@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+      <ProjectReference Include="..\..\src\Nameless.Logging\Nameless.Logging.csproj" />
+      <ProjectReference Include="..\..\src\Nameless.Notification\Nameless.Notification.csproj" />
+    </ItemGroup>
+</Project>

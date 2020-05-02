@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="AsyncEnumerator" Version="4.0.1" />
+      <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
+    </ItemGroup>
+</Project>

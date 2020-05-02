@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nameless.CircuitBreaker\Nameless.CircuitBreaker.csproj" />
+    <ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+    <ProjectReference Include="..\..\src\Nameless.Logging\Nameless.Logging.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.1.3" />
+
+    <PackageReference Include="Autofac" Version="5.1.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="ElmahCore" Version="1.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\extra\Nameless.Caching.Memory.Extra\Nameless.Caching.Memory.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.CQRS.Common.Extra\Nameless.CQRS.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Data.SqlClient.Extra\Nameless.Data.SqlClient.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Environment.Common.Extra\Nameless.Environment.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.FileProvider.Physical.Extra\Nameless.FileProvider.Physical.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Localization.Json.Extra\Nameless.Localization.Json.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Logging.Log4net.Extra\Nameless.Logging.Log4net.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Mailing.Mailkit.Extra\Nameless.Mailing.Mailkit.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Notification.Common.Extra\Nameless.Notification.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.ObjectMapper.AutoMapper.Extra\Nameless.ObjectMapper.AutoMapper.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Search.Lucene.Extra\Nameless.Search.Lucene.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Security.Common.Extra\Nameless.Security.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Serialization.Json.Extra\Nameless.Serialization.Json.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Services.Common.Extra\Nameless.Services.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Text.Common.Extra\Nameless.Text.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Caching.Memory\Nameless.Caching.Memory.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.IoC.Autofac\Nameless.IoC.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Localization.Json\Nameless.Localization.Json.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Caching\Nameless.Caching.csproj" />
+    <ProjectReference Include="..\Nameless.Bookshelf.Core\Nameless.Bookshelf.Core.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.IoC.Autofac.Extra\Nameless.IoC.Autofac.Extra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

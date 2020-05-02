@@ -1,0 +1,45 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Web Application (Debug)",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "./apps/WebApplication/WebApplication.sln",
+                "-p:Configuration=Debug",
+                "-verbosity:normal"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build Bookshelf (Debug)",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "./apps/Bookshelf/Bookshelf.sln",
+                "-p:Configuration=Debug",
+                "-verbosity:normal"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

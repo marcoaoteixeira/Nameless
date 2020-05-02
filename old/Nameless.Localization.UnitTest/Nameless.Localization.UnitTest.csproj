@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Nameless\StringLocalizerTest.pt-BR.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\**\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
+    <PackageReference Include="Moq" Version="4.13.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+
+    <ProjectReference Include="..\..\src\Nameless.IoC\Nameless.IoC.csproj" />    
+    <ProjectReference Include="..\..\impl\Nameless.IoC.Autofac\Nameless.IoC.Autofac.csproj" />
+    
+    <ProjectReference Include="..\..\src\Nameless.FileProvider\Nameless.FileProvider.csproj" />
+
+    <ProjectReference Include="..\..\src\Nameless.Localization\Nameless.Localization.csproj" />
+    <!-- <ProjectReference Include="..\..\impl\Nameless.Localization.Json\Nameless.Localization.Json.csproj" />
+    <ProjectReference Include="..\..\extra\Nameless.Localization.Json.Extra\Nameless.Localization.Json.Extra.csproj" /> -->
+  </ItemGroup>
+
+</Project>

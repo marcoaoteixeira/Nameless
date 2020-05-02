@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>aspnet-Nameless.WebApplication.Web-1073CB58-4C4D-49F9-A4EF-9BF8BB33F5E0</UserSecretsId>
+  </PropertyGroup>
+
+<ItemGroup>
+    <PackageReference Include="Autofac" Version="5.1.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="ElmahCore" Version="1.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nameless.WebApplication.Core\Nameless.WebApplication.Core.csproj" />
+    <ProjectReference Include="..\..\Bookshelf\Nameless.Bookshelf.Core\Nameless.Bookshelf.Core.csproj" />
+    
+    <ProjectReference Include="..\..\..\src\Nameless.Caching\Nameless.Caching.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Core\Nameless.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.CQRS\Nameless.CQRS.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Environment\Nameless.Environment.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.FileStorage\Nameless.FileStorage.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.IO\Nameless.IO.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.IoC\Nameless.IoC.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Localization\Nameless.Localization.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Logging\Nameless.Logging.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Mailing\Nameless.Mailing.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Notification\Nameless.Notification.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.ObjectMapper\Nameless.ObjectMapper.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Patterns\Nameless.Patterns.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.PubSub\Nameless.PubSub.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Search\Nameless.Search.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Security\Nameless.Security.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Serialization\Nameless.Serialization.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Services\Nameless.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Text\Nameless.Text.csproj" />
+
+    <ProjectReference Include="..\..\..\impl\Nameless.AspNetCore\Nameless.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.AspNetCore.Identity.Stores.NHibernate\Nameless.AspNetCore.Identity.Stores.NHibernate.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Caching.InMemory\Nameless.Caching.InMemory.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.CQRS.Common\Nameless.CQRS.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Environment.Common\Nameless.Environment.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.FileProvider.Common\Nameless.FileProvider.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.FileStorage.FileSystem\Nameless.FileStorage.FileSystem.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.IoC.Autofac\Nameless.IoC.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Localization.Json\Nameless.Localization.Json.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Logging.Log4net\Nameless.Logging.Log4net.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Mailing.MailKit\Nameless.Mailing.MailKit.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.NHibernate\Nameless.NHibernate.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Notification.Common\Nameless.Notification.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.ObjectMapper.AutoMapper\Nameless.ObjectMapper.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.PubSub.Common\Nameless.PubSub.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Search.Lucene\Nameless.Search.Lucene.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Security.Common\Nameless.Security.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Serialization.Json\Nameless.Serialization.Json.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Services.Common\Nameless.Services.Common.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Text.Common\Nameless.Text.Common.csproj" />
+
+    <ProjectReference Include="..\..\..\extra\Nameless.Caching.InMemory.Extra\Nameless.Caching.InMemory.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.CQRS.Common.Extra\Nameless.CQRS.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Environment.Common.Extra\Nameless.Environment.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.FileProvider.Physical.Extra\Nameless.FileProvider.Physical.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.FileStorage.FileSystem.Extra\Nameless.FileStorage.FileSystem.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.IoC.Autofac.Extra\Nameless.IoC.Autofac.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Localization.Json.Extra\Nameless.Localization.Json.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Logging.Log4net.Extra\Nameless.Logging.Log4net.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Mailing.Mailkit.Extra\Nameless.Mailing.Mailkit.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.NHibernate.Extra\Nameless.NHibernate.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Notification.Common.Extra\Nameless.Notification.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.ObjectMapper.AutoMapper.Extra\Nameless.ObjectMapper.AutoMapper.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.PubSub.Common.Extra\Nameless.PubSub.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Search.Lucene.Extra\Nameless.Search.Lucene.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Security.Common.Extra\Nameless.Security.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Serialization.Json.Extra\Nameless.Serialization.Json.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Services.Common.Extra\Nameless.Services.Common.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Text.Common.Extra\Nameless.Text.Common.Extra.csproj" />
+  </ItemGroup>
+
+</Project>

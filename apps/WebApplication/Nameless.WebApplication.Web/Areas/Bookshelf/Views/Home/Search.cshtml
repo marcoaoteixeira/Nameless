@@ -1,0 +1,11 @@
+﻿@model BookSearchResult
+@{ ViewData["Title"] = "Bookshelf"; }
+
+<div class="row">
+    <div class="col-lg-3">
+        <partial name="_SearchForm" model="Model.Parameters" />
+    </div>
+    <div class="col-lg-9">
+        <partial name="_SearchResult" model="Model.Result" />
+    </div>
+</div>

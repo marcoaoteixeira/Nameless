@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Castle.Core" Version="4.4.0" />
+        <PackageReference Include="NHibernate" Version="5.2.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Nameless.NHibernate\Nameless.NHibernate.csproj" />
+
+        <ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+        <ProjectReference Include="..\..\src\Nameless.Orm\Nameless.Orm.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+      <ProjectReference Include="..\..\src\Nameless.Serialization\Nameless.Serialization.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,78 @@
+﻿using System.IO;
+
+namespace Nameless.Mailing.MailKit {
+
+    /// <summary>
+    /// The configuration for SMTP client.
+    /// </summary>
+    public sealed class SmtpClientSettings {
+
+        #region Public Enumerators
+
+        /// <summary>
+        /// Enumerates the delivery methods.
+        /// </summary>
+        public enum DeliveryMethods {
+            /// <summary>
+            /// Network
+            /// </summary>
+            Network = 0,
+
+            /// <summary>
+            /// Pickup Directory
+            /// </summary>
+            PickupDirectory = 1
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the SMTP server address.
+        /// </summary>
+        public string Host { get; set; } = "localhost";
+
+        /// <summary>
+        /// Whether if will use port, or not use, to connecto to the SMTP service.
+        /// </summary>
+        public bool UsePort { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the SMTP server port.
+        /// </summary>
+        public int Port { get; set; } = 25;
+
+        /// <summary>
+        /// Gets or sets if should use credentials.
+        /// </summary>
+        public bool UseCredentials { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the user name credential.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password credential.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets if should enable SSL.
+        /// </summary>
+        public bool EnableSsl { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the delivery method
+        /// </summary>
+        public DeliveryMethods DeliveryMethod { get; set; } = DeliveryMethods.PickupDirectory;
+
+        /// <summary>
+        /// Gets or sets the pickup directory path
+        /// </summary>
+        public string PickupDirectoryPath { get; set; } = Path.Combine (typeof (SmtpClientSettings).Assembly.GetDirectoryPath (), "Resources", "PickupDirectory");
+
+        #endregion
+    }
+}
