@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="StackExchange.Redis" Version="2.1.39" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
+        <ProjectReference Include="..\..\..\Serialization\Abstractions\src\Nameless.Serialization.csproj" />
+        
+        <ProjectReference Include="..\..\Abstractions\src\Nameless.Caching.csproj" />
+    </ItemGroup>
+
+</Project>

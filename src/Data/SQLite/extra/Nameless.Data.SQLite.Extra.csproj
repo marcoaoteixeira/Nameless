@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Common\src\Nameless.Data.Common.csproj" />
+        <ProjectReference Include="..\src\Nameless.Data.SQLite.csproj" />
+        <ProjectReference Include="..\..\..\DependencyInjection\Autofac\src\Nameless.DependencyInjection.Autofac.csproj" />
+    </ItemGroup>
+
+</Project>

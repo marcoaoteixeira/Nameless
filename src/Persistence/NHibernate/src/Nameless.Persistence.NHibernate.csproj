@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NHibernate" Version="5.2.7" />
+        <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Abstractions\src\Nameless.Persistence.csproj" />
+        
+        <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
+        <ProjectReference Include="..\..\..\Security\Abstractions\src\Nameless.Security.csproj" />
+        <ProjectReference Include="..\..\..\Security\Common\src\Nameless.Security.Common.csproj" />
+    </ItemGroup>
+
+</Project>

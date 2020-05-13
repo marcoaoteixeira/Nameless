@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Abstractions\src\Nameless.Templating.csproj" />
+        <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
+        <ProjectReference Include="..\..\..\Text\Abstractions\src\Nameless.Text.csproj" />
+    </ItemGroup>
+
+</Project>

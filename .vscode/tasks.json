@@ -23,12 +23,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build Bookshelf (Debug)",
+            "label": "Build Skeleton (Debug)",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "./apps/Bookshelf/Bookshelf.sln",
+                "./apps/Skeleton/Skeleton.sln",
                 "-p:Configuration=Debug",
                 "-verbosity:normal"
             ],

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
+        <ProjectReference Include="..\..\Abstractions\src\Nameless.FileStorage.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Identity\src\Nameless.AspNetCore.Identity.csproj" />
+        <ProjectReference Include="..\..\..\Persistence\NHibernate\src\Nameless.Persistence.NHibernate.csproj" />
+    </ItemGroup>
+
+</Project>

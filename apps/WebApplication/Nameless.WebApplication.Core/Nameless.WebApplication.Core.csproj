@@ -32,6 +32,7 @@
     <ProjectReference Include="..\..\..\src\Nameless.Notification\Nameless.Notification.csproj" />
     <ProjectReference Include="..\..\..\src\Nameless.ObjectMapper\Nameless.ObjectMapper.csproj" />
     <ProjectReference Include="..\..\..\src\Nameless.Patterns\Nameless.Patterns.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Persistence\Nameless.Persistence.csproj" />
     <ProjectReference Include="..\..\..\src\Nameless.PubSub\Nameless.PubSub.csproj" />
     <ProjectReference Include="..\..\..\src\Nameless.Search\Nameless.Search.csproj" />
     <ProjectReference Include="..\..\..\src\Nameless.Security\Nameless.Security.csproj" />
@@ -40,7 +41,6 @@
     <ProjectReference Include="..\..\..\src\Nameless.Text\Nameless.Text.csproj" />
 
     <ProjectReference Include="..\..\..\impl\Nameless.AspNetCore\Nameless.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\..\impl\Nameless.AspNetCore.Identity.Stores.NHibernate\Nameless.AspNetCore.Identity.Stores.NHibernate.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.Caching.InMemory\Nameless.Caching.InMemory.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.CQRS.Common\Nameless.CQRS.Common.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.Environment.Common\Nameless.Environment.Common.csproj" />
@@ -53,6 +53,7 @@
     <ProjectReference Include="..\..\..\impl\Nameless.NHibernate\Nameless.NHibernate.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.Notification.Common\Nameless.Notification.Common.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.ObjectMapper.AutoMapper\Nameless.ObjectMapper.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\..\impl\Nameless.Persistence.NHibernate\Nameless.Persistence.NHibernate.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.PubSub.Common\Nameless.PubSub.Common.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.Search.Lucene\Nameless.Search.Lucene.csproj" />
     <ProjectReference Include="..\..\..\impl\Nameless.Security.Common\Nameless.Security.Common.csproj" />
@@ -69,8 +70,10 @@
     <ProjectReference Include="..\..\..\extra\Nameless.Localization.Json.Extra\Nameless.Localization.Json.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.Logging.Log4net.Extra\Nameless.Logging.Log4net.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.Mailing.Mailkit.Extra\Nameless.Mailing.Mailkit.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.NHibernate.Extra\Nameless.NHibernate.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.Notification.Common.Extra\Nameless.Notification.Common.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.ObjectMapper.AutoMapper.Extra\Nameless.ObjectMapper.AutoMapper.Extra.csproj" />
+    <ProjectReference Include="..\..\..\extra\Nameless.Persistence.NHibernate.Extra\Nameless.Persistence.NHibernate.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.PubSub.Common.Extra\Nameless.PubSub.Common.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.Search.Lucene.Extra\Nameless.Search.Lucene.Extra.csproj" />
     <ProjectReference Include="..\..\..\extra\Nameless.Security.Common.Extra\Nameless.Security.Common.Extra.csproj" />

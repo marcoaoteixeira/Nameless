@@ -39,14 +39,14 @@
             }
         },
         {
-            "name": "Launch Bookshelf (Debug)",
+            "name": "Launch Skeleton (Debug)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "Build Bookshelf (Debug)",
+            "preLaunchTask": "Build Skeleton (Debug)",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/apps/Bookshelf/Nameless.Bookshelf.Web/bin/Debug/netcoreapp3.1/Nameless.Bookshelf.Web.dll",
+            "program": "${workspaceFolder}/apps/Skeleton/src/bin/Debug/netcoreapp3.1/Nameless.Skeleton.Web.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/apps/Bookshelf/Nameless.Bookshelf.Web",
+            "cwd": "${workspaceFolder}/apps/Skeleton/src",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
