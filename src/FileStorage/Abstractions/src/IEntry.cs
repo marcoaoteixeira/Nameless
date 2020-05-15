@@ -6,7 +6,7 @@ namespace Nameless.FileStorage {
         #region Properties
 
         /// <summary>
-        /// Gets the name of the file.
+        /// Gets the name of the entry.
         /// </summary>
         string Name { get; }
 
@@ -29,11 +29,6 @@ namespace Nameless.FileStorage {
         /// Gets the date and time in UTC when the entry was last modified.
         /// </summary>
         DateTimeOffset LastWriteTimeUtc { get; }
-
-        /// <summary>
-        /// Gets whether the entry is a directory or not.
-        /// </summary>
-        bool IsDirectory { get; }
 
         #endregion
     }

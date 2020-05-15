@@ -14,6 +14,7 @@
         <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
         <ProjectReference Include="..\..\Abstractions\src\Nameless.Localization.csproj" />
         <ProjectReference Include="..\..\..\Logging\Abstractions\src\Nameless.Logging.csproj" />
+        <ProjectReference Include="..\..\..\FileStorage\Abstractions\src\Nameless.FileStorage.csproj" />
     </ItemGroup>
     
 </Project>

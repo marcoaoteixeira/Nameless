@@ -22,7 +22,7 @@ namespace Nameless.FileStorage.FileSystem {
 
         public Directory (string root, string path, Func<string, IChangeToken> changeTokenFactory) {
             Prevent.ParameterNullOrWhiteSpace (root, nameof (root));
-            Prevent.ParameterNullOrWhiteSpace (path, nameof (path));
+            Prevent.ParameterNull (path, nameof (path));
             Prevent.ParameterNull (changeTokenFactory, nameof (changeTokenFactory));
 
             Root = root;
@@ -41,9 +41,9 @@ namespace Nameless.FileStorage.FileSystem {
 
         public bool Exists => CurrentDirectory.Exists;
 
-        public DateTime CreationTimeUtc => CurrentDirectory.CreationTimeUtc;
+        public long Length => -1;
 
-        public DateTime LastWriteTimeUtc => CurrentDirectory.LastWriteTimeUtc;
+        public DateTimeOffset LastWriteTimeUtc => CurrentDirectory.LastWriteTimeUtc;
 
         public IAsyncEnumerable<IFile> GetFilesAsync (bool includeSubDirectories = false) {
             if (!Exists) { return AsyncEnumerable<IFile>.Empty; }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
+using Nameless.FileStorage;
 using Nameless.Helpers;
 using Nameless.Localization.Json.Schemas;
 using Nameless.Logging;
@@ -19,7 +20,7 @@ namespace Nameless.Localization.Json {
     public sealed class MessageCollectionAggregationProvider : IMessageCollectionAggregationProvider, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IFileProvider _fileProvider;
+        private readonly IFileStorage _fileStorage;
         private readonly LocalizationSettings _settings;
         private readonly object _syncLock = new object ();
 
@@ -37,7 +38,7 @@ namespace Nameless.Localization.Json {
 
         private ILogger _logger;
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
+            get { return _logger ?? = NullLogger.Instance; }
             set { _logger = value ?? NullLogger.Instance; }
         }
 
@@ -45,10 +46,10 @@ namespace Nameless.Localization.Json {
 
         #region Public Constructors
 
-        public MessageCollectionAggregationProvider (IFileProvider fileProvider, LocalizationSettings settings = null) {
-            Prevent.ParameterNull (fileProvider, nameof (fileProvider));
+        public MessageCollectionAggregationProvider (IFileStorage fileStorage, LocalizationSettings settings = null) {
+            Prevent.ParameterNull (fileStorage, nameof (fileStorage));
 
-            _fileProvider = fileProvider;
+            _fileStorage = fileStorage;
             _settings = settings ?? new LocalizationSettings ();
         }
 
@@ -75,15 +76,15 @@ namespace Nameless.Localization.Json {
                 }
 
                 if (Logger.IsEnabled (LogLevel.Debug)) {
-                    var rootProp = _fileProvider.GetType ().GetProperty ("Root");
+                    var rootProp = _fileStorage.GetType ().GetProperty ("Root");
                     if (rootProp != null) {
-                        Logger.Debug ($"Trying to retrieve files from {rootProp.GetValue (_fileProvider)}");
+                        Logger.Debug ($"Trying to retrieve files from {rootProp.GetValue (_fileStorage)}");
                     }
                 }
 
                 // Retrieves the associated file
-                var file = _fileProvider.GetDirectoryContents (_settings.ResourceFolderPath)
-                    .SingleOrDefault (_ => string.Equals (Path.GetFileName (_.PhysicalPath), $"{cultureName}.json", StringComparison.OrdinalIgnoreCase));
+                var filePath = Path.Combine (_settings.ResourceFolderPath, $"{cultureName}.json");
+                var file = _fileStorage.GetFile (filePath);
 
                 // If file not exists, return.
                 if (file == null || !file.Exists) { return null; }
@@ -97,7 +98,7 @@ namespace Nameless.Localization.Json {
                     // Keep an eye in the file changed event, if needed.
                     if (_settings.ReloadOnChange) {
                         var changeToken = ChangeToken.OnChange (
-                            changeTokenProducer: () => _fileProvider.Watch (file.PhysicalPath),
+                            changeTokenProducer: () => _fileStorage.Watch (file.PhysicalPath),
                             changeTokenConsumer : ChangeTokenCallback,
                             file.PhysicalPath
                         );

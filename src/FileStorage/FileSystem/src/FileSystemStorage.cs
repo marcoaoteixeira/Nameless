@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
-using Nameless.Helpers;
 
 namespace Nameless.FileStorage.FileSystem {
     public class FileSystemStorage : IFileStorage, IDisposable {
@@ -81,12 +80,12 @@ namespace Nameless.FileStorage.FileSystem {
         #region IFileStorage Members
 
         /// <inheritdoc />
-        public Task<bool> CreateDirectoryAsync (string path) {
+        public Task<bool> CreateDirectoryAsync (string relativePath) {
             BlockAccessAfterDispose ();
 
-            path = PathHelper.Normalize (path);
+            relativePath = PathHelper.Normalize (relativePath);
 
-            var directoryPath = PathHelper.GetPhysicalPath (_root, path);
+            var directoryPath = PathHelper.GetPhysicalPath (_root, relativePath);
             if (System.IO.Directory.Exists (directoryPath)) {
                 return Task.FromResult (false);
             }
@@ -100,27 +99,27 @@ namespace Nameless.FileStorage.FileSystem {
         /// <exception cref="FileStorageException">
         /// Thrown if the specified path does not points to a directory.
         /// </exception>
-        public Task<IDirectory> GetDirectoryAsync (string path) {
+        public Task<IDirectory> GetDirectoryAsync (string relativePath) {
             BlockAccessAfterDispose ();
 
-            path = PathHelper.Normalize (path);
+            relativePath = PathHelper.Normalize (relativePath);
 
-            var directoryPath = PathHelper.GetPhysicalPath (_root, path);
+            var directoryPath = PathHelper.GetPhysicalPath (_root, relativePath);
             if (!System.IO.Directory.Exists (directoryPath)) {
                 throw new FileStorageException ("The specified path does not points to a directory.");
             }
 
-            IDirectory directory = new Directory (_root, path, ChangeTokenFactory);
+            IDirectory directory = new Directory (_root, relativePath, ChangeTokenFactory);
             return Task.FromResult (directory);
         }
 
         /// <inheritdoc />
-        public Task CreateFile (string path, Stream input, bool overwrite = false) {
+        public Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false) {
             BlockAccessAfterDispose ();
 
-            path = PathHelper.Normalize (path);
+            relativePath = PathHelper.Normalize (relativePath);
 
-            var filePath = PathHelper.GetPhysicalPath (_root, path);
+            var filePath = PathHelper.GetPhysicalPath (_root, relativePath);
             if (System.IO.File.Exists (filePath) && !overwrite) {
                 throw new FileStorageException ("Cannot create file because the destination path already exist.");
             }
@@ -134,12 +133,12 @@ namespace Nameless.FileStorage.FileSystem {
         }
 
         /// <inheritdoc />
-        public Task<IFile> GetFileAsync (string path) {
+        public Task<IFile> GetFileAsync (string relativePath) {
             BlockAccessAfterDispose ();
 
-            path = PathHelper.Normalize (path);
+            relativePath = PathHelper.Normalize (relativePath);
 
-            var file = new File (_root, path, ChangeTokenFactory);
+            var file = new File (_root, relativePath, ChangeTokenFactory);
 
             return Task.FromResult<IFile> (file);
         }

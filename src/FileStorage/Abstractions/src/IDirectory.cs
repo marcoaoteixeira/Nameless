@@ -1,42 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage {
     /// <summary>
     /// Represents an abstract directory in a virtual file storage.
     /// </summary>
-    public interface IDirectory {
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the file.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the full path of the directory within the file storage.
-        /// </summary>
-        string Path { get; }
-
-        /// <summary>
-        /// Whether if the file exists or not.
-        /// </summary>
-        bool Exists { get; }
-
-        /// <summary>
-        /// Gets the date that the file was created.
-        /// </summary>
-        DateTime CreationTimeUtc { get; }
-
-        /// <summary>
-        /// Gets the date and time in UTC when the file was last modified.
-        /// </summary>
-        DateTime LastWriteTimeUtc { get; }
-
-        #endregion
-
+    public interface IDirectory : IEntry {
+        
         #region Methods
 
         /// <summary>

@@ -24,29 +24,33 @@ namespace Nameless.FileStorage {
         /// <summary>
         /// Creates a directory in the file store if it doesn't already exist.
         /// </summary>
-        /// <param name="path">The path of the directory to be created.</param>
+        /// <param name="relativePath">
+        /// The relative path of the directory to be created.
+        /// </param>
         /// <returns>
         /// <c>true</c> if the directory was created; <c>false</c> if the
         /// directory already existed.
         /// </returns>
-        Task<bool> CreateDirectoryAsync (string path);
+        Task<bool> CreateDirectoryAsync (string relativePath);
 
         /// <summary>
         /// Retrieves information about the given directory within the file
         /// store.
         /// </summary>
-        /// <param name="path">The path to the directory.</param>
+        /// <param name="relativePath">
+        /// The relative path to the directory.
+        /// </param>
         /// <returns>
         /// A <see cref="IDirectory"/> object representing the directory.
         /// </returns>
-        Task<IDirectory> GetDirectoryAsync (string path);
+        Task<IDirectory> GetDirectoryAsync (string relativePath);
 
         /// <summary>
         /// Creates a new file in the file storage from the contents of an
         /// input stream.
         /// </summary>
-        /// <param name="path">
-        /// The path of the file to be created.
+        /// <param name="relativePath">
+        /// The relative path of the file to be created.
         /// </param>
         /// <param name="input">
         /// The stream whose contents to write to the new file.
@@ -58,16 +62,16 @@ namespace Nameless.FileStorage {
         /// <returns>
         /// A <see cref="Task" /> representing the method execution.
         /// </returns>
-        Task CreateFile (string path, Stream input, bool overwrite = false);
+        Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false);
 
         /// <summary>
         /// Retrieves information about the given file within the file store.
         /// </summary>
-        /// <param name="path">The path to the file.</param>
+        /// <param name="relativePath">The relative path to the file.</param>
         /// <returns>
         /// A <see cref="IFile"/> object representing the file.
         /// </returns>
-        Task<IFile> GetFileAsync (string path);
+        Task<IFile> GetFileAsync (string relativePath);
 
         #endregion
     }

@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
 using Nameless.FileStorage.FileSystem.Properties;
-using Nameless.Helpers;
 
 namespace Nameless.FileStorage.FileSystem {
     public sealed class File : IFile {
@@ -49,19 +48,26 @@ namespace Nameless.FileStorage.FileSystem {
         public long Length => CurrentFile.Length;
 
         /// <inheritdoc />
-        public DateTime CreationTimeUtc => CurrentFile.CreationTimeUtc;
-
-        /// <inheritdoc />
-        public DateTime LastWriteTimeUtc => CurrentFile.LastWriteTimeUtc;
+        public DateTimeOffset LastWriteTimeUtc => CurrentFile.LastWriteTimeUtc;
 
         /// <inheritdoc />
         /// <exception cref="FileStorageException">
         /// Thrown if the specified file does not exist.
         /// </exception>
-        public Task<Stream> OpenAsync () {
+        public Task<Stream> CreateStreamAsync () {
             if (!Exists) { throw new FileStorageException (Resources.TheFileDoesNotExistsMessage); }
 
-            var stream = CurrentFile.OpenRead ();
+            // We are setting buffer size to 1 to prevent FileStream from
+            // allocating it's internal buffer 0 causes constructor to throw
+            var bufferSize = 1;
+            var stream = new FileStream (
+                path: CurrentFile.FullName,
+                mode: FileMode.Open,
+                access: FileAccess.Read,
+                share: FileShare.ReadWrite,
+                bufferSize: bufferSize,
+                options: FileOptions.Asynchronous | FileOptions.SequentialScan
+            );
             return Task.FromResult<Stream> (stream);
         }
 

@@ -1,52 +1,21 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage {
 
     /// <summary>
     /// Represents an abstract file in a virtual file storage.
     /// </summary>
-    public interface IFile {
+    public interface IFile : IEntry {
 
         #region Properties
-
-        /// <summary>
-        /// Gets the name of the file.
-        /// </summary>
-        string Name { get; }
 
         /// <summary>
         /// Gets the full path of the file's containing directory within the
         /// file storage.
         /// </summary>
         string DirectoryPath { get; }
-
-        /// <summary>
-        /// Gets the full path of the file within the file storage.
-        /// </summary>
-        string Path { get; }
-
-        /// <summary>
-        /// Whether if the file exists or not.
-        /// </summary>
-        bool Exists { get; }
-
-        /// <summary>
-        /// Gets the length of the file.
-        /// </summary>
-        long Length { get; }
-
-        /// <summary>
-        /// Gets the date that the file was created.
-        /// </summary>
-        DateTime CreationTimeUtc { get; }
-
-        /// <summary>
-        /// Gets the date and time in UTC when the file was last modified.
-        /// </summary>
-        DateTime LastWriteTimeUtc { get; }
 
         #endregion
 
@@ -61,7 +30,7 @@ namespace Nameless.FileStorage {
         /// contents of the file. The caller must close the stream when
         /// finished.
         /// </returns>
-        Task<Stream> OpenAsync ();
+        Task<Stream> CreateStreamAsync ();
 
         /// <summary>
         /// Creates a copy of a file in the file storage.
