@@ -1,29 +1,53 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage {
 
     /// <summary>
     /// Represents an abstract file in a virtual file storage.
     /// </summary>
-    public interface IFile : IEntry {
+    public interface IFile {
 
         #region Properties
 
         /// <summary>
-        /// Gets the full path of the file's containing directory within the
-        /// file storage.
+        /// Gets the name of the file.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the full path of the entry within the file storage.
+        /// </summary>
+        string Path { get; }
+
+        /// <summary>
+        /// Gets the directory path where the file resides.
         /// </summary>
         string DirectoryPath { get; }
+
+        /// <summary>
+        /// Gets whether the file exists or not.
+        /// </summary>
+        bool Exists { get; }
+
+        /// <summary>
+        /// Gets the length of the file, if -1, file does not exists.
+        /// </summary>
+        long Length { get; }
+
+        /// <summary>
+        /// Gets the date and time in UTC when the file was last modified.
+        /// </summary>
+        DateTimeOffset LastWriteTimeUtc { get; }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Creates a stream to read the contents of a file in the file
-        /// storage.
+        /// Creates a stream to read the contents of a file.
         /// </summary>
         /// <returns>
         /// An instance of <see cref="Stream"/> that can be used to read the
@@ -33,10 +57,11 @@ namespace Nameless.FileStorage {
         Task<Stream> CreateStreamAsync ();
 
         /// <summary>
-        /// Creates a copy of a file in the file storage.
+        /// Creates a copy of the current file.
         /// </summary>
         /// <param name="destFilePath">
-        /// The path of the destination file to be created.
+        /// The root relative path of the destination file to be created or
+        /// overwritten.
         /// </param>
         /// <param name="overwrite">
         /// Whether it will overwrite the file, if exists, or not.
@@ -44,15 +69,15 @@ namespace Nameless.FileStorage {
         Task CopyAsync (string destFilePath, bool overwrite = false);
 
         /// <summary>
-        /// Renames or moves a file to another location in the file storage.
+        /// Moves the current file to another location or renames it.
         /// </summary>
         /// <param name="destFilePath">
-        /// The new path of the file after the rename/move.
+        /// The root relative path of the file after the move/rename.
         /// </param>
         Task MoveAsync (string destFilePath);
 
         /// <summary>
-        /// Deletes a file in the file storage, if it exists.
+        /// Deletes the current file, if it exists.
         /// </summary>
         /// <returns>
         /// <c>true</c> if the file was deleted; <c>false</c> if not.
@@ -60,9 +85,9 @@ namespace Nameless.FileStorage {
         Task<bool> DeleteAsync ();
 
         /// <summary>
-        /// Watchs change in this file.
+        /// Watchs for changes in the current file.
         /// </summary>
-        void Watch (Action<ChangeEventArgs> callback);
+        IDisposable Watch (Action<ChangeEventArgs> callback);
 
         #endregion
     }

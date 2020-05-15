@@ -80,9 +80,6 @@ namespace Nameless.FileStorage.FileSystem {
             if (!Exists) { throw new FileStorageException (Resources.TheFileDoesNotExistsMessage); }
 
             var destFileName = PathHelper.GetPhysicalPath (Root, destFilePath);
-            if (System.IO.File.Exists (destFileName) && !overwrite) {
-                throw new FileStorageException ("Cannot copy file because the destination path already exists.");
-            }
 
             CurrentFile.CopyTo (destFileName, overwrite);
 
@@ -120,7 +117,7 @@ namespace Nameless.FileStorage.FileSystem {
         public void Watch (Action<ChangeEventArgs> callback) {
             ChangeToken.OnChange (
                 changeTokenProducer: () => ChangeTokenFactory (Path),
-                changeTokenConsumer: (state) => callback (new ChangeEventArgs { Path = state }),
+                changeTokenConsumer: (state) => callback (new ChangeEventArgs { OldPath = state }),
                 state : Path
             );
         }

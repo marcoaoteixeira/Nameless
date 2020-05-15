@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Dasync.Collections;
 using Microsoft.Extensions.Primitives;
 
-namespace Nameless.FileStorage.FileSystem {
+namespace Nameless.FileStorage.Physical {
     public sealed class Directory : IDirectory {
 
         #region Private Properties
 
         private string Root { get; }
-
-        private DirectoryInfo CurrentDirectory { get; }
-
         private Func<string, IChangeToken> ChangeTokenFactory { get; }
+        private DirectoryInfo CurrentDirectory { get; set; }
+        private EntryState CurrentState { get; } = new EntryState ();
 
         #endregion
 
@@ -26,25 +25,36 @@ namespace Nameless.FileStorage.FileSystem {
             Prevent.ParameterNull (changeTokenFactory, nameof (changeTokenFactory));
 
             Root = root;
-            Path = path;
-            CurrentDirectory = new DirectoryInfo (PathHelper.GetPhysicalPath (root, path));
             ChangeTokenFactory = changeTokenFactory;
+
+            FetchDirectoryInfo (PathHelper.GetPhysicalPath (root, path));
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void FetchDirectoryInfo (string path) {
+            CurrentDirectory = !string.IsNullOrWhiteSpace (path) ? new DirectoryInfo (path) : null;
         }
 
         #endregion
 
         #region IDirectory Members
 
+        /// <inheritdoc />
         public string Name => CurrentDirectory.Name;
 
-        public string Path { get; }
+        /// <inheritdoc />
+        public string Path => CurrentDirectory.FullName[Root.Length..].TrimStart (System.IO.Path.DirectorySeparatorChar);
 
+        /// <inheritdoc />
         public bool Exists => CurrentDirectory.Exists;
 
-        public long Length => -1;
-
+        /// <inheritdoc />
         public DateTimeOffset LastWriteTimeUtc => CurrentDirectory.LastWriteTimeUtc;
 
+        /// <inheritdoc />
         public IAsyncEnumerable<IFile> GetFilesAsync (bool includeSubDirectories = false) {
             if (!Exists) { return AsyncEnumerable<IFile>.Empty; }
 
@@ -61,6 +71,7 @@ namespace Nameless.FileStorage.FileSystem {
             });
         }
 
+        /// <inheritdoc />
         public IAsyncEnumerable<IDirectory> GetDirectoriesAsync (bool includeSubDirectories = false) {
             if (!Exists) { return AsyncEnumerable<IDirectory>.Empty; }
 
@@ -77,21 +88,32 @@ namespace Nameless.FileStorage.FileSystem {
             });
         }
 
+        /// <inheritdoc />
         public Task<bool> DeleteAsync () {
             if (!Exists) { return Task.FromResult (false); }
 
             CurrentDirectory.Delete (recursive: true);
 
+            // Track changes
+            CurrentState.OldPath = CurrentDirectory.FullName;
+            CurrentState.NewPath = null;
+            CurrentState.Action = ChangeEventAction.Deleted;
+            // Track changes
+
             return Task.FromResult (true);
         }
 
-        public void Watch (Action<ChangeEventArgs> callback, string filters = null) {
+        /// <inheritdoc />
+        public IDisposable Watch (Action<ChangeEventArgs> callback, string filters = null) {
             filters = !string.IsNullOrWhiteSpace (filters) ? filters : "*.*";
 
-            ChangeToken.OnChange (
+            return ChangeToken.OnChange (
                 changeTokenProducer: () => ChangeTokenFactory (filters),
-                changeTokenConsumer: (state) => callback (new ChangeEventArgs { OldPath = state }),
-                state : Path
+                changeTokenConsumer: (state) => {
+                    callback (state.ToChangeEventArgs ());
+                    FetchDirectoryInfo (state.NewPath ?? state.OldPath);
+                },
+                state : CurrentState
             );
         }
 
