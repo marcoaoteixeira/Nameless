@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 using Nameless.FileStorage.Physical.Properties;
 
 namespace Nameless.FileStorage.Physical {
@@ -10,7 +9,7 @@ namespace Nameless.FileStorage.Physical {
         #region Private Properties
 
         private string Root { get; }
-        private Func<string, IChangeToken> ChangeTokenFactory { get; }
+        private Func<string, Action, IDisposable> ChangeWatcherFactory { get; }
         private FileInfo CurrentFile { get; set; }
         private EntryState CurrentState { get; } = new EntryState ();
 
@@ -18,23 +17,28 @@ namespace Nameless.FileStorage.Physical {
 
         #region Public Constructors
 
-        public File (string root, string path, Func<string, IChangeToken> changeTokenFactory) {
+        public File (string root, string path, Func<string, Action, IDisposable> changeWatcherFactory) {
             Prevent.ParameterNullOrWhiteSpace (root, nameof (root));
             Prevent.ParameterNullOrWhiteSpace (path, nameof (path));
-            Prevent.ParameterNull (changeTokenFactory, nameof (changeTokenFactory));
+            Prevent.ParameterNull (changeWatcherFactory, nameof (changeWatcherFactory));
 
             Root = root;
-            ChangeTokenFactory = changeTokenFactory;
+            ChangeWatcherFactory = changeWatcherFactory;
 
-            FetchFileInfo (PathHelper.GetPhysicalPath (root, path));
+            FetchFileInfo (path);
         }
 
         #endregion
 
         #region Private Methods
 
-        private void FetchFileInfo (string path) {
-            CurrentFile = !string.IsNullOrWhiteSpace (path) ? new FileInfo (path) : null;
+        private void FetchFileInfo (string relativePath) {
+            CurrentFile = null;
+
+            if (!string.IsNullOrWhiteSpace (relativePath)) {
+                var path = PathHelper.GetPhysicalPath (Root, relativePath);
+                CurrentFile = new FileInfo (path);
+            }
         }
 
         #endregion
@@ -121,9 +125,10 @@ namespace Nameless.FileStorage.Physical {
             CurrentFile.CopyTo (destination, overwrite);
 
             // Track changes
-            CurrentState.OldPath = CurrentFile.FullName;
-            CurrentState.NewPath = destination;
-            CurrentState.Action = ChangeEventAction.Copied;
+            CurrentState.OldPath = Path;
+            CurrentState.NewPath = destFilePath;
+            var destDirectoryPath = System.IO.Path.GetDirectoryName (destFilePath);
+            CurrentState.Action = destDirectoryPath != DirectoryPath ? ChangeEventAction.Copied : ChangeEventAction.Renamed;
             // Track changes
 
             return Task.CompletedTask;
@@ -169,8 +174,8 @@ namespace Nameless.FileStorage.Physical {
             CurrentFile.MoveTo (destination);
 
             // Track changes
-            CurrentState.OldPath = CurrentFile.FullName;
-            CurrentState.NewPath = destination;
+            CurrentState.OldPath = Path;
+            CurrentState.NewPath = destFilePath;
             CurrentState.Action = ChangeEventAction.Moved;
             // Track changes
 
@@ -195,7 +200,7 @@ namespace Nameless.FileStorage.Physical {
             CurrentFile.Delete ();
 
             // Track changes
-            CurrentState.OldPath = CurrentFile.FullName;
+            CurrentState.OldPath = Path;
             CurrentState.NewPath = null;
             CurrentState.Action = ChangeEventAction.Deleted;
             // Track changes
@@ -205,14 +210,10 @@ namespace Nameless.FileStorage.Physical {
 
         /// <inheritdoc />
         public IDisposable Watch (Action<ChangeEventArgs> callback) {
-            return ChangeToken.OnChange (
-                changeTokenProducer: () => ChangeTokenFactory (Path),
-                changeTokenConsumer: (state) => {
-                    callback (state.ToChangeEventArgs ());
-                    FetchFileInfo (state.NewPath ?? state.OldPath);
-                },
-                state : CurrentState
-            );
+            return ChangeWatcherFactory (Path, () => {
+                callback (CurrentState.ToChangeEventArgs ());
+                FetchFileInfo (CurrentState.NewPath ?? CurrentState.OldPath);
+            });
         }
 
         #endregion

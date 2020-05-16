@@ -9,6 +9,12 @@ namespace Nameless.FileStorage {
         public ChangeEventAction Action { get; set; }
 
         #endregion
+
+        #region Public Static Properties
+
+        public new static ChangeEventArgs Empty => new ChangeEventArgs ();
+            
+        #endregion
     }
 
     public enum ChangeEventAction : int {

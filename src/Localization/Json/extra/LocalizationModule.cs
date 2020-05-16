@@ -26,7 +26,7 @@ namespace Nameless.Localization.Json {
         public LifetimeScopeType StringLocalizerFactoryLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
 
         /// <summary>
-        /// Gets or sets the <see cref="IMessageCollectionAggregationProvider"/> <see cref="LifetimeScopeType"/>.
+        /// Gets or sets the <see cref="IMessageCollectionPackageProvider"/> <see cref="LifetimeScopeType"/>.
         /// </summary>
         /// <remarks>Default is <see cref="LifetimeScopeType.Singleton"/>.</remarks>
         public LifetimeScopeType MessageCollectionAggregationProviderLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
@@ -48,8 +48,8 @@ namespace Nameless.Localization.Json {
                 .SetLifetimeScope (StringLocalizerFactoryLifetimeScope);
 
             builder
-                .RegisterType<MessageCollectionAggregationProvider> ()
-                .As<IMessageCollectionAggregationProvider> ()
+                .RegisterType<MessageCollectionPackageProvider> ()
+                .As<IMessageCollectionPackageProvider> ()
                 .SetLifetimeScope (MessageCollectionAggregationProviderLifetimeScope);
 
             base.Load (builder);

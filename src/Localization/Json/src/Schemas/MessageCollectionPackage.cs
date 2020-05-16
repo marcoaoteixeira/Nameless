@@ -14,7 +14,7 @@ namespace Nameless.Localization.Json.Schemas {
     /// }
     /// </code>
     /// </example>
-    public sealed class MessageCollectionAggregation {
+    public sealed class MessageCollectionPackage {
         #region Private Properties
 
         private IDictionary<string, MessageCollection> MessageCollections { get; }
@@ -29,7 +29,7 @@ namespace Nameless.Localization.Json.Schemas {
 
         #region Public Constructors
 
-        public MessageCollectionAggregation (string cultureName, MessageCollection[] messageCollections) {
+        public MessageCollectionPackage (string cultureName, MessageCollection[] messageCollections) {
             Prevent.ParameterNullOrWhiteSpace (cultureName, nameof (cultureName));
             Prevent.ParameterNullOrEmpty (messageCollections, nameof (messageCollections));
 
@@ -41,17 +41,15 @@ namespace Nameless.Localization.Json.Schemas {
 
         #region Public Methods
 
-        public bool HasMessageCollection (string messageCollectionName) => MessageCollections.ContainsKey (messageCollectionName);
-
         public bool TryGetMessageCollection (string messageCollectionName, out MessageCollection messageCollection) => MessageCollections.TryGetValue (messageCollectionName, out messageCollection);
 
-        public bool Equals (MessageCollectionAggregation obj) => obj != null && obj.CultureName == CultureName;
+        public bool Equals (MessageCollectionPackage obj) => obj != null && obj.CultureName == CultureName;
 
         #endregion
 
         #region Public Override Methods
 
-        public override bool Equals (object obj) => Equals (obj as MessageCollectionAggregation);
+        public override bool Equals (object obj) => Equals (obj as MessageCollectionPackage);
 
         public override int GetHashCode () {
             var hash = 13;

@@ -65,14 +65,19 @@ namespace Nameless.FileStorage.Physical {
             }
         }
 
-        private IChangeToken ChangeTokenFactory (string filters) {
+        private IDisposable ChangeWatcherFactory (string filter, Action callback) {
             BlockAccessAfterDispose ();
 
-            var changeToken = _fileProvider.Watch (filters);
-            if (changeToken is NullChangeToken) {
-                throw new InvalidOperationException ("Invalid filters");
-            }
-            return changeToken;
+            return ChangeToken.OnChange (
+                changeTokenProducer: () => {
+                    var changeToken = _fileProvider.Watch (filter);
+                    if (changeToken is NullChangeToken) {
+                        throw new InvalidOperationException ("Invalid filters");
+                    }
+                    return changeToken;
+                },
+                changeTokenConsumer : callback
+            );
         }
 
         #endregion
@@ -109,7 +114,7 @@ namespace Nameless.FileStorage.Physical {
                 throw new FileStorageException ("The specified path does not points to a directory.");
             }
 
-            IDirectory directory = new Directory (_root, relativePath, ChangeTokenFactory);
+            IDirectory directory = new Directory (_root, relativePath, ChangeWatcherFactory);
             return Task.FromResult (directory);
         }
 
@@ -138,7 +143,7 @@ namespace Nameless.FileStorage.Physical {
 
             relativePath = PathHelper.Normalize (relativePath);
 
-            var file = new File (_root, relativePath, ChangeTokenFactory);
+            var file = new File (_root, relativePath, ChangeWatcherFactory);
 
             return Task.FromResult<IFile> (file);
         }

@@ -11,7 +11,7 @@ namespace Nameless.FileStorage.Physical {
         #region Private Properties
 
         private string Root { get; }
-        private Func<string, IChangeToken> ChangeTokenFactory { get; }
+        private Func<string, Action, IDisposable> ChangeWatcherFactory { get; }
         private DirectoryInfo CurrentDirectory { get; set; }
         private EntryState CurrentState { get; } = new EntryState ();
 
@@ -19,23 +19,28 @@ namespace Nameless.FileStorage.Physical {
 
         #region Public Constructors
 
-        public Directory (string root, string path, Func<string, IChangeToken> changeTokenFactory) {
+        public Directory (string root, string path, Func<string, Action, IDisposable> changeWatcherFactory) {
             Prevent.ParameterNullOrWhiteSpace (root, nameof (root));
             Prevent.ParameterNull (path, nameof (path));
-            Prevent.ParameterNull (changeTokenFactory, nameof (changeTokenFactory));
+            Prevent.ParameterNull (changeWatcherFactory, nameof (changeWatcherFactory));
 
             Root = root;
-            ChangeTokenFactory = changeTokenFactory;
+            ChangeWatcherFactory = changeWatcherFactory;
 
-            FetchDirectoryInfo (PathHelper.GetPhysicalPath (root, path));
+            FetchDirectoryInfo (path);
         }
 
         #endregion
 
         #region Private Methods
 
-        private void FetchDirectoryInfo (string path) {
-            CurrentDirectory = !string.IsNullOrWhiteSpace (path) ? new DirectoryInfo (path) : null;
+        private void FetchDirectoryInfo (string relativePath) {
+            CurrentDirectory = null;
+
+            if (!string.IsNullOrWhiteSpace (relativePath)) {
+                var path = PathHelper.GetPhysicalPath (Root, relativePath);
+                CurrentDirectory = new DirectoryInfo (path);
+            }
         }
 
         #endregion
@@ -66,7 +71,7 @@ namespace Nameless.FileStorage.Physical {
 
                 foreach (var file in files) {
                     var path = file.FullName.Substring (Root.Length);
-                    await item.ReturnAsync (new File (Root, path, ChangeTokenFactory));
+                    await item.ReturnAsync (new File (Root, path, ChangeWatcherFactory));
                 }
             });
         }
@@ -83,7 +88,7 @@ namespace Nameless.FileStorage.Physical {
 
                 foreach (var directory in directories) {
                     var path = directory.FullName.Substring (Root.Length);
-                    await item.ReturnAsync (new Directory (Root, path, ChangeTokenFactory));
+                    await item.ReturnAsync (new Directory (Root, path, ChangeWatcherFactory));
                 }
             });
         }
@@ -95,7 +100,7 @@ namespace Nameless.FileStorage.Physical {
             CurrentDirectory.Delete (recursive: true);
 
             // Track changes
-            CurrentState.OldPath = CurrentDirectory.FullName;
+            CurrentState.OldPath = Path;
             CurrentState.NewPath = null;
             CurrentState.Action = ChangeEventAction.Deleted;
             // Track changes
@@ -104,17 +109,13 @@ namespace Nameless.FileStorage.Physical {
         }
 
         /// <inheritdoc />
-        public IDisposable Watch (Action<ChangeEventArgs> callback, string filters = null) {
-            filters = !string.IsNullOrWhiteSpace (filters) ? filters : "*.*";
+        public IDisposable Watch (Action<ChangeEventArgs> callback, string filter = null) {
+            filter = !string.IsNullOrWhiteSpace (filter) ? filter : "*.*";
 
-            return ChangeToken.OnChange (
-                changeTokenProducer: () => ChangeTokenFactory (filters),
-                changeTokenConsumer: (state) => {
-                    callback (state.ToChangeEventArgs ());
-                    FetchDirectoryInfo (state.NewPath ?? state.OldPath);
-                },
-                state : CurrentState
-            );
+            return ChangeWatcherFactory (filter, () => {
+                callback (CurrentState.ToChangeEventArgs ());
+                FetchDirectoryInfo (CurrentState.NewPath ?? CurrentState.OldPath);
+            });
         }
 
         #endregion

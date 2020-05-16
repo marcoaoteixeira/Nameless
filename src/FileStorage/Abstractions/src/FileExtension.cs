@@ -36,7 +36,7 @@ namespace Nameless.FileStorage {
             if (self == null) { return null; }
 
             using var stream = await self.CreateStreamAsync ();
-            using var streamReader = new StreamReader (stream, encoding : encoding ?? Encoding.UTF8);
+            using var streamReader = new StreamReader (stream, encoding ?? Encoding.UTF8);
 
             return streamReader.ReadToEnd ();
         }

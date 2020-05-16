@@ -1,10 +1,10 @@
 using Nameless.Localization.Json.Schemas;
 
 namespace Nameless.Localization.Json {
-    public interface IMessageCollectionAggregationProvider {
+    public interface IMessageCollectionPackageProvider {
         #region Methods
 
-        MessageCollectionAggregation Create (string cultureName);
+        MessageCollectionPackage Create (string cultureName);
 
         #endregion
     }

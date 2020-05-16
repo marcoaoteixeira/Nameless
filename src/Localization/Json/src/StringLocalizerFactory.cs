@@ -12,14 +12,14 @@ namespace Nameless.Localization.Json {
 
         #region Private Read-Only Fields
 
-        private readonly IMessageCollectionAggregationProvider _messageCollectionAggregationProvider;
+        private readonly IMessageCollectionPackageProvider _messageCollectionAggregationProvider;
         private readonly IPluralizationRuleProvider _pluralizationRuleProvider;
 
         #endregion
 
         #region Public Constructors
 
-        public StringLocalizerFactory (IMessageCollectionAggregationProvider messageCollectionAggregationProvider, IPluralizationRuleProvider pluralizationRuleProvider) {
+        public StringLocalizerFactory (IMessageCollectionPackageProvider messageCollectionAggregationProvider, IPluralizationRuleProvider pluralizationRuleProvider) {
             Prevent.ParameterNull (messageCollectionAggregationProvider, nameof (messageCollectionAggregationProvider));
             Prevent.ParameterNull (pluralizationRuleProvider, nameof (pluralizationRuleProvider));
 

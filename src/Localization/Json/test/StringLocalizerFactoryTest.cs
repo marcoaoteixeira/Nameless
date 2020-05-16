@@ -10,7 +10,7 @@ namespace Nameless.Localization.Test {
         public void Create_WithType_ReturnsStringLocalizer () {
             // arrange
             var fileProvider = new PhysicalFileProvider (typeof (StringLocalizerFactoryTest).Assembly.GetDirectoryPath ());
-            var messageCollectionAggregationProvider = new MessageCollectionAggregationProvider (fileProvider);
+            var messageCollectionAggregationProvider = new MessageCollectionPackageProvider (fileProvider);
             IStringLocalizerFactory factory = new StringLocalizerFactory (messageCollectionAggregationProvider, new PluralizationRuleProvider ());
 
             // act
