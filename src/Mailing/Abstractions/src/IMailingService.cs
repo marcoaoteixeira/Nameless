@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Nameless.Mailing {
 
     /// <summary>
-    /// Represents the e-mail service.
+    /// Contract to the e-mail messaging service.
     /// </summary>
     public interface IMailingService {
 

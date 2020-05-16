@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Nameless.CircuitBreaker.Common {
+namespace Nameless.CircuitBreaker {
 
     [Serializable]
     public class OperationFailedException : Exception {

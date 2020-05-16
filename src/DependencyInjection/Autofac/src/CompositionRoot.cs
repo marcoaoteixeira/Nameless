@@ -10,9 +10,7 @@ namespace Nameless.DependencyInjection.Autofac {
 
         #region Private Fields
 
-        private ServiceComposer _currentServiceComposer;
-        private IContainer _currentContainer;
-
+        private ServiceComposer _serviceComposer;
         private bool _disposed;
 
         #endregion
@@ -22,14 +20,14 @@ namespace Nameless.DependencyInjection.Autofac {
         /// <summary>
         /// Gets the Autofac container.
         /// </summary>
-        public IContainer Container => _currentContainer;
+        public IContainer Container { get; private set; }
 
         #endregion
 
         #region Public Constructors
 
         public CompositionRoot () {
-            _currentServiceComposer = new ServiceComposer ();
+            _serviceComposer = new ServiceComposer ();
         }
 
         #endregion
@@ -58,23 +56,23 @@ namespace Nameless.DependencyInjection.Autofac {
         #region ICompositionRoot Members
 
         /// <inheritdoc/>
-        public void Compose (Action<IServiceComposer> action) => action (_currentServiceComposer);
+        public void Compose (Action<IServiceComposer> action) => action (_serviceComposer);
 
         /// <inheritdoc/>
         public void StartUp () {
-            if (_currentContainer != null) {
+            if (Container != null) {
                 throw new InvalidOperationException ("Composition root already started.");
             }
-            _currentContainer = _currentServiceComposer.Builder.Build ();
+            Container = _serviceComposer.Builder.Build ();
         }
 
         /// <inheritdoc/>
         public void TearDown () {
-            if (_currentContainer != null) {
-                _currentContainer.Dispose ();
+            if (Container != null) {
+                Container.Dispose ();
             }
-            _currentContainer = null;
-            _currentServiceComposer = null;
+            Container = null;
+            _serviceComposer = null;
         }
 
         #endregion

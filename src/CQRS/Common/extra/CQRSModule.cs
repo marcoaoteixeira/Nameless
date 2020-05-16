@@ -14,7 +14,7 @@ namespace Nameless.CQRS {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the <see cref="IDispatcher"/> <see cref="LifetimeScopeType"/>.
+        /// Gets or sets the <see cref="ICommandQueryDispatcher"/> <see cref="LifetimeScopeType"/>.
         /// </summary>
         /// <remarks>Default is <see cref="LifetimeScopeType.Singleton"/>.</remarks>
         public LifetimeScopeType DispatcherLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
@@ -51,8 +51,8 @@ namespace Nameless.CQRS {
         /// <inheritdoc/>
         protected override void Load (ContainerBuilder builder) {
             builder
-                .RegisterType<Dispatcher> ()
-                .As<IDispatcher> ()
+                .RegisterType<CommandQueryDispatcher> ()
+                .As<ICommandQueryDispatcher> ()
                 .SetLifetimeScope (DispatcherLifetimeScope);
 
             builder

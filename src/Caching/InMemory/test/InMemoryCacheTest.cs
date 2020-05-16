@@ -1,14 +1,14 @@
 using Xunit;
 
 namespace Nameless.Caching.InMemory.Test {
-    public class MemoryCacheTest {
+    public class InMemoryCacheTest {
         [Fact]
         public void Can_Create () {
             // arrange
             ICache cache;
 
             // act
-            cache = new MemoryCache ();
+            cache = new InMemoryCache ();
 
             // assert
             Assert.NotNull (cache);
@@ -17,7 +17,7 @@ namespace Nameless.Caching.InMemory.Test {
         [Fact]
         public async void Can_Set_A_Value_Into_The_Cache () {
             // arrange
-            ICache cache = new MemoryCache ();
+            ICache cache = new InMemoryCache ();
             var value = 123;
 
             // act
@@ -32,7 +32,7 @@ namespace Nameless.Caching.InMemory.Test {
         [Fact]
         public async void Removes_Entry () {
             // arrange
-            ICache cache = new MemoryCache ();
+            ICache cache = new InMemoryCache ();
             var value = 123;
 
             // act
@@ -49,7 +49,7 @@ namespace Nameless.Caching.InMemory.Test {
         [Fact]
         public async void Notify_After_Object_Eviction () {
             // arrange
-            ICache cache = new MemoryCache ();
+            ICache cache = new InMemoryCache ();
             var value = 123;
             var key = string.Empty;
             void callback (string k, object v) {

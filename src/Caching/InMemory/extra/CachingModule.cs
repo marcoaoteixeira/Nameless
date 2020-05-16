@@ -5,7 +5,7 @@ namespace Nameless.Caching.InMemory {
     /// <summary>
     /// The Caching service registration.
     /// </summary>
-    public sealed class InMemoryCachingModule : ModuleBase {
+    public sealed class CachingModule : ModuleBase {
 
         #region Public Properties
 
@@ -22,7 +22,7 @@ namespace Nameless.Caching.InMemory {
         /// <inheritdoc/>
         protected override void Load (ContainerBuilder builder) {
             builder
-                .RegisterType<MemoryCache> ()
+                .RegisterType<InMemoryCache> ()
                 .As<ICache> ()
                 .SetLifetimeScope (CacheLifetimeScope);
 

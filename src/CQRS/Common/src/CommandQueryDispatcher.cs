@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Nameless.DependencyInjection;
 
 namespace Nameless.CQRS {
-    public sealed class Dispatcher : IDispatcher {
+    public sealed class CommandQueryDispatcher : ICommandQueryDispatcher {
         #region Private Read-Only Fields
 
         private readonly IServiceResolver _serviceResolver;
@@ -13,7 +13,7 @@ namespace Nameless.CQRS {
 
         #region Public Constructors
 
-        public Dispatcher (IServiceResolver serviceResolver) {
+        public CommandQueryDispatcher (IServiceResolver serviceResolver) {
             Prevent.ParameterNull (serviceResolver, nameof (serviceResolver));
 
             _serviceResolver = serviceResolver;

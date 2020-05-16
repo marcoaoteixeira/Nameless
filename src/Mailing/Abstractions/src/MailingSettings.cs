@@ -26,6 +26,12 @@ namespace Nameless.Mailing {
 
         #endregion
 
+        #region Public Static Properties
+
+        public static MailingSettings Default => new MailingSettings ();
+            
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -74,9 +80,9 @@ namespace Nameless.Mailing {
 
         /// <summary>
         /// Gets or sets the pickup directory path, relative to the
-        /// application. Default value is "Resources/PickupDirectory".
+        /// application. Default value is "App_Data/Mailing/PickupDirectory".
         /// </summary>
-        public string PickupDirectoryFolder { get; set; } = Path.Combine ("Resources", "PickupDirectory");
+        public string PickupDirectoryFolder { get; set; } = Path.Combine ("App_Data", "Mailing", "PickupDirectory");
 
         #endregion
     }

@@ -22,7 +22,7 @@ namespace Nameless.Data {
 
             var value = SafeGetValue (source, fieldName);
 
-            return value != null ? (string)value : defaultValue;
+            return value != null ? (string) value : defaultValue;
         }
 
         /// <summary>
@@ -36,9 +36,9 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new bool? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new bool?(defaultValue.Value) : null; }
 
-            return (bool?)value;
+            return (bool?) value;
         }
 
         /// <summary>
@@ -52,10 +52,11 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new char? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new char?(defaultValue.Value) : null; }
 
-            return (char?)value;
+            return (char?) value;
         }
+
         /// <summary>
         /// Retrieves a sbyte value or the default value.
         /// </summary>
@@ -67,7 +68,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new sbyte? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new sbyte?(defaultValue.Value) : null; }
 
             return Convert.ToSByte (value);
         }
@@ -82,7 +83,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new byte? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new byte?(defaultValue.Value) : null; }
 
             return Convert.ToByte (value);
         }
@@ -97,7 +98,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new short? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new short?(defaultValue.Value) : null; }
 
             return Convert.ToInt16 (value);
         }
@@ -112,7 +113,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new ushort? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new ushort?(defaultValue.Value) : null; }
 
             return Convert.ToUInt16 (value);
         }
@@ -127,7 +128,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new int? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new int?(defaultValue.Value) : null; }
 
             return Convert.ToInt32 (value);
         }
@@ -142,7 +143,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new uint? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new uint?(defaultValue.Value) : null; }
 
             return Convert.ToUInt32 (value);
         }
@@ -157,7 +158,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new long? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new long?(defaultValue.Value) : null; }
 
             return Convert.ToInt64 (value);
         }
@@ -172,7 +173,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new ulong? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new ulong?(defaultValue.Value) : null; }
 
             return Convert.ToUInt64 (value);
         }
@@ -187,7 +188,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new float? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new float?(defaultValue.Value) : null; }
 
             return Convert.ToSingle (value);
         }
@@ -202,7 +203,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new double? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new double?(defaultValue.Value) : null; }
 
             return Convert.ToDouble (value);
         }
@@ -217,7 +218,7 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new decimal? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new decimal?(defaultValue.Value) : null; }
 
             return Convert.ToDecimal (value);
         }
@@ -232,9 +233,9 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new DateTime? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new DateTime?(defaultValue.Value) : null; }
 
-            return (DateTime?)value;
+            return (DateTime?) value;
         }
         /// <summary>
         /// Retrieves a date/time offset value or the default value.
@@ -248,9 +249,9 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new DateTimeOffset? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new DateTimeOffset?(defaultValue.Value) : null; }
 
-            return (DateTimeOffset?)value;
+            return (DateTimeOffset?) value;
         }
         /// <summary>
         /// Retrieves a time span value or the default value.
@@ -264,9 +265,9 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new TimeSpan? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new TimeSpan?(defaultValue.Value) : null; }
 
-            return (TimeSpan?)value;
+            return (TimeSpan?) value;
         }
         /// <summary>
         /// Retrieves a GUID value or the default value.
@@ -279,10 +280,11 @@ namespace Nameless.Data {
             Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new Guid? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new Guid?(defaultValue.Value) : null; }
 
             return Guid.Parse (value.ToString ());
         }
+
         /// <summary>
         /// Retrieves an Enum value or the default value.
         /// </summary>
@@ -295,10 +297,11 @@ namespace Nameless.Data {
             if (!typeof (TEnum).IsEnum) { throw new InvalidOperationException ($"{nameof (TEnum)} must be an Enum."); }
 
             var value = SafeGetValue (source, fieldName);
-            if (value == null) { return defaultValue.HasValue ? new TEnum? (defaultValue.Value) : null; }
+            if (value == null) { return defaultValue.HasValue ? new TEnum?(defaultValue.Value) : null; }
 
-            return (TEnum)Enum.Parse (typeof (TEnum), value.ToString ());
+            return (TEnum) Enum.Parse (typeof (TEnum), value.ToString ());
         }
+
         /// <summary>
         /// Retrieves an Enum value or the default value.
         /// </summary>
@@ -316,7 +319,7 @@ namespace Nameless.Data {
                 .GetType ()
                 .GetMethod (nameof (GetEnumOrDefault))
                 .MakeGenericMethod (enumType)
-                .Invoke (null /* instance */, new object[] { fieldName, defaultValue });
+                .Invoke (null /* instance */ , new object[] { fieldName, defaultValue });
         }
         /// <summary>
         /// Retrieves a byte array (BLOB) value or the default value.
@@ -330,12 +333,22 @@ namespace Nameless.Data {
 
             var value = SafeGetValue (source, fieldName);
 
-            return value != null ? (byte[])value : defaultValue;
+            return value != null ? (byte[]) value : defaultValue;
         }
 
         #endregion
 
-        #region Private Read-Only Fields
+        #region Private Read-Only Methods
+
+        private static TStruct? GetStructOrDefault<TStruct> (this IDataRecord source, string fieldName, TStruct? defaultValue = null)
+            where TStruct : struct {
+            Prevent.ParameterNullOrWhiteSpace (fieldName, nameof (fieldName));
+
+            var value = SafeGetValue (source, fieldName);
+            if (value == null) { return defaultValue.HasValue ? new TStruct?(defaultValue.Value) : null; }
+
+            return (TStruct?) value;
+        }
 
         private static object SafeGetValue (this IDataRecord record, string fieldName) {
             if (record == null) { return null; }

@@ -10,9 +10,10 @@ namespace Nameless.Search.Lucene {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the index storage directory path.
+        /// Gets or sets the index storage directory path, relative to the
+        /// application. Default value is "./App_Data/Search/Lucene".
         /// </summary>
-        public string IndexStorageDirectoryPath { get; set; } = Path.Combine (typeof (SearchSettings).Assembly.GetDirectoryPath (), "App_Data", "Lucene");
+        public string IndexStorageDirectoryPath { get; set; } = Path.Combine ("App_Data", "Search", "Lucene");
 
         #endregion
     }

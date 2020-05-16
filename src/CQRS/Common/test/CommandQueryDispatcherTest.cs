@@ -6,7 +6,7 @@ using Nameless.DependencyInjection.Autofac;
 using Xunit;
 
 namespace Nameless.CQRS.Common.Test {
-    public class DispatcherTest : IDisposable {
+    public class CommandQueryDispatcherTest : IDisposable {
         private IContainer _container;
         public void Dispose () {
             if (_container != null) {
@@ -14,8 +14,8 @@ namespace Nameless.CQRS.Common.Test {
             }
         }
 
-        public DispatcherTest () {
-            var supportAssemblies = new [] { typeof (DispatcherTest).Assembly };
+        public CommandQueryDispatcherTest () {
+            var supportAssemblies = new [] { typeof (CommandQueryDispatcherTest).Assembly };
             var builder = new ContainerBuilder ();
             builder.RegisterModule (new CQRSModule (supportAssemblies));
             _container = builder.Build ();
@@ -24,7 +24,7 @@ namespace Nameless.CQRS.Common.Test {
         [Fact]
         public async Task CommandAsync_WithSumCommand_ReturnsCorrectValue () {
             // arrange
-            IDispatcher dispatcher = new Dispatcher (new ServiceResolver (_container));
+            ICommandQueryDispatcher dispatcher = new CommandQueryDispatcher (new ServiceResolver (_container));
             SumCommand command = new SumCommand { X = 10, Y = 40 };
 
             // act

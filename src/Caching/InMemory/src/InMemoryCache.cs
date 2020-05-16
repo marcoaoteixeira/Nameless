@@ -2,22 +2,21 @@
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
-using MS_MemoryCache = System.Runtime.Caching.MemoryCache;
 
 namespace Nameless.Caching.InMemory {
-    public sealed class MemoryCache : ICache, IDisposable {
+    public sealed class InMemoryCache : ICache, IDisposable {
         #region Public Static Read-Only Fields
 
         /// <summary>
         /// Gets the cache name.
         /// </summary>
-        public static readonly string DefaultCacheName = nameof (MemoryCache);
+        public static readonly string DefaultCacheName = nameof (InMemoryCache);
 
         #endregion
 
         #region Private Fields
 
-        private MS_MemoryCache _cache;
+        private MemoryCache _cache;
         private bool _disposed;
 
         #endregion
@@ -25,23 +24,23 @@ namespace Nameless.Caching.InMemory {
         #region Public Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MemoryCache"/>.
+        /// Initializes a new instance of <see cref="InMemoryCache"/>.
         /// </summary>
-        public MemoryCache () : this (DefaultCacheName) { }
+        public InMemoryCache () : this (DefaultCacheName) { }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MemoryCache"/>.
+        /// Initializes a new instance of <see cref="InMemoryCache"/>.
         /// </summary>
         /// <param name="cacheName">The name of the cache</param>
-        public MemoryCache (string cacheName) {
-            _cache = new MS_MemoryCache (cacheName);
+        public InMemoryCache (string cacheName) {
+            _cache = new MemoryCache (cacheName);
         }
 
         #endregion
 
         #region Destructor
 
-        ~MemoryCache () {
+        ~InMemoryCache () {
             Dispose (disposing: false);
         }
 
@@ -63,7 +62,7 @@ namespace Nameless.Caching.InMemory {
 
         private void BlockAccessAfterDispose () {
             if (_disposed) {
-                throw new ObjectDisposedException (nameof (MemoryCache));
+                throw new ObjectDisposedException (GetType ().FullName);
             }
         }
 
@@ -106,6 +105,8 @@ namespace Nameless.Caching.InMemory {
         public Task<T> GetAsync<T> (string key, CancellationToken token = default) {
             BlockAccessAfterDispose ();
 
+            token.ThrowIfCancellationRequested ();
+
             var value = _cache.Get (key);
             T result = default;
             if (value != null) {
@@ -117,6 +118,8 @@ namespace Nameless.Caching.InMemory {
         public Task RemoveAsync (string key, CancellationToken token = default) {
             BlockAccessAfterDispose ();
 
+            token.ThrowIfCancellationRequested ();
+
             _cache.Remove (key);
 
             return Task.CompletedTask;
@@ -124,6 +127,8 @@ namespace Nameless.Caching.InMemory {
 
         public Task SetAsync (string key, object value, CacheEntryOptions options = null, CancellationToken token = default) {
             BlockAccessAfterDispose ();
+
+            token.ThrowIfCancellationRequested ();
 
             var policy = new CacheItemPolicy ();
 

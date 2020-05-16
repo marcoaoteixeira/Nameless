@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nameless.CQRS {
-    public interface IDispatcher {
+    public interface ICommandQueryDispatcher {
         #region Methods
 
         /// <summary>

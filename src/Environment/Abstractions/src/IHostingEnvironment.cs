@@ -9,6 +9,16 @@ namespace Nameless.Environment {
         #region Properties
 
         /// <summary>
+        /// Gets the environment name.
+        /// </summary>
+        string EnvironmentName { get; }
+
+        /// <summary>
+        /// Gets the application name.
+        /// </summary>
+        string ApplicationName { get; }
+
+        /// <summary>
         /// Gets the application base path.
         /// </summary>
         string ApplicationBasePath { get; }

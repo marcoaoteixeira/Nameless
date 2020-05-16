@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Nameless.Logging;
-using MS_Timeout = System.Threading.Timeout;
 
-namespace Nameless.CircuitBreaker.Common {
+namespace Nameless.CircuitBreaker {
     public sealed class DefaultCircuitBreaker : ICircuitBreaker, IDisposable {
         #region Private Read-Only Fields
 
@@ -63,8 +62,8 @@ namespace Nameless.CircuitBreaker.Common {
             _timeout = _settings.Timeout;
             State = CircuitBreakerState.Closed;
 
-            _lastDueTime = MS_Timeout.Infinite;
-            _timer = new Timer (TimerCallback, state: null, dueTime: _lastDueTime, period: Timeout);
+            _lastDueTime = System.Threading.Timeout.Infinite;
+            _timer = new Timer (TimerCallback, state : null, dueTime : _lastDueTime, period : Timeout);
             _exceptionFilters = new List<IExceptionFilter> ();
         }
 
@@ -75,15 +74,15 @@ namespace Nameless.CircuitBreaker.Common {
             OnStateChanged (new StateChangeEventArgs (State));
             StopTimer ();
         }
-        
+
         private void StartTimer () {
             _lastDueTime = 0L; // start immediately
             _timer.Change (dueTime: _lastDueTime, period: Timeout);
         }
 
         private void StopTimer () {
-            _lastDueTime = MS_Timeout.Infinite; // stop immediately
-            _timer.Change (dueTime: MS_Timeout.Infinite, period: Timeout);
+            _lastDueTime = System.Threading.Timeout.Infinite; // stop immediately
+            _timer.Change (dueTime: System.Threading.Timeout.Infinite, period: Timeout);
         }
 
         private void ResetTimer () {
@@ -96,7 +95,7 @@ namespace Nameless.CircuitBreaker.Common {
 
         private void BlockAccessAfterDispose () {
             if (_disposed) {
-                throw new ObjectDisposedException (nameof (DefaultCircuitBreaker));
+                throw new ObjectDisposedException (GetType ().FullName);
             }
         }
 
@@ -107,7 +106,7 @@ namespace Nameless.CircuitBreaker.Common {
                     _timer.Dispose ();
                 }
             }
-            
+
             _timer = null;
             _disposed = true;
         }
@@ -150,14 +149,13 @@ namespace Nameless.CircuitBreaker.Common {
 
             TResult result = default;
             try {
-                result = (TResult)operation.DynamicInvoke (arguments);
+                result = (TResult) operation.DynamicInvoke (arguments);
 
                 if (result is Task task) {
-                    
+
                     task.GetAwaiter ().GetResult ();
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 // If there is no inner exception, then the exception was caused by the invoker, so throw.
                 if (ex.InnerException == null) { throw; }
 

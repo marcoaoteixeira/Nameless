@@ -1,23 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MS_Environment = System.Environment;
-using MS_HostEnvironment = Microsoft.Extensions.Hosting.IHostEnvironment;
 
 namespace Nameless.Environment {
     public sealed class HostingEnvironment : IHostingEnvironment {
         #region Private Read-Only Fields
 
-        private readonly MS_HostEnvironment _hostingEnvironment;
+        private readonly Microsoft.Extensions.Hosting.IHostEnvironment _hostEnvironment;
 
         #endregion
 
         #region Public Constructors
 
-        public HostingEnvironment (MS_HostEnvironment hostingEnvironment) {
-            Prevent.ParameterNull (hostingEnvironment, nameof (hostingEnvironment));
+        public HostingEnvironment (Microsoft.Extensions.Hosting.IHostEnvironment hostEnvironment) {
+            Prevent.ParameterNull (hostEnvironment, nameof (hostEnvironment));
 
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
 
         #endregion
@@ -35,7 +33,7 @@ namespace Nameless.Environment {
                 default:
                     return EnvironmentVariableTarget.Machine;
             }
-            
+
             return EnvironmentVariableTarget.Machine;
         }
 
@@ -43,18 +41,22 @@ namespace Nameless.Environment {
 
         #region IHostingEnvironment Members
 
-        public string ApplicationBasePath => _hostingEnvironment.ContentRootPath;
+        public string EnvironmentName => _hostEnvironment.EnvironmentName;
+
+        public string ApplicationName => _hostEnvironment.ApplicationName;
+
+        public string ApplicationBasePath => _hostEnvironment.ContentRootPath;
 
         public object GetData (string key) => AppDomain.CurrentDomain.GetData (key);
 
         public void SetData (string key, object data) => AppDomain.CurrentDomain.SetData (key, data);
 
         public string GetVariable (string key, VariableTarget target = VariableTarget.User) {
-            return MS_Environment.GetEnvironmentVariable (key, Parse (target));
+            return System.Environment.GetEnvironmentVariable (key, Parse (target));
         }
 
         public IDictionary<string, string> GetVariables (VariableTarget target) {
-            var variables = MS_Environment.GetEnvironmentVariables (Parse (target));
+            var variables = System.Environment.GetEnvironmentVariables (Parse (target));
             var result = new Dictionary<string, string> ();
             foreach (DictionaryEntry kvp in variables) {
                 result.Add ((string) kvp.Key, (string) kvp.Value);
@@ -63,7 +65,7 @@ namespace Nameless.Environment {
         }
 
         public void SetVariable (string key, string variable, VariableTarget target = VariableTarget.User) {
-            MS_Environment.SetEnvironmentVariable (key, variable, Parse (target));
+            System.Environment.SetEnvironmentVariable (key, variable, Parse (target));
         }
 
         #endregion

@@ -10,10 +10,10 @@ namespace Nameless.Environment {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the <see cref="IHostingEnvironment"/><see cref="LifetimeScopeType"/>.
+        /// Gets or sets the <see cref="IHostingEnvironment"/> <see cref="LifetimeScopeType"/>.
         /// </summary>
-        /// <remarks>Default is <see cref="LifetimeScopeType.Singleton"/>.</remarks>
-        public LifetimeScopeType HostingEnvironmentLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
+        /// <remarks>Default is <see cref="LifetimeScopeType.PerScope"/>.</remarks>
+        public LifetimeScopeType HostingEnvironmentLifetimeScope { get; set; } = LifetimeScopeType.PerScope;
 
         #endregion
 
