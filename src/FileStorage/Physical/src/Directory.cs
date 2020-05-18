@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Dasync.Collections;
-using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage.Physical {
     public sealed class Directory : IDirectory {
@@ -60,41 +60,37 @@ namespace Nameless.FileStorage.Physical {
         public DateTimeOffset LastWriteTimeUtc => CurrentDirectory.LastWriteTimeUtc;
 
         /// <inheritdoc />
-        public IAsyncEnumerable<IFile> GetFilesAsync (bool includeSubDirectories = false) {
-            if (!Exists) { return AsyncEnumerable<IFile>.Empty; }
+        public async IAsyncEnumerable<IFile> GetFilesAsync (bool includeSubDirectories = false) {
+            if (!Exists) { yield break; }
 
-            return new AsyncEnumerable<IFile> (async item => {
-                var files = CurrentDirectory.GetFiles (
-                    searchPattern: "*",
-                    searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
-                );
+            var files = CurrentDirectory.GetFiles (
+                searchPattern: "*",
+                searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+            );
 
-                foreach (var file in files) {
-                    var path = file.FullName.Substring (Root.Length);
-                    await item.ReturnAsync (new File (Root, path, ChangeWatcherFactory));
-                }
-            });
+            foreach (var file in files) {
+                var path = file.FullName.Substring (Root.Length);
+                yield return await Task.FromResult (new File (Root, path, ChangeWatcherFactory));
+            }
         }
 
         /// <inheritdoc />
-        public IAsyncEnumerable<IDirectory> GetDirectoriesAsync (bool includeSubDirectories = false) {
-            if (!Exists) { return AsyncEnumerable<IDirectory>.Empty; }
+        public async IAsyncEnumerable<IDirectory> GetDirectoriesAsync (bool includeSubDirectories = false) {
+            if (!Exists) { yield break; }
 
-            return new AsyncEnumerable<IDirectory> (async item => {
-                var directories = CurrentDirectory.GetDirectories (
-                    searchPattern: "*",
-                    searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
-                );
+            var directories = CurrentDirectory.GetDirectories (
+                searchPattern: "*",
+                searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+            );
 
-                foreach (var directory in directories) {
-                    var path = directory.FullName.Substring (Root.Length);
-                    await item.ReturnAsync (new Directory (Root, path, ChangeWatcherFactory));
-                }
-            });
+            foreach (var directory in directories) {
+                var path = directory.FullName.Substring (Root.Length);
+                yield return await Task.FromResult (new Directory (Root, path, ChangeWatcherFactory));
+            }
         }
 
         /// <inheritdoc />
-        public Task<bool> DeleteAsync () {
+        public Task<bool> DeleteAsync (CancellationToken token = default) {
             if (!Exists) { return Task.FromResult (false); }
 
             CurrentDirectory.Delete (recursive: true);
@@ -111,6 +107,7 @@ namespace Nameless.FileStorage.Physical {
         /// <inheritdoc />
         public IDisposable Watch (Action<ChangeEventArgs> callback, string filter = null) {
             filter = !string.IsNullOrWhiteSpace (filter) ? filter : "*.*";
+            filter = System.IO.Path.Combine (Path, filter).Replace ('\\', '/');
 
             return ChangeWatcherFactory (filter, () => {
                 callback (CurrentState.ToChangeEventArgs ());

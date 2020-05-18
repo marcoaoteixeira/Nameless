@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Nameless.FileStorage.Physical.Properties;
 
@@ -67,7 +68,7 @@ namespace Nameless.FileStorage.Physical {
         /// <exception cref="FileStorageException">
         /// Thrown if the current file does not exist.
         /// </exception>
-        public Task<Stream> CreateStreamAsync () {
+        public Task<Stream> CreateStreamAsync (CancellationToken token = default) {
             if (!Exists) { throw new FileStorageException (Resources.TheFileDoesNotExistsMessage); }
 
             // We are setting buffer size to 1 to prevent FileStream from
@@ -117,7 +118,7 @@ namespace Nameless.FileStorage.Physical {
         /// <exception cref="ArgumentException">
         /// <paramref name="destFilePath" /> is empty or white spaces.
         /// </exception>
-        public Task CopyAsync (string destFilePath, bool overwrite = false) {
+        public Task CopyAsync (string destFilePath, bool overwrite = false, CancellationToken token = default) {
             Prevent.ParameterNullOrWhiteSpace (destFilePath, nameof (destFilePath));
 
             var destination = PathHelper.GetPhysicalPath (Root, destFilePath);
@@ -166,7 +167,7 @@ namespace Nameless.FileStorage.Physical {
         /// <paramref name="destFilePath" /> contains a colon (:) in the
         /// middle of the <c>string</c>.
         /// </exception>
-        public Task MoveAsync (string destFilePath) {
+        public Task MoveAsync (string destFilePath, CancellationToken token = default) {
             Prevent.ParameterNullOrWhiteSpace (destFilePath, nameof (destFilePath));
 
             var destination = PathHelper.GetPhysicalPath (Root, destFilePath);
@@ -194,7 +195,7 @@ namespace Nameless.FileStorage.Physical {
         /// on the current platform. -or- The caller does not have the required
         /// permission.
         /// </exception>
-        public Task<bool> DeleteAsync () {
+        public Task<bool> DeleteAsync (CancellationToken token = default) {
             if (!Exists) { return Task.FromResult (false); }
 
             CurrentFile.Delete ();

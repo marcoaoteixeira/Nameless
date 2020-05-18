@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dasync.Collections;
 using Nameless.Logging;
 
 namespace Nameless.Data {
@@ -14,7 +13,7 @@ namespace Nameless.Data {
     /// <summary>
     /// Default implementation of <see cref="IDatabase"/>.
     /// </summary>
-    public sealed class Database : IDatabase {
+    public sealed class Database : IDatabase, IDisposable {
 
         #region Private Read-Only Fields
 
@@ -24,7 +23,7 @@ namespace Nameless.Data {
 
         #region Private Fields
 
-        private IDbConnection _connection;
+        private DbConnection _connection;
         private DbTransactionWrapper _transaction;
         private bool _disposed;
 
@@ -32,14 +31,16 @@ namespace Nameless.Data {
 
         #region Public Properties
 
+#pragma warning disable IDE0074
         private ILogger _logger;
         /// <summary>
         /// Gets or sets the logger instance.
         /// </summary>
         public ILogger Logger {
-            get { return _logger ?? NullLogger.Instance; }
+            get { return _logger ?? (_logger = NullLogger.Instance); }
             set { _logger = value ?? NullLogger.Instance; }
         }
+#pragma warning restore IDE0074
 
         #endregion
 
@@ -86,10 +87,10 @@ namespace Nameless.Data {
 
         #region Private Methods
 
-        private IDbConnection GetConnection () {
+        private DbConnection GetConnection () {
             try {
                 if (_connection == null) {
-                    _connection = _factory.Create ();
+                    _connection = _factory.Create () as DbConnection;
 
                     if (_connection.State == ConnectionState.Closed) {
                         _connection.Open ();
@@ -102,10 +103,10 @@ namespace Nameless.Data {
 
         private IDbDataParameter ConvertParameter (IDbCommand command, Parameter parameter) {
             var result = command.CreateParameter ();
-            result.ParameterName = (!parameter.Name.StartsWith ("@") ? string.Concat ("@", parameter.Name) : parameter.Name);
+            result.ParameterName = !parameter.Name.StartsWith ("@") ? string.Concat ("@", parameter.Name) : parameter.Name;
             result.DbType = parameter.Type;
             result.Direction = parameter.Direction;
-            result.Value = (parameter.Value ?? DBNull.Value);
+            result.Value = parameter.Value ?? DBNull.Value;
             return result;
         }
 
@@ -150,30 +151,27 @@ namespace Nameless.Data {
             parameters.Each (parameter => command.Parameters.Add (ConvertParameter (command, parameter)));
         }
 
-        private Task<object> ExecuteAsync (string commandText, CommandType commandType, Parameter[] parameters, bool scalar, CancellationToken token = default) {
-            using (var command = GetConnection ().CreateCommand ()) {
-                try {
-                    PrepareCommand (command, commandText, commandType, parameters);
+        private async Task<TResult> ExecuteAsync<TResult> (string commandText, CommandType commandType, Parameter[] parameters, bool scalar, CancellationToken token = default) {
+            using var command = GetConnection ().CreateCommand ();
+            try {
+                PrepareCommand (command, commandText, commandType, parameters);
 
-                    token.ThrowIfCancellationRequested ();
+                var result = scalar ?
+                    await command.ExecuteScalarAsync (token) :
+                    await command.ExecuteNonQueryAsync (token);
 
-                    var result = scalar ?
-                        command.ExecuteScalar () :
-                        command.ExecuteNonQuery ();
+                command.Parameters.OfType<DbParameter> ()
+                    .Where (dbParameter => dbParameter.Direction != ParameterDirection.Input)
+                    .Each (dbParameter => {
+                        parameters
+                            .Single (parameter =>
+                                parameter.Name == dbParameter.ParameterName &&
+                                parameter.Direction == dbParameter.Direction
+                            ).Value = dbParameter.Value;
+                    });
 
-                    command.Parameters.OfType<DbParameter> ()
-                        .Where (dbParameter => dbParameter.Direction != ParameterDirection.Input)
-                        .Each (dbParameter => {
-                            parameters
-                                .Single (parameter =>
-                                    parameter.Name == dbParameter.ParameterName &&
-                                    parameter.Direction == dbParameter.Direction)
-                                .Value = dbParameter.Value;
-                        });
-
-                    return Task.FromResult (result);
-                } catch (Exception ex) { Logger.Error (ex, ex.Message); LogCommand (Logger, command, parameters); throw; }
-            }
+                return (TResult) result;
+            } catch (Exception ex) { Logger.Error (ex, ex.Message); LogCommand (Logger, command, parameters); throw; }
         }
 
         #endregion
@@ -203,38 +201,32 @@ namespace Nameless.Data {
         public Task<int> ExecuteNonQueryAsync (string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters) {
             BlockAccessAfterDispose ();
 
-            return ExecuteAsync (commandText, commandType, parameters, false /* scalar */ , token)
-                .ContinueWith (continuation => continuation.CanContinue () ? (int) continuation.Result : -1);
+            return ExecuteAsync<int> (commandText, commandType, parameters, scalar : false, token : token);
         }
 
         /// <inheritdoc/>
-        public IAsyncEnumerable<TResult> ExecuteReaderAsync<TResult> (string commandText, Func<IDataRecord, TResult> mapper, CommandType commandType = CommandType.Text, params Parameter[] parameters) {
+        public async IAsyncEnumerable<TResult> ExecuteReaderAsync<TResult> (string commandText, Func<IDataRecord, TResult> mapper, CommandType commandType = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose ();
 
-            return new AsyncEnumerable<TResult> (async item => {
-                using (var command = GetConnection ().CreateCommand ()) { 
-                    PrepareCommand (command, commandText, commandType, parameters);
-                    item.CancellationToken.ThrowIfCancellationRequested ();
+            using var command = GetConnection ().CreateCommand ();
+            PrepareCommand (command, commandText, commandType, parameters);
 
-                    IDataReader reader;
-                    try { reader = command.ExecuteReader (); }
-                    catch (Exception ex) { Logger.Error (ex, ex.Message); LogCommand (Logger, command, parameters); throw; }
-                    using (reader) {
-                        while (reader.Read ()) {
-                            item.CancellationToken.ThrowIfCancellationRequested ();
-                            var record = mapper (reader);
-                            await item.ReturnAsync (record);
-                        }
-                    }
+            DbDataReader reader;
+            try { reader = await command.ExecuteReaderAsync (); }
+            catch (Exception ex) { Logger.Error (ex, ex.Message); LogCommand (Logger, command, parameters); throw; }
+            using (reader) {
+                while (await reader.ReadAsync ()) {
+                    var record = mapper (reader);
+                    yield return record;
                 }
-            });
+            }
         }
 
         /// <inheritdoc/>
-        public Task<object> ExecuteScalarAsync (string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters) {
+        public Task<TResult> ExecuteScalarAsync<TResult> (string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters) {
             BlockAccessAfterDispose ();
 
-            return ExecuteAsync (commandText, commandType, parameters, true /* scalar */ , token);
+            return ExecuteAsync<TResult> (commandText, commandType, parameters, scalar : true, token : token);
         }
 
         #endregion IDatabase Members

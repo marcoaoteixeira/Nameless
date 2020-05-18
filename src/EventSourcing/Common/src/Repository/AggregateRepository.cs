@@ -49,7 +49,7 @@ namespace Nameless.EventSourcing.Repository {
             var snapshot = await _snapshotStore.GetAsync (aggregateID, token);
             if (snapshot == null) { return null; }
 
-            var aggregate = await _aggregateFactory.CreateAsync<TAggregate> () as Snapshottable;
+            var aggregate = _aggregateFactory.Create<TAggregate> () as Snapshottable;
             aggregate.ApplySnapshot (snapshot);
             var eventEnumerator = _eventStore.GetAsync (aggregateID, fromVersion : snapshot.Version + 1).GetAsyncEnumerator (token);
             var events = new List<IEvent> ();
@@ -67,7 +67,7 @@ namespace Nameless.EventSourcing.Repository {
             while (await eventEnumerator.MoveNextAsync ()) {
                 events.Add (eventEnumerator.Current);
             }
-            var aggregate = await _aggregateFactory.CreateAsync<TAggregate> ();
+            var aggregate = _aggregateFactory.Create<TAggregate> ();
 
             aggregate.LoadFromHistory (events);
 

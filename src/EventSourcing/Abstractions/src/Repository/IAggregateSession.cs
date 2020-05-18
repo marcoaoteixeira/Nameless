@@ -5,9 +5,10 @@ using Nameless.EventSourcing.Domain;
 
 namespace Nameless.EventSourcing.Repository {
     /// <summary>
-    /// Session state.
+    /// Contract to an aggregate session.
     /// </summary>
     public interface IAggregateSession {
+ 
         #region Public Methods
 
         /// <summary>
@@ -35,17 +36,15 @@ namespace Nameless.EventSourcing.Repository {
         /// </summary>
         /// <typeparam name="TAggregate">The type of the aggregate.</typeparam>
         /// <param name="aggregateID">The aggregate ID.</param>
-        /// <param name="token">The cancellation token.</param>
-        /// <returns>A <see cref="Task{TAggregate}"> representing the method execution.</returns>
-        Task<TAggregate> GetAsync<TAggregate> (Guid aggregateID, CancellationToken token = default) where TAggregate : AggregateRoot;
+        /// <returns>The aggregate in session.</returns>
+        TAggregate Get<TAggregate> (Guid aggregateID) where TAggregate : AggregateRoot;
 
         /// <summary>
-        /// Committs all changes.
+        /// Commits all changes.
         /// </summary>
         /// <typeparam name="TAggregate">The type of the aggregate.</typeparam>
         /// <param name="token">The cancellation token.</param>
-        /// <returns>A <see cref="Task"> representing the method execution.</returns>
-        Task CommittAsync<TAggregate> (CancellationToken token = default) where TAggregate : AggregateRoot;
+        Task CommitAsync<TAggregate> (CancellationToken token = default) where TAggregate : AggregateRoot;
 
         #endregion
     }

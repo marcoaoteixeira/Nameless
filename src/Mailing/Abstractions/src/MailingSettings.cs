@@ -80,9 +80,10 @@ namespace Nameless.Mailing {
 
         /// <summary>
         /// Gets or sets the pickup directory path, relative to the
-        /// application. Default value is "App_Data/Mailing/PickupDirectory".
+        /// application file storage. Default value is
+        /// "Mailing/PickupDirectory".
         /// </summary>
-        public string PickupDirectoryFolder { get; set; } = Path.Combine ("App_Data", "Mailing", "PickupDirectory");
+        public string PickupDirectoryFolder { get; set; } = Path.Combine ("Mailing", "PickupDirectory");
 
         #endregion
     }

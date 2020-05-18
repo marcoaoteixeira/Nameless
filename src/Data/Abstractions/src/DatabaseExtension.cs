@@ -28,32 +28,11 @@ namespace Nameless.Data {
             if (self == null) { return default; }
 
             var enumerator = self.ExecuteReaderAsync (commandText, mapper, commandType, parameters).GetAsyncEnumerator (token);
+            var result = await enumerator.MoveNextAsync () ? enumerator.Current : default;
 
-            return await enumerator.MoveNextAsync () ? enumerator.Current : default;
-        }
+            await enumerator.DisposeAsync ();
 
-        /// <summary>
-        /// Executes a scalar command against the data base.
-        /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="self">The <see cref="IDatabase"/> instance.</param>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">The command type.</param>
-        /// 
-        /// <param name="parameters">The command parameters.</param>
-        /// <returns>A instance of <typeparamref name="TResult"/>.</returns>
-        public static Task<TResult> ExecuteScalarAsync<TResult> (this IDatabase self, string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters) {
-            if (self == null) { return default; }
-
-            return self
-                .ExecuteScalarAsync (commandText, commandType, token, parameters)
-                .ContinueWith (continuation => {
-                    TResult result = default;
-                    if (continuation.CanContinue () && continuation.Result != null) {
-                        result = (TResult) continuation.Result;
-                    }
-                    return result;
-                });
+            return result;
         }
 
         #endregion

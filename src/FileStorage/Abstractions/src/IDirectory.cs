@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage {
 
@@ -62,7 +62,7 @@ namespace Nameless.FileStorage {
         /// <returns>
         /// <c>true</c> if the directory was deleted; <c>false</c> if not.
         /// </returns>
-        Task<bool> DeleteAsync ();
+        Task<bool> DeleteAsync (CancellationToken token = default);
 
         /// <summary>
         /// Watchs for changes inside the current directory.

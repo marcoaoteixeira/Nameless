@@ -6,10 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\..\Core\src\Nameless.Core.csproj" />
         <ProjectReference Include="..\..\Abstractions\src\Nameless.Data.csproj" />
         <ProjectReference Include="..\..\..\Logging\Abstractions\src\Nameless.Logging.csproj" />

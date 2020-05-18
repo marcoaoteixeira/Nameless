@@ -23,7 +23,7 @@ namespace Nameless.EventSourcing.Test.Domain {
             var factory = new AggregateFactory ();
 
             // act
-            var aggregate = await factory.CreateAsync<OrderAggregateRoot> ();
+            var aggregate = await factory.Create<OrderAggregateRoot> ();
 
             // assert
             Assert.NotNull (aggregate);
@@ -36,7 +36,7 @@ namespace Nameless.EventSourcing.Test.Domain {
             var id = Guid.NewGuid ();
 
             // act
-            var aggregate = await factory.CreateAsync<OrderAggregateRoot> (args: new object[] { id });
+            var aggregate = await factory.Create<OrderAggregateRoot> (args: new object[] { id });
 
             // assert
             Assert.NotNull (aggregate);

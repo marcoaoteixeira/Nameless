@@ -8,6 +8,8 @@
     <ItemGroup>
         <ProjectReference Include="..\src\Nameless.Mailing.MailKit.csproj" />
         <ProjectReference Include="..\..\..\DependencyInjection\Autofac\src\Nameless.DependencyInjection.Autofac.csproj" />
+        <ProjectReference Include="..\..\..\Environment\Abstractions\src\Nameless.Environment.csproj" />
+        <ProjectReference Include="..\..\..\FileStorage\Abstractions\src\Nameless.FileStorage.csproj" />
     </ItemGroup>
 
 </Project>

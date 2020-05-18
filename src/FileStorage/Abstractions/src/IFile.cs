@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Nameless.FileStorage {
 
@@ -49,12 +49,13 @@ namespace Nameless.FileStorage {
         /// <summary>
         /// Creates a stream to read the contents of a file.
         /// </summary>
+        /// <param name="token">The cancellation token.</param>
         /// <returns>
         /// An instance of <see cref="Stream"/> that can be used to read the
         /// contents of the file. The caller must close the stream when
         /// finished.
         /// </returns>
-        Task<Stream> CreateStreamAsync ();
+        Task<Stream> CreateStreamAsync (CancellationToken token = default);
 
         /// <summary>
         /// Creates a copy of the current file.
@@ -66,7 +67,8 @@ namespace Nameless.FileStorage {
         /// <param name="overwrite">
         /// Whether it will overwrite the file, if exists, or not.
         /// </param>
-        Task CopyAsync (string destFilePath, bool overwrite = false);
+        /// <param name="token">The cancellation token.</param>
+        Task CopyAsync (string destFilePath, bool overwrite = false, CancellationToken token = default);
 
         /// <summary>
         /// Moves the current file to another location or renames it.
@@ -74,15 +76,17 @@ namespace Nameless.FileStorage {
         /// <param name="destFilePath">
         /// The root relative path of the file after the move/rename.
         /// </param>
-        Task MoveAsync (string destFilePath);
+        /// <param name="token">The cancellation token.</param>
+        Task MoveAsync (string destFilePath, CancellationToken token = default);
 
         /// <summary>
         /// Deletes the current file, if it exists.
         /// </summary>
+        /// <param name="token">The cancellation token.</param>
         /// <returns>
         /// <c>true</c> if the file was deleted; <c>false</c> if not.
         /// </returns>
-        Task<bool> DeleteAsync ();
+        Task<bool> DeleteAsync (CancellationToken token = default);
 
         /// <summary>
         /// Watchs for changes in the current file.

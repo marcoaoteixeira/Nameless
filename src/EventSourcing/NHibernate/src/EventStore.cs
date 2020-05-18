@@ -41,7 +41,7 @@ namespace Nameless.EventSourcing.Event {
 
         #region IEventStore Members
 
-        public IAsyncEnumerable<IEvent> GetAsync (Guid aggregateID, int? fromVersion) {
+        public async IAsyncEnumerable<IEvent> GetAsync (Guid aggregateID, int? fromVersion) {
             var query = Repository.Query<EventEntity> ();
 
             query = query.Where (_ => _.AggregateID == aggregateID);
@@ -50,12 +50,10 @@ namespace Nameless.EventSourcing.Event {
                 query = query.Where (_ => _.Version >= fromVersion.Value);
             }
 
-            return new AsyncEnumerable<IEvent> (async enumerator => {
-                foreach (var entity in query.ToArray ()) {
-                    var evt = ToEvent (entity);
-                    await enumerator.ReturnAsync (evt);
-                }
-            });
+            foreach (var entity in query) {
+                var evt = ToEvent (entity);
+                yield return await Task.FromResult (evt);
+            }
         }
 
         public Task<IEvent> GetLastEventAsync (Guid aggregateID, CancellationToken token = default) {

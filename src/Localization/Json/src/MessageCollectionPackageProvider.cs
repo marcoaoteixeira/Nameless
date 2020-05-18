@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Nameless.FileStorage;
 using Nameless.Helpers;
 using Nameless.Localization.Json.Schemas;
@@ -30,11 +32,13 @@ namespace Nameless.Localization.Json {
 
         #region Public Properties
 
+#pragma warning disable IDE0074
         private ILogger _logger;
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
+            get { return _logger ?? (_logger = NullLogger.Instance); }
             set { _logger = value ?? NullLogger.Instance; }
         }
+#pragma warning restore IDE0074
 
         #endregion
 
@@ -106,10 +110,10 @@ namespace Nameless.Localization.Json {
 
         #region IMessageCollectionAggregationProvider Members
 
-        public MessageCollectionPackage Create (string cultureName) {
-            Prevent.ParameterNullOrWhiteSpace (cultureName, nameof (cultureName));
-
+        public async Task<MessageCollectionPackage> CreateAsync (string cultureName, CancellationToken token = default) {
             BlockAccessAfterDispose ();
+
+            Prevent.ParameterNullOrWhiteSpace (cultureName, nameof (cultureName));
 
             cultureName = cultureName.ToLower (); // normalize
 
@@ -121,7 +125,9 @@ namespace Nameless.Localization.Json {
 
             // Retrieves the associated file
             var filePath = Path.Combine (_settings.ResourceFolderPath, $"{cultureName}.json");
-            var file = _fileStorage.GetFile (filePath);
+            var file = await _fileStorage.GetFileAsync (filePath);
+
+            token.ThrowIfCancellationRequested ();
 
             // If file not exists, return.
             if (file == null || !file.Exists) { return null; }

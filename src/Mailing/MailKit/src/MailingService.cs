@@ -18,21 +18,23 @@ namespace Nameless.Mailing.MailKit {
 
         #region Private Read-Only Fields
 
-        private readonly IDirectory _pickupDirectory;
+        private readonly IFileStorage _fileStorage;
         private readonly MailingSettings _settings;
 
         #endregion
 
         #region Public Properties
 
+#pragma warning disable IDE0074
         private ILogger _logger;
         /// <summary>
         /// Gets or sets the Logger value.
         /// </summary>
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
+            get { return _logger ?? (_logger = NullLogger.Instance); }
             set { _logger = value ?? NullLogger.Instance; }
         }
+#pragma warning restore IDE0074
 
         #endregion
 
@@ -47,7 +49,7 @@ namespace Nameless.Mailing.MailKit {
             Prevent.ParameterNull (fileStorage, nameof (fileStorage));
 
             _settings = settings ?? new MailingSettings ();
-            _pickupDirectory = AsyncHelper.RunSync (() => fileStorage.GetDirectoryAsync (_settings.PickupDirectoryFolder));
+            _fileStorage = fileStorage;
         }
 
         #endregion
@@ -65,12 +67,14 @@ namespace Nameless.Mailing.MailKit {
         }
 
         private async Task SendOfflineAsync (MimeMessage message, CancellationToken token) {
+            
+
             if (string.IsNullOrWhiteSpace (_settings.PickupDirectoryFolder) || !Directory.Exists (_settings.PickupDirectoryFolder)) {
                 throw new InvalidOperationException ("Pickup directory not specified or invalid.");
             }
 
             var now = DateTime.Now;
-            var path = Path.Combine (_pickupDirectory.Path, $"{Guid.NewGuid ():N}_{now:yyyyMMddHHmmssfff}.eml");
+            var path = Path.Combine (_fileStorage.Path, $"{Guid.NewGuid ():N}_{now:yyyyMMddHHmmssfff}.eml");
             using var stream = new FileStream (path, FileMode.Create);
             await message.WriteToAsync (stream, headersOnly : false, cancellationToken : token);
         }

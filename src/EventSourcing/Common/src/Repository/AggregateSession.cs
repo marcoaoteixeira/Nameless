@@ -7,6 +7,7 @@ using Nameless.EventSourcing.Domain;
 
 namespace Nameless.EventSourcing.Repository {
     public sealed class AggregateSession : IAggregateSession {
+
         #region Private Read-Only Fields
 
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim (initialCount: 1, maxCount: 1);
@@ -83,7 +84,7 @@ namespace Nameless.EventSourcing.Repository {
             } finally { _semaphore.Release (); }
         }
 
-        public Task<TAggregate> GetAsync<TAggregate> (Guid aggregateID, CancellationToken token = default) where TAggregate : AggregateRoot {
+        public TAggregate Get<TAggregate> (Guid aggregateID) where TAggregate : AggregateRoot {
             _semaphore.Wait ();
             TAggregate result = default;
             try {
@@ -92,21 +93,20 @@ namespace Nameless.EventSourcing.Repository {
                     result = (TAggregate) aggregate;
                 }
             } finally { _semaphore.Release (); }
-            return Task.FromResult (result);
+            return result;
         }
 
-        public Task CommittAsync<TAggregate> (CancellationToken token = default) where TAggregate : AggregateRoot {
+        public async Task CommitAsync<TAggregate> (CancellationToken token = default) where TAggregate : AggregateRoot {
             _semaphore.Wait ();
             try {
                 var keys = GetCurrentCacheKeys<TAggregate> ();
                 foreach (var key in keys) {
-                    token.ThrowIfCancellationRequested ();
                     if (_cache.TryGetValue (key, out object aggregate)) {
-                        _aggregateRepository.SaveAsync ((TAggregate) aggregate, token);
+                        token.ThrowIfCancellationRequested ();
+                        await _aggregateRepository.SaveAsync ((TAggregate) aggregate, token);
                     }
                 }
             } finally { _semaphore.Release (); }
-            return Task.CompletedTask;
         }
 
         #endregion

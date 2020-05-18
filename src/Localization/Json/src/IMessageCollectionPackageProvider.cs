@@ -1,10 +1,12 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Nameless.Localization.Json.Schemas;
 
 namespace Nameless.Localization.Json {
     public interface IMessageCollectionPackageProvider {
         #region Methods
 
-        MessageCollectionPackage Create (string cultureName);
+        Task<MessageCollectionPackage> CreateAsync (string cultureName, CancellationToken token = default);
 
         #endregion
     }

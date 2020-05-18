@@ -1,9 +1,8 @@
 using System;
 using System.IO;
-using Nameless.Helpers;
 
-namespace Nameless.FileStorage.Physical {
-    internal static class PathHelper {
+namespace Nameless.Helpers {
+    public static class PathHelper {
 
         #region Internal Static Methods
 
@@ -21,7 +20,7 @@ namespace Nameless.FileStorage.Physical {
         /// leading or trailing slashes are removed.
         /// </para>
         /// </remarks>
-        internal static string Normalize (string path) {
+        public static string Normalize (string path) {
             if (path == null) { return null; }
 
             return path.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).Trim (Path.DirectorySeparatorChar);
@@ -39,7 +38,7 @@ namespace Nameless.FileStorage.Physical {
         /// <c>false</c>.
         /// </param>
         /// <returns>The physical path to the content.</returns>
-        internal static string GetPhysicalPath (string root, string relativePath, bool allowOutsideFileSystem = false) {
+        public static string GetPhysicalPath (string root, string relativePath, bool allowOutsideFileSystem = false) {
             root = Normalize (root);
             root = !root.EndsWith (Path.DirectorySeparatorChar) ? string.Concat (root, Path.DirectorySeparatorChar) : root;
             relativePath = Normalize (relativePath);

@@ -29,7 +29,7 @@ namespace Nameless.Localization.Json {
         /// Gets or sets the <see cref="IMessageCollectionPackageProvider"/> <see cref="LifetimeScopeType"/>.
         /// </summary>
         /// <remarks>Default is <see cref="LifetimeScopeType.Singleton"/>.</remarks>
-        public LifetimeScopeType MessageCollectionAggregationProviderLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
+        public LifetimeScopeType MessageCollectionPackageProviderLifetimeScope { get; set; } = LifetimeScopeType.Singleton;
 
         #endregion
 
@@ -50,7 +50,7 @@ namespace Nameless.Localization.Json {
             builder
                 .RegisterType<MessageCollectionPackageProvider> ()
                 .As<IMessageCollectionPackageProvider> ()
-                .SetLifetimeScope (MessageCollectionAggregationProviderLifetimeScope);
+                .SetLifetimeScope (MessageCollectionPackageProviderLifetimeScope);
 
             base.Load (builder);
         }

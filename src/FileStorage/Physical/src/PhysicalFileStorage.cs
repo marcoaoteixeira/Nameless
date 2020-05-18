@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
@@ -85,7 +86,7 @@ namespace Nameless.FileStorage.Physical {
         #region IFileStorage Members
 
         /// <inheritdoc />
-        public Task<bool> CreateDirectoryAsync (string relativePath) {
+        public Task<bool> CreateDirectoryAsync (string relativePath, CancellationToken token = default) {
             BlockAccessAfterDispose ();
 
             relativePath = PathHelper.Normalize (relativePath);
@@ -119,7 +120,7 @@ namespace Nameless.FileStorage.Physical {
         }
 
         /// <inheritdoc />
-        public Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false) {
+        public Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false, CancellationToken token = default) {
             BlockAccessAfterDispose ();
 
             relativePath = PathHelper.Normalize (relativePath);

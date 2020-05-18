@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nameless.FileStorage {
@@ -19,6 +20,7 @@ namespace Nameless.FileStorage {
     /// sensitive.
     /// </remarks>
     public interface IFileStorage {
+        
         #region Methods
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace Nameless.FileStorage {
         /// <c>true</c> if the directory was created; <c>false</c> if the
         /// directory already existed.
         /// </returns>
-        Task<bool> CreateDirectoryAsync (string relativePath);
+        Task<bool> CreateDirectoryAsync (string relativePath, CancellationToken token = default);
 
         /// <summary>
         /// Retrieves information about the given directory within the file
@@ -62,7 +64,7 @@ namespace Nameless.FileStorage {
         /// <returns>
         /// A <see cref="Task" /> representing the method execution.
         /// </returns>
-        Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false);
+        Task CreateFileAsync (string relativePath, Stream input, bool overwrite = false, CancellationToken token = default);
 
         /// <summary>
         /// Retrieves information about the given file within the file store.

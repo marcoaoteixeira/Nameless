@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using Microsoft.Extensions.FileProviders;
 using Moq;
+using Nameless.FileStorage;
 using Nameless.Localization.Json;
 using Xunit;
 
@@ -9,8 +8,8 @@ namespace Nameless.Localization.Test {
         [Fact]
         public void Create_WithType_ReturnsStringLocalizer () {
             // arrange
-            var fileProvider = new PhysicalFileProvider (typeof (StringLocalizerFactoryTest).Assembly.GetDirectoryPath ());
-            var messageCollectionAggregationProvider = new MessageCollectionPackageProvider (fileProvider);
+            var fileProvider = new Mock<IFileStorage> ();
+            var messageCollectionAggregationProvider = new MessageCollectionPackageProvider (fileProvider.Object);
             IStringLocalizerFactory factory = new StringLocalizerFactory (messageCollectionAggregationProvider, new PluralizationRuleProvider ());
 
             // act

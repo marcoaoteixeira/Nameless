@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Nameless.Data {
 
     /// <summary>
-    /// Defines methods/properties/events to implement a database accessor to work with ADO.Net
+    /// Contract to a database accessor that works with ADO.Net
     /// </summary>
-    public interface IDatabase : IDisposable {
+    public interface IDatabase {
 
         #region Properties
 
@@ -58,8 +58,8 @@ namespace Nameless.Data {
         /// <param name="commandType">The command type.</param>
         /// <param name="token">The cancellation token.</param>
         /// <param name="parameters">The command parameters.</param>
-        /// <returns>A <see cref="Task{object}"/> representing the method execution.</returns>
-        Task<object> ExecuteScalarAsync (string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters);
+        /// <returns>A <see cref="Task{TResult}"/> representing the method execution.</returns>
+        Task<TResult> ExecuteScalarAsync<TResult> (string commandText, CommandType commandType = CommandType.Text, CancellationToken token = default, params Parameter[] parameters);
 
         #endregion
     }
