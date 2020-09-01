@@ -1,38 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Nameless.FileStorage {
 
     /// <summary>
     /// Represents an abstract directory in the file storage.
     /// </summary>
-    public interface IDirectory {
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the name of the directory.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the full path of the directory.
-        /// </summary>
-        string Path { get; }
-
-        /// <summary>
-        /// Gets whether the directory exists or not.
-        /// </summary>
-        bool Exists { get; }
-
-        /// <summary>
-        /// Gets the date and time in UTC when the directory was last modified.
-        /// </summary>
-        DateTimeOffset LastWriteTimeUtc { get; }
-
-        #endregion
+    public interface IDirectory : IEntry {
 
         #region Methods
 
@@ -57,18 +31,14 @@ namespace Nameless.FileStorage {
         IAsyncEnumerable<IDirectory> GetDirectoriesAsync (bool includeSubDirectories = false);
 
         /// <summary>
-        /// Deletes the current directory.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if the directory was deleted; <c>false</c> if not.
-        /// </returns>
-        Task<bool> DeleteAsync (CancellationToken token = default);
-
-        /// <summary>
         /// Watchs for changes inside the current directory.
         /// </summary>
+        /// <param name="callback">
+        /// The callback that will be executed when something happens inside the
+        /// diretory.
+        /// </param>
         /// <param name="filter">The filter, if any; otherwise "*.*"</param>
-        IDisposable Watch (Action<ChangeEventArgs> callback, string filter = null);
+        IDisposable Watch (Action<object> callback, string filter = null);
 
         #endregion
     }

@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Nameless.Text;
 
 namespace Nameless.Templating {
-    public sealed class PlainTextFileTemplateRenderer : ITemplateRenderer<PlainTextFileTemplate> {
+    public sealed class TextTemplateRenderer : ITemplateRenderer<TextTemplate> {
+        
         #region Private Read-Only Fields
 
         private readonly IInterpolator _interpolator;
@@ -13,7 +14,7 @@ namespace Nameless.Templating {
 
         #region Public Constructors
 
-        public PlainTextFileTemplateRenderer (IInterpolator interpolator) {
+        public TextTemplateRenderer (IInterpolator interpolator) {
             Prevent.ParameterNull (interpolator, nameof (interpolator));
 
             _interpolator = interpolator;
@@ -23,7 +24,7 @@ namespace Nameless.Templating {
 
         #region ITemplateRenderer<PlainTextFileTemplate> Members
 
-        public async Task RenderAsync (PlainTextFileTemplate template, TextWriter writer, CancellationToken token = default) {
+        public async Task RenderAsync (TextTemplate template, TextWriter writer, CancellationToken token = default) {
             Prevent.ParameterNull (template, nameof (template));
             Prevent.ParameterNull (writer, nameof (writer));
 

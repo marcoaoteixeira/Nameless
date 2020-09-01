@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace Nameless.FileStorage {
     /// <summary>
-    /// Represents a generic abstraction over a virtual file store.
+    /// Represents a generic abstraction over a file storage.
     /// </summary>
-    /// <remarks>
-    /// The virtual file storage uses forward slash (/) as the path delimiter,
-    /// and has no concept of volumes or drives. All paths are specified and
+    /// /// <remarks>
+    /// The virtual file storage uses forward slash (/) as the relativePath delimiter,
+    /// and has no concept of volumes or drives. All relativePaths are specified and
     /// returned as relative to the root of the virtual file storage. Absolute
-    /// paths using a leading slash or leading period, and parent traversal
+    /// relativePaths using a leading slash or leading period, and parent traversal
     /// using "../", are not supported.
     /// 
     /// This abstraction does not dictate any case sensitivity semantics. Case
@@ -24,7 +24,7 @@ namespace Nameless.FileStorage {
         #region Methods
 
         /// <summary>
-        /// Creates a directory in the file store if it doesn't already exist.
+        /// Creates a directory in the file storage if it doesn't already exist.
         /// </summary>
         /// <param name="relativePath">
         /// The relative path of the directory to be created.
@@ -37,7 +37,7 @@ namespace Nameless.FileStorage {
 
         /// <summary>
         /// Retrieves information about the given directory within the file
-        /// store.
+        /// storage.
         /// </summary>
         /// <param name="relativePath">
         /// The relative path to the directory.

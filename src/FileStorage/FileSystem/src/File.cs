@@ -2,9 +2,10 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Nameless.FileStorage.Physical.Properties;
+using Nameless.FileStorage.FileSystem.Properties;
+using Nameless.Helpers;
 
-namespace Nameless.FileStorage.Physical {
+namespace Nameless.FileStorage.FileSystem {
     public sealed class File : IFile {
 
         #region Private Properties
@@ -210,7 +211,7 @@ namespace Nameless.FileStorage.Physical {
         }
 
         /// <inheritdoc />
-        public IDisposable Watch (Action<ChangeEventArgs> callback) {
+        public IDisposable Watch (Action<object> callback) {
             return ChangeWatcherFactory (Path, () => {
                 callback (CurrentState.ToChangeEventArgs ());
                 FetchFileInfo (CurrentState.NewPath ?? CurrentState.OldPath);

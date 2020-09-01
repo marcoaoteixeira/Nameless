@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Nameless.Helpers;
 using SysDirectory = System.IO.Directory;
 using SysPath = System.IO.Path;
+using SysSearchOption = System.IO.SearchOption;
 
-namespace Nameless.FileStorage.Physical {
+namespace Nameless.FileStorage.FileSystem {
     public sealed class Directory : IDirectory {
 
         #region Private Properties
@@ -53,7 +53,7 @@ namespace Nameless.FileStorage.Physical {
             var files = SysDirectory.GetFiles (
                 path: FullPath,
                 searchPattern: "*",
-                searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+                searchOption : includeSubDirectories ? SysSearchOption.AllDirectories : SysSearchOption.TopDirectoryOnly
             );
 
             foreach (var file in files) {
@@ -72,7 +72,7 @@ namespace Nameless.FileStorage.Physical {
             var directories = SysDirectory.GetDirectories (
                 path: FullPath,
                 searchPattern: "*",
-                searchOption : includeSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+                searchOption : includeSubDirectories ? SysSearchOption.AllDirectories : SysSearchOption.TopDirectoryOnly
             );
 
             foreach (var directory in directories) {
@@ -85,20 +85,30 @@ namespace Nameless.FileStorage.Physical {
         }
 
         /// <inheritdoc />
-        public Task<bool> DeleteAsync (CancellationToken token = default) {
-            if (!Exists) { return Task.FromResult (false); }
-
-            SysDirectory.Delete (path: FullPath, recursive : true);
-
-            return Task.FromResult (true);
-        }
-
-        /// <inheritdoc />
         public IDisposable Watch (Action<object> callback, string filter = null) {
             filter = !string.IsNullOrWhiteSpace (filter) ? filter : "*.*";
             filter = PathHelper.Normalize (SysPath.Combine (Path, filter));
 
             return ChangeWatcherFactory (filter, () => callback (Path));
+        }
+
+        /// <inheritdoc />
+        public Task CopyAsync (string destPath, bool overwrite = false, CancellationToken token = default) {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
+        public Task MoveAsync (string destPath, CancellationToken token = default) {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
+        public Task<bool> DeleteAsync (CancellationToken token = default) {
+            if (!Exists) { return Task.FromResult (false); }
+
+            SysDirectory.Delete (path: FullPath, recursive: true);
+
+            return Task.FromResult (true);
         }
 
         #endregion

@@ -4,8 +4,8 @@ namespace Nameless.Localization.Json {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the localization resource folder path. The folder path
-        /// must be relative to the application file storage root.
+        /// Gets or sets the localization resources folder. The folder path
+        /// must be relative to the application file storage root path.
         /// </summary>
         public string ResourceFolderPath { get; set; } = "Localization";
         
@@ -15,8 +15,8 @@ namespace Nameless.Localization.Json {
         public string DefaultCultureName { get; set; } = "en-US";
         
         /// <summary>
-        /// Whether it will watch localization resource files for changes and
-        /// reload.
+        /// Whether it will watch for changes in localization resource files
+        /// and reload it.
         /// </summary>
         public bool ReloadOnChange { get; set; } = true;
 

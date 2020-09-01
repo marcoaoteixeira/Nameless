@@ -1,5 +1,7 @@
 ﻿namespace Nameless.Templating {
-    public sealed class PlainTextFileTemplate : Template {
+
+    public sealed class TextTemplate : Template {
+        
         #region Public Properties
 
         public string Text { get; set; }

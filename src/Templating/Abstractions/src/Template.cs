@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace Nameless.Templating {
+﻿namespace Nameless.Templating {
     public abstract class Template {
+        
         #region Public Properties
 
         public string Name { get; set; }

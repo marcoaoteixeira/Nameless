@@ -7,10 +7,10 @@ namespace Nameless.FileStorage {
     public static class FileExtension {
         #region Public Static Methods
 
-        public static Stream CreateStream (this IFile self) {
+        public static Stream Open (this IFile self) {
             if (self == null) { return null; }
 
-            var stream = AsyncHelper.RunSync (() => self.CreateStreamAsync ());
+            var stream = AsyncHelper.RunSync (() => self.OpenAsync ());
             return stream;
         }
 
@@ -35,7 +35,7 @@ namespace Nameless.FileStorage {
         public static async Task<string> GetTextAsync (this IFile self, Encoding encoding = null) {
             if (self == null) { return null; }
 
-            using var stream = await self.CreateStreamAsync ();
+            using var stream = await self.OpenAsync ();
             using var streamReader = new StreamReader (stream, encoding ?? Encoding.UTF8);
 
             return streamReader.ReadToEnd ();
