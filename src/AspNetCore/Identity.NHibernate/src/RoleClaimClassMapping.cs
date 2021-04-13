@@ -15,7 +15,7 @@ namespace Nameless.AspNetCore.Identity.NHibernate {
                 map.Property (prop => prop.RoleId, mapping => {
                     mapping.Column ("role_id");
                     mapping.NotNullable (true);
-                    mapping.Type<UUIDColumnToStringPropertyUserType> ();
+                    mapping.Type (NHibernateUtil.Guid);
                     mapping.UniqueKey (UQ_ROLECLAIMS_ROLEID_TYPE);
                 });
 

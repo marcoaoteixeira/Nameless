@@ -20,6 +20,12 @@ namespace Nameless.FileStorage {
     /// sensitive.
     /// </remarks>
     public interface IFileStorage {
+
+        #region Properties
+
+        string Root { get; }
+            
+        #endregion
         
         #region Methods
 

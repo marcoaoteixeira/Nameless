@@ -64,19 +64,7 @@ namespace Nameless.Localization.Json {
         #region Private Methods
 
         private void ChangeMonitorCallback (ChangeEventArgs args) {
-            var cultureName = string.Empty;
-            switch (args.Action) {
-                case ChangeEventAction.Modified:
-                case ChangeEventAction.Deleted:
-                case ChangeEventAction.Renamed:
-                case ChangeEventAction.Moved:
-                    cultureName = Path.GetFileNameWithoutExtension (args.OldPath);
-                    break;
-                default:
-                    break;
-            }
-
-            cultureName = cultureName.ToLower (); // normalize
+            var cultureName = Path.GetFileNameWithoutExtension (args.OriginalPath).ToLower (); // normalize
 
             if (!string.IsNullOrWhiteSpace (cultureName)) {
                 if (_cache.TryRemove (cultureName, out CacheEntry entry)) {

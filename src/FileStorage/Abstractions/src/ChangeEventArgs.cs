@@ -4,9 +4,9 @@ namespace Nameless.FileStorage {
     public sealed class ChangeEventArgs : EventArgs {
         #region Public Properties
 
-        public string OldPath { get; set; }
-        public string NewPath { get; set; }
-        public ChangeEventAction Action { get; set; }
+        public string OriginalPath { get; set; }
+        public string CurrentPath { get; set; }
+        public ChangeReason Reason { get; set; }
 
         #endregion
 
@@ -17,17 +17,15 @@ namespace Nameless.FileStorage {
         #endregion
     }
 
-    public enum ChangeEventAction : int {
+    public enum ChangeReason : int {
         None,
 
-        Modified,
+        Changed,
+
+        Created,
 
         Deleted,
 
-        Renamed,
-
-        Moved,
-
-        Copied
+        Renamed
     }
 }

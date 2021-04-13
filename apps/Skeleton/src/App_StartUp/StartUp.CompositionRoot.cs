@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using Autofac;
 using Nameless.AspNetCore.Identity.NHibernate;
-using Nameless.FileProvider;
+using Nameless.CQRS;
+using Nameless.DependencyInjection.Autofac;
+using Nameless.FileStorage.FileSystem;
 using Nameless.Localization.Json;
 using Nameless.Logging.Log4net;
 using Nameless.Persistence.NHibernate;
@@ -14,7 +16,9 @@ namespace Nameless.Skeleton.Web {
 
         public void ConfigureContainer (ContainerBuilder builder) {
             builder
-                .RegisterModule (new FileProviderModule ())
+                .RegisterModule (new CQRSModule (new [] { typeof (StartUp).Assembly }))
+                .RegisterModule (new DependencyInjectionModule ())
+                .RegisterModule (new FileSystemStorageModule ())
                 .RegisterModule (new LocalizationModule ())
                 .RegisterModule (new LoggingModule ())
                 .RegisterModule (new PersistenceModule {

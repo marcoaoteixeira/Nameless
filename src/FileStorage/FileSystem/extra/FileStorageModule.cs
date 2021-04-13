@@ -4,7 +4,6 @@ using Autofac;
 using Autofac.Core;
 using Nameless.DependencyInjection.Autofac;
 using Nameless.Environment;
-using Nameless.Helpers;
 
 namespace Nameless.FileStorage.FileSystem {
     /// <summary>
@@ -18,7 +17,7 @@ namespace Nameless.FileStorage.FileSystem {
     /// present, it will use the <see cref="FileStorageSettings.Root" />
     /// property instead.
     /// </remarks>
-    public sealed class FileStorageModule : ModuleBase {
+    public sealed class FileSystemStorageModule : ModuleBase {
         #region Public Properties
 
         /// <summary>
@@ -56,7 +55,7 @@ namespace Nameless.FileStorage.FileSystem {
             }
 
             if (string.IsNullOrWhiteSpace (settings.Root)) {
-                settings.Root = typeof (FileStorageModule).Assembly.GetDirectoryPath ();
+                settings.Root = typeof (FileSystemStorageModule).Assembly.GetDirectoryPath ();
             }
 
             args.Parameters = args.Parameters.Union (new Parameter[] {

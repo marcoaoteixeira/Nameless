@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Nameless.FileStorage.FileSystem.Properties;
-using Nameless.Helpers;
 
 namespace Nameless.FileStorage.FileSystem {
     public sealed class File : IFile {
@@ -11,15 +10,14 @@ namespace Nameless.FileStorage.FileSystem {
         #region Private Properties
 
         private string Root { get; }
-        private Func<string, Action, IDisposable> ChangeWatcherFactory { get; }
+        private Func<string, string, Action<ChangeEventArgs>, IDisposable> ChangeWatcherFactory { get; }
         private FileInfo CurrentFile { get; set; }
-        private EntryState CurrentState { get; } = new EntryState ();
 
         #endregion
 
         #region Public Constructors
 
-        public File (string root, string path, Func<string, Action, IDisposable> changeWatcherFactory) {
+        public File (string root, string path, Func<string, string, Action<ChangeEventArgs>, IDisposable> changeWatcherFactory) {
             Prevent.ParameterNullOrWhiteSpace (root, nameof (root));
             Prevent.ParameterNullOrWhiteSpace (path, nameof (path));
             Prevent.ParameterNull (changeWatcherFactory, nameof (changeWatcherFactory));
@@ -126,13 +124,6 @@ namespace Nameless.FileStorage.FileSystem {
 
             CurrentFile.CopyTo (destination, overwrite);
 
-            // Track changes
-            CurrentState.OldPath = Path;
-            CurrentState.NewPath = destFilePath;
-            var destDirectoryPath = System.IO.Path.GetDirectoryName (destFilePath);
-            CurrentState.Action = destDirectoryPath != DirectoryPath ? ChangeEventAction.Copied : ChangeEventAction.Renamed;
-            // Track changes
-
             return Task.CompletedTask;
         }
 
@@ -175,12 +166,6 @@ namespace Nameless.FileStorage.FileSystem {
 
             CurrentFile.MoveTo (destination);
 
-            // Track changes
-            CurrentState.OldPath = Path;
-            CurrentState.NewPath = destFilePath;
-            CurrentState.Action = ChangeEventAction.Moved;
-            // Track changes
-
             return Task.CompletedTask;
         }
 
@@ -201,21 +186,12 @@ namespace Nameless.FileStorage.FileSystem {
 
             CurrentFile.Delete ();
 
-            // Track changes
-            CurrentState.OldPath = Path;
-            CurrentState.NewPath = null;
-            CurrentState.Action = ChangeEventAction.Deleted;
-            // Track changes
-
             return Task.FromResult (true);
         }
 
         /// <inheritdoc />
-        public IDisposable Watch (Action<object> callback) {
-            return ChangeWatcherFactory (Path, () => {
-                callback (CurrentState.ToChangeEventArgs ());
-                FetchFileInfo (CurrentState.NewPath ?? CurrentState.OldPath);
-            });
+        public IDisposable Watch (Action<ChangeEventArgs> callback) {
+            return ChangeWatcherFactory (CurrentFile.DirectoryName, CurrentFile.Name, callback);
         }
 
         #endregion

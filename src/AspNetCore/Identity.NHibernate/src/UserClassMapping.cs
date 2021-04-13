@@ -12,7 +12,7 @@ namespace Nameless.AspNetCore.Identity.NHibernate {
             
             Id (prop => prop.Id, mapper => {
                 mapper.Column ("id");
-                mapper.Type<UUIDColumnToStringPropertyUserType> ();
+                mapper.Type (NHibernateUtil.Guid);
                 mapper.Generator (Generators.Assigned);
             });
 

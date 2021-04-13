@@ -26,7 +26,7 @@ namespace Nameless.Localization.Json.Schemas {
                 return new LocalizedString (text, text, args);
             }
 
-            var pluralForm = (pluralizationRule ?? PluralizationRuleProvider.DefaultRule) (count);
+            var pluralForm = (pluralizationRule ?? DefaultPluralizationRuleProvider.DefaultRule) (count);
             if (pluralForm >= Translations.Length) {
                 throw new PluralFormNotFoundException ($"Couldn't locate plural form '{pluralForm}' message '{text}'.");
             }

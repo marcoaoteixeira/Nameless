@@ -6,27 +6,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="5.1.4" />
+        <PackageReference Include="Autofac" Version="5.2.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="ElmahCore" Version="1.2.5" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.3" />
-        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\src\Core\src\Nameless.Core.csproj" />
-        
         <ProjectReference Include="..\..\..\src\AspNetCore\Common\src\Nameless.AspNetCore.csproj" />
         <ProjectReference Include="..\..\..\src\AspNetCore\Identity\src\Nameless.AspNetCore.Identity.csproj" />
         <ProjectReference Include="..\..\..\src\AspNetCore\Identity.NHibernate\src\Nameless.AspNetCore.Identity.NHibernate.csproj" />
         <ProjectReference Include="..\..\..\src\AspNetCore\Localization\src\Nameless.AspNetCore.Localization.csproj" />
 
+        <ProjectReference Include="..\..\..\src\Core\src\Nameless.Core.csproj" />
+
         <ProjectReference Include="..\..\..\src\DependencyInjection\Abstractions\src\Nameless.DependencyInjection.csproj" />
+        <ProjectReference Include="..\..\..\src\DependencyInjection\Autofac\extra\Nameless.DependencyInjection.Autofac.Extra.csproj" />
         <ProjectReference Include="..\..\..\src\DependencyInjection\Autofac\src\Nameless.DependencyInjection.Autofac.csproj" />
 
-        <ProjectReference Include="..\..\..\src\FileProvider\Abstractions\src\Nameless.FileProvider.csproj" />
-        <ProjectReference Include="..\..\..\src\FileProvider\Physical\extra\Nameless.FileProvider.Physical.Extra.csproj" />
+        <ProjectReference Include="..\..\..\src\FileStorage\Abstractions\src\Nameless.FileStorage.csproj" />
+        <ProjectReference Include="..\..\..\src\FileStorage\FileSystem\src\Nameless.FileStorage.FileSystem.csproj" />
+        <ProjectReference Include="..\..\..\src\FileStorage\FileSystem\extra\Nameless.FileStorage.FileSystem.Extra.csproj" />
 
         <ProjectReference Include="..\..\..\src\Localization\Abstractions\src\Nameless.Localization.csproj" />
         <ProjectReference Include="..\..\..\src\Localization\Json\src\Nameless.Localization.Json.csproj" />
@@ -41,7 +43,16 @@
         <ProjectReference Include="..\..\..\src\Persistence\NHibernate\extra\Nameless.Persistence.NHibernate.Extra.csproj" />
 
         <ProjectReference Include="..\..\..\src\Serialization\Abstractions\src\Nameless.Serialization.csproj" />
+        <ProjectReference Include="..\..\..\src\Serialization\Json\src\Nameless.Serialization.Json.csproj" />
         <ProjectReference Include="..\..\..\src\Serialization\Json\extra\Nameless.Serialization.Json.Extra.csproj" />
+
+        <ProjectReference Include="..\..\..\src\CQRS\Abstractions\src\Nameless.CQRS.csproj" />
+        <ProjectReference Include="..\..\..\src\CQRS\Common\extra\Nameless.CQRS.Common.Extra.csproj" />
+        <ProjectReference Include="..\..\..\src\CQRS\Common\src\Nameless.CQRS.Common.csproj" />
+
+        <ProjectReference Include="..\..\..\src\Mailing\Abstractions\src\Nameless.Mailing.csproj" />
+        <ProjectReference Include="..\..\..\src\Mailing\MailKit\src\Nameless.Mailing.MailKit.csproj" />
+        <ProjectReference Include="..\..\..\src\Mailing\MailKit\extra\Nameless.Mailing.MailKit.Extra.csproj" />
     </ItemGroup>
 
 </Project>

@@ -6,14 +6,11 @@ namespace Nameless.CQRS.Common.Test.Fixtures {
     public class SumCommand : ICommand {
         public int X { get; set; }
         public int Y { get; set; }
-
-        public int Result { get; set; }
     }
 
     public class SumCommandHandler : ICommandHandler<SumCommand> {
-        public Task HandleAsync (SumCommand command, IProgress<int> progress = null, CancellationToken token = default) {
-            command.Result = command.X + command.Y;
-            return Task.CompletedTask;
+        public Task<ExecutionResult> HandleAsync (SumCommand command, IProgress<int> progress = null, CancellationToken token = default) {
+            return Task.FromResult (new ExecutionResult (state: command.X + command.Y));
         }
     }
 
@@ -25,9 +22,8 @@ namespace Nameless.CQRS.Common.Test.Fixtures {
     }
 
     public class SubtractCommandHandler : ICommandHandler<SubtractCommand> {
-        public Task HandleAsync (SubtractCommand command, IProgress<int> progress = null, CancellationToken token = default) {
-            command.Result = command.X - command.Y;
-            return Task.CompletedTask;
+        public Task<ExecutionResult> HandleAsync (SubtractCommand command, IProgress<int> progress = null, CancellationToken token = default) {
+            return Task.FromResult (new ExecutionResult (state: command.X - command.Y));
         }
     }
 }

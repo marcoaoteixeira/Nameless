@@ -1,0 +1,35 @@
+﻿@inject IViewLocalizer T
+@{
+    Layout = "_Blank.cshtml";
+    ViewData["Title"] = T["Access Denied"];
+}
+
+@section Styles {
+    <!-- Page style -->
+    <link rel="stylesheet" href="~/css/shared.error.css">
+}
+
+<div class="error-page">
+    <h2 class="headline text-danger">@((int)System.Net.HttpStatusCode.Forbidden)</h2>
+
+    <div class="error-content">
+        <h3><i class="fas fa-exclamation-triangle text-danger"></i> @T["Access denied due to insufficient permissions."]</h3>
+
+        <p>
+            @T["Contact your system administrator for more info."]
+            @T["Meanwhile, you may"] <a asp-controller="Home" asp-action="Index">@T["return to Home"]</a> @T["or try using the search form."]
+        </p>
+
+        <form class="search-form" asp-controller="Search" asp-action="Content">
+            <div class="input-group">
+                <input type="text" name="Term" class="form-control" placeholder='@T["Search"]'>
+
+                <div class="input-group-append">
+                    <button type="submit" name="submit" class="btn btn-danger"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <!-- /.input-group -->
+        </form>
+    </div>
+</div>
+<!-- /.error-page -->

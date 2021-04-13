@@ -17,7 +17,7 @@ namespace Nameless.Localization.Test {
             var messageCollection = new MessageCollection ("Test.Test", new [] {
                 new Message ("Test", new [] { "Teste" })
             });
-            IStringLocalizer stringLocalizer = new StringLocalizer ("Test", "Test", "Test", messageCollection, PluralizationRuleProvider.DefaultRule);
+            IStringLocalizer stringLocalizer = new StringLocalizer ("Test", "Test", "Test", messageCollection, DefaultPluralizationRuleProvider.DefaultRule);
 
             // act
             var translation = stringLocalizer.Get ("Test");
@@ -34,7 +34,7 @@ namespace Nameless.Localization.Test {
         public void Get_WithPluralForm_ReturnsPluralTranslation (int count, string expected) {
             // arrange
             var translations = new [] { "Nothing", "Something" };
-            var pluralizationRule = PluralizationRuleProvider.DefaultRule;
+            var pluralizationRule = DefaultPluralizationRuleProvider.DefaultRule;
             var messageCollection = new MessageCollection ("Test.Test", new [] {
                 new Message ("Test", translations)
             });
@@ -56,7 +56,7 @@ namespace Nameless.Localization.Test {
             var messageCollection = new MessageCollection ("Test.Test", new [] {
                 new Message ("Test", new [] { "This is a test for {0}" })
             });
-            IStringLocalizer stringLocalizer = new StringLocalizer ("Test", "Test", "Test", messageCollection, PluralizationRuleProvider.DefaultRule);
+            IStringLocalizer stringLocalizer = new StringLocalizer ("Test", "Test", "Test", messageCollection, DefaultPluralizationRuleProvider.DefaultRule);
 
             // act
             var actual = stringLocalizer.Get ("Test", args : new object[] { 123 });

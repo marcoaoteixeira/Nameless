@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.AspNetCore.Identity;
 using Nameless.AspNetCore.Localization;
-using Nameless.FileProvider;
+using Nameless.FileStorage.FileSystem;
 using Nameless.Localization.Json;
 using Nameless.Logging.Log4net;
 using Nameless.Persistence.NHibernate;
@@ -34,8 +34,8 @@ namespace Nameless.Skeleton.Web {
 
         private static void ConfigureSettings (IServiceCollection services, IConfiguration configuration) {
             var fileProviderSettings = configuration
-                .GetSection (nameof (FileProviderSettings))
-                .Get<FileProviderSettings> () ?? new FileProviderSettings {
+                .GetSection (nameof (FileSystemStorageSettings))
+                .Get<FileSystemStorageSettings> () ?? new FileSystemStorageSettings {
                     Root = typeof (StartUp).Assembly.GetDirectoryPath ()
                 };
             services.ConfigureSettings (configuration, () => fileProviderSettings);
@@ -57,7 +57,6 @@ namespace Nameless.Skeleton.Web {
         }
 
         private static void ConfigureIdentity (IServiceCollection services) {
-            // services.AddIdentity<User, Role> ();
             services.AddNamelessIdentity ();
         }
 

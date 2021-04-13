@@ -1,0 +1,53 @@
+@page
+@model ExternalSignInPageModel
+@inject IViewLocalizer T
+@{
+    Layout = "/Views/Shared/_Blank.cshtml";
+    ViewData["Title"] = T["Register External Sign In"];
+    ViewBag.PageSpecificCssClass = "login-page";
+}
+
+<div class="login-box">
+    <div class="login-logo">
+        <a asp-area="" asp-controller="Home" asp-action="Index"><b>Skeleton</b></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body">
+
+            <h4 id="external-login-title">@T["Associate your {0} account.", @Model.ProviderDisplayName]</h4>
+
+            <p id="external-login-description" class="text-info">
+                @T["You've successfully authenticated with <strong>{0}</strong>.", @Model.ProviderDisplayName]
+                @T["Please enter an email address for this site below and click the Register button to finish logging in."]
+            </p>
+
+            <form method="post">
+                @Html.AntiForgeryToken()
+                
+                <div class="input-group mb-3">
+                    <input asp-for="Input.Email" class="form-control" placeholder="@T["E-mail"]">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="error"></span>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block">@T["Register"]</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+        </div>
+        <!-- /.login-card-body -->
+    </div>
+</div>
+<!-- /.login-box -->
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

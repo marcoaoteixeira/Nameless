@@ -28,10 +28,10 @@ namespace Nameless.CQRS.Common.Test {
             SumCommand command = new SumCommand { X = 10, Y = 40 };
 
             // act
-            await dispatcher.CommandAsync (command);
+            var result = await dispatcher.CommandAsync (command);
 
             // assert
-            Assert.Equal (50, command.Result);
+            Assert.Equal (50, (int)result.State);
         }
     }
 }

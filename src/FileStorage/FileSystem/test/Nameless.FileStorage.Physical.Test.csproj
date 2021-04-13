@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\Nameless.FileStorage.Physical.csproj" />
+        <ProjectReference Include="..\src\Nameless.FileStorage.FileSystem.csproj" />
     </ItemGroup>
 
 </Project>

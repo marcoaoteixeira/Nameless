@@ -43,7 +43,7 @@ namespace Nameless.Localization.Json {
             }
 
             if (!_pluralizationRuleProvider.TryGet (new CultureInfo (cultureName), out PluralizationRuleDelegate pluralizationRule)) {
-                pluralizationRule = PluralizationRuleProvider.DefaultRule;
+                pluralizationRule = DefaultPluralizationRuleProvider.DefaultRule;
             }
 
             return new StringLocalizer (baseName, location, cultureName, messageCollection, pluralizationRule);

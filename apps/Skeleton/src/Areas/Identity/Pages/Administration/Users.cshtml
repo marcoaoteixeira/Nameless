@@ -1,0 +1,73 @@
+@page
+@model UsersPageModel
+@inject IViewLocalizer T
+@{
+    ViewData["Title"] = T["Administration - Users"];
+}
+
+<!-- Search box -->
+<div class="search-box">
+    <form method="post">
+        <div class="input-group input-group-lg">
+            <input asp-for="Input.Term" class="form-control" placeholder="@T["Search term..."]">
+            <span class="input-group-append">
+                <button type="submit" class="btn btn-success btn-flat">@T["Search"]</button>
+            </span>
+        </div>
+    </form>
+</div>
+
+<!-- Default box -->
+<div class="card card-solid">
+    <div class="card-body pb-0">
+        <div class="row d-flex align-items-stretch">
+            @foreach (var item in Model.CurrentUsers) {
+                <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+                    <div class="card-item card bg-light">
+                        <div class="card-header text-muted border-bottom-0">
+                            @item.Position
+                        </div>
+
+                        <div class="card-body pt-0">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="lead"><b>@item.UserName</b></h2>
+                                    <p class="text-muted text-sm"><b>@T["Roles:"] </b> @string.Join(" / ", item.Roles) </p>
+                                    <ul class="ml-4 mb-0 fa-ul text-muted">
+                                        <li class="small"><span class="fa-li"><i class="fas fa-lg fa-envelope-open"></i></span> @T["E-mail:"] @item.Email</li>
+                                        <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> @T["Phone #:"] @item.PhoneNumber</li>
+                                    </ul>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <img src="@item.AvatarUrl" alt="" class="img-circle img-fluid">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <a href="#" class="btn btn-sm bg-teal">
+                                    <i class="fas fa-comments"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-user"></i> @T["View Full Profile"]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+                
+        </div>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/areas/identity/pages/administration/users.css">
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/areas/identity/pages/administration/users.js"></script>
+}

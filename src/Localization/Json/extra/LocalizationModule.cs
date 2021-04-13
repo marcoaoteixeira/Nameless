@@ -38,7 +38,7 @@ namespace Nameless.Localization.Json {
         /// <inheritdoc/>
         protected override void Load (ContainerBuilder builder) {
             builder
-                .RegisterType<PluralizationRuleProvider> ()
+                .RegisterType<DefaultPluralizationRuleProvider> ()
                 .As<IPluralizationRuleProvider> ()
                 .SetLifetimeScope (PluralizationRuleProviderLifetimeScope);
 

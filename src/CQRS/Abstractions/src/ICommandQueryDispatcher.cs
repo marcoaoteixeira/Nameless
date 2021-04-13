@@ -14,7 +14,7 @@ namespace Nameless.CQRS {
         /// <param name="progress">The progress notification system.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>A <see cref="Task" /> representing the dispatch execution.</returns>
-        Task CommandAsync<TCommand> (TCommand command, IProgress<int> progress = null, CancellationToken token = default) where TCommand : ICommand;
+        Task<ExecutionResult> CommandAsync<TCommand> (TCommand command, IProgress<int> progress = null, CancellationToken token = default) where TCommand : ICommand;
 
         /// <summary>
         /// Executes a query.

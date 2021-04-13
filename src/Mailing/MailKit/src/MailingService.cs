@@ -6,7 +6,6 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
 using Nameless.FileStorage;
-using Nameless.Helpers;
 using Nameless.Logging;
 
 namespace Nameless.Mailing.MailKit {
@@ -67,14 +66,12 @@ namespace Nameless.Mailing.MailKit {
         }
 
         private async Task SendOfflineAsync (MimeMessage message, CancellationToken token) {
-            
-
             if (string.IsNullOrWhiteSpace (_settings.PickupDirectoryFolder) || !Directory.Exists (_settings.PickupDirectoryFolder)) {
                 throw new InvalidOperationException ("Pickup directory not specified or invalid.");
             }
 
             var now = DateTime.Now;
-            var path = Path.Combine (_fileStorage.Path, $"{Guid.NewGuid ():N}_{now:yyyyMMddHHmmssfff}.eml");
+            var path = Path.Combine (_fileStorage.Root, _settings.PickupDirectoryFolder, $"{Guid.NewGuid ():N}_{now:yyyyMMddHHmmssfff}.eml");
             using var stream = new FileStream (path, FileMode.Create);
             await message.WriteToAsync (stream, headersOnly : false, cancellationToken : token);
         }

@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\Nameless.FileStorage.FileSystem.csproj" />
         <ProjectReference Include="..\..\..\DependencyInjection\Autofac\src\Nameless.DependencyInjection.Autofac.csproj" />
         <ProjectReference Include="..\..\..\Environment\Abstractions\src\Nameless.Environment.csproj" />
+        <ProjectReference Include="..\src\Nameless.FileStorage.FileSystem.csproj" />
     </ItemGroup>
 
 </Project>

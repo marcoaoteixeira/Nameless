@@ -1,5 +1,5 @@
-
 using Nameless.Persistence.NHibernate;
+using NHibernate;
 using NHibernate.Mapping.ByCode.Conformist;
 
 namespace Nameless.AspNetCore.Identity.NHibernate {
@@ -15,14 +15,14 @@ namespace Nameless.AspNetCore.Identity.NHibernate {
                 map.Property (prop => prop.UserId, mapping => {
                     mapping.Column ("user_id");
                     mapping.NotNullable (true);
-                    mapping.Type<UUIDColumnToStringPropertyUserType> ();
+                    mapping.Type (NHibernateUtil.Guid);
                     mapping.UniqueKey (UQ_USERINROLES_USERID_ROLEID);
                 });
 
                 map.Property (prop => prop.RoleId, mapping => {
                     mapping.Column ("role_id");
                     mapping.NotNullable (true);
-                    mapping.Type<UUIDColumnToStringPropertyUserType> ();
+                    mapping.Type (NHibernateUtil.Guid);
                     mapping.UniqueKey (UQ_USERINROLES_USERID_ROLEID);
                 });
             });

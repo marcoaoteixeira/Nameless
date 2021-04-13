@@ -1,95 +1,92 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Primitives;
-using Nameless.Helpers;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
+using SysFileSystemInfo = System.IO.FileSystemInfo;
 using SysPath = System.IO.Path;
 using SysStream = System.IO.Stream;
+using SysFileSystemWatcher = System.IO.FileSystemWatcher;
+using SysFileSystemEventArgs = System.IO.FileSystemEventArgs;
+using SysNotifyFilters = System.IO.NotifyFilters;
+using SysRenamedEventArgs = System.IO.RenamedEventArgs;
+using SysWatcherChangeTypes = System.IO.WatcherChangeTypes;
 
 namespace Nameless.FileStorage.FileSystem {
 
-    public class FileSystemFileStorage : IFileStorage, IDisposable {
+    public class FileSystemStorage : IFileStorage {
         #region Private Read-Only Fields
 
         private readonly FileSystemStorageSettings _settings;
 
         #endregion
 
-        #region Private Fields
-
-        private PhysicalFileProvider _fileProvider;
-        private bool _disposed;
-
-        #endregion
-
-        #region Private Properties
-
-        private string Root { get; }
-
-        #endregion
-
         #region Public Constructors
 
-        public FileSystemFileStorage (FileSystemStorageSettings settings = null) {
+        public FileSystemStorage (FileSystemStorageSettings settings = null) {
             Prevent.ParameterNull (settings, nameof (settings));
 
             _settings = settings ?? new FileSystemStorageSettings ();
 
             Root = PathHelper.Normalize (_settings.Root);
-
-            Initialize ();
         }
 
         #endregion
 
-        #region Destructor
+        #region Private Static Methods
 
-        ~FileSystemFileStorage () {
-            Dispose (disposing: false);
+        private static ChangeReason ParseChangeTypes (SysWatcherChangeTypes types) {
+            switch (types) {
+                case SysWatcherChangeTypes.All:
+                    break;
+                case SysWatcherChangeTypes.Changed:
+                    return ChangeReason.Changed;
+                case SysWatcherChangeTypes.Created:
+                    return ChangeReason.Created;
+                case SysWatcherChangeTypes.Deleted:
+                    return ChangeReason.Deleted;
+                case SysWatcherChangeTypes.Renamed:
+                    return ChangeReason.Renamed;
+            }
+            return ChangeReason.None;
         }
 
         #endregion
 
         #region Private Methods
 
-        private void Initialize () {
-            _fileProvider = new PhysicalFileProvider (Root);
+        private IDisposable ChangeWatcherFactory (string path, string filter, Action<ChangeEventArgs> callback) {
+            var watcher = new SysFileSystemWatcher {
+                Filter = filter ?? "*.*",
+                Path = path,
+                NotifyFilter = SysNotifyFilters.LastAccess |
+                                SysNotifyFilters.LastWrite |
+                                SysNotifyFilters.FileName |
+                                SysNotifyFilters.DirectoryName
+            };
+
+            watcher.Changed += (sender, evt) => FileSystemWatcherCallback (sender, evt, callback);
+            watcher.Deleted += (sender, evt) => FileSystemWatcherCallback (sender, evt, callback);
+            watcher.Renamed += (sender, evt) => FileSystemWatcherCallback (sender, evt, callback);
+
+            watcher.EnableRaisingEvents = true;
+
+            return watcher;
         }
 
-        private void Dispose (bool disposing) {
-            if (_disposed) { return; }
-            if (disposing) {
-                if (_fileProvider != null) {
-                    _fileProvider.Dispose ();
-                }
-            }
+        private void FileSystemWatcherCallback (object sender, SysFileSystemEventArgs args, Action<ChangeEventArgs> callback) {
+            var obj = sender as SysFileSystemInfo;
 
-            _fileProvider = null;
-            _disposed = true;
-        }
+            var originalPath = obj.FullName;
+            var currentPath = args is SysRenamedEventArgs renamedArgs ? renamedArgs.OldFullPath : args.FullPath;
 
-        private void BlockAccessAfterDispose () {
-            if (_disposed) {
-                throw new ObjectDisposedException (GetType ().FullName);
-            }
-        }
+            var newArgs = new ChangeEventArgs {
+                OriginalPath = originalPath[Root.Length..].TrimStart (SysPath.DirectorySeparatorChar),
+                CurrentPath = currentPath[Root.Length..].TrimStart (SysPath.DirectorySeparatorChar),
+                Reason = ParseChangeTypes (args.ChangeType)
+            };
 
-        private IDisposable ChangeWatcherFactory (string filter, Action callback) {
-            BlockAccessAfterDispose ();
-
-            return ChangeToken.OnChange (
-                changeTokenProducer: () => {
-                    var changeToken = _fileProvider.Watch (filter);
-                    if (changeToken is NullChangeToken) {
-                        throw new InvalidOperationException ("Invalid filters");
-                    }
-                    return changeToken;
-                },
-                changeTokenConsumer : callback
-            );
+            callback (newArgs);
         }
 
         #endregion
@@ -97,9 +94,10 @@ namespace Nameless.FileStorage.FileSystem {
         #region IFileStorage Members
 
         /// <inheritdoc />
-        public Task<bool> CreateDirectoryAsync (string relativePath, CancellationToken token = default) {
-            BlockAccessAfterDispose ();
+        public string Root { get; }
 
+        /// <inheritdoc />
+        public Task<bool> CreateDirectoryAsync (string relativePath, CancellationToken token = default) {
             relativePath = PathHelper.Normalize (relativePath);
 
             var directoryPath = PathHelper.GetPhysicalPath (Root, relativePath);
@@ -117,8 +115,6 @@ namespace Nameless.FileStorage.FileSystem {
         /// Thrown if the specified path does not points to a directory.
         /// </exception>
         public Task<IDirectory> GetDirectoryAsync (string relativePath) {
-            BlockAccessAfterDispose ();
-
             relativePath = PathHelper.Normalize (relativePath);
 
             var directoryPath = PathHelper.GetPhysicalPath (Root, relativePath);
@@ -133,8 +129,6 @@ namespace Nameless.FileStorage.FileSystem {
         /// <inheritdoc />
         public Task CreateFileAsync (string relativePath, SysStream input, bool overwrite = false, CancellationToken token = default) {
             Prevent.ParameterNull (input, nameof (input));
-            
-            BlockAccessAfterDispose ();
 
             relativePath = PathHelper.Normalize (relativePath);
 
@@ -153,22 +147,11 @@ namespace Nameless.FileStorage.FileSystem {
 
         /// <inheritdoc />
         public Task<IFile> GetFileAsync (string relativePath) {
-            BlockAccessAfterDispose ();
-
             relativePath = PathHelper.Normalize (relativePath);
 
             var file = new File (Root, relativePath, ChangeWatcherFactory);
 
             return Task.FromResult<IFile> (file);
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose () {
-            Dispose (disposing: true);
-            GC.SuppressFinalize (this);
         }
 
         #endregion

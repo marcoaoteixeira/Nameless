@@ -27,9 +27,17 @@ namespace Nameless.AspNetCore.Identity {
                     opts.User.RequireUniqueEmail = true;
                 });
 
-            self
-                .AddScoped<IUserStore<User>, UserStore> ()
-                .AddScoped<IRoleStore<Role>, RoleStore> ();
+            var userStoreInterfaces = typeof (UserStore).GetInterfaces ();
+            foreach (var userStoreInterface in userStoreInterfaces) {
+                if (userStoreInterface == typeof (IDisposable)) continue;
+                self.AddScoped (userStoreInterface, typeof (UserStore));
+            }
+
+            var roleStoreInterfaces = typeof (RoleStore).GetInterfaces ();
+            foreach (var roleStoreInterface in roleStoreInterfaces) {
+                if (roleStoreInterface == typeof (IDisposable)) continue;
+                self.AddScoped (roleStoreInterface, typeof (RoleStore));
+            }
         }
 
         #endregion

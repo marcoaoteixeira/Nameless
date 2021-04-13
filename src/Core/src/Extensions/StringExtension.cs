@@ -340,7 +340,7 @@ namespace Nameless {
 
             // don't allow non A-Z chars as first letter, as they are not allowed in prefixes
             while (result.Length > 0 && !result[0].IsLetter ()) {
-                result = result.Substring (1);
+                result = result[1..];
             }
 
             if (result.Length > 128) {
@@ -528,7 +528,7 @@ namespace Nameless {
             if (self == null) { return null; }
             if (prefix == null) { return self; }
 
-            return self.StartsWith (prefix, StringComparison.Ordinal) ? self.Substring (prefix.Length) : self;
+            return self.StartsWith (prefix, StringComparison.Ordinal) ? self[prefix.Length..] : self;
         }
 
         /// <summary>

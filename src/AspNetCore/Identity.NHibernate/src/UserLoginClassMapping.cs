@@ -15,7 +15,7 @@ namespace Nameless.AspNetCore.Identity.NHibernate {
                 map.Property (prop => prop.UserId, mapping => {
                     mapping.Column ("user_id");
                     mapping.NotNullable (true);
-                    mapping.Type<UUIDColumnToStringPropertyUserType> ();
+                    mapping.Type (NHibernateUtil.Guid);
                     mapping.UniqueKey (UQ_USERLOGINS_USERID_LOGINPROVIDER_PROVIDERKEY);
                 });
 

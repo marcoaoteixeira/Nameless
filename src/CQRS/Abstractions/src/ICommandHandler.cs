@@ -18,7 +18,7 @@ namespace Nameless.CQRS {
         /// <param name="progress">The progress notification system.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>A <see cref="Task" /> representing the command execution.</returns>
-        Task HandleAsync (TCommand command, IProgress<int> progress = null, CancellationToken token = default);
+        Task<ExecutionResult> HandleAsync (TCommand command, IProgress<int> progress = null, CancellationToken token = default);
 
         #endregion
 

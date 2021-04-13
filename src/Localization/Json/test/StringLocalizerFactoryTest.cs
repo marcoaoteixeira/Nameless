@@ -10,7 +10,7 @@ namespace Nameless.Localization.Test {
             // arrange
             var fileProvider = new Mock<IFileStorage> ();
             var messageCollectionAggregationProvider = new MessageCollectionPackageProvider (fileProvider.Object);
-            IStringLocalizerFactory factory = new StringLocalizerFactory (messageCollectionAggregationProvider, new PluralizationRuleProvider ());
+            IStringLocalizerFactory factory = new StringLocalizerFactory (messageCollectionAggregationProvider, new DefaultPluralizationRuleProvider ());
 
             // act
             var stringLocalizer = factory.Create (typeof (StringLocalizerFactoryTest), "pt-BR");
