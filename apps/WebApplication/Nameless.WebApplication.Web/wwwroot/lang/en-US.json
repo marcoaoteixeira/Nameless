@@ -1,0 +1,10 @@
+{
+    "auth.form.title": "Sign in into the application",
+    "auth.form.field.email.title": "E-mail",
+    "auth.form.field.email.validation.required": "The field E-mail is required.",
+    "auth.form.field.email.validation.email": "The value of the field shoud be a valid e-mail address.",
+    "auth.form.field.password.title": "Password",
+    "auth.form.field.password.validation.required": "The field Password is required.",
+    "auth.form.field.rememberMe.title": "Remember me",
+    "auth.form.button.submit.title": "Sign In"
+}

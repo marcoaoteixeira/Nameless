@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<RootNamespace>Nameless.WebApplication</RootNamespace>
+		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\AspNetCore\Nameless.AspNetCore\Nameless.AspNetCore.csproj" />
+		<ProjectReference Include="..\..\..\src\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+		<ProjectReference Include="..\..\..\src\CommandQuery\Nameless.CommandQuery.Extra\Nameless.CommandQuery.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Core\Nameless.Core.Extra\Nameless.Core.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Environment\Nameless.Environment.System.Extra\Nameless.Environment.System.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\FileStorage\Nameless.FileStorage.System.Extra\Nameless.FileStorage.System.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Localization\Nameless.Localization.Microsoft.Extra\Nameless.Localization.Microsoft.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Logging\Nameless.Logging.Microsoft.Extra\Nameless.Logging.Microsoft.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Lucene\Nameless.Lucene.Extra\Nameless.Lucene.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Security\Nameless.Security.Extra\Nameless.Security.Extra.csproj" />
+		<ProjectReference Include="..\..\..\src\Serialization\Nameless.Serialization.Json.Extra\Nameless.Serialization.Json.Extra.csproj" />
+	</ItemGroup>
+
+</Project>

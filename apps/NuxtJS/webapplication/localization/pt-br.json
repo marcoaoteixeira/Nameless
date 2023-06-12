@@ -1,0 +1,18 @@
+{
+    "main": "This is the main message for the {application}",
+
+    "pages": {
+        "account": {
+            "auth": {
+                "Welcome to %s!": "Bemvindo ao %s!",
+                "Please sign-in to your account": "Por favor entre com suas credenciais",
+                "E-mail": "E-mail",
+                "Password": "Senha",
+                "Remember me": "Lembrar me",
+                "Forgot password?": "Esqueceu a senha?",
+                "Sign In": "Entrar",
+                "Or": "Ou"
+            }
+        }
+    }
+}

@@ -1,0 +1,77 @@
+name: Development Cycle
+
+on:
+
+  push:
+    branches:
+      - 'feature/**'
+
+env:
+  CODE_COVERAGE_FOLDER_PATH: './code_coverage'
+  CODE_COVERAGE_COBERTURA_FILE_PATH: './code_coverage/**/coverage.cobertura.xml'
+  CODE_COVERAGE_REPORT_FOLDER_PATH: './code_coverage/coverage_report'
+
+jobs:
+
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['7.0.100']
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Restore Solution
+        run: dotnet restore
+
+      - name: Build Solution
+        if: success()
+        run: |
+          dotnet build \
+          --configuration Debug \
+          --no-restore \
+          --verbosity normal
+
+      - name: Run tests
+        if: success()
+        run: |
+          dotnet test \
+          --no-restore \
+          --no-build \
+          --logger:"Html;LogFileName=coverage-logger.html" \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ${{ env.CODE_COVERAGE_FOLDER_PATH }} \
+          --verbosity normal
+
+      - name: Prepare for coverage report
+        if: success()
+        run: |
+          dotnet tool install \
+          dotnet-reportgenerator-globaltool \
+          --version 5.1.12 \
+          --global
+
+      - name: Write coverage report
+        if: success()
+        run: |
+          reportgenerator \
+          "-reports:${{ env.CODE_COVERAGE_COBERTURA_FILE_PATH }}" \
+          "-targetdir:${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}" \
+          -reporttypes:Html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: test-coverage-report
+          path: ${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}
+          retention-days: 7

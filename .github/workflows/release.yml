@@ -1,0 +1,56 @@
+name: Release Cycle
+
+on:
+  
+  release:
+    types: [published]
+
+env:
+  ARTIFACTS_FOLDER_PATH: './artifacts/nupkgs'
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['7.0.100']
+
+    steps:
+      - name: Get build version
+        id: build
+        run: |
+          if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
+          then
+            echo version=${BASH_REMATCH[1]} >> $GITHUB_OUTPUT
+          else
+            echo version='1.0.0' >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Pack NuGet packages
+        run: |
+          dotnet pack \
+          -p:PackageVersion=${{ steps.build.outputs.version }} \
+          --configuration Release \
+          --nologo \
+          --output ${{ env.ARTIFACTS_FOLDER_PATH }} \
+          --verbosity normal
+
+      - name: Publish NuGet packages
+        if: success()
+        run: |
+          dotnet nuget push \
+          ${{ env.ARTIFACTS_FOLDER_PATH }}/*.nupkg \
+          --source ${{secrets.NUGET_SOURCE}} \
+          --api-key ${{secrets.NUGET_API_KEY}} \
+          --skip-duplicate

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+    <ProjectReference Include="..\Nameless.Localization.Microsoft\Nameless.Localization.Microsoft.csproj" />
+  </ItemGroup>
+
+</Project>

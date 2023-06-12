@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<RootNamespace>Nameless.Logging.log4net</RootNamespace>
+
+		<!-- PACKING -->
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Company>Nameless</Company>
+		<Description>Multiple classes and functionalities for .NET Core applications.</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/Logging/Nameless.Logging.log4net</PackageProjectUrl>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.0.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="readme.md">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="readme.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="log4net" Version="2.0.15" />
+	  <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.Logging.Abstractions\Nameless.Logging.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>
