@@ -3,9 +3,7 @@ using Autofac;
 using Nameless.Autofac;
 
 namespace Nameless.CommandQuery {
-
     public sealed class CommandQueryModule : ModuleBase {
-
         #region Public Properties
 
         public Type[] CommandHandlerImplementations { get; set; } = Array.Empty<Type>();
@@ -25,8 +23,13 @@ namespace Nameless.CommandQuery {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterType<DispatcherService>()
-                .As<IDispatcherService>()
+                .RegisterType<CommandDispatcher>()
+                .As<ICommandDispatcher>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<QueryDispatcher>()
+                .As<IQueryDispatcher>()
                 .SingleInstance();
 
             var commandHandlerImplementations = CommandHandlerImplementations.IsNullOrEmpty()

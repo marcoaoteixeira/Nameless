@@ -1,14 +1,11 @@
 ﻿using Nameless.Infrastructure;
 
-namespace Nameless.CommandQuery
-{
-
+namespace Nameless.CommandQuery {
     /// <summary>
     /// Command handler interface.
     /// </summary>
     /// <typeparam name="TCommand">Type of the command.</typeparam>
     public interface ICommandHandler<in TCommand> where TCommand : ICommand {
-
         #region Methods
 
         /// <summary>

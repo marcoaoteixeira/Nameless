@@ -20,7 +20,7 @@ namespace Nameless.CommandQuery.UnitTests {
         }
 
         [Test]
-        public void CommandQueryModule_Resolve_DispatcherService() {
+        public void CommandQueryModule_Resolve_CommandDispatcher() {
             // arrange
             using var container = CreateContainer(builder => {
                 var mapper = Substitute.For<IMapper>();
@@ -29,24 +29,40 @@ namespace Nameless.CommandQuery.UnitTests {
             });
 
             // act
-            var dispatcherService = container.Resolve<IDispatcherService>();
+            var dispatcher = container.Resolve<ICommandDispatcher>();
 
             // assert
-            Assert.That(dispatcherService, Is.Not.Null);
+            Assert.That(dispatcher, Is.Not.Null);
         }
 
         [Test]
-        public async Task DispatcherService_Execute_Command_Simple() {
+        public void CommandQueryModule_Resolve_QueryDispatcher() {
             // arrange
             using var container = CreateContainer(builder => {
                 var mapper = Substitute.For<IMapper>();
 
                 builder.RegisterInstance(mapper);
             });
-            var dispatcherService = container.Resolve<IDispatcherService>();
 
             // act
-            var response = await dispatcherService.ExecuteAsync(new SaveAnimalCommand { Name = "Test" });
+            var dispatcher = container.Resolve<IQueryDispatcher>();
+
+            // assert
+            Assert.That(dispatcher, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task CommandDispatcher_Execute_Command_Simple() {
+            // arrange
+            using var container = CreateContainer(builder => {
+                var mapper = Substitute.For<IMapper>();
+
+                builder.RegisterInstance(mapper);
+            });
+            var dispatcher = container.Resolve<ICommandDispatcher>();
+
+            // act
+            var response = await dispatcher.ExecuteAsync(new SaveAnimalCommand { Name = "Test" });
 
             // assert
             Assert.Multiple(() => {
@@ -57,17 +73,17 @@ namespace Nameless.CommandQuery.UnitTests {
         }
 
         [Test]
-        public async Task DispatcherService_Execute_Command_Inherited() {
+        public async Task CommandDispatcher_Execute_Command_Inherited() {
             // arrange
             using var container = CreateContainer(builder => {
                 var mapper = Substitute.For<IMapper>();
 
                 builder.RegisterInstance(mapper);
             });
-            var dispatcherService = container.Resolve<IDispatcherService>();
+            var dispatcher = container.Resolve<ICommandDispatcher>();
 
             // act
-            var response = await dispatcherService.ExecuteAsync(new UpdateAnimalCommand { ID = 2, Name = "Test" });
+            var response = await dispatcher.ExecuteAsync(new UpdateAnimalCommand { ID = 2, Name = "Test" });
 
             // assert
             Assert.Multiple(() => {
