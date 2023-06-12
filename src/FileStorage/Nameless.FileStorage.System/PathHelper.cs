@@ -45,24 +45,14 @@ namespace Nameless.FileStorage.System {
             Prevent.NullOrWhiteSpaces(root, nameof(root));
             Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
 
-            var currentRoot = Normalize(root);
-
-            // Assert root path
-            currentRoot = currentRoot.EndsWith(Path.DirectorySeparatorChar)
-                ? currentRoot
-                : string.Concat(currentRoot, Path.DirectorySeparatorChar);
-
-            var currentRelativePath = Normalize(relativePath);
-            var result = Path.Combine(currentRoot, currentRelativePath);
-
-            Console.WriteLine($"[PathHelper.GetPhysicalPath] result: {result}");
-            Console.WriteLine($"[PathHelper.GetPhysicalPath] currentRoot: {currentRoot}");
-            Console.WriteLine($"[PathHelper.GetPhysicalPath] GetFullPath: {Path.GetFullPath(result)}");
+            root = Normalize(root);
+            relativePath = Normalize(relativePath);
+            var result = Path.Join(root, relativePath);
 
             // Verify that the resulting path is inside the root file system path.
-            var isInsideFileSystem = Path.GetFullPath(result).StartsWith(currentRoot, StringComparison.OrdinalIgnoreCase);
+            var isInsideFileSystem = Path.GetFullPath(result).StartsWith(root, StringComparison.OrdinalIgnoreCase);
             if (!isInsideFileSystem) {
-                throw new PathResolutionException($"The path '{currentRelativePath}' resolves to a physical path outside the file storage root.");
+                throw new PathResolutionException($"The path '{result}' resolves to a physical path outside the file storage root.");
             }
 
             return result;
