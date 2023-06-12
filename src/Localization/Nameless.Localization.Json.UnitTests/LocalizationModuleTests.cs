@@ -38,9 +38,9 @@ namespace Nameless.Localization.Json.UnitTests {
             service.Should().NotBeNull();
         }
 
-        [TestCase("pt-BR", "Olá Mundo!")]
+        [TestCase("pt-BR", "OlÃ¡ Mundo!")]
         [TestCase("en-US", "Hello World!")]
-        [TestCase("es-ES", "¡Hola Mundo!")]
+        [TestCase("es-ES", "Â¡Hola Mundo!")]
         public void LocalizationModule_Resolve_Service_With_Localization_Dependency(string cultureName, string phrase) {
             // arrange
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureName);

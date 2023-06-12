@@ -2,6 +2,13 @@ namespace Nameless.FileStorage.System {
 
     public static class PathHelper {
 
+        #region Private Constants
+
+        private const char WINDOWS_DIRECTORY_SEPARATOR_CHAR = '\\';
+        private const char UNIX_DIRECTORY_SEPARATOR_CHAR = '/';
+
+        #endregion
+
         #region Public Static Methods
 
         /// <summary>
@@ -21,13 +28,15 @@ namespace Nameless.FileStorage.System {
         public static string Normalize(string path) {
             Prevent.NullOrWhiteSpaces(path, nameof(path));
 
-            var result = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            var result = OperatingSystem.IsWindows()
+                ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
+                : path.Replace(WINDOWS_DIRECTORY_SEPARATOR_CHAR, UNIX_DIRECTORY_SEPARATOR_CHAR);
 
             // On Windows we'll leave the path as it is.
             if (OperatingSystem.IsWindows()) { return result; }
 
             // For Linux, MacOS, Android, let's "fix"
-            return result.StartsWith(Path.DirectorySeparatorChar) ? result : $"{Path.DirectorySeparatorChar}{result}";
+            return result.StartsWith(UNIX_DIRECTORY_SEPARATOR_CHAR) ? result : $"{UNIX_DIRECTORY_SEPARATOR_CHAR}{result}";
         }
 
         /// <summary>
