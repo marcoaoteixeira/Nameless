@@ -18,6 +18,10 @@ namespace Nameless.FileStorage.System.UnitTesting {
         public async Task GetFileAsync_Retrieves_Existent_File() {
             var appContext = new Mock<IApplicationContext>();
 
+            var directoryPath = GetType().Assembly.GetDirectoryPath();
+
+            Console.WriteLine($"[GetFileAsync_Retrieves_Existent_File] Directory path: {directoryPath}");
+
             appContext
                 .Setup(_ => _.DataDirectoryPath)
                 .Returns(GetType().Assembly.GetDirectoryPath());
