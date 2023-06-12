@@ -2,6 +2,13 @@ namespace Nameless.FileStorage.System {
 
     public static class PathHelper {
 
+        #region Private Constants
+
+        private const char WINDOWS_DIRECTORY_SEPARATOR_CHAR = '\\';
+        private const char UNIX_DIRECTORY_SEPARATOR_CHAR = '/';
+
+        #endregion
+
         #region Public Static Methods
 
         /// <summary>
@@ -21,11 +28,15 @@ namespace Nameless.FileStorage.System {
         public static string Normalize(string path) {
             Prevent.NullOrWhiteSpaces(path, nameof(path));
 
-            var result = path
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-                .Trim(Path.DirectorySeparatorChar);
+            var result = OperatingSystem.IsWindows()
+                ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
+                : path.Replace(WINDOWS_DIRECTORY_SEPARATOR_CHAR, UNIX_DIRECTORY_SEPARATOR_CHAR);
 
-            return result;
+            // On Windows we'll leave the path as it is.
+            if (OperatingSystem.IsWindows()) { return result; }
+
+            // For Linux, MacOS, Android, let's "fix"
+            return result.StartsWith(UNIX_DIRECTORY_SEPARATOR_CHAR) ? result : $"{UNIX_DIRECTORY_SEPARATOR_CHAR}{result}";
         }
 
         /// <summary>
@@ -45,20 +56,15 @@ namespace Nameless.FileStorage.System {
             Prevent.NullOrWhiteSpaces(root, nameof(root));
             Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
 
-            var currentRoot = Normalize(root);
-
-            // Assert root path
-            currentRoot = currentRoot.EndsWith(Path.DirectorySeparatorChar)
-                ? currentRoot
-                : string.Concat(currentRoot, Path.DirectorySeparatorChar);
-
-            var currentRelativePath = Normalize(relativePath);
-            var result = Path.Combine(currentRoot, currentRelativePath);
+            root = Normalize(root);
+            relativePath = Normalize(relativePath);
+            var result = Path.Join(root, relativePath);
+            var fullPath = Path.GetFullPath(result);
 
             // Verify that the resulting path is inside the root file system path.
-            var isInsideFileSystem = Path.GetFullPath(result).StartsWith(currentRoot, StringComparison.OrdinalIgnoreCase);
+            var isInsideFileSystem = fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase);
             if (!isInsideFileSystem) {
-                throw new PathResolutionException($"The path '{currentRelativePath}' resolves to a physical path outside the file storage root.");
+                throw new PathResolutionException($"The path '{result}' resolves to a physical path outside the file storage root.");
             }
 
             return result;

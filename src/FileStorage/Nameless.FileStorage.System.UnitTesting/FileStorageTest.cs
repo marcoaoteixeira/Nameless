@@ -1,4 +1,7 @@
-﻿namespace Nameless.FileStorage.System.UnitTesting {
+﻿using Moq;
+using Nameless.Infrastructure;
+
+namespace Nameless.FileStorage.System.UnitTesting {
 
     public class FileStorageTest {
 
@@ -13,7 +16,12 @@
 
         [Test]
         public async Task GetFileAsync_Retrieves_Existent_File() {
-            var fileStorage = new FileStorageImpl(NullApplicationContext.Instance);
+            var appContext = new Mock<IApplicationContext>();
+            appContext
+                .Setup(_ => _.DataDirectoryPath)
+                .Returns(GetType().Assembly.GetDirectoryPath());
+
+            var fileStorage = new FileStorageImpl(appContext.Object);
 
             var fileName = Path.GetFileName(typeof(FileStorageTest).Assembly.Location);
             var file = await fileStorage.GetFileAsync(fileName);

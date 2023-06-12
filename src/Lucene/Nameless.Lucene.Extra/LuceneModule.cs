@@ -19,7 +19,6 @@ namespace Nameless.Lucene {
             builder
                 .RegisterType<IndexProvider>()
                 .As<IIndexProvider>()
-
                 .WithParameter(ResolvedParameter.ForNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_KEY))
                 .SetLifetimeScope(LifetimeScopeType.Singleton);
 

@@ -1,4 +1,4 @@
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using Microsoft.Extensions.Options;
 using Nameless.NHibernate;
 using Nameless.Persistence.NHibernate.UnitTesting.Fixtures;
@@ -23,7 +23,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
 
             var session = _sessionFactory
                 .WithOptions()
-                .Connection(new SqliteConnection(GetConnStr(currentID)))
+                .Connection(new SQLiteConnection(GetConnStr(currentID)))
                 .OpenSession();
 
             session.Connection.Open();

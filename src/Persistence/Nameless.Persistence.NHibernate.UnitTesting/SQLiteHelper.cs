@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 
 namespace Nameless.Persistence.NHibernate.UnitTesting {
 
@@ -10,7 +10,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
 
         public SQLiteHelper(string? connectionString = null) {
             var currentConnStr = connectionString ?? "Data Source=:memory:;Version=3;Page Size=4096;BinaryGUID=False;";
-            _dbConnection = new SqliteConnection(currentConnStr);
+            _dbConnection = new SQLiteConnection(currentConnStr);
             _dbConnection.Open();
         }
 
@@ -24,7 +24,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
 
             if (parameters != null && parameters.Any()) {
                 foreach (var parameter in parameters) {
-                    command.Parameters.Add(new SqliteParameter(parameter.Key, parameter.Value));
+                    command.Parameters.Add(new SQLiteParameter(parameter.Key, parameter.Value));
                 }
             }
 
@@ -48,7 +48,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
 
             if (parameters != null && parameters.Any()) {
                 foreach (var parameter in parameters) {
-                    command.Parameters.Add(new SqliteParameter(parameter.Key, parameter.Value));
+                    command.Parameters.Add(new SQLiteParameter(parameter.Key, parameter.Value));
                 }
             }
 
@@ -72,7 +72,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
 
             if (parameters != null && parameters.Any()) {
                 foreach (var parameter in parameters) {
-                    command.Parameters.Add(new SqliteParameter(parameter.Key, parameter.Value));
+                    command.Parameters.Add(new SQLiteParameter(parameter.Key, parameter.Value));
                 }
             }
 

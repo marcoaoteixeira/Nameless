@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Options;
 
 namespace Nameless.Lucene.UnitTests {
 
@@ -8,9 +9,11 @@ namespace Nameless.Lucene.UnitTests {
         public void LuceneModule_Correctly_Register_Services() {
             // arrange
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(new LuceneOptions {
+            var options = Options.Create(new LuceneOptions {
                 IndexesDirectoryName = typeof(LuceneModuleTests).Assembly.GetDirectoryPath("App_Data", "Lucene"),
             });
+            builder.RegisterInstance(NullApplicationContext.Instance);
+            builder.RegisterInstance(options);
             builder.RegisterModule<LuceneModule>();
 
             var container = builder.Build();

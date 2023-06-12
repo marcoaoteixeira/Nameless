@@ -19,9 +19,7 @@ namespace Nameless.NHibernate {
         /// Initializes a new instance of <see cref="ModelInspector" />
         /// </summary>
         public ModelInspector(Type[] entityTypes) {
-            Prevent.NullOrEmpty(entityTypes, nameof(entityTypes));
-
-            _entityTypes = entityTypes;
+            _entityTypes = entityTypes ?? Array.Empty<Type>();
         }
 
         #endregion
