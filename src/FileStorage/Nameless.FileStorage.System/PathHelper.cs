@@ -21,11 +21,13 @@ namespace Nameless.FileStorage.System {
         public static string Normalize(string path) {
             Prevent.NullOrWhiteSpaces(path, nameof(path));
 
-            var result = path
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-                .Trim(Path.DirectorySeparatorChar);
+            var result = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
-            return result;
+            // On Windows we'll leave the path as it is.
+            if (OperatingSystem.IsWindows()) { return result; }
+
+            // For Linux, MacOS, Android, let's "fix"
+            return result.StartsWith(Path.DirectorySeparatorChar) ? result : $"{Path.DirectorySeparatorChar}{result}";
         }
 
         /// <summary>
@@ -49,9 +51,6 @@ namespace Nameless.FileStorage.System {
             relativePath = Normalize(relativePath);
             var result = Path.Join(root, relativePath);
             var fullPath = Path.GetFullPath(result);
-
-            Console.WriteLine($"Path join: {result}");
-            Console.WriteLine($"Full path: {fullPath}");
 
             // Verify that the resulting path is inside the root file system path.
             var isInsideFileSystem = fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase);
