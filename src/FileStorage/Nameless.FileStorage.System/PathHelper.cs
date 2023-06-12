@@ -48,9 +48,13 @@ namespace Nameless.FileStorage.System {
             root = Normalize(root);
             relativePath = Normalize(relativePath);
             var result = Path.Join(root, relativePath);
+            var fullPath = Path.GetFullPath(result);
+
+            Console.WriteLine($"Path join: {result}");
+            Console.WriteLine($"Full path: {fullPath}");
 
             // Verify that the resulting path is inside the root file system path.
-            var isInsideFileSystem = Path.GetFullPath(result).StartsWith(root, StringComparison.OrdinalIgnoreCase);
+            var isInsideFileSystem = fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase);
             if (!isInsideFileSystem) {
                 throw new PathResolutionException($"The path '{result}' resolves to a physical path outside the file storage root.");
             }
