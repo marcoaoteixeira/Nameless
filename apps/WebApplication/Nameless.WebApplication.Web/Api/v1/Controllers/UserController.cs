@@ -14,18 +14,21 @@ namespace Nameless.WebApplication.Web.Api.v1.Controllers {
 
         #region Private Read-Only Fields
 
-        private readonly IDispatcherService _dispatcherService;
+        private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IQueryDispatcher _queryDispatcher;
         private readonly IMapper _mapper;
 
         #endregion
 
         #region Public Constructors
 
-        public UserController(IDispatcherService dispatcherService, IMapper mapper) {
-            Prevent.Null(dispatcherService, nameof(dispatcherService));
+        public UserController(ICommandDispatcher commandDispatcher, IQueryDispatcher queryDispatcher, IMapper mapper) {
+            Prevent.Null(commandDispatcher, nameof(commandDispatcher));
+            Prevent.Null(queryDispatcher, nameof(queryDispatcher));
             Prevent.Null(mapper, nameof(mapper));
 
-            _dispatcherService = dispatcherService;
+            _commandDispatcher = commandDispatcher;
+            _queryDispatcher = queryDispatcher;
             _mapper = mapper;
         }
 
@@ -40,7 +43,7 @@ namespace Nameless.WebApplication.Web.Api.v1.Controllers {
         public async Task<IActionResult> PostAsync([FromBody] CreateUserInput input, CancellationToken cancellationToken = default) {
             var command = _mapper.Map<CreateUserCommand>(input);
 
-            var executionResult = await _dispatcherService.ExecuteAsync(command, cancellationToken);
+            var executionResult = await _commandDispatcher.ExecuteAsync(command, cancellationToken);
 
             executionResult.PushErrorsIntoModelState(ModelState);
 
@@ -53,7 +56,7 @@ namespace Nameless.WebApplication.Web.Api.v1.Controllers {
         public async Task<IActionResult> GetAsync([FromQuery]Guid userId, CancellationToken cancellationToken = default) {
             var query = new GetUserByIdQuery { UserId = userId };
 
-            var result = await _dispatcherService.ExecuteAsync(query, cancellationToken);
+            var result = await _queryDispatcher.ExecuteAsync(query, cancellationToken);
 
             return result != default ? Ok(result) : NotFound();
         }

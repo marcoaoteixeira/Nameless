@@ -35,7 +35,7 @@
 
         #region Public Methods
 
-        public T? StateAs<T>() => (T?)State;
+        public T? GetStateAs<T>() => (T?)State;
 
         #endregion
 

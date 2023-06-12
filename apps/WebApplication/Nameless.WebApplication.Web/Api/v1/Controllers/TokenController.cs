@@ -13,18 +13,18 @@ namespace Nameless.WebApplication.Web.Api.v1.Controllers {
 
         #region Private Read-Only Fields
 
-        private readonly IDispatcherService _dispatcherService;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
 
         #endregion
 
         #region Public Constructors
 
-        public TokenController(IDispatcherService dispatcherService, IMapper mapper) {
-            Prevent.Null(dispatcherService, nameof(dispatcherService));
+        public TokenController(ICommandDispatcher commandDispatcher, IMapper mapper) {
+            Prevent.Null(commandDispatcher, nameof(commandDispatcher));
             Prevent.Null(mapper, nameof(mapper));
 
-            _dispatcherService = dispatcherService;
+            _commandDispatcher = commandDispatcher;
             _mapper = mapper;
         }
 
@@ -39,7 +39,7 @@ namespace Nameless.WebApplication.Web.Api.v1.Controllers {
         public async Task<IActionResult> RefreshAsync([FromBody]TokenInput input, CancellationToken cancellationToken = default) {
             var command = _mapper.Map<RefreshTokenCommand>(input);
 
-            var executionResult = await _dispatcherService.ExecuteAsync(command, cancellationToken);
+            var executionResult = await _commandDispatcher.ExecuteAsync(command, cancellationToken);
 
             executionResult.PushErrorsIntoModelState(ModelState);
 

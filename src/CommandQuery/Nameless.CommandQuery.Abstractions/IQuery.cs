@@ -1,5 +1,4 @@
 namespace Nameless.CommandQuery {
-
     /// <summary>
     /// Query interfacec.
     /// </summary>

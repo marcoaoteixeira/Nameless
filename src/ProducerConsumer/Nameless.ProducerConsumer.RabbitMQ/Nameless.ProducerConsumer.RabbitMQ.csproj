@@ -8,7 +8,7 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
-		<RootNamespace>Nameless.PubSub.RabbitMQ</RootNamespace>
+		<RootNamespace>Nameless.ProducerConsumer.RabbitMQ</RootNamespace>
 
 		<!-- PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -16,7 +16,7 @@
 		<Company>Nameless</Company>
 		<Description>Multiple classes and functionalities for .NET Core applications.</Description>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/PubSub/Nameless.PubSub.RabbitMQ</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/ProducerConsumer/Nameless.ProducerConsumer.RabbitMQ</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
