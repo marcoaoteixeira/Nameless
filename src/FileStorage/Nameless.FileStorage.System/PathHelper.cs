@@ -57,6 +57,7 @@ namespace Nameless.FileStorage.System {
 
             Console.WriteLine($"[PathHelper.GetPhysicalPath] result: {result}");
             Console.WriteLine($"[PathHelper.GetPhysicalPath] currentRoot: {currentRoot}");
+            Console.WriteLine($"[PathHelper.GetPhysicalPath] GetFullPath: {Path.GetFullPath(result)}");
 
             // Verify that the resulting path is inside the root file system path.
             var isInsideFileSystem = Path.GetFullPath(result).StartsWith(currentRoot, StringComparison.OrdinalIgnoreCase);
