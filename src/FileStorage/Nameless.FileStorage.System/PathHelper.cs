@@ -55,6 +55,9 @@ namespace Nameless.FileStorage.System {
             var currentRelativePath = Normalize(relativePath);
             var result = Path.Combine(currentRoot, currentRelativePath);
 
+            Console.WriteLine($"[PathHelper.GetPhysicalPath] result: {result}");
+            Console.WriteLine($"[PathHelper.GetPhysicalPath] currentRoot: {currentRoot}");
+
             // Verify that the resulting path is inside the root file system path.
             var isInsideFileSystem = Path.GetFullPath(result).StartsWith(currentRoot, StringComparison.OrdinalIgnoreCase);
             if (!isInsideFileSystem) {

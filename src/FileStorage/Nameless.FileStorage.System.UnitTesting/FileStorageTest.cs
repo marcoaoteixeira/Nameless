@@ -23,6 +23,9 @@ namespace Nameless.FileStorage.System.UnitTesting {
             Console.WriteLine($"[GetFileAsync_Retrieves_Existent_File] Directory path: {directoryPath}");
 
             appContext
+                .Setup(_ => _.BasePath)
+                .Returns(GetType().Assembly.GetDirectoryPath());
+            appContext
                 .Setup(_ => _.DataDirectoryPath)
                 .Returns(GetType().Assembly.GetDirectoryPath());
 
