@@ -158,6 +158,7 @@ publish/
 **/packages/*
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
+!**/local/*.nupkg
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/packages/repositories.config
 # Remove builded nupkg folder
