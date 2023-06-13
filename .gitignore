@@ -153,7 +153,7 @@ publish/
 *.publishproj
 
 # NuGet Packages
-*.nupkg
+#*.nupkg
 # The packages folder can be ignored because of Package Restore
 **/packages/*
 # except build/, which is used as an MSBuild target.
@@ -162,8 +162,8 @@ publish/
 #!**/packages/repositories.config
 # Remove builded nupkg folder
 nuget_packages
-# Except the 'res' folder
-!**/res/nupkgs/
+!**/local/**/*.nupkg
+!**/local/**/*.snupkg
 
 # Windows Azure Build Output
 csx/
