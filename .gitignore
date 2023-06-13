@@ -162,6 +162,8 @@ publish/
 #!**/packages/repositories.config
 # Remove builded nupkg folder
 nuget_packages
+# Except the 'res' folder
+!**/res/nupkgs/
 
 # Windows Azure Build Output
 csx/
