@@ -1,11 +1,10 @@
 # Nameless
 
-This repository contains all code that I assume is useful in most
-of the cases where I need to build something. So, if you think
-that it could be useful for you, feel free to fork, clone, etc.
-Also, I tried to mention every person that I might get something
-from. If you find code that needs to be given the correct authorship,
-please, let me know.
+This repository contains all code that I assume is useful in most of the cases
+where I need to build something. So, if you think that it could be useful for
+you, feel free to fork, clone, etc. Also, I tried to mention every person that
+I got something from. If you find code that needs to be given the correct
+authorship, please, let me know.
 
 ## Starting
 
@@ -19,19 +18,24 @@ No pre-requirements
 
 ### Installing
 
+```
 Well, no need to install anything.
+```
 
 ### Testing
 
-There are some test projects inside the "test" folder. Maybe you'll need to
-install the coverage tool and a report tool
+There are some test projects. Maybe you'll need to install the coverage tool
+and a report tool. If I'm not mistaken, Visual Studio already has those
+dependencies installed for you after restore. But...
 
-*.NET Coverlet Tool*
+_.NET Coverlet Tool_
+
 ```
 dotnet tool install -g coverlet.console
 ```
 
-*.NET Report Generator Tool*
+_.NET Report Generator Tool_
+
 ```
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
@@ -42,8 +46,8 @@ Nothing defined, use your good sense.
 
 ## Deployment
 
-This particular project uses GitHub Workflows as its CI. All files are
-located in the .github folder.
+I'm using GitHub Actions to act as a CI/CD. All files are located in the
+.github folder.
 
 ## Contribuition
 
@@ -55,7 +59,7 @@ Using [SemVer](http://semver.org/) for assembly versioning.
 
 ## Authors
 
-* **Marco Teixeira (marcoaoteixeira)** - *initial work*
+- **Marco Teixeira (marcoaoteixeira)** - _initial work_
 
 ## License
 
@@ -63,4 +67,4 @@ MIT
 
 ## Acknowledgement
 
-* Hat tip to anyone whose code was used.
+- Hat tip to anyone whose code was used.
