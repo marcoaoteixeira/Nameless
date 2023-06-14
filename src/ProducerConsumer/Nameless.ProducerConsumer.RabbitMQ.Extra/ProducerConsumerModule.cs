@@ -4,12 +4,10 @@ using Nameless.Autofac;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
-
     /// <summary>
     /// The PubSub service registration.
     /// </summary>
     public sealed class ProducerConsumerModule : ModuleBase {
-
         #region Private Constants
 
         private const string CONNECTION_KEY = "Connection.d78abe02-49ce-424d-8e7a-df2ea4de837e";

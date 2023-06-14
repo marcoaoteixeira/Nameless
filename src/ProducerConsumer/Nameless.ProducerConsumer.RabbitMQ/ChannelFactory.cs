@@ -45,7 +45,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 channel.QueueBind(
                     queue: queue.Name,
                     exchange: exchangeName,
-                    routingKey: queue.RoutingKey,
+                    routingKey: queue.RoutingKey ?? queue.Name,
                     arguments: new Dictionary<string, object>()
                 );
             }

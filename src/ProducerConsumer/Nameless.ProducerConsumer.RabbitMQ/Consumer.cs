@@ -133,7 +133,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #endregion
 
-        #region ISubscriber Members
+        #region IConsumer Members
 
         /// <inheritdoc />
         public Registration<T> Register<T>(string topic, Action<T> callback, Arguments arguments) {
