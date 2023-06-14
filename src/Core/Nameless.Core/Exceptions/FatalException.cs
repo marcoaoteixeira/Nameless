@@ -1,14 +1,12 @@
 using System.Runtime.Serialization;
 
-namespace Nameless.Exceptions
-{
+namespace Nameless.Exceptions {
 
     /// <summary>
     /// Represents a fatal exception.
     /// </summary>
     [Serializable]
-    public class FatalException : Exception
-    {
+    public class FatalException : Exception {
 
         #region Public Constructors
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nameless.NoSQL.MongoDb {
+﻿namespace Nameless.NoSQL.MongoDb {
 
     public interface ICollectionNamingStrategy {
 

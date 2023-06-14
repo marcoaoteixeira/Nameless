@@ -2,10 +2,10 @@
 
     public interface IMessengerService {
 
-		#region Methods
+        #region Methods
 
-		Task<MessageResponse> DispatchAsync(MessageRequest request, CancellationToken cancellationToken = default);
+        Task<MessageResponse> DispatchAsync(MessageRequest request, CancellationToken cancellationToken = default);
 
-		#endregion
-	}
+        #endregion
+    }
 }

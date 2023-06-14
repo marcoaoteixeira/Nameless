@@ -3,8 +3,7 @@ using Microsoft.Extensions.Options;
 using Nameless.Infrastructure;
 using NSubstitute;
 
-namespace Nameless.Lucene.UnitTests
-{
+namespace Nameless.Lucene.UnitTests {
 
     public class IndexProviderTests {
 

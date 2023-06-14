@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Core;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Nameless.Autofac;
 
@@ -90,7 +89,7 @@ namespace Nameless.NoSQL.MongoDb {
         }
 
         private static IMongoClient RegisterMongoClient(IComponentContext ctx) {
-            var opts = ctx.Resolve<IOptions<MongoOptions>>().Value ?? MongoOptions.Default;
+            var opts = ctx.ResolveOptional<MongoOptions>() ?? MongoOptions.Default;
 
             var settings = string.IsNullOrWhiteSpace(opts.ConnectionString)
                 ? new MongoClientSettings { Server = new MongoServerAddress(opts.Host, opts.Port) }
@@ -104,7 +103,7 @@ namespace Nameless.NoSQL.MongoDb {
         }
 
         private static IMongoDatabase RegisterMongoDatabase(IComponentContext ctx) {
-            var opts = ctx.Resolve<IOptions<MongoOptions>>().Value ?? MongoOptions.Default;
+            var opts = ctx.ResolveOptional<MongoOptions>() ?? MongoOptions.Default;
             return ctx.ResolveNamed<IMongoClient>(MONGO_CLIENT_KEY).GetDatabase(opts.DatabaseName);
         }
 

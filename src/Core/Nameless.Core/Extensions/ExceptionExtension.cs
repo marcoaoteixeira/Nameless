@@ -2,8 +2,7 @@
 using System.Security;
 using Nameless.Exceptions;
 
-namespace Nameless
-{
+namespace Nameless {
 
     /// <summary>
     /// Extension methods for <see cref="Exception"/>.

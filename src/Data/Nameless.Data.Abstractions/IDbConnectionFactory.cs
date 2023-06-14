@@ -2,22 +2,22 @@ using System.Data;
 
 namespace Nameless.Data {
 
-	public interface IDbConnectionFactory {
+    public interface IDbConnectionFactory {
 
-		#region Properties
+        #region Properties
 
-		string ProviderName { get; }
+        string ProviderName { get; }
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		/// <summary>
-		/// Creates a new database connection.
-		/// </summary>
-		/// <returns>An instance of <see cref="IDbConnection" />.</returns>
-		IDbConnection Create();
+        /// <summary>
+        /// Creates a new database connection.
+        /// </summary>
+        /// <returns>An instance of <see cref="IDbConnection" />.</returns>
+        IDbConnection Create();
 
-		#endregion
-	}
+        #endregion
+    }
 }

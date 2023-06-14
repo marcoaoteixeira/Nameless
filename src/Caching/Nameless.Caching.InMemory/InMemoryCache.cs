@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
@@ -15,7 +14,7 @@ namespace Nameless.Caching.InMemory {
 
         #region Public Constructors
 
-        public InMemoryCache(IOptions<MemoryCacheOptions> options) {
+        public InMemoryCache(MemoryCacheOptions options) {
             _cache = new MemoryCache(options);
         }
 

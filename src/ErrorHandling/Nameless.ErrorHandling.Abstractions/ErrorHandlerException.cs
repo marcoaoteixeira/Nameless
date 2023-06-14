@@ -4,7 +4,7 @@
         #region Public Constructors
 
         public ErrorHandlerException(Exception inner)
-            : base ("Exception thrown by ErrorHandling system. See inner exception for more info.", inner) { }
+            : base("Exception thrown by ErrorHandling system. See inner exception for more info.", inner) { }
 
         #endregion
 

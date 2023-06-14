@@ -170,8 +170,7 @@ namespace Nameless.Data {
             using var command = CreateCommand(commandText, commandType, parameters);
 
             IDataReader reader;
-            try { reader = command.ExecuteReader(); }
-            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            try { reader = command.ExecuteReader(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             using (reader) {
                 while (reader.Read()) {
                     yield return mapper(reader);

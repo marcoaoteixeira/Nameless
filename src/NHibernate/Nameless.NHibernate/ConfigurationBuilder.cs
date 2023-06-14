@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using NHibernate.Cfg;
+﻿using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 
@@ -15,8 +14,8 @@ namespace Nameless.NHibernate {
 
         #region Public Constructors
 
-        public ConfigurationBuilder(IOptions<NHibernateOptions> options) {
-            _options = options.Value ?? NHibernateOptions.Default;
+        public ConfigurationBuilder(NHibernateOptions options) {
+            _options = options ?? NHibernateOptions.Default;
         }
 
         #endregion

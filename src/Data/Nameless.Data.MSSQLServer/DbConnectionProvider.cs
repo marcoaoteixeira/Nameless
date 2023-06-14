@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 using Nameless.Logging;
 
 namespace Nameless.Data.MSSQLServer {
@@ -30,8 +29,8 @@ namespace Nameless.Data.MSSQLServer {
 
         #region Public Constructors
 
-        public DbConnectionProvider(IOptions<DatabaseOptions> options) {
-            _options = options.Value ?? DatabaseOptions.Default;
+        public DbConnectionProvider(DatabaseOptions options) {
+            _options = options ?? DatabaseOptions.Default;
         }
 
         #endregion
@@ -44,8 +43,7 @@ namespace Nameless.Data.MSSQLServer {
             var connection = new SqlConnection(_options.ConnectionString);
 
             if (connection.State != ConnectionState.Open) {
-                try { connection.Open(); }
-                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                try { connection.Open(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             }
 
             return connection;

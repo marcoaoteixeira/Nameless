@@ -2,8 +2,7 @@
 using FluentValidation.Results;
 using Nameless.Infrastructure;
 
-namespace Nameless.CommandQuery.Mappings
-{
+namespace Nameless.CommandQuery.Mappings {
 
     public sealed class ValidationResult_ExecutionResult : Profile {
 

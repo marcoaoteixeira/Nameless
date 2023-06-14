@@ -8,68 +8,68 @@ namespace Nameless.Lucene {
     /// </summary>
     public sealed class SearchHit : ISearchHit {
 
-		#region Private Read-Only Fields
+        #region Private Read-Only Fields
 
-		private readonly Lucene_Document _document;
-		private readonly float _score;
+        private readonly Lucene_Document _document;
+        private readonly float _score;
 
-		#endregion
+        #endregion
 
-		#region Public Constructors
+        #region Public Constructors
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="SearchHit"/>
-		/// </summary>
-		/// <param name="document">The document.</param>
-		/// <param name="score">The score.</param>
-		public SearchHit(Lucene_Document document, float score) {
-			Prevent.Null(document, nameof(document));
+        /// <summary>
+        /// Initializes a new instance of <see cref="SearchHit"/>
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="score">The score.</param>
+        public SearchHit(Lucene_Document document, float score) {
+            Prevent.Null(document, nameof(document));
 
-			_document = document;
-			_score = score;
-		}
+            _document = document;
+            _score = score;
+        }
 
-		#endregion
+        #endregion
 
-		#region ISearchHit Members
+        #region ISearchHit Members
 
-		/// <inheritdoc />
-		public string DocumentID => GetString(nameof(ISearchHit.DocumentID));
+        /// <inheritdoc />
+        public string DocumentID => GetString(nameof(ISearchHit.DocumentID));
 
-		/// <inheritdoc />
-		public float Score => _score;
+        /// <inheritdoc />
+        public float Score => _score;
 
-		/// <inheritdoc />
-		public int GetInt(string name) {
-			var field = _document.GetField(name);
+        /// <inheritdoc />
+        public int GetInt(string name) {
+            var field = _document.GetField(name);
 
-			return field != default ? int.Parse(field.GetStringValue()) : 0;
-		}
+            return field != default ? int.Parse(field.GetStringValue()) : 0;
+        }
 
-		/// <inheritdoc />
-		public double GetDouble(string name) {
-			var field = _document.GetField(name);
+        /// <inheritdoc />
+        public double GetDouble(string name) {
+            var field = _document.GetField(name);
 
-			return field != default ? double.Parse(field.GetStringValue()) : 0d;
-		}
+            return field != default ? double.Parse(field.GetStringValue()) : 0d;
+        }
 
-		/// <inheritdoc />
-		public bool GetBoolean(string name) => GetInt(name) > 0;
+        /// <inheritdoc />
+        public bool GetBoolean(string name) => GetInt(name) > 0;
 
-		/// <inheritdoc />
-		public string GetString(string name) {
-			var field = _document.GetField(name);
+        /// <inheritdoc />
+        public string GetString(string name) {
+            var field = _document.GetField(name);
 
-			return field != default ? field.GetStringValue() : string.Empty;
-		}
+            return field != default ? field.GetStringValue() : string.Empty;
+        }
 
-		/// <inheritdoc />
-		public DateTimeOffset GetDateTimeOffset(string name) {
-			var field = _document.GetField(name);
+        /// <inheritdoc />
+        public DateTimeOffset GetDateTimeOffset(string name) {
+            var field = _document.GetField(name);
 
-			return field != default ? DateTools.StringToDate(field.GetStringValue()) : DateTimeOffset.MinValue;
-		}
+            return field != default ? DateTools.StringToDate(field.GetStringValue()) : DateTimeOffset.MinValue;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

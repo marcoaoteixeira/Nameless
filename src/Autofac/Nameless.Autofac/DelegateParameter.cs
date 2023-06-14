@@ -47,7 +47,7 @@ namespace Nameless.Autofac {
             if (methodInfo == default) { return default; }
 
             if (methodInfo.IsSpecialName && (methodInfo.Name.StartsWith("set_", StringComparison.Ordinal) && methodInfo.DeclaringType != null))
-                return methodInfo.DeclaringType.GetProperty(methodInfo.Name.Substring(4));
+                return methodInfo.DeclaringType.GetProperty(methodInfo.Name[4..]);
             return null;
         }
 

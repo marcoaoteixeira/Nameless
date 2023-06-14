@@ -53,8 +53,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         private void OnMessage<T>(Registration<T> registration, BasicDeliverEventArgs deliverArgs, Arguments arguments) {
             Action<T>? handler;
 
-            try { handler = registration.CreateHandler(); }
-            catch (Exception ex) {
+            try { handler = registration.CreateHandler(); } catch (Exception ex) {
                 Logger.Error(ex, $"({registration}) Handler creation failed. Reason: {ex.Message}");
                 NoAcknowledge(_channel, deliverArgs, arguments);
                 return;

@@ -1,7 +1,6 @@
 ﻿using Nameless.Services;
 
-namespace Nameless
-{
+namespace Nameless {
 
     /// <summary>
     /// Extension methods for <see cref="IXmlSchemaValidator"/>.

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Nameless.Collections.Generic;
 
 namespace Nameless.Core.UnitTests.Collections.Generic {
-    
+
     public class AsyncEnumerableTests {
 
         [Test]
@@ -18,7 +14,7 @@ namespace Nameless.Core.UnitTests.Collections.Generic {
             var enumerable = new AsyncEnumerable<int>(items);
 
             // assert
-        
+
         }
     }
 }

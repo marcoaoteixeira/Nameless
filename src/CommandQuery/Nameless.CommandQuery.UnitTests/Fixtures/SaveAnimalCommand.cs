@@ -1,7 +1,6 @@
 ﻿using Nameless.Infrastructure;
 
-namespace Nameless.CommandQuery.UnitTests.Fixtures
-{
+namespace Nameless.CommandQuery.UnitTests.Fixtures {
 
     public sealed class SaveAnimalCommand : ICommand {
 
@@ -9,7 +8,7 @@ namespace Nameless.CommandQuery.UnitTests.Fixtures
     }
 
     public sealed class SaveAnimalCommandHandler : ICommandHandler<SaveAnimalCommand> {
-        
+
         public Task<ExecutionResult> HandleAsync(SaveAnimalCommand command, CancellationToken cancellationToken = default) {
             return Task.FromResult(ExecutionResult.Successful(1));
         }

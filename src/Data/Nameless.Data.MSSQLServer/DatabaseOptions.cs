@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Data.MSSQLServer {
 
-	public sealed class DatabaseOptions {
+    public sealed class DatabaseOptions {
 
         #region Public Static Read-Only Fields
 
@@ -15,6 +15,6 @@
         /// </summary>
         public string ConnectionString { get; set; } = "Server=.;Database=master;User Id=sa;Password=sa;";
 
-		#endregion
-	}
+        #endregion
+    }
 }

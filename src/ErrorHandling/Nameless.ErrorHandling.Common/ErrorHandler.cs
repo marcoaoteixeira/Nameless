@@ -21,8 +21,7 @@
         #region IErrorHandler Members
 
         public void Run(Action action, bool ignoreError = false) {
-            try { action(); }
-            catch (Exception ex) {
+            try { action(); } catch (Exception ex) {
                 foreach (var policy in _policyProvider.GetPoliciesFor(ex)) {
                     policy.Handle(ex);
                 }

@@ -1,5 +1,4 @@
 ﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using Nameless.FileStorage;
@@ -7,8 +6,7 @@ using Nameless.Logging;
 using Nameless.Services;
 using Nameless.Services.Impl;
 
-namespace Nameless.Messenger.Email
-{
+namespace Nameless.Messenger.Email {
 
     public sealed class MessengerService : IMessengerService {
 
@@ -37,11 +35,11 @@ namespace Nameless.Messenger.Email
         /// </summary>
         /// <param name="fileStorage">The file storage.</param>
         /// <param name="options">The SMTP client settings.</param>
-        public MessengerService(IFileStorage fileStorage, IOptions<MessengerOptions> options, IClock? clock = default) {
+        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClock? clock = default) {
             Prevent.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
-            _opts = options.Value ?? MessengerOptions.Default;
+            _opts = options ?? MessengerOptions.Default;
             _clock = clock ?? DefaultClock.Instance;
         }
 
@@ -91,7 +89,7 @@ namespace Nameless.Messenger.Email
 
         public async Task<MessageResponse> DispatchAsync(MessageRequest request, CancellationToken cancellationToken = default) {
             Prevent.Null(request, nameof(request));
-            
+
             if (request.From.IsNullOrEmpty()) {
                 throw new InvalidOperationException("Missing sender address.");
             }
@@ -129,8 +127,7 @@ namespace Nameless.Messenger.Email
                 ((string)bcc).Split(';').Each(_ => mail.Bcc.Add(InternetAddress.Parse(_)));
             }
 
-            try { await SendAsync(mail, cancellationToken); }
-            catch (Exception ex) { return MessageResponse.Failure(ex); }
+            try { await SendAsync(mail, cancellationToken); } catch (Exception ex) { return MessageResponse.Failure(ex); }
 
             return MessageResponse.Successful();
         }

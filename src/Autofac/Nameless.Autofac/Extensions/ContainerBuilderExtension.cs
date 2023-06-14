@@ -1,5 +1,4 @@
-﻿using System.Security.AccessControl;
-using Autofac;
+﻿using Autofac;
 using Autofac_Parameter = Autofac.Core.Parameter;
 
 namespace Nameless.Autofac {
@@ -21,7 +20,8 @@ namespace Nameless.Autofac {
         public static ContainerBuilder Register<TService, TImplementation>(this ContainerBuilder self, string? name = default, LifetimeScopeType lifetimeScope = LifetimeScopeType.Transient, params Autofac_Parameter[] parameters)
             where TService : class
             where TImplementation : TService {
-            return self.Register(
+            return Register(
+                self: self,
                 service: typeof(TService),
                 implementation: typeof(TImplementation),
                 name: name,
@@ -73,7 +73,7 @@ namespace Nameless.Autofac {
 
         private static bool RegisterAsSingleton(ContainerBuilder builder, Type service, Type implementation, string? name = default) {
             var result = false;
-            
+
             if (implementation.IsSingleton()) {
                 var instance = SingletonAttribute.GetInstance(implementation);
                 if (instance == default) {

@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Data.MySQL {
 
-	public sealed class DatabaseOptions {
+    public sealed class DatabaseOptions {
 
         #region Public Static Read-Only Properties
 
@@ -15,6 +15,6 @@
         /// </summary>
         public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;";
 
-		#endregion
-	}
+        #endregion
+    }
 }

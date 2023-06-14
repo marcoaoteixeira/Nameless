@@ -25,7 +25,7 @@ namespace Nameless.Data {
         #region Public Constructors
 
         public DataModule(params Assembly[] supportAssemblies)
-            : base (supportAssemblies) { }
+            : base(supportAssemblies) { }
 
         #endregion
 
@@ -34,8 +34,12 @@ namespace Nameless.Data {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
             var dbConnectionFactoryImplementation = DbConnectionFactoryImplementation
-                ?? SearchForImplementation<IDbConnectionFactory>()
-                ?? throw new ImplementationNotFoundException(typeof(IDbConnectionFactory));
+                ?? SearchForImplementation<IDbConnectionFactory>();
+
+            if (dbConnectionFactoryImplementation == default) {
+                throw new InvalidOperationException($"Could not find implementation for {nameof(IDbConnectionFactory)}.");
+            }
+
             builder
                 .RegisterType(dbConnectionFactoryImplementation)
                 .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_KEY)

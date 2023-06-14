@@ -2,8 +2,7 @@
 using FluentValidation;
 using Nameless.Infrastructure;
 
-namespace Nameless.CommandQuery.UnitTests.Fixtures
-{
+namespace Nameless.CommandQuery.UnitTests.Fixtures {
 
     public sealed class UpdateAnimalCommand : ICommand {
 

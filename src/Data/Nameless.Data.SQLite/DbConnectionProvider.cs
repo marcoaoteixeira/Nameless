@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Options;
 using Nameless.Logging;
 
 namespace Nameless.Data.SQLite {
@@ -30,8 +29,8 @@ namespace Nameless.Data.SQLite {
 
         #region Public Constructors
 
-        public DbConnectionProvider(IOptions<DatabaseOptions> options) {
-            _options = options.Value ?? DatabaseOptions.Default;
+        public DbConnectionProvider(DatabaseOptions options) {
+            _options = options ?? DatabaseOptions.Default;
         }
 
         #endregion

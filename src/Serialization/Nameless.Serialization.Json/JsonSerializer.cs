@@ -16,7 +16,7 @@ namespace Nameless.Serialization.Json {
 
         public object? Deserialize(Type? type, byte[]? buffer, SerializationOptions? options = default) {
             Prevent.Null(type, nameof(type));
-            
+
             if (buffer == default) { return default; }
 
             var opts = options as JsonSerializationOptions ?? JsonSerializationOptions.Default;

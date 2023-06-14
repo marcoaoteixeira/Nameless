@@ -44,6 +44,13 @@ dotnet tool install -g dotnet-reportgenerator-globaltool
 
 Nothing defined, use your good sense.
 
+### About The Code
+
+When I create a new extension method my point is to never throw an exception
+if the target instance is _null_. I'll always return the expected _default_
+value. Only the cases where it's not possible to return a _default_ value
+I'll throw an _ArgumentNullException_. And that's it.
+
 ## Deployment
 
 I'm using GitHub Actions to act as a CI/CD. All files are located in the

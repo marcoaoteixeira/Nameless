@@ -1,5 +1,4 @@
 using System.Data;
-using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Nameless.Logging;
 
@@ -30,8 +29,8 @@ namespace Nameless.Data.MySQL {
 
         #region Public Constructors
 
-        public DbConnectionProvider(IOptions<DatabaseOptions> options) {
-            _options = options.Value ?? DatabaseOptions.Default;
+        public DbConnectionProvider(DatabaseOptions options) {
+            _options = options ?? DatabaseOptions.Default;
         }
 
         #endregion
@@ -44,8 +43,7 @@ namespace Nameless.Data.MySQL {
             var connection = new MySqlConnection(_options.ConnectionString);
 
             if (connection.State != ConnectionState.Open) {
-                try { connection.Open(); }
-                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                try { connection.Open(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             }
 
             return connection;

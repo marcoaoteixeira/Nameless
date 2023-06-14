@@ -55,7 +55,7 @@ namespace Nameless.NHibernate {
 
         public IDictionary<string, string> ToDictionary() {
             var configs = new List<KeyValuePair<string, string>>();
-            
+
             var properties = GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(_ => typeof(NHibernateOptionsBase).IsAssignableFrom(_.PropertyType));

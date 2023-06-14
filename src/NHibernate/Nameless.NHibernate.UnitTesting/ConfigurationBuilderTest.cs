@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace Nameless.NHibernate.UnitTesting {
+﻿namespace Nameless.NHibernate.UnitTesting {
 
     public class ConfigurationBuilderTest {
 
         [Test]
         public void Build_Should_Return_Configuration() {
 
-            IConfigurationBuilder builder = new ConfigurationBuilder(Options.Create(NHibernateOptions.Default));
+            IConfigurationBuilder builder = new ConfigurationBuilder(NHibernateOptions.Default);
 
             var config = builder.Build();
 
@@ -21,7 +19,7 @@ namespace Nameless.NHibernate.UnitTesting {
             var opts = new NHibernateOptions();
             opts.Common.Dialect = expected;
 
-            IConfigurationBuilder builder = new ConfigurationBuilder(Options.Create(opts));
+            IConfigurationBuilder builder = new ConfigurationBuilder(opts);
 
             var config = builder.Build();
 

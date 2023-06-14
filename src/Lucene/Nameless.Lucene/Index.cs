@@ -110,8 +110,7 @@ namespace Nameless.Lucene {
                     case IndexableType.Text:
                         var textValue = (string)fieldValue;
                         if (sanitize) { textValue = textValue.RemoveHtmlTags(); }
-                        if (analyze) { luceneDocument.Add(new TextField(fieldName, textValue, store)); }
-                        else { luceneDocument.Add(new StringField(fieldName, textValue, store)); }
+                        if (analyze) { luceneDocument.Add(new TextField(fieldName, textValue, store)); } else { luceneDocument.Add(new StringField(fieldName, textValue, store)); }
                         break;
 
                     case IndexableType.DateTime:
@@ -146,7 +145,7 @@ namespace Nameless.Lucene {
 
         private void Initialize() {
             _directory = Lucene_FSDirectory.Open(new DirectoryInfo(_indexDirectoryPath));
-            
+
             // Creates the index directory
             using (CreateIndexWriter()) { }
         }
@@ -215,7 +214,7 @@ namespace Nameless.Lucene {
 
         /// <inheritdoc />
         public void StoreDocuments(params IDocument[] documents) {
-           if (documents.IsNullOrEmpty()) { return; }
+            if (documents.IsNullOrEmpty()) { return; }
 
             var ids = documents.Select(_ => _.ID).ToArray();
 

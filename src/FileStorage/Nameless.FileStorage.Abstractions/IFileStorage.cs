@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Nameless.FileStorage {
+﻿namespace Nameless.FileStorage {
 
     /// <summary>
     /// Represents a generic abstraction over a file storage.
