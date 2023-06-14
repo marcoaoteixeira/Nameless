@@ -63,15 +63,11 @@ _TeamCity*
 
 # NuGet Packages
 *.nupkg
-# The packages folder can be ignored because of Package Restore
-**/packages/*
-# except build/, which is used as an MSBuild target.
-!**/packages/build/
+# Packages stored here could not be found on nuget.org, so will build it.
 !**/packages/unavailable/*.nupkg
-# Uncomment if necessary however generally it will be regenerated when needed
-#!**/packages/repositories.config
 # Remove builded nupkg folder
 nuget_packages
+**/packages/
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
