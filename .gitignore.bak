@@ -67,7 +67,7 @@ _TeamCity*
 !**/packages/unavailable/*.nupkg
 # Remove builded nupkg folder
 nuget_packages
-packages
+**/packages/
 
 # Visual Studio cache files
 # files ending in .cache can be ignored

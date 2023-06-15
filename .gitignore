@@ -96,6 +96,7 @@ Backup*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 *.bkp
+*.bak
 
 # SQL Server files
 *.mdf
