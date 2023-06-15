@@ -1,7 +1,7 @@
-﻿# Nameless Caching In-Memory (Extra)
+﻿# Nameless Caching Redis (Extra)
 
 An [Autofac](https://github.com/autofac/Autofac) module to use with
-_Nameless.Caching.InMemory_.
+_Nameless.Caching.Redis_.
 
 _I tried to mention every person that I got something from. If you find code
 that needs to be given the correct authorship, please, let me know._

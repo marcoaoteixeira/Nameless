@@ -38,17 +38,15 @@ namespace Nameless.Caching.InMemory {
         private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = default) {
             var result = new MemoryCacheEntryOptions();
 
-            if (opts == null) { return result; }
+            if (opts == null || opts.ExpiresIn == default) { return result; }
 
-            if (opts.ExpiresIn != default) {
-                var cts = new CancellationTokenSource(opts.ExpiresIn);
-                var changeToken = new CancellationChangeToken(cts.Token);
-                result.ExpirationTokens.Add(changeToken);
+            var cts = new CancellationTokenSource(opts.ExpiresIn);
+            var changeToken = new CancellationChangeToken(cts.Token);
+            result.ExpirationTokens.Add(changeToken);
 
-                result.RegisterPostEvictionCallback((key, value, reason, state) => {
-                    OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts);
-                });
-            }
+            result.RegisterPostEvictionCallback((key, value, reason, state) => {
+                OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts);
+            });
 
             return result;
         }
@@ -77,24 +75,24 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<object> SetAsync(string key, object value, CacheEntryOptions? opts = default, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = default, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _cache.Set(key, value, GetOptions(opts));
+            var result = value != default && _cache.Set(key, value, GetOptions(opts)) != default;
 
             return Task.FromResult(result);
         }
 
-        public Task<object?> GetAsync(string key, CancellationToken cancellationToken = default) {
+        public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
             cancellationToken.ThrowIfCancellationRequested();
 
             var value = _cache.Get(key);
 
-            return Task.FromResult(value);
+            return Task.FromResult(value is T result ? result : default);
         }
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
@@ -106,8 +104,6 @@ namespace Nameless.Caching.InMemory {
 
             return Task.FromResult(true);
         }
-
-        public Task<bool> RefreshAsync(string key, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
         #endregion
 

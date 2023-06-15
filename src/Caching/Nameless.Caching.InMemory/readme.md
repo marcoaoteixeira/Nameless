@@ -1,8 +1,10 @@
-﻿# Nameless Core
+﻿# Nameless Caching In-Memory
 
-This code has no intents to be something great. Just random pieces of code that
-a written (or copy) over the years. And nowadays its used in most of my
-personal developments.
+Cache implementation of Nameless.Cache.Abstractions, under the hood it uses
+_Microsoft.Extensions.Caching.Memory_.
+
+_I tried to mention every person that I got something from. If you find code
+that needs to be given the correct authorship, please, let me know._
 
 ## Starting
 
@@ -16,30 +18,36 @@ No pre-requirements
 
 ### Installing
 
+```
 Well, no need to install anything.
+```
 
 ### Testing
 
-There is a test project, inside the "test" folder. Maybe you'll need to install
-the coverage tool and a report tool
+There is a test projects. Maybe you'll need to install the coverage tool and a
+report tool. If I'm not mistaken, Visual Studio already has those dependencies
+installed for you after restore. But...
 
-*Coverlet*
+_.NET Coverlet Tool_
+
 ```
 dotnet tool install -g coverlet.console
 ```
 
-*.NET Report Generator*
+_.NET Report Generator Tool_
+
 ```
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
 ### Coding Styles
 
-Nothing defined, just use the good sense.
+Nothing defined, use your good sense.
 
 ## Deployment
 
-There are informations to deploy the NuGet packages, inside the project file.
+I'm using GitHub Actions to act as a CI/CD. All files are located in the
+.github folder.
 
 ## Contribuition
 
@@ -51,7 +59,7 @@ Using [SemVer](http://semver.org/) for assembly versioning.
 
 ## Authors
 
-* **Marco Teixeira (marcoaoteixeira)** - *initial work*
+- **Marco Teixeira (marcoaoteixeira)** - _initial work_
 
 ## License
 
@@ -59,4 +67,4 @@ MIT
 
 ## Acknowledgement
 
-* Hat tip to anyone whose code was used. 
+- Hat tip to anyone whose code was used.

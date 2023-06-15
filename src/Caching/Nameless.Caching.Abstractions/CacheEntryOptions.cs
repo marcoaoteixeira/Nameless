@@ -16,7 +16,7 @@
 
         #region Public Properties
 
-        public TimeSpan ExpiresIn { get; set; } = TimeSpan.Zero;
+        public TimeSpan ExpiresIn { get; set; }
         public EvictionCallback EvictionCallback {
             get { return _evictionCallback ??= DefaultEvictionCallback; }
             set { _evictionCallback = value; }

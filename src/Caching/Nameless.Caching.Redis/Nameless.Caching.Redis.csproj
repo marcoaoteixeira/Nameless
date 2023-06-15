@@ -43,6 +43,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\Logging\Nameless.Logging.Abstractions\Nameless.Logging.Abstractions.csproj" />
+		<ProjectReference Include="..\Nameless.Caching.Abstractions\Nameless.Caching.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>
