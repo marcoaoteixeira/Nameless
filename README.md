@@ -16,13 +16,13 @@ Instructions below will show your the way to get things working.
 No pre-requirements
 ```
 
-### Installing
+## Installing
 
 ```
 Well, no need to install anything.
 ```
 
-### Testing
+## Testing
 
 There are some test projects. Maybe you'll need to install the coverage tool
 and a report tool. If I'm not mistaken, Visual Studio already has those
@@ -40,16 +40,28 @@ _.NET Report Generator Tool_
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
-### Coding Styles
+## Coding Styles
 
-Nothing defined, use your good sense.
+Nothing written into stone, use your good sense. But you can refere to this
+page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
 
-### About The Code
+### Some Ideas to Keep in Mind
 
-When I create a new extension method my point is to never throw an exception
-if the target instance is _null_. I'll always return the expected _default_
-value. Only the cases where it's not possible to return a _default_ value
-I'll throw an _ArgumentNullException_. And that's it.
+- When I create a new extension method I never throw an _ArgumentNullException_
+  if the target instance is _null_. What I do is to return the _default_ value.
+  - The only cases are some where it's not possible to return a _default_ value,
+    so I'll throw an excption. And that's it.
+- **_default_** vs **_null_** :
+  - Am I sure is a reference type? **null**
+  - Am I sure is a value type? **default**
+  - I'm not sure at all: **default**
+- I think that most of my developer's life I spent writing C# code. But I like
+  that kind of code organization from Java so, I use, almost, that same style
+  of code identation on my project.
+- Methods that returns arrays, collections or enumerables in general,
+  **DO NOT RETURN NULL VALUE EVER!!!** If there is no value to return, just
+  return an empty enumerable from the same type. Use [_Array.Empty\<T\>()_](https://learn.microsoft.com/en-us/dotnet/api/system.array.empty?view=net-7.0) or
+  [_Enumerable.Empty\<T\>()_](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=net-7.0)
 
 ## Deployment
 

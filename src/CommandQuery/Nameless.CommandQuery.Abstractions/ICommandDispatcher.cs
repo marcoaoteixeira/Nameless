@@ -1,7 +1,9 @@
 ﻿using Nameless.Infrastructure;
 
 namespace Nameless.CommandQuery {
+
     public interface ICommandDispatcher {
+
         #region Methods
 
         /// <summary>

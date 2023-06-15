@@ -1,5 +1,7 @@
 ﻿namespace Nameless.CommandQuery {
+
     public interface IQueryDispatcher {
+
         #region Methods
 
         /// <summary>

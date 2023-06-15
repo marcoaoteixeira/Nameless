@@ -19,13 +19,12 @@ namespace Nameless {
         /// <param name="self">The <see cref="IAsyncEnumerable{T}"/> source.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The first or default item in the <see cref="IAsyncEnumerable{T}"/></returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public async static Task<T> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
-            Prevent.Null(self, nameof(self));
+        public async static Task<T?> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
+            if (self == default) { return default; }
 
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
-            return await enumerator.MoveNextAsync() ? enumerator.Current : default!;
+            return await enumerator.MoveNextAsync() ? enumerator.Current : default;
         }
 
         /// <summary>

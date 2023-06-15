@@ -6,6 +6,7 @@ namespace Nameless.CommandQuery {
     /// </summary>
     /// <typeparam name="TCommand">Type of the command.</typeparam>
     public interface ICommandHandler<in TCommand> where TCommand : ICommand {
+
         #region Methods
 
         /// <summary>
