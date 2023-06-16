@@ -40,6 +40,13 @@ _.NET Report Generator Tool_
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
+### Integration Tests
+
+Some tests requires an environment to run properly, such as Redis Cache
+or things like that. So, those tests have a category setted on them named
+**_INTEGRATION_**. Make sure that the test running script ignore those
+tests marked with this category so you don't break your build.
+
 ## Coding Styles
 
 Nothing written into stone, use your good sense. But you can refere to this

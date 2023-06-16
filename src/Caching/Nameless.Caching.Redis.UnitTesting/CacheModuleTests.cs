@@ -3,6 +3,7 @@
 namespace Nameless.Caching.Redis.UnitTesting {
     public class CacheModuleTests {
 
+        [Ignore("Need to find a way to test this without local Redis")]
         [Test]
         public void Can_Initialize_Cache_Module() {
             var builder = new ContainerBuilder();

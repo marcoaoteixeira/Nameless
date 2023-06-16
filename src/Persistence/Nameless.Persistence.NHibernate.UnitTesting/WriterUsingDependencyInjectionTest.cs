@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Options;
 using Nameless.NHibernate;
 using Nameless.Persistence.NHibernate.UnitTesting.Fixtures;
 using NHibernate;
@@ -32,7 +31,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
             };
 
             builder
-                .RegisterInstance(Options.Create(options));
+                .RegisterInstance(options);
             builder
                 .RegisterModule(new NHibernateModule {
                     SchemaInfo = new() {

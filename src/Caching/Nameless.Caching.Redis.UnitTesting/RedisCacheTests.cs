@@ -1,82 +1,107 @@
+using System.Text.Json;
+using Moq;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis.UnitTesting {
     public class RedisCacheTests {
-        private IRedisDatabaseManager _databaseManager;
-        private IDatabase _database;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup() {
-
-            _databaseManager = new RedisDatabaseManager(new RedisOptions {
-                Port = 55400
-            });
-            _database = _databaseManager.GetDatabase();
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown() {
-            ((IDisposable)_databaseManager).Dispose();
-        }
 
         [Test]
         public async Task Can_Set_New_Value_To_Cache() {
             // arrange
-            var cache = new RedisCache(_database);
-            var obj = new {
+            var key = "Test";
+            var value = new {
                 Id = 1,
-                Name = "My Test"
+                Name = "Test"
             };
+            var json = JsonSerializer.Serialize(value);
+            var database = new Mock<IDatabase>();
+            database
+                .Setup(_ => _.StringSetAsync(key, json, It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
+                .ReturnsAsync(true)
+                .Verifiable();
+            var cache = new RedisCache(database.Object);
 
             // act
-            var result = await cache.SetAsync("cd5cfd4c-db35-49e9-b5d1-d1dcd0fed30a", obj);
+            var set = await cache.SetAsync(key, value);
 
             // assert
-            Assert.That(result, Is.True);
+            Assert.Multiple(() => {
+                Assert.That(set, Is.True);
+                Assert.That(database.VerifyAll, Throws.Nothing);
+            });
         }
 
         [Test]
         public async Task Can_Get_Value_From_Cache() {
             // arrange
-            var cache = new RedisCache(_database);
-            var obj = new {
+            var key = "Test";
+            var value = new {
                 Id = 1,
-                Name = "My Test"
+                Name = "Test"
             };
-            var key = "ee15493f-c1ec-444b-b61b-7461a0b4622e";
+            var json = JsonSerializer.Serialize(value);
+            var database = new Mock<IDatabase>();
+            database
+                .Setup(_ => _.StringSetAsync(key, json, It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
+                .ReturnsAsync(true)
+                .Verifiable();
+            database
+                .Setup(_ => _.StringGetAsync(key, It.IsAny<CommandFlags>()))
+                .ReturnsAsync(json)
+                .Verifiable();
+            var cache = new RedisCache(database.Object);
+
 
             // act
-            var set = await cache.SetAsync(key, obj);
+            var set = await cache.SetAsync(key, value);
             var get = await cache.GetAsync<object>(key);
 
             // assert
-            Assert.That(set, Is.True);
-            Assert.That(get, Is.Not.Null);
+            Assert.Multiple(() => {
+                Assert.That(set, Is.True);
+                Assert.That(get, Is.Not.Null);
+                Assert.That(database.VerifyAll, Throws.Nothing);
+            });
         }
 
         [Test]
         public async Task Can_Set_Value_To_Cache_With_ExpiresIn() {
             // arrange
-            var cache = new RedisCache(_database);
-            var obj = new {
+            // arrange
+            var key = "Test";
+            var value = new {
                 Id = 1,
-                Name = "My Test"
+                Name = "Test"
             };
-            var key = "95931450-923e-46ea-8908-cf09f627af96";
+            var json = JsonSerializer.Serialize(value);
             var opts = new CacheEntryOptions {
                 ExpiresIn = TimeSpan.FromMilliseconds(500)
             };
+            var database = new Mock<IDatabase>();
+            database
+                .Setup(_ => _.StringSetAsync(key, json, opts.ExpiresIn, It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
+                .ReturnsAsync(true)
+                .Verifiable();
+            database
+                .Setup(_ => _.StringGetAsync(key, It.IsAny<CommandFlags>()))
+                .ReturnsAsync(string.Empty)
+                .Verifiable();
+            var cache = new RedisCache(database.Object);
+            
 
             // act
-            var set = await cache.SetAsync(key, obj, opts);
+            var set = await cache.SetAsync(key, value, opts);
 
             await Task.Delay(TimeSpan.FromMilliseconds(750));
 
             var get = await cache.GetAsync<object>(key);
 
             // assert
-            Assert.That(set, Is.True);
-            Assert.That(get, Is.Null);
+            Assert.Multiple(() => {
+                Assert.That(set, Is.True);
+                Assert.That(get, Is.Null);
+                Assert.That(database.VerifyAll, Throws.Nothing);
+            });
         }
     }
 }

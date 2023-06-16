@@ -1,7 +1,6 @@
 using System.Globalization;
 using Autofac;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Nameless.FileStorage.System;
 using Nameless.Localization.Json;
 using Nameless.Localization.Microsoft.UnitTests.Fixtures;
@@ -16,7 +15,7 @@ namespace Nameless.Localization.Microsoft.UnitTests {
             inner
                 .RegisterModule<FileStorageModule>();
             inner
-                .RegisterInstance(Options.Create(LocalizationOptions.Default));
+                .RegisterInstance(LocalizationOptions.Default);
             inner
                 .RegisterModule<LocalizationModule>();
             inner
