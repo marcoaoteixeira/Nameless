@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Moq;
 
 namespace Nameless.Core.UnitTests.Extensions {
@@ -7,11 +8,12 @@ namespace Nameless.Core.UnitTests.Extensions {
         [Test]
         public void Get_Assembly_Directory_Path_In_FileSystem() {
             // arrange
-            var directory = "C:\\This\\Is\\A\\Test";
+            var pathSeparator = OperatingSystem.IsWindows() ? '\\' : '/';
+            var directory = string.Join(pathSeparator, "C:", "This", "Is", "A", "Test");
             var assembly = new Mock<Assembly>();
             assembly
                 .Setup(_ => _.Location)
-                .Returns($"{directory}\\Assembly.dll");
+                .Returns($"{directory}{pathSeparator}Assembly.dll");
 
             // act
             var path = AssemblyExtension.GetDirectoryPath(assembly.Object);
