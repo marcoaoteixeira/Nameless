@@ -7,7 +7,6 @@ namespace Nameless.AspNetCore {
         #region Public Static Methods
 
         public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(configuration, nameof(configuration));
             Prevent.Null(optionsProvider, nameof(optionsProvider));
 

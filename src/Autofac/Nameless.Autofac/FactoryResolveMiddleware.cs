@@ -61,7 +61,7 @@ namespace Nameless.Autofac {
                     property.SetValue(
                         obj: context.Instance,
                         value: _factory(property, context),
-                        index: default
+                        index: null
                     );
                 }
             }

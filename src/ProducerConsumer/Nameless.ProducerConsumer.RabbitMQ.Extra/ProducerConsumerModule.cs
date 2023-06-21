@@ -12,6 +12,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         private const string CONNECTION_KEY = "Connection.d78abe02-49ce-424d-8e7a-df2ea4de837e";
         private const string CHANNEL_KEY = "Channel.e9aa434b-3418-451f-848e-a0999bb71ac2";
+        private const string BOOTSTRAPPER_KEY = "Bootstrapper.f27aecdd-c79f-457c-b9f3-10a8629219af";
 
         #endregion
 
@@ -41,6 +42,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 .WithParameter(ResolvedParameter.ForNamed<IModel>(CHANNEL_KEY))
                 .SingleInstance();
 
+            builder
+                .Register(BootstrapperResolver)
+                .Named<Bootstrapper>(BOOTSTRAPPER_KEY)
+                .AutoActivate();
+
             base.Load(builder);
         }
 
@@ -49,18 +55,18 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Static Methods
 
         private static IConnection ConnectionResolver(IComponentContext context) {
-            var settings = context.ResolveOptional<RabbitMQSettings>() ?? new();
+            var options = context.ResolveOptional<ProducerConsumerOptions>() ?? new();
             var factory = new ConnectionFactory {
-                HostName = settings.Server.Hostname,
-                Port = settings.Server.Port,
-                UserName = settings.Server.Username,
-                Password = settings.Server.Password
+                HostName = options.Server.Hostname,
+                Port = options.Server.Port,
+                UserName = options.Server.Username,
+                Password = options.Server.Password
             };
 
-            if (settings.Server.UseSsl) {
+            if (options.Server.UseSsl) {
                 factory.Ssl = new(
-                    serverName: settings.Server.ServerName,
-                    certificatePath: settings.Server.CertificatePath,
+                    serverName: options.Server.ServerName,
+                    certificatePath: options.Server.CertificatePath,
                     enabled: true
                 );
             }
@@ -71,13 +77,17 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         private static IModel ChannelResolver(IComponentContext context) {
-            var settings = context.ResolveOptional<RabbitMQSettings>() ?? new();
             var connection = context.ResolveNamed<IConnection>(CONNECTION_KEY);
-            var factory = new ChannelFactory(connection);
-
-            var channel = factory.Create(settings.Exchanges);
+            var channel = connection.CreateModel();
 
             return channel;
+        }
+
+        private static Bootstrapper BootstrapperResolver(IComponentContext context) {
+            var connection = context.ResolveNamed<IConnection>(CONNECTION_KEY);
+            var opts = context.ResolveOptional<ProducerConsumerOptions>() ?? new();
+
+            return new Bootstrapper(connection, opts);
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace Nameless.AspNetCore {
         /// <returns>A <see cref="string"/> representation of the IPv4.</returns>
         /// <remarks>If the IP address could not be parsed, a <see cref="string.Empty"/> will be returned instead.</remarks>
         public static string GetIPv4(this HttpContext self)
-            => self != default ? GetIPAddress(self).MapToIPv4().ToString() : string.Empty;
+            => GetIPAddress(self).MapToIPv4().ToString();
         /// <summary>
         /// Retrieves the IP address (v6) from the <see cref="HttpContext"/>.
         /// </summary>
@@ -25,7 +25,7 @@ namespace Nameless.AspNetCore {
         /// <returns>A <see cref="string"/> representation of the IPv6.</returns>
         /// <remarks>If the IP address could not be parsed, a <see cref="string.Empty"/> will be returned instead.</remarks>
         public static string GetIPv6(this HttpContext self)
-            => self != default ? GetIPAddress(self).MapToIPv6().ToString() : string.Empty;
+            => GetIPAddress(self).MapToIPv6().ToString();
 
         #endregion
 

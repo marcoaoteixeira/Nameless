@@ -8,13 +8,13 @@ namespace Nameless.ProducerConsumer {
         #region Methods
 
         /// <summary>
-        /// Registers a callback to handle the message for a specific topic.
+        /// Registers a handle to process a message for a specific topic.
         /// </summary>
         /// <param name="topic">The topic.</param>
-        /// <param name="callback">The callback handler.</param>
-        /// <param name="arguments">The consumer arguments.</param>
-        /// <returns>Returns the <see cref="Registration{T}"/> instance.</returns>
-        Registration<T> Register<T>(string topic, Action<T> callback, Arguments arguments);
+        /// <param name="handler">The message event handler.</param>
+        /// <param name="parameters">The consumer parameters.</param>
+        /// <returns>Returns a <see cref="Registration{T}"/> representing the consumer registration.</returns>
+        Registration<T> Register<T>(string topic, MessageEventHandler<T> handler, params Parameter[] parameters);
 
         /// <summary>
         /// Unregisters a consumer.

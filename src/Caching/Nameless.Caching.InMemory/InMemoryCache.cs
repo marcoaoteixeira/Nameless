@@ -35,7 +35,7 @@ namespace Nameless.Caching.InMemory {
             cts.Dispose();
         }
 
-        private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = default) {
+        private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = null) {
             var result = new MemoryCacheEntryOptions();
 
             if (opts == null || opts.ExpiresIn == default) { return result; }
@@ -61,7 +61,7 @@ namespace Nameless.Caching.InMemory {
                 _cache.Dispose();
             }
 
-            _cache = default!;
+            _cache = null!;
             _disposed = true;
         }
 
@@ -75,18 +75,23 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = default, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Prevent.Null(value, nameof(value));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = value != default && _cache.Set(key, value, GetOptions(opts)) != default;
+            var result = _cache.Set(key, value, GetOptions(opts)) != null;
 
             return Task.FromResult(result);
         }
 
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -97,6 +102,8 @@ namespace Nameless.Caching.InMemory {
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 

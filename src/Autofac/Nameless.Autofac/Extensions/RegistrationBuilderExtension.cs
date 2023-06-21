@@ -18,8 +18,6 @@ namespace Nameless.Autofac {
         /// <param name="self">The registration object.</param>
         /// <param name="lifetimeScopeType">The life time scope type.</param>
         public static void SetLifetimeScope<TLimit, TActivatorData, TRegistrationStyle>(this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> self, LifetimeScopeType lifetimeScopeType) {
-            if (self == default) { return; }
-
             switch (lifetimeScopeType) {
                 case LifetimeScopeType.Singleton:
                     self.SingleInstance();

@@ -2,26 +2,32 @@ using System.ComponentModel;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
 
-    public sealed class RabbitMQSettings {
+    public sealed class ProducerConsumerOptions {
 
         #region Private Fields
 
-        private IList<ExchangeSettings>? _exchanges;
+        private IList<ExchangeOptions>? _exchanges;
+
+        #endregion
+
+        #region Public Static Read-Only Properties
+
+        public static ProducerConsumerOptions Empty => new();
 
         #endregion
 
         #region Public Properties
 
-        public ServerSettings Server { get; set; } = new();
-        public IList<ExchangeSettings> Exchanges {
-            get { return _exchanges ??= new List<ExchangeSettings>(); }
+        public ServerOptions Server { get; set; } = new();
+        public IList<ExchangeOptions> Exchanges {
+            get { return _exchanges ??= new List<ExchangeOptions>(); }
             set { _exchanges = value; }
         }
 
         #endregion
     }
 
-    public sealed class ServerSettings {
+    public sealed class ServerOptions {
 
         #region Public Properties
 
@@ -46,72 +52,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #endregion
     }
 
-    public sealed class ExchangeSettings {
-
-        #region Private Fields
-
-        private IDictionary<string, object>? _arguments;
-        private IList<QueueSettings>? _queues;
-
-        #endregion
-
-        #region Public Properties
-
-        public string Name { get; set; }
-        public ExchangeType Type { get; set; }
-        public bool Durable { get; set; }
-        public bool AutoDelete { get; set; }
-        public IDictionary<string, object> Arguments {
-            get { return _arguments ??= new Dictionary<string, object>(); }
-            set { _arguments = value; }
-        }
-        public IList<QueueSettings> Queues {
-            get { return _queues ??= new List<QueueSettings>(); }
-            set { _queues = value; }
-        }
-
-        #endregion
-
-        #region Public Constructors
-
-        public ExchangeSettings() {
-            Name = Constants.DEFAULT_EXCHANGE_NAME;
-        }
-
-        #endregion
-    }
-
-    public sealed class QueueSettings {
-
-        #region Private Fields
-
-        private IDictionary<string, object>? _arguments;
-
-        #endregion
-
-        #region Public Properties
-
-        public string? Name { get; set; }
-        public bool Durable { get; set; }
-        public bool Exclusive { get; set; }
-        public bool AutoDelete { get; set; }
-        public string? RoutingKey { get; set; }
-        public IDictionary<string, object> Arguments {
-            get { return _arguments ??= new Dictionary<string, object>(); }
-            set { _arguments = value; }
-        }
-
-        #endregion
-
-        #region Public Constructors
-
-        public QueueSettings() {
-            Name = Constants.DEFAULT_QUEUE_NAME;
-        }
-
-        #endregion
-    }
-
     public enum ExchangeType {
         [Description("topic")]
         Topic = 0,
@@ -123,5 +63,76 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         Direct = 4,
         [Description("headers")]
         Headers = 8
+    }
+
+    public sealed class ExchangeOptions {
+
+        #region Private Fields
+
+        private IDictionary<string, object>? _arguments;
+        private IList<QueueOptions>? _queues;
+
+        #endregion
+
+        #region Public Properties
+
+        public string Name { get; set; }
+        public ExchangeType Type { get; set; }
+        public bool Durable { get; set; } = true;
+        public bool AutoDelete { get; set; }
+        public IDictionary<string, object> Arguments {
+            get { return _arguments ??= new Dictionary<string, object>(); }
+            set { _arguments = value; }
+        }
+        public IList<QueueOptions> Queues {
+            get { return _queues ??= new List<QueueOptions>(); }
+            set { _queues = value; }
+        }
+
+        #endregion
+
+        #region Public Constructors
+
+        public ExchangeOptions() {
+            Name = Constants.DEFAULT_EXCHANGE_NAME;
+        }
+
+        #endregion
+    }
+
+    public sealed class QueueOptions {
+
+        #region Private Fields
+
+        private IDictionary<string, object>? _arguments;
+        private IDictionary<string, object>? _bindings;
+
+        #endregion
+
+        #region Public Properties
+
+        public string? Name { get; set; }
+        public bool Durable { get; set; } = true;
+        public bool Exclusive { get; set; }
+        public bool AutoDelete { get; set; }
+        public string? RoutingKey { get; set; }
+        public IDictionary<string, object> Arguments {
+            get { return _arguments ??= new Dictionary<string, object>(); }
+            set { _arguments = value; }
+        }
+        public IDictionary<string, object> Bindings {
+            get { return _bindings ??= new Dictionary<string, object>(); }
+            set { _bindings = value; }
+        }
+
+        #endregion
+
+        #region Public Constructors
+
+        public QueueOptions() {
+            Name = Constants.DEFAULT_QUEUE_NAME;
+        }
+
+        #endregion
     }
 }

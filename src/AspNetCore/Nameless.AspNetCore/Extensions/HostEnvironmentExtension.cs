@@ -21,7 +21,7 @@ namespace Nameless.AspNetCore {
         /// <param name="self">The current instance that implements <see cref="IHostEnvironment"/>.</param>
         /// <returns><c>true</c> if the environment name is <see cref="DeveloperMachine"/>; otherwise <c>false</c>.</returns>
         public static bool IsDeveloperMachine(this IHostEnvironment self)
-            => self != default && self.IsEnvironment(DeveloperMachine);
+            => self.IsEnvironment(DeveloperMachine);
 
         #endregion
     }

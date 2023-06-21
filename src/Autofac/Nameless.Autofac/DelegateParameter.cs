@@ -30,8 +30,8 @@ namespace Nameless.Autofac {
 
         public override bool CanSupplyValue(ParameterInfo pi, IComponentContext context, [NotNullWhen(returnValue: true)] out Func<object>? valueProvider) {
             var propertyInfo = GetProperty(pi);
-            if (propertyInfo == default || propertyInfo.Name != _name) {
-                valueProvider = default;
+            if (propertyInfo == null || propertyInfo.Name != _name) {
+                valueProvider = null;
                 return false;
             }
             valueProvider = _factory;
@@ -44,7 +44,7 @@ namespace Nameless.Autofac {
 
         private static PropertyInfo? GetProperty(ParameterInfo pi) {
             var methodInfo = pi.Member as MethodInfo;
-            if (methodInfo == default) { return default; }
+            if (methodInfo == null) { return null; }
 
             if (methodInfo.IsSpecialName && (methodInfo.Name.StartsWith("set_", StringComparison.Ordinal) && methodInfo.DeclaringType != null))
                 return methodInfo.DeclaringType.GetProperty(methodInfo.Name[4..]);

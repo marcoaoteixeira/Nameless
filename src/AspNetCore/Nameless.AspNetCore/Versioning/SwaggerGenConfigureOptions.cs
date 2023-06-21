@@ -53,11 +53,11 @@ namespace Nameless.AspNetCore.Versioning {
                 Contact = new() {
                     Name = settings.Contact.Name,
                     Email = settings.Contact.Email,
-                    Url = settings.Contact.Url != default ? new Uri(settings.Contact.Url) : default
+                    Url = settings.Contact.Url != null ? new Uri(settings.Contact.Url) : null
                 },
                 License = new() {
                     Name = settings.License.Name,
-                    Url = settings.License.Url != default ? new Uri(settings.License.Url) : default
+                    Url = settings.License.Url != null ? new Uri(settings.License.Url) : null
                 }
             };
         }

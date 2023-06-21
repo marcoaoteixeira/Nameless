@@ -54,10 +54,9 @@ page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en
 
 ### Some Ideas to Keep in Mind
 
-- When I create a new extension method I never throw an _ArgumentNullException_
-  if the target instance is _null_. What I do is to return the _default_ value.
-  - The only cases are some where it's not possible to return a _default_ value,
-    so I'll throw an excption. And that's it.
+- When I create a new extension method I never check for nullability the target
+  instance. If the target instance is _null_, you'll get an _NullReferenceException_
+  on your face, punk!
 - **_default_** vs **_null_** :
   - Am I sure is a reference type? **null**
   - Am I sure is a value type? **default**

@@ -47,12 +47,12 @@ namespace Nameless {
         /// or doesn't have a defined single instance accessor property.
         /// .</returns>
         public static object? GetInstance(Type? type) {
-            if (type == default) { return default; }
+            if (type == null) { return null; }
 
-            if (!HasAttribute(type, out var attr)) { return default; }
-            if (!HasAccessorProperty(type, attr.Accessor, out var accessor)) { return default; }
+            if (!HasAttribute(type, out var attr)) { return null; }
+            if (!HasAccessorProperty(type, attr.Accessor, out var accessor)) { return null; }
 
-            return accessor.GetValue(obj: default /* static instance */);
+            return accessor.GetValue(obj: null /* static instance */);
         }
 
         #endregion
@@ -61,13 +61,13 @@ namespace Nameless {
 
         private static bool HasAttribute(Type type, [NotNullWhen(true)] out SingletonAttribute? attr) {
             attr = type.GetCustomAttribute<SingletonAttribute>(inherit: false);
-            return attr != default;
+            return attr != null;
         }
 
         private static bool HasAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
             var currentAccessorName = string.IsNullOrWhiteSpace(accessorName) ? DEFAULT_ACCESSOR_NAME : accessorName;
             accessor = type.GetProperty(currentAccessorName, BindingFlags.Public | BindingFlags.Static);
-            return accessor != default;
+            return accessor != null;
         }
 
         #endregion

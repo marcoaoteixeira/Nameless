@@ -1,28 +1,29 @@
-﻿using RabbitMQ.Client;
+﻿using Autofac;
+using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
 
-    public sealed class ChannelFactory : IChannelFactory {
+    internal sealed class Bootstrapper : IStartable {
 
         #region Private Read-Only Fields
 
         private readonly IConnection _connection;
+        private readonly ProducerConsumerOptions _options;
 
         #endregion
 
-        #region Public Constructors
+        #region Internal Constructors
 
-        public ChannelFactory(IConnection connection) {
-            Prevent.Null(connection, nameof(connection));
-
+        internal Bootstrapper(IConnection connection, ProducerConsumerOptions options) {
             _connection = connection;
+            _options = options;
         }
 
         #endregion
 
         #region Private Static Methods
 
-        private static void ConfigureExchange(IModel channel, ExchangeSettings exchange) {
+        private static void ConfigureExchange(IModel channel, ExchangeOptions exchange) {
             channel.ExchangeDeclare(
                 exchange: exchange.Name,
                 type: exchange.Type.GetDescription(),
@@ -32,7 +33,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             );
         }
 
-        private static void ConfigureQueues(IModel channel, string exchangeName, QueueSettings[] queues) {
+        private static void ConfigureQueues(IModel channel, string exchangeName, IEnumerable<QueueOptions> queues) {
             foreach (var queue in queues) {
                 channel.QueueDeclare(
                     queue: queue.Name,
@@ -46,24 +47,22 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     queue: queue.Name,
                     exchange: exchangeName,
                     routingKey: queue.RoutingKey ?? queue.Name,
-                    arguments: new Dictionary<string, object>()
+                    arguments: queue.Bindings
                 );
             }
         }
 
         #endregion
 
-        #region IChannelFactory Members
+        #region IStartable Members
 
-        public IModel Create(IEnumerable<ExchangeSettings> exchanges) {
-            var channel = _connection.CreateModel();
+        void IStartable.Start() {
+            using var channel = _connection.CreateModel();
 
-            foreach (var exchange in exchanges) {
+            foreach (var exchange in _options.Exchanges) {
                 ConfigureExchange(channel, exchange);
-                ConfigureQueues(channel, exchange.Name, exchange.Queues.ToArray());
+                ConfigureQueues(channel, exchange.Name, exchange.Queues);
             }
-
-            return channel;
         }
 
         #endregion

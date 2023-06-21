@@ -4,13 +4,13 @@
 
         #region Private Static Read-Only Fields
 
-        private static readonly EvictionCallback DefaultEvictionCallback = (key, value, reason) => { };
+        private static readonly EvictionCallback EmptyEvictionCallback = (key, value, reason) => { };
 
         #endregion
 
         #region Private Fields
 
-        private EvictionCallback? _evictionCallback = default;
+        private EvictionCallback? _evictionCallback = null;
 
         #endregion
 
@@ -18,7 +18,7 @@
 
         public TimeSpan ExpiresIn { get; set; }
         public EvictionCallback EvictionCallback {
-            get { return _evictionCallback ??= DefaultEvictionCallback; }
+            get { return _evictionCallback ??= EmptyEvictionCallback; }
             set { _evictionCallback = value; }
         }
 
