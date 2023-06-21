@@ -14,7 +14,7 @@ namespace Nameless.Data.MSSQLServer {
 
         #region Private Fields
 
-        private ILogger _logger = default!;
+        private ILogger _logger = null!;
 
         #endregion
 
@@ -22,7 +22,7 @@ namespace Nameless.Data.MSSQLServer {
 
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
         }
 
         #endregion
@@ -43,7 +43,8 @@ namespace Nameless.Data.MSSQLServer {
             var connection = new SqlConnection(_options.ConnectionString);
 
             if (connection.State != ConnectionState.Open) {
-                try { connection.Open(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                try { connection.Open(); }
+                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             }
 
             return connection;

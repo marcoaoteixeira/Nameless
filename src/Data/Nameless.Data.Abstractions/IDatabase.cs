@@ -9,6 +9,10 @@ namespace Nameless.Data {
 
         #region Methods
 
+        void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified);
+        void CommitTransaction();
+        void RollbackTransaction();
+
         /// <summary>
         /// Executes a not-query command against the data base.
         /// </summary>

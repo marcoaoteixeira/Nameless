@@ -10,8 +10,6 @@ namespace Nameless.Data {
 
         #region Private Fields
 
-        private IDbConnection? _connection;
-        private DbTransactionWrapper? _transaction;
         private bool _disposed;
 
         #endregion
@@ -24,7 +22,23 @@ namespace Nameless.Data {
         /// </summary>
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
+        }
+
+        #endregion
+
+        #region Private Properties
+
+        private IDbConnection? _connection;
+        private IDbConnection DbConnection {
+            get => _connection ?? throw new NullReferenceException();
+            set => _connection = value;
+        }
+
+        private IDbTransaction? _transaction;
+        private IDbTransaction DbTransaction {
+            get => _transaction ?? throw new NullReferenceException();
+            set => _transaction = value;
         }
 
         #endregion
@@ -38,11 +52,11 @@ namespace Nameless.Data {
         public Database(IDbConnectionFactory dbConnectionFactory) {
             Prevent.Null(dbConnectionFactory, nameof(dbConnectionFactory));
 
-            _connection = dbConnectionFactory.Create();
+            DbConnection = dbConnectionFactory.Create();
 
             // Ensure connection is open.
-            if (_connection.State != ConnectionState.Open) {
-                _connection.Open();
+            if (DbConnection.State != ConnectionState.Open) {
+                DbConnection.Open();
             }
         }
 
@@ -63,9 +77,8 @@ namespace Nameless.Data {
 
         private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {
             var result = command.CreateParameter();
-            result.ParameterName = !parameter.Name.StartsWith("@") ? string.Concat("@", parameter.Name) : parameter.Name;
+            result.ParameterName = parameter.Name;
             result.DbType = parameter.Type;
-            result.Direction = parameter.Direction;
             result.Value = parameter.Value ?? DBNull.Value;
             return result;
         }
@@ -83,53 +96,38 @@ namespace Nameless.Data {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _transaction?.Dispose();
-                _connection?.Dispose();
+                DbTransaction.Dispose();
+                DbConnection.Dispose();
             }
 
-            _transaction = default;
-            _connection = default;
+            DbTransaction = null!;
+            DbConnection = null!;
             _disposed = true;
         }
 
-        private void DbTransactionWrapperConsumed(object sender, EventArgs e) {
-            _transaction = default;
-        }
-
-        private IDbCommand CreateCommand(string commandText, CommandType commandType, Parameter[] parameters) {
-            BlockAccessAfterDispose();
-
-            if (_connection == default) { throw new InvalidOperationException("Database connection missing."); }
-
-            var command = _connection.CreateCommand();
-            command.CommandText = commandText;
-            command.CommandType = commandType;
+        private IDbCommand CreateCommand(string text, CommandType type, Parameter[] parameters) {
+            var command = DbConnection.CreateCommand();
+            command.CommandText = text;
+            command.CommandType = type;
             command.Transaction = _transaction;
 
-            parameters.Each(parameter => command.Parameters.Add(ConvertParameter(command, parameter)));
+            foreach (var parameter in parameters) {
+                command.Parameters.Add(
+                    value: ConvertParameter(command, parameter)
+                );
+            }
 
             Logger.Debug(command);
 
             return command;
         }
 
-        private TResult? Execute<TResult>(string commandText, CommandType commandType, Parameter[] parameters, bool scalar) {
-            using var command = CreateCommand(commandText, commandType, parameters);
+        private TResult? Execute<TResult>(string text, CommandType type, Parameter[] parameters, bool scalar) {
+            using var command = CreateCommand(text, type, parameters);
             try {
                 var result = scalar ?
                     command.ExecuteScalar() :
                     command.ExecuteNonQuery();
-
-                command.Parameters
-                    .OfType<IDbDataParameter>()
-                    .Where(dbParameter => dbParameter.Direction != ParameterDirection.Input)
-                    .Each(dbParameter => {
-                        parameters
-                            .Single(parameter =>
-                               parameter.Name == dbParameter.ParameterName &&
-                               parameter.Direction == dbParameter.Direction
-                            ).Value = dbParameter.Value;
-                    });
 
                 return (TResult?)result;
             } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
@@ -140,39 +138,48 @@ namespace Nameless.Data {
         #region IDatabase Members
 
         /// <inheritdoc/>
-        public IDbTransaction StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
-            if (_connection == default) { throw new InvalidOperationException("Database connection missing."); }
+        public void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
+            BlockAccessAfterDispose();
 
-            if (_transaction == default) {
-                _transaction = new DbTransactionWrapper(_connection, isolationLevel);
-                _transaction.Committed += DbTransactionWrapperConsumed!;
-                _transaction.Rolledback += DbTransactionWrapperConsumed!;
-                _transaction.Disposed += DbTransactionWrapperConsumed!;
-            }
-            return _transaction;
+            DbTransaction ??= DbConnection.BeginTransaction(isolationLevel);
+        }
+
+        public void CommitTransaction() {
+            BlockAccessAfterDispose();
+
+            DbTransaction.Commit();
+
+            _transaction = null;
+        }
+
+        public void RollbackTransaction() {
+            BlockAccessAfterDispose();
+
+            DbTransaction.Rollback();
+
+            _transaction = null;
         }
 
         /// <inheritdoc/>
-        public int ExecuteNonQuery(string commandText, CommandType commandType = CommandType.Text, params Parameter[] parameters) {
-            Prevent.NullOrWhiteSpaces(commandText, nameof(commandText));
-
+        public int ExecuteNonQuery(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            return Execute<int>(commandText, commandType, parameters, scalar: false);
+            Prevent.NullOrWhiteSpaces(text, nameof(text));
+
+            return Execute<int>(text, type, parameters, scalar: false);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TResult> ExecuteReader<TResult>(string commandText, Func<IDataRecord, TResult> mapper, CommandType commandType = CommandType.Text, params Parameter[] parameters) {
-            Prevent.NullOrWhiteSpaces(commandText, nameof(commandText));
-
+        public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            using var command = CreateCommand(commandText, commandType, parameters);
+            Prevent.NullOrWhiteSpaces(text, nameof(text));
 
-            
+            using var command = CreateCommand(text, type, parameters);
 
             IDataReader reader;
-            try { reader = command.ExecuteReader(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            try { reader = command.ExecuteReader(); }
+            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             using (reader) {
                 while (reader.Read()) {
                     yield return mapper(reader);
@@ -181,12 +188,12 @@ namespace Nameless.Data {
         }
 
         /// <inheritdoc/>
-        public TResult? ExecuteScalar<TResult>(string commandText, CommandType commandType = CommandType.Text, params Parameter[] parameters) {
-            Prevent.NullOrWhiteSpaces(commandText, nameof(commandText));
-
+        public TResult? ExecuteScalar<TResult>(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            return Execute<TResult>(commandText, commandType, parameters, scalar: true);
+            Prevent.NullOrWhiteSpaces(text, nameof(text));
+
+            return Execute<TResult>(text, type, parameters, scalar: true);
         }
 
         #endregion

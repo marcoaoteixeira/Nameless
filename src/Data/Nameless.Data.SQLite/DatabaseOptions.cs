@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Data.SQLite {
-
     public sealed class DatabaseOptions {
-
         #region Public Static Read-Only Properties
 
         public static DatabaseOptions Default => new();
