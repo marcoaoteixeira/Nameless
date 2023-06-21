@@ -1,6 +1,7 @@
 ﻿using Autofac;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.UnitTesting {
+    [Ignore("This test suite needs RabbitMQ locally.")]
     public class ProducerTests {
 
         private IContainer _container;
