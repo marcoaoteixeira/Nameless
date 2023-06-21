@@ -23,13 +23,13 @@ namespace Nameless.CommandQuery {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterType<CommandDispatcher>()
-                .As<ICommandDispatcher>()
+                .RegisterType<CommandService>()
+                .As<ICommandService>()
                 .SingleInstance();
 
             builder
-                .RegisterType<QueryDispatcher>()
-                .As<IQueryDispatcher>()
+                .RegisterType<QueryService>()
+                .As<IQueryService>()
                 .SingleInstance();
 
             var commandHandlerImplementations = CommandHandlerImplementations.IsNullOrEmpty()

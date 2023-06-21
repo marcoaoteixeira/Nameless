@@ -12,7 +12,7 @@ namespace Nameless.CommandQuery.UnitTests {
             containerBuilder
                 .RegisterModule(new CommandQueryModule(typeof(CommandQueryModuleTests).Assembly));
 
-            if (builder != default) {
+            if (builder != null) {
                 builder(containerBuilder);
             }
 
@@ -29,7 +29,7 @@ namespace Nameless.CommandQuery.UnitTests {
             });
 
             // act
-            var dispatcher = container.Resolve<ICommandDispatcher>();
+            var dispatcher = container.Resolve<ICommandService>();
 
             // assert
             Assert.That(dispatcher, Is.Not.Null);
@@ -45,52 +45,38 @@ namespace Nameless.CommandQuery.UnitTests {
             });
 
             // act
-            var dispatcher = container.Resolve<IQueryDispatcher>();
+            var dispatcher = container.Resolve<IQueryService>();
 
             // assert
             Assert.That(dispatcher, Is.Not.Null);
         }
 
         [Test]
-        public async Task CommandDispatcher_Execute_Command_Simple() {
+        public void CommandDispatcher_Execute_Command_Simple() {
             // arrange
             using var container = CreateContainer(builder => {
                 var mapper = Substitute.For<IMapper>();
 
                 builder.RegisterInstance(mapper);
             });
-            var dispatcher = container.Resolve<ICommandDispatcher>();
+            var service = container.Resolve<ICommandService>();
 
-            // act
-            var response = await dispatcher.ExecuteAsync(new SaveAnimalCommand { Name = "Test" });
-
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(response, Is.Not.Null);
-                Assert.That(response.Success, Is.True);
-                Assert.That(response.State, Is.EqualTo(1));
-            });
+            // act && assert
+            Assert.DoesNotThrowAsync(async () => await service.ExecuteAsync(new SaveAnimalCommand { Name = "Test" }));
         }
 
         [Test]
-        public async Task CommandDispatcher_Execute_Command_Inherited() {
+        public void CommandDispatcher_Execute_Command_Inherited() {
             // arrange
             using var container = CreateContainer(builder => {
                 var mapper = Substitute.For<IMapper>();
 
                 builder.RegisterInstance(mapper);
             });
-            var dispatcher = container.Resolve<ICommandDispatcher>();
+            var service = container.Resolve<ICommandService>();
 
-            // act
-            var response = await dispatcher.ExecuteAsync(new UpdateAnimalCommand { ID = 2, Name = "Test" });
-
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(response, Is.Not.Null);
-                Assert.That(response.Success, Is.True);
-                Assert.That(response.State, Is.EqualTo(2));
-            });
+            // act && assert
+            Assert.DoesNotThrowAsync(async () => await service.ExecuteAsync(new UpdateAnimalCommand { ID = 2, Name = "Test" }));
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using Autofac;
-using Nameless.Infrastructure;
 
 namespace Nameless.CommandQuery {
-    public sealed class CommandDispatcher : ICommandDispatcher {
+    public sealed class CommandService : ICommandService {
         #region Private Read-Only Fields
 
         private readonly ILifetimeScope _scope;
@@ -11,7 +10,7 @@ namespace Nameless.CommandQuery {
 
         #region Public Constructors
 
-        public CommandDispatcher(ILifetimeScope scope) {
+        public CommandService(ILifetimeScope scope) {
             Prevent.Null(scope, nameof(scope));
 
             _scope = scope;
@@ -19,15 +18,15 @@ namespace Nameless.CommandQuery {
 
         #endregion
 
-        #region ICommandDispatcher Members
+        #region ICommandService Members
 
-        public Task<ExecutionResult> ExecuteAsync(ICommand command, CancellationToken cancellationToken = default) {
+        public Task ExecuteAsync(ICommand command, CancellationToken cancellationToken = default) {
             Prevent.Null(command, nameof(command));
 
             var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
             dynamic handler = _scope.Resolve(handlerType);
 
-            return (Task<ExecutionResult>)handler.HandleAsync((dynamic)command, cancellationToken);
+            return handler.HandleAsync((dynamic)command, cancellationToken);
         }
 
         #endregion

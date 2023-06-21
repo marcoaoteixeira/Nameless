@@ -1,8 +1,6 @@
-﻿using Nameless.Infrastructure;
+﻿namespace Nameless.CommandQuery {
 
-namespace Nameless.CommandQuery {
-
-    public interface ICommandDispatcher {
+    public interface ICommandService {
 
         #region Methods
 
@@ -12,7 +10,7 @@ namespace Nameless.CommandQuery {
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task{ExecutionResult}" /> representing the command execution.</returns>
-        Task<ExecutionResult> ExecuteAsync(ICommand command, CancellationToken cancellationToken = default);
+        Task ExecuteAsync(ICommand command, CancellationToken cancellationToken = default);
 
         #endregion
     }
