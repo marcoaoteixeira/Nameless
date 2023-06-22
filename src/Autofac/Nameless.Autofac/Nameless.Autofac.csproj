@@ -2,27 +2,27 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<LangVersion>latest</LangVersion>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<AnalysisLevel>latest</AnalysisLevel>
 		<RootNamespace>Nameless.Autofac</RootNamespace>
+
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 
 		<!-- PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
-		<Description>Multiple classes and functionalities for .NET Core applications.</Description>
+		<Description>Library to be used in conjunction with Autofac.</Description>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/Autofac/Nameless.Autofac</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/Autofac/Nameless.Autofac</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0.0</Version>
+		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageOutputPath>..\..\..\nupkgs</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

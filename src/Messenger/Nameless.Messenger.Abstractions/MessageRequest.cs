@@ -1,12 +1,10 @@
 ﻿using System.Text;
 
 namespace Nameless.Messenger {
-
     /// <summary>
     /// The request.
     /// </summary>
     public sealed class MessageRequest {
-
         #region Public Properties
 
         /// <summary>

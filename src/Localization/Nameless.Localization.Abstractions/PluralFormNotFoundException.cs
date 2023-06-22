@@ -1,10 +1,8 @@
 ﻿using System.Runtime.Serialization;
 
 namespace Nameless.Localization {
-
     [Serializable]
     public class PluralFormNotFoundException : Exception {
-
         #region Public Constructors
 
         public PluralFormNotFoundException() { }

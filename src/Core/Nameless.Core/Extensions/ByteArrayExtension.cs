@@ -1,10 +1,8 @@
 ﻿namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="byte"/> arrays.
+    /// <see cref="byte"/> array extensions.
     /// </summary>
     public static class ByteArrayExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -12,11 +10,8 @@
         /// </summary>
         /// <param name="self">The source array of <see cref="byte"/>.</param>
         /// <returns>A hexadecimal <see cref="string"/> representation of the <see cref="byte"/> array.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string ToHexString(this byte[] self) {
-            Prevent.Null(self, nameof(self));
-
-            return BitConverter.ToString(self).Replace("-", string.Empty);
+            return BitConverter.ToString(self ?? Array.Empty<byte>()).Replace("-", string.Empty);
         }
 
         #endregion

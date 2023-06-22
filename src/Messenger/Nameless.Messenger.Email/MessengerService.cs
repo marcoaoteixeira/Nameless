@@ -7,9 +7,7 @@ using Nameless.Services;
 using Nameless.Services.Impl;
 
 namespace Nameless.Messenger.Email {
-
     public sealed class MessengerService : IMessengerService {
-
         #region Private Read-Only Fields
 
         private readonly IFileStorage _fileStorage;
@@ -23,7 +21,7 @@ namespace Nameless.Messenger.Email {
         private ILogger? _logger;
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
         }
 
         #endregion
@@ -35,7 +33,7 @@ namespace Nameless.Messenger.Email {
         /// </summary>
         /// <param name="fileStorage">The file storage.</param>
         /// <param name="options">The SMTP client settings.</param>
-        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClock? clock = default) {
+        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClock? clock = null) {
             Prevent.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
@@ -127,7 +125,8 @@ namespace Nameless.Messenger.Email {
                 ((string)bcc).Split(';').Each(_ => mail.Bcc.Add(InternetAddress.Parse(_)));
             }
 
-            try { await SendAsync(mail, cancellationToken); } catch (Exception ex) { return MessageResponse.Failure(ex); }
+            try { await SendAsync(mail, cancellationToken); }
+            catch (Exception ex) { return MessageResponse.Failure(ex); }
 
             return MessageResponse.Successful();
         }

@@ -4,12 +4,10 @@ using Nameless.Autofac;
 using Nameless.Infrastructure;
 
 namespace Nameless.Environment.System {
-
     /// <summary>
     /// The Environment service registration.
     /// </summary>
     public sealed class EnvironmentModule : ModuleBase {
-
         #region Protected Override Methods
 
         /// <inheritdoc/>
@@ -18,7 +16,7 @@ namespace Nameless.Environment.System {
                 .RegisterType<HostEnvironment>()
                 .As<IHostEnvironment>()
                 .OnPreparing(OnPreparingHostEnvironment)
-                .SetLifetimeScope(LifetimeScopeType.Singleton);
+                .SingleInstance();
 
             base.Load(builder);
         }

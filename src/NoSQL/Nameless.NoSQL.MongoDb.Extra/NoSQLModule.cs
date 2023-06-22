@@ -5,9 +5,7 @@ using MongoDB.Driver;
 using Nameless.Autofac;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public sealed class NoSQLModule : ModuleBase {
-
         #region Private Constants
 
         private const string MONGO_CLIENT_KEY = "ed2daa8b-6e05-4c27-9532-11e45b6e2005";

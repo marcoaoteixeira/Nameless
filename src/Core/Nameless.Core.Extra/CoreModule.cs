@@ -6,9 +6,7 @@ using Nameless.Services;
 using Nameless.Services.Impl;
 
 namespace Nameless.Extra {
-
     public sealed class CoreModule : ModuleBase {
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -28,7 +26,7 @@ namespace Nameless.Extra {
 
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(IClock),
                     factory: (member, ctx) => ctx.Resolve<IClock>()
                 ));

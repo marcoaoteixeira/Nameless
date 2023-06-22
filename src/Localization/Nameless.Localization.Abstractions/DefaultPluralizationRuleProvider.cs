@@ -2,14 +2,12 @@
 using System.Globalization;
 
 namespace Nameless.Localization {
-
     [Singleton]
     public sealed class DefaultPluralizationRuleProvider : IPluralizationRuleProvider {
-
         #region Private Static Read-Only Fields
 
         private static readonly IPluralizationRuleProvider _instance = new DefaultPluralizationRuleProvider();
-        private static readonly IDictionary<string, PluralizationRuleDelegate> _rules = new Dictionary<string, PluralizationRuleDelegate>();
+        private static readonly Dictionary<string, PluralizationRuleDelegate> _rules = new();
 
         #endregion
 
@@ -80,7 +78,7 @@ namespace Nameless.Localization {
         public bool TryGet(CultureInfo culture, [NotNullWhen(true)] out PluralizationRuleDelegate? rule) {
             Prevent.Null(culture, nameof(culture));
 
-            rule = default;
+            rule = null;
 
             if (culture.Name == string.Empty) { return false; }
 

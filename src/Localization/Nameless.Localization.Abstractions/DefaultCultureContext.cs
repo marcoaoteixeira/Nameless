@@ -1,10 +1,8 @@
 ﻿using System.Globalization;
 
 namespace Nameless.Localization {
-
     [Singleton]
     public sealed class DefaultCultureContext : ICultureContext {
-
         #region Private Static Read-Only Fields
 
         private static readonly ICultureContext _instance = new DefaultCultureContext();

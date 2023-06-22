@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Messenger {
-
     public enum Priority {
-
         /// <summary>
         /// Medium
         /// </summary>

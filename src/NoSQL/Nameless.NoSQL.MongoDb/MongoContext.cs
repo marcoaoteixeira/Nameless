@@ -1,9 +1,7 @@
 ﻿using MongoDB.Driver;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public sealed class MongoContext : IMongoContext {
-
         #region Private Read-Only Fields
 
         private readonly IMongoDatabase _database;
@@ -14,7 +12,7 @@ namespace Nameless.NoSQL.MongoDb {
 
         #region Public Constructors
 
-        public MongoContext(IMongoDatabase database, ICollectionNamingStrategy? collectionNamingStrategy = default, MongoCollectionSettings? collectionSettings = default) {
+        public MongoContext(IMongoDatabase database, ICollectionNamingStrategy? collectionNamingStrategy = null, MongoCollectionSettings? collectionSettings = null) {
             Prevent.Null(database, nameof(database));
 
             _database = database;
@@ -35,7 +33,7 @@ namespace Nameless.NoSQL.MongoDb {
         /// naming strategy will take care of it.
         /// </param>
         /// <returns>The collection.</returns>
-        public IMongoCollection<T> GetCollection<T>(string? name = default) {
+        public IMongoCollection<T> GetCollection<T>(string? name = null) {
             var collectionName = string.IsNullOrWhiteSpace(name)
                 ? _collectionNamingStrategy.GetCollectionName<T>()
                 : name;

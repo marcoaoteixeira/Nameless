@@ -1,7 +1,5 @@
 ﻿namespace Nameless.NoSQL.MongoDb {
-
     public interface ICollectionNamingStrategy {
-
         #region Methods
 
         string? GetCollectionName(Type? type);
@@ -10,14 +8,10 @@
     }
 
     public static class CollectionNamingStrategyExtension {
-
         #region Public Static Methods
 
-        public static string? GetCollectionName<T>(this ICollectionNamingStrategy self) {
-            if (self == default) { return default; }
-
-            return self.GetCollectionName(typeof(T));
-        }
+        public static string? GetCollectionName<T>(this ICollectionNamingStrategy self)
+            => self.GetCollectionName(typeof(T));
 
         #endregion
     }

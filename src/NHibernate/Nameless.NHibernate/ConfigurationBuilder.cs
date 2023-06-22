@@ -3,9 +3,7 @@ using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 
 namespace Nameless.NHibernate {
-
     public sealed class ConfigurationBuilder : IConfigurationBuilder {
-
         #region Private Read-Only Fields
 
         private readonly NHibernateOptions _options;
@@ -23,7 +21,7 @@ namespace Nameless.NHibernate {
         #region Private Static Methods
 
         private static bool IsMappingType(Type? type) {
-            if (type == default || type.IsAbstract || type.IsInterface) {
+            if (type == null || type.IsAbstract || type.IsInterface) {
                 return false;
             }
 
@@ -51,7 +49,7 @@ namespace Nameless.NHibernate {
                 .ToArray();
             modelMapper.AddMappings(mappingTypes);
 
-            configuration.AddDeserializedMapping(modelMapper.CompileMappingForAllExplicitlyAddedEntities(), default);
+            configuration.AddDeserializedMapping(modelMapper.CompileMappingForAllExplicitlyAddedEntities(), null);
 
             return configuration;
         }

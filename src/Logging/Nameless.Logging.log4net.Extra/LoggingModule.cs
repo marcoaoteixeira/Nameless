@@ -28,7 +28,7 @@ namespace Nameless.Logging.log4net {
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(ILogger),
                     factory: (member, ctx) => member.DeclaringType != default && member.DeclaringType.FullName != default
                         ? ctx.Resolve<ILoggerFactory>().CreateLogger(member.DeclaringType.FullName)

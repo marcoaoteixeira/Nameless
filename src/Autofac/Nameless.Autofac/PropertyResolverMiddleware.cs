@@ -5,7 +5,7 @@ using Autofac.Core.Resolving.Pipeline;
 
 namespace Nameless.Autofac {
 
-    public sealed class FactoryResolveMiddleware : IResolveMiddleware {
+    public sealed class PropertyResolverMiddleware : IResolveMiddleware {
 
         #region Private Read-Only Fields
 
@@ -16,7 +16,7 @@ namespace Nameless.Autofac {
 
         #region Public Constructors
 
-        public FactoryResolveMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
+        public PropertyResolverMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
             Prevent.Null(serviceType, nameof(serviceType));
             Prevent.Null(factory, nameof(factory));
 

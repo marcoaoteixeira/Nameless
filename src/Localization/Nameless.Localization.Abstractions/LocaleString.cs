@@ -1,9 +1,8 @@
 ﻿using System.Globalization;
+using Nameless.Helpers;
 
 namespace Nameless.Localization {
-
     public sealed class LocaleString {
-
         #region Public Properties
 
         public CultureInfo Culture { get; }
@@ -15,7 +14,7 @@ namespace Nameless.Localization {
 
         #region Public Constructors
 
-        public LocaleString(CultureInfo culture, string text, string? translation = default, params object[] args) {
+        public LocaleString(CultureInfo culture, string text, string? translation = null, params object[] args) {
             Prevent.Null(culture, nameof(culture));
             Prevent.NullOrWhiteSpaces(text, nameof(text));
 
@@ -50,15 +49,7 @@ namespace Nameless.Localization {
 
         public override bool Equals(object? obj) => Equals(obj as LocaleString);
 
-        public override int GetHashCode() {
-            var hash = 13;
-            unchecked {
-                hash += Culture.GetHashCode() * 7;
-                hash += Text.GetHashCode() * 7;
-                hash += Translation.GetHashCode() * 7;
-            }
-            return hash;
-        }
+        public override int GetHashCode() => SimpleHash.Compute(Culture, Text, Translation);
 
         public override string ToString() => GetTranslation();
 

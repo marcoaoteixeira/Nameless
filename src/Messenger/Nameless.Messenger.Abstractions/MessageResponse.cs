@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Messenger {
-
     public sealed class MessageResponse {
-
         #region Public Properties
 
         public Exception? Error { get; }

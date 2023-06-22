@@ -1,9 +1,7 @@
 ﻿using MongoDB.Bson.Serialization;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public abstract class ClassMappingBase<TDocument> {
-
         #region Protected Constructors
 
         protected ClassMappingBase() {

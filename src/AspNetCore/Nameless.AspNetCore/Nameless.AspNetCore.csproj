@@ -9,15 +9,15 @@
 
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 
 		<!-- PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
-		<Description>Library to extend ASP.NET Core capabilities.</Description>
+		<Description>Library to be used in conjunction with ASP.NET Core.</Description>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/AspNetCore/Nameless.AspNetCore</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/AspNetCore/Nameless.AspNetCore</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

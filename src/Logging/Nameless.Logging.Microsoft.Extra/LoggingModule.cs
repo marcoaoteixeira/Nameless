@@ -42,7 +42,7 @@ namespace Nameless.Logging.Microsoft.Extra {
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
                 // For Nameless
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(ILogger),
                     factory: (member, ctx) => member.DeclaringType != default && member.DeclaringType.FullName != default
                         ? ctx.Resolve<ILoggerFactory>().CreateLogger(member.DeclaringType.FullName)
@@ -50,7 +50,7 @@ namespace Nameless.Logging.Microsoft.Extra {
                 ));
 
                 // For Microsoft
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(MS_ILogger),
                     factory: (member, ctx) => member.DeclaringType != default && member.DeclaringType.FullName != default
                         ? ctx.Resolve<MS_ILoggerProvider>().CreateLogger(member.DeclaringType.FullName)

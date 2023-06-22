@@ -2,27 +2,27 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<LangVersion>latest</LangVersion>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<AnalysisLevel>latest</AnalysisLevel>
 		<RootNamespace>Nameless.FileStorage.System</RootNamespace>
+
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 
 		<!-- PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
-		<Description>Multiple classes and functionalities for .NET Core applications.</Description>
+		<Description>Library to be used in conjunction with File Storage and the current system.</Description>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/FileStorage/Nameless.FileStorage.System</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/master/src/FileStorage/Nameless.FileStorage.System</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0.0</Version>
+		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageOutputPath>..\..\..\nupkgs</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
