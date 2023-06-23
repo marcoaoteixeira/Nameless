@@ -1,13 +1,10 @@
 ﻿using MongoDB.Driver;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public static class AsyncCursorSourceExtension {
-
         #region Private Inner Classes
 
         private class AsyncEnumerableAdapter<T> : IAsyncEnumerable<T> {
-
             #region Private Read-Only Fields
 
             private readonly IAsyncCursorSource<T> _source;
@@ -34,7 +31,6 @@ namespace Nameless.NoSQL.MongoDb {
         }
 
         private class AsyncEnumeratorAdapter<T> : IAsyncEnumerator<T> {
-
             #region Private Read-Only Fields
 
             private readonly IAsyncCursorSource<T> _source;
@@ -64,7 +60,7 @@ namespace Nameless.NoSQL.MongoDb {
             public T Current {
                 get {
                     // TODO: Check if this code really run ok
-                    if (_batchEnumerator == default || _batchEnumerator.Current == null) {
+                    if (_batchEnumerator == null || _batchEnumerator.Current == null) {
                         throw new NullReferenceException();
                     }
                     return _batchEnumerator.Current;
@@ -72,15 +68,15 @@ namespace Nameless.NoSQL.MongoDb {
             }
 
             public async ValueTask<bool> MoveNextAsync() {
-                if (_asyncCursor == default) {
+                if (_asyncCursor == null) {
                     _asyncCursor = await _source.ToCursorAsync(_cancellationToken);
                 }
 
-                if (_batchEnumerator != default && _batchEnumerator.MoveNext()) {
+                if (_batchEnumerator != null && _batchEnumerator.MoveNext()) {
                     return true;
                 }
 
-                if (_asyncCursor != default && await _asyncCursor.MoveNextAsync(_cancellationToken)) {
+                if (_asyncCursor != null && await _asyncCursor.MoveNextAsync(_cancellationToken)) {
                     _batchEnumerator?.Dispose();
                     _batchEnumerator = _asyncCursor.Current.GetEnumerator();
 
@@ -92,7 +88,7 @@ namespace Nameless.NoSQL.MongoDb {
 
             public ValueTask DisposeAsync() {
                 _asyncCursor?.Dispose();
-                _asyncCursor = default;
+                _asyncCursor = null;
 
                 return ValueTask.CompletedTask;
             }

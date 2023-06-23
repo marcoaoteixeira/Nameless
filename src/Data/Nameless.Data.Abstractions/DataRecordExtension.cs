@@ -246,7 +246,7 @@ namespace Nameless.Data {
             Prevent.NullOrWhiteSpaces(fieldName, nameof(fieldName));
 
             var value = SafeGetValue(self, fieldName);
-            
+
             return value == default
                 ? defaultValue.HasValue
                     ? new TStruct?(defaultValue.Value)

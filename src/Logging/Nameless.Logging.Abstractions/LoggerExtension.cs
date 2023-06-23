@@ -315,6 +315,12 @@
 
         #endregion
 
+        public static ILogger On(this ILogger self, bool condition) {
+            if (self == default) { return NullLogger.Instance; }
+
+            return condition ? self : NullLogger.Instance;
+        }
+
         #endregion
 
         #region Private Static Methods

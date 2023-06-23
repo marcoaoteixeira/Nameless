@@ -1,5 +1,4 @@
-﻿using System.Security.AccessControl;
-using Autofac;
+﻿using Autofac;
 using Autofac_Parameter = Autofac.Core.Parameter;
 
 namespace Nameless.Autofac {
@@ -18,10 +17,11 @@ namespace Nameless.Autofac {
         /// <param name="lifetimeScope"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public static ContainerBuilder Register<TService, TImplementation>(this ContainerBuilder self, string? name = default, LifetimeScopeType lifetimeScope = LifetimeScopeType.Transient, params Autofac_Parameter[] parameters)
+        public static ContainerBuilder Register<TService, TImplementation>(this ContainerBuilder self, string? name = null, LifetimeScopeType lifetimeScope = LifetimeScopeType.Transient, params Autofac_Parameter[] parameters)
             where TService : class
             where TImplementation : TService {
-            return self.Register(
+            return Register(
+                self: self,
                 service: typeof(TService),
                 implementation: typeof(TImplementation),
                 name: name,
@@ -33,9 +33,7 @@ namespace Nameless.Autofac {
         /// <summary>
         /// Registers an implementation for a specified service. Knows how to deal with classes marked with <see cref="SingletonAttribute"/>.
         /// </summary>
-        public static ContainerBuilder Register(this ContainerBuilder self, Type service, Type implementation, string? name = default, LifetimeScopeType lifetimeScope = LifetimeScopeType.Transient, params Autofac_Parameter[] parameters) {
-            Prevent.Null(self, nameof(self));
-
+        public static ContainerBuilder Register(this ContainerBuilder self, Type service, Type implementation, string? name = null, LifetimeScopeType lifetimeScope = LifetimeScopeType.Transient, params Autofac_Parameter[] parameters) {
             if (!service.IsAssignableFrom(implementation)) {
                 throw new ArgumentException($"The specified type ({service}) must be assignable to {implementation}");
             }
@@ -71,12 +69,12 @@ namespace Nameless.Autofac {
 
         #region Private Static Methods
 
-        private static bool RegisterAsSingleton(ContainerBuilder builder, Type service, Type implementation, string? name = default) {
+        private static bool RegisterAsSingleton(ContainerBuilder builder, Type service, Type implementation, string? name = null) {
             var result = false;
-            
+
             if (implementation.IsSingleton()) {
                 var instance = SingletonAttribute.GetInstance(implementation);
-                if (instance == default) {
+                if (instance == null) {
                     throw new MemberAccessException("Couldn't access singleton accessor property.");
                 }
 

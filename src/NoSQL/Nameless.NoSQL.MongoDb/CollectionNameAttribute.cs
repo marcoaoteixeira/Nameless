@@ -1,10 +1,6 @@
-﻿using System;
-
-namespace Nameless.NoSQL.MongoDb {
-
+﻿namespace Nameless.NoSQL.MongoDb {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed class CollectionNameAttribute : Attribute {
-
         #region Public Read-Only Properties
 
         public string Name { get; }

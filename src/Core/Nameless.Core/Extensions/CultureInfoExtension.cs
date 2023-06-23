@@ -17,7 +17,7 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static IEnumerable<CultureInfo> GetTree(this CultureInfo self) {
             Prevent.Null(self, nameof(self));
-            
+
             var currentCulture = new CultureInfo(self.Name);
             while (!string.IsNullOrWhiteSpace(currentCulture.Name)) {
                 yield return currentCulture;

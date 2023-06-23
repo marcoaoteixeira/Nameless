@@ -2,9 +2,7 @@ using System.Collections;
 using Sys_Environment = System.Environment;
 
 namespace Nameless.Environment.System {
-
     public sealed class HostEnvironment : IHostEnvironment {
-
         #region Private Read-Only Fields
 
         private readonly string _environmentName;

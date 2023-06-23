@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Text {
 
-	/// <summary>
-	/// Enumerator for string padder direction.
-	/// </summary>
-	public enum StringPadderDirection {
+    /// <summary>
+    /// Enumerator for string padder direction.
+    /// </summary>
+    public enum StringPadderDirection {
 
         /// <summary>
         /// Left side.

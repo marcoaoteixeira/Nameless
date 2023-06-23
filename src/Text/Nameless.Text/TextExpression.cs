@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Text {
 
-	/// <summary>
-	/// Base class used in <see cref="Interpolator"/>.
-	/// </summary>
-	public abstract class TextExpression {
+    /// <summary>
+    /// Base class used in <see cref="Interpolator"/>.
+    /// </summary>
+    public abstract class TextExpression {
 
         #region Public Abstract Methods
 

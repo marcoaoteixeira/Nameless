@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Text {
 
-	/// <summary>
-	/// Contract to data binder functionality.
-	/// </summary>
-	public interface IDataBinder {
+    /// <summary>
+    /// Contract to data binder functionality.
+    /// </summary>
+    public interface IDataBinder {
 
         #region Methods
 

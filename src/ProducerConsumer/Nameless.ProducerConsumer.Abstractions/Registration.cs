@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using Nameless.Helpers;
 
 namespace Nameless.ProducerConsumer {
-
     /// <summary>
     /// Represents a consumer registration, also holds the reference to the callback method.
     /// </summary>
@@ -43,17 +41,17 @@ namespace Nameless.ProducerConsumer {
         /// </summary>
         /// <param name="callback">The message handler.</param>
         /// <param name="tag">The registration tag.</param>
-        public Registration(string tag, string topic, Action<T> callback) {
+        public Registration(string tag, string topic, MessageEventHandler<T> handler) {
             Prevent.NullOrWhiteSpaces(tag, nameof(tag));
             Prevent.NullOrWhiteSpaces(topic, nameof(topic));
-            Prevent.Null(callback, nameof(callback));
+            Prevent.Null(handler, nameof(handler));
 
             Tag = tag;
             Topic = topic;
 
-            _methodInfo = callback.Method;
-            _targetObject = new WeakReference(callback.Target);
-            _isStatic = callback.Target == default;
+            _methodInfo = handler.Method;
+            _targetObject = new WeakReference(handler.Target);
+            _isStatic = handler.Target == default;
         }
 
         #endregion
@@ -67,49 +65,32 @@ namespace Nameless.ProducerConsumer {
 
         #endregion
 
+        #region Public Override Methods
+
+        public override string ToString() {
+            return $"[{Topic};{Tag}]";
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
         /// Creates a handler for the subscription.
         /// </summary>
-        /// <returns>An instance of <see cref="Action{object}" />.</returns>
-        public Action<T>? CreateHandler() {
+        /// <returns>An instance of <see cref="MessageEventHandler{T}" />.</returns>
+        public MessageEventHandler<T>? CreateHandler() {
             BlockAccessAfterDispose();
 
             if (_targetObject.Target != default && _targetObject.IsAlive) {
-                return (Action<T>)_methodInfo.CreateDelegate(typeof(Action<T>), _targetObject.Target);
+                return (MessageEventHandler<T>)_methodInfo.CreateDelegate(typeof(MessageEventHandler<T>), _targetObject.Target);
             }
 
             if (_isStatic) {
-                return (Action<T>)_methodInfo.CreateDelegate(typeof(Action<T>));
+                return (MessageEventHandler<T>)_methodInfo.CreateDelegate(typeof(MessageEventHandler<T>));
             }
 
             return default;
-        }
-
-        /// <summary>
-        /// Checks for equality of the object.
-        /// </summary>
-        /// <param name="obj">The other <see cref="Subscription" /> object.</param>
-        /// <returns><c>true</c> if equals, otherwise <c>false</c>.</returns>
-        public bool Equals(Registration<T>? obj) => obj != default
-            && obj.Tag == Tag
-            && obj.Topic == Topic
-            && obj.Callback == Callback;
-
-        #endregion
-
-        #region Public Override Methods
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => Equals(obj as Registration<T>);
-
-        /// <inheritdoc />
-        public override int GetHashCode() => SimpleHash.Compute(Tag, Topic, Callback);
-
-        /// <inheritdoc />
-        public override string ToString() {
-            return $"[{Topic}] Handler: {Tag}";
         }
 
         #endregion
@@ -139,7 +120,7 @@ namespace Nameless.ProducerConsumer {
         #region IDisposable Members
 
         /// <inheritdoc />
-        public void Dispose() {
+        void IDisposable.Dispose() {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

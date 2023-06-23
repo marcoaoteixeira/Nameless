@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace Nameless.Utils {
-
     public static class DeepCopy {
-
         #region Public Static Methods
 
         /// <summary>
@@ -24,13 +22,9 @@ namespace Nameless.Utils {
                 throw new InvalidOperationException($"Cannot clone abstract classes, interfaces or pointers. Object type: {objType}");
             }
 
-            // Initialize inner objects individually, for example in default constructor
-            // some list property initialized with some values, but in 'instance' these items are cleaned -
-            // without ObjectCreationHandling.Replace default constructor values will be added to result
-            var settings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
-            var json = JsonConvert.SerializeObject(obj);
+            var json = JsonSerializer.Serialize(obj);
 
-            return JsonConvert.DeserializeObject(json, objType, settings);
+            return JsonSerializer.Deserialize(json, objType);
         }
 
         public static T? Clone<T>(T obj) where T : class => (T?)Clone(obj as object);

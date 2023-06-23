@@ -14,7 +14,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 using System.Security.Cryptography;
-using Microsoft.Extensions.Options;
 
 namespace Nameless.Security {
 
@@ -45,8 +44,8 @@ namespace Nameless.Security {
 
         #region Public Constructors
 
-        public RandomPasswordGenerator(IOptions<PasswordGeneratorOptions> options) {
-            _options = options.Value ?? PasswordGeneratorOptions.Default;
+        public RandomPasswordGenerator(PasswordGeneratorOptions options) {
+            _options = options ?? PasswordGeneratorOptions.Default;
         }
 
         #endregion

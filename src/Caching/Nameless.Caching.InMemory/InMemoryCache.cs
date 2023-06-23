@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
@@ -15,7 +14,7 @@ namespace Nameless.Caching.InMemory {
 
         #region Public Constructors
 
-        public InMemoryCache(IOptions<MemoryCacheOptions> options) {
+        public InMemoryCache(MemoryCacheOptions options) {
             _cache = new MemoryCache(options);
         }
 
@@ -36,20 +35,18 @@ namespace Nameless.Caching.InMemory {
             cts.Dispose();
         }
 
-        private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = default) {
+        private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = null) {
             var result = new MemoryCacheEntryOptions();
 
-            if (opts == null) { return result; }
+            if (opts == null || opts.ExpiresIn == default) { return result; }
 
-            if (opts.ExpiresIn != default) {
-                var cts = new CancellationTokenSource(opts.ExpiresIn);
-                var changeToken = new CancellationChangeToken(cts.Token);
-                result.ExpirationTokens.Add(changeToken);
+            var cts = new CancellationTokenSource(opts.ExpiresIn);
+            var changeToken = new CancellationChangeToken(cts.Token);
+            result.ExpirationTokens.Add(changeToken);
 
-                result.RegisterPostEvictionCallback((key, value, reason, state) => {
-                    OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts);
-                });
-            }
+            result.RegisterPostEvictionCallback((key, value, reason, state) => {
+                OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts);
+            });
 
             return result;
         }
@@ -64,7 +61,7 @@ namespace Nameless.Caching.InMemory {
                 _cache.Dispose();
             }
 
-            _cache = default!;
+            _cache = null!;
             _disposed = true;
         }
 
@@ -78,28 +75,35 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<object> SetAsync(string key, object value, CacheEntryOptions? opts = default, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Prevent.Null(value, nameof(value));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _cache.Set(key, value, GetOptions(opts));
+            var result = _cache.Set(key, value, GetOptions(opts)) != null;
 
             return Task.FromResult(result);
         }
 
-        public Task<object?> GetAsync(string key, CancellationToken cancellationToken = default) {
+        public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             var value = _cache.Get(key);
 
-            return Task.FromResult(value);
+            return Task.FromResult(value is T result ? result : default);
         }
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
+
+            Prevent.NullOrWhiteSpaces(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -107,8 +111,6 @@ namespace Nameless.Caching.InMemory {
 
             return Task.FromResult(true);
         }
-
-        public Task<bool> RefreshAsync(string key, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
         #endregion
 

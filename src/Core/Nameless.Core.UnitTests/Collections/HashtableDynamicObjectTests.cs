@@ -1,19 +1,72 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Nameless.Collections;
 
 namespace Nameless.Core.UnitTests.Collections {
-    
+
     public class HashtableDynamicObjectTests {
 
         [Test]
-        public void HashtableDynamicObject_Create() {
-            dynamic hash = new HashtableDynamicObject();
+        public void Can_Create_New_HashtableDynamicObject() {
+            // arrange
+            IDynamicMetaObjectProvider provider;
 
-            hash.Property = "wewe";
+            // act
+            provider = new HashtableDynamicObject();
+
+            // assert
+            Assert.That(provider, Is.Not.Null);
+        }
+
+        [Test]
+        public void Can_Insert_New_Property() {
+
+            // arrange
+            dynamic hashtable = new HashtableDynamicObject();
+
+            // act
+            hashtable.Id = 1;
+
+            // assert
+            Assert.That(hashtable, Is.Not.Null);
+            Assert.That(hashtable.Id, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Can_Create_Entity_With_Dynamic_Attributes() {
+            // arrange
+            Entity entity;
+
+            // act
+            entity = new Entity();
+
+            // assert
+            entity.Attribute.Name = "Test";
+            var name = entity.GetAttributes().First().value;
+
+            Assert.Multiple(() => {
+                Assert.That(entity.Attribute, Is.Not.Null);
+                Assert.That(entity.Attribute.Name, Is.EqualTo("Test"));
+                Assert.That(name, Is.EqualTo("Test"));
+            });
+        }
+
+        public class Entity {
+            private readonly IDictionary _attributes = new Hashtable();
+            private readonly HashtableDynamicObject _proxy;
+            public dynamic Attribute => _proxy;
+
+            public Entity() {
+                _proxy = new HashtableDynamicObject(_attributes);
+            }
+
+            public IEnumerable<(object? key, object? value)> GetAttributes() {
+                foreach (var key in _attributes.Keys) {
+                    yield return (key, _attributes[key]);
+                }
+            }
         }
     }
 }

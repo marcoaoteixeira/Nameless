@@ -1,8 +1,6 @@
 ﻿namespace Nameless.Localization {
-
     [Singleton]
     public sealed class NullStringLocalizer : IStringLocalizer {
-
         #region Private Static Read-Only Fields
 
         private static readonly IStringLocalizer _instance = new NullStringLocalizer();

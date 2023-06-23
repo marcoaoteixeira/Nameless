@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Nameless.IO {
+﻿namespace Nameless.IO {
 
     /// <summary>
     /// Provides a rolling <see cref="Stream"/> for a file.

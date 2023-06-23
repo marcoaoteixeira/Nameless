@@ -1,8 +1,7 @@
 using System.Text;
 using Nameless.Infrastructure;
 
-namespace Nameless
-{
+namespace Nameless {
 
     /// <summary>
     /// Extension methods for <see cref="Stream"/>.

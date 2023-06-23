@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
-using Microsoft.Extensions.Options;
 using L4N_Hierarchy = log4net.Repository.Hierarchy.Hierarchy;
 using L4N_ILoggerRepository = log4net.Repository.ILoggerRepository;
 using L4N_LogManager = log4net.LogManager;
@@ -36,11 +35,11 @@ namespace Nameless.Logging.log4net {
         /// Initializes a new instance of <see cref="LoggerFactory"/>
         /// </summary>
         /// <param name="options">The logger settings.</param>
-        public LoggerFactory(ILoggerEventFactory loggerEventFactory, IOptions<Log4netOptions> options) {
+        public LoggerFactory(ILoggerEventFactory loggerEventFactory, Log4netOptions options) {
             Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
 
             _loggerEventFactory = loggerEventFactory;
-            _options = options.Value ?? Log4netOptions.Default;
+            _options = options ?? Log4netOptions.Default;
 
             Initialize();
         }
@@ -71,15 +70,13 @@ namespace Nameless.Logging.log4net {
             // Create logger repository
             var repositoryType = typeof(L4N_Hierarchy);
             if (!string.IsNullOrWhiteSpace(_options.RepositoryName)) {
-                try { _repository = L4N_LogManager.CreateRepository(_options.RepositoryName, repositoryType); }
-                catch { }
+                try { _repository = L4N_LogManager.CreateRepository(_options.RepositoryName, repositoryType); } catch { }
             }
             _repository ??= L4N_LogManager.CreateRepository(Assembly.GetExecutingAssembly(), repositoryType);
 
             // Configure logger
             var configurationFilePath = GetConfigurationFilePath(_options.ConfigurationFileName);
-            if (_options.ReloadOnChange) { L4N_XmlConfigurator.ConfigureAndWatch(_repository, configurationFilePath); }
-            else { L4N_XmlConfigurator.Configure(_repository, configurationFilePath); }
+            if (_options.ReloadOnChange) { L4N_XmlConfigurator.ConfigureAndWatch(_repository, configurationFilePath); } else { L4N_XmlConfigurator.Configure(_repository, configurationFilePath); }
         }
 
         private void Dispose(bool disposing) {

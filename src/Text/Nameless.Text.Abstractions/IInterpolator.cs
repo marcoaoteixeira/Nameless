@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Text {
 
-	/// <summary>
-	/// Interpolation contract.
-	/// </summary>
-	public interface IInterpolator {
+    /// <summary>
+    /// Interpolation contract.
+    /// </summary>
+    public interface IInterpolator {
 
         #region Methods
 

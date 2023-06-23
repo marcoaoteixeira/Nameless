@@ -61,14 +61,14 @@ namespace Nameless.Localization.Microsoft {
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(IStringLocalizer),
                     factory: StringLocalizer_Resolve_Delegate
                 ));
             };
 
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new FactoryResolveMiddleware(
+                pipeline.Use(new PropertyResolverMiddleware(
                     serviceType: typeof(MS_IStringLocalizer),
                     factory: MS_StringLocalizer_Resolve_Delegate
                 ));

@@ -1,5 +1,4 @@
 using System.Data.SQLite;
-using Microsoft.Extensions.Options;
 using Nameless.NHibernate;
 using Nameless.Persistence.NHibernate.UnitTesting.Fixtures;
 using NHibernate;
@@ -56,7 +55,7 @@ namespace Nameless.Persistence.NHibernate.UnitTesting {
                 }
             };
 
-            var configurationBuilder = new ConfigurationBuilder(Options.Create(opts));
+            var configurationBuilder = new ConfigurationBuilder(opts);
             _configuration = configurationBuilder.Build();
             _sessionFactory = _configuration.BuildSessionFactory();
         }

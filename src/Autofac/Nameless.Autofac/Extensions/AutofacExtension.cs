@@ -20,19 +20,19 @@ namespace Nameless.Autofac {
         /// <typeparam name="TScanningActivatorData">Activator data type.</typeparam>
         /// <typeparam name="TRegistrationStyle">Registration style.</typeparam>
         /// <param name="registration">Registration to set service mapping on.</param>
-        /// <param name="openGenericServiceType">The open generic interface or base class type for which implementations will be found.</param>
+        /// <param name="openGenericService">The open generic interface or base class type for which implementations will be found.</param>
         /// <returns>Registration builder allowing the registration to be configured.</returns>
-        public static IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> AsClosedInterfacesOf<TLimit, TScanningActivatorData, TRegistrationStyle>(this IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> registration, Type openGenericServiceType) where TScanningActivatorData : ScanningActivatorData {
-            Prevent.Null(openGenericServiceType, nameof(openGenericServiceType));
+        public static IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> AsClosedInterfacesOf<TLimit, TScanningActivatorData, TRegistrationStyle>(this IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> registration, Type openGenericService) where TScanningActivatorData : ScanningActivatorData {
+            Prevent.Null(openGenericService, nameof(openGenericService));
 
-            if (!openGenericServiceType.IsInterface) {
-                throw new ArgumentException("Generic type must be an interface.", nameof(openGenericServiceType));
+            if (!openGenericService.IsInterface) {
+                throw new ArgumentException("Generic type must be an interface.", nameof(openGenericService));
             }
 
             return registration
-                .Where(candidateType => candidateType.IsClosedTypeOf(openGenericServiceType))
+                .Where(candidateType => candidateType.IsClosedTypeOf(openGenericService))
                 .As(candidateType => candidateType.GetInterfaces()
-                    .Where(_ => _.IsClosedTypeOf(openGenericServiceType))
+                    .Where(_ => _.IsClosedTypeOf(openGenericService))
                     .Select(_ => (Service)new TypedService(_))
                 );
         }

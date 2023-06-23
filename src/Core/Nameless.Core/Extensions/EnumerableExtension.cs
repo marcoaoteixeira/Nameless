@@ -97,7 +97,7 @@ namespace Nameless {
         /// <param name="self">The <see cref="IEnumerable"/> instance.</param>
         /// <returns><c>true</c>, if is empty, otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static bool IsNullOrEmpty([NotNullWhen(false)]this IEnumerable? self) {
+        public static bool IsNullOrEmpty([NotNullWhen(false)] this IEnumerable? self) {
             if (self == default) { return true; }
 
             // Costs O(1)

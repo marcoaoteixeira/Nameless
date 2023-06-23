@@ -15,11 +15,10 @@
         /// <param name="index">The index</param>
         /// <param name="output">The output value for the index</param>
         /// <returns><c>true</c> if the value in the specified index was found; otherwise <c>false</c></returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool TryGetByIndex<T>(this T[] self, int index, out T? output) {
-            Prevent.Null(self, nameof(self));
-
             output = default;
+
+            if (self == default) { return false; }
 
             if (self.Length > index) {
                 output = self[index];

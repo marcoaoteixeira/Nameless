@@ -92,7 +92,7 @@ namespace Nameless.FileStorage.System {
         /// <inheritdoc />
         public Task<IFile> GetFileAsync(string relativePath, CancellationToken cancellationToken = default) {
             Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
-            
+
             var currentRelativePath = PathHelper.Normalize(relativePath);
 
             cancellationToken.ThrowIfCancellationRequested();

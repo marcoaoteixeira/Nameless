@@ -11,7 +11,7 @@ namespace Nameless.Logging.log4net.UnitTests {
             // arrange
             var builder = new ContainerBuilder();
             builder.RegisterModule<LoggingModule>();
-            builder.RegisterInstance(Options.Create(Log4netOptions.Default));
+            builder.RegisterInstance(Log4netOptions.Default);
             using var container = builder.Build();
 
             // act
@@ -30,7 +30,7 @@ namespace Nameless.Logging.log4net.UnitTests {
             // arrange
             var builder = new ContainerBuilder();
             builder.RegisterModule<LoggingModule>();
-            builder.RegisterInstance(Options.Create(Log4netOptions.Default));
+            builder.RegisterInstance(Log4netOptions.Default);
             builder.RegisterType<ServiceWithLogger>().As<IService>();
             using var container = builder.Build();
 

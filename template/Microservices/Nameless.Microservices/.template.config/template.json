@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Marco Antonio Orestes Teixeira",
+  "classifications": ["Microservices"],
+  "identity": "Nameless.Microservices",
+  "name": "Nameless Microservices Skeleton",
+  "shortName": "microservices",
+  "sourceName": "Nameless.Microservices",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}

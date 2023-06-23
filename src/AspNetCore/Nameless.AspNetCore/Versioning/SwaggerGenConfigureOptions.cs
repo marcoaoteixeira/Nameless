@@ -31,14 +31,14 @@ namespace Nameless.AspNetCore.Versioning {
         /// <param name="provider">The <see cref="IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
         /// <param name="hostEnvironment">The <see cref="IHostEnvironment"/>hostEnvironment.</param>
         /// <param name="options">The <see cref="SwaggerPageOptions"/>applicationOptions.</param>
-        public SwaggerGenConfigureOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, IOptions<SwaggerPageOptions> options) {
+        public SwaggerGenConfigureOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, SwaggerPageOptions options) {
             Prevent.Null(provider, nameof(provider));
             Prevent.Null(hostEnvironment, nameof(hostEnvironment));
             Prevent.Null(options, nameof(options));
 
             _provider = provider;
             _hostEnvironment = hostEnvironment;
-            _options = options.Value ?? SwaggerPageOptions.Default;
+            _options = options ?? SwaggerPageOptions.Default;
         }
 
         #endregion
@@ -53,11 +53,11 @@ namespace Nameless.AspNetCore.Versioning {
                 Contact = new() {
                     Name = settings.Contact.Name,
                     Email = settings.Contact.Email,
-                    Url = settings.Contact.Url != default ? new Uri(settings.Contact.Url) : default
+                    Url = settings.Contact.Url != null ? new Uri(settings.Contact.Url) : null
                 },
                 License = new() {
                     Name = settings.License.Name,
-                    Url = settings.License.Url != default ? new Uri(settings.License.Url) : default
+                    Url = settings.License.Url != null ? new Uri(settings.License.Url) : null
                 }
             };
         }

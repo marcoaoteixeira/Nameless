@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using Nameless.Security.Cryptography;
 using NHibernate.Engine;
@@ -19,7 +18,7 @@ namespace Nameless.NHibernate {
         #region Public Constructors
 
         public SecureStringUserType() {
-            _cryptoProvider = new AesCryptoProvider(Options.Create(CryptoOptions.Default));
+            _cryptoProvider = new AesCryptoProvider(CryptoOptions.Default);
         }
 
         #endregion

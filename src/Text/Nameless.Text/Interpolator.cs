@@ -1,5 +1,4 @@
 ﻿namespace Nameless.Text {
-
     /// <summary>
     /// Default implementation of <see cref="IInterpolator"/>. Helps interpolate string and objects.
     /// </summary>
@@ -7,7 +6,6 @@
     /// http://haacked.com/archive/2009/01/04/fun-with-named-formats-string-parsing-and-edge-cases.aspx/
     /// </remarks>
     public sealed class Interpolator : IInterpolator {
-
         #region Private Read-Only Fields
 
         private readonly IDataBinder _dataBinder;

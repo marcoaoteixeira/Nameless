@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Notification {
-
     /// <summary>
     /// Default implementation of <see cref="INotifier"/>.
     /// </summary>
     public sealed class Notifier : INotifier {
-
         #region Private Read-Only Fields
 
         private readonly List<NotifyEntry> _entries = new();
@@ -15,7 +13,7 @@
 
         /// <inheritdoc/>
         public void Add(NotifyType type, string message) {
-            _entries.Add(new NotifyEntry { Type = type, Message = message });
+            _entries.Add(new() { Type = type, Message = message });
         }
 
         /// <inheritdoc/>

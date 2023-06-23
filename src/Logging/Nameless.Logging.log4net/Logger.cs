@@ -39,14 +39,14 @@ namespace Nameless.Logging.log4net {
             Prevent.NullOrWhiteSpaces(message, nameof(message));
 
             if (!IsEnabled(logLevel)) { return; }
-            
+
             var logMessage = new LogMessage(logLevel, message, exception, args);
             var loggingEvent = _loggerEventFactory.CreateLoggingEvent(
                 message: in logMessage,
                 logger: _logger,
                 options: _options
             );
-            
+
             if (loggingEvent is null) { return; }
 
             _logger.Log(loggingEvent);

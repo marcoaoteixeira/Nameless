@@ -46,9 +46,7 @@ namespace Nameless.AspNetCore.Versioning {
             foreach (var parameter in operation.Parameters) {
                 var description = apiDescription.ParameterDescriptions.First(_ => _.Name == parameter.Name);
 
-                if (parameter.Description == null) {
-                    parameter.Description = description.ModelMetadata?.Description;
-                }
+                parameter.Description ??= description.ModelMetadata?.Description;
 
                 if (parameter.Schema.Default == null && description.DefaultValue != null) {
                     // REF: https://github.com/Microsoft/aspnet-api-versioning/issues/429#issuecomment-605402330

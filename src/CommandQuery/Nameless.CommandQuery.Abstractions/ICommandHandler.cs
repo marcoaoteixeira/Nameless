@@ -1,6 +1,4 @@
-﻿using Nameless.Infrastructure;
-
-namespace Nameless.CommandQuery {
+﻿namespace Nameless.CommandQuery {
     /// <summary>
     /// Command handler interface.
     /// </summary>
@@ -14,7 +12,7 @@ namespace Nameless.CommandQuery {
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task" /> representing the command execution.</returns>
-        Task<ExecutionResult> HandleAsync(TCommand command, CancellationToken cancellationToken = default);
+        Task HandleAsync(TCommand command, CancellationToken cancellationToken = default);
 
         #endregion
     }

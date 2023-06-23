@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
-
         #region Private Static Read-Only Fields
 
         private static readonly ICollectionNamingStrategy _instance = new CollectionNamingStrategy();
@@ -37,10 +35,10 @@ namespace Nameless.NoSQL.MongoDb {
         #region ICollectionNamingStrategy Members
 
         public string? GetCollectionName(Type? type) {
-            if (type == default) { throw new ArgumentNullException(nameof(type)); }
+            if (type == null) { throw new ArgumentNullException(nameof(type)); }
 
             var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
-            if (attr != default && !string.IsNullOrWhiteSpace(attr.Name)) { return attr.Name; }
+            if (attr != null && !string.IsNullOrWhiteSpace(attr.Name)) { return attr.Name; }
 
             return type.FullName!
                     .Replace(".", string.Empty)

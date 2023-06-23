@@ -1,7 +1,5 @@
 ﻿namespace Nameless.NoSQL.MongoDb {
-
     public sealed class MongoOptions {
-
         #region Public Static Read-Only Properties
 
         public static MongoOptions Default => new();

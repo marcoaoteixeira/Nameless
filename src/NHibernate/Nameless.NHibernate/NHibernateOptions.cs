@@ -3,9 +3,7 @@ using System.Data;
 using System.Reflection;
 
 namespace Nameless.NHibernate {
-
     public abstract class NHibernateOptionsBase {
-
         #region Public Methods
 
         public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
@@ -26,7 +24,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateOptions {
-
         #region Public Static Read-Only Properties
 
         public static NHibernateOptions Default => new();
@@ -55,14 +52,14 @@ namespace Nameless.NHibernate {
 
         public IDictionary<string, string> ToDictionary() {
             var configs = new List<KeyValuePair<string, string>>();
-            
+
             var properties = GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(_ => typeof(NHibernateOptionsBase).IsAssignableFrom(_.PropertyType));
 
             foreach (var property in properties) {
                 var config = (NHibernateOptionsBase)property.GetValue(this)!;
-                if (config == default) { continue; }
+                if (config == null) { continue; }
                 configs.AddRange(config.GetConfigValues());
             }
 
@@ -73,7 +70,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateConnectionOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("connection.provider")]
@@ -98,7 +94,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateAdoNetOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("adonet.batch_size")]
@@ -117,7 +112,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateCommonOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("dialect")]
@@ -187,7 +181,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateCacheOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("cache.use_second_level_cache")]
@@ -212,7 +205,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateQueryOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("query.substitutions")]
@@ -243,7 +235,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateLinqToHqlOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("linqtohql.generatorsregistry")]
@@ -253,7 +244,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateHbmToDdlOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("hbm2ddl.auto")]
@@ -266,7 +256,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateProxyFactoryOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("proxyfactory.factory_class")]
@@ -276,7 +265,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateCollectionTypeOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("collectiontype.factory_class")]
@@ -286,7 +274,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateTransactionOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("transaction.factory_class")]
@@ -302,7 +289,6 @@ namespace Nameless.NHibernate {
     }
 
     public sealed class NHibernateSpecificOptions : NHibernateOptionsBase {
-
         #region Public Properties
 
         [Description("firebird.disable_parameter_casting")]

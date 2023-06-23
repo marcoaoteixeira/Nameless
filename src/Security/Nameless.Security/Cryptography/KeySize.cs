@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Security.Cryptography {
 
-	/// <summary>
-	/// Encryption key sizes.
-	/// </summary>
-	public enum KeySize {
+    /// <summary>
+    /// Encryption key sizes.
+    /// </summary>
+    public enum KeySize {
 
         /// <summary>
         /// 128 bits.

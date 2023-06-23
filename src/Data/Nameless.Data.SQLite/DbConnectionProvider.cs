@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Options;
 using Nameless.Logging;
 
 namespace Nameless.Data.SQLite {
@@ -15,7 +14,7 @@ namespace Nameless.Data.SQLite {
 
         #region Private Fields
 
-        private ILogger _logger = default!;
+        private ILogger _logger = null!;
 
         #endregion
 
@@ -23,15 +22,15 @@ namespace Nameless.Data.SQLite {
 
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
         }
 
         #endregion
 
         #region Public Constructors
 
-        public DbConnectionProvider(IOptions<DatabaseOptions> options) {
-            _options = options.Value ?? DatabaseOptions.Default;
+        public DbConnectionProvider(DatabaseOptions options) {
+            _options = options ?? DatabaseOptions.Default;
         }
 
         #endregion
@@ -44,7 +43,8 @@ namespace Nameless.Data.SQLite {
             var connection = new SqliteConnection(_options.ConnectionString);
 
             if (connection.State != ConnectionState.Open) {
-                try { connection.Open(); } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                try { connection.Open(); }
+                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
             }
 
             return connection;

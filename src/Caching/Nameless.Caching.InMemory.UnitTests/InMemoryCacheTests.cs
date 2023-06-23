@@ -16,7 +16,7 @@ namespace Nameless.Caching.InMemory.UnitTests {
             var obj = await cache.SetAsync("Test", 123456);
 
             // assert
-            obj.Should().Be(123456);
+            obj.Should().Be(true);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace Nameless.Caching.InMemory.UnitTests {
             var expired = await cache.GetAsync<int>("Test");
 
             // assert
-            actual.Should().Be(123456);
+            actual.Should().Be(true);
             expired.Should().Be(0);
         }
 
@@ -74,7 +74,7 @@ namespace Nameless.Caching.InMemory.UnitTests {
             var expired = await cache.GetAsync<int>("Test");
 
             // assert
-            actual.Should().Be(123456);
+            actual.Should().Be(true);
             expired.Should().Be(0);
             innerKey.Should().Be("Test");
             innerValue.Should().Be(123456);

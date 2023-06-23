@@ -1,5 +1,4 @@
 ﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using Nameless.FileStorage;
@@ -7,11 +6,8 @@ using Nameless.Logging;
 using Nameless.Services;
 using Nameless.Services.Impl;
 
-namespace Nameless.Messenger.Email
-{
-
+namespace Nameless.Messenger.Email {
     public sealed class MessengerService : IMessengerService {
-
         #region Private Read-Only Fields
 
         private readonly IFileStorage _fileStorage;
@@ -25,7 +21,7 @@ namespace Nameless.Messenger.Email
         private ILogger? _logger;
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
         }
 
         #endregion
@@ -37,11 +33,11 @@ namespace Nameless.Messenger.Email
         /// </summary>
         /// <param name="fileStorage">The file storage.</param>
         /// <param name="options">The SMTP client settings.</param>
-        public MessengerService(IFileStorage fileStorage, IOptions<MessengerOptions> options, IClock? clock = default) {
+        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClock? clock = null) {
             Prevent.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
-            _opts = options.Value ?? MessengerOptions.Default;
+            _opts = options ?? MessengerOptions.Default;
             _clock = clock ?? DefaultClock.Instance;
         }
 
@@ -91,7 +87,7 @@ namespace Nameless.Messenger.Email
 
         public async Task<MessageResponse> DispatchAsync(MessageRequest request, CancellationToken cancellationToken = default) {
             Prevent.Null(request, nameof(request));
-            
+
             if (request.From.IsNullOrEmpty()) {
                 throw new InvalidOperationException("Missing sender address.");
             }

@@ -2,9 +2,7 @@ using Nameless.Logging;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
-
     public sealed class Producer : IProducer {
-
         #region Private Read-Only Fields
 
         private readonly IModel _channel;
@@ -31,33 +29,30 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #endregion
 
-        #region IPublisher Members
+        #region IProducer Members
 
         /// <inheritdoc />
         /// <remarks>
-        /// Here, topic will be used as the routingKey parameter when calling <see cref="IModel.BasicPublish"/>
+        /// Here, <paramref name="topic"/> will be used as the routingKey parameter when calling <see cref="IModel.BasicPublish"/>
         /// </remarks>
-        public Task<string> ProduceAsync(string topic, object payload, Arguments arguments, CancellationToken cancellationToken = default) {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var properties = _channel.CreateBasicProperties().FillWith(arguments);
-            var message = new Message(
-                id: properties.MessageId,
+        public void Produce(string topic, object message, params Parameter[] parameters) {
+            var producerParams = new ProducerParameters(parameters);
+            var properties = _channel.CreateBasicProperties().FillWith(producerParams);
+            var envelope = new Envelope(
+                message: message,
+                messageId: properties.MessageId,
                 correlationId: properties.CorrelationId,
-                payload: payload,
                 publishedAt: DateTime.UtcNow
             );
 
             try {
                 _channel.BasicPublish(
-                    exchange: arguments.ExchangeName(),
+                    exchange: producerParams.ExchangeName,
                     routingKey: topic,
                     basicProperties: properties,
-                    body: message.AsBuffer()
+                    body: envelope.CreateBuffer()
                 );
             } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
-
-            return Task.FromResult(message.Id);
         }
 
         #endregion

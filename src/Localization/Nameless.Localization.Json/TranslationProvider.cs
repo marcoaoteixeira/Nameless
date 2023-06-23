@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Globalization;
-using Microsoft.Extensions.Options;
 using Nameless.FileStorage;
 using Nameless.Localization.Json.Schema;
 using Newtonsoft.Json;
@@ -25,11 +24,11 @@ namespace Nameless.Localization.Json {
 
         #region Public Constructors
 
-        public TranslationProvider(IFileStorage fileStorage, IOptions<LocalizationOptions> options) {
+        public TranslationProvider(IFileStorage fileStorage, LocalizationOptions options) {
             Prevent.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
-            _options = options.Value ?? LocalizationOptions.Default;
+            _options = options ?? LocalizationOptions.Default;
         }
 
         #endregion

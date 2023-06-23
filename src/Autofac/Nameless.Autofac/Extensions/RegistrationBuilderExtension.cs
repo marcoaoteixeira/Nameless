@@ -1,7 +1,6 @@
-﻿using Autofac;
-using Autofac.Builder;
+﻿using Autofac.Builder;
 
-namespace Nameless.Autofac{
+namespace Nameless.Autofac {
 
     /// <summary>
     /// Extension methods for <see cref="IRegistrationBuilder{TLimit, TActivatorData, TRegistrationStyle}"/>
@@ -19,8 +18,6 @@ namespace Nameless.Autofac{
         /// <param name="self">The registration object.</param>
         /// <param name="lifetimeScopeType">The life time scope type.</param>
         public static void SetLifetimeScope<TLimit, TActivatorData, TRegistrationStyle>(this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> self, LifetimeScopeType lifetimeScopeType) {
-            Prevent.Null(self, nameof(self));
-
             switch (lifetimeScopeType) {
                 case LifetimeScopeType.Singleton:
                     self.SingleInstance();

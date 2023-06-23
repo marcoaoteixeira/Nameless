@@ -3,8 +3,7 @@ using Microsoft.Extensions.Options;
 using Nameless.Infrastructure;
 using NSubstitute;
 
-namespace Nameless.Lucene.UnitTests
-{
+namespace Nameless.Lucene.UnitTests {
 
     public class IndexProviderTests {
 
@@ -17,7 +16,7 @@ namespace Nameless.Lucene.UnitTests
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(applicationContext).As<IApplicationContext>();
-            builder.RegisterInstance(Options.Create(LuceneOptions.Default));
+            builder.RegisterInstance(LuceneOptions.Default);
             builder.RegisterModule<LuceneModule>();
 
             _container = builder.Build();

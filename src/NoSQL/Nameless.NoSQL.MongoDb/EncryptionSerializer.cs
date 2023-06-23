@@ -5,9 +5,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace Nameless.NoSQL.MongoDb {
-
     public sealed class EncryptionSerializer : SerializerBase<string?> {
-
         #region Private Static Read-Only Fields
 
         private static readonly byte[] Default_Key = new byte[8] { 0x38, 0xc4, 0x18, 0x22, 0x5b, 0xf2, 0xec, 0x9e };
@@ -52,7 +50,7 @@ namespace Nameless.NoSQL.MongoDb {
         public override string? Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args) {
             if (context.Reader.CurrentBsonType == BsonType.Null) {
                 context.Reader.ReadNull();
-                return default;
+                return null;
             }
 
             var value = context.Reader.ReadString();
@@ -64,7 +62,7 @@ namespace Nameless.NoSQL.MongoDb {
         #region Private Static Methods
 
         private static string? Crypt(byte[] key, byte[] iv, string value) {
-            if (value == default) { return default; }
+            if (value == null) { return null; }
 
             using var algorithm = DES.Create();
             using var transform = algorithm.CreateEncryptor(key, iv);
@@ -76,7 +74,7 @@ namespace Nameless.NoSQL.MongoDb {
         }
 
         private static string? Decrypt(byte[] key, byte[] iv, string value) {
-            if (value == default) { return default; }
+            if (value == null) { return null; }
 
             using var algorithm = DES.Create();
             using var transform = algorithm.CreateDecryptor(key, iv);

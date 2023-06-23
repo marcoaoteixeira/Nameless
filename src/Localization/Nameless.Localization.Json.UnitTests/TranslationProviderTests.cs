@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Nameless.FileStorage.System;
 
 namespace Nameless.Localization.Json.UnitTests {
@@ -13,7 +12,7 @@ namespace Nameless.Localization.Json.UnitTests {
         public async Task TranslationProvider_Can_Return_Translation(string cultureName, string phrase) {
             // arrange
             var fileStorage = new FileStorageImpl(NullApplicationContext.Instance);
-            var translationProvider = new TranslationProvider(fileStorage, Options.Create(LocalizationOptions.Default));
+            var translationProvider = new TranslationProvider(fileStorage, LocalizationOptions.Default);
 
             // act
             var translation = await translationProvider.GetAsync(new CultureInfo(cultureName));

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nameless.Text {
+﻿namespace Nameless.Text {
 
     /// <summary>
     /// The string padder format provider.

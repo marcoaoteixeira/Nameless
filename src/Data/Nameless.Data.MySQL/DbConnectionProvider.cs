@@ -1,5 +1,4 @@
 using System.Data;
-using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Nameless.Logging;
 
@@ -15,7 +14,7 @@ namespace Nameless.Data.MySQL {
 
         #region Private Fields
 
-        private ILogger _logger = default!;
+        private ILogger _logger = null!;
 
         #endregion
 
@@ -23,15 +22,15 @@ namespace Nameless.Data.MySQL {
 
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value ?? NullLogger.Instance; }
+            set { _logger = value; }
         }
 
         #endregion
 
         #region Public Constructors
 
-        public DbConnectionProvider(IOptions<DatabaseOptions> options) {
-            _options = options.Value ?? DatabaseOptions.Default;
+        public DbConnectionProvider(DatabaseOptions options) {
+            _options = options ?? DatabaseOptions.Default;
         }
 
         #endregion

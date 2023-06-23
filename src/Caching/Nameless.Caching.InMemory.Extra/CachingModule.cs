@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Caching.Memory;
 using Nameless.Autofac;
 
 namespace Nameless.Caching.InMemory {
@@ -9,11 +10,21 @@ namespace Nameless.Caching.InMemory {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterType<InMemoryCache>()
+                .Register(RegisterInMemoryCache)
                 .As<ICache>()
                 .SingleInstance();
 
             base.Load(builder);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static ICache RegisterInMemoryCache(IComponentContext context) {
+            var opts = context.ResolveOptional<MemoryCacheOptions>() ?? new();
+
+            return new InMemoryCache(opts);
         }
 
         #endregion

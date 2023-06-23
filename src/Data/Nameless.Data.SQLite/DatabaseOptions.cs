@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Data.SQLite {
-
-	public sealed class DatabaseOptions {
-
+    public sealed class DatabaseOptions {
         #region Public Static Read-Only Properties
 
         public static DatabaseOptions Default => new();
@@ -15,6 +13,6 @@
         /// </summary>
         public string ConnectionString { get; set; } = "Data Source=:memory:; Version=3; Page Size=8192;";
 
-		#endregion
-	}
+        #endregion
+    }
 }
