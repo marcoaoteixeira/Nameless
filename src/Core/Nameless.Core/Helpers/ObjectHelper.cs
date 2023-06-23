@@ -4,12 +4,10 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Nameless.Helpers {
-
     /// <summary>
     /// An <see cref="object"/> helper class.
     /// </summary>
     public static class ObjectHelper {
-
         #region Public Static Methods
 
         /// <summary>
@@ -38,13 +36,13 @@ namespace Nameless.Helpers {
         #region Private Static Methods
 
         private static string ConvertComplexObjectToXml(object input) {
-            if (input == default) { return string.Empty; }
+            if (input == null) { return string.Empty; }
 
             using var memoryStream = new MemoryStream();
             using var streamReader = new StreamReader(memoryStream);
             var xmlSerializer = new XmlSerializer(input.GetType());
             xmlSerializer.Serialize(memoryStream, input);
-            xmlSerializer = default;
+            xmlSerializer = null;
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -52,13 +50,13 @@ namespace Nameless.Helpers {
         }
 
         private static XElement? ConvertAnonymousObjectToXml(object input) {
-            if (input == default) { return default; }
+            if (input == null) { return null; }
 
-            return ConvertAnonymousObjectToXml(input, default);
+            return ConvertAnonymousObjectToXml(input, null);
         }
 
         private static XElement? ConvertAnonymousObjectToXml(object input, string? element) {
-            if (input == default) { return default; }
+            if (input == null) { return null; }
             if (string.IsNullOrEmpty(element)) { element = "root"; }
 
             element = XmlConvert.EncodeName(element);
@@ -71,16 +69,16 @@ namespace Nameless.Helpers {
                            let name = XmlConvert.EncodeName(property.Name)
 
                            let val = !property.PropertyType.IsArray
-                                ? property.GetValue(input, default)
+                                ? property.GetValue(input, null)
                                 : "array"
 
                            let value = property.PropertyType.IsArray
-                                ? GetArrayElement(property, property.GetValue(input, default) as Array)
+                                ? GetArrayElement(property, property.GetValue(input, null) as Array)
                                 : (property.PropertyType.IsSimple()
                                     ? new XElement(name, val)
                                     : ConvertAnonymousObjectToXml(val, name))
 
-                           where value != default
+                           where value != null
 
                            select value;
 
@@ -90,7 +88,7 @@ namespace Nameless.Helpers {
         }
 
         private static XElement? GetArrayElement(PropertyInfo info, Array? input) {
-            if (input == default) { return default; }
+            if (input == null) { return null; }
 
             var name = XmlConvert.EncodeName(info.Name);
             var rootElement = new XElement(name);
@@ -98,7 +96,7 @@ namespace Nameless.Helpers {
 
             for (var idx = 0; idx < arrayCount; idx++) {
                 var value = input.GetValue(idx);
-                if (value == default) { continue; }
+                if (value == null) { continue; }
 
                 var childElement = value.GetType().IsSimple()
                     ? new XElement(string.Concat(name, "Child"), value)

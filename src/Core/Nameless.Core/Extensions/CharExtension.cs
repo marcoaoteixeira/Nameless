@@ -1,10 +1,8 @@
 ﻿namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="char"/>.
+    /// <see cref="char"/> extension methods.
     /// </summary>
     public static class CharExtension {
-
         #region Public Static Methods
 
         /// <summary>

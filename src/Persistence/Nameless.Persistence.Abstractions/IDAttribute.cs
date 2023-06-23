@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Nameless.Helpers;
 
 namespace Nameless.Persistence {
 
@@ -23,69 +22,67 @@ namespace Nameless.Persistence {
 
         #region Public Static Methods
 
-        public static ID GetID<T>() => GetID(typeof(T), null);
+        public static ID GetID<T>() => GetID(typeof(T));
 
         public static ID GetID<T>(T instance) => GetID(typeof(T), instance);
 
-        public static ID GetID(Type type, object? instance) {
+        public static ID GetID(Type type, object? instance = null) {
             Prevent.Null(type, nameof(type));
 
-            var field = type
-                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                .FirstOrDefault(_ => ConventionFields.Contains(_.Name) || _.GetCustomAttribute<IDAttribute>() != null);
+            MemberInfo? member;
 
-            if (field != null) {
-                return new ID(field.Name, instance != null ? field.GetValue(instance) : null);
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            member = fields.FirstOrDefault(_ => _.GetCustomAttribute<IDAttribute>() != null)
+                ?? fields.FirstOrDefault(_ => ConventionFields.Contains(_.Name));
+
+            if (member != null) {
+                return new(member.Name, instance != null ? ((FieldInfo)member).GetValue(instance) : null);
             }
 
-            var property = type
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .FirstOrDefault(_ => ConventionProperties.Contains(_.Name) || _.GetCustomAttribute<IDAttribute>() != null);
+            var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            member = properties.FirstOrDefault(_ => _.GetCustomAttribute<IDAttribute>() != null)
+                ?? properties.FirstOrDefault(_ => ConventionProperties.Contains(_.Name));
 
-            if (property != null) {
-                return new ID(property.Name, instance != null ? property.GetValue(instance) : null);
+            if (member != null) {
+                return new(member.Name, instance != null ? ((PropertyInfo)member).GetValue(instance) : null);
             }
 
-            return ID.Null;
+            return ID.Empty;
         }
 
         #endregion
     }
 
-    public sealed class ID {
-
+    public record ID {
         #region Public Static Read-Only Fields
 
-        public static readonly ID Null = new(null, null);
-
-        #endregion
-
-        #region Private Read-Only Fields
-
-        private readonly string? _name;
-        private readonly object? _value;
+        public static readonly ID Empty = new(nameof(ID));
 
         #endregion
 
         #region Public Properties
 
-        public string? Name => _name;
-        public object? Value => _value;
+        public string Name { get; }
+        public object? Value { get; }
 
         #endregion
 
         #region Public Constructors
 
-        public ID(string? name, object? value) {
-            _name = name;
-            _value = value;
+        public ID(string name, object? value = null) {
+            Prevent.NullOrWhiteSpaces(name, nameof(name));
+
+            Name = name;
+            Value = value;
         }
 
         #endregion
 
-        #region Public Methods
+        #region Public Override Methods
 
-        public T As<T>() => IDHelper.TryGetAs<T>(_value, out var output) ? output : default!;
+        public override string ToString() {
+            return $"[{(Value != null ? Value.GetType().Name : "null")}] {Name}: {Value}";
+        }
 
         #endregion
     }

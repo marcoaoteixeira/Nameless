@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 
 namespace Nameless.Infrastructure {
-
     /// <summary>
     /// Describes the type of a sequential GUID value.
     /// </summary>
@@ -34,7 +33,6 @@ namespace Nameless.Infrastructure {
     /// Source: https://github.com/jhtodd/SequentialGuid
     /// </remarks>
     public static class SequentialGuid {
-
         #region Private Static Read-Only Fields
 
         /// <summary>

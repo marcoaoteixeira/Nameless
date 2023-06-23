@@ -2,12 +2,10 @@ using System.Text;
 using Nameless.Infrastructure;
 
 namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="Stream"/>.
+    /// <see cref="Stream"/> extension methods.
     /// </summary>
     public static class StreamExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -17,16 +15,12 @@ namespace Nameless {
         /// <param name="encoding">The encoding. Default is <see cref="Encoding.UTF8" /> without BOM</param>
         /// <param name="bufferSize">The size of the buffer. Default is <see cref="BufferSize.Small"/></param>
         /// <returns>The stream as a string.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="InvalidOperationException">if <paramref name="self"/> can't be read.</exception>
         public static string ToText(this Stream self, Encoding? encoding = default, BufferSize bufferSize = BufferSize.Small) {
-            Prevent.Null(self, nameof(self));
-
             if (!self.CanRead) { throw new InvalidOperationException("Can't read stream."); }
 
-            var innerEncoding = encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-            using var reader = new StreamReader(self, encoding: innerEncoding, bufferSize: (int)bufferSize);
+            using var reader = new StreamReader(self, encoding: encoding ?? Defaults.Encodings.UTF8, bufferSize: (int)bufferSize);
             return reader.ReadToEnd();
         }
 
@@ -36,11 +30,9 @@ namespace Nameless {
         /// <param name="self">The source <see cref="Stream"/></param>
         /// <param name="bufferSize">The buffer size. Default is <see cref="BufferSize.Small"/></param>
         /// <returns>A byte array representing the <see cref="Stream"/>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="InvalidOperationException">if <paramref name="self"/> can't be read.</exception>
         public static byte[] ToByteArray(this Stream self, BufferSize bufferSize = BufferSize.Small) {
-            Prevent.Null(self, nameof(self));
-
             if (!self.CanRead) { throw new InvalidOperationException("Can't read stream."); }
 
             // Return faster...

@@ -1,12 +1,10 @@
 ﻿using Nameless.Services;
 
 namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="IXmlSchemaValidator"/>.
+    /// <see cref="IXmlSchemaValidator"/> extension methods.
     /// </summary>
     public static class XmlSchemaValidatorExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -16,17 +14,10 @@ namespace Nameless {
         /// <param name="schemaFilePath">The XML schema file path.</param>
         /// <param name="xmlFilePath">The XML file path.</param>
         /// <returns><c>true</c> if is valid; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// if <paramref name="self"/> is <c>null</c> or
-        /// if <paramref name="schemaFilePath"/> is <c>null</c> or
-        /// if <paramref name="xmlFilePath"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// if <paramref name="schemaFilePath"/> is empty or white spaces or
-        /// if <paramref name="xmlFilePath"/> is empty or white spaces.
-        /// </exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="schemaFilePath"/> or <paramref name="xmlFilePath"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if <paramref name="schemaFilePath"/> or <paramref name="xmlFilePath"/> is empty or white spaces.</exception>
         public static bool Validate(this IXmlSchemaValidator self, string schemaFilePath, string xmlFilePath) {
-            Prevent.Null(self, nameof(self));
             Prevent.NullOrWhiteSpaces(schemaFilePath, nameof(schemaFilePath));
             Prevent.NullOrWhiteSpaces(xmlFilePath, nameof(xmlFilePath));
 
@@ -42,10 +33,8 @@ namespace Nameless {
         /// <param name="schemaBuffer">The XML schema buffer.</param>
         /// <param name="xmlBuffer">The XML buffer.</param>
         /// <returns><c>true</c> if is valid; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool Validate(this IXmlSchemaValidator self, byte[] schemaBuffer, byte[] xmlBuffer) {
-            Prevent.Null(self, nameof(self));
-
             using var schema = new MemoryStream();
             using var xml = new MemoryStream();
             schema.Write(schemaBuffer, 0, schemaBuffer.Length);

@@ -1,10 +1,8 @@
 ﻿using Nameless.Infrastructure;
 
 namespace Nameless {
-
     [Singleton]
     public sealed class NullApplicationContext : IApplicationContext {
-
         #region Private Static Read-Only Fields
 
         private static readonly IApplicationContext _instance = new NullApplicationContext();

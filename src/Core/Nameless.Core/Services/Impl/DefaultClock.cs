@@ -1,11 +1,9 @@
 ﻿namespace Nameless.Services.Impl {
-
     /// <summary>
     /// Singleton Pattern implementation for <see cref="DefaultClock" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
     /// </summary>
     [Singleton]
     public sealed class DefaultClock : IClock {
-
         #region Private Static Read-Only Fields
 
         private static readonly IClock _instance = new DefaultClock();

@@ -1,9 +1,7 @@
 ﻿using System.Text;
 
 namespace Nameless {
-
     public static class Defaults {
-
         #region Public Static Inner Classes
 
         public static class Encodings {

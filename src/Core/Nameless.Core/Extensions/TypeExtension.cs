@@ -1,12 +1,10 @@
 using System.Reflection;
 
 namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="Type"/>.
+    /// <see cref="Type"/> extension methods.
     /// </summary>
     public static class TypeExtension {
-
         #region Private Static Read-Only Fields
 
         private static readonly Type[] WriteTypes = new[] {
@@ -21,31 +19,26 @@ namespace Nameless {
 
         #region Public Static Methods
 
-        public static bool IsSingleton(this Type self) => self.GetCustomAttribute<SingletonAttribute>(inherit: false) != null;
+        public static bool IsSingleton(this Type self)
+            => self.GetCustomAttribute<SingletonAttribute>(inherit: false) != null;
 
         /// <summary>
         /// Verifies if the <see cref="Type"/> is an instance of <see cref="Nullable"/>.
         /// </summary>
         /// <param name="self">The self type.</param>
         /// <returns><c>true</c>, if is instance of <see cref="Nullable"/>, otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static bool IsNullable(this Type self) {
-            Prevent.Null(self, nameof(self));
-
-            return self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        public static bool IsNullable(this Type self) 
+            => self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
         /// Can convert to <see cref="Nullable"/> type.
         /// </summary>
         /// <param name="self">The self type.</param>
         /// <returns><c>true</c>, if can convert, otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static bool AllowNull(this Type self) {
-            Prevent.Null(self, nameof(self));
-
-            return !self.IsValueType || self.IsNullable();
-        }
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        public static bool AllowNull(this Type self)
+            => !self.IsValueType || self.IsNullable();
 
         /// <summary>
         /// Retrieves the generic method associated to the self type.
@@ -56,9 +49,8 @@ namespace Nameless {
         /// <param name="argumentTypes">Method argument types, if any.</param>
         /// <param name="returnType">Method return type.</param>
         /// <returns>Returns an instance of <see cref="MethodInfo"/> representing the generic method.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static MethodInfo? GetGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = default, Type? returnType = default) {
-            Prevent.Null(self, nameof(self));
             Prevent.NullOrWhiteSpaces(name, nameof(name));
             Prevent.Null(genericArgumentTypes, nameof(genericArgumentTypes));
 
@@ -85,9 +77,7 @@ namespace Nameless {
         /// <c>true</c> if the current type can be assigned to the specified type;
         /// otherwise, <c>false</c>.
         /// </returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool IsAssignableTo(this Type self, Type type) {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(type, nameof(type));
 
             return type.IsAssignableFrom(self);
@@ -103,17 +93,16 @@ namespace Nameless {
         /// <c>true</c> if the current type can be assigned to the specified type;
         /// otherwise, <c>false</c>.
         /// </returns>
-        public static bool IsAssignableTo<T>(this Type self) => IsAssignableTo(self, typeof(T));
+        public static bool IsAssignableTo<T>(this Type self)
+            => IsAssignableTo(self, typeof(T));
 
         /// <summary>
         /// Verifies if the <paramref name="self"/> is a simple type.
         /// </summary>
         /// <param name="self">The self type.</param>
         /// <returns><c>true</c> if is simple type; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool IsSimple(this Type self) {
-            Prevent.Null(self, nameof(self));
-
             return self.IsPrimitive || WriteTypes.Contains(self);
         }
 
@@ -123,8 +112,9 @@ namespace Nameless {
         /// <param name="self">The source type.</param>
         /// <param name="genericArgumentType">The generic argument type.</param>
         /// <returns>The generic argument type, if found.</returns>
+        /// <exception cref="ArgumentNullException">if <paramref name="genericArgumentType"/> is <c>null</c>.</exception>
         public static Type? GetFirstOccurrenceOfGenericArgument(this Type? self, Type genericArgumentType) {
-            if (self == default) { return default; }
+            if (self == null) { return null; }
 
             Prevent.Null(genericArgumentType, nameof(genericArgumentType));
 
@@ -133,7 +123,15 @@ namespace Nameless {
             return result ?? GetFirstOccurrenceOfGenericArgument(self.BaseType, genericArgumentType);
         }
 
-        public static bool IsAssignableFromGenericType(this Type self, Type type) {
+        /// <summary>
+        /// Checks if the current type (<paramref name="self"/>) is assignable from the <paramref name="type"/>.
+        /// </summary>
+        /// <param name="self">The current type.</param>
+        /// <param name="type">The assignable from type.</param>
+        /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
+        public static bool IsAssignableFromGenericType(this Type self, Type? type) {
+            if (type == null) { return false; }
+
             foreach (var item in type.GetInterfaces()) {
                 if (item.IsGenericType && item.GetGenericTypeDefinition() == self) {
                     return true;
@@ -144,21 +142,24 @@ namespace Nameless {
                 return true;
             }
 
-            if (type.BaseType == default) {
-                return false;
-            }
-
             return IsAssignableFromGenericType(self, type.BaseType);
         }
 
         public static bool HasInterface<TInterface>(this Type self) where TInterface : class
             => HasInterface(self, typeof(TInterface));
 
-        public static bool HasInterface(this Type self, Type @interface) {
-            Prevent.Null(self, nameof(self));
-            Prevent.Null(@interface, nameof(@interface));
+        /// <summary>
+        /// Checks if the current type (<paramref name="self"/>) implements the specified interface defined by <paramref name="interfaceType"/>.
+        /// </summary>
+        /// <param name="self">The current type.</param>
+        /// <param name="interfaceType">The interface type.</param>
+        /// <returns><c>true</c> if implements; otherwise <c>false</c>.</returns>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="interfaceType"/> is <c>null</c>.</exception>
+        public static bool HasInterface(this Type self, Type interfaceType) {
+            Prevent.Null(interfaceType, nameof(interfaceType));
 
-            return self.GetInterfaces().Any(_ => @interface.IsAssignableFrom(_) || @interface.IsAssignableFromGenericType(_));
+            return self.GetInterfaces().Any(_ => interfaceType.IsAssignableFrom(_) || interfaceType.IsAssignableFromGenericType(_));
         }
 
         #endregion

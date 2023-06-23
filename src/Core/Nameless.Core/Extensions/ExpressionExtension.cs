@@ -2,10 +2,9 @@ using System.Linq.Expressions;
 
 namespace Nameless {
     /// <summary>
-    /// Extension methods for <see cref="Expression"/>.
+    /// <see cref="Expression"/> extension methods.
     /// </summary>
     public static class ExpressionExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -14,10 +13,8 @@ namespace Nameless {
         /// <param name="self">The method.</param>
         /// <returns>An instance of <see cref="MemberExpression"/> representing the <paramref name="self"/> expression.</returns>
         /// <remarks>Used to get property information</remarks>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if <paramref name="self"/> is not a <see cref="LambdaExpression"/>.</exception>
         public static MemberExpression? GetMemberInfo(this Expression self) {
-            Prevent.Null(self, nameof(self));
-
             if (self is not LambdaExpression lambda) {
                 throw new ArgumentException("Not a lambda expression", nameof(self));
             }
@@ -42,12 +39,9 @@ namespace Nameless {
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="self">The self function.</param>
         /// <returns>The name of the member.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static string? GetMemberName<T>(this Expression<Func<T, object>> self) {
-            Prevent.Null(self, nameof(self));
-
-            return GetExpressionMemberName(self.Body);
-        }
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        public static string? GetMemberName<T>(this Expression<Func<T, object>> self)
+            => GetExpressionMemberName(self.Body);
 
         /// <summary>
         /// Retrieves member name by a expression.
@@ -55,28 +49,24 @@ namespace Nameless {
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="self">The self expression.</param>
         /// <returns>The name of the member.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static string? GetMemberName<T>(this Expression<Action<T>> self) {
-            Prevent.Null(self, nameof(self));
-
-            return GetExpressionMemberName(self.Body);
-        }
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        public static string? GetMemberName<T>(this Expression<Action<T>> self)
+            => GetExpressionMemberName(self.Body);
 
         /// <summary>
         /// Creates an AND condition with another expression.
         /// </summary>
         /// <typeparam name="T">Type of the expression.</typeparam>
-        /// <param name="left">The left expression.</param>
+        /// <param name="self">The left expression.</param>
         /// <param name="right">The right expression.</param>
         /// <returns>An expression composition.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.</exception>
-        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right) {
-            Prevent.Null(left, nameof(left));
+        /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
+        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
             Prevent.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.And(
-                left: Expression.Invoke(left, param),
+                left: Expression.Invoke(self, param),
                 right: Expression.Invoke(right, param)
             );
             return Expression.Lambda<Func<T, bool>>(body, param);
@@ -86,17 +76,17 @@ namespace Nameless {
         /// Creates an OR condition with another expression.
         /// </summary>
         /// <typeparam name="T">Type of the expression.</typeparam>
-        /// <param name="left">The left expression.</param>
+        /// <param name="self">The left expression.</param>
         /// <param name="right">The right expression.</param>
         /// <returns>An expression composition.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.</exception>
-        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right) {
-            Prevent.Null(left, nameof(left));
+        /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
+        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
+            Prevent.Null(self, nameof(self));
             Prevent.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.Or(
-                left: Expression.Invoke(left, param),
+                left: Expression.Invoke(self, param),
                 right: Expression.Invoke(right, param)
             );
             return Expression.Lambda<Func<T, bool>>(body, param);

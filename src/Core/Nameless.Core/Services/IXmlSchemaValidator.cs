@@ -1,12 +1,10 @@
 ﻿using System.Xml.Schema;
 
 namespace Nameless.Services {
-
     /// <summary>
     /// Defines methods for validate a XML via XML schema.
     /// </summary>
     public interface IXmlSchemaValidator {
-
         #region Events
 
         /// <summary>

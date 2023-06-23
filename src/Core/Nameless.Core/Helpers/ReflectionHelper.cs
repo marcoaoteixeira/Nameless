@@ -1,12 +1,10 @@
 ﻿using System.Reflection;
 
 namespace Nameless.Helpers {
-
     /// <summary>
     /// Reflection helper.
     /// </summary>
     public static class ReflectionHelper {
-
         #region Public Static Methods
 
         /// <summary>
@@ -21,11 +19,7 @@ namespace Nameless.Helpers {
 
             var field = GetPrivateField(instance.GetType(), name);
 
-            if (field == default) {
-                throw new FieldAccessException($"Field \"{name}\" not found.");
-            }
-
-            return field.GetValue(instance);
+            return field != null ? field.GetValue(instance) : throw new FieldAccessException($"Field \"{name}\" not found.");
         }
 
         /// <summary>
@@ -38,11 +32,7 @@ namespace Nameless.Helpers {
             Prevent.Null(instance, nameof(instance));
             Prevent.NullOrWhiteSpaces(name, nameof(name));
 
-            var field = GetPrivateField(instance.GetType(), name);
-
-            if (field == default) {
-                throw new FieldAccessException($"Field \"{name}\" not found.");
-            }
+            var field = GetPrivateField(instance.GetType(), name) ?? throw new FieldAccessException($"Field \"{name}\" not found.");
 
             field.SetValue(instance, value);
         }
@@ -56,14 +46,14 @@ namespace Nameless.Helpers {
         /// <param name="matchParameterInheritance">If will match parameter inheritance.</param>
         /// <param name="parameterTypes">The method parameters type.</param>
         /// <returns>An <see cref="IEnumerable{MethodInfo}"/> with all found methods.</returns>
-        public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = default, Type? methodAttributeType = default, bool matchParameterInheritance = true, params Type[] parameterTypes) {
+        public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {
             Prevent.Null(type, nameof(type));
 
             return type.GetRuntimeMethods().Where(method => {
                 var currentReturnType = returnType ?? typeof(void);
                 if (method.ReturnType != currentReturnType) { return false; }
 
-                if (methodAttributeType != default && !method.GetCustomAttributes(methodAttributeType, inherit: true).Any()) {
+                if (methodAttributeType != null && !method.GetCustomAttributes(methodAttributeType, inherit: true).Any()) {
                     return false;
                 }
 
@@ -71,12 +61,13 @@ namespace Nameless.Helpers {
                 var currentParameterTypes = (parameterTypes ?? Enumerable.Empty<Type>()).ToArray();
                 if (parameters.Length != currentParameterTypes.Length) { return false; }
 
-                return currentParameterTypes.Select((parameterType, index) => {
-                    var match = parameters[index].ParameterType == parameterType;
-                    var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
+                return currentParameterTypes
+                    .Select((parameterType, index) => {
+                        var match = parameters[index].ParameterType == parameterType;
+                        var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
 
-                    return match || (assignable && matchParameterInheritance);
-                }).All(result => result == true);
+                        return match || (assignable && matchParameterInheritance);
+                    }).All(result => result == true);
             });
         }
 
@@ -87,7 +78,7 @@ namespace Nameless.Helpers {
         private static FieldInfo? GetPrivateField(Type type, string name) {
             var result = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (result == default && type.BaseType != default) {
+            if (result == null && type.BaseType != null) {
                 return GetPrivateField(type.BaseType, name);
             }
 
