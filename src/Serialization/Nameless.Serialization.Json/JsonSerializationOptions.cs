@@ -2,9 +2,7 @@ using System.Text;
 using Newtonsoft.Json;
 
 namespace Nameless.Serialization.Json {
-
     public sealed class JsonSerializationOptions : SerializationOptions {
-
         #region Public Static Read-Only Properties
 
         public static JsonSerializationOptions Default => new();
