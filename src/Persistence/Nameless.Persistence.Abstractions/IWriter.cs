@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Persistence {
-
     /// <summary>
     /// Exposes methods to define a data writer.
     /// </summary>
     public interface IWriter {
-
         #region Methods
 
         /// <summary>

@@ -2,13 +2,10 @@
 using Nameless.Helpers;
 
 namespace Nameless.Persistence {
-
     public static class WriterExtension {
-
         #region Public Static Methods
 
         public static Task<int> SaveAsync<TEntity>(this IWriter self, SaveInstruction<TEntity> instruction, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(instruction, nameof(instruction));
 
             var instructions = new SaveInstructionCollection<TEntity> {
@@ -19,7 +16,6 @@ namespace Nameless.Persistence {
         }
 
         public static Task<int> DeleteAsync<TEntity>(this IWriter self, Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(filter, nameof(filter));
 
             var instructions = new DeleteInstructionCollection<TEntity> {
@@ -30,7 +26,6 @@ namespace Nameless.Persistence {
         }
 
         public static Task<int> DeleteAsync<TEntity>(this IWriter self, DeleteInstruction<TEntity> instruction, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(instruction, nameof(instruction));
 
             var instructions = new DeleteInstructionCollection<TEntity> {
@@ -41,7 +36,6 @@ namespace Nameless.Persistence {
         }
 
         public static int Delete<TEntity>(this IWriter self, Expression<Func<TEntity, bool>> filter) where TEntity : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(filter, nameof(filter));
 
             var instructions = new DeleteInstructionCollection<TEntity> {
@@ -52,7 +46,6 @@ namespace Nameless.Persistence {
         }
 
         public static int Delete<TEntity>(this IWriter self, DeleteInstruction<TEntity> instruction) where TEntity : class {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(instruction, nameof(instruction));
 
             var instructions = new DeleteInstructionCollection<TEntity> {
