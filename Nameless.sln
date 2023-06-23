@@ -211,6 +211,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.UnitTesting",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Utils.UnitTests", "src\Utils\Nameless.Utils.UnitTests\Nameless.Utils.UnitTests.csproj", "{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{E0907BC1-8D14-415D-935C-1DCEF07D11A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Microservices", "template\Microservices\Nameless.Microservices\Nameless.Microservices.csproj", "{E6ED4269-E02F-4DED-B1E7-EF08F7751055}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -541,6 +545,10 @@ Global
 		{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6ED4269-E02F-4DED-B1E7-EF08F7751055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6ED4269-E02F-4DED-B1E7-EF08F7751055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6ED4269-E02F-4DED-B1E7-EF08F7751055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6ED4269-E02F-4DED-B1E7-EF08F7751055}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -649,6 +657,7 @@ Global
 		{7B55273D-E646-4FDB-958D-CCBE16B1A1DE} = {12C27408-2BD6-4776-950C-2B341F84BB97}
 		{A499F230-9F34-4319-AF9E-E37012504481} = {D6850580-D6DB-4932-BD45-76D2BE1DCF48}
 		{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8} = {29E03A2A-82E1-49FD-BF4A-3A255CC3D1D9}
+		{E6ED4269-E02F-4DED-B1E7-EF08F7751055} = {E0907BC1-8D14-415D-935C-1DCEF07D11A9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0218EE4E-9F2A-4987-8829-99002E04A58F}
