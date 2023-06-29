@@ -2,12 +2,10 @@
 using System.Xml.Schema;
 
 namespace Nameless.Services.Impl {
-
     /// <summary>
     /// Default implementation of <see cref="IXmlSchemaValidator"/>.
     /// </summary>
     public sealed class XmlSchemaValidator : IXmlSchemaValidator, IDisposable {
-
         #region Private Fields
 
         private bool _disposed;
@@ -41,7 +39,7 @@ namespace Nameless.Services.Impl {
             if (_disposed) { return; }
             if (disposing) { /* DO NOTHING */ }
 
-            Validating = default;
+            Validating = null;
             _disposed = true;
         }
 
@@ -65,7 +63,7 @@ namespace Nameless.Services.Impl {
             InvalidState = false;
 
             var settings = new XmlReaderSettings();
-            var xmlSchema = XmlSchema.Read(stream: schema, validationEventHandler: default);
+            var xmlSchema = XmlSchema.Read(stream: schema, validationEventHandler: null);
 
             settings.Schemas.Add(xmlSchema!);
             settings.ValidationType = ValidationType.Schema;

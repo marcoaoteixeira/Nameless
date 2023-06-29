@@ -3,9 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless {
-
     public static class Prevent {
-
         #region Public Static Methods
 
         /// <summary>
@@ -18,13 +16,13 @@ namespace Nameless {
         /// </exception>
         [DebuggerStepThrough]
         public static void Null([NotNull] object? argumentValue, string? argumentName) {
-            if (argumentValue == default) {
+            if (argumentValue == null) {
                 throw new ArgumentNullException(argumentName);
             }
         }
 
         /// <summary>
-        /// Makes sure that the <paramref name="argumentValue"/> is not <c>default</c>.
+        /// Makes sure that the <paramref name="argumentValue"/> is not <c>null</c>.
         /// </summary>
         /// <param name="argumentValue">The argument value</param>
         /// <param name="argumentName">The argument name.</param>
@@ -34,7 +32,7 @@ namespace Nameless {
         [DebuggerStepThrough]
         public static void Default<T>([NotNull] T argumentValue, string? argumentName) where T : struct {
             if (default(T).Equals(argumentValue)) {
-                throw new ArgumentException("Argument value cannot be default.", argumentName);
+                throw new ArgumentException("Argument value cannot be null.", argumentName);
             }
         }
 

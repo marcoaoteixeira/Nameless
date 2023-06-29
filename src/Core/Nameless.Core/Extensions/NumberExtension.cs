@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Exnsions {
-
     /// <summary>
-    /// Expression methods for number value type.
+    /// <see cref="int"/> extension methods.
     /// </summary>
     public static class NumberExtension {
-
         #region Public Static Methods
 
         /// <summary>

@@ -2,12 +2,10 @@
 using Nameless.Collections.Generic;
 
 namespace Nameless {
-
     /// <summary>
     /// <see cref="IAsyncEnumerable{T}"/> extension methods.
     /// </summary>
     public static class AsyncEnumerableExtension {
-
         #region Public Static Methods
 
         public static IAsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<T> self) => new AsyncEnumerable<T>(self);
@@ -19,9 +17,8 @@ namespace Nameless {
         /// <param name="self">The <see cref="IAsyncEnumerable{T}"/> source.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The first or default item in the <see cref="IAsyncEnumerable{T}"/></returns>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public async static Task<T?> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
-            if (self == default) { return default; }
-
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
             return await enumerator.MoveNextAsync() ? enumerator.Current : default;
@@ -36,10 +33,9 @@ namespace Nameless {
         /// <param name="project">The project function.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An instance of <see cref="IAsyncEnumerable{TOutput}"/></returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="project"/> is <c>null</c>.</exception>
         public async static IAsyncEnumerable<TOutput> Project<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(project, nameof(project));
 
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
@@ -57,10 +53,8 @@ namespace Nameless {
         /// <param name="self">The <see cref="IAsyncEnumerable{T}"/> source.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An instance of <see cref="IList{T}"/></returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public async static Task<IList<T>> ToListAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
-            Prevent.Null(self, nameof(self));
-
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
             IList<T> result = new List<T>();

@@ -5,7 +5,6 @@ namespace Nameless {
     /// </summary>
     [Singleton]
     public sealed class NullProgress<T> : IProgress<T> {
-
         #region Private Static Read-Only Fields
 
         private static readonly IProgress<T> _instance = new NullProgress<T>();
@@ -48,7 +47,6 @@ namespace Nameless {
     /// </summary>
     [Singleton]
     public sealed class NullProgress : IProgress<int> {
-
         #region Private Static Read-Only Fields
 
         private static readonly IProgress<int> _instance = new NullProgress();

@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 
 namespace Nameless.Helpers {
-
     /// <summary>
     /// Asynchronous helper.
     /// </summary>
@@ -9,7 +8,6 @@ namespace Nameless.Helpers {
     /// See: https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/AsyncHelper.cs
     /// </remarks>
     public static class AsyncHelper {
-
         #region Private Static Read-Only Fields
 
         private static readonly TaskFactory CurrentTaskFactory = new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);

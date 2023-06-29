@@ -69,7 +69,7 @@ namespace Nameless.Persistence.NHibernate {
 
         private static bool Exists<TEntity>(ISession session, TEntity entity) where TEntity : class {
             var currentID = IDAttribute.GetID(entity);
-            if (currentID == ID.Null) {
+            if (currentID == ID.Empty) {
                 throw new IDNotFoundException(typeof(TEntity));
             }
 

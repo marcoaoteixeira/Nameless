@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Lucene {
-
     public sealed class Field {
-
         #region Public Properties
 
         /// <summary>

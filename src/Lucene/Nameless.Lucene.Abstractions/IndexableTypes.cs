@@ -1,5 +1,4 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Enumerator for indexable types.
     /// </summary>

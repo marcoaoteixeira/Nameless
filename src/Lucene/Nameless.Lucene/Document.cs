@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Default implementation of <see cref="IDocument"/>.
     /// </summary>
     public sealed class Document : IDocument {
-
         #region Private Read-Only Fields
 
         private readonly string _id;

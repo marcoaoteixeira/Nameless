@@ -1,8 +1,6 @@
 namespace Nameless {
-
     [Singleton]
     public sealed class NullDisposable : IDisposable {
-
         #region Private Static Read-Only Fields
 
         private static readonly IDisposable _instance = new NullDisposable();

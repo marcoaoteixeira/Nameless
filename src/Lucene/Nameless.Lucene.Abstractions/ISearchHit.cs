@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for search hit.
     /// </summary>
     public interface ISearchHit {
-
         #region Properties
 
         /// <summary>

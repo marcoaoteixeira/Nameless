@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for a search bit class.
     /// </summary>
     public interface ISearchBit {
-
         #region Methods
 
         /// <summary>

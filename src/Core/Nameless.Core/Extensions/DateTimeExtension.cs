@@ -1,10 +1,8 @@
 ﻿namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="DateTime"/>.
+    /// <see cref="DateTime"/> extension methods.
     /// </summary>
     public static class DateTimeExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -13,9 +11,8 @@
         /// </summary>
         /// <param name="self">The self <see cref="DateTime"/>.</param>
         /// <returns>An integer representation of the difference.</returns>
-        public static int GetYearsToToday(this DateTime self) {
-            return self.GetYears(DateTime.Today);
-        }
+        public static int GetYearsToToday(this DateTime self)
+            => self.GetYears(DateTime.Today);
 
         /// <summary>
         /// Gets the difference, in years, between the <paramref name="self"/>
@@ -66,9 +63,8 @@
         /// </summary>
         /// <param name="self">The source <see cref="DateTime"/></param>
         /// <returns>A <see cref="long"/> representing the Unix epoch date.</returns>
-        public static long ToUnixEpochDate(this DateTime self) {
-            return (long)Math.Round((self.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
-        }
+        public static long ToUnixEpochDate(this DateTime self)
+            => (long)Math.Round((self.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
         #endregion
     }

@@ -7,12 +7,10 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 
 namespace Nameless.Lucene {
-
     /// <summary>
     /// Default implementation of <see cref="ISearchBuilder"/>.
     /// </summary>
     public sealed class SearchBuilder : ISearchBuilder {
-
         #region Private Constants
 
         private const double EPSILON = 0.001;
@@ -88,7 +86,7 @@ namespace Nameless.Lucene {
             while (tokenStream.IncrementToken()) {
                 try {
                     var attr = tokenStream.GetAttribute<ICharTermAttribute>();
-                    if (attr != default) {
+                    if (attr != null) {
                         result.Add(attr.ToString());
                     }
                 } catch { }
@@ -105,13 +103,13 @@ namespace Nameless.Lucene {
             _occur = Occur.SHOULD;
             _exactMatch = false;
             _notAnalyzed = false;
-            _query = default;
+            _query = null;
             _boost = 0;
             _asFilter = false;
         }
 
         private void CreatePendingClause() {
-            if (_query == default) { return; }
+            if (_query == null) { return; }
 
             // comparing floating-point numbers using an epsilon value
             if (Math.Abs(_boost - 0) > EPSILON) { _query.Boost = _boost; }
@@ -196,7 +194,7 @@ namespace Nameless.Lucene {
 
             foreach (var defaultField in defaultFields) {
                 CreatePendingClause();
-                _query = new QueryParser(IndexProvider.Version, defaultField, _analyzer).Parse(query);
+                _query = new QueryParser(IndexProvider.LuceneVersion, defaultField, _analyzer).Parse(query);
             }
 
             return this;
@@ -281,8 +279,8 @@ namespace Nameless.Lucene {
         public ISearchBuilder WithinRange(string field, DateTime? minimun, DateTime? maximun, bool includeMinimun = true, bool includeMaximun = true) {
             CreatePendingClause();
 
-            var minimunBytesRef = minimun.HasValue ? new BytesRef(DateTools.DateToString(minimun.Value, DateResolution.MILLISECOND)) : default;
-            var maximunBytesRef = maximun.HasValue ? new BytesRef(DateTools.DateToString(maximun.Value, DateResolution.MILLISECOND)) : default;
+            var minimunBytesRef = minimun.HasValue ? new BytesRef(DateTools.DateToString(minimun.Value, DateResolution.MILLISECOND)) : null;
+            var maximunBytesRef = maximun.HasValue ? new BytesRef(DateTools.DateToString(maximun.Value, DateResolution.MILLISECOND)) : null;
 
             _query = new TermRangeQuery(field, minimunBytesRef, maximunBytesRef, includeMinimun, includeMaximun);
 
@@ -293,8 +291,8 @@ namespace Nameless.Lucene {
         public ISearchBuilder WithinRange(string field, string minimun, string maximun, bool includeMinimun = true, bool includeMaximun = true) {
             CreatePendingClause();
 
-            var minimunBytesRef = minimun != default ? new BytesRef(QueryParserBase.Escape(minimun)) : default;
-            var maximunBytesRef = maximun != default ? new BytesRef(QueryParserBase.Escape(maximun)) : default;
+            var minimunBytesRef = minimun != null ? new BytesRef(QueryParserBase.Escape(minimun)) : null;
+            var maximunBytesRef = maximun != null ? new BytesRef(QueryParserBase.Escape(maximun)) : null;
 
             _query = new TermRangeQuery(field, minimunBytesRef, maximunBytesRef, includeMinimun, includeMaximun);
 

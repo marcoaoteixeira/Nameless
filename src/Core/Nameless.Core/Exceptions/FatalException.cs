@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Nameless.Exceptions {
+namespace Nameless {
 
     /// <summary>
     /// Represents a fatal exception.

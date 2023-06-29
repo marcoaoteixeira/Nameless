@@ -1,7 +1,7 @@
 ﻿namespace Nameless {
 
     /// <summary>
-    /// Extension methods for generic arrays.
+    /// Generic arrays extension methods.
     /// </summary>
     public static class ArrayExtension {
 
@@ -18,7 +18,7 @@
         public static bool TryGetByIndex<T>(this T[] self, int index, out T? output) {
             output = default;
 
-            if (self == default) { return false; }
+            if (self == null) { return false; }
 
             if (self.Length > index) {
                 output = self[index];

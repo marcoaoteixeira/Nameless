@@ -3,12 +3,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="IEnumerable"/> and <see cref="IEnumerable{T}"/>.
+    /// <see cref="IEnumerable"/> extension methods.
     /// </summary>
     public static class EnumerableExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -17,13 +15,9 @@ namespace Nameless {
         /// <typeparam name="T">The enumerable argument type.</typeparam>
         /// <param name="self">An instance of <see cref="IEnumerable{T}"/>.</param>
         /// <param name="action">The iterator action.</param>
-        /// <exception cref="ArgumentNullException">
-        /// if <paramref name="self"/> or <paramref name="action"/> were <c>null</c>.
-        /// </exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each<T>(this IEnumerable<T> self, Action<T> action) {
-            Prevent.Null(self, nameof(self));
-            Prevent.Null(action, nameof(action));
-
             Each(self, (current, _) => action(current));
         }
 
@@ -34,11 +28,9 @@ namespace Nameless {
         /// <typeparam name="T">The enumerable argument type.</typeparam>
         /// <param name="self">An instance of <see cref="IEnumerable{T}"/>.</param>
         /// <param name="action">The iterator action.</param>
-        /// <exception cref="ArgumentNullException">
-        /// if <paramref name="self"/> or <paramref name="action"/> were <c>null</c>.
-        /// </exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each<T>(this IEnumerable<T> self, Action<T, int> action) {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(action, nameof(action));
 
             var counter = 0;
@@ -54,13 +46,9 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">An instance of <see cref="IEnumerable"/>.</param>
         /// <param name="action">The iterator action.</param>
-        /// <exception cref="ArgumentNullException">
-        /// if <paramref name="self"/> or <paramref name="action"/> were <c>null</c>.
-        /// </exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each(this IEnumerable self, Action<object> action) {
-            Prevent.Null(self, nameof(self));
-            Prevent.Null(action, nameof(action));
-
             Each(self, (current, _) => action(current));
         }
 
@@ -70,14 +58,10 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">An instance of <see cref="IEnumerable"/>.</param>
         /// <param name="action">The iterator action.</param>
-        /// <exception cref="ArgumentNullException">
-        /// if <paramref name="self"/> or <paramref name="action"/> were <c>null</c>.
-        /// </exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each(this IEnumerable self, Action<object, int> action) {
-            Prevent.Null(self, nameof(self));
             Prevent.Null(action, nameof(action));
-
-            if (self == default) { return; }
 
             var counter = 0;
             var enumerator = self.GetEnumerator();
@@ -96,9 +80,8 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">The <see cref="IEnumerable"/> instance.</param>
         /// <returns><c>true</c>, if is empty, otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool IsNullOrEmpty([NotNullWhen(false)] this IEnumerable? self) {
-            if (self == default) { return true; }
+            if (self == null) { return true; }
 
             // Costs O(1)
             if (self is ICollection collection) { return collection.Count == 0; }
@@ -120,7 +103,8 @@ namespace Nameless {
         /// <typeparam name="T">The type of the enumerable.</typeparam>
         /// <param name="self">The self <see cref="IEnumerable{T}"/>.</param>
         /// <returns>An <see cref="IReadOnlyCollection{T}"/> instance.</returns>
-        public static IList<T> ToReadOnlyCollection<T>(this IEnumerable<T> self) => new ReadOnlyCollection<T>((self ?? Enumerable.Empty<T>()).ToList());
+        public static IList<T> ToReadOnlyCollection<T>(this IEnumerable<T> self)
+            => new ReadOnlyCollection<T>((self ?? Enumerable.Empty<T>()).ToList());
 
         /// <summary>
         /// Selects distinct the self <see cref="IEnumerable{T}"/> by an expression.
@@ -130,10 +114,8 @@ namespace Nameless {
         /// <param name="self">The self <see cref="IEnumerable{T}"/>.</param>
         /// <param name="keySelector">The key selector function.</param>
         /// <returns>A filtered collection.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> self, Func<TSource, TKey> keySelector) {
-            Prevent.Null(self, nameof(self));
-
             var seenKeys = new HashSet<TKey>();
             foreach (var element in self) {
                 if (seenKeys.Add(keySelector(element))) {

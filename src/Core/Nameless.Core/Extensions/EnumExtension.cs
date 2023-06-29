@@ -4,10 +4,9 @@ using System.Reflection;
 namespace Nameless {
 
     /// <summary>
-    /// Extension methods for <see cref="Enum"/>.
+    /// <see cref="Enum"/> extension methods.
     /// </summary>
     public static class EnumExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -20,7 +19,7 @@ namespace Nameless {
         public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum self, bool inherited = false) where TAttribute : Attribute {
             var field = self.GetType().GetField(self.ToString());
 
-            if (field == default) { return Enumerable.Empty<TAttribute>(); }
+            if (field == null) { return Enumerable.Empty<TAttribute>(); }
 
             return field.GetCustomAttributes<TAttribute>(inherit: inherited);
         }
@@ -33,7 +32,7 @@ namespace Nameless {
         public static string GetDescription(this Enum self) {
             var attr = GetAttributes<DescriptionAttribute>(self).SingleOrDefault();
 
-            return attr != default ? attr.Description : self.ToString();
+            return attr != null ? attr.Description : self.ToString();
         }
 
         #endregion

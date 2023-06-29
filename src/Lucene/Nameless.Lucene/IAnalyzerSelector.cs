@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for a Lucene analyzer selector.
     /// </summary>
     public interface IAnalyzerSelector {
-
         #region Methods
 
         /// <summary>

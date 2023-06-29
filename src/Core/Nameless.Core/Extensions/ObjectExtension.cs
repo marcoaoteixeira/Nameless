@@ -2,12 +2,10 @@
 using System.Runtime.CompilerServices;
 
 namespace Nameless {
-
     /// <summary>
-    /// Extension methods for <see cref="object"/>.
+    /// <see cref="object"/> extension methods.
     /// </summary>
     public static class ObjectExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -15,10 +13,8 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">The source object.</param>
         /// <returns><c>true</c> if anonymous object (or type), otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
+        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool IsAnonymous(this object self) {
-            Prevent.Null(self, nameof(self));
-
             var type = self as Type ?? self.GetType();
 
             return

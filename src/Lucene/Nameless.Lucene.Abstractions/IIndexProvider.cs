@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for an index provider.
     /// </summary>
     public interface IIndexProvider {
-
         #region Methods
 
         /// <summary>
