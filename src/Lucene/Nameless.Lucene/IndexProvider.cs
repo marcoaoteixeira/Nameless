@@ -2,12 +2,10 @@
 using Nameless.Infrastructure;
 
 namespace Nameless.Lucene {
-
     /// <summary>
     /// Default implementation of <see cref="IIndexProvider"/>
     /// </summary>
     public sealed class IndexProvider : IIndexProvider {
-
         #region Private Static Read-Only Fields
 
         private static readonly Dictionary<string, IIndex> Cache = new(StringComparer.InvariantCultureIgnoreCase);
@@ -28,7 +26,7 @@ namespace Nameless.Lucene {
         /// <summary>
         /// Gets the Lucene version used.
         /// </summary>
-        public static LuceneVersion Version => LuceneVersion.LUCENE_48;
+        public static LuceneVersion LuceneVersion => LuceneVersion.LUCENE_48;
 
         #endregion
 
@@ -40,7 +38,7 @@ namespace Nameless.Lucene {
 		/// <param name="applicationContext">The application context.</param>
         /// <param name="analyzerProvider">The analyzer provider.</param>
         /// <param name="options">The settings.</param>
-        public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions options) {
+        public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions? options = null) {
             Prevent.Null(applicationContext, nameof(applicationContext));
             Prevent.Null(analyzerProvider, nameof(analyzerProvider));
 

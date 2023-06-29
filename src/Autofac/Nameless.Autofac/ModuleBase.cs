@@ -66,7 +66,7 @@ namespace Nameless.Autofac {
         protected Type[] SearchForImplementations(Type serviceType) {
             Prevent.Null(serviceType, nameof(serviceType));
 
-            if (!SupportAssemblies.Any()) { return Enumerable.Empty<Type>().ToArray(); }
+            if (!SupportAssemblies.Any()) { return Array.Empty<Type>(); }
 
             var result = SupportAssemblies
                 .SelectMany(assembly => assembly.GetExportedTypes())

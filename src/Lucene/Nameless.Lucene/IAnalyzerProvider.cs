@@ -1,12 +1,10 @@
 ﻿using Lucene.Net.Analysis;
 
 namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods to a Lucene analyzer provider.
     /// </summary>
     public interface IAnalyzerProvider {
-
         #region Methods
 
         /// <summary>

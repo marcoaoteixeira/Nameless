@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for a search builder.
     /// </summary>
     public interface ISearchBuilder {
-
         #region Methods
 
         /// <summary>

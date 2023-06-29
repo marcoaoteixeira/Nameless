@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for an index representation.
     /// </summary>
     public interface IIndex {
-
         #region Properties
 
         /// <summary>

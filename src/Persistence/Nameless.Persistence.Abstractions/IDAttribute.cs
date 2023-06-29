@@ -54,9 +54,9 @@ namespace Nameless.Persistence {
     }
 
     public record ID {
-        #region Public Static Read-Only Fields
+        #region Public Static Read-Only Properties
 
-        public static readonly ID Empty = new(nameof(ID));
+        public static ID Empty => new(nameof(ID));
 
         #endregion
 

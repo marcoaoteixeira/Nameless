@@ -7,12 +7,10 @@ using Lucene_Document = Lucene.Net.Documents.Document;
 using Lucene_FSDirectory = Lucene.Net.Store.FSDirectory;
 
 namespace Nameless.Lucene {
-
     /// <summary>
     /// Default implementation of <see cref="IIndex"/>
     /// </summary>
     public sealed class Index : IIndex, IDisposable {
-
         #region Private Constants
 
         private const string DATE_PATTERN = "yyyy-MM-ddTHH:mm:ssZ";
@@ -43,7 +41,7 @@ namespace Nameless.Lucene {
         /// <summary>
         /// GEts the default minimum date time.
         /// </summary>
-        public static DateTime DefaultMinDateTime => new(1980, 1, 1);
+        public static DateTime MinDateTime => new(1980, 1, 1);
 
         /// <summary>
         /// Gets the batch size.
@@ -92,13 +90,15 @@ namespace Nameless.Lucene {
 
             var luceneDocument = new Lucene_Document();
             foreach (var field in document.Fields) {
-                if (field.Value == default) { continue; }
+                if (field.Value == null) { continue; }
                 var fieldName = field.Name;
                 var fieldValue = field.Value;
 
-                if (fieldValue == default) { continue; }
+                if (fieldValue == null) { continue; }
 
-                var store = field.Options.HasFlag(FieldOptions.Store) ? global::Lucene.Net.Documents.Field.Store.YES : global::Lucene.Net.Documents.Field.Store.NO;
+                var store = field.Options.HasFlag(FieldOptions.Store)
+                    ? global::Lucene.Net.Documents.Field.Store.YES
+                    : global::Lucene.Net.Documents.Field.Store.NO;
                 var analyze = field.Options.HasFlag(FieldOptions.Analyze);
                 var sanitize = field.Options.HasFlag(FieldOptions.Sanitize);
 
@@ -110,7 +110,8 @@ namespace Nameless.Lucene {
                     case IndexableType.Text:
                         var textValue = (string)fieldValue;
                         if (sanitize) { textValue = textValue.RemoveHtmlTags(); }
-                        if (analyze) { luceneDocument.Add(new TextField(fieldName, textValue, store)); } else { luceneDocument.Add(new StringField(fieldName, textValue, store)); }
+                        if (analyze) { luceneDocument.Add(new TextField(fieldName, textValue, store)); }
+                        else { luceneDocument.Add(new StringField(fieldName, textValue, store)); }
                         break;
 
                     case IndexableType.DateTime:
@@ -152,7 +153,7 @@ namespace Nameless.Lucene {
 
         private bool IndexDirectoryExists() => Directory.Exists(_indexDirectoryPath);
 
-        private IndexWriter CreateIndexWriter() => new(_directory, new(IndexProvider.Version, _analyzer));
+        private IndexWriter CreateIndexWriter() => new(_directory, new(IndexProvider.LuceneVersion, _analyzer));
 
         private IndexReader CreateIndexReader() {
             lock (_syncLock) {
@@ -168,13 +169,13 @@ namespace Nameless.Lucene {
 
         private void RenewIndex() {
             lock (_syncLock) {
-                if (_indexReader != default) {
+                if (_indexReader != null) {
                     _indexReader.Dispose();
-                    _indexReader = default;
+                    _indexReader = null;
                 }
 
-                if (_indexSearcher != default) {
-                    _indexSearcher = default;
+                if (_indexSearcher != null) {
+                    _indexSearcher = null;
                 }
             }
         }
@@ -186,9 +187,9 @@ namespace Nameless.Lucene {
                 _indexReader?.Dispose();
             }
 
-            _directory = default;
-            _indexReader = default;
-            _indexSearcher = default;
+            _directory = null;
+            _indexReader = null;
+            _indexSearcher = null;
             _disposed = true;
         }
 
@@ -204,7 +205,9 @@ namespace Nameless.Lucene {
 
         /// <inheritdoc />
         public int TotalDocuments() {
-            if (!IndexDirectoryExists()) { return -1; }
+            if (!IndexDirectoryExists()) {
+                return -1;
+            }
 
             return CreateIndexReader().NumDocs;
         }

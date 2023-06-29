@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Lucene {
-
     /// <summary>
     /// Defines methods for a document index.
     /// </summary>
     public interface IDocument {
-
         #region Properties
 
         string ID { get; }

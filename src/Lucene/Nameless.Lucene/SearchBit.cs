@@ -1,12 +1,10 @@
 ﻿using Lucene.Net.Util;
 
 namespace Nameless.Lucene {
-
     /// <summary>
     /// Default implementation of <see cref="ISearchBit"/>.
     /// </summary>
     public sealed class SearchBit : ISearchBit {
-
         #region Private Read-Only Fields
 
         private readonly OpenBitSet _openBitSet;
