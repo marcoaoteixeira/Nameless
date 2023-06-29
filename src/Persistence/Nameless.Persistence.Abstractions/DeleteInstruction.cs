@@ -2,9 +2,7 @@
 using System.Linq.Expressions;
 
 namespace Nameless.Persistence {
-
     public sealed class DeleteInstruction<TEntity> where TEntity : class {
-
         #region Public Properties
 
         public Expression<Func<TEntity, bool>> Filter { get; }
@@ -33,7 +31,6 @@ namespace Nameless.Persistence {
     }
 
     public sealed class DeleteInstructionCollection<TEntity> : Collection<DeleteInstruction<TEntity>> where TEntity : class {
-
         #region Public Methods
 
         public DeleteInstructionCollection<TEntity> Add(Expression<Func<TEntity, bool>> filter) {

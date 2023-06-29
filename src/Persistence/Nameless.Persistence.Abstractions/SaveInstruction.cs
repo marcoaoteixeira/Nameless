@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 
 namespace Nameless.Persistence {
-
     public sealed class SaveInstruction<TEntity> where TEntity : class {
 
         #region Public Properties
@@ -29,8 +28,8 @@ namespace Nameless.Persistence {
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
-                Filter = default,
-                Patch = default,
+                Filter = null,
+                Patch = null,
                 Mode = SaveMode.Insert
             };
         }
@@ -40,8 +39,8 @@ namespace Nameless.Persistence {
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
-                Filter = default,
-                Patch = default,
+                Filter = null,
+                Patch = null,
                 Mode = SaveMode.Update
             };
         }
@@ -53,7 +52,7 @@ namespace Nameless.Persistence {
             return new SaveInstruction<TEntity> {
                 Entity = entity,
                 Filter = filter,
-                Patch = default,
+                Patch = null,
                 Mode = SaveMode.Update
             };
         }
@@ -63,7 +62,7 @@ namespace Nameless.Persistence {
             Prevent.Null(filter, nameof(filter));
 
             return new SaveInstruction<TEntity> {
-                Entity = default!,
+                Entity = null!,
                 Filter = filter,
                 Patch = patch,
                 Mode = SaveMode.Update
@@ -75,8 +74,8 @@ namespace Nameless.Persistence {
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
-                Filter = default,
-                Patch = default,
+                Filter = null,
+                Patch = null,
                 Mode = SaveMode.UpSert
             };
         }
@@ -88,7 +87,7 @@ namespace Nameless.Persistence {
             return new SaveInstruction<TEntity> {
                 Entity = entity,
                 Filter = filter,
-                Patch = default,
+                Patch = null,
                 Mode = SaveMode.UpSert
             };
         }
@@ -105,6 +104,38 @@ namespace Nameless.Persistence {
     }
 
     public sealed class SaveInstructionCollection<TEntity> : Collection<SaveInstruction<TEntity>> where TEntity : class {
+        #region Public Methods
 
+        public SaveInstructionCollection<TEntity> AddInsert(TEntity entity) {
+            Add(SaveInstruction<TEntity>.Insert(entity));
+            return this;
+        }
+
+        public SaveInstructionCollection<TEntity> AddUpdate(TEntity entity) {
+            Add(SaveInstruction<TEntity>.Update(entity));
+            return this;
+        }
+
+        public SaveInstructionCollection<TEntity> AddUpdate(TEntity entity, Expression<Func<TEntity, bool>> filter) {
+            Add(SaveInstruction<TEntity>.Update(entity, filter));
+            return this;
+        }
+
+        public SaveInstructionCollection<TEntity> AddUpdate(Expression<Func<TEntity, TEntity>> patch, Expression<Func<TEntity, bool>> filter) {
+            Add(SaveInstruction<TEntity>.Update(patch, filter));
+            return this;
+        }
+
+        public SaveInstructionCollection<TEntity> AddUpSert(TEntity entity) {
+            Add(SaveInstruction<TEntity>.UpSert(entity));
+            return this;
+        }
+
+        public SaveInstructionCollection<TEntity> AddUpSert(TEntity entity, Expression<Func<TEntity, bool>> filter) {
+            Add(SaveInstruction<TEntity>.UpSert(entity, filter));
+            return this;
+        }
+
+        #endregion
     }
 }
