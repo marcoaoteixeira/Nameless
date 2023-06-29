@@ -51,6 +51,6 @@ jobs:
         run: |
           dotnet nuget push \
           ${{ env.ARTIFACTS_FOLDER_PATH }}/*.nupkg \
-          --source ${{secrets.NUGET_SOURCE}} \
-          --api-key ${{secrets.NUGET_API_KEY}} \
+          --source ${{vars.NUPKG_SOURCE_URL}} \
+          --api-key ${{secrets.NUPKG_API_KEY}} \
           --skip-duplicate
