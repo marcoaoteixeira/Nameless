@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Nameless.AspNetCore.Versioning;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Nameless.Microservices {
+namespace Nameless.Microservice {
     public partial class StartUp {
         #region Private Static Methods
 

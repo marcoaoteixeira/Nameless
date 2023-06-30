@@ -1,6 +1,6 @@
 using Nameless.AspNetCore.Filters;
 
-namespace Nameless.Microservices {
+namespace Nameless.Microservice {
     public partial class StartUp {
         #region Private Static Methods
 

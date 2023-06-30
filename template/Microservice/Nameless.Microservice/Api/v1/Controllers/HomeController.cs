@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Nameless.Microservices.Api.v1.Controllers {
+namespace Nameless.Microservice.Api.v1.Controllers {
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]

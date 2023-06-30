@@ -1,6 +1,6 @@
 using Nameless.AspNetCore.Options;
 
-namespace Nameless.Microservices {
+namespace Nameless.Microservice {
     public partial class StartUp {
         #region Private Static Methods
 
