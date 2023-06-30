@@ -38,8 +38,4 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-	</ItemGroup>
-
 </Project>

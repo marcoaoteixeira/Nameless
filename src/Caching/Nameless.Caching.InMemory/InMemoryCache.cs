@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
-
     public sealed class InMemoryCache : ICache, IDisposable {
-
         #region Private Fields
 
         private IMemoryCache _cache;

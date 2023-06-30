@@ -2,9 +2,10 @@
 using Autofac_Parameter = Autofac.Core.Parameter;
 
 namespace Nameless.Autofac {
-
+    /// <summary>
+    /// <see cref="ContainerBuilder"/> extension methods.
+    /// </summary>
     public static class ContainerBuilderExtension {
-
         #region Public Static Methods
 
         /// <summary>
