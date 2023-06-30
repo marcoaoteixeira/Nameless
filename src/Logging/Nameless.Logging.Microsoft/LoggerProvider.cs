@@ -16,7 +16,7 @@ namespace Nameless.Logging.Microsoft {
         #region Public Constructors
 
         public LoggerProvider(ILoggerFactory loggerFactory, MS_IExternalScopeProvider externalScopeProvider) {
-            Prevent.Null(loggerFactory, nameof(loggerFactory));
+            Garda.Prevent.Null(loggerFactory, nameof(loggerFactory));
 
             _loggerFactory = loggerFactory;
             _externalScopeProvider = externalScopeProvider;

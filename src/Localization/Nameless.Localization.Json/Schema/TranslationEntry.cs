@@ -12,7 +12,7 @@
         #region Public Constructors
 
         public TranslationEntry(string key, string[]? values = default) {
-            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Garda.Prevent.NullOrWhiteSpace(key, nameof(key));
 
             Key = key;
             Values = values ?? Array.Empty<string>();

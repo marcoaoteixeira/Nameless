@@ -106,7 +106,7 @@ namespace Nameless.FileStorage.System {
         /// <paramref name="destFilePath" /> is empty or white spaces.
         /// </exception>
         public Task CopyAsync(string destFilePath, bool overwrite = false, CancellationToken cancellationToken = default) {
-            Prevent.NullOrWhiteSpaces(destFilePath, nameof(destFilePath));
+            Garda.Prevent.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
 
             var destination = PathHelper.GetPhysicalPath(Root, destFilePath);
 
@@ -150,7 +150,7 @@ namespace Nameless.FileStorage.System {
         /// middle of the <c>string</c>.
         /// </exception>
         public Task MoveAsync(string destFilePath, CancellationToken cancellationToken = default) {
-            Prevent.NullOrWhiteSpaces(destFilePath, nameof(destFilePath));
+            Garda.Prevent.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
 
             var destination = PathHelper.GetPhysicalPath(Root, destFilePath);
 

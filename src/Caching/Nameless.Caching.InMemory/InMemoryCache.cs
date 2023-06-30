@@ -78,8 +78,8 @@ namespace Nameless.Caching.InMemory {
         public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(key, nameof(key));
-            Prevent.Null(value, nameof(value));
+            Garda.Prevent.NullOrWhiteSpace(key, nameof(key));
+            Garda.Prevent.Null(value, nameof(value));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -91,7 +91,7 @@ namespace Nameless.Caching.InMemory {
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Garda.Prevent.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -103,7 +103,7 @@ namespace Nameless.Caching.InMemory {
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Garda.Prevent.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 

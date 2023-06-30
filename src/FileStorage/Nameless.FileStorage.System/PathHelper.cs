@@ -26,7 +26,7 @@ namespace Nameless.FileStorage.System {
         /// </para>
         /// </remarks>
         public static string Normalize(string path) {
-            Prevent.NullOrWhiteSpaces(path, nameof(path));
+            Garda.Prevent.NullOrWhiteSpace(path, nameof(path));
 
             var result = OperatingSystem.IsWindows()
                 ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
@@ -53,8 +53,8 @@ namespace Nameless.FileStorage.System {
         /// </param>
         /// <returns>The physical path to the content.</returns>
         public static string GetPhysicalPath(string root, string relativePath) {
-            Prevent.NullOrWhiteSpaces(root, nameof(root));
-            Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
+            Garda.Prevent.NullOrWhiteSpace(root, nameof(root));
+            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
 
             root = Normalize(root);
             relativePath = Normalize(relativePath);

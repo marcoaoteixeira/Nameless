@@ -16,9 +16,9 @@ namespace Nameless.Logging.log4net {
         #region Public Constructors
 
         public Logger(L4N_ILogger logger, ILoggerEventFactory loggerEventFactory, Log4netOptions options) {
-            Prevent.Null(logger, nameof(logger));
-            Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
-            Prevent.Null(options, nameof(options));
+            Garda.Prevent.Null(logger, nameof(logger));
+            Garda.Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
+            Garda.Prevent.Null(options, nameof(options));
 
             _logger = logger;
             _loggerEventFactory = loggerEventFactory;
@@ -36,7 +36,7 @@ namespace Nameless.Logging.log4net {
         }
 
         public void Log(LogLevel logLevel, string message, Exception? exception = default, params object[] args) {
-            Prevent.NullOrWhiteSpaces(message, nameof(message));
+            Garda.Prevent.NullOrWhiteSpace(message, nameof(message));
 
             if (!IsEnabled(logLevel)) { return; }
 

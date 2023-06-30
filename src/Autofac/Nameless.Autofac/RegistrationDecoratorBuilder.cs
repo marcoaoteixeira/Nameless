@@ -23,7 +23,7 @@ namespace Nameless.Autofac {
         #region Public Constructors
 
         public RegistrationDecoratorBuilder(ContainerBuilder builder) {
-            Prevent.Null(builder, nameof(builder));
+            Garda.Prevent.Null(builder, nameof(builder));
 
             _builder = builder;
         }

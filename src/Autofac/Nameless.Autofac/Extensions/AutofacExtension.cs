@@ -23,7 +23,7 @@ namespace Nameless.Autofac {
         /// <param name="openGenericService">The open generic interface or base class type for which implementations will be found.</param>
         /// <returns>Registration builder allowing the registration to be configured.</returns>
         public static IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> AsClosedInterfacesOf<TLimit, TScanningActivatorData, TRegistrationStyle>(this IRegistrationBuilder<TLimit, TScanningActivatorData, TRegistrationStyle> registration, Type openGenericService) where TScanningActivatorData : ScanningActivatorData {
-            Prevent.Null(openGenericService, nameof(openGenericService));
+            Garda.Prevent.Null(openGenericService, nameof(openGenericService));
 
             if (!openGenericService.IsInterface) {
                 throw new ArgumentException("Generic type must be an interface.", nameof(openGenericService));

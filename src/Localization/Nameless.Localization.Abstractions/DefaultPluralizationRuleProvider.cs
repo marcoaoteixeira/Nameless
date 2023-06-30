@@ -76,7 +76,7 @@ namespace Nameless.Localization {
 
         /// <inheritdocs />
         public bool TryGet(CultureInfo culture, [NotNullWhen(true)] out PluralizationRuleDelegate? rule) {
-            Prevent.Null(culture, nameof(culture));
+            Garda.Prevent.Null(culture, nameof(culture));
 
             rule = null;
 

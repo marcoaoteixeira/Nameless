@@ -14,7 +14,7 @@ namespace Nameless.Localization.Microsoft {
         #region Public Constructors
 
         public StringLocalizerAdapter(IStringLocalizer localizer) {
-            Prevent.Null(localizer, nameof(localizer));
+            Garda.Prevent.Null(localizer, nameof(localizer));
 
             _localizer = localizer;
         }

@@ -8,7 +8,7 @@ namespace Nameless.FileStorage.System {
         #region Public Constructors
 
         public FileStorageImpl(IApplicationContext applicationContext) {
-            Prevent.Null(applicationContext, nameof(applicationContext));
+            Garda.Prevent.Null(applicationContext, nameof(applicationContext));
 
             Root = PathHelper.Normalize(applicationContext.DataDirectoryPath);
         }
@@ -72,8 +72,8 @@ namespace Nameless.FileStorage.System {
 
         /// <inheritdoc />
         public Task CreateFileAsync(string relativePath, Stream input, bool overwrite = false, CancellationToken token = default) {
-            Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
-            Prevent.Null(input, nameof(input));
+            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
+            Garda.Prevent.Null(input, nameof(input));
 
             var filePath = PathHelper.GetPhysicalPath(Root, relativePath);
 
@@ -91,7 +91,7 @@ namespace Nameless.FileStorage.System {
 
         /// <inheritdoc />
         public Task<IFile> GetFileAsync(string relativePath, CancellationToken cancellationToken = default) {
-            Prevent.NullOrWhiteSpaces(relativePath, nameof(relativePath));
+            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
 
             var currentRelativePath = PathHelper.Normalize(relativePath);
 

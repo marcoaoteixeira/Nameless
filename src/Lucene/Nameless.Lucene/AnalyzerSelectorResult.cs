@@ -22,7 +22,7 @@ namespace Nameless.Lucene {
         #region Public Constructors
 
         public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
-            Prevent.Null(analyzer, nameof(analyzer));
+            Garda.Prevent.Null(analyzer, nameof(analyzer));
 
             Priority = priority;
             Analyzer = analyzer;

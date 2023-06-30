@@ -36,12 +36,12 @@ namespace Nameless.Localization.Json {
         #region Public Constructors
 
         public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, PluralizationRuleDelegate pluralizationRule, TranslationCollection translationCollection, Func<CultureInfo, string, string, IStringLocalizer> factory) {
-            Prevent.Null(culture, nameof(culture));
-            Prevent.NullOrWhiteSpaces(resourceName, nameof(resourceName));
-            Prevent.NullOrWhiteSpaces(resourcePath, nameof(resourcePath));
-            Prevent.Null(pluralizationRule, nameof(pluralizationRule));
-            Prevent.Null(translationCollection, nameof(translationCollection));
-            Prevent.Null(factory, nameof(factory));
+            Garda.Prevent.Null(culture, nameof(culture));
+            Garda.Prevent.NullOrWhiteSpace(resourceName, nameof(resourceName));
+            Garda.Prevent.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
+            Garda.Prevent.Null(pluralizationRule, nameof(pluralizationRule));
+            Garda.Prevent.Null(translationCollection, nameof(translationCollection));
+            Garda.Prevent.Null(factory, nameof(factory));
 
 
             _culture = culture;

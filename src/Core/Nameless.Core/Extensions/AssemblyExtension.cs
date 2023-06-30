@@ -16,7 +16,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="combineWith"/> is <c>null</c>.</exception>
         public static string GetDirectoryPath(this Assembly self, params string[] combineWith) {
-            Prevent.Null(combineWith, nameof(combineWith));
+            Garda.Prevent.Null(combineWith, nameof(combineWith));
 
             var location = OperatingSystem.IsWindows() ? self.Location : $"file://{self.Location}";
             var uri = new UriBuilder(location);

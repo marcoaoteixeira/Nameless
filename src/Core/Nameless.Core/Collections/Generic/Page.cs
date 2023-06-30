@@ -41,7 +41,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         public Page(IQueryable<T> items, int index = 0, int size = 10) {
-            Prevent.Null(items, nameof(items));
+            Garda.Prevent.Null(items, nameof(items));
 
             index = index >= 0 ? index : 0;
             size = size > 0 ? size : 10;

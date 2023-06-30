@@ -28,7 +28,7 @@ namespace Nameless.CommandQuery {
         #region Protected Constructors
 
         protected QueryHandlerBase(IMapper mapper) {
-            Prevent.Null(mapper, nameof(mapper));
+            Garda.Prevent.Null(mapper, nameof(mapper));
 
             Mapper = mapper;
         }

@@ -11,7 +11,7 @@ namespace Nameless.CommandQuery {
         #region Public Constructors
 
         public CommandService(ILifetimeScope scope) {
-            Prevent.Null(scope, nameof(scope));
+            Garda.Prevent.Null(scope, nameof(scope));
 
             _scope = scope;
         }
@@ -21,7 +21,7 @@ namespace Nameless.CommandQuery {
         #region ICommandService Members
 
         public Task ExecuteAsync(ICommand command, CancellationToken cancellationToken = default) {
-            Prevent.Null(command, nameof(command));
+            Garda.Prevent.Null(command, nameof(command));
 
             var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
             dynamic handler = _scope.Resolve(handlerType);

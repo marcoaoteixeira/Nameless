@@ -17,8 +17,8 @@ namespace Nameless.Autofac {
         #region Public Constructors
 
         public PropertyResolverMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
-            Prevent.Null(serviceType, nameof(serviceType));
-            Prevent.Null(factory, nameof(factory));
+            Garda.Prevent.Null(serviceType, nameof(serviceType));
+            Garda.Prevent.Null(factory, nameof(factory));
 
             _serviceType = serviceType;
             _factory = factory;

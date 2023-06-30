@@ -13,7 +13,7 @@
         /// <param name="action">The action of the interaction.</param>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> is <c>null</c>.</exception>
         public static void Times(this int self, Action action) {
-            Prevent.Null(action, nameof(action));
+            Garda.Prevent.Null(action, nameof(action));
 
             self.Times(_ => action());
         }
@@ -27,7 +27,7 @@
         /// <param name="action">The action of the interaction.</param>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> is <c>null</c>.</exception>
         public static void Times(this int self, Action<int> action) {
-            Prevent.Null(action, nameof(action));
+            Garda.Prevent.Null(action, nameof(action));
 
             for (var number = 0; number < self; number++) {
                 action(number);

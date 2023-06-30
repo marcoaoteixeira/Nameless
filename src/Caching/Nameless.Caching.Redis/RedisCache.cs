@@ -13,7 +13,7 @@ namespace Nameless.Caching.Redis {
         #region Public Constructors
 
         public RedisCache(IDatabase database) {
-            Prevent.Null(database, nameof(database));
+            Garda.Prevent.Null(database, nameof(database));
 
             _database = database;
         }

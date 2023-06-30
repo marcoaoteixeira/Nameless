@@ -15,8 +15,8 @@ namespace Nameless.Localization {
         #region Public Constructors
 
         public LocaleString(CultureInfo culture, string text, string? translation = null, params object[] args) {
-            Prevent.Null(culture, nameof(culture));
-            Prevent.NullOrWhiteSpaces(text, nameof(text));
+            Garda.Prevent.Null(culture, nameof(culture));
+            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
 
             Culture = culture;
             Text = text;

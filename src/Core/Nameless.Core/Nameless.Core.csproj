@@ -32,6 +32,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Garda\Nameless.Garda\Nameless.Garda.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="readme.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

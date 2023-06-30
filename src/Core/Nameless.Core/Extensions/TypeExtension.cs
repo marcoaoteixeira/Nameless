@@ -51,8 +51,8 @@ namespace Nameless {
         /// <returns>Returns an instance of <see cref="MethodInfo"/> representing the generic method.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static MethodInfo? GetGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = default, Type? returnType = default) {
-            Prevent.NullOrWhiteSpaces(name, nameof(name));
-            Prevent.Null(genericArgumentTypes, nameof(genericArgumentTypes));
+            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Garda.Prevent.Null(genericArgumentTypes, nameof(genericArgumentTypes));
 
             var innerArgumentTypes = argumentTypes ?? Array.Empty<Type>();
             var innerReturnType = returnType ?? typeof(void);
@@ -78,7 +78,7 @@ namespace Nameless {
         /// otherwise, <c>false</c>.
         /// </returns>
         public static bool IsAssignableTo(this Type self, Type type) {
-            Prevent.Null(type, nameof(type));
+            Garda.Prevent.Null(type, nameof(type));
 
             return type.IsAssignableFrom(self);
         }
@@ -116,7 +116,7 @@ namespace Nameless {
         public static Type? GetFirstOccurrenceOfGenericArgument(this Type? self, Type genericArgumentType) {
             if (self == null) { return null; }
 
-            Prevent.Null(genericArgumentType, nameof(genericArgumentType));
+            Garda.Prevent.Null(genericArgumentType, nameof(genericArgumentType));
 
             var args = self.GetGenericArguments();
             var result = args.FirstOrDefault(genericArgumentType.IsAssignableFromGenericType);
@@ -157,7 +157,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="interfaceType"/> is <c>null</c>.</exception>
         public static bool HasInterface(this Type self, Type interfaceType) {
-            Prevent.Null(interfaceType, nameof(interfaceType));
+            Garda.Prevent.Null(interfaceType, nameof(interfaceType));
 
             return self.GetInterfaces().Any(_ => interfaceType.IsAssignableFrom(_) || interfaceType.IsAssignableFromGenericType(_));
         }

@@ -19,8 +19,8 @@ namespace Nameless.Persistence {
         /// <param name="writer">The persister.</param>
         /// <param name="reader">The querier.</param>
         public Repository(IWriter writer, IReader reader) {
-            Prevent.Null(writer, nameof(writer));
-            Prevent.Null(reader, nameof(reader));
+            Garda.Prevent.Null(writer, nameof(writer));
+            Garda.Prevent.Null(reader, nameof(reader));
 
             _writer = writer;
             _reader = reader;

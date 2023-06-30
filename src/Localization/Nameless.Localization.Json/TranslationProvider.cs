@@ -25,7 +25,7 @@ namespace Nameless.Localization.Json {
         #region Public Constructors
 
         public TranslationProvider(IFileStorage fileStorage, LocalizationOptions options) {
-            Prevent.Null(fileStorage, nameof(fileStorage));
+            Garda.Prevent.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
             _options = options ?? LocalizationOptions.Default;
@@ -78,7 +78,7 @@ namespace Nameless.Localization.Json {
         public async Task<Translation> GetAsync(CultureInfo culture, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
-            Prevent.Null(culture, nameof(culture));
+            Garda.Prevent.Null(culture, nameof(culture));
 
             // Retrieves the associated file
             var relativeFilePath = Path.Combine(_options.ResourceFolderName, $"{culture.Name}.json");

@@ -7,8 +7,8 @@ namespace Nameless.AspNetCore {
         #region Public Static Methods
 
         public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
-            Prevent.Null(configuration, nameof(configuration));
-            Prevent.Null(optionsProvider, nameof(optionsProvider));
+            Garda.Prevent.Null(configuration, nameof(configuration));
+            Garda.Prevent.Null(optionsProvider, nameof(optionsProvider));
 
             var opts = optionsProvider();
             var key = GetSectionKey<TOptions>();

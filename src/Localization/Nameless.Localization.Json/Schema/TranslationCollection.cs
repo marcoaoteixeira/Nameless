@@ -18,7 +18,7 @@
         #region Public Constructors
 
         public TranslationCollection(string key, IEnumerable<TranslationEntry>? values = default) {
-            Prevent.NullOrWhiteSpaces(key, nameof(key));
+            Garda.Prevent.NullOrWhiteSpace(key, nameof(key));
 
             Key = key;
             _entries = (values ?? Array.Empty<TranslationEntry>()).ToDictionary(_ => _.Key, _ => _);

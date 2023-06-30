@@ -36,7 +36,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="project"/> is <c>null</c>.</exception>
         public async static IAsyncEnumerable<TOutput> Project<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
-            Prevent.Null(project, nameof(project));
+            Garda.Prevent.Null(project, nameof(project));
 
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
