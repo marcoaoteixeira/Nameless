@@ -5,7 +5,7 @@ using Nameless.Autofac;
 using Nameless.Services;
 using Nameless.Services.Impl;
 
-namespace Nameless.Extra {
+namespace Nameless {
     public sealed class CoreModule : ModuleBase {
         #region Protected Override Methods
 
