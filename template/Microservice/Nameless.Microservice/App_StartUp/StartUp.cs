@@ -1,6 +1,6 @@
 using Autofac.Extensions.DependencyInjection;
 
-namespace Nameless.Microservices {
+namespace Nameless.Microservice {
     public partial class StartUp {
         #region Public Properties
 
