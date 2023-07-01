@@ -24,7 +24,7 @@ namespace Nameless.Persistence {
         #region Public Static Methods
 
         public static SaveInstruction<TEntity> Insert(TEntity entity) {
-            Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(entity, nameof(entity));
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
@@ -35,7 +35,7 @@ namespace Nameless.Persistence {
         }
 
         public static SaveInstruction<TEntity> Update(TEntity entity) {
-            Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(entity, nameof(entity));
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
@@ -46,8 +46,8 @@ namespace Nameless.Persistence {
         }
 
         public static SaveInstruction<TEntity> Update(TEntity entity, Expression<Func<TEntity, bool>> filter) {
-            Prevent.Null(entity, nameof(entity));
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
@@ -58,8 +58,8 @@ namespace Nameless.Persistence {
         }
 
         public static SaveInstruction<TEntity> Update(Expression<Func<TEntity, TEntity>> patch, Expression<Func<TEntity, bool>> filter) {
-            Prevent.Null(patch, nameof(patch));
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(patch, nameof(patch));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             return new SaveInstruction<TEntity> {
                 Entity = null!,
@@ -70,7 +70,7 @@ namespace Nameless.Persistence {
         }
 
         public static SaveInstruction<TEntity> UpSert(TEntity entity) {
-            Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(entity, nameof(entity));
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,
@@ -81,8 +81,8 @@ namespace Nameless.Persistence {
         }
 
         public static SaveInstruction<TEntity> UpSert(TEntity entity, Expression<Func<TEntity, bool>> filter) {
-            Prevent.Null(entity, nameof(entity));
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             return new SaveInstruction<TEntity> {
                 Entity = entity,

@@ -12,8 +12,8 @@
         #region Public Constructors
 
         public Parameter(string name, object value) {
-            Prevent.NullOrWhiteSpaces(name, nameof(name));
-            Prevent.Null(value, nameof(value));
+            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Garda.Prevent.Null(value, nameof(value));
 
             Name = name;
             Value = value;

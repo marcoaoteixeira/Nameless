@@ -33,7 +33,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public Consumer(IModel channel) {
-            Prevent.Null(channel, nameof(channel));
+            Garda.Prevent.Null(channel, nameof(channel));
 
             _channel = channel;
         }
@@ -166,7 +166,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public Registration<T> Register<T>(string topic, MessageEventHandler<T> handler, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Prevent.Null(handler, nameof(handler));
+            Garda.Prevent.Null(handler, nameof(handler));
 
             lock (_lock) {
                 var consumerParams = new ConsumerParameters(parameters);
@@ -205,7 +205,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public bool Unregister<T>(Registration<T> registration) {
             BlockAccessAfterDispose();
 
-            Prevent.Null(registration, nameof(registration));
+            Garda.Prevent.Null(registration, nameof(registration));
 
             var tag = registration.Tag;
 

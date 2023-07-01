@@ -50,7 +50,7 @@ namespace Nameless.Data {
         /// </summary>
         /// <param name="dbConnectionFactory">The database connection factory.</param>
         public Database(IDbConnectionFactory dbConnectionFactory) {
-            Prevent.Null(dbConnectionFactory, nameof(dbConnectionFactory));
+            Garda.Prevent.Null(dbConnectionFactory, nameof(dbConnectionFactory));
 
             DbConnection = dbConnectionFactory.Create();
 
@@ -164,7 +164,7 @@ namespace Nameless.Data {
         public int ExecuteNonQuery(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(text, nameof(text));
+            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
 
             return Execute<int>(text, type, parameters, scalar: false);
         }
@@ -173,7 +173,7 @@ namespace Nameless.Data {
         public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(text, nameof(text));
+            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
 
             using var command = CreateCommand(text, type, parameters);
 
@@ -191,7 +191,7 @@ namespace Nameless.Data {
         public TResult? ExecuteScalar<TResult>(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Prevent.NullOrWhiteSpaces(text, nameof(text));
+            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
 
             return Execute<TResult>(text, type, parameters, scalar: true);
         }

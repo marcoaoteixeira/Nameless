@@ -32,9 +32,9 @@ namespace Nameless.AspNetCore.Versioning {
         /// <param name="hostEnvironment">The <see cref="IHostEnvironment"/>hostEnvironment.</param>
         /// <param name="options">The <see cref="SwaggerPageOptions"/>applicationOptions.</param>
         public SwaggerGenConfigureOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, SwaggerPageOptions options) {
-            Prevent.Null(provider, nameof(provider));
-            Prevent.Null(hostEnvironment, nameof(hostEnvironment));
-            Prevent.Null(options, nameof(options));
+            Garda.Prevent.Null(provider, nameof(provider));
+            Garda.Prevent.Null(hostEnvironment, nameof(hostEnvironment));
+            Garda.Prevent.Null(options, nameof(options));
 
             _provider = provider;
             _hostEnvironment = hostEnvironment;

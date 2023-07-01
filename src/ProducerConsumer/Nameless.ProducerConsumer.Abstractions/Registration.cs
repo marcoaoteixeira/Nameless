@@ -42,9 +42,9 @@ namespace Nameless.ProducerConsumer {
         /// <param name="callback">The message handler.</param>
         /// <param name="tag">The registration tag.</param>
         public Registration(string tag, string topic, MessageEventHandler<T> handler) {
-            Prevent.NullOrWhiteSpaces(tag, nameof(tag));
-            Prevent.NullOrWhiteSpaces(topic, nameof(topic));
-            Prevent.Null(handler, nameof(handler));
+            Garda.Prevent.NullOrWhiteSpace(tag, nameof(tag));
+            Garda.Prevent.NullOrWhiteSpace(topic, nameof(topic));
+            Garda.Prevent.Null(handler, nameof(handler));
 
             Tag = tag;
             Topic = topic;

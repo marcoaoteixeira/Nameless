@@ -21,7 +21,7 @@ namespace Nameless.Lucene {
         /// <param name="document">The document.</param>
         /// <param name="score">The score.</param>
         public SearchHit(Lucene_Document document, float score) {
-            Prevent.Null(document, nameof(document));
+            Garda.Prevent.Null(document, nameof(document));
 
             _document = document;
             _score = score;

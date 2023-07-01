@@ -31,7 +31,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each<T>(this IEnumerable<T> self, Action<T, int> action) {
-            Prevent.Null(action, nameof(action));
+            Garda.Prevent.Null(action, nameof(action));
 
             var counter = 0;
 
@@ -61,7 +61,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each(this IEnumerable self, Action<object, int> action) {
-            Prevent.Null(action, nameof(action));
+            Garda.Prevent.Null(action, nameof(action));
 
             var counter = 0;
             var enumerator = self.GetEnumerator();

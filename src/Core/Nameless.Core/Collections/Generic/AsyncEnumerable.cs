@@ -11,7 +11,7 @@
         #region Public Constructors
 
         public AsyncEnumerable(IEnumerable<T> enumerable) {
-            Prevent.Null(enumerable, nameof(enumerable));
+            Garda.Prevent.Null(enumerable, nameof(enumerable));
 
             _enumerable = enumerable;
         }
@@ -44,7 +44,7 @@
         #region Public Constructors
 
         public AsyncEnumerator(IEnumerable<T> enumerable, CancellationToken cancellationToken = default) {
-            Prevent.Null(enumerable, nameof(enumerable));
+            Garda.Prevent.Null(enumerable, nameof(enumerable));
 
             _enumerator = enumerable.GetEnumerator();
             _cancellationToken = cancellationToken;

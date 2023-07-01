@@ -14,7 +14,7 @@ namespace Nameless.Persistence.NHibernate {
         #region Public Constructors
 
         public Reader(ISession session) {
-            Prevent.Null(session, nameof(session));
+            Garda.Prevent.Null(session, nameof(session));
 
             _session = session;
         }
@@ -24,7 +24,7 @@ namespace Nameless.Persistence.NHibernate {
         #region IQuerier Members
 
         public Task<IList<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             var query = _session.Query<TEntity>();
 
@@ -42,7 +42,7 @@ namespace Nameless.Persistence.NHibernate {
         }
 
         public Task<bool> ExistsAsync<TEntity>(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             var counter = _session.Query<TEntity>().Count(filter);
 

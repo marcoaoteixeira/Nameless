@@ -12,7 +12,7 @@ namespace Nameless.Persistence {
         #region Private Constructors
 
         private DeleteInstruction(Expression<Func<TEntity, bool>> filter) {
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             Filter = filter;
         }
@@ -22,7 +22,7 @@ namespace Nameless.Persistence {
         #region Public Static Methods
 
         public static DeleteInstruction<TEntity> Create(Expression<Func<TEntity, bool>> filter) {
-            Prevent.Null(filter, nameof(filter));
+            Garda.Prevent.Null(filter, nameof(filter));
 
             return new DeleteInstruction<TEntity>(filter);
         }

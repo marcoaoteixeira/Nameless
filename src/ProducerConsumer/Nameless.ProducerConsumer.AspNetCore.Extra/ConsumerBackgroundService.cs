@@ -25,7 +25,7 @@ namespace Nameless.ProducerConsumer.AspNetCore {
         #region Protected Constructors
 
         protected ConsumerBackgroundService(IConsumer consumer) {
-            Prevent.Null(consumer, nameof(consumer));
+            Garda.Prevent.Null(consumer, nameof(consumer));
 
             _consumer = consumer;
         }

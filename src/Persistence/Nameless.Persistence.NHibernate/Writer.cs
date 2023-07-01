@@ -16,7 +16,7 @@ namespace Nameless.Persistence.NHibernate {
         #region Public Constructors
 
         public Writer(ISession session) {
-            Prevent.Null(session, nameof(session));
+            Garda.Prevent.Null(session, nameof(session));
 
             _session = session;
         }
@@ -49,7 +49,7 @@ namespace Nameless.Persistence.NHibernate {
 
         private static int UpSert<TEntity>(ISession session, TEntity entity, Expression<Func<TEntity, bool>>? filter = null)
             where TEntity : class {
-            Prevent.Null(entity, nameof(entity));
+            Garda.Prevent.Null(entity, nameof(entity));
 
             var exists = false;
             if (entity != null && filter != null) {

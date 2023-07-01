@@ -43,6 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Garda\Nameless.Garda\Nameless.Garda.csproj" />
 		<ProjectReference Include="..\Nameless.Caching.Abstractions\Nameless.Caching.Abstractions.csproj" />
 	</ItemGroup>
 

@@ -36,7 +36,7 @@ namespace Nameless.Logging.log4net {
         /// </summary>
         /// <param name="options">The logger settings.</param>
         public LoggerFactory(ILoggerEventFactory loggerEventFactory, Log4netOptions options) {
-            Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
+            Garda.Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
 
             _loggerEventFactory = loggerEventFactory;
             _options = options ?? Log4netOptions.Default;
@@ -101,7 +101,7 @@ namespace Nameless.Logging.log4net {
         #region ILoggerFactory Members
 
         public ILogger CreateLogger(string source) {
-            Prevent.NullOrWhiteSpaces(source, nameof(source));
+            Garda.Prevent.NullOrWhiteSpace(source, nameof(source));
 
             BlockAccessAfterDispose();
 

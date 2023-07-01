@@ -18,7 +18,7 @@ namespace Nameless.Lucene {
         /// </summary>
         /// <param name="openBitSet">The open bit set.</param>
         public SearchBit(OpenBitSet openBitSet) {
-            Prevent.Null(openBitSet, nameof(openBitSet));
+            Garda.Prevent.Null(openBitSet, nameof(openBitSet));
 
             _openBitSet = openBitSet;
         }

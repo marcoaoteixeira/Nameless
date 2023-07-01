@@ -11,7 +11,7 @@ namespace Nameless.CommandQuery {
         #region Public Constructors
 
         public QueryService(ILifetimeScope scope) {
-            Prevent.Null(scope, nameof(scope));
+            Garda.Prevent.Null(scope, nameof(scope));
 
             _scope = scope;
         }
@@ -21,7 +21,7 @@ namespace Nameless.CommandQuery {
         #region IQueryService Members
 
         public Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) {
-            Prevent.Null(query, nameof(query));
+            Garda.Prevent.Null(query, nameof(query));
 
             var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
             dynamic handler = _scope.Resolve(handlerType);

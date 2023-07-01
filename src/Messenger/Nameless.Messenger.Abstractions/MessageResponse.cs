@@ -12,7 +12,7 @@
         private MessageResponse() { }
 
         private MessageResponse(Exception error) {
-            Prevent.Null(error, nameof(error));
+            Garda.Prevent.Null(error, nameof(error));
 
             Error = error;
         }

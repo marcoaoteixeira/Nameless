@@ -7,7 +7,7 @@ namespace Nameless.FileStorage {
         #region Public Static Methods
 
         public static Stream Open(this IFile self) {
-            Prevent.Null(self, nameof(self));
+            Garda.Prevent.Null(self, nameof(self));
 
             return AsyncHelper.RunSync(() => self.OpenAsync());
         }

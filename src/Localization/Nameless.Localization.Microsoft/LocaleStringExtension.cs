@@ -7,7 +7,7 @@ namespace Nameless.Localization.Microsoft {
         #region Public Static Methods
 
         public static MS_LocalizedString ToLocalizedString(this LocaleString self) {
-            Prevent.Null(self, nameof(self));
+            Garda.Prevent.Null(self, nameof(self));
 
             return new MS_LocalizedString(self.Text, self.GetTranslation());
         }

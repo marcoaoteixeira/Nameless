@@ -25,7 +25,7 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="fallback"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if <paramref name="fallback"/> is empty or white spaces.</exception>
         public static string OnBlank(this string? self, string fallback) {
-            Prevent.NullOrWhiteSpaces(fallback, nameof(fallback));
+            Garda.Prevent.NullOrWhiteSpace(fallback, nameof(fallback));
 
             return string.IsNullOrWhiteSpace(self) ? fallback : self;
         }
@@ -106,7 +106,7 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="ellipsis"/> is <c>null</c>.</exception>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string Ellipsize(this string self, int characterCount, string ellipsis = "&#160;&#8230;", bool wordBoundary = false) {
-            Prevent.Null(ellipsis, nameof(ellipsis));
+            Garda.Prevent.Null(ellipsis, nameof(ellipsis));
 
             if (characterCount < 0 || self.Length <= characterCount) {
                 return self;
@@ -154,7 +154,7 @@ namespace Nameless {
         /// <returns>A replaced <see cref="string"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="replacements"/> is <c>null</c>.</exception>
         public static string ReplaceAll(this string self, IDictionary<string, string> replacements) {
-            Prevent.Null(replacements, nameof(replacements));
+            Garda.Prevent.Null(replacements, nameof(replacements));
 
             var pattern = string.Format("{0}", string.Join("|", replacements.Keys));
 
@@ -210,7 +210,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="predicate"/> is <c>null</c>.</exception>
         public static string Strip(this string self, Func<char, bool> predicate) {
-            Prevent.Null(predicate, nameof(predicate));
+            Garda.Prevent.Null(predicate, nameof(predicate));
 
             var result = new char[self.Length];
             var cursor = 0;
@@ -234,7 +234,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException"> <paramref name="chars"/> is <c>null</c>.</exception>
         public static bool Any(this string self, params char[] chars) {
-            Prevent.Null(chars, nameof(chars));
+            Garda.Prevent.Null(chars, nameof(chars));
 
             if (!chars.Any()) { return false; }
 
@@ -257,7 +257,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if or <paramref name="chars"/> is <c>null</c>.</exception>
         public static bool All(this string self, params char[] chars) {
-            Prevent.Null(chars, nameof(chars));
+            Garda.Prevent.Null(chars, nameof(chars));
 
             for (var idx = 0; idx < self.Length; idx++) {
                 var current = self[idx];
@@ -279,8 +279,8 @@ namespace Nameless {
         /// <returns>The translated representation of <paramref name="self"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="from"/> or <paramref name="to"/> is <c>null</c>.</exception>
         public static string Translate(this string self, char[] from, char[] to) {
-            Prevent.Null(from, nameof(from));
-            Prevent.Null(to, nameof(to));
+            Garda.Prevent.Null(from, nameof(from));
+            Garda.Prevent.Null(to, nameof(to));
 
             if (string.IsNullOrEmpty(self)) { return string.Empty; }
 
@@ -478,7 +478,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="prefix"/> is <c>null</c>.</exception>
         public static string TrimPrefix(this string self, string prefix) {
-            Prevent.Null(prefix, nameof(prefix));
+            Garda.Prevent.Null(prefix, nameof(prefix));
 
             return self.StartsWith(prefix, StringComparison.Ordinal) ? self[prefix.Length..] : self;
         }
@@ -492,7 +492,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="suffix"/> is <c>null</c>.</exception>
         public static string TrimSuffix(this string self, string suffix) {
-            Prevent.Null(suffix, nameof(suffix));
+            Garda.Prevent.Null(suffix, nameof(suffix));
 
             return self.EndsWith(suffix, StringComparison.Ordinal) ? self[..^suffix.Length] : self;
         }

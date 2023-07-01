@@ -21,9 +21,9 @@ namespace Nameless.Localization.Json {
         #region Public Constructors
 
         public StringLocalizerFactory(ICultureContext cultureContext, IPluralizationRuleProvider pluralizationRuleProvider, ITranslationProvider translationProvider) {
-            Prevent.Null(cultureContext, nameof(cultureContext));
-            Prevent.Null(translationProvider, nameof(translationProvider));
-            Prevent.Null(pluralizationRuleProvider, nameof(pluralizationRuleProvider));
+            Garda.Prevent.Null(cultureContext, nameof(cultureContext));
+            Garda.Prevent.Null(translationProvider, nameof(translationProvider));
+            Garda.Prevent.Null(pluralizationRuleProvider, nameof(pluralizationRuleProvider));
 
             _cultureContext = cultureContext;
             _pluralizationRuleProvider = pluralizationRuleProvider;

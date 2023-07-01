@@ -2,9 +2,10 @@
 using Autofac_Parameter = Autofac.Core.Parameter;
 
 namespace Nameless.Autofac {
-
+    /// <summary>
+    /// <see cref="ContainerBuilder"/> extension methods.
+    /// </summary>
     public static class ContainerBuilderExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Nameless.Autofac {
         public static IRegistrationDecoratorBuilder<TService, TImplementation> RegisterTypeWithDecorator<TService, TImplementation>(this ContainerBuilder self)
             where TService : notnull
             where TImplementation : notnull, TService {
-            Prevent.Null(self, nameof(self));
+            Garda.Prevent.Null(self, nameof(self));
 
             return new RegistrationDecoratorBuilder<TService, TImplementation>(self);
         }

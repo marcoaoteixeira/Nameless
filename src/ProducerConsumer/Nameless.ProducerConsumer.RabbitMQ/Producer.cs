@@ -22,7 +22,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public Producer(IModel channel) {
-            Prevent.Null(channel, nameof(channel));
+            Garda.Prevent.Null(channel, nameof(channel));
 
             _channel = channel;
         }

@@ -311,7 +311,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
         /// <inheritdoc />
         public byte[] Encrypt(Stream stream) {
-            Prevent.Null(stream, nameof(stream));
+            Garda.Prevent.Null(stream, nameof(stream));
 
             BlockAccesAfterDispose();
 
@@ -339,7 +339,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
         /// <inheritdoc />
         public byte[] Decrypt(Stream stream) {
-            Prevent.Null(stream, nameof(stream));
+            Garda.Prevent.Null(stream, nameof(stream));
 
             BlockAccesAfterDispose();
 

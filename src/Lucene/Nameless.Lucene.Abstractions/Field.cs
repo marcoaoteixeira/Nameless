@@ -30,8 +30,8 @@
         /// <param name="type">The indexable type.</param>
         /// <param name="options">The options.</param>
         public Field(string name, object value, IndexableType type = IndexableType.Text, FieldOptions options = FieldOptions.None) {
-            Prevent.NullOrWhiteSpaces(name, nameof(name));
-            Prevent.Null(value, nameof(value));
+            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Garda.Prevent.Null(value, nameof(value));
 
             Name = name;
             Value = value;

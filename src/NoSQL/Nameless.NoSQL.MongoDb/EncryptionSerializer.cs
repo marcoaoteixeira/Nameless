@@ -25,8 +25,8 @@ namespace Nameless.NoSQL.MongoDb {
         public EncryptionSerializer() : this(Default_Key, Default_IV) { }
 
         public EncryptionSerializer(byte[] key, byte[] iv) {
-            Prevent.NullOrEmpty(key, nameof(key));
-            Prevent.NullOrEmpty(iv, nameof(iv));
+            Garda.Prevent.NullOrEmpty(key, nameof(key));
+            Garda.Prevent.NullOrEmpty(iv, nameof(iv));
 
             if (key.Length != 8) { throw new ArgumentException("Parameter must be an array of 8 positions.", nameof(key)); }
             if (iv.Length != 8) { throw new ArgumentException("Parameter must be an array of 8 positions.", nameof(iv)); }

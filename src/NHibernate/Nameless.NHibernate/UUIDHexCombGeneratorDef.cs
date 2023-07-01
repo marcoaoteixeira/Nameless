@@ -35,7 +35,7 @@ namespace Nameless.NHibernate {
         #region Private Constructors
 
         private UUIDHexCombGeneratorDef(string format) {
-            Prevent.NullOrWhiteSpaces(format, nameof(format));
+            Garda.Prevent.NullOrWhiteSpace(format, nameof(format));
 
             Params = new { format };
         }

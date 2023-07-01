@@ -24,7 +24,7 @@ namespace Nameless.Localization.Json.Schema {
         #region Public Constructors
 
         public Translation(CultureInfo culture, IEnumerable<TranslationCollection>? values = default) {
-            Prevent.Null(culture, nameof(culture));
+            Garda.Prevent.Null(culture, nameof(culture));
 
             Culture = culture;
             _entries = (values ?? Array.Empty<TranslationCollection>()).ToDictionary(_ => _.Key, _ => _);

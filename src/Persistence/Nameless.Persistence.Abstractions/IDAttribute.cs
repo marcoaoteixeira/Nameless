@@ -27,7 +27,7 @@ namespace Nameless.Persistence {
         public static ID GetID<T>(T instance) => GetID(typeof(T), instance);
 
         public static ID GetID(Type type, object? instance = null) {
-            Prevent.Null(type, nameof(type));
+            Garda.Prevent.Null(type, nameof(type));
 
             MemberInfo? member;
 
@@ -70,7 +70,7 @@ namespace Nameless.Persistence {
         #region Public Constructors
 
         public ID(string name, object? value = null) {
-            Prevent.NullOrWhiteSpaces(name, nameof(name));
+            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
 
             Name = name;
             Value = value;

@@ -64,7 +64,7 @@ namespace Nameless.Autofac {
         /// <exception cref="ArgumentNullException"><paramref name="serviceType" /> is <see langword="null" />.</exception>
         /// <returns>An array of types</returns>
         protected Type[] SearchForImplementations(Type serviceType) {
-            Prevent.Null(serviceType, nameof(serviceType));
+            Garda.Prevent.Null(serviceType, nameof(serviceType));
 
             if (!SupportAssemblies.Any()) { return Array.Empty<Type>(); }
 

@@ -9,8 +9,8 @@ namespace Nameless.Logging.log4net {
         #region ILoggerEventFactory Members
 
         public L4N_LoggingEvent? CreateLoggingEvent(in LogMessage message, L4N_ILogger logger, Log4netOptions options) {
-            Prevent.Null(message, nameof(message));
-            Prevent.Null(logger, nameof(logger));
+            Garda.Prevent.Null(message, nameof(message));
+            Garda.Prevent.Null(logger, nameof(logger));
 
             var level = LogLevelTranslator.Translate(message.LogLevel, options.OverrideCriticalLevel);
             if (level == L4N_Level.Off) {

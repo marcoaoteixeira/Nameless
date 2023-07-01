@@ -57,8 +57,8 @@ namespace Nameless.Services.Impl {
 
         /// <inheritdoc />
         public bool Validate(Stream schema, Stream xml) {
-            Prevent.Null(schema, nameof(schema));
-            Prevent.Null(xml, nameof(xml));
+            Garda.Prevent.Null(schema, nameof(schema));
+            Garda.Prevent.Null(xml, nameof(xml));
 
             InvalidState = false;
 

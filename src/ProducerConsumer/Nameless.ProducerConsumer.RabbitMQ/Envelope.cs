@@ -38,7 +38,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         /// Initializes a new instance of <see cref="Envelope"/>.
         /// </summary>
         public Envelope(object message, string? messageId = default, string? correlationId = default, DateTime publishedAt = default) {
-            Prevent.Null(message, nameof(message));
+            Garda.Prevent.Null(message, nameof(message));
 
             Message = message;
             MessageId = messageId ?? string.Empty;

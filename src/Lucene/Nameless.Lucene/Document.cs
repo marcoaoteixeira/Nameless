@@ -26,7 +26,7 @@
         /// </summary>
         /// <param name="id">The document ID.</param>
         public Document(string id) {
-            Prevent.NullOrWhiteSpaces(id, nameof(id));
+            Garda.Prevent.NullOrWhiteSpace(id, nameof(id));
 
             _id = id;
 
@@ -43,7 +43,7 @@
         #region Private Methods
 
         private IDocument InnerSet(IndexableType type, string name, object value, FieldOptions options) {
-            Prevent.NullOrWhiteSpaces(name, nameof(name));
+            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
 
             _fields[name] = new(
                 name: name,
