@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.InMemory",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.InMemory.Extra", "src\Caching\Nameless.Caching.InMemory.Extra\Nameless.Caching.InMemory.Extra.csproj", "{24921453-4FDF-42EB-AD4E-62F1F2A39EAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.InMemory.UnitTests", "src\Caching\Nameless.Caching.InMemory.UnitTests\Nameless.Caching.InMemory.UnitTests.csproj", "{76410FBD-9BB0-4CC0-A5A0-580F5870D831}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.InMemory.UnitTest", "src\Caching\Nameless.Caching.InMemory.UnitTest\Nameless.Caching.InMemory.UnitTest.csproj", "{76410FBD-9BB0-4CC0-A5A0-580F5870D831}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.Redis", "src\Caching\Nameless.Caching.Redis\Nameless.Caching.Redis.csproj", "{FBB71362-BA38-4724-B588-8C598E3C768E}"
 EndProject
@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.CommandQuery.Abstr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.CommandQuery.Extra", "src\CommandQuery\Nameless.CommandQuery.Extra\Nameless.CommandQuery.Extra.csproj", "{3A6BF960-5FCE-40B6-8801-2AF0E784307D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.CommandQuery.UnitTests", "src\CommandQuery\Nameless.CommandQuery.UnitTests\Nameless.CommandQuery.UnitTests.csproj", "{95511BAA-5B1F-4A81-B669-4A42114E18F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.CommandQuery.UnitTest", "src\CommandQuery\Nameless.CommandQuery.UnitTest\Nameless.CommandQuery.UnitTest.csproj", "{95511BAA-5B1F-4A81-B669-4A42114E18F7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2881B806-84B1-416B-8135-5F33C236D35D}"
 EndProject
@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Core", "src\Core\N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Core.Extra", "src\Core\Nameless.Core.Extra\Nameless.Core.Extra.csproj", "{11509124-E73C-4E3A-BB28-52C13137909D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Core.UnitTests", "src\Core\Nameless.Core.UnitTests\Nameless.Core.UnitTests.csproj", "{C2C421E9-3A34-43A3-A437-76D1E32440D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Core.UnitTest", "src\Core\Nameless.Core.UnitTest\Nameless.Core.UnitTest.csproj", "{C2C421E9-3A34-43A3-A437-76D1E32440D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D6850580-D6DB-4932-BD45-76D2BE1DCF48}"
 EndProject
@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FileStorage.System
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FileStorage.System.Extra", "src\FileStorage\Nameless.FileStorage.System.Extra\Nameless.FileStorage.System.Extra.csproj", "{DA00622A-5564-4D3A-8A2A-251B2E10F054}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FileStorage.System.UnitTesting", "src\FileStorage\Nameless.FileStorage.System.UnitTesting\Nameless.FileStorage.System.UnitTesting.csproj", "{701C3EFD-AC54-4408-B739-EDE9D7762752}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FileStorage.System.UnitTest", "src\FileStorage\Nameless.FileStorage.System.UnitTest\Nameless.FileStorage.System.UnitTest.csproj", "{701C3EFD-AC54-4408-B739-EDE9D7762752}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IO", "IO", "{7E6744DC-EAFD-40A8-AB3B-FD26737C76A5}"
 EndProject
@@ -87,13 +87,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Json"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Json.Extra", "src\Localization\Nameless.Localization.Json.Extra\Nameless.Localization.Json.Extra.csproj", "{CF238F23-946E-4B81-805D-434A4EB8C78A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Json.UnitTests", "src\Localization\Nameless.Localization.Json.UnitTests\Nameless.Localization.Json.UnitTests.csproj", "{8235EE09-3294-4CAC-8079-2A458721A003}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Json.UnitTest", "src\Localization\Nameless.Localization.Json.UnitTest\Nameless.Localization.Json.UnitTest.csproj", "{8235EE09-3294-4CAC-8079-2A458721A003}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Microsoft", "src\Localization\Nameless.Localization.Microsoft\Nameless.Localization.Microsoft.csproj", "{52B9A2AD-F295-40C1-BDAC-1ED8C118EBBC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Microsoft.Extra", "src\Localization\Nameless.Localization.Microsoft.Extra\Nameless.Localization.Microsoft.Extra.csproj", "{BFAB6303-A124-48A0-89F7-19DDE8E912E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Microsoft.UnitTests", "src\Localization\Nameless.Localization.Microsoft.UnitTests\Nameless.Localization.Microsoft.UnitTests.csproj", "{BDEDCE7B-555B-42A4-8A5C-DCC2DB45A60D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Microsoft.UnitTest", "src\Localization\Nameless.Localization.Microsoft.UnitTest\Nameless.Localization.Microsoft.UnitTest.csproj", "{BDEDCE7B-555B-42A4-8A5C-DCC2DB45A60D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{1B9C12CE-2DE4-425C-AD56-6E1FB21BDD7A}"
 EndProject
@@ -103,7 +103,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Logging.log4net", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Logging.log4net.Extra", "src\Logging\Nameless.Logging.log4net.Extra\Nameless.Logging.log4net.Extra.csproj", "{9C9FCE48-C040-4D99-B3A8-DC1349551B71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Logging.log4net.UnitTests", "src\Logging\Nameless.Logging.log4net.UnitTests\Nameless.Logging.log4net.UnitTests.csproj", "{4D13B225-2193-4425-961E-E5B656E938F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Logging.log4net.UnitTest", "src\Logging\Nameless.Logging.log4net.UnitTest\Nameless.Logging.log4net.UnitTest.csproj", "{4D13B225-2193-4425-961E-E5B656E938F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Logging.Microsoft", "src\Logging\Nameless.Logging.Microsoft\Nameless.Logging.Microsoft.csproj", "{E25C368D-E979-485E-9754-109BD74F34A6}"
 EndProject
@@ -117,7 +117,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.Abstraction
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.Extra", "src\Lucene\Nameless.Lucene.Extra\Nameless.Lucene.Extra.csproj", "{70BF4C8A-0BD9-4D31-BFEA-1DDFEBB58AF7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.UnitTests", "src\Lucene\Nameless.Lucene.UnitTests\Nameless.Lucene.UnitTests.csproj", "{F89F8E0F-DDA7-482F-9AA5-CE0AF3D91D16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.UnitTest", "src\Lucene\Nameless.Lucene.UnitTest\Nameless.Lucene.UnitTest.csproj", "{F89F8E0F-DDA7-482F-9AA5-CE0AF3D91D16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messenger", "Messenger", "{73691C03-281F-4F9F-A3F0-FE02A4EE3083}"
 EndProject
@@ -133,7 +133,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.NHibernate", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.NHibernate.Extra", "src\NHibernate\Nameless.NHibernate.Extra\Nameless.NHibernate.Extra.csproj", "{65145867-8BFB-4167-B778-4501F2E66CA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.NHibernate.UnitTesting", "src\NHibernate\Nameless.NHibernate.UnitTesting\Nameless.NHibernate.UnitTesting.csproj", "{EADB1DD4-8A0E-4671-8A5C-3645E8D5356A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.NHibernate.UnitTest", "src\NHibernate\Nameless.NHibernate.UnitTest\Nameless.NHibernate.UnitTest.csproj", "{EADB1DD4-8A0E-4671-8A5C-3645E8D5356A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NoSQL", "NoSQL", "{03585672-B52F-4123-920F-F70AEBA5560B}"
 EndProject
@@ -157,7 +157,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Persistence.NHiber
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Persistence.NHibernate.Extra", "src\Persistence\Nameless.Persistence.NHibernate.Extra\Nameless.Persistence.NHibernate.Extra.csproj", "{7721E718-D624-4500-8336-A87A8CB7FB60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Persistence.NHibernate.UnitTesting", "src\Persistence\Nameless.Persistence.NHibernate.UnitTesting\Nameless.Persistence.NHibernate.UnitTesting.csproj", "{A9F0E6F0-FA5A-4137-ACDF-F34B1B1D6C2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Persistence.NHibernate.UnitTest", "src\Persistence\Nameless.Persistence.NHibernate.UnitTest\Nameless.Persistence.NHibernate.UnitTest.csproj", "{A9F0E6F0-FA5A-4137-ACDF-F34B1B1D6C2F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProducerConsumer", "ProducerConsumer", "{9F6E607E-0D25-4EE2-A0C1-03B08C8A79CD}"
 EndProject
@@ -167,7 +167,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.RabbitMQ.Extra", "src\ProducerConsumer\Nameless.ProducerConsumer.RabbitMQ.Extra\Nameless.ProducerConsumer.RabbitMQ.Extra.csproj", "{630CA990-E99E-4269-B258-9CE2A4304F59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.RabbitMQ.UnitTesting", "src\ProducerConsumer\Nameless.ProducerConsumer.RabbitMQ.UnitTesting\Nameless.ProducerConsumer.RabbitMQ.UnitTesting.csproj", "{7D96ECC3-72E0-4464-BC23-4CD204223DE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.RabbitMQ.UnitTest", "src\ProducerConsumer\Nameless.ProducerConsumer.RabbitMQ.UnitTest\Nameless.ProducerConsumer.RabbitMQ.UnitTest.csproj", "{7D96ECC3-72E0-4464-BC23-4CD204223DE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{465B6A27-C79E-445B-B443-74B6514D1DBA}"
 EndProject
@@ -203,13 +203,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Utils", "src\Utils
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.AspNetCore.Extra", "src\ProducerConsumer\Nameless.ProducerConsumer.AspNetCore.Extra\Nameless.ProducerConsumer.AspNetCore.Extra.csproj", "{25105C4C-D310-4511-BD4C-B6BA251C0C4F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.Redis.UnitTesting", "src\Caching\Nameless.Caching.Redis.UnitTesting\Nameless.Caching.Redis.UnitTesting.csproj", "{DDB38513-58EE-4071-92A8-94A37DAC2133}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.Redis.UnitTest", "src\Caching\Nameless.Caching.Redis.UnitTest\Nameless.Caching.Redis.UnitTest.csproj", "{DDB38513-58EE-4071-92A8-94A37DAC2133}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.Redis.Extra", "src\Caching\Nameless.Caching.Redis.Extra\Nameless.Caching.Redis.Extra.csproj", "{7B55273D-E646-4FDB-958D-CCBE16B1A1DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.UnitTesting", "src\Data\Nameless.Data.UnitTesting\Nameless.Data.UnitTesting.csproj", "{A499F230-9F34-4319-AF9E-E37012504481}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.UnitTest", "src\Data\Nameless.Data.UnitTest\Nameless.Data.UnitTest.csproj", "{A499F230-9F34-4319-AF9E-E37012504481}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Utils.UnitTests", "src\Utils\Nameless.Utils.UnitTests\Nameless.Utils.UnitTests.csproj", "{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Utils.UnitTest", "src\Utils\Nameless.Utils.UnitTest\Nameless.Utils.UnitTest.csproj", "{3F79CD4F-1B03-44B1-A7DE-B633BBC86FC8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{E0907BC1-8D14-415D-935C-1DCEF07D11A9}"
 EndProject
@@ -217,9 +217,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Microservice", "te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Garda", "Garda", "{B435D3D9-AF60-47B8-8609-5C2DCC367670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Garda", "src\Garda\Nameless.Garda\Nameless.Garda.csproj", "{9C251AD1-D03B-4603-8993-4D9236DC9D2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Garda", "src\Garda\Nameless.Garda\Nameless.Garda.csproj", "{9C251AD1-D03B-4603-8993-4D9236DC9D2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Garda.UnitTests", "src\Garda\Nameless.Garda.UnitTests\Nameless.Garda.UnitTests.csproj", "{FDBAE8F5-021C-4ABB-89C5-7640D0FE7F4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Garda.UnitTest", "src\Garda\Nameless.Garda.UnitTest\Nameless.Garda.UnitTest.csproj", "{FDBAE8F5-021C-4ABB-89C5-7640D0FE7F4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
