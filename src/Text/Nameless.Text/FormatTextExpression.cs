@@ -36,8 +36,8 @@
         /// <param name="dataBinder">An instance of <see cref="IDataBinder"/>.</param>
         /// <param name="expression">The text expression.</param>
         public FormatTextExpression(IDataBinder dataBinder, string expression) {
-            Garda.Prevent.Null(dataBinder, nameof(dataBinder));
-            Garda.Prevent.NullOrWhiteSpace(expression, nameof(expression));
+            Prevent.Against.Null(dataBinder, nameof(dataBinder));
+            Prevent.Against.NullOrWhiteSpace(expression, nameof(expression));
 
             _dataBinder = dataBinder;
 
@@ -58,7 +58,7 @@
 
         /// <inheritdoc/>
         public override string? Eval(object? obj) {
-            Garda.Prevent.Null(obj, nameof(obj));
+            Prevent.Against.Null(obj, nameof(obj));
 
             return (!string.IsNullOrWhiteSpace(Format)
                     ? _dataBinder.Eval(obj, Expression, string.Concat("{0:", Format, "}"))

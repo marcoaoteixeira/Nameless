@@ -5,7 +5,7 @@ namespace Nameless {
     public sealed class NullApplicationContext : IApplicationContext {
         #region Private Static Read-Only Fields
 
-        private static readonly IApplicationContext _instance = new NullApplicationContext();
+        private static readonly NullApplicationContext _instance = new();
 
         #endregion
 

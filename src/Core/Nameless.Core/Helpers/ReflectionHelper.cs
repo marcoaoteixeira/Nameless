@@ -14,8 +14,8 @@ namespace Nameless.Helpers {
         /// <param name="name">The name of the field.</param>
         /// <returns>The value of the field.</returns>
         public static object? GetPrivateFieldValue(object instance, string name) {
-            Garda.Prevent.Null(instance, nameof(instance));
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.Null(instance, nameof(instance));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
 
             var field = GetPrivateField(instance.GetType(), name);
 
@@ -29,8 +29,8 @@ namespace Nameless.Helpers {
         /// <param name="name">The name of the field.</param>
         /// <param name="value">The new value.</param>
         public static void SetPrivateFieldValue(object instance, string name, object value) {
-            Garda.Prevent.Null(instance, nameof(instance));
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.Null(instance, nameof(instance));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
 
             var field = GetPrivateField(instance.GetType(), name) ?? throw new FieldAccessException($"Field \"{name}\" not found.");
 
@@ -47,7 +47,7 @@ namespace Nameless.Helpers {
         /// <param name="parameterTypes">The method parameters type.</param>
         /// <returns>An <see cref="IEnumerable{MethodInfo}"/> with all found methods.</returns>
         public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             return type.GetRuntimeMethods().Where(method => {
                 var currentReturnType = returnType ?? typeof(void);

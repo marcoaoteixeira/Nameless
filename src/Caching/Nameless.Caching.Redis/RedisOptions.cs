@@ -1,9 +1,7 @@
 ﻿using System.Security.Authentication;
 
 namespace Nameless.Caching.Redis {
-
     public sealed class RedisOptions {
-
         #region Public Static Read-Only Fields
 
         public static readonly RedisOptions Default = new();

@@ -25,7 +25,7 @@ namespace Nameless.Localization.Json {
         #region Public Constructors
 
         public TranslationProvider(IFileStorage fileStorage, LocalizationOptions options) {
-            Garda.Prevent.Null(fileStorage, nameof(fileStorage));
+            Prevent.Against.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
             _options = options ?? LocalizationOptions.Default;
@@ -78,7 +78,7 @@ namespace Nameless.Localization.Json {
         public async Task<Translation> GetAsync(CultureInfo culture, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
-            Garda.Prevent.Null(culture, nameof(culture));
+            Prevent.Against.Null(culture, nameof(culture));
 
             // Retrieves the associated file
             var relativeFilePath = Path.Combine(_options.ResourceFolderName, $"{culture.Name}.json");
@@ -90,7 +90,7 @@ namespace Nameless.Localization.Json {
             var entry = _cache.GetOrAdd(culture.Name, key => {
                 using var fileStream = file.Open();
                 var json = fileStream.ToText();
-                var translationCollections = JsonConvert.DeserializeObject<TranslationCollection[]>(json, TranslationCollectionJsonConverter.Default);
+                var translationCollections = JsonConvert.DeserializeObject<EntryCollection[]>(json, EntryCollectionJsonConverter.Default);
                 var translation = new Translation(culture, translationCollections);
 
                 // Keep an eye in the file changed event, if needed.

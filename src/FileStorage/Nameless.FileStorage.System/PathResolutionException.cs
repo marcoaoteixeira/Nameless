@@ -1,10 +1,8 @@
 ﻿using System.Runtime.Serialization;
 
 namespace Nameless.FileStorage.System {
-
     [Serializable]
     public class PathResolutionException : Exception {
-
         #region Public Constructors
 
         public PathResolutionException() { }

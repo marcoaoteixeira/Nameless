@@ -3,9 +3,7 @@ using MS_ILogger = Microsoft.Extensions.Logging.ILogger;
 using MS_ILoggerProvider = Microsoft.Extensions.Logging.ILoggerProvider;
 
 namespace Nameless.Logging.Microsoft {
-
     public sealed class LoggerProvider : MS_ILoggerProvider {
-
         #region Private Read-Only Fields
 
         private readonly ILoggerFactory _loggerFactory;
@@ -16,10 +14,8 @@ namespace Nameless.Logging.Microsoft {
         #region Public Constructors
 
         public LoggerProvider(ILoggerFactory loggerFactory, MS_IExternalScopeProvider externalScopeProvider) {
-            Garda.Prevent.Null(loggerFactory, nameof(loggerFactory));
-
-            _loggerFactory = loggerFactory;
-            _externalScopeProvider = externalScopeProvider;
+            _loggerFactory = Prevent.Against.Null(loggerFactory, nameof(loggerFactory));
+            _externalScopeProvider = Prevent.Against.Null(externalScopeProvider, nameof(externalScopeProvider));
         }
 
         #endregion

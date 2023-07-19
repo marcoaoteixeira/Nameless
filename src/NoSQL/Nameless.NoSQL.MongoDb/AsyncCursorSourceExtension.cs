@@ -14,7 +14,7 @@ namespace Nameless.NoSQL.MongoDb {
             #region Internal Constructors
 
             internal AsyncEnumerableAdapter(IAsyncCursorSource<T> source) {
-                Garda.Prevent.Null(source, nameof(source));
+                Prevent.Against.Null(source, nameof(source));
 
                 _source = source;
             }

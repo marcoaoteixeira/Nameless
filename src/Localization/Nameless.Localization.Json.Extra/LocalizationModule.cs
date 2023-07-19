@@ -4,14 +4,12 @@ using Autofac.Core.Registration;
 using Nameless.Autofac;
 
 namespace Nameless.Localization.Json {
-
     public sealed class LocalizationModule : ModuleBase {
-
         #region Private Constants
 
-        private const string TRANSLATION_PROVIDER_KEY = "66faa31b-c30b-4efc-9e0c-016b5c8a1e17";
-        private const string PLURALIZATION_RULE_PROVIDER_KEY = "7dbbb454-e130-4b5a-8891-285596c51bd7";
-        private const string CULTURE_CONTEXT_KEY = "5bd5f404-df4b-46d9-9ad4-298b765c5949";
+        private const string CULTURE_CONTEXT_TOKEN = "CultureContext.5bd5f404-df4b-46d9-9ad4-298b765c5949";
+        private const string PLURALIZATION_RULE_PROVIDER_TOKEN = "PluralizationRuleProvider.7dbbb454-e130-4b5a-8891-285596c51bd7";
+        private const string TRANSLATION_PROVIDER_TOKEN = "TranslationProvider.66faa31b-c30b-4efc-9e0c-016b5c8a1e17";
 
         #endregion
 
@@ -20,30 +18,27 @@ namespace Nameless.Localization.Json {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
             builder
-               .Register<ICultureContext, DefaultCultureContext>(
-                    name: CULTURE_CONTEXT_KEY,
-                    lifetimeScope: LifetimeScopeType.Singleton
-               );
+               .RegisterType<CultureContext>()
+               .Named<ICultureContext>(CULTURE_CONTEXT_TOKEN)
+               .SingleInstance();
 
             builder
-                .Register<IPluralizationRuleProvider, DefaultPluralizationRuleProvider>(
-                    name: PLURALIZATION_RULE_PROVIDER_KEY,
-                    lifetimeScope: LifetimeScopeType.Singleton
-                );
+               .RegisterType<PluralizationRuleProvider>()
+               .Named<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_TOKEN)
+               .SingleInstance();
 
             builder
-                .Register<ITranslationProvider, TranslationProvider>(
-                    name: TRANSLATION_PROVIDER_KEY,
-                    lifetimeScope: LifetimeScopeType.Singleton
-                );
+               .RegisterType<TranslationProvider>()
+               .Named<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
+               .SingleInstance();
 
             builder
                 .Register<IStringLocalizerFactory, StringLocalizerFactory>(
                     lifetimeScope: LifetimeScopeType.Singleton,
                     parameters: new[] {
-                        ResolvedParameter.ForNamed<ICultureContext>(CULTURE_CONTEXT_KEY),
-                        ResolvedParameter.ForNamed<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_KEY),
-                        ResolvedParameter.ForNamed<ITranslationProvider>(TRANSLATION_PROVIDER_KEY)
+                        ResolvedParameter.ForNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN),
+                        ResolvedParameter.ForNamed<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_TOKEN),
+                        ResolvedParameter.ForNamed<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
                     }
                 );
 
@@ -53,7 +48,7 @@ namespace Nameless.Localization.Json {
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolverMiddleware(
+                pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(IStringLocalizer),
                     factory: (member, context) => member.DeclaringType != null
                         ? context.Resolve<IStringLocalizerFactory>().Create(member.DeclaringType)

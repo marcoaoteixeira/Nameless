@@ -38,7 +38,7 @@ namespace Nameless.Infrastructure {
         /// <summary>
         /// Provides cryptographically strong random data for GUID creation.
         /// </summary>
-        private static readonly RandomNumberGenerator RandomGenerator = RandomNumberGenerator.Create();
+        private static readonly RandomNumberGenerator Generator = RandomNumberGenerator.Create();
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace Nameless.Infrastructure {
             // randomness of GUID data, and future versions (or different
             // implementations like Mono) might use a different method.
             if (useRandomNumberGenerator) {
-                RandomGenerator.GetBytes(randomBytes);
+                Generator.GetBytes(randomBytes);
             } else {
                 randomBytes = Guid.NewGuid().ToByteArray();
             }

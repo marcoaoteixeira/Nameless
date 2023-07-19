@@ -39,7 +39,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.UnitTesting {
         [Test]
         public void Produce_Message_To_Queue() {
             // arrange
-            var producer = _container.Resolve<IProducer>();
+            var producer = _container.Resolve<IProducerService>();
 
             // act && assert
             Assert.DoesNotThrow(() => {

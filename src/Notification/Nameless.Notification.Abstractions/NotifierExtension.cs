@@ -14,7 +14,7 @@
         /// <param name="self">The instance of <see cref="INotifier"/>.</param>
         /// <param name="message">A message to display</param>
         public static void Information(this INotifier self, string message) {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             self.Add(NotifyType.Information, message);
         }
@@ -26,7 +26,7 @@
         /// <param name="self">The instance of <see cref="INotifier"/>.</param>
         /// <param name="message">A message to display</param>
         public static void Warning(this INotifier self, string message) {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             self.Add(NotifyType.Warning, message);
         }
@@ -38,7 +38,7 @@
         /// <param name="self">The instance of <see cref="INotifier"/>.</param>
         /// <param name="message">A message to display</param>
         public static void Error(this INotifier self, string message) {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             self.Add(NotifyType.Error, message);
         }

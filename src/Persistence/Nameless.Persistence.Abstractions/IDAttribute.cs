@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 
 namespace Nameless.Persistence {
-
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public sealed class IDAttribute : Attribute {
 
@@ -27,7 +26,7 @@ namespace Nameless.Persistence {
         public static ID GetID<T>(T instance) => GetID(typeof(T), instance);
 
         public static ID GetID(Type type, object? instance = null) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             MemberInfo? member;
 
@@ -70,7 +69,7 @@ namespace Nameless.Persistence {
         #region Public Constructors
 
         public ID(string name, object? value = null) {
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
 
             Name = name;
             Value = value;

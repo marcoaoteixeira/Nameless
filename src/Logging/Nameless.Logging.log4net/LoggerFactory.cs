@@ -6,9 +6,7 @@ using L4N_LogManager = log4net.LogManager;
 using L4N_XmlConfigurator = log4net.Config.XmlConfigurator;
 
 namespace Nameless.Logging.log4net {
-
     public sealed class LoggerFactory : ILoggerFactory, IDisposable {
-
         #region Private Read-Only Static Fields
 
         private readonly static ConcurrentDictionary<string, ILogger> _cache = new();
@@ -24,7 +22,7 @@ namespace Nameless.Logging.log4net {
 
         #region Private Fields
 
-        private L4N_ILoggerRepository _repository = default!;
+        private L4N_ILoggerRepository _repository = null!;
         private bool _disposed;
 
         #endregion
@@ -34,11 +32,11 @@ namespace Nameless.Logging.log4net {
         /// <summary>
         /// Initializes a new instance of <see cref="LoggerFactory"/>
         /// </summary>
-        /// <param name="options">The logger settings.</param>
-        public LoggerFactory(ILoggerEventFactory loggerEventFactory, Log4netOptions options) {
-            Garda.Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
+        /// <param name="loggerEventFactory">The logger event factory.</param>
+        /// <param name="options">The log4net options.</param>
+        public LoggerFactory(ILoggerEventFactory loggerEventFactory, Log4netOptions? options = null) {
+            _loggerEventFactory = Prevent.Against.Null(loggerEventFactory, nameof(loggerEventFactory));
 
-            _loggerEventFactory = loggerEventFactory;
             _options = options ?? Log4netOptions.Default;
 
             Initialize();
@@ -70,13 +68,16 @@ namespace Nameless.Logging.log4net {
             // Create logger repository
             var repositoryType = typeof(L4N_Hierarchy);
             if (!string.IsNullOrWhiteSpace(_options.RepositoryName)) {
-                try { _repository = L4N_LogManager.CreateRepository(_options.RepositoryName, repositoryType); } catch { }
+                try { _repository = L4N_LogManager.CreateRepository(_options.RepositoryName, repositoryType); }
+                catch { }
             }
+
             _repository ??= L4N_LogManager.CreateRepository(Assembly.GetExecutingAssembly(), repositoryType);
 
             // Configure logger
             var configurationFilePath = GetConfigurationFilePath(_options.ConfigurationFileName);
-            if (_options.ReloadOnChange) { L4N_XmlConfigurator.ConfigureAndWatch(_repository, configurationFilePath); } else { L4N_XmlConfigurator.Configure(_repository, configurationFilePath); }
+            if (_options.ReloadOnChange) { L4N_XmlConfigurator.ConfigureAndWatch(_repository, configurationFilePath); }
+            else { L4N_XmlConfigurator.Configure(_repository, configurationFilePath); }
         }
 
         private void Dispose(bool disposing) {
@@ -86,7 +87,7 @@ namespace Nameless.Logging.log4net {
                 _cache.Clear();
             }
 
-            _repository = default!;
+            _repository = null!;
             _disposed = true;
         }
 
@@ -101,7 +102,7 @@ namespace Nameless.Logging.log4net {
         #region ILoggerFactory Members
 
         public ILogger CreateLogger(string source) {
-            Garda.Prevent.NullOrWhiteSpace(source, nameof(source));
+            Prevent.Against.NullOrWhiteSpace(source, nameof(source));
 
             BlockAccessAfterDispose();
 

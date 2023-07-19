@@ -6,9 +6,7 @@ using L4N_LoggingEvent = log4net.Core.LoggingEvent;
 using MS_IExternalScopeProvider = Microsoft.Extensions.Logging.IExternalScopeProvider;
 
 namespace Nameless.Logging.Microsoft {
-
     public sealed class LoggerEventFactoryDecorator : ILoggerEventFactory {
-
         #region Private Constants
 
         private const string DEFAULT_SCOPE_PROPERTY = "scope";
@@ -25,11 +23,8 @@ namespace Nameless.Logging.Microsoft {
         #region Public Constructors
 
         public LoggerEventFactoryDecorator(ILoggerEventFactory factory, MS_IExternalScopeProvider externalScopeProvider) {
-            Garda.Prevent.Null(factory, nameof(factory));
-            Garda.Prevent.Null(externalScopeProvider, nameof(externalScopeProvider));
-
-            _factory = factory;
-            _externalScopeProvider = externalScopeProvider;
+            _factory = Prevent.Against.Null(factory, nameof(factory));
+            _externalScopeProvider = Prevent.Against.Null(externalScopeProvider, nameof(externalScopeProvider));
         }
 
         #endregion
@@ -40,7 +35,7 @@ namespace Nameless.Logging.Microsoft {
             static string? join(string? previous, string? actual) {
                 return string.IsNullOrEmpty(previous)
                     ? actual
-                    : string.Concat(previous, " ", actual);
+                    : string.Concat(previous, Defaults.Separators.Space, actual);
             }
 
             externalScopeProvider.ForEachScope((scope, @event) => {
@@ -100,7 +95,7 @@ namespace Nameless.Logging.Microsoft {
         public L4N_LoggingEvent? CreateLoggingEvent(in LogMessage message, L4N_ILogger logger, Log4netOptions options) {
             var result = _factory.CreateLoggingEvent(message, logger, options);
 
-            if (result == default) { return default; }
+            if (result == null) { return null; }
 
             Enrich(result, _externalScopeProvider);
 

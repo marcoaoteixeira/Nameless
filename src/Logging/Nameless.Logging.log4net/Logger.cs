@@ -2,9 +2,7 @@
 using L4N_Level = log4net.Core.Level;
 
 namespace Nameless.Logging.log4net {
-
     public sealed class Logger : ILogger {
-
         #region Private Read-Only Fields
 
         private readonly L4N_ILogger _logger;
@@ -16,9 +14,9 @@ namespace Nameless.Logging.log4net {
         #region Public Constructors
 
         public Logger(L4N_ILogger logger, ILoggerEventFactory loggerEventFactory, Log4netOptions options) {
-            Garda.Prevent.Null(logger, nameof(logger));
-            Garda.Prevent.Null(loggerEventFactory, nameof(loggerEventFactory));
-            Garda.Prevent.Null(options, nameof(options));
+            Prevent.Against.Null(logger, nameof(logger));
+            Prevent.Against.Null(loggerEventFactory, nameof(loggerEventFactory));
+            Prevent.Against.Null(options, nameof(options));
 
             _logger = logger;
             _loggerEventFactory = loggerEventFactory;
@@ -29,25 +27,25 @@ namespace Nameless.Logging.log4net {
 
         #region ILogger Members
 
-        public bool IsEnabled(LogLevel logLevel) {
-            var level = LogLevelTranslator.Translate(logLevel, _options.OverrideCriticalLevel);
+        public bool IsEnabled(Level level) {
+            var translation = LevelTranslator.Translate(level, _options.OverrideCriticalLevel);
 
-            return level != L4N_Level.Off && _logger.IsEnabledFor(level);
+            return translation != L4N_Level.Off && _logger.IsEnabledFor(translation);
         }
 
-        public void Log(LogLevel logLevel, string message, Exception? exception = default, params object[] args) {
-            Garda.Prevent.NullOrWhiteSpace(message, nameof(message));
+        public void Log(Level level, string message, Exception? exception = default, params object[] args) {
+            Prevent.Against.NullOrWhiteSpace(message, nameof(message));
 
-            if (!IsEnabled(logLevel)) { return; }
+            if (!IsEnabled(level)) { return; }
 
-            var logMessage = new LogMessage(logLevel, message, exception, args);
+            var logMessage = new LogMessage(level, message, exception, args);
             var loggingEvent = _loggerEventFactory.CreateLoggingEvent(
                 message: in logMessage,
                 logger: _logger,
                 options: _options
             );
 
-            if (loggingEvent is null) { return; }
+            if (loggingEvent == null) { return; }
 
             _logger.Log(loggingEvent);
         }

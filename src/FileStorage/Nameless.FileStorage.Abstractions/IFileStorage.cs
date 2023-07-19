@@ -1,5 +1,4 @@
 ﻿namespace Nameless.FileStorage {
-
     /// <summary>
     /// Represents a generic abstraction over a file storage.
     /// </summary>
@@ -17,7 +16,6 @@
     /// sensitive.
     /// </remarks>
     public interface IFileStorage {
-
         #region Properties
 
         string Root { get; }
@@ -63,7 +61,7 @@
         /// An <see cref="IAsyncEnumerable{IFile}"/> representing all files found
         /// by the <paramref name="filter"/>.
         /// </returns>
-        IAsyncEnumerable<IFile> GetFilesAsync(string? filter = default, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<IFile> GetFilesAsync(string? filter = null, CancellationToken cancellationToken = default);
 
         #endregion
     }

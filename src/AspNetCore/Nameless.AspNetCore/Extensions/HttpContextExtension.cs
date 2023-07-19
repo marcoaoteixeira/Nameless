@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Http;
 
 namespace Nameless.AspNetCore {
-
     /// <summary>
     /// <see cref="HttpContext"/> extension methods.
     /// </summary>
     public static class HttpContextExtension {
-
         #region Public Static Methods
 
         /// <summary>

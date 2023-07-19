@@ -12,7 +12,7 @@ namespace Nameless.NHibernate {
         /// <param name="self">The source <see cref="T:NHibernate.IQuery" />.</param>
         /// <returns>A collection of dynamics, representing the query result.</returns>
         public static IList<dynamic> AsDynamicList(this IQuery self) {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             return self.SetResultTransformer(DynamicResultTransformer.Instance).List<dynamic>();
         }

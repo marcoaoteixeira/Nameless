@@ -1,10 +1,8 @@
 namespace Nameless.Environment {
-
     /// <summary>
     /// Enumerates all the variable targets available.
     /// </summary>
-    public enum VariableTarget : int {
-
+    public enum VariableTarget {
         Process = 0,
 
         User = 1,

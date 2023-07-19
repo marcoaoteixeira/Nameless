@@ -21,8 +21,8 @@ namespace Nameless.Localization.Json {
         #region Internal Constructors
 
         internal CacheEntry(Translation group, IDisposable changeMonitor) {
-            Garda.Prevent.Null(group, nameof(group));
-            Garda.Prevent.Null(changeMonitor, nameof(changeMonitor));
+            Prevent.Against.Null(group, nameof(group));
+            Prevent.Against.Null(changeMonitor, nameof(changeMonitor));
 
             _group = group;
             _changeMonitor = changeMonitor;

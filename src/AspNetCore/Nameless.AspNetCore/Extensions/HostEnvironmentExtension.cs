@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Hosting;
 
 namespace Nameless.AspNetCore {
-
     /// <summary>
     /// <see cref="IHostEnvironment"/> extension methods.
     /// </summary>
     public static class HostEnvironmentExtension {
-
         #region Public Static Read-Only Fields
 
         public static readonly string DeveloperMachine = nameof(DeveloperMachine);

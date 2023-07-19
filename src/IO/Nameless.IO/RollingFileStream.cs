@@ -1,21 +1,15 @@
 ﻿namespace Nameless.IO {
-
     /// <summary>
     /// Provides a rolling <see cref="Stream"/> for a file.
     /// </summary>
     public sealed class RollingFileStream : FileStream {
-
         #region Private Constants
 
+        private const string MAXIMUM_FILE_LENGTH_SHOULD_BE_GREATER_THAN_ZERO_MESSAGE = "Maximum file length should be greater than zero.";
+        private const string MAXIMUM_FILE_COUNT_SHOULD_BE_GREATER_THAN_ZERO_MESSAGE = "Maximum file count should be greater than zero.";
+        private const string BUFFER_SIZE_EXCEEDS_MAXIMUM_FILE_LENGTH_MESSAGE = "Buffer size exceeds maximum file length.";
+
         private const int DEFAULT_BUFFER_SIZE = 32 * 1024; // 32Kb
-
-        #endregion
-
-        #region Public Static Read-Only Fields
-
-        public static readonly string MaximumFileLengthShouldBeGreaterThanZero = "Maximum file length should be greater than zero.";
-        public static readonly string MaximumFileCountShouldBeGreaterThanZero = "Maximum file count should be greater than zero.";
-        public static readonly string BufferSizeExceedsMaximumFileLength = "Buffer size exceeds maximum file length.";
 
         #endregion
 
@@ -109,11 +103,11 @@
         public RollingFileStream(string path, long maximumFileLength, int maximumFileCount, FileMode mode, FileShare share, int bufferSize, bool useAsync)
             : base(path, FilterFileMode(mode), FileAccess.Write, share, bufferSize, useAsync) {
             if (maximumFileLength <= 0) {
-                throw new ArgumentOutOfRangeException(nameof(maximumFileLength), maximumFileLength, MaximumFileLengthShouldBeGreaterThanZero);
+                throw new ArgumentOutOfRangeException(nameof(maximumFileLength), maximumFileLength, MAXIMUM_FILE_LENGTH_SHOULD_BE_GREATER_THAN_ZERO_MESSAGE);
             }
 
             if (maximumFileCount <= 0) {
-                throw new ArgumentOutOfRangeException(nameof(maximumFileCount), maximumFileCount, MaximumFileCountShouldBeGreaterThanZero);
+                throw new ArgumentOutOfRangeException(nameof(maximumFileCount), maximumFileCount, MAXIMUM_FILE_COUNT_SHOULD_BE_GREATER_THAN_ZERO_MESSAGE);
             }
 
             MaximumFileLength = maximumFileLength;
@@ -178,7 +172,7 @@
                 count = actualCount - partialCount;
             } else {
                 if (count > MaximumFileLength) {
-                    throw new ArgumentOutOfRangeException(nameof(count), count, BufferSizeExceedsMaximumFileLength);
+                    throw new ArgumentOutOfRangeException(nameof(count), count, BUFFER_SIZE_EXCEEDS_MAXIMUM_FILE_LENGTH_MESSAGE);
                 }
             }
 

@@ -13,7 +13,7 @@ namespace Nameless.Serialization.Json {
         }
 
         public object? Deserialize(Type? type, byte[]? buffer, SerializationOptions? options = null) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             if (buffer == null) { return null; }
 
@@ -23,7 +23,7 @@ namespace Nameless.Serialization.Json {
         }
 
         public void Serialize(Stream? stream, object? graph, SerializationOptions? options = null) {
-            Garda.Prevent.Null(stream, nameof(stream));
+            Prevent.Against.Null(stream, nameof(stream));
 
             if (!stream.CanWrite) { throw new InvalidOperationException("Cannot write to the stream"); }
 
@@ -32,7 +32,7 @@ namespace Nameless.Serialization.Json {
         }
 
         public object? Deserialize(Type? type, Stream? stream, SerializationOptions? options = null) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             if (stream == null) { return null; }
 

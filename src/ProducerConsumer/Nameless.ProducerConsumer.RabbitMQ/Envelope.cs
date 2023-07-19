@@ -2,13 +2,11 @@
 using System.Text.Json;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
-
     /// <summary>
     /// Represents the envelope that will hold the data when
     /// sending a message for the RabbitMQ broker.
     /// </summary>
     public sealed class Envelope {
-
         #region Public Properties
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         /// Initializes a new instance of <see cref="Envelope"/>.
         /// </summary>
         public Envelope(object message, string? messageId = default, string? correlationId = default, DateTime publishedAt = default) {
-            Garda.Prevent.Null(message, nameof(message));
+            Prevent.Against.Null(message, nameof(message));
 
             Message = message;
             MessageId = messageId ?? string.Empty;

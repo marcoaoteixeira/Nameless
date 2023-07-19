@@ -1,7 +1,5 @@
 namespace Nameless.FileStorage {
-
     public sealed class ChangeEventArgs : EventArgs {
-
         #region Public Properties
 
         public string OriginalPath { get; set; } = default!;
@@ -17,16 +15,15 @@ namespace Nameless.FileStorage {
         #endregion
     }
 
-    public enum ChangeReason : int {
+    public enum ChangeReason {
+        None = 0,
 
-        None,
+        Changed = 1,
 
-        Changed,
+        Created = 2,
 
-        Created,
+        Deleted = 4,
 
-        Deleted,
-
-        Renamed
+        Renamed = 8
     }
 }

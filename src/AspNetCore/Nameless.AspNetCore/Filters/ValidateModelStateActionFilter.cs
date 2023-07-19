@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Nameless.AspNetCore.Filters {
-
     /// <summary>
     /// Implementation of <see cref="ActionFilterAttribute"/> that validates
     /// if the incoming model is valid.
     /// </summary>
     public sealed class ValidateModelStateActionFilter : ActionFilterAttribute {
-
         #region Public Override Methods
 
         /// <inheritdoc />

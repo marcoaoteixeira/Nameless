@@ -36,9 +36,9 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="elementName"/> or <paramref name="attributeName"/> or <paramref name="attributeValue"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if <paramref name="elementName"/> or <paramref name="attributeName"/> or <paramref name="attributeValue"/> is empty or white spaces.</exception>
         public static bool HasElement(this XContainer self, string elementName, string attributeName, string attributeValue) {
-            Garda.Prevent.NullOrWhiteSpace(elementName, nameof(elementName));
-            Garda.Prevent.NullOrWhiteSpace(attributeName, nameof(attributeName));
-            Garda.Prevent.NullOrWhiteSpace(attributeValue, nameof(attributeValue));
+            Prevent.Against.NullOrWhiteSpace(elementName, nameof(elementName));
+            Prevent.Against.NullOrWhiteSpace(attributeName, nameof(attributeName));
+            Prevent.Against.NullOrWhiteSpace(attributeValue, nameof(attributeValue));
 
             var expression = string.Format(ELEMENT_PATH_PATTERN, elementName, attributeName, attributeValue);
 

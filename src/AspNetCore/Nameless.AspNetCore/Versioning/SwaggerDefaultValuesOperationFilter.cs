@@ -4,14 +4,12 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Nameless.AspNetCore.Versioning {
-
     /// <summary>
     /// Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
     /// </summary>
     /// <remarks>This <see cref="IOperationFilter"/> is only required due to bugs in the <see cref="SwaggerGenerator"/>.
     /// Once they are fixed and published, this class can be removed.</remarks>
     public class SwaggerDefaultValuesOperationFilter : IOperationFilter {
-
         #region IOperationFilter Members
 
         // <summary>
@@ -50,9 +48,7 @@ namespace Nameless.AspNetCore.Versioning {
 
                 if (parameter.Schema.Default == null && description.DefaultValue != null) {
                     // REF: https://github.com/Microsoft/aspnet-api-versioning/issues/429#issuecomment-605402330
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    var json = JsonSerializer.Serialize(description.DefaultValue, description.ModelMetadata.ModelType);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    var json = JsonSerializer.Serialize(description.DefaultValue, description.ModelMetadata!.ModelType);
                     parameter.Schema.Default = OpenApiAnyFactory.CreateFromJson(json);
                 }
 

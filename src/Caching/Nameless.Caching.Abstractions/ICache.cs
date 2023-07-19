@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Caching {
-
     public interface ICache {
-
         #region Methods
 
         Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default);

@@ -9,7 +9,7 @@ namespace Nameless.Localization.Json {
         #region Public Static Methods
 
         public static Translation Get(this ITranslationProvider self, CultureInfo culture) {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             return AsyncHelper.RunSync(() => self.GetAsync(culture));
         }

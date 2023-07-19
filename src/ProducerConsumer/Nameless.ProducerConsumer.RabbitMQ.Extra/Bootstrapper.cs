@@ -2,20 +2,18 @@
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
-
     internal sealed class Bootstrapper : IStartable {
-
         #region Private Read-Only Fields
 
-        private readonly IConnection _connection;
+        private readonly IModel _channel;
         private readonly ProducerConsumerOptions _options;
 
         #endregion
 
         #region Internal Constructors
 
-        internal Bootstrapper(IConnection connection, ProducerConsumerOptions options) {
-            _connection = connection;
+        internal Bootstrapper(IModel channel, ProducerConsumerOptions options) {
+            _channel = channel;
             _options = options;
         }
 
@@ -57,11 +55,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region IStartable Members
 
         void IStartable.Start() {
-            using var channel = _connection.CreateModel();
-
             foreach (var exchange in _options.Exchanges) {
-                ConfigureExchange(channel, exchange);
-                ConfigureQueues(channel, exchange.Name, exchange.Queues);
+                ConfigureExchange(_channel, exchange);
+                ConfigureQueues(_channel, exchange.Name, exchange.Queues);
             }
         }
 

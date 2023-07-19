@@ -16,7 +16,7 @@ namespace Nameless.Helpers {
         /// <param name="obj">The source <see cref="object" />.</param>
         /// <returns>A XML <see cref="string"/>.</returns>
         public static string? ToXml(object obj) {
-            Garda.Prevent.Null(obj, nameof(obj));
+            Prevent.Against.Null(obj, nameof(obj));
 
             return !obj.IsAnonymous()
                 ? ConvertComplexObjectToXml(obj)

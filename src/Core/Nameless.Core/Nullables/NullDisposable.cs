@@ -3,7 +3,7 @@ namespace Nameless {
     public sealed class NullDisposable : IDisposable {
         #region Private Static Read-Only Fields
 
-        private static readonly IDisposable _instance = new NullDisposable();
+        private static readonly NullDisposable _instance = new();
 
         #endregion
 

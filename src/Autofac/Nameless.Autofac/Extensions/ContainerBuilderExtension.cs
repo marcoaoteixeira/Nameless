@@ -61,7 +61,7 @@ namespace Nameless.Autofac {
         public static IRegistrationDecoratorBuilder<TService, TImplementation> RegisterTypeWithDecorator<TService, TImplementation>(this ContainerBuilder self)
             where TService : notnull
             where TImplementation : notnull, TService {
-            Garda.Prevent.Null(self, nameof(self));
+            Prevent.Against.Null(self, nameof(self));
 
             return new RegistrationDecoratorBuilder<TService, TImplementation>(self);
         }

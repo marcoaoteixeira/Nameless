@@ -5,12 +5,11 @@ namespace Nameless.ProducerConsumer {
     /// Represents a consumer registration, also holds the reference to the callback method.
     /// </summary>
     public sealed class Registration<T> : IDisposable {
-
         #region Private Fields
 
-        private MethodInfo _methodInfo;
-        private WeakReference _targetObject;
-        private bool _isStatic;
+        private MethodInfo _handler;
+        private WeakReference _target;
+        private bool _staticHandler;
         private bool _disposed;
 
         #endregion
@@ -27,11 +26,6 @@ namespace Nameless.ProducerConsumer {
         /// </summary>
         public string Topic { get; }
 
-        /// <summary>
-        /// Gets the info about the method that will handle the message.
-        /// </summary>
-        public MemberInfo Callback => _methodInfo;
-
         #endregion
 
         #region Public Constructors
@@ -41,17 +35,17 @@ namespace Nameless.ProducerConsumer {
         /// </summary>
         /// <param name="callback">The message handler.</param>
         /// <param name="tag">The registration tag.</param>
-        public Registration(string tag, string topic, MessageEventHandler<T> handler) {
-            Garda.Prevent.NullOrWhiteSpace(tag, nameof(tag));
-            Garda.Prevent.NullOrWhiteSpace(topic, nameof(topic));
-            Garda.Prevent.Null(handler, nameof(handler));
+        public Registration(string tag, string topic, MessageHandler<T> handler) {
+            Prevent.Against.NullOrWhiteSpace(tag, nameof(tag));
+            Prevent.Against.NullOrWhiteSpace(topic, nameof(topic));
+            Prevent.Against.Null(handler, nameof(handler));
 
             Tag = tag;
             Topic = topic;
 
-            _methodInfo = handler.Method;
-            _targetObject = new WeakReference(handler.Target);
-            _isStatic = handler.Target == default;
+            _handler = handler.Method;
+            _target = new WeakReference(handler.Target);
+            _staticHandler = handler.Target == null;
         }
 
         #endregion
@@ -78,16 +72,16 @@ namespace Nameless.ProducerConsumer {
         /// <summary>
         /// Creates a handler for the subscription.
         /// </summary>
-        /// <returns>An instance of <see cref="MessageEventHandler{T}" />.</returns>
-        public MessageEventHandler<T>? CreateHandler() {
+        /// <returns>An instance of <see cref="MessageHandler{T}" />.</returns>
+        public MessageHandler<T>? CreateHandler() {
             BlockAccessAfterDispose();
 
-            if (_targetObject.Target != default && _targetObject.IsAlive) {
-                return (MessageEventHandler<T>)_methodInfo.CreateDelegate(typeof(MessageEventHandler<T>), _targetObject.Target);
+            if (_target.Target != default && _target.IsAlive) {
+                return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>), _target.Target);
             }
 
-            if (_isStatic) {
-                return (MessageEventHandler<T>)_methodInfo.CreateDelegate(typeof(MessageEventHandler<T>));
+            if (_staticHandler) {
+                return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>));
             }
 
             return default;
@@ -99,7 +93,7 @@ namespace Nameless.ProducerConsumer {
 
         private void BlockAccessAfterDispose() {
             if (_disposed) {
-                throw new ObjectDisposedException(nameof(Registration<T>));
+                throw new ObjectDisposedException($"Registration: {Tag}");
             }
         }
 
@@ -108,9 +102,9 @@ namespace Nameless.ProducerConsumer {
             if (disposing) { /* Dispose managed resources */ }
             // Dispose unmanaged resources
 
-            _methodInfo = default!;
-            _targetObject = default!;
-            _isStatic = false;
+            _handler = null!;
+            _target = null!;
+            _staticHandler = false;
 
             _disposed = true;
         }

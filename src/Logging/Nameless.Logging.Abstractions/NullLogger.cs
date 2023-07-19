@@ -1,14 +1,18 @@
 ﻿namespace Nameless.Logging {
-
     [Singleton]
     public sealed class NullLogger : ILogger {
+        #region Private Static Read-Only Fields
 
-        #region Public Static Properties
+        private static readonly NullLogger _instance = new();
+
+        #endregion
+
+        #region Public Static Read-Only Properties
 
         /// <summary>
         /// Gets the unique instance of NullLogger.
         /// </summary>
-        public static ILogger Instance { get; } = new NullLogger();
+        public static ILogger Instance => _instance;
 
         #endregion
 
@@ -30,10 +34,10 @@
         #region ILogger Members
 
         /// <inheritdoc />
-        public bool IsEnabled(LogLevel level) => false;
+        public bool IsEnabled(Level level) => false;
 
         /// <inheritdoc />
-        public void Log(LogLevel logLevel, string message, Exception? exception = default, params object[] args) { }
+        public void Log(Level logLevel, string message, Exception? exception = default, params object[] args) { }
 
         #endregion
     }

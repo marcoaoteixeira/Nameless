@@ -1,10 +1,8 @@
 namespace Nameless.Environment {
-
     /// <summary>
     /// Defines methods to expose the application hosting environment.
     /// </summary>
     public interface IHostEnvironment {
-
         #region Properties
 
         /// <summary>

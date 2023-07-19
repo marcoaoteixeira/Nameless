@@ -21,7 +21,7 @@ namespace Nameless.Security.Cryptography {
         #region ICryptoProvider Members
 
         public byte[] Encrypt(Stream stream) {
-            Garda.Prevent.Null(stream, nameof(stream));
+            Prevent.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return Array.Empty<byte>(); }
@@ -43,7 +43,7 @@ namespace Nameless.Security.Cryptography {
         }
 
         public byte[] Decrypt(Stream stream) {
-            Garda.Prevent.Null(stream, nameof(stream));
+            Prevent.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return Array.Empty<byte>(); }

@@ -6,28 +6,21 @@
         #region Public Static Methods
 
         /// <summary>
-        /// Gets the difference, in years, between the <paramref name="self"/> <see cref="DateTime"/> 
-        /// and <see cref="DateTime.Today"/>.
-        /// </summary>
-        /// <param name="self">The self <see cref="DateTime"/>.</param>
-        /// <returns>An integer representation of the difference.</returns>
-        public static int GetYearsToToday(this DateTime self)
-            => self.GetYears(DateTime.Today);
-
-        /// <summary>
         /// Gets the difference, in years, between the <paramref name="self"/>
-        /// and the <paramref name="date"/>.
+        /// and the <paramref name="date"/>. Note: Gregorian calendar.
         /// </summary>
         /// <param name="self">The current <see cref="DateTime"/>.</param>
         /// <param name="date">The other <see cref="DateTime"/>.</param>
         /// <returns>An integer representation of the difference.</returns>
         public static int GetYears(this DateTime self, DateTime date) {
-            var years = date.Year - self.Year;
+            var zero = new DateTime(1, 1, 1); // Gregorian calendar.
+            var span = self > date ? self - date : date - self;
 
-            if (date.Month < self.Month) { --years; }
-            if (date.Month == self.Month && date.Day < self.Day) { --years; }
+            // Because we start at year 1 for the Gregorian
+            // calendar, we must subtract a year here.
+            var result = (zero + span).Year - 1;
 
-            return Math.Abs(years);
+            return result;
         }
 
         /// <summary>
@@ -36,7 +29,7 @@
         /// <param name="year">The year</param>
         /// <param name="month">The month</param>
         /// <param name="ordinal">The ordinal number for the working day, example 5.</param>
-        /// <param name="holidays">An list of holidays</param>
+        /// <param name="holidays">An list of holidays, for the specified month</param>
         /// <returns>The number of the first working day of the given month and year.</returns>
         public static int GetFirstWorkingDay(int year, int month, int ordinal, params int[] holidays) {
             var day = 1;

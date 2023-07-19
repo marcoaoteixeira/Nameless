@@ -5,7 +5,7 @@ namespace Nameless.UnitTests {
             Assert.Throws<ArgumentNullException>(() => {
                 object? value = null;
 
-                Garda.Prevent.Null(value, nameof(value));
+                Prevent.Against.Null(value, nameof(value));
             });
         }
 
@@ -14,7 +14,7 @@ namespace Nameless.UnitTests {
             Assert.DoesNotThrow(() => {
                 object? value = "123";
 
-                Garda.Prevent.Null(value, nameof(value));
+                Prevent.Against.Null(value, nameof(value));
             });
         }
 
@@ -23,7 +23,7 @@ namespace Nameless.UnitTests {
             Assert.DoesNotThrow(() => {
                 object? value = 123;
 
-                Garda.Prevent.Null(value, nameof(value));
+                Prevent.Against.Null(value, nameof(value));
             });
         }
     }

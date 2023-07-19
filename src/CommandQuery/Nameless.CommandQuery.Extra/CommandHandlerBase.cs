@@ -1,20 +1,19 @@
 ﻿using FluentValidation;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.CommandQuery {
-
     public abstract class CommandHandlerBase<TCommand> : ICommandHandler<TCommand>
         where TCommand : ICommand {
+        #region Private Read-Only Fields
 
-        #region Private Fields
-
-        private ILogger? _logger = null;
-        private IValidator<TCommand>? _validator = null;
+        private readonly IValidator<TCommand>? _validator = null;
 
         #endregion
 
         #region Public Properties
 
+        private ILogger? _logger = null;
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
             set { _logger = value; }
@@ -32,7 +31,7 @@ namespace Nameless.CommandQuery {
 
         #region Protected Abstract Methods
 
-        protected abstract Task InnerHandleAsync(TCommand command, CancellationToken cancellationToken = default);
+        protected abstract Task ExecuteAsync(TCommand command, CancellationToken cancellationToken = default);
 
         #endregion
 
@@ -43,7 +42,7 @@ namespace Nameless.CommandQuery {
                 await _validator.ValidateAsync(command, opts => opts.ThrowOnFailures(), cancellationToken);
             }
 
-            await InnerHandleAsync(command, cancellationToken);
+            await ExecuteAsync(command, cancellationToken);
         }
 
         #endregion

@@ -13,7 +13,7 @@ namespace Nameless.Data {
         #region Public Constructors
 
         public Parameter(string name, object? value, DbType type = DbType.String) {
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
 
             Name = name;
             Value = value;

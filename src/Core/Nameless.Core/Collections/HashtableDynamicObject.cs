@@ -43,7 +43,7 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TryGetMember(GetMemberBinder binder, out object? result) {
-            Garda.Prevent.Null(binder, nameof(binder));
+            Prevent.Against.Null(binder, nameof(binder));
 
             result = _dictionary[binder.Name];
             return _dictionary.Contains(binder.Name);
@@ -51,7 +51,7 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TrySetMember(SetMemberBinder binder, object? value) {
-            Garda.Prevent.Null(binder, nameof(binder));
+            Prevent.Against.Null(binder, nameof(binder));
 
             _dictionary[binder.Name] = value;
 
@@ -60,8 +60,8 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result) {
-            Garda.Prevent.Null(binder, nameof(binder));
-            Garda.Prevent.Null(indexes, nameof(indexes));
+            Prevent.Against.Null(binder, nameof(binder));
+            Prevent.Against.Null(indexes, nameof(indexes));
 
             if (indexes.Length != 1) {
                 throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));
@@ -73,8 +73,8 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value) {
-            Garda.Prevent.Null(binder, nameof(binder));
-            Garda.Prevent.Null(indexes, nameof(indexes));
+            Prevent.Against.Null(binder, nameof(binder));
+            Prevent.Against.Null(indexes, nameof(indexes));
 
             if (indexes.Length != 1) {
                 throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));

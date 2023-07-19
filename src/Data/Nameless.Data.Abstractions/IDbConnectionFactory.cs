@@ -1,9 +1,7 @@
 using System.Data;
 
 namespace Nameless.Data {
-
     public interface IDbConnectionFactory {
-
         #region Properties
 
         string ProviderName { get; }

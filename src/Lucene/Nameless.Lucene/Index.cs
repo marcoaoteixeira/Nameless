@@ -59,9 +59,9 @@ namespace Nameless.Lucene {
         /// <param name="indexDirectoryPath">The base path of the Lucene directory.</param>
         /// <param name="name">The index name.</param>
         public Index(Analyzer analyzer, string indexDirectoryPath, string name) {
-            Garda.Prevent.Null(analyzer, nameof(analyzer));
-            Garda.Prevent.NullOrWhiteSpace(indexDirectoryPath, nameof(indexDirectoryPath));
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.Null(analyzer, nameof(analyzer));
+            Prevent.Against.NullOrWhiteSpace(indexDirectoryPath, nameof(indexDirectoryPath));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
 
             _analyzer = analyzer;
             _indexDirectoryPath = indexDirectoryPath;
@@ -86,7 +86,7 @@ namespace Nameless.Lucene {
         #region Private Static Methods
 
         private static Lucene_Document CreateDocument(IDocument document) {
-            Garda.Prevent.Null(document, nameof(document));
+            Prevent.Against.Null(document, nameof(document));
 
             var luceneDocument = new Lucene_Document();
             foreach (var field in document.Fields) {

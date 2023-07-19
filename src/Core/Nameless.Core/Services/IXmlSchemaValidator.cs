@@ -1,19 +1,8 @@
-﻿using System.Xml.Schema;
-
-namespace Nameless.Services {
+﻿namespace Nameless.Services {
     /// <summary>
     /// Defines methods for validate a XML via XML schema.
     /// </summary>
     public interface IXmlSchemaValidator {
-        #region Events
-
-        /// <summary>
-        /// Triggers when validate a XML.
-        /// </summary>
-        event Action<ValidationEventArgs> Validating;
-
-        #endregion
-
         #region Methods
 
         /// <summary>

@@ -19,11 +19,11 @@ namespace Nameless.Localization.Json.UnitTests {
 
             // assert
             translation.Should().NotBeNull();
-            translation.Values.Should().NotBeEmpty();
-            translation.Values.First().Values.Should().NotBeEmpty();
-            translation.Values.First().Values.First().Key.Should().Be("Hello World!");
-            translation.Values.First().Values.First().Values.Should().NotBeEmpty();
-            translation.Values.First().Values.First().Values.First().Should().Be(phrase);
+            translation.EntryCollections.Should().NotBeEmpty();
+            translation.EntryCollections.First().Entries.Should().NotBeEmpty();
+            translation.EntryCollections.First().Entries.First().Key.Should().Be("Hello World!");
+            translation.EntryCollections.First().Entries.First().Values.Should().NotBeEmpty();
+            translation.EntryCollections.First().Entries.First().Values.First().Should().Be(phrase);
         }
     }
 }

@@ -1,7 +1,5 @@
 namespace Nameless.Logging.log4net {
-
     public sealed class Log4netOptions {
-
         #region Public Static Read-Only Fields
 
         public static Log4netOptions Default => new();
@@ -26,7 +24,7 @@ namespace Nameless.Logging.log4net {
         /// <summary>
         /// Gets or sets whether critical level will be forward to fatal.
         /// </summary>
-        public bool OverrideCriticalLevel { get; set; } = false;
+        public bool OverrideCriticalLevel { get; set; }
 
         #endregion
     }

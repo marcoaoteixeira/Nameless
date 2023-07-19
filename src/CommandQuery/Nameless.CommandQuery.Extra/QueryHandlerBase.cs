@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
-using Nameless.Logging;
+using FluentValidation;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.CommandQuery {
-
     public abstract class QueryHandlerBase<TQuery, TResult> : IQueryHandler<TQuery, TResult> where TQuery : IQuery<TResult> {
-        #region Private Fields
+        #region Private Read-Only Fields
 
-        private ILogger? _logger = null;
+        private readonly IValidator<TQuery>? _validator;
 
         #endregion
 
         #region Public Properties
 
-        protected ILogger Logger {
+        private ILogger? _logger = null;
+        public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
             set { _logger = value; }
         }
@@ -27,17 +29,29 @@ namespace Nameless.CommandQuery {
 
         #region Protected Constructors
 
-        protected QueryHandlerBase(IMapper mapper) {
-            Garda.Prevent.Null(mapper, nameof(mapper));
+        protected QueryHandlerBase(IMapper mapper, IValidator<TQuery>? validator = null) {
+            Mapper = Prevent.Against.Null(mapper, nameof(mapper));
 
-            Mapper = mapper;
+            _validator = validator;
         }
+
+        #endregion
+
+        #region Public Abstract Methods
+
+        public abstract Task<TResult> ExecuteAsync(TQuery query, CancellationToken cancellationToken = default);
 
         #endregion
 
         #region IQueryHandler<TQuery, TResult> Members
 
-        public abstract Task<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken = default);
+        public async Task<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken = default) {
+            if (_validator != null) {
+                await _validator.ValidateAsync(query, opts => opts.ThrowOnFailures(), cancellationToken);
+            }
+
+            return await ExecuteAsync(query, cancellationToken);
+        }
 
         #endregion
     }

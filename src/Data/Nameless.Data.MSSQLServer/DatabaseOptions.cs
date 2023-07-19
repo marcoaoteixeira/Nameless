@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Data.MSSQLServer {
-
     public sealed class DatabaseOptions {
-
         #region Public Static Read-Only Fields
 
         public static DatabaseOptions Default => new();

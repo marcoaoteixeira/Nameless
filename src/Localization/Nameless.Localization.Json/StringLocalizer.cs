@@ -13,7 +13,7 @@ namespace Nameless.Localization.Json {
         private readonly string _resourceName;
         private readonly string _resourcePath;
         private readonly PluralizationRuleDelegate _pluralizationRule;
-        private readonly TranslationCollection _translationCollection;
+        private readonly EntryCollection _translationCollection;
         private readonly Func<CultureInfo, string, string, IStringLocalizer> _factory;
 
         #endregion
@@ -35,13 +35,13 @@ namespace Nameless.Localization.Json {
 
         #region Public Constructors
 
-        public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, PluralizationRuleDelegate pluralizationRule, TranslationCollection translationCollection, Func<CultureInfo, string, string, IStringLocalizer> factory) {
-            Garda.Prevent.Null(culture, nameof(culture));
-            Garda.Prevent.NullOrWhiteSpace(resourceName, nameof(resourceName));
-            Garda.Prevent.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
-            Garda.Prevent.Null(pluralizationRule, nameof(pluralizationRule));
-            Garda.Prevent.Null(translationCollection, nameof(translationCollection));
-            Garda.Prevent.Null(factory, nameof(factory));
+        public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, PluralizationRuleDelegate pluralizationRule, EntryCollection translationCollection, Func<CultureInfo, string, string, IStringLocalizer> factory) {
+            Prevent.Against.Null(culture, nameof(culture));
+            Prevent.Against.NullOrWhiteSpace(resourceName, nameof(resourceName));
+            Prevent.Against.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
+            Prevent.Against.Null(pluralizationRule, nameof(pluralizationRule));
+            Prevent.Against.Null(translationCollection, nameof(translationCollection));
+            Prevent.Against.Null(factory, nameof(factory));
 
 
             _culture = culture;
@@ -73,14 +73,14 @@ namespace Nameless.Localization.Json {
         }
 
         public IEnumerable<LocaleString> List(bool includeParentCultures = false) {
-            foreach (var translation in _translationCollection.Values) {
+            foreach (var translation in _translationCollection.Entries) {
                 foreach (var value in translation.Values) {
                     yield return new LocaleString(_culture, value, value);
                 }
             }
 
             if (includeParentCultures) {
-                foreach (var culture in _culture.GetTree().Skip(1)) {
+                foreach (var culture in _culture.GetParents().Skip(1)) {
                     var localizer = _factory(culture, _resourceName, _resourcePath);
                     foreach (var translation in localizer.List(includeParentCultures: false)) {
                         yield return translation;

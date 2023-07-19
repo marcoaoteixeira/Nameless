@@ -4,9 +4,7 @@ using MS_ILogger = Microsoft.Extensions.Logging.ILogger;
 using MS_LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Nameless.Logging.Microsoft {
-
     public sealed class LoggerAdapter : MS_ILogger {
-
         #region Private Read-Only Fields
 
         private readonly ILogger _logger;
@@ -17,11 +15,8 @@ namespace Nameless.Logging.Microsoft {
         #region Public Constructors
 
         public LoggerAdapter(ILogger logger, MS_IExternalScopeProvider externalScopeProvider) {
-            Garda.Prevent.Null(logger, nameof(logger));
-            Garda.Prevent.Null(externalScopeProvider, nameof(externalScopeProvider));
-
-            _logger = logger;
-            _externalScopeProvider = externalScopeProvider;
+            _logger = Prevent.Against.Null(logger, nameof(logger));
+            _externalScopeProvider = Prevent.Against.Null(externalScopeProvider, nameof(externalScopeProvider));
         }
 
         #endregion
@@ -30,10 +25,10 @@ namespace Nameless.Logging.Microsoft {
 
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull => _externalScopeProvider.Push(state);
 
-        public bool IsEnabled(MS_LogLevel logLevel) => _logger.IsEnabled(LogLevelTranslator.Translate(logLevel));
+        public bool IsEnabled(MS_LogLevel logLevel) => _logger.IsEnabled(LevelTranslator.Translate(logLevel));
 
         public void Log<TState>(MS_LogLevel logLevel, MS_EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-            => _logger.Log(LogLevelTranslator.Translate(logLevel), formatter(state, exception), exception);
+            => _logger.Log(LevelTranslator.Translate(logLevel), formatter(state, exception), exception);
 
         #endregion
     }

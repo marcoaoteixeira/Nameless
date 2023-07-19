@@ -3,12 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Nameless.AspNetCore {
     public static class ServiceCollectionExtension {
-
         #region Public Static Methods
 
         public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
-            Garda.Prevent.Null(configuration, nameof(configuration));
-            Garda.Prevent.Null(optionsProvider, nameof(optionsProvider));
+            Prevent.Against.Null(configuration, nameof(configuration));
+            Prevent.Against.Null(optionsProvider, nameof(optionsProvider));
 
             var opts = optionsProvider();
             var key = GetSectionKey<TOptions>();

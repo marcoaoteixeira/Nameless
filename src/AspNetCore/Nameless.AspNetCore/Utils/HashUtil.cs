@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Nameless.AspNetCore {
-
     public static class HashUtil {
-
         #region Private Constant Fields
 
         private const int SALT_SIZE = 256;

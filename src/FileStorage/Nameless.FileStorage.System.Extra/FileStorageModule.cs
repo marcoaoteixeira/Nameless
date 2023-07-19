@@ -2,9 +2,7 @@
 using Nameless.Autofac;
 
 namespace Nameless.FileStorage.System {
-
     public sealed class FileStorageModule : ModuleBase {
-
         #region Protected Override Methods
 
         /// <inheritdoc/>

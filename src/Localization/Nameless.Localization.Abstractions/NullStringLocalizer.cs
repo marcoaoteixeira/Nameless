@@ -3,7 +3,7 @@
     public sealed class NullStringLocalizer : IStringLocalizer {
         #region Private Static Read-Only Fields
 
-        private static readonly IStringLocalizer _instance = new NullStringLocalizer();
+        private static readonly NullStringLocalizer _instance = new();
 
         #endregion
 
@@ -32,9 +32,11 @@
 
         #region IStringLocalizer Members
 
-        public LocaleString this[string text, int count = -1, params object[] args] => new(Thread.CurrentThread.CurrentUICulture, text, text, args);
+        public LocaleString this[string text, int count = -1, params object[] args]
+            => new(Thread.CurrentThread.CurrentUICulture, text, text, args);
 
-        public IEnumerable<LocaleString> List(bool includeParentCultures) => Enumerable.Empty<LocaleString>();
+        public IEnumerable<LocaleString> List(bool includeParentCultures)
+            => Enumerable.Empty<LocaleString>();
 
         #endregion
     }

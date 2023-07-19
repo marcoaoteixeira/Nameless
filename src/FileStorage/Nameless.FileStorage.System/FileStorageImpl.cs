@@ -2,13 +2,11 @@ using Nameless.Infrastructure;
 using Sys_File = System.IO.File;
 
 namespace Nameless.FileStorage.System {
-
     public sealed class FileStorageImpl : IFileStorage {
-
         #region Public Constructors
 
         public FileStorageImpl(IApplicationContext applicationContext) {
-            Garda.Prevent.Null(applicationContext, nameof(applicationContext));
+            Prevent.Against.Null(applicationContext, nameof(applicationContext));
 
             Root = PathHelper.Normalize(applicationContext.DataDirectoryPath);
         }
@@ -72,8 +70,8 @@ namespace Nameless.FileStorage.System {
 
         /// <inheritdoc />
         public Task CreateFileAsync(string relativePath, Stream input, bool overwrite = false, CancellationToken token = default) {
-            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
-            Garda.Prevent.Null(input, nameof(input));
+            Prevent.Against.NullOrWhiteSpace(relativePath, nameof(relativePath));
+            Prevent.Against.Null(input, nameof(input));
 
             var filePath = PathHelper.GetPhysicalPath(Root, relativePath);
 
@@ -91,7 +89,7 @@ namespace Nameless.FileStorage.System {
 
         /// <inheritdoc />
         public Task<IFile> GetFileAsync(string relativePath, CancellationToken cancellationToken = default) {
-            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
+            Prevent.Against.NullOrWhiteSpace(relativePath, nameof(relativePath));
 
             var currentRelativePath = PathHelper.Normalize(relativePath);
 

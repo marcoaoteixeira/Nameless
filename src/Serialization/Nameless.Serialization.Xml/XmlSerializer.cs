@@ -8,8 +8,8 @@ namespace Nameless.Serialization.Xml {
         #region Private Static Methods
 
         private static void Serialize(Stream stream, object graph, IDictionary<string, string>? namespaces = null) {
-            Garda.Prevent.Null(stream, nameof(stream));
-            Garda.Prevent.Null(graph, nameof(graph));
+            Prevent.Against.Null(stream, nameof(stream));
+            Prevent.Against.Null(graph, nameof(graph));
 
             var xmlSerializer = new MS_XmlSerializer(graph.GetType());
             var xmlSerializerNamespaces = new MS_XmlSerializerNamespaces();

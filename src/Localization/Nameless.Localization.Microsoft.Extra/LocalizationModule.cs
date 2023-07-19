@@ -23,13 +23,13 @@ namespace Nameless.Localization.Microsoft {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-               .Register<ICultureContext, DefaultCultureContext>(
+               .Register<ICultureContext, CultureContext>(
                    name: CULTURE_CONTEXT_KEY,
                    lifetimeScope: LifetimeScopeType.Singleton
                );
 
             builder
-                .Register<IPluralizationRuleProvider, DefaultPluralizationRuleProvider>(
+                .Register<IPluralizationRuleProvider, PluralizationRuleProvider>(
                     name: PLURALIZATION_RULE_PROVIDER_KEY,
                     lifetimeScope: LifetimeScopeType.Singleton
                 );
@@ -61,14 +61,14 @@ namespace Nameless.Localization.Microsoft {
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolverMiddleware(
+                pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(IStringLocalizer),
                     factory: StringLocalizer_Resolve_Delegate
                 ));
             };
 
             registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolverMiddleware(
+                pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(MS_IStringLocalizer),
                     factory: MS_StringLocalizer_Resolve_Delegate
                 ));

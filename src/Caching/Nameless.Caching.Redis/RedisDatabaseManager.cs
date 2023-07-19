@@ -24,15 +24,15 @@ namespace Nameless.Caching.Redis {
 
         #region Private Fields
 
-        private IConnectionMultiplexer _multiplexer = default!;
-        private IDatabase _database = default!;
+        private IConnectionMultiplexer _multiplexer = null!;
+        private IDatabase _database = null!;
         private bool _disposed;
 
         #endregion
 
         #region Public Constructors
 
-        public RedisDatabaseManager(RedisOptions options) {
+        public RedisDatabaseManager(RedisOptions? options = null) {
             _options = options ?? RedisOptions.Default;
 
             Initialize();
@@ -42,7 +42,8 @@ namespace Nameless.Caching.Redis {
 
         #region Destructor
 
-        ~RedisDatabaseManager() => Dispose(disposing: false);
+        ~RedisDatabaseManager()
+            => Dispose(disposing: false);
 
         #endregion
 
@@ -56,21 +57,20 @@ namespace Nameless.Caching.Redis {
                 KeepAlive = _options.KeepAlive,
             };
 
-            if (_options.Ssl != default && _options.Ssl.Host != default) {
+            if (_options.Ssl != null && _options.Ssl.Host != null) {
                 opts.EndPoints.Add(_options.Ssl.Host, _options.Ssl.Port);
             }
 
-            if (_options.Certificate != default) {
+            if (_options.Certificate != null) {
                 opts.CertificateSelection += OnCertificateSelection;
                 opts.CertificateValidation += OnCertificateValidation;
             }
 
             _multiplexer = ConnectionMultiplexer.Connect(opts);
-            _database = _multiplexer.GetDatabase();
         }
 
         private X509Certificate OnCertificateSelection(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers) {
-            if (_options.Certificate == default || _options.Certificate.Pfx == default) {
+            if (_options.Certificate == null || _options.Certificate.Pfx == null) {
                 throw new InvalidOperationException("The path to the .pfx file was not specified.");
             }
 
@@ -78,11 +78,11 @@ namespace Nameless.Caching.Redis {
         }
 
         private bool OnCertificateValidation(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) {
-            if (_options.Certificate == default || _options.Certificate.Pem == default) {
+            if (_options.Certificate == null || _options.Certificate.Pem == null) {
                 throw new InvalidOperationException("The path to the .pem file was not specified.");
             }
 
-            if (certificate == default) { return false; }
+            if (certificate == null) { return false; }
 
             var inner = new X509Certificate2(_options.Certificate.Pem);
             var verdict = certificate.Issuer == inner.Subject;
@@ -92,7 +92,11 @@ namespace Nameless.Caching.Redis {
             return verdict;
         }
 
-        private void BlockAccessAfterDispose() => ObjectDisposedException.ThrowIf(_disposed, this);
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(RedisDatabaseManager));
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
@@ -100,8 +104,8 @@ namespace Nameless.Caching.Redis {
                 _multiplexer.Dispose();
             }
 
-            _multiplexer = default!;
-            _database = default!;
+            _multiplexer = null!;
+            _database = null!;
             _disposed = true;
         }
 
@@ -112,7 +116,7 @@ namespace Nameless.Caching.Redis {
         public IDatabase GetDatabase() {
             BlockAccessAfterDispose();
 
-            return _database;
+            return _database ??= _multiplexer.GetDatabase();
         }
 
         #endregion

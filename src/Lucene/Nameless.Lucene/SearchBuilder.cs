@@ -54,8 +54,8 @@ namespace Nameless.Lucene {
         /// <param name="indexSearcherFactory">The indexes directory factory.</param>
         /// <param name="analyzer">The analyzer provider.</param>
         public SearchBuilder(Analyzer analyzer, Func<IndexSearcher> indexSearcherFactory) {
-            Garda.Prevent.Null(analyzer, nameof(analyzer));
-            Garda.Prevent.Null(indexSearcherFactory, nameof(indexSearcherFactory));
+            Prevent.Against.Null(analyzer, nameof(analyzer));
+            Prevent.Against.Null(indexSearcherFactory, nameof(indexSearcherFactory));
 
             _analyzer = analyzer;
             _indexSearcherFactory = indexSearcherFactory;
@@ -187,8 +187,8 @@ namespace Nameless.Lucene {
 
         /// <inheritdoc />
         public ISearchBuilder Parse(string query, bool escape = true, params string[] defaultFields) {
-            Garda.Prevent.NullOrWhiteSpace(query, nameof(query));
-            Garda.Prevent.NullOrEmpty(defaultFields, nameof(defaultFields));
+            Prevent.Against.NullOrWhiteSpace(query, nameof(query));
+            Prevent.Against.NullOrEmpty(defaultFields, nameof(defaultFields));
 
             if (escape) { query = QueryParserBase.Escape(query); }
 
