@@ -32,7 +32,7 @@
 
         #region IStringLocalizer Members
 
-        public LocaleString this[string text, int count = -1, params object[] args]
+        public LocaleString this[string text, params object[] args]
             => new(Thread.CurrentThread.CurrentUICulture, text, text, args);
 
         public IEnumerable<LocaleString> List(bool includeParentCultures)

@@ -11,46 +11,35 @@ namespace Nameless.Localization.Json {
         #region Private Read-Only Fields
 
         private readonly ICultureContext _cultureContext;
-        private readonly IPluralizationRuleProvider _pluralizationRuleProvider;
         private readonly ITranslationProvider _translationProvider;
 
         #endregion
 
         #region Public Constructors
 
-        public StringLocalizerFactory(ICultureContext cultureContext, IPluralizationRuleProvider pluralizationRuleProvider, ITranslationProvider translationProvider) {
-            Prevent.Against.Null(cultureContext, nameof(cultureContext));
-            Prevent.Against.Null(translationProvider, nameof(translationProvider));
-            Prevent.Against.Null(pluralizationRuleProvider, nameof(pluralizationRuleProvider));
-
-            _cultureContext = cultureContext;
-            _pluralizationRuleProvider = pluralizationRuleProvider;
-            _translationProvider = translationProvider;
+        public StringLocalizerFactory(ICultureContext cultureContext, ITranslationProvider translationProvider) {
+            _cultureContext = Prevent.Against.Null(cultureContext, nameof(cultureContext));
+            _translationProvider = Prevent.Against.Null(translationProvider, nameof(translationProvider));
         }
 
         #endregion
 
         #region Private Methods
 
-        private PluralizationRuleDelegate GetPluralizationRuleDelegate(CultureInfo culture) {
-            return _pluralizationRuleProvider.TryGet(culture, out var pluralizationRule)
-                ? pluralizationRule
-                : PluralizationRuleProvider.DefaultRule;
-        }
-
-        private EntryCollection GetTranslationCollection(CultureInfo culture, string resourceName, string resourcePath) {
+        private Container GetContainer(CultureInfo culture, string resourceName, string resourcePath) {
             var key = $"[{resourceName}] {resourcePath}";
             var translation = _translationProvider.Get(culture);
-            return translation.TryGetValue(key, out var translationCollection)
-                ? translationCollection
-                : new EntryCollection(key);
+
+            if (translation.TryGetValue(key, out var container)) {
+                return container;
+            }
+            return new Container(key);
         }
 
         private StringLocalizer GetLocalizer(CultureInfo culture, string resourceName, string resourcePath) {
-            var pluralizationRule = GetPluralizationRuleDelegate(culture);
-            var translationCollection = GetTranslationCollection(culture, resourceName, resourcePath);
+            var container = GetContainer(culture, resourceName, resourcePath);
 
-            return new StringLocalizer(culture, resourceName, resourcePath, pluralizationRule, translationCollection, GetLocalizer);
+            return new StringLocalizer(culture, resourceName, resourcePath, container, GetLocalizer);
         }
 
         #endregion

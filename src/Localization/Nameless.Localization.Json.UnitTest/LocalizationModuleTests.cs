@@ -2,9 +2,9 @@ using System.Globalization;
 using Autofac;
 using FluentAssertions;
 using Nameless.FileStorage.System;
-using Nameless.Localization.Json.UnitTests.Fixtures;
+using Nameless.Localization.Json.UnitTest.Fixtures;
 
-namespace Nameless.Localization.Json.UnitTests {
+namespace Nameless.Localization.Json.UnitTest {
     public class LocalizationModuleTests {
 
         private static IContainer CreateContainer(Action<ContainerBuilder>? builder = default) {

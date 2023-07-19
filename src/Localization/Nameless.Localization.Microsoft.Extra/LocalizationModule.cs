@@ -4,10 +4,12 @@ using Autofac.Core;
 using Autofac.Core.Registration;
 using Nameless.Autofac;
 using Nameless.Localization.Json;
+using Nameless.Localization.Json.Impl;
 using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
 using MS_IStringLocalizerFactory = Microsoft.Extensions.Localization.IStringLocalizerFactory;
 
-namespace Nameless.Localization.Microsoft {
+namespace Nameless.Localization.Microsoft
+{
 
     public sealed class LocalizationModule : ModuleBase {
 
@@ -35,7 +37,7 @@ namespace Nameless.Localization.Microsoft {
                 );
 
             builder
-                 .Register<ITranslationProvider, TranslationProvider>(
+                 .Register<ITranslationProvider, FileTranslationProvider>(
                      name: TRANSLATION_PROVIDER_KEY,
                      lifetimeScope: LifetimeScopeType.Singleton
                  );

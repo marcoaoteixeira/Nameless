@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Nameless.Helpers;
 
 namespace Nameless.Localization.Json.Schema {
-    public sealed class EntryCollection : IEnumerable<Entry> {
+    public sealed class Container : IEnumerable<Entry> {
         #region Public Static Read-Only Properties
 
-        public static EntryCollection Empty => new("NULL");
+        public static Container Empty => new(string.Empty);
 
         #endregion
 
@@ -17,14 +18,14 @@ namespace Nameless.Localization.Json.Schema {
 
         #region Private Properties
 
-        public Dictionary<string, Entry> Entries { get; } = new();
+        private Dictionary<string, Entry> Entries { get; } = new();
 
         #endregion
 
         #region Public Constructors
 
-        public EntryCollection(string source) {
-            Source = Prevent.Against.NullOrWhiteSpace(source, nameof(source));
+        public Container(string source) {
+            Source = Prevent.Against.Null(source, nameof(source));
         }
 
         #endregion
@@ -34,17 +35,13 @@ namespace Nameless.Localization.Json.Schema {
         public void Add(Entry entry) {
             Prevent.Against.Null(entry, nameof(entry));
 
-            if (Entries.ContainsKey(entry.Key)) {
-                Entries[entry.Key] = entry;
-            } else {
-                Entries.Add(entry.Key, entry);
-            }
+            Entries.AddOrChange(entry.Key, entry);
         }
 
-        public bool TryGetValue(string key, out Entry? output)
+        public bool TryGetValue(string key, [NotNullWhen(true)] out Entry? output)
             => Entries.TryGetValue(key, out output);
 
-        public bool Equals(EntryCollection? other)
+        public bool Equals(Container? other)
             => other != null
             && other.Source == Source;
 
@@ -53,7 +50,7 @@ namespace Nameless.Localization.Json.Schema {
         #region Public Override Methods
 
         public override bool Equals(object? obj)
-            => Equals(obj as EntryCollection);
+            => Equals(obj as Container);
 
         public override int GetHashCode()
             => SimpleHash.Compute(Source);

@@ -2,13 +2,13 @@
 using Autofac.Core;
 using Autofac.Core.Registration;
 using Nameless.Autofac;
+using Nameless.Localization.Json.Impl;
 
 namespace Nameless.Localization.Json {
     public sealed class LocalizationModule : ModuleBase {
         #region Private Constants
 
         private const string CULTURE_CONTEXT_TOKEN = "CultureContext.5bd5f404-df4b-46d9-9ad4-298b765c5949";
-        private const string PLURALIZATION_RULE_PROVIDER_TOKEN = "PluralizationRuleProvider.7dbbb454-e130-4b5a-8891-285596c51bd7";
         private const string TRANSLATION_PROVIDER_TOKEN = "TranslationProvider.66faa31b-c30b-4efc-9e0c-016b5c8a1e17";
 
         #endregion
@@ -18,29 +18,19 @@ namespace Nameless.Localization.Json {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
             builder
-               .RegisterType<CultureContext>()
+               .RegisterInstance(CultureContext.Instance)
                .Named<ICultureContext>(CULTURE_CONTEXT_TOKEN)
                .SingleInstance();
 
             builder
-               .RegisterType<PluralizationRuleProvider>()
-               .Named<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_TOKEN)
-               .SingleInstance();
-
-            builder
-               .RegisterType<TranslationProvider>()
+               .RegisterType<FileTranslationProvider>()
                .Named<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
                .SingleInstance();
 
             builder
-                .Register<IStringLocalizerFactory, StringLocalizerFactory>(
-                    lifetimeScope: LifetimeScopeType.Singleton,
-                    parameters: new[] {
-                        ResolvedParameter.ForNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN),
-                        ResolvedParameter.ForNamed<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_TOKEN),
-                        ResolvedParameter.ForNamed<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
-                    }
-                );
+                .Register(StringLocalizerFactoryResolver)
+                .As<IStringLocalizerFactory>()
+                .SingleInstance();
 
             base.Load(builder);
         }
@@ -56,6 +46,18 @@ namespace Nameless.Localization.Json {
                 ));
             };
             base.AttachToComponentRegistration(componentRegistry, registration);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static IStringLocalizerFactory StringLocalizerFactoryResolver(IComponentContext context) {
+            var cultureContext = context.ResolveNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN);
+            var translationProvider = context.ResolveNamed<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN);
+            var stringLocalizerFactory = new StringLocalizerFactory(cultureContext, translationProvider);
+
+            return stringLocalizerFactory;
         }
 
         #endregion

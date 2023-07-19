@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Nameless.Helpers;
 
@@ -6,34 +7,37 @@ namespace Nameless.Localization.Json.Schema {
     /// <summary>
     /// This class represents a translation, in other words, a file for a culture.
     /// </summary>
-    public sealed class Translation {
-        #region Private Read-Only Fields
-
-        private readonly Dictionary<string, EntryCollection> _dictionary;
-
-        #endregion
-
+    public sealed class Translation : IEnumerable<Container> {
         #region Public Properties
 
         public CultureInfo Culture { get; }
-        public EntryCollection[] EntryCollections => _dictionary.Values.ToArray();
+
+        #endregion
+
+        #region Private Properties
+
+        private Dictionary<string, Container> Containers { get; } = new();
 
         #endregion
 
         #region Public Constructors
 
-        public Translation(CultureInfo culture, params EntryCollection[] entryCollections) {
+        public Translation(CultureInfo culture) {
             Culture = Prevent.Against.Null(culture, nameof(culture));
-
-            _dictionary = (entryCollections ?? Array.Empty<EntryCollection>()).ToDictionary(_ => _.Source, _ => _);
         }
 
         #endregion
 
         #region Public Methods
 
-        public bool TryGetValue(string source, [NotNullWhen(true)] out EntryCollection? output)
-            => _dictionary.TryGetValue(source, out output);
+        public void Add(Container container) {
+            Prevent.Against.Null(container, nameof(container));
+
+            Containers.AddOrChange(container.Source, container);
+        }
+
+        public bool TryGetValue(string source, [NotNullWhen(true)] out Container? output)
+            => Containers.TryGetValue(source, out output);
 
         public bool Equals(Translation? other)
             => other != null
@@ -48,6 +52,16 @@ namespace Nameless.Localization.Json.Schema {
 
         public override int GetHashCode()
             => SimpleHash.Compute(Culture.Name);
+
+        #endregion
+
+        #region IEnumerable<EntryCollection> Members
+
+        public IEnumerator<Container> GetEnumerator()
+            => Containers.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => Containers.Values.GetEnumerator();
 
         #endregion
     }
