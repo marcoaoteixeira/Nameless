@@ -74,6 +74,20 @@ page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en
 I'm using GitHub Actions to act as a CI/CD. All files are located in the
 .github folder.
 
+## Template
+
+There is a small "microservice" template inside the template folder. To install it just use:
+
+```
+dotnet new install <FULL_PATH_TO_MICROSERVICE_FOLDER>
+```
+
+E.g:
+
+```
+dotnet new install C:\Workspace\Nameless\template\Microservice\Nameless.Microservice
+```
+
 ## Contribuition
 
 Just me, at the moment.
