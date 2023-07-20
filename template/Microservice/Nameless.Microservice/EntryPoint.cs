@@ -15,6 +15,7 @@ namespace Nameless.Microservice {
                             config.AddJsonFile("AppSettings.json", optional: true, reloadOnChange: true);
                             config.AddJsonFile($"AppSettings.{ctx.HostingEnvironment.EnvironmentName}.json", optional: true);
                             config.AddEnvironmentVariables();
+                            config.AddUserSecrets<StartUp>();
                         })
                         .ConfigureLogging((webHostBuilderContext, loggingBuilder) => {
                             loggingBuilder.AddConfiguration(webHostBuilderContext.Configuration.GetSection("Logging"));
