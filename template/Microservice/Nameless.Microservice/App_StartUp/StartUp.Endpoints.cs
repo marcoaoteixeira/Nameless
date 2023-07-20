@@ -10,8 +10,8 @@ namespace Nameless.Microservice {
             });
         }
 
-        private static void UseEndpoints(IApplicationBuilder applicationBuilder) {
-            applicationBuilder.UseEndpoints(endpoints => endpoints.MapControllers());
+        private static void UseEndpoints(IApplicationBuilder app) {
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
         #endregion

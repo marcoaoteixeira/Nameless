@@ -1,19 +1,18 @@
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Nameless.Microservice {
     public partial class StartUp {
         #region Public Properties
 
         public IConfiguration Configuration { get; }
-        public IHostEnvironment HostEnvironment { get; }
 
         #endregion
 
         #region Public Constructors
 
-        public StartUp(IConfiguration configuration, IHostEnvironment hostEnvironment) {
+        public StartUp(IConfiguration configuration) {
             Configuration = configuration;
-            HostEnvironment = hostEnvironment;
         }
 
         #endregion
@@ -30,6 +29,8 @@ namespace Nameless.Microservice {
 
             ConfigureCors(services);
 
+            ConfigureAuth(services, Configuration);
+
             ConfigureRouting(services);
 
             ConfigureEndpoints(services);
@@ -40,25 +41,24 @@ namespace Nameless.Microservice {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment, IHostApplicationLifetime hostApplicationLifetime) {
-            UseSwagger(applicationBuilder, webHostEnvironment);
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime, IApiVersionDescriptionProvider versioning) {
+            UseSwagger(app, env, versioning);
 
-            UseCors(applicationBuilder);
+            UseCors(app);
 
-            UseRouting(applicationBuilder);
+            UseRouting(app);
 
-            UseEndpoints(applicationBuilder);
+            UseAuth(app);
 
-            UseHttpSecurity(applicationBuilder, webHostEnvironment);
+            UseEndpoints(app);
 
-            UseAuth(applicationBuilder);
+            UseHttpSecurity(app, env);
 
-            UseErrorHandling(applicationBuilder, webHostEnvironment);
-
-            var container = applicationBuilder.ApplicationServices.GetAutofacRoot();
+            UseErrorHandling(app, env);
 
             // Tear down the composition root and free all resources.
-            hostApplicationLifetime.ApplicationStopped.Register(container.Dispose);
+            var container = app.ApplicationServices.GetAutofacRoot();
+            lifetime.ApplicationStopped.Register(container.Dispose);
         }
 
         #endregion

@@ -1,10 +1,10 @@
 namespace Nameless.Microservice {
     public partial class StartUp {
-        #region Private Methods
+        #region Private Static Methods
 
-        private void UseErrorHandling(IApplicationBuilder applicationBuilder, IWebHostEnvironment webHostEnvironment) {
-            if (webHostEnvironment.IsDevelopment()) {
-                applicationBuilder.UseDeveloperExceptionPage();
+        private static void UseErrorHandling(IApplicationBuilder app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
+                app.UseDeveloperExceptionPage();
             }
         }
 

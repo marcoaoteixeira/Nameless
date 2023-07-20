@@ -125,7 +125,7 @@ namespace Nameless.Localization.Json.Services.Impl
                 // Sync
                 await Semaphore.WaitAsync(cancellationToken);
 
-                var key = culture.Name.ToLowerInvariant();
+                var key = culture.Name;
 
                 // If the cache already holds a reference to the culture,
                 // just returns it.
