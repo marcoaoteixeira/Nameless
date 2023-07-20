@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Nameless.AspNetCore {
 
-    public sealed record Error {
+    public sealed record BadRequestEntry {
         #region Public Properties
 
         [JsonPropertyName("code")]
@@ -16,22 +16,22 @@ namespace Nameless.AspNetCore {
         #endregion
     }
 
-    public sealed class ErrorOutput : IEnumerable<Error> {
+    public sealed class BadRequestOutput : IEnumerable<BadRequestEntry> {
         #region Private Properties
 
-        private List<Error> Bag { get; } = new();
+        private List<BadRequestEntry> Bag { get; } = new();
 
         #endregion
 
         #region Public Methods
 
-        public void Push(string code, string[] messages) {
+        public void Push(string code, string[] problems) {
             Prevent.Against.Null(code, nameof(code));
-            Prevent.Against.Null(messages, nameof(messages));
+            Prevent.Against.Null(problems, nameof(problems));
 
             Bag.Add(new() {
                 Code = code,
-                Problems = messages
+                Problems = problems
             });
         }
 
@@ -48,7 +48,7 @@ namespace Nameless.AspNetCore {
 
         #region IEnumerable<Error> Members
 
-        IEnumerator<Error> IEnumerable<Error>.GetEnumerator()
+        IEnumerator<BadRequestEntry> IEnumerable<BadRequestEntry>.GetEnumerator()
             => Bag.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -60,23 +60,23 @@ namespace Nameless.AspNetCore {
     public static class ModelStateDictionaryExtension {
         #region Public Static Methods
 
-        public static ErrorOutput CreateErrorOutput(this ModelStateDictionary self) {
-            var errorOutput = new ErrorOutput();
+        public static BadRequestOutput CreateBadRequestOutput(this ModelStateDictionary self) {
+            var result = new BadRequestOutput();
 
             foreach (var kvp in self) {
                 var code = kvp.Key;
-                var messages = new List<string>();
+                var problems = new List<string>();
                 foreach (var error in kvp.Value.Errors) {
-                    var message = string.IsNullOrWhiteSpace(error.ErrorMessage)
+                    var problem = string.IsNullOrWhiteSpace(error.ErrorMessage)
                         ? error.Exception?.Message ?? string.Empty
                         : string.Empty;
 
-                    messages.Add(message);
+                    problems.Add(problem);
                 }
-                errorOutput.Push(code, messages.ToArray());
+                result.Push(code, problems.ToArray());
             }
 
-            return errorOutput;
+            return result;
         }
 
         #endregion
