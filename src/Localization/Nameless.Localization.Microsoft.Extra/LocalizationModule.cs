@@ -1,23 +1,17 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
 using Nameless.Autofac;
 using Nameless.Localization.Json;
-using Nameless.Localization.Json.Impl;
-using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
-using MS_IStringLocalizerFactory = Microsoft.Extensions.Localization.IStringLocalizerFactory;
+using Nameless.Localization.Json.Services;
+using Nameless.Localization.Json.Services.Impl;
 
-namespace Nameless.Localization.Microsoft
-{
-
+namespace Nameless.Localization.Microsoft {
     public sealed class LocalizationModule : ModuleBase {
-
         #region Private Constants
 
-        private const string TRANSLATION_PROVIDER_KEY = "be4e54c9-946e-4a42-b246-b4df5b955c93";
-        private const string PLURALIZATION_RULE_PROVIDER_KEY = "10913e35-0bcc-40a8-b1fa-73329112a79f";
-        private const string CULTURE_CONTEXT_KEY = "8b53a609-5c3e-4b22-9e8c-a1711bc8daeb";
+        private const string CULTURE_CONTEXT_TOKEN = "CultureContext.fe8a69c2-2543-42fd-a3f9-1c6e8ae1ab66";
+        private const string TRANSLATION_PROVIDER_TOKEN = "TranslationProvider.9ecf2edd-1b0d-4402-8c38-07a205f74ad6";
 
         #endregion
 
@@ -25,37 +19,24 @@ namespace Nameless.Localization.Microsoft
 
         protected override void Load(ContainerBuilder builder) {
             builder
-               .Register<ICultureContext, CultureContext>(
-                   name: CULTURE_CONTEXT_KEY,
-                   lifetimeScope: LifetimeScopeType.Singleton
-               );
+               .RegisterInstance(CultureContext.Instance)
+               .Named<ICultureContext>(CULTURE_CONTEXT_TOKEN)
+               .SingleInstance();
 
             builder
-                .Register<IPluralizationRuleProvider, PluralizationRuleProvider>(
-                    name: PLURALIZATION_RULE_PROVIDER_KEY,
-                    lifetimeScope: LifetimeScopeType.Singleton
-                );
+               .RegisterType<FileTranslationProvider>()
+               .Named<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
+               .SingleInstance();
 
             builder
-                 .Register<ITranslationProvider, FileTranslationProvider>(
-                     name: TRANSLATION_PROVIDER_KEY,
-                     lifetimeScope: LifetimeScopeType.Singleton
-                 );
+                .Register(StringLocalizerFactoryResolver)
+                .As<IStringLocalizerFactory>()
+                .SingleInstance();
 
             builder
-                .Register<IStringLocalizerFactory, StringLocalizerFactory>(
-                    lifetimeScope: LifetimeScopeType.Singleton,
-                    parameters: new[] {
-                        ResolvedParameter.ForNamed<ICultureContext>(CULTURE_CONTEXT_KEY),
-                        ResolvedParameter.ForNamed<IPluralizationRuleProvider>(PLURALIZATION_RULE_PROVIDER_KEY),
-                        ResolvedParameter.ForNamed<ITranslationProvider>(TRANSLATION_PROVIDER_KEY)
-                    }
-                );
-
-            builder
-                .Register<MS_IStringLocalizerFactory, StringLocalizerFactoryAdapter>(
-                    lifetimeScope: LifetimeScopeType.Singleton
-                );
+                .RegisterType<StringLocalizerFactoryAdapter>()
+                .As<IMSStringLocalizerFactory>()
+                .SingleInstance();
 
             base.Load(builder);
         }
@@ -65,14 +46,18 @@ namespace Nameless.Localization.Microsoft
             registration.PipelineBuilding += (sender, pipeline) => {
                 pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(IStringLocalizer),
-                    factory: StringLocalizer_Resolve_Delegate
+                    factory: (member, context) => member.DeclaringType != null
+                        ? context.Resolve<IStringLocalizerFactory>().Create(member.DeclaringType)
+                        : NullStringLocalizer.Instance
                 ));
             };
 
             registration.PipelineBuilding += (sender, pipeline) => {
                 pipeline.Use(new PropertyResolveMiddleware(
-                    serviceType: typeof(MS_IStringLocalizer),
-                    factory: MS_StringLocalizer_Resolve_Delegate
+                    serviceType: typeof(IMSStringLocalizer),
+                    factory: (member, context) => member.DeclaringType != null
+                        ? context.Resolve<IMSStringLocalizerFactory>().Create(member.DeclaringType)
+                        : MSNullStringLocalizer.Instance
                 ));
             };
 
@@ -83,11 +68,13 @@ namespace Nameless.Localization.Microsoft
 
         #region Private Static Methods
 
-        private static IStringLocalizer StringLocalizer_Resolve_Delegate(MemberInfo member, IComponentContext context)
-            => context.Resolve<IStringLocalizerFactory>().Create(member.DeclaringType!);
+        private static IStringLocalizerFactory StringLocalizerFactoryResolver(IComponentContext context) {
+            var cultureContext = context.ResolveNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN);
+            var translationProvider = context.ResolveNamed<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN);
+            var stringLocalizerFactory = new StringLocalizerFactory(cultureContext, translationProvider);
 
-        private static MS_IStringLocalizer MS_StringLocalizer_Resolve_Delegate(MemberInfo member, IComponentContext context)
-            => context.Resolve<MS_IStringLocalizerFactory>().Create(member.DeclaringType!);
+            return stringLocalizerFactory;
+        }
 
         #endregion
     }

@@ -29,7 +29,7 @@ namespace Nameless.CommandQuery.UnitTests {
             });
 
             // act
-            var dispatcher = container.Resolve<ICommandService>();
+            var dispatcher = container.Resolve<IDispatcherService>();
 
             // assert
             Assert.That(dispatcher, Is.Not.Null);
@@ -45,7 +45,7 @@ namespace Nameless.CommandQuery.UnitTests {
             });
 
             // act
-            var dispatcher = container.Resolve<IQueryService>();
+            var dispatcher = container.Resolve<IDispatcherService>();
 
             // assert
             Assert.That(dispatcher, Is.Not.Null);
@@ -59,7 +59,7 @@ namespace Nameless.CommandQuery.UnitTests {
 
                 builder.RegisterInstance(mapper);
             });
-            var service = container.Resolve<ICommandService>();
+            var service = container.Resolve<IDispatcherService>();
 
             // act && assert
             Assert.DoesNotThrowAsync(async () => await service.ExecuteAsync(new SaveAnimalCommand { Name = "Test" }));
@@ -73,7 +73,7 @@ namespace Nameless.CommandQuery.UnitTests {
 
                 builder.RegisterInstance(mapper);
             });
-            var service = container.Resolve<ICommandService>();
+            var service = container.Resolve<IDispatcherService>();
 
             // act && assert
             Assert.DoesNotThrowAsync(async () => await service.ExecuteAsync(new UpdateAnimalCommand { ID = 2, Name = "Test" }));

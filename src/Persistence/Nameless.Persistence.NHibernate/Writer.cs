@@ -4,9 +4,7 @@ using NHibernate.Criterion;
 using NHibernate.Linq;
 
 namespace Nameless.Persistence.NHibernate {
-
     public sealed class Writer : IWriter {
-
         #region Private Read-Only Fields
 
         private readonly ISession _session;

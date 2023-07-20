@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.Json;
 using Nameless.FileStorage;
-using Nameless.Localization.Json.Schema;
+using Nameless.Localization.Json.Objects;
+using Nameless.Localization.Json.Objects.Translation;
 
-namespace Nameless.Localization.Json.Impl {
+namespace Nameless.Localization.Json.Services.Impl
+{
     public sealed class FileTranslationProvider : ITranslationProvider, IDisposable {
         #region Private Static Read-Only Fields
 
@@ -47,12 +47,12 @@ namespace Nameless.Localization.Json.Impl {
 
         #region Private Static Methods
 
-        private static Translation DeserializeTranslationFile(string json) {
+        private static Trunk DeserializeTranslationFile(string json) {
             var options = new JsonSerializerOptions {
-                Converters = { TranslationJsonConverter.Default }
+                Converters = { TrunkJsonConverter.Default }
             };
 
-            var result = JsonSerializer.Deserialize<Translation>(json, options);
+            var result = JsonSerializer.Deserialize<Trunk>(json, options);
 
             return result!;
         }
@@ -116,7 +116,7 @@ namespace Nameless.Localization.Json.Impl {
 
         #region ITranslationProvider Members
 
-        public async Task<Translation> GetAsync(CultureInfo culture, CancellationToken cancellationToken = default) {
+        public async Task<Trunk> GetAsync(CultureInfo culture, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
             Prevent.Against.Null(culture, nameof(culture));
@@ -130,7 +130,7 @@ namespace Nameless.Localization.Json.Impl {
                 // If the cache already holds a reference to the culture,
                 // just returns it.
                 if (Cache.TryGetValue(key, out var entry)) {
-                    return entry.Translation;
+                    return entry.Trunk;
                 }
 
                 var file = await GetTranslationFileAsync(key, cancellationToken);
@@ -144,13 +144,13 @@ namespace Nameless.Localization.Json.Impl {
                     entry = new CacheEntry(translation, changeMonitor);
                 } else {
                     // If file doesn't exists, create a dummy cache entry
-                    entry = new CacheEntry(new Translation(culture), NullDisposable.Instance);
+                    entry = new CacheEntry(new Trunk(culture), NullDisposable.Instance);
                 }
 
                 // Assert entry inside cache
                 Cache.AddOrChange(key, entry);
 
-                return entry.Translation;
+                return entry.Trunk;
             } finally { Semaphore.Release(); }
         }
 

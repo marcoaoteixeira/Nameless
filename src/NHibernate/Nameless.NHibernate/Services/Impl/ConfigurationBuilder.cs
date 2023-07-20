@@ -1,8 +1,9 @@
-﻿using NHibernate.Cfg;
+﻿using Nameless.NHibernate.Services;
+using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 
-namespace Nameless.NHibernate {
+namespace Nameless.NHibernate.Services.Impl {
     public sealed class ConfigurationBuilder : IConfigurationBuilder {
         #region Private Read-Only Fields
 
@@ -12,7 +13,7 @@ namespace Nameless.NHibernate {
 
         #region Public Constructors
 
-        public ConfigurationBuilder(NHibernateOptions options) {
+        public ConfigurationBuilder(NHibernateOptions? options = null) {
             _options = options ?? NHibernateOptions.Default;
         }
 
@@ -49,7 +50,7 @@ namespace Nameless.NHibernate {
                 .ToArray();
             modelMapper.AddMappings(mappingTypes);
 
-            configuration.AddDeserializedMapping(modelMapper.CompileMappingForAllExplicitlyAddedEntities(), null);
+            configuration.AddDeserializedMapping(modelMapper.CompileMappingForAllExplicitlyAddedEntities(), documentFileName: null);
 
             return configuration;
         }

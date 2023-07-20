@@ -3,14 +3,9 @@ using Autofac.Core;
 using Autofac.Core.Registration;
 using Nameless.Autofac;
 using Nameless.Logging.log4net;
-using MS_ILogger = Microsoft.Extensions.Logging.ILogger;
-using MS_ILoggerProvider = Microsoft.Extensions.Logging.ILoggerProvider;
-using MS_NullLogger = Microsoft.Extensions.Logging.Abstractions.NullLogger;
 
 namespace Nameless.Logging.Microsoft.Extra {
-
     public sealed class LoggingModule : ModuleBase {
-
         #region Protected Override Methods
 
         /// <inheritdoc/>
@@ -34,7 +29,7 @@ namespace Nameless.Logging.Microsoft.Extra {
 
             builder
                 .RegisterType<LoggerProvider>()
-                .As<MS_ILoggerProvider>()
+                .As<IMSLoggerProvider>()
                 .SingleInstance();
         }
 
@@ -44,17 +39,17 @@ namespace Nameless.Logging.Microsoft.Extra {
                 // For Nameless
                 pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(ILogger),
-                    factory: (member, ctx) => member.DeclaringType != default && member.DeclaringType.FullName != default
+                    factory: (member, ctx) => member.DeclaringType != null && member.DeclaringType.FullName != null
                         ? ctx.Resolve<ILoggerFactory>().CreateLogger(member.DeclaringType.FullName)
                         : NullLogger.Instance
                 ));
 
                 // For Microsoft
                 pipeline.Use(new PropertyResolveMiddleware(
-                    serviceType: typeof(MS_ILogger),
-                    factory: (member, ctx) => member.DeclaringType != default && member.DeclaringType.FullName != default
-                        ? ctx.Resolve<MS_ILoggerProvider>().CreateLogger(member.DeclaringType.FullName)
-                        : MS_NullLogger.Instance
+                    serviceType: typeof(IMSLogger),
+                    factory: (member, ctx) => member.DeclaringType != null && member.DeclaringType.FullName != null
+                        ? ctx.Resolve<IMSLoggerProvider>().CreateLogger(member.DeclaringType.FullName)
+                        : MSNullLogger.Instance
                 ));
             };
             base.AttachToComponentRegistration(componentRegistry, registration);

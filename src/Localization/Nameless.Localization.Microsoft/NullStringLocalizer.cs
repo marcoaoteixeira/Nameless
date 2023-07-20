@@ -1,14 +1,11 @@
-﻿using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
-using MS_LocalizedString = Microsoft.Extensions.Localization.LocalizedString;
+﻿using Microsoft.Extensions.Localization;
 
 namespace Nameless.Localization.Microsoft {
-
     [Singleton]
-    public sealed class NullStringLocalizer : MS_IStringLocalizer {
-
+    public sealed class NullStringLocalizer : IMSStringLocalizer {
         #region Private Static Read-Only Fields
 
-        private static readonly MS_IStringLocalizer _instance = new NullStringLocalizer();
+        private static readonly NullStringLocalizer _instance = new();
 
         #endregion
 
@@ -17,7 +14,7 @@ namespace Nameless.Localization.Microsoft {
         /// <summary>
         /// Gets the unique instance of Localizer.
         /// </summary>
-        public static MS_IStringLocalizer Instance => _instance;
+        public static IMSStringLocalizer Instance => _instance;
 
         #endregion
 
@@ -37,11 +34,14 @@ namespace Nameless.Localization.Microsoft {
 
         #region MS_NullStringLocalizer Members
 
-        public MS_LocalizedString this[string name] => new(name, name);
+        public LocalizedString this[string name]
+            => new(name, name);
 
-        public MS_LocalizedString this[string name, params object[] arguments] => new(name, string.Format(name, arguments));
+        public LocalizedString this[string name, params object[] arguments]
+            => new(name, string.Format(name, arguments));
 
-        public IEnumerable<MS_LocalizedString> GetAllStrings(bool includeParentCultures) => Array.Empty<MS_LocalizedString>();
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => Enumerable.Empty<LocalizedString>();
 
         #endregion
     }

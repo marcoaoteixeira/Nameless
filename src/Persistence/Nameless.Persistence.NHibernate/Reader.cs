@@ -22,7 +22,7 @@ namespace Nameless.Persistence.NHibernate {
 
         #region IReader Members
 
-        public Task<IList<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
+        public async Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
             Prevent.Against.Null(filter, nameof(filter));
 
             var query = _session.Query<TEntity>();
@@ -33,11 +33,18 @@ namespace Nameless.Persistence.NHibernate {
                     : query.OrderByDescending(orderBy);
             }
 
-            var result = query
+            var result = await query
                 .Where(filter)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            return result;
+            IEnumerable<TEntity> ReturnValues() {
+                foreach (var item in result) {
+                    yield return item;
+                }
+            };
+
+            return ReturnValues();
         }
 
         public Task<bool> ExistsAsync<TEntity>(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default) where TEntity : class {

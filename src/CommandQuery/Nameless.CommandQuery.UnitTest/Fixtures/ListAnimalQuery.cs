@@ -8,7 +8,7 @@ namespace Nameless.CommandQuery.UnitTests.Fixtures {
         public ListAnimalQueryHandler(IMapper mapper) : base(mapper) {
         }
 
-        public override Task<Animal[]> HandleAsync(ListAnimalQuery query, CancellationToken cancellationToken = default) {
+        public override Task<Animal[]> ExecuteAsync(ListAnimalQuery query, CancellationToken cancellationToken = default) {
             return Task.FromResult(new[] { new Animal { ID = 1, Name = "Test" } });
         }
     }

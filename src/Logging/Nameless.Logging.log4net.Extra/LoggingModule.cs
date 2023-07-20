@@ -11,7 +11,6 @@ namespace Nameless.Logging.log4net {
         #region Private Constants
 
         private const string LOGGER_EVENT_FACTORY_TOKEN = "LoggerEventFactory.55408158-459f-4bc3-9eaf-2a4e90027dcf";
-        private const string LOGGER_FACTORY_TOKEN = "LoggerFactory.6322c41f-c8f0-44d5-8853-2491ea29436b";
 
         #endregion
 
@@ -26,7 +25,7 @@ namespace Nameless.Logging.log4net {
 
             builder
                 .Register(LoggerFactoryResolver)
-                .Named<ILoggerFactory>(LOGGER_FACTORY_TOKEN)
+                .As<ILoggerFactory>()
                 .SingleInstance();
         }
 
@@ -36,7 +35,7 @@ namespace Nameless.Logging.log4net {
                 pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(ILogger),
                     factory: (member, ctx) => member.DeclaringType != null && member.DeclaringType.FullName != null
-                        ? ctx.ResolveNamed<ILoggerFactory>(LOGGER_FACTORY_TOKEN).CreateLogger(member.DeclaringType.FullName)
+                        ? ctx.Resolve<ILoggerFactory>().CreateLogger(member.DeclaringType.FullName)
                         : NullLogger.Instance
                 ));
             };

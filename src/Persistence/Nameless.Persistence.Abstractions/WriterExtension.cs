@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Nameless.Helpers;
 
 namespace Nameless.Persistence {
     public static class WriterExtension {
@@ -19,40 +18,10 @@ namespace Nameless.Persistence {
             Prevent.Against.Null(filter, nameof(filter));
 
             var instructions = new DeleteInstructionCollection<TEntity> {
-                DeleteInstruction<TEntity>.Create(filter)
+                filter
             };
 
             return self.DeleteAsync(instructions, cancellationToken);
-        }
-
-        public static Task<int> DeleteAsync<TEntity>(this IWriter self, DeleteInstruction<TEntity> instruction, CancellationToken cancellationToken = default) where TEntity : class {
-            Prevent.Against.Null(instruction, nameof(instruction));
-
-            var instructions = new DeleteInstructionCollection<TEntity> {
-                instruction
-            };
-
-            return self.DeleteAsync(instructions, cancellationToken);
-        }
-
-        public static int Delete<TEntity>(this IWriter self, Expression<Func<TEntity, bool>> filter) where TEntity : class {
-            Prevent.Against.Null(filter, nameof(filter));
-
-            var instructions = new DeleteInstructionCollection<TEntity> {
-                DeleteInstruction<TEntity>.Create(filter)
-            };
-
-            return AsyncHelper.RunSync(() => self.DeleteAsync(instructions, cancellationToken: default));
-        }
-
-        public static int Delete<TEntity>(this IWriter self, DeleteInstruction<TEntity> instruction) where TEntity : class {
-            Prevent.Against.Null(instruction, nameof(instruction));
-
-            var instructions = new DeleteInstructionCollection<TEntity> {
-                instruction
-            };
-
-            return AsyncHelper.RunSync(() => self.DeleteAsync(instructions, cancellationToken: default));
         }
 
         #endregion

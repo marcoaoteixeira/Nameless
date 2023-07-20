@@ -1,12 +1,10 @@
 ﻿using NHibernate.Mapping.ByCode;
 
 namespace Nameless.NHibernate {
-
     /// <summary>
     /// Default implementation of <see cref="ExplicitlyDeclaredModel" />.
     /// </summary>
     public sealed class ModelInspector : ExplicitlyDeclaredModel {
-
         #region Private Read-Only Fields
 
         private readonly Type[] _entityTypes;

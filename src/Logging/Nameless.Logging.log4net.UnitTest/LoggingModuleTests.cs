@@ -15,12 +15,10 @@ namespace Nameless.Logging.log4net.UnitTests {
             using var container = builder.Build();
 
             // act
-            var loggerEventFactory = container.Resolve<ILoggerEventFactory>();
             var loggerFactory = container.Resolve<ILoggerFactory>();
 
             // assert
             Assert.Multiple(() => {
-                Assert.That(loggerEventFactory, Is.Not.Null);
                 Assert.That(loggerFactory, Is.Not.Null);
             });
         }

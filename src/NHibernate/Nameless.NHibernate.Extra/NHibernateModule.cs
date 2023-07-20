@@ -1,13 +1,13 @@
 ﻿using Autofac;
 using Nameless.Autofac;
+using Nameless.NHibernate.Services;
+using Nameless.NHibernate.Services.Impl;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 
 namespace Nameless.NHibernate {
-
     public sealed class NHibernateModule : ModuleBase {
-
         #region Private Constants
 
         private const string CONFIGURATION_BUILDER_KEY = "e7c9cd70-03fe-492b-8729-754e69a09575";
@@ -18,7 +18,7 @@ namespace Nameless.NHibernate {
 
         #region Public Properties
 
-        public ExecuteSchemaInfo SchemaInfo { get; set; } = ExecuteSchemaInfo.Default;
+        public SchemaExecutionPlan SchemaInfo { get; set; } = SchemaExecutionPlan.Default;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Nameless.NHibernate {
             return result;
         }
 
-        private static ISessionFactory ResolveSessionFactory(IComponentContext ctx, ExecuteSchemaInfo schemaInfo) {
+        private static ISessionFactory ResolveSessionFactory(IComponentContext ctx, SchemaExecutionPlan schemaInfo) {
             var configuration = ctx.ResolveNamed<Configuration>(CONFIGURATION_KEY);
             var sessionFactory = configuration.BuildSessionFactory();
             if (schemaInfo.ExecuteSchema == ExecuteSchemaOptions.OnSessionFactoryResolution) {
@@ -43,7 +43,7 @@ namespace Nameless.NHibernate {
             return sessionFactory;
         }
 
-        private static ISession ResolveSession(IComponentContext ctx, ExecuteSchemaInfo schemaInfo) {
+        private static ISession ResolveSession(IComponentContext ctx, SchemaExecutionPlan schemaInfo) {
             var sessionFactory = ctx.ResolveNamed<ISessionFactory>(SESSION_FACTORY_KEY);
             var session = sessionFactory.OpenSession();
 
@@ -56,7 +56,7 @@ namespace Nameless.NHibernate {
             return session;
         }
 
-        private static void ExecuteSchemaExport(ISession session, Configuration configuration, ExecuteSchemaInfo schemaInfo) {
+        private static void ExecuteSchemaExport(ISession session, Configuration configuration, SchemaExecutionPlan schemaInfo) {
             var outputConsole = !schemaInfo.SchemaOutput.HasFlag(SchemaOutputOptions.None) &&
                                  schemaInfo.SchemaOutput.HasFlag(SchemaOutputOptions.Console);
             var outputFile = !schemaInfo.SchemaOutput.HasFlag(SchemaOutputOptions.None) &&

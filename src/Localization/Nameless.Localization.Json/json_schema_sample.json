@@ -1,7 +1,10 @@
 {
+  // TRUNK
   "Culture": "pt-BR",
-  "Containers": {
+  "Branches": {
+    // BRANCH
     "[AssemblyName] TypeFullName": {
+      // LEAF
       "Message1": "Mensagem1",
       "Message2": "Mensagem2"
     },

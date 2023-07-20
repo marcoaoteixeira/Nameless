@@ -3,26 +3,26 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Nameless.Helpers;
 
-namespace Nameless.Localization.Json.Schema {
+namespace Nameless.Localization.Json.Objects.Translation {
     /// <summary>
     /// This class represents a translation, in other words, a file for a culture.
     /// </summary>
-    public sealed class Translation : IEnumerable<Container> {
+    public sealed class Trunk : IEnumerable<Branch> {
         #region Public Properties
 
         public CultureInfo Culture { get; }
 
         #endregion
 
-        #region Private Properties
+        #region Internal Properties
 
-        private Dictionary<string, Container> Containers { get; } = new();
+        internal Dictionary<string, Branch> Branches { get; } = new();
 
         #endregion
 
         #region Public Constructors
 
-        public Translation(CultureInfo culture) {
+        public Trunk(CultureInfo culture) {
             Culture = Prevent.Against.Null(culture, nameof(culture));
         }
 
@@ -30,16 +30,16 @@ namespace Nameless.Localization.Json.Schema {
 
         #region Public Methods
 
-        public void Add(Container container) {
-            Prevent.Against.Null(container, nameof(container));
+        public void Add(Branch branch) {
+            Prevent.Against.Null(branch, nameof(branch));
 
-            Containers.AddOrChange(container.Source, container);
+            Branches.AddOrChange(branch.Name, branch);
         }
 
-        public bool TryGetValue(string source, [NotNullWhen(true)] out Container? output)
-            => Containers.TryGetValue(source, out output);
+        public bool TryGetValue(string name, [NotNullWhen(true)] out Branch? output)
+            => Branches.TryGetValue(name, out output);
 
-        public bool Equals(Translation? other)
+        public bool Equals(Trunk? other)
             => other != null
             && other.Culture.Name == Culture.Name;
 
@@ -48,7 +48,7 @@ namespace Nameless.Localization.Json.Schema {
         #region Public Override Methods
 
         public override bool Equals(object? obj)
-            => Equals(obj as Translation);
+            => Equals(obj as Trunk);
 
         public override int GetHashCode()
             => SimpleHash.Compute(Culture.Name);
@@ -57,11 +57,11 @@ namespace Nameless.Localization.Json.Schema {
 
         #region IEnumerable<EntryCollection> Members
 
-        public IEnumerator<Container> GetEnumerator()
-            => Containers.Values.GetEnumerator();
+        IEnumerator<Branch> IEnumerable<Branch>.GetEnumerator()
+            => Branches.Values.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => Containers.Values.GetEnumerator();
+            => Branches.Values.GetEnumerator();
 
         #endregion
     }

@@ -16,8 +16,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string)arg;
         }
 
-        public static void SetExchangeName(this ProducerArgs self, string value) {
+        public static ProducerArgs SetExchangeName(this ProducerArgs self, string value) {
             self.Set(EXCHANGE_NAME_TOKEN, value ?? Constants.DEFAULT_EXCHANGE_NAME);
+            return self;
         }
 
         public static string? GetAppId(this ProducerArgs self) {
@@ -26,10 +27,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetAppId(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetAppId(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.AppId), value);
             }
+            return self;
         }
 
         public static string? GetClusterId(this ProducerArgs self) {
@@ -38,10 +40,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetClusterId(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetClusterId(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.ClusterId), value);
             }
+            return self;
         }
 
         public static string? GetContentEncoding(this ProducerArgs self) {
@@ -50,10 +53,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetContentEncoding(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetContentEncoding(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.ContentEncoding), value);
             }
+            return self;
         }
 
         public static string? GetContentType(this ProducerArgs self) {
@@ -62,10 +66,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetContentType(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetContentType(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.ContentType), value);
             }
+            return self;
         }
 
         public static string? GetCorrelationId(this ProducerArgs self) {
@@ -74,10 +79,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetCorrelationId(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetCorrelationId(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.CorrelationId), value);
             }
+            return self;
         }
 
         public static byte GetDeliveryMode(this ProducerArgs self) {
@@ -86,8 +92,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (byte)arg;
         }
 
-        public static void SetDeliveryMode(this ProducerArgs self, byte value) {
+        public static ProducerArgs SetDeliveryMode(this ProducerArgs self, byte value) {
             self.Set(nameof(IBasicProperties.DeliveryMode), value);
+            return self;
         }
 
         public static string? GetExpiration(this ProducerArgs self) {
@@ -96,10 +103,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetExpiration(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetExpiration(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.Expiration), value);
             }
+            return self;
         }
 
         public static IDictionary<string, object> GetHeaders(this ProducerArgs self) {
@@ -108,10 +116,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (IDictionary<string, object>)arg;
         }
 
-        public static void SetHeaders(this ProducerArgs self, IDictionary<string, object> value) {
+        public static ProducerArgs SetHeaders(this ProducerArgs self, IDictionary<string, object> value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.Headers), value);
             }
+            return self;
         }
 
         public static string? GetMessageId(this ProducerArgs self) {
@@ -120,10 +129,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetMessageId(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetMessageId(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.MessageId), value);
             }
+            return self;
         }
 
         public static bool GetPersistent(this ProducerArgs self) {
@@ -132,8 +142,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (bool)arg;
         }
 
-        public static void SetPersistent(this ProducerArgs self, bool value) {
+        public static ProducerArgs SetPersistent(this ProducerArgs self, bool value) {
             self.Set(nameof(IBasicProperties.Persistent), value);
+            return self;
         }
 
         public static byte GetPriority(this ProducerArgs self) {
@@ -142,8 +153,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (byte)arg;
         }
 
-        public static void SetPriority(this ProducerArgs self, byte value) {
+        public static ProducerArgs SetPriority(this ProducerArgs self, byte value) {
             self.Set(nameof(IBasicProperties.Priority), value);
+            return self;
         }
 
         public static string? GetReplyTo(this ProducerArgs self) {
@@ -152,10 +164,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetReplyTo(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetReplyTo(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.ReplyTo), value);
             }
+            return self;
         }
 
         public static PublicationAddress? GetReplyToAddress(this ProducerArgs self) {
@@ -164,10 +177,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (PublicationAddress?)arg;
         }
 
-        public static void SetReplyToAddress(this ProducerArgs self, PublicationAddress? value) {
+        public static ProducerArgs SetReplyToAddress(this ProducerArgs self, PublicationAddress? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.ReplyToAddress), value);
             }
+            return self;
         }
 
         public static AmqpTimestamp GetTimestamp(this ProducerArgs self) {
@@ -176,8 +190,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (AmqpTimestamp)arg;
         }
 
-        public static void SetTimestamp(this ProducerArgs self, AmqpTimestamp value) {
+        public static ProducerArgs SetTimestamp(this ProducerArgs self, AmqpTimestamp value) {
             self.Set(nameof(IBasicProperties.Timestamp), value);
+            return self;
         }
 
         public static string? GetTypeProp(this ProducerArgs self) {
@@ -186,10 +201,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetTypeProp(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetTypeProp(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.Type), value);
             }
+            return self;
         }
 
         public static string? GetUserId(this ProducerArgs self) {
@@ -198,10 +214,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return (string?)arg;
         }
 
-        public static void SetUserId(this ProducerArgs self, string? value) {
+        public static ProducerArgs SetUserId(this ProducerArgs self, string? value) {
             if (value != null) {
                 self.Set(nameof(IBasicProperties.UserId), value);
             }
+            return self;
         }
 
         #endregion

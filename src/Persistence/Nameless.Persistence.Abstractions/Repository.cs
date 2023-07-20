@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 namespace Nameless.Persistence {
-
     public sealed class Repository : IRepository {
-
         #region Private Read-Only Fields
 
         private readonly IWriter _writer;
@@ -41,7 +39,7 @@ namespace Nameless.Persistence {
         }
 
         /// <inheritdoc />
-        public Task<IList<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
+        public Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
             return _reader.FindAsync(filter, orderBy, orderDescending, cancellationToken);
         }
 

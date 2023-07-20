@@ -1,5 +1,4 @@
-﻿using Nameless.AdventureWorks.ProducerConsumer;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
     public sealed class ConnectionManager : IConnectionManager, IDisposable {

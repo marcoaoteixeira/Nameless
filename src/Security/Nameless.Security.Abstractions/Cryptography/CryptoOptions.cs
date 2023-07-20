@@ -1,9 +1,7 @@
 ﻿using System.Text;
 
 namespace Nameless.Security.Cryptography {
-
     public sealed class CryptoOptions {
-
         #region Public Static Read-Only Properties
 
         public static CryptoOptions Default => new();

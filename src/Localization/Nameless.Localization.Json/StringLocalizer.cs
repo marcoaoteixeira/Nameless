@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Nameless.Localization.Json.Schema;
+using Nameless.Localization.Json.Objects.Translation;
 
 namespace Nameless.Localization.Json {
     public sealed class StringLocalizer : IStringLocalizer {
@@ -8,18 +8,18 @@ namespace Nameless.Localization.Json {
         private readonly CultureInfo _culture;
         private readonly string _resourceName;
         private readonly string _resourcePath;
-        private readonly Container _container;
+        private readonly Branch _branch;
         private readonly Func<CultureInfo, string, string, IStringLocalizer> _factory;
 
         #endregion
 
         #region Public Constructors
 
-        public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, Container container, Func<CultureInfo, string, string, IStringLocalizer> factory) {
+        public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, Branch branch, Func<CultureInfo, string, string, IStringLocalizer> factory) {
             _culture = Prevent.Against.Null(culture, nameof(culture));
             _resourceName = Prevent.Against.NullOrWhiteSpace(resourceName, nameof(resourceName));
             _resourcePath = Prevent.Against.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
-            _container = Prevent.Against.Null(container, nameof(container));
+            _branch = Prevent.Against.Null(branch, nameof(branch));
             _factory = Prevent.Against.Null(factory, nameof(factory));
         }
 
@@ -29,15 +29,15 @@ namespace Nameless.Localization.Json {
 
         public LocaleString this[string text, params object[] args] {
             get {
-                return _container.TryGetValue(text, out var entry)
-                    ? new(_culture, entry.Key, entry.Value, args)
+                return _branch.TryGetValue(text, out var entry)
+                    ? new(_culture, entry.ID, entry.Text, args)
                     : new(_culture, text, null, args);
             }
         }
 
         public IEnumerable<LocaleString> List(bool includeParentCultures = false) {
-            foreach (var entry in _container) {
-                yield return new(_culture, entry.Key, entry.Value);
+            foreach (var entry in _branch) {
+                yield return new(_culture, entry.ID, entry.Text);
             }
 
             if (includeParentCultures) {

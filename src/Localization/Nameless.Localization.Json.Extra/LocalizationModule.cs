@@ -2,7 +2,8 @@
 using Autofac.Core;
 using Autofac.Core.Registration;
 using Nameless.Autofac;
-using Nameless.Localization.Json.Impl;
+using Nameless.Localization.Json.Services;
+using Nameless.Localization.Json.Services.Impl;
 
 namespace Nameless.Localization.Json {
     public sealed class LocalizationModule : ModuleBase {

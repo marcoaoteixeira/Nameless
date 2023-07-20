@@ -1,10 +1,10 @@
-﻿using Nameless.Localization.Json.Schema;
+﻿using Nameless.Localization.Json.Objects.Translation;
 
-namespace Nameless.Localization.Json {
+namespace Nameless.Localization.Json.Objects {
     internal class CacheEntry : IDisposable {
         #region Private Fields
 
-        private Translation _translation;
+        private Trunk _trunk;
         private IDisposable _changeMonitor;
         private bool _disposed;
 
@@ -12,14 +12,14 @@ namespace Nameless.Localization.Json {
 
         #region Internal Properties
 
-        internal Translation Translation => _translation;
+        internal Trunk Trunk => _trunk;
 
         #endregion
 
         #region Internal Constructors
 
-        internal CacheEntry(Translation translation, IDisposable changeMonitor) {
-            _translation = Prevent.Against.Null(translation, nameof(translation));
+        internal CacheEntry(Trunk trunk, IDisposable changeMonitor) {
+            _trunk = Prevent.Against.Null(trunk, nameof(trunk));
             _changeMonitor = Prevent.Against.Null(changeMonitor, nameof(changeMonitor));
         }
 
@@ -38,10 +38,10 @@ namespace Nameless.Localization.Json {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _changeMonitor?.Dispose();
+                _changeMonitor.Dispose();
             }
 
-            _translation = null!;
+            _trunk = null!;
             _changeMonitor = null!;
             _disposed = true;
         }

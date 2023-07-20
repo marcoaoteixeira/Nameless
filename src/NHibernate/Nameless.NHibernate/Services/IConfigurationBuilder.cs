@@ -1,9 +1,7 @@
 ﻿using NHibernate.Cfg;
 
-namespace Nameless.NHibernate {
-
+namespace Nameless.NHibernate.Services {
     public interface IConfigurationBuilder {
-
         #region Methods
 
         Configuration Build();

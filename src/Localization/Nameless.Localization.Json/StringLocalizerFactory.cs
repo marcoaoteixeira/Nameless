@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
-using Nameless.Localization.Json.Schema;
+using Nameless.Localization.Json.Objects.Translation;
+using Nameless.Localization.Json.Services;
 
-namespace Nameless.Localization.Json {
+namespace Nameless.Localization.Json
+{
     /// <summary>
     /// Holds all mechanics to create string localizers.
     /// For performance sake, use only one instance of this class
@@ -26,18 +28,17 @@ namespace Nameless.Localization.Json {
 
         #region Private Methods
 
-        private Container GetContainer(CultureInfo culture, string resourceName, string resourcePath) {
+        private Branch GetBranch(CultureInfo culture, string resourceName, string resourcePath) {
             var key = $"[{resourceName}] {resourcePath}";
             var translation = _translationProvider.Get(culture);
 
-            if (translation.TryGetValue(key, out var container)) {
-                return container;
-            }
-            return new Container(key);
+            return translation.TryGetValue(key, out var branch)
+                ? branch
+                : new(key);
         }
 
         private StringLocalizer GetLocalizer(CultureInfo culture, string resourceName, string resourcePath) {
-            var container = GetContainer(culture, resourceName, resourcePath);
+            var container = GetBranch(culture, resourceName, resourcePath);
 
             return new StringLocalizer(culture, resourceName, resourcePath, container, GetLocalizer);
         }
@@ -55,7 +56,7 @@ namespace Nameless.Localization.Json {
         /// "[Something.Somewhere.Thing] Something.Somewhere.Thing.Thingable"
         /// </remarks>
         public IStringLocalizer Create(Type resource)
-            => Create(resource.Assembly.GetName().Name!, resource.FullName!);
+            => GetLocalizer(_cultureContext.GetCurrentCulture(), resource.Assembly.GetName().Name!, resource.FullName!);
 
         /// <inheritdocs />
         /// <remarks>

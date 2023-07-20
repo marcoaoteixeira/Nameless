@@ -19,7 +19,13 @@ namespace Nameless.Caching.Redis.UnitTesting {
                 .Setup(_ => _.StringSetAsync(key, json, It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<When>(), It.IsAny<CommandFlags>()))
                 .ReturnsAsync(true)
                 .Verifiable();
-            var cache = new RedisCache(database.Object);
+
+            var databaseManager = new Mock<IRedisDatabaseManager>();
+            databaseManager
+                .Setup(_ => _.GetDatabase())
+                .Returns(database.Object);
+
+            var cache = new RedisCache(databaseManager.Object);
 
             // act
             var set = await cache.SetAsync(key, value);
@@ -49,7 +55,13 @@ namespace Nameless.Caching.Redis.UnitTesting {
                 .Setup(_ => _.StringGetAsync(key, It.IsAny<CommandFlags>()))
                 .ReturnsAsync(json)
                 .Verifiable();
-            var cache = new RedisCache(database.Object);
+
+            var databaseManager = new Mock<IRedisDatabaseManager>();
+            databaseManager
+                .Setup(_ => _.GetDatabase())
+                .Returns(database.Object);
+
+            var cache = new RedisCache(databaseManager.Object);
 
 
             // act
@@ -86,7 +98,13 @@ namespace Nameless.Caching.Redis.UnitTesting {
                 .Setup(_ => _.StringGetAsync(key, It.IsAny<CommandFlags>()))
                 .ReturnsAsync(string.Empty)
                 .Verifiable();
-            var cache = new RedisCache(database.Object);
+
+            var databaseManager = new Mock<IRedisDatabaseManager>();
+            databaseManager
+                .Setup(_ => _.GetDatabase())
+                .Returns(database.Object);
+
+            var cache = new RedisCache(databaseManager.Object);
             
 
             // act
