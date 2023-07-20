@@ -1,5 +1,5 @@
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Nameless.Serialization.Json {
     public sealed class JsonSerializationOptions : SerializationOptions {
@@ -18,7 +18,7 @@ namespace Nameless.Serialization.Json {
         /// <summary>
         /// Gets or sets the JSON serializer settings.
         /// </summary>
-        public JsonSerializerSettings Settings { get; set; } = new();
+        public JsonSerializerOptions Options { get; set; } = new();
 
         #endregion
     }

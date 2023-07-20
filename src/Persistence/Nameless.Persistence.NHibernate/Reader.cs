@@ -1,10 +1,9 @@
 ﻿using System.Linq.Expressions;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace Nameless.Persistence.NHibernate {
-
     public sealed class Reader : IReader {
-
         #region Private Read-Only Fields
 
         private readonly ISession _session;
@@ -14,17 +13,17 @@ namespace Nameless.Persistence.NHibernate {
         #region Public Constructors
 
         public Reader(ISession session) {
-            Garda.Prevent.Null(session, nameof(session));
+            Prevent.Against.Null(session, nameof(session));
 
             _session = session;
         }
 
         #endregion
 
-        #region IQuerier Members
+        #region IReader Members
 
-        public Task<IList<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
-            Garda.Prevent.Null(filter, nameof(filter));
+        public async Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
+            Prevent.Against.Null(filter, nameof(filter));
 
             var query = _session.Query<TEntity>();
 
@@ -34,19 +33,24 @@ namespace Nameless.Persistence.NHibernate {
                     : query.OrderByDescending(orderBy);
             }
 
-            var result = query
+            var result = await query
                 .Where(filter)
-                .ToList() as IList<TEntity>;
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            return Task.FromResult(result);
+            IEnumerable<TEntity> ReturnValues() {
+                foreach (var item in result) {
+                    yield return item;
+                }
+            };
+
+            return ReturnValues();
         }
 
         public Task<bool> ExistsAsync<TEntity>(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default) where TEntity : class {
-            Garda.Prevent.Null(filter, nameof(filter));
+            Prevent.Against.Null(filter, nameof(filter));
 
-            var counter = _session.Query<TEntity>().Count(filter);
-
-            return Task.FromResult(counter > 0);
+            return _session.Query<TEntity>().AnyAsync(filter);
         }
 
         public IQueryable<TEntity> Query<TEntity>() where TEntity : class {

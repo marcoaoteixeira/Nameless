@@ -10,7 +10,7 @@ namespace Nameless.CommandQuery.UnitTests.Fixtures {
         public UpdateAnimalCommandHandler(IValidator<UpdateAnimalCommand>? validator = null)
             : base(validator) { }
 
-        protected override Task InnerHandleAsync(UpdateAnimalCommand command, CancellationToken cancellationToken = default) {
+        protected override Task ExecuteAsync(UpdateAnimalCommand command, CancellationToken cancellationToken = default) {
             return Task.CompletedTask;
         }
     }

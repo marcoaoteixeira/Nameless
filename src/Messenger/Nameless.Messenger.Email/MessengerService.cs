@@ -11,7 +11,7 @@ namespace Nameless.Messenger.Email {
         #region Private Read-Only Fields
 
         private readonly IFileStorage _fileStorage;
-        private readonly IClock _clock;
+        private readonly IClockService _clock;
         private readonly MessengerOptions _opts;
 
         #endregion
@@ -33,12 +33,12 @@ namespace Nameless.Messenger.Email {
         /// </summary>
         /// <param name="fileStorage">The file storage.</param>
         /// <param name="options">The SMTP client settings.</param>
-        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClock? clock = null) {
-            Garda.Prevent.Null(fileStorage, nameof(fileStorage));
+        public MessengerService(IFileStorage fileStorage, MessengerOptions options, IClockService? clock = null) {
+            Prevent.Against.Null(fileStorage, nameof(fileStorage));
 
             _fileStorage = fileStorage;
             _opts = options ?? MessengerOptions.Default;
-            _clock = clock ?? DefaultClock.Instance;
+            _clock = clock ?? ClockService.Instance;
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace Nameless.Messenger.Email {
         #region IMessenger Members
 
         public async Task<MessageResponse> DispatchAsync(MessageRequest request, CancellationToken cancellationToken = default) {
-            Garda.Prevent.Null(request, nameof(request));
+            Prevent.Against.Null(request, nameof(request));
 
             if (request.From.IsNullOrEmpty()) {
                 throw new InvalidOperationException("Missing sender address.");

@@ -1,4 +1,7 @@
-﻿namespace Nameless.NHibernate.UnitTesting {
+﻿using Nameless.NHibernate.Services;
+using Nameless.NHibernate.Services.Impl;
+
+namespace Nameless.NHibernate.UnitTesting {
 
     public class ConfigurationBuilderTest {
 

@@ -1,10 +1,8 @@
 ﻿namespace Nameless.AspNetCore.Options {
-
     /// <summary>
     /// Represents the Swagger page information that will be present at the top of the page.
     /// </summary>
     public sealed class SwaggerPageOptions {
-
         #region Public Static Properties
 
         /// <summary>
@@ -33,7 +31,6 @@
     }
 
     public sealed class SwaggerContactOptions {
-
         #region Public Properties
 
         /// <summary>
@@ -53,7 +50,6 @@
     }
 
     public sealed class SwaggerLicenseOptions {
-
         #region Public Properties
 
         /// <summary>

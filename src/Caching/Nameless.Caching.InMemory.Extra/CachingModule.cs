@@ -3,9 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Nameless.Autofac;
 
 namespace Nameless.Caching.InMemory {
-
     public sealed class CachingModule : ModuleBase {
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {

@@ -1,14 +1,11 @@
 ﻿using Autofac;
 using Nameless.Autofac;
-using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
-
     public sealed class CachingModule : ModuleBase {
-
         #region Private Constants
 
-        private const string REDIS_DATABASE_MANAGER_KEY = "[RedisDatabaseManager] 6e88deea-b059-4ff5-bafb-3a8d36976294";
+        private const string REDIS_DATABASE_MANAGER_TOKEN = "RedisDatabaseManager.6e88deea-b059-4ff5-bafb-3a8d36976294";
 
         #endregion
 
@@ -16,24 +13,34 @@ namespace Nameless.Caching.Redis {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterType<RedisDatabaseManager>()
-                .Named<IRedisDatabaseManager>(REDIS_DATABASE_MANAGER_KEY)
-                .WithParameter(
-                    parameterSelector: (param, ctx) => param.ParameterType == typeof(RedisOptions),
-                    valueProvider: (param, ctx) => ctx.ResolveOptional<RedisOptions>() ?? RedisOptions.Default
-                )
+                .Register(RedisDatabaseManagerResolver)
+                .Named<IRedisDatabaseManager>(REDIS_DATABASE_MANAGER_TOKEN)
                 .SingleInstance();
 
             builder
-                .RegisterType<RedisCache>()
+                .Register(RedisCacheResolver)
                 .As<ICache>()
-                .WithParameter(
-                    parameterSelector: (param, ctx) => param.ParameterType == typeof(IDatabase),
-                    valueProvider: (param, ctx) => ctx.ResolveNamed<IRedisDatabaseManager>(REDIS_DATABASE_MANAGER_KEY).GetDatabase()
-                )
                 .InstancePerDependency();
 
             base.Load(builder);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static IRedisDatabaseManager RedisDatabaseManagerResolver(IComponentContext context) {
+            var options = context.ResolveOptional<RedisOptions>() ?? RedisOptions.Default;
+            var manager = new RedisDatabaseManager(options);
+
+            return manager;
+        }
+
+        private static ICache RedisCacheResolver(IComponentContext context) {
+            var manager = context.ResolveNamed<IRedisDatabaseManager>(REDIS_DATABASE_MANAGER_TOKEN);
+            var cache = new RedisCache(manager);
+
+            return cache;
         }
 
         #endregion

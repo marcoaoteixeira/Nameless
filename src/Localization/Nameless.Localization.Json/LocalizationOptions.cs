@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Localization.Json {
-
     public sealed class LocalizationOptions {
-
         #region Public Static Read-Only Properties
 
         public static LocalizationOptions Default => new();

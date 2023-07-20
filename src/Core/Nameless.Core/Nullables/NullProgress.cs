@@ -7,7 +7,7 @@ namespace Nameless {
     public sealed class NullProgress<T> : IProgress<T> {
         #region Private Static Read-Only Fields
 
-        private static readonly IProgress<T> _instance = new NullProgress<T>();
+        private static readonly NullProgress<T> _instance = new();
 
         #endregion
 
@@ -49,7 +49,7 @@ namespace Nameless {
     public sealed class NullProgress : IProgress<int> {
         #region Private Static Read-Only Fields
 
-        private static readonly IProgress<int> _instance = new NullProgress();
+        private static readonly NullProgress _instance = new();
 
         #endregion
 

@@ -62,7 +62,7 @@ namespace Nameless {
         /// <returns>An expression composition.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
-            Garda.Prevent.Null(right, nameof(right));
+            Prevent.Against.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.And(
@@ -81,8 +81,8 @@ namespace Nameless {
         /// <returns>An expression composition.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
-            Garda.Prevent.Null(self, nameof(self));
-            Garda.Prevent.Null(right, nameof(right));
+            Prevent.Against.Null(self, nameof(self));
+            Prevent.Against.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.Or(

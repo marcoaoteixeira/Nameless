@@ -5,7 +5,7 @@ namespace Nameless {
 
     /// <summary>
     /// Classes marked with <see cref="SingletonAttribute"/> must have a static
-    /// property, defined in <see cref="Accessor"/>, that will return the
+    /// property, defined in <see cref="AccessorName"/>, that will return the
     /// singleton instance object of the type that this attribute was applied.
     /// <see cref="https://en.wikipedia.org/wiki/Singleton_pattern"/>
     /// </summary>
@@ -20,11 +20,15 @@ namespace Nameless {
 
         #region Public Properties
 
+        private string? _accessorName;
         /// <summary>
-        /// Gets or sets the name of the singleton accessor property.
+        /// Gets or sets the name of the property that will be used to get
+        /// the singleton instance of the annotated class.
         /// </summary>
-        /// <remarks>Default is "Instance".</remarks>
-        public string Accessor { get; set; } = DEFAULT_ACCESSOR_NAME;
+        public string AccessorName {
+            get { return _accessorName ??= DEFAULT_ACCESSOR_NAME; }
+            set { _accessorName = value; }
+        }
 
         #endregion
 
@@ -35,7 +39,8 @@ namespace Nameless {
         /// </summary>
         /// <typeparam name="T">The type</typeparam>
         /// <returns>A singleton instance of the type.</returns>
-        public static T? GetInstance<T>() where T : class => GetInstance(typeof(T)) as T;
+        public static T? GetInstance<T>() where T : class
+            => GetInstance(typeof(T)) as T;
 
         /// <summary>
         /// Retrieves the singlet instance of the type through its accessor property.
@@ -50,7 +55,7 @@ namespace Nameless {
             if (type == null) { return null; }
 
             if (!HasAttribute(type, out var attr)) { return null; }
-            if (!HasAccessorProperty(type, attr.Accessor, out var accessor)) { return null; }
+            if (!HasAccessorProperty(type, attr.AccessorName, out var accessor)) { return null; }
 
             return accessor.GetValue(obj: null /* static instance */);
         }
@@ -65,8 +70,8 @@ namespace Nameless {
         }
 
         private static bool HasAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
-            var currentAccessorName = string.IsNullOrWhiteSpace(accessorName) ? DEFAULT_ACCESSOR_NAME : accessorName;
-            accessor = type.GetProperty(currentAccessorName, BindingFlags.Public | BindingFlags.Static);
+            var currentAccessor = string.IsNullOrWhiteSpace(accessorName) ? DEFAULT_ACCESSOR_NAME : accessorName;
+            accessor = type.GetProperty(currentAccessor, BindingFlags.Public | BindingFlags.Static);
             return accessor != null;
         }
 

@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 
 namespace Nameless.Collections.Generic {
-
     /// <summary>
     /// Represents a page of enumerable items.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public sealed class Page<T> : IPage<T> {
-
         #region Public Static Read-Only Fields
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         public Page(IQueryable<T> items, int index = 0, int size = 10) {
-            Garda.Prevent.Null(items, nameof(items));
+            Prevent.Against.Null(items, nameof(items));
 
             index = index >= 0 ? index : 0;
             size = size > 0 ? size : 10;
@@ -92,7 +90,6 @@ namespace Nameless.Collections.Generic {
     /// <see cref="Page{T}"/> extension methods.
     /// </summary>
     public static class PageExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -103,7 +100,8 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         /// <returns>An instance of <see cref="Page{T}"/>.</returns>
-        public static IPage<T> AsPage<T>(this IEnumerable<T> self, int index = 0, int size = 10) => new Page<T>(self, index, size);
+        public static IPage<T> AsPage<T>(this IEnumerable<T> self, int index = 0, int size = 10)
+            => new Page<T>(self, index, size);
 
         /// <summary>
         /// Creates a <see cref="Page{T}"/> from the <see cref="IQueryable{T}"/>.
@@ -113,7 +111,8 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         /// <returns>An instance of <see cref="Page{T}"/>.</returns>
-        public static IPage<T> AsPage<T>(this IQueryable<T> self, int index = 0, int size = 10) => new Page<T>(self, index, size);
+        public static IPage<T> AsPage<T>(this IQueryable<T> self, int index = 0, int size = 10)
+            => new Page<T>(self, index, size);
 
         #endregion
     }

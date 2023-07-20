@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
 using System.Linq.Expressions;
 
 namespace Nameless.Persistence {
@@ -12,31 +12,44 @@ namespace Nameless.Persistence {
         #region Private Constructors
 
         private DeleteInstruction(Expression<Func<TEntity, bool>> filter) {
-            Garda.Prevent.Null(filter, nameof(filter));
-
-            Filter = filter;
+            Filter = Prevent.Against.Null(filter, nameof(filter));
         }
 
         #endregion
 
         #region Public Static Methods
 
-        public static DeleteInstruction<TEntity> Create(Expression<Func<TEntity, bool>> filter) {
-            Garda.Prevent.Null(filter, nameof(filter));
-
-            return new DeleteInstruction<TEntity>(filter);
-        }
+        public static DeleteInstruction<TEntity> Create(Expression<Func<TEntity, bool>> filter)
+            => new(filter);
 
         #endregion
     }
 
-    public sealed class DeleteInstructionCollection<TEntity> : Collection<DeleteInstruction<TEntity>> where TEntity : class {
+    public sealed class DeleteInstructionCollection<TEntity> : IEnumerable<DeleteInstruction<TEntity>> where TEntity : class {
+        #region Private Read-Only Fields
+
+        private readonly List<DeleteInstruction<TEntity>> _instructions = new();
+
+        #endregion
+
         #region Public Methods
 
         public DeleteInstructionCollection<TEntity> Add(Expression<Func<TEntity, bool>> filter) {
-            Add(DeleteInstruction<TEntity>.Create(filter));
+            _instructions.Add(DeleteInstruction<TEntity>.Create(filter));
             return this;
         }
+
+        public void Clear() => _instructions.Clear();
+
+        #endregion
+
+        #region IEnumerable<DeleteInstruction<TEntity>> Members
+
+        public IEnumerator<DeleteInstruction<TEntity>> GetEnumerator()
+            => _instructions.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => _instructions.GetEnumerator();
 
         #endregion
     }

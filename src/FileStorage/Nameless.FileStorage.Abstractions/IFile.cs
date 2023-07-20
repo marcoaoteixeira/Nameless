@@ -1,10 +1,8 @@
 namespace Nameless.FileStorage {
-
     /// <summary>
     /// Represents an abstract file in a virtual file storage.
     /// </summary>
     public interface IFile {
-
         #region Properties
 
         /// <summary>

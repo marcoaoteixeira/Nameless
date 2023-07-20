@@ -4,11 +4,9 @@ namespace Nameless.Microservice {
     public partial class StartUp {
         #region Private Static Methods
 
-        private static void ConfigureFluentValidation(IServiceCollection serviceCollection) {
-            serviceCollection.AddValidatorsFromAssemblies(
-                assemblies: new[] {
-            typeof(StartUp).Assembly
-                }
+        private static void ConfigureFluentValidation(IServiceCollection services) {
+            services.AddValidatorsFromAssemblies(
+                assemblies: new[] { typeof(StartUp).Assembly }
             );
         }
 

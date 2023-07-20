@@ -6,7 +6,7 @@ namespace Nameless {
         #region Public Static Methods
 
         [DebuggerStepThrough]
-        public static string NullOrWhiteSpace(this IGuardClause self, [NotNull] string input, string name, string? message = null) {
+        public static string NullOrWhiteSpace(this Prevent self, [NotNull] string input, string name, string? message = null) {
             if (input == null) {
                 throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
             }

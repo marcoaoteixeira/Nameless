@@ -6,7 +6,7 @@ namespace Nameless {
         #region Public Static Methods
 
         [DebuggerStepThrough]
-        public static T Null<T>(this IGuardClause _, [NotNull] T input, string name, string? message = null)
+        public static T Null<T>(this Prevent _, [NotNull] T input, string name, string? message = null)
             => input ?? throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
     }
 

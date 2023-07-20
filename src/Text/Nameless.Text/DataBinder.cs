@@ -120,8 +120,8 @@ namespace Nameless.Text {
 
         /// <inheritdoc/>
         public object Eval(object container, string expression, string? format = default) {
-            Garda.Prevent.Null(container, nameof(container));
-            Garda.Prevent.NullOrWhiteSpace(expression, nameof(expression));
+            Prevent.Against.Null(container, nameof(container));
+            Prevent.Against.NullOrWhiteSpace(expression, nameof(expression));
 
             var value = InnerEval(container, expression);
 

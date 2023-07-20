@@ -1,10 +1,8 @@
 ﻿namespace Nameless.Logging {
-
     /// <summary>
-    /// Extension methods for <see cref="ILogger"/>.
+    /// <see cref="ILogger"/> extension methods.
     /// </summary>
     public static class LoggerExtension {
-
         #region Public Static Methods
 
         #region Debug Log Methods
@@ -15,7 +13,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Debug(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Debug, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Debug, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -25,7 +23,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Debug(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Debug, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Debug, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -35,7 +33,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Debug(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Debug, null, format, args);
+            FilteredLog(source, Level.Debug, null, format, args);
         }
 
         /// <summary>
@@ -46,7 +44,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Debug(this ILogger self, Exception exception, string format, params object[] args) {
-            FilteredLog(self, LogLevel.Debug, exception, format, args);
+            FilteredLog(self, Level.Debug, exception, format, args);
         }
 
         #endregion
@@ -59,7 +57,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Information(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Information, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Information, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -69,7 +67,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Information(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Information, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Information, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -79,7 +77,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Information(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Information, null, format, args);
+            FilteredLog(source, Level.Information, null, format, args);
         }
 
         /// <summary>
@@ -90,7 +88,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Information(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Information, exception, format, args);
+            FilteredLog(source, Level.Information, exception, format, args);
         }
 
         #endregion
@@ -103,7 +101,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Warning(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Warning, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Warning, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -113,7 +111,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Warning(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Warning, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Warning, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -123,7 +121,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Warning(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Warning, null, format, args);
+            FilteredLog(source, Level.Warning, null, format, args);
         }
 
         /// <summary>
@@ -134,7 +132,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Warning(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Warning, exception, format, args);
+            FilteredLog(source, Level.Warning, exception, format, args);
         }
 
         #endregion
@@ -147,7 +145,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Error(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Error, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Error, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -157,7 +155,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Error(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Error, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Error, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -167,7 +165,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Error(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Error, null, format, args);
+            FilteredLog(source, Level.Error, null, format, args);
         }
 
         /// <summary>
@@ -178,7 +176,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Error(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Error, exception, format, args);
+            FilteredLog(source, Level.Error, exception, format, args);
         }
 
         #endregion
@@ -191,7 +189,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Fatal(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Fatal, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Fatal, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -201,7 +199,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Fatal(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Fatal, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Fatal, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -211,7 +209,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Fatal(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Fatal, null, format, args);
+            FilteredLog(source, Level.Fatal, null, format, args);
         }
 
         /// <summary>
@@ -222,7 +220,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Fatal(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Fatal, exception, format, args);
+            FilteredLog(source, Level.Fatal, exception, format, args);
         }
 
         #endregion
@@ -235,7 +233,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Critical(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Critical, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Critical, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -245,7 +243,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Critical(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Critical, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Critical, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -255,7 +253,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Critical(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Critical, null, format, args);
+            FilteredLog(source, Level.Critical, null, format, args);
         }
 
         /// <summary>
@@ -266,7 +264,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Critical(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Critical, exception, format, args);
+            FilteredLog(source, Level.Critical, exception, format, args);
         }
 
         #endregion
@@ -279,7 +277,7 @@
         /// <param name="source">The source (<see cref="ILogger"/>).</param>
         /// <param name="message">The message to log.</param>
         public static void Audit(this ILogger source, string message) {
-            FilteredLog(source, LogLevel.Audit, null, message, Array.Empty<object>());
+            FilteredLog(source, Level.Audit, null, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -289,7 +287,7 @@
         /// <param name="exception">The <see cref="Exception"/> to log.</param>
         /// <param name="message">The message to log.</param>
         public static void Audit(this ILogger source, Exception exception, string message) {
-            FilteredLog(source, LogLevel.Audit, exception, message, Array.Empty<object>());
+            FilteredLog(source, Level.Audit, exception, message, Array.Empty<object>());
         }
 
         /// <summary>
@@ -299,7 +297,7 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Audit(this ILogger source, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Audit, null, format, args);
+            FilteredLog(source, Level.Audit, null, format, args);
         }
 
         /// <summary>
@@ -310,24 +308,23 @@
         /// <param name="format">The message format to log.</param>
         /// <param name="args">The message format arguments, if any.</param>
         public static void Audit(this ILogger source, Exception exception, string format, params object[] args) {
-            FilteredLog(source, LogLevel.Audit, exception, format, args);
+            FilteredLog(source, Level.Audit, exception, format, args);
         }
 
         #endregion
 
-        public static ILogger On(this ILogger self, bool condition) {
-            if (self == default) { return NullLogger.Instance; }
-
-            return condition ? self : NullLogger.Instance;
-        }
+        public static ILogger On(this ILogger self, bool condition)
+            => self != null && condition
+                ? self
+                : NullLogger.Instance;
 
         #endregion
 
         #region Private Static Methods
 
-        private static void FilteredLog(ILogger logger, LogLevel logLevel, Exception? exception, string message, params object[] args) {
-            if (logger.IsEnabled(logLevel)) {
-                logger.Log(logLevel, message, exception, args);
+        private static void FilteredLog(ILogger logger, Level level, Exception? exception, string message, params object[] args) {
+            if (logger.IsEnabled(level)) {
+                logger.Log(level, message, exception, args);
             }
         }
 

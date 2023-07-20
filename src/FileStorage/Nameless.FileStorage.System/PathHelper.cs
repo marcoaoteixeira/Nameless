@@ -1,7 +1,5 @@
 namespace Nameless.FileStorage.System {
-
     public static class PathHelper {
-
         #region Private Constants
 
         private const char WINDOWS_DIRECTORY_SEPARATOR_CHAR = '\\';
@@ -26,7 +24,7 @@ namespace Nameless.FileStorage.System {
         /// </para>
         /// </remarks>
         public static string Normalize(string path) {
-            Garda.Prevent.NullOrWhiteSpace(path, nameof(path));
+            Prevent.Against.NullOrWhiteSpace(path, nameof(path));
 
             var result = OperatingSystem.IsWindows()
                 ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
@@ -53,8 +51,8 @@ namespace Nameless.FileStorage.System {
         /// </param>
         /// <returns>The physical path to the content.</returns>
         public static string GetPhysicalPath(string root, string relativePath) {
-            Garda.Prevent.NullOrWhiteSpace(root, nameof(root));
-            Garda.Prevent.NullOrWhiteSpace(relativePath, nameof(relativePath));
+            Prevent.Against.NullOrWhiteSpace(root, nameof(root));
+            Prevent.Against.NullOrWhiteSpace(relativePath, nameof(relativePath));
 
             root = Normalize(root);
             relativePath = Normalize(relativePath);

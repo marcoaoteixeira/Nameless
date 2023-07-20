@@ -3,7 +3,6 @@ using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
     public sealed class RedisCache : ICache {
-
         #region Private Read-Only Fields
 
         private readonly IDatabase _database;
@@ -12,10 +11,10 @@ namespace Nameless.Caching.Redis {
 
         #region Public Constructors
 
-        public RedisCache(IDatabase database) {
-            Garda.Prevent.Null(database, nameof(database));
+        public RedisCache(IRedisDatabaseManager manager) {
+            Prevent.Against.Null(manager, nameof(manager));
 
-            _database = database;
+            _database = manager.GetDatabase();
         }
 
         #endregion
@@ -26,7 +25,7 @@ namespace Nameless.Caching.Redis {
             cancellationToken.ThrowIfCancellationRequested();
 
             var json = JsonSerializer.Serialize(value);
-            var expiry = opts != default && opts.ExpiresIn != default
+            var expiry = opts != null && opts.ExpiresIn != default
                 ? (TimeSpan?)opts.ExpiresIn
                 : null;
 
@@ -43,7 +42,9 @@ namespace Nameless.Caching.Redis {
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var value = await _database.StringGetAsync(key: key, flags: CommandFlags.None);
+            var value = await _database
+                .StringGetAsync(key: key, flags: CommandFlags.None)
+                .ConfigureAwait(false);
 
             return value.HasValue
                 ? JsonSerializer.Deserialize<T>(value.ToString())
@@ -53,9 +54,11 @@ namespace Nameless.Caching.Redis {
         public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await _database.StringGetDeleteAsync(key: key, flags: CommandFlags.None);
+            var result = await _database
+                .StringGetDeleteAsync(key: key, flags: CommandFlags.None)
+                .ConfigureAwait(false);
 
-            return true;
+            return !result.IsNull;
         }
 
         #endregion

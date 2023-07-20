@@ -1,4 +1,6 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Nameless.Microservice.Api.v1.Models;
 
 namespace Nameless.Microservice.Api.v1.Controllers {
     [ApiController]
@@ -8,9 +10,9 @@ namespace Nameless.Microservice.Api.v1.Controllers {
         #region Public Methods
 
         [HttpGet]
-        [ProducesResponseType(200)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WorkingOutput))]
         public IActionResult Index() {
-            return Ok(new { message = "It works!" });
+            return Ok(new WorkingOutput { Message = "It works!" });
         }
 
         #endregion

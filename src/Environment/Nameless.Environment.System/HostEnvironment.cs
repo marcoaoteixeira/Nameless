@@ -14,9 +14,9 @@ namespace Nameless.Environment.System {
         #region Public Constructors
 
         public HostEnvironment(string environmentName, string applicationName, string applicationBasePath) {
-            Garda.Prevent.NullOrWhiteSpace(environmentName, nameof(environmentName));
-            Garda.Prevent.NullOrWhiteSpace(applicationName, nameof(applicationName));
-            Garda.Prevent.NullOrWhiteSpace(applicationBasePath, nameof(applicationBasePath));
+            Prevent.Against.NullOrWhiteSpace(environmentName, nameof(environmentName));
+            Prevent.Against.NullOrWhiteSpace(applicationName, nameof(applicationName));
+            Prevent.Against.NullOrWhiteSpace(applicationBasePath, nameof(applicationBasePath));
 
             _environmentName = environmentName;
             _applicationName = applicationName;

@@ -15,13 +15,13 @@ namespace Nameless {
         /// <param name="self">The <see cref="Enum"/> value.</param>
         /// <param name="inherited">Marks as inherited attributes.</param>
         /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-        /// <returns>A collection of attributes of type <typeparamref name="TAttribute" /></returns>
-        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum self, bool inherited = false) where TAttribute : Attribute {
+        /// <returns>The <typeparamref name="TAttribute" /> annotated in the enum.</returns>
+        public static TAttribute? GetAttribute<TAttribute>(this Enum self, bool inherited = false) where TAttribute : Attribute {
             var field = self.GetType().GetField(self.ToString());
 
-            if (field == null) { return Enumerable.Empty<TAttribute>(); }
+            if (field == null) { return null; }
 
-            return field.GetCustomAttributes<TAttribute>(inherit: inherited);
+            return field.GetCustomAttribute<TAttribute>(inherit: inherited);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Nameless {
         /// <param name="self">The self enumerator.</param>
         /// <returns>The enumerator description.</returns>
         public static string GetDescription(this Enum self) {
-            var attr = GetAttributes<DescriptionAttribute>(self).SingleOrDefault();
+            var attr = GetAttribute<DescriptionAttribute>(self);
 
             return attr != null ? attr.Description : self.ToString();
         }

@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Nameless.Serialization.Json {
     public class JsonSerializer : ISerializer {
         #region ISerializer Members
@@ -8,22 +6,22 @@ namespace Nameless.Serialization.Json {
             if (graph == null) { return Array.Empty<byte>(); }
 
             var opts = options as JsonSerializationOptions ?? JsonSerializationOptions.Default;
-            var json = JsonConvert.SerializeObject(graph, opts.Settings);
+            var json = SystemJsonSerializer.Serialize(graph, opts.Options);
             return opts.Encoding.GetBytes(json);
         }
 
         public object? Deserialize(Type? type, byte[]? buffer, SerializationOptions? options = null) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             if (buffer == null) { return null; }
 
             var opts = options as JsonSerializationOptions ?? JsonSerializationOptions.Default;
             var json = opts.Encoding.GetString(buffer);
-            return JsonConvert.DeserializeObject(json, type, opts.Settings);
+            return SystemJsonSerializer.Deserialize(json, type, opts.Options);
         }
 
         public void Serialize(Stream? stream, object? graph, SerializationOptions? options = null) {
-            Garda.Prevent.Null(stream, nameof(stream));
+            Prevent.Against.Null(stream, nameof(stream));
 
             if (!stream.CanWrite) { throw new InvalidOperationException("Cannot write to the stream"); }
 
@@ -32,7 +30,7 @@ namespace Nameless.Serialization.Json {
         }
 
         public object? Deserialize(Type? type, Stream? stream, SerializationOptions? options = null) {
-            Garda.Prevent.Null(type, nameof(type));
+            Prevent.Against.Null(type, nameof(type));
 
             if (stream == null) { return null; }
 

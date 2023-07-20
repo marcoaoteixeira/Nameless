@@ -1,11 +1,7 @@
 ﻿namespace Nameless.NHibernate {
-
     public enum ExecuteSchemaOptions {
-
-        None,
-
-        OnSessionFactoryResolution,
-
-        OnSessionResolution
+        None = 0,
+        OnSessionFactoryResolution = 1,
+        OnSessionResolution = 2
     }
 }

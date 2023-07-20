@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Core;
 using Nameless.Autofac;
 
 namespace Nameless.Data {
@@ -10,7 +9,7 @@ namespace Nameless.Data {
     public sealed class DataModule : ModuleBase {
         #region Private Constants
 
-        private const string DB_CONNECTION_FACTORY_KEY = "7e99f8b1-05ad-4a89-8e36-46a7660bc8a8";
+        private const string DB_CONNECTION_FACTORY_TOKEN = "DbConnectionFactory.7e99f8b1-05ad-4a89-8e36-46a7660bc8a8";
 
         #endregion
 
@@ -37,16 +36,26 @@ namespace Nameless.Data {
 
             builder
                 .RegisterType(dbConnectionFactoryImplementation)
-                .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_KEY)
+                .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
-                .RegisterType<Database>()
+                .Register(DatabaseResolver)
                 .As<IDatabase>()
-                .WithParameter(ResolvedParameter.ForNamed<IDbConnectionFactory>(DB_CONNECTION_FACTORY_KEY))
                 .InstancePerDependency();
 
             base.Load(builder);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static IDatabase DatabaseResolver(IComponentContext context) {
+            var factory = context.ResolveNamed<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN);
+            var database = new Database(factory);
+
+            return database;
         }
 
         #endregion

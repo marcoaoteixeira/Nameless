@@ -6,9 +6,7 @@ using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 
 namespace Nameless.NHibernate {
-
     public sealed class SecureStringUserType : IUserType {
-
         #region Private Read-Only Fields
 
         private readonly ICryptoProvider _cryptoProvider;

@@ -3,17 +3,14 @@ using System.Dynamic;
 using NHibernate.Transform;
 
 namespace Nameless.NHibernate {
-
-
     /// <summary>
     /// Singleton Pattern implementation for <see cref="DynamicResultTransformer" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
     /// </summary>
     [Singleton]
     public sealed class DynamicResultTransformer : IResultTransformer {
-
         #region Private Static Read-Only Fields
 
-        private static readonly IResultTransformer _instance = new DynamicResultTransformer();
+        private static readonly DynamicResultTransformer _instance = new();
 
         #endregion
 
@@ -45,13 +42,13 @@ namespace Nameless.NHibernate {
         public IList TransformList(IList collection) => collection;
 
         public object TransformTuple(object[] tuple, string[] aliases) {
-            Garda.Prevent.Null(tuple, nameof(tuple));
-            Garda.Prevent.Null(aliases, nameof(aliases));
+            Prevent.Against.Null(tuple, nameof(tuple));
+            Prevent.Against.Null(aliases, nameof(aliases));
 
             var result = new ExpandoObject() as IDictionary<string, object>;
             tuple.Each((current, idx) => {
                 if (aliases.TryGetByIndex(idx, out var alias)) {
-                    if (alias != default) {
+                    if (alias != null) {
                         result[alias] = current;
                     }
                 }

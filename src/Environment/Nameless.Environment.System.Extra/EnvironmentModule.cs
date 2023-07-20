@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Autofac.Core;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 
@@ -13,9 +12,8 @@ namespace Nameless.Environment.System {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterType<HostEnvironment>()
+                .Register(HostEnvironmentResolver)
                 .As<IHostEnvironment>()
-                .OnPreparing(OnPreparingHostEnvironment)
                 .SingleInstance();
 
             base.Load(builder);
@@ -23,16 +21,17 @@ namespace Nameless.Environment.System {
 
         #endregion
 
-        #region Private Methods
+        #region Private Static Methods
 
-        private void OnPreparingHostEnvironment(PreparingEventArgs args) {
-            var applicationContext = args.Context.Resolve<IApplicationContext>();
+        private static IHostEnvironment HostEnvironmentResolver(IComponentContext context) {
+            var applicationContext = context.Resolve<IApplicationContext>();
+            var environment = new HostEnvironment(
+                environmentName: applicationContext.EnvironmentName,
+                applicationName: applicationContext.ApplicationName,
+                applicationBasePath: applicationContext.BasePath
+            );
 
-            args.Parameters = args.Parameters.Union(new[] {
-                new NamedParameter("environmentName", applicationContext.EnvironmentName),
-                new NamedParameter("applicationName", applicationContext.ApplicationName),
-                new NamedParameter("applicationBasePath", applicationContext.BasePath)
-            });
+            return environment;
         }
 
         #endregion

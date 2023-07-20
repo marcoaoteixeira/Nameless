@@ -13,7 +13,7 @@ namespace Nameless.NoSQL.MongoDb {
         #region Public Constructors
 
         public MongoContext(IMongoDatabase database, ICollectionNamingStrategy? collectionNamingStrategy = null, MongoCollectionSettings? collectionSettings = null) {
-            Garda.Prevent.Null(database, nameof(database));
+            Prevent.Against.Null(database, nameof(database));
 
             _database = database;
             _collectionNamingStrategy = collectionNamingStrategy ?? CollectionNamingStrategy.Instance;

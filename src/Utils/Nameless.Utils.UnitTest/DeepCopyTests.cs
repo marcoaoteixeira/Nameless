@@ -13,7 +13,7 @@ namespace Nameless.Utils.UnitTests {
             var user = new User { ID = 1, Name = "Test", Email = "test@test.com" };
 
             // act
-            var clone = DeepCopy.Clone(user);
+            var clone = DeepCopy.Clone(user)!;
 
             // assert
             Assert.Multiple(() => {
@@ -32,7 +32,7 @@ namespace Nameless.Utils.UnitTests {
             } };
 
             // act
-            var clone = DeepCopy.Clone(order);
+            var clone = DeepCopy.Clone(order)!;
 
             // assert
             Assert.Multiple(() => {
@@ -55,7 +55,7 @@ namespace Nameless.Utils.UnitTests {
             };
 
             // act
-            var clone = DeepCopy.Clone(order);
+            var clone = DeepCopy.Clone(order)!;
 
             // assert
             Assert.Multiple(() => {

@@ -1,7 +1,8 @@
 ﻿{
-  "[Nameless.Localization.Microsoft.UnitTests] Nameless.Localization.Microsoft.UnitTests.Fixtures.Service": {
-    "Hello World!": [
-      "Hello World!"
-    ]
+  "Culture": "en-US",
+  "Branches": {
+    "[Nameless.Localization.Microsoft.UnitTest] Nameless.Localization.Microsoft.UnitTest.Fixtures.Service": {
+      "Hello World!": "Hello World!"
+    }
   }
 }

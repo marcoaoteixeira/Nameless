@@ -3,16 +3,14 @@ using L4N_Level = log4net.Core.Level;
 using L4N_LoggingEvent = log4net.Core.LoggingEvent;
 
 namespace Nameless.Logging.log4net {
-
     public sealed class LoggerEventFactory : ILoggerEventFactory {
-
         #region ILoggerEventFactory Members
 
         public L4N_LoggingEvent? CreateLoggingEvent(in LogMessage message, L4N_ILogger logger, Log4netOptions options) {
-            Garda.Prevent.Null(message, nameof(message));
-            Garda.Prevent.Null(logger, nameof(logger));
+            Prevent.Against.Null(message, nameof(message));
+            Prevent.Against.Null(logger, nameof(logger));
 
-            var level = LogLevelTranslator.Translate(message.LogLevel, options.OverrideCriticalLevel);
+            var level = LevelTranslator.Translate(message.Level, options.OverrideCriticalLevel);
             if (level == L4N_Level.Off) {
                 return null;
             }

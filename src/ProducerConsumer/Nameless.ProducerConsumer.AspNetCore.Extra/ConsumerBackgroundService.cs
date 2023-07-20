@@ -4,7 +4,7 @@ namespace Nameless.ProducerConsumer.AspNetCore {
     public abstract class ConsumerBackgroundService<T> : BackgroundService {
         #region Private Read-Only Fields
 
-        private readonly IConsumer _consumer;
+        private readonly IConsumerService _consumerService;
 
         #endregion
 
@@ -18,16 +18,16 @@ namespace Nameless.ProducerConsumer.AspNetCore {
         #region Public Abstract Properties
 
         public abstract string Topic { get; }
-        public Parameter[] Parameters { get; } = Array.Empty<Parameter>();
+        public abstract ConsumerArgs? Args { get; }
 
         #endregion
 
         #region Protected Constructors
 
-        protected ConsumerBackgroundService(IConsumer consumer) {
-            Garda.Prevent.Null(consumer, nameof(consumer));
+        protected ConsumerBackgroundService(IConsumerService consumer) {
+            Prevent.Against.Null(consumer, nameof(consumer));
 
-            _consumer = consumer;
+            _consumerService = consumer;
         }
 
         #endregion
@@ -35,28 +35,26 @@ namespace Nameless.ProducerConsumer.AspNetCore {
         #region Public Override Methods
 
         public override Task StartAsync(CancellationToken cancellationToken) {
-            _registration ??= _consumer.Register<T>(Topic, Consume, Parameters);
+            InitializeRegistration();
 
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken) {
-            if (_registration != null) {
-                _consumer.Unregister((Registration<T>)_registration);
-            }
+            TerminateRegistration();
 
             return base.StopAsync(cancellationToken);
         }
 
         public override void Dispose() {
             if (_disposed) { return; }
-            if (_registration != null) {
-                _registration.Dispose();
-                _registration = null;
-            }
+
+            TerminateRegistration();
+
             _disposed = true;
 
             base.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -64,6 +62,21 @@ namespace Nameless.ProducerConsumer.AspNetCore {
         #region Protected Abstract Methods
 
         protected abstract Task Consume(T message, CancellationToken cancellationToken = default);
+
+        #endregion
+
+        #region Private Methods
+
+        private void InitializeRegistration() {
+            _registration ??= _consumerService.Register<T>(Topic, Consume, Args);
+        }
+
+        private void TerminateRegistration() {
+            if (_registration != null) {
+                _consumerService.Unregister((Registration<T>)_registration);
+                _registration = null;
+            }
+        }
 
         #endregion
     }

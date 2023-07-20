@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 namespace Nameless.Persistence {
-
     public sealed class Repository : IRepository {
-
         #region Private Read-Only Fields
 
         private readonly IWriter _writer;
@@ -19,8 +17,8 @@ namespace Nameless.Persistence {
         /// <param name="writer">The persister.</param>
         /// <param name="reader">The querier.</param>
         public Repository(IWriter writer, IReader reader) {
-            Garda.Prevent.Null(writer, nameof(writer));
-            Garda.Prevent.Null(reader, nameof(reader));
+            Prevent.Against.Null(writer, nameof(writer));
+            Prevent.Against.Null(reader, nameof(reader));
 
             _writer = writer;
             _reader = reader;
@@ -41,7 +39,7 @@ namespace Nameless.Persistence {
         }
 
         /// <inheritdoc />
-        public Task<IList<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
+        public Task<IEnumerable<TEntity>> FindAsync<TEntity>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, object>>? orderBy = null, bool orderDescending = false, CancellationToken cancellationToken = default) where TEntity : class {
             return _reader.FindAsync(filter, orderBy, orderDescending, cancellationToken);
         }
 

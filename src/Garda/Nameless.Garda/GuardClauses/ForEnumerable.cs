@@ -7,7 +7,7 @@ namespace Nameless {
         #region Public Static Methods
 
         [DebuggerStepThrough]
-        public static T NullOrEmpty<T>(this IGuardClause _, [NotNull] T input, string name, string? message = null) where T : class, IEnumerable {
+        public static T NullOrEmpty<T>(this Prevent _, [NotNull] T input, string name, string? message = null) where T : class, IEnumerable {
             if (input == null) {
                 throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
             }

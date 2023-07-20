@@ -7,7 +7,7 @@ namespace Nameless.Security.Cryptography {
         #region Private Static Methods
 
         private static string ExecuteAction(ICryptoProvider? cryptoProvider, string? value, bool encrypt = true) {
-            Garda.Prevent.Null(cryptoProvider, nameof(cryptoProvider));
+            Prevent.Against.Null(cryptoProvider, nameof(cryptoProvider));
 
             if (string.IsNullOrWhiteSpace(value)) { return string.Empty; }
 

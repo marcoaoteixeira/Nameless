@@ -2,12 +2,10 @@
 using Nameless.Logging;
 
 namespace Nameless.Data {
-
     /// <summary>
     /// Default implementation of <see cref="IDatabase"/>.
     /// </summary>
     public sealed class Database : IDatabase, IDisposable {
-
         #region Private Fields
 
         private bool _disposed;
@@ -29,17 +27,8 @@ namespace Nameless.Data {
 
         #region Private Properties
 
-        private IDbConnection? _connection;
-        private IDbConnection DbConnection {
-            get => _connection ?? throw new NullReferenceException();
-            set => _connection = value;
-        }
-
+        private IDbConnection _connection;
         private IDbTransaction? _transaction;
-        private IDbTransaction DbTransaction {
-            get => _transaction ?? throw new NullReferenceException();
-            set => _transaction = value;
-        }
 
         #endregion
 
@@ -50,13 +39,13 @@ namespace Nameless.Data {
         /// </summary>
         /// <param name="dbConnectionFactory">The database connection factory.</param>
         public Database(IDbConnectionFactory dbConnectionFactory) {
-            Garda.Prevent.Null(dbConnectionFactory, nameof(dbConnectionFactory));
+            Prevent.Against.Null(dbConnectionFactory, nameof(dbConnectionFactory));
 
-            DbConnection = dbConnectionFactory.Create();
+            _connection = dbConnectionFactory.Create();
 
             // Ensure connection is open.
-            if (DbConnection.State != ConnectionState.Open) {
-                DbConnection.Open();
+            if (_connection.State != ConnectionState.Open) {
+                _connection.Open();
             }
         }
 
@@ -96,17 +85,17 @@ namespace Nameless.Data {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                DbTransaction.Dispose();
-                DbConnection.Dispose();
+                _transaction?.Dispose();
+                _connection?.Dispose();
             }
 
-            DbTransaction = null!;
-            DbConnection = null!;
+            _transaction = null!;
+            _connection = null!;
             _disposed = true;
         }
 
         private IDbCommand CreateCommand(string text, CommandType type, Parameter[] parameters) {
-            var command = DbConnection.CreateCommand();
+            var command = _connection.CreateCommand();
             command.CommandText = text;
             command.CommandType = type;
             command.Transaction = _transaction;
@@ -117,20 +106,9 @@ namespace Nameless.Data {
                 );
             }
 
-            Logger.Debug(command);
+            Logger.DbCommand(command);
 
             return command;
-        }
-
-        private TResult? Execute<TResult>(string text, CommandType type, Parameter[] parameters, bool scalar) {
-            using var command = CreateCommand(text, type, parameters);
-            try {
-                var result = scalar ?
-                    command.ExecuteScalar() :
-                    command.ExecuteNonQuery();
-
-                return (TResult?)result;
-            } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
         }
 
         #endregion
@@ -141,39 +119,40 @@ namespace Nameless.Data {
         public void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
             BlockAccessAfterDispose();
 
-            DbTransaction ??= DbConnection.BeginTransaction(isolationLevel);
+            _transaction ??= _connection.BeginTransaction(isolationLevel);
         }
 
         public void CommitTransaction() {
             BlockAccessAfterDispose();
 
-            DbTransaction.Commit();
-
-            _transaction = null;
+            _transaction?.Commit();
+            _transaction = null!;
         }
 
         public void RollbackTransaction() {
             BlockAccessAfterDispose();
 
-            DbTransaction.Rollback();
-
-            _transaction = null;
+            _transaction?.Rollback();
+            _transaction = null!;
         }
 
         /// <inheritdoc/>
         public int ExecuteNonQuery(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
+            Prevent.Against.NullOrWhiteSpace(text, nameof(text));
 
-            return Execute<int>(text, type, parameters, scalar: false);
+            using var command = CreateCommand(text, type, parameters);
+
+            try { return command.ExecuteNonQuery(); }
+            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
         }
 
         /// <inheritdoc/>
         public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
+            Prevent.Against.NullOrWhiteSpace(text, nameof(text));
 
             using var command = CreateCommand(text, type, parameters);
 
@@ -191,9 +170,12 @@ namespace Nameless.Data {
         public TResult? ExecuteScalar<TResult>(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
-            Garda.Prevent.NullOrWhiteSpace(text, nameof(text));
+            Prevent.Against.NullOrWhiteSpace(text, nameof(text));
 
-            return Execute<TResult>(text, type, parameters, scalar: true);
+            using var command = CreateCommand(text, type, parameters);
+
+            try { return (TResult?)command.ExecuteScalar(); }
+            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
         }
 
         #endregion

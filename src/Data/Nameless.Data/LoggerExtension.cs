@@ -6,8 +6,8 @@ namespace Nameless.Data {
     internal static class LoggerExtension {
         #region Internal Static Methods
 
-        internal static void Debug(this ILogger self, IDbCommand command) {
-            if (!self.IsEnabled(LogLevel.Debug)) { return; }
+        internal static void DbCommand(this ILogger self, IDbCommand command) {
+            if (!self.IsEnabled(Level.Debug)) { return; }
 
             var sb = new StringBuilder();
 

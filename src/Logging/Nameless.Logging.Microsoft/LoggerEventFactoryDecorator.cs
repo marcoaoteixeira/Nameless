@@ -1,14 +1,9 @@
 ﻿using System.Collections;
 using System.Globalization;
 using Nameless.Logging.log4net;
-using L4N_ILogger = log4net.Core.ILogger;
-using L4N_LoggingEvent = log4net.Core.LoggingEvent;
-using MS_IExternalScopeProvider = Microsoft.Extensions.Logging.IExternalScopeProvider;
 
 namespace Nameless.Logging.Microsoft {
-
     public sealed class LoggerEventFactoryDecorator : ILoggerEventFactory {
-
         #region Private Constants
 
         private const string DEFAULT_SCOPE_PROPERTY = "scope";
@@ -18,29 +13,26 @@ namespace Nameless.Logging.Microsoft {
         #region Private Read-Only Fields
 
         private readonly ILoggerEventFactory _factory;
-        private readonly MS_IExternalScopeProvider _externalScopeProvider;
+        private readonly IMSExternalScopeProvider _externalScopeProvider;
 
         #endregion
 
         #region Public Constructors
 
-        public LoggerEventFactoryDecorator(ILoggerEventFactory factory, MS_IExternalScopeProvider externalScopeProvider) {
-            Garda.Prevent.Null(factory, nameof(factory));
-            Garda.Prevent.Null(externalScopeProvider, nameof(externalScopeProvider));
-
-            _factory = factory;
-            _externalScopeProvider = externalScopeProvider;
+        public LoggerEventFactoryDecorator(ILoggerEventFactory factory, IMSExternalScopeProvider externalScopeProvider) {
+            _factory = Prevent.Against.Null(factory, nameof(factory));
+            _externalScopeProvider = Prevent.Against.Null(externalScopeProvider, nameof(externalScopeProvider));
         }
 
         #endregion
 
         #region Private Static Methods
 
-        private static void Enrich(L4N_LoggingEvent loggingEvent, MS_IExternalScopeProvider externalScopeProvider) {
+        private static void Enrich(L4NLoggingEvent loggingEvent, IMSExternalScopeProvider externalScopeProvider) {
             static string? join(string? previous, string? actual) {
                 return string.IsNullOrEmpty(previous)
                     ? actual
-                    : string.Concat(previous, " ", actual);
+                    : string.Concat(previous, Constants.Separators.Space, actual);
             }
 
             externalScopeProvider.ForEachScope((scope, @event) => {
@@ -97,10 +89,10 @@ namespace Nameless.Logging.Microsoft {
 
         #region ILoggerEventFactory Members
 
-        public L4N_LoggingEvent? CreateLoggingEvent(in LogMessage message, L4N_ILogger logger, Log4netOptions options) {
+        public L4NLoggingEvent? CreateLoggingEvent(in LogMessage message, IL4NLogger logger, Log4netOptions options) {
             var result = _factory.CreateLoggingEvent(message, logger, options);
 
-            if (result == default) { return default; }
+            if (result == null) { return null; }
 
             Enrich(result, _externalScopeProvider);
 

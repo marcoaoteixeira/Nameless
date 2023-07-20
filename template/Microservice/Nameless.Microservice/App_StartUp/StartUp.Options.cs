@@ -1,20 +1,14 @@
+using Nameless.AspNetCore;
 using Nameless.AspNetCore.Options;
 
 namespace Nameless.Microservice {
     public partial class StartUp {
         #region Private Static Methods
 
-        private static void ConfigureOptions(IServiceCollection serviceCollection, IConfiguration configuration) {
-            serviceCollection.AddOptions();
+        private static void ConfigureOptions(IServiceCollection services, IConfiguration config) {
+            services.AddOptions();
 
-            serviceCollection
-                 .Configure<SwaggerPageOptions>(configuration.GetSection(GetSectionKey<SwaggerPageOptions>()));
-        }
-
-        private static string GetSectionKey<TNode>() {
-            return typeof(TNode).Name
-                .Replace("Options", string.Empty)
-                .Replace("Settings", string.Empty);
+            services.PushOptions<SwaggerPageOptions>(config);
         }
 
         #endregion

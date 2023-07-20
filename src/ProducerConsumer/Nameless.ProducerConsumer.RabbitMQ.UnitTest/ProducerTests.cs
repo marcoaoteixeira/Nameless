@@ -39,11 +39,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ.UnitTesting {
         [Test]
         public void Produce_Message_To_Queue() {
             // arrange
-            var producer = _container.Resolve<IProducer>();
+            var producer = _container.Resolve<IProducerService>();
+            var producerArgs = new ProducerArgs();
+            producerArgs
+                .SetExchangeName(_exchangeName);
 
             // act && assert
-            Assert.DoesNotThrow(() => {
-                producer.Produce(_queueName, new { text = "This is a test." }, new Parameter(Parameters.Producer.ExchangeName, _exchangeName));
+            Assert.DoesNotThrowAsync(async () => {
+                await producer.ProduceAsync(_queueName, new { text = "This is a test." }, producerArgs);
             });
         }
     }

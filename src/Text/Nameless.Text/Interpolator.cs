@@ -19,7 +19,7 @@
         /// </summary>
         /// <param name="dataBinder">An instance of <see cref="IDataBinder"/>.</param>
         public Interpolator(IDataBinder dataBinder) {
-            Garda.Prevent.Null(dataBinder, nameof(dataBinder));
+            Prevent.Against.Null(dataBinder, nameof(dataBinder));
 
             _dataBinder = dataBinder;
         }
@@ -30,7 +30,7 @@
 
         /// <inheritdoc />
         public string Interpolate(string format, object obj) {
-            Garda.Prevent.NullOrWhiteSpace(format, nameof(format));
+            Prevent.Against.NullOrWhiteSpace(format, nameof(format));
 
             var tokens = ExtractExpressions(format)
                 .Select(expression => expression.Eval(obj));

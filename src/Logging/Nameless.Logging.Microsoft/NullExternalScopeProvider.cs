@@ -1,13 +1,9 @@
-﻿using MS_IExternalScopeProvider = Microsoft.Extensions.Logging.IExternalScopeProvider;
-
-namespace Nameless.Logging.Microsoft {
-
+﻿namespace Nameless.Logging.Microsoft {
     [Singleton]
-    public sealed class NullExternalScopeProvider : MS_IExternalScopeProvider {
-
+    public sealed class NullExternalScopeProvider : IMSExternalScopeProvider {
         #region Private Static Read-Only Fields
 
-        private static readonly MS_IExternalScopeProvider _instance = new NullExternalScopeProvider();
+        private static readonly NullExternalScopeProvider _instance = new();
 
         #endregion
 
@@ -16,7 +12,7 @@ namespace Nameless.Logging.Microsoft {
         /// <summary>
         /// Gets the unique instance of <see cref="NullScope" />.
         /// </summary>
-        public static MS_IExternalScopeProvider Instance => _instance;
+        public static IMSExternalScopeProvider Instance => _instance;
 
         #endregion
 

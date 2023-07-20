@@ -17,8 +17,8 @@ namespace Nameless.Autofac {
         #region Public Constructors
 
         public DelegateParameter(string name, Func<object> factory) {
-            Garda.Prevent.NullOrWhiteSpace(name, nameof(name));
-            Garda.Prevent.Null(factory, nameof(factory));
+            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
+            Prevent.Against.Null(factory, nameof(factory));
 
             _name = name;
             _factory = factory;

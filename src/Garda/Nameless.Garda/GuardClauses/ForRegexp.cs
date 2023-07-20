@@ -6,7 +6,7 @@ namespace Nameless {
         #region Public Static Methods
 
         [DebuggerStepThrough]
-        public static string NoMatchingPattern(this IGuardClause _, string input, string name, string pattern, string? message = null) {
+        public static string NoMatchingPattern(this Prevent _, string input, string name, string pattern, string? message = null) {
             var match = Regex.Match(input, pattern);
             if (!match.Success || match.Value != input) {
                 throw new ArgumentException(message ?? $"Argument {name} does not match pattern {pattern}", name);

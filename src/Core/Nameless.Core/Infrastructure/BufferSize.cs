@@ -1,5 +1,4 @@
 ﻿namespace Nameless.Infrastructure {
-
     public enum BufferSize : int {
         /// <summary>
         /// 1Kb

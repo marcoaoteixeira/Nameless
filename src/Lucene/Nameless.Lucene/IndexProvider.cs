@@ -39,8 +39,8 @@ namespace Nameless.Lucene {
         /// <param name="analyzerProvider">The analyzer provider.</param>
         /// <param name="options">The settings.</param>
         public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions? options = null) {
-            Garda.Prevent.Null(applicationContext, nameof(applicationContext));
-            Garda.Prevent.Null(analyzerProvider, nameof(analyzerProvider));
+            Prevent.Against.Null(applicationContext, nameof(applicationContext));
+            Prevent.Against.Null(analyzerProvider, nameof(analyzerProvider));
 
             _applicationContext = applicationContext;
             _analyzerProvider = analyzerProvider;

@@ -1,13 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
 namespace Nameless.AspNetCore.Exceptions {
-
     /// <summary>
     /// Exception for not authenticated access.
     /// </summary>
     [Serializable]
     public class AuthenticationException : Exception {
-
         #region Public Constructors
 
         /// <summary>

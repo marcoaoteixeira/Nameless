@@ -1,10 +1,5 @@
-﻿using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
-using MS_IStringLocalizerFactory = Microsoft.Extensions.Localization.IStringLocalizerFactory;
-
-namespace Nameless.Localization.Microsoft {
-
-    public sealed class StringLocalizerFactoryAdapter : MS_IStringLocalizerFactory {
-
+﻿namespace Nameless.Localization.Microsoft {
+    public sealed class StringLocalizerFactoryAdapter : IMSStringLocalizerFactory {
         #region Private Read-Only Fields
 
         private readonly IStringLocalizerFactory _factory;
@@ -14,18 +9,18 @@ namespace Nameless.Localization.Microsoft {
         #region Public Constructors
 
         public StringLocalizerFactoryAdapter(IStringLocalizerFactory factory) {
-            Garda.Prevent.Null(factory, nameof(factory));
-
-            _factory = factory;
+            _factory = Prevent.Against.Null(factory, nameof(factory));
         }
 
         #endregion
 
-        #region MS_IStringLocalizerFactory Members
+        #region IStringLocalizerFactory Members
 
-        public MS_IStringLocalizer Create(Type resourceSource) => new StringLocalizerAdapter(_factory.Create(resourceSource));
+        public IMSStringLocalizer Create(Type resourceSource)
+            => new StringLocalizerAdapter(_factory.Create(resourceSource));
 
-        public MS_IStringLocalizer Create(string baseName, string location) => new StringLocalizerAdapter(_factory.Create(baseName, location));
+        public IMSStringLocalizer Create(string baseName, string location)
+            => new StringLocalizerAdapter(_factory.Create(baseName, location));
 
         #endregion
     }

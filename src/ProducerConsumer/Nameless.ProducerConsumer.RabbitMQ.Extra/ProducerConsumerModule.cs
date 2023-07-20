@@ -1,6 +1,7 @@
 ﻿using Autofac;
-using Autofac.Core;
 using Nameless.Autofac;
+using Nameless.ProducerConsumer.RabbitMQ.Services;
+using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
@@ -10,9 +11,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
     public sealed class ProducerConsumerModule : ModuleBase {
         #region Private Constants
 
-        private const string CONNECTION_KEY = "Connection.d78abe02-49ce-424d-8e7a-df2ea4de837e";
-        private const string CHANNEL_KEY = "Channel.e9aa434b-3418-451f-848e-a0999bb71ac2";
-        private const string BOOTSTRAPPER_KEY = "Bootstrapper.f27aecdd-c79f-457c-b9f3-10a8629219af";
+        private const string CONNECTION_MANAGER_TOKEN = "ConnectionManager.d78abe02-49ce-424d-8e7a-df2ea4de837e";
+        private const string CHANNEL_MANAGER_TOKEN = "ChannelManager.e9aa434b-3418-451f-848e-a0999bb71ac2";
+        private const string CHANNEL_TOKEN = "Channel.7e06234f-d326-4cba-afe2-24a2c2c288f1";
+        private const string BOOTSTRAPPER_TOKEN = "Bootstrapper.f27aecdd-c79f-457c-b9f3-10a8629219af";
 
         #endregion
 
@@ -21,30 +23,33 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ConnectionResolver)
-                .Named<IConnection>(CONNECTION_KEY)
+                .Register(ConnectionManagerResolver)
+                .Named<IConnectionManager>(CONNECTION_MANAGER_TOKEN)
+                .SingleInstance();
+
+            builder
+                .Register(ChannelManagerResolver)
+                .Named<IChannelManager>(CHANNEL_MANAGER_TOKEN)
                 .SingleInstance();
 
             builder
                 .Register(ChannelResolver)
-                .Named<IModel>(CHANNEL_KEY)
+                .Named<IModel>(CHANNEL_TOKEN)
                 .SingleInstance();
 
             builder
-                .RegisterType<Producer>()
-                .As<IProducer>()
-                .WithParameter(ResolvedParameter.ForNamed<IModel>(CHANNEL_KEY))
+                .Register(ProducerServiceResolver)
+                .As<IProducerService>()
                 .SingleInstance();
 
             builder
-                .RegisterType<Consumer>()
-                .As<IConsumer>()
-                .WithParameter(ResolvedParameter.ForNamed<IModel>(CHANNEL_KEY))
+                .Register(ConsumerServiceResolver)
+                .As<IConsumerService>()
                 .SingleInstance();
 
             builder
                 .Register(BootstrapperResolver)
-                .Named<Bootstrapper>(BOOTSTRAPPER_KEY)
+                .Named<Bootstrapper>(BOOTSTRAPPER_TOKEN)
                 .AutoActivate();
 
             base.Load(builder);
@@ -54,40 +59,49 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Private Static Methods
 
-        private static IConnection ConnectionResolver(IComponentContext context) {
-            var options = context.ResolveOptional<ProducerConsumerOptions>() ?? new();
-            var factory = new ConnectionFactory {
-                HostName = options.Server.Hostname,
-                Port = options.Server.Port,
-                UserName = options.Server.Username,
-                Password = options.Server.Password
-            };
+        private static IConnectionManager ConnectionManagerResolver(IComponentContext context) {
+            var options = context.ResolveOptional<ProducerConsumerOptions>();
+            var connectionManager = new ConnectionManager(options);
+            
+            return connectionManager;
+        }
 
-            if (options.Server.UseSsl) {
-                factory.Ssl = new(
-                    serverName: options.Server.ServerName,
-                    certificatePath: options.Server.CertificatePath,
-                    enabled: true
-                );
-            }
+        private static IChannelManager ChannelManagerResolver(IComponentContext context) {
+            var connectionManager = context.ResolveNamed<IConnectionManager>(CONNECTION_MANAGER_TOKEN);
+            var channelManager = new ChannelManager(connectionManager);
 
-            var connection = factory.CreateConnection();
-
-            return connection;
+            return channelManager;
         }
 
         private static IModel ChannelResolver(IComponentContext context) {
-            var connection = context.ResolveNamed<IConnection>(CONNECTION_KEY);
-            var channel = connection.CreateModel();
+            var channelManager = context.ResolveNamed<IChannelManager>(CHANNEL_MANAGER_TOKEN);
+            var channel = channelManager.GetChannel();
 
             return channel;
         }
 
-        private static Bootstrapper BootstrapperResolver(IComponentContext context) {
-            var connection = context.ResolveNamed<IConnection>(CONNECTION_KEY);
-            var opts = context.ResolveOptional<ProducerConsumerOptions>() ?? new();
+        private static IProducerService ProducerServiceResolver(IComponentContext context) {
+            var channelManager = context.ResolveNamed<IChannelManager>(CHANNEL_MANAGER_TOKEN);
+            var channel = channelManager.GetChannel();
+            var producerService = new ProducerService(channel);
 
-            return new Bootstrapper(connection, opts);
+            return producerService;
+        }
+
+        private static IConsumerService ConsumerServiceResolver(IComponentContext context) {
+            var channelManager = context.ResolveNamed<IChannelManager>(CHANNEL_MANAGER_TOKEN);
+            var channel = channelManager.GetChannel();
+            var consumerService = new ConsumerService(channel);
+
+            return consumerService;
+        }
+
+        private static Bootstrapper BootstrapperResolver(IComponentContext context) {
+            var channelManager = context.ResolveNamed<IChannelManager>(CHANNEL_MANAGER_TOKEN);
+            var channel = channelManager.GetChannel();
+            var options = context.ResolveOptional<ProducerConsumerOptions>() ?? ProducerConsumerOptions.Default;
+
+            return new Bootstrapper(channel, options);
         }
 
         #endregion

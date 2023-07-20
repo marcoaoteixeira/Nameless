@@ -1,10 +1,8 @@
 using System.Runtime.Serialization;
 
 namespace Nameless.FileStorage {
-
     [Serializable]
     public class FileStorageException : Exception {
-
         #region Public Constructors
 
         public FileStorageException() { }

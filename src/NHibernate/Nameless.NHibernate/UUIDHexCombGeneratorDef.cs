@@ -1,17 +1,14 @@
 ﻿using NHibernate.Mapping.ByCode;
 
 namespace Nameless.NHibernate {
-
-
     /// <summary>
     /// Singleton Pattern implementation for <see cref="UUIDHexCombGeneratorDef" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
     /// </summary>
     [Singleton]
     public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
-
         #region Private Static Read-Only Fields
 
-        private static readonly IGeneratorDef _instance = new UUIDHexCombGeneratorDef("D");
+        private static readonly UUIDHexCombGeneratorDef _instance = new();
 
         #endregion
 
@@ -34,11 +31,7 @@ namespace Nameless.NHibernate {
 
         #region Private Constructors
 
-        private UUIDHexCombGeneratorDef(string format) {
-            Garda.Prevent.NullOrWhiteSpace(format, nameof(format));
-
-            Params = new { format };
-        }
+        private UUIDHexCombGeneratorDef() { }
 
         #endregion
 
@@ -48,7 +41,7 @@ namespace Nameless.NHibernate {
         public string Class => "uuid.hex";
 
         /// <inheritdoc />
-        public object Params { get; }
+        public object Params => new { format = "D" };
 
         /// <inheritdoc />
         public Type DefaultReturnType => typeof(string);

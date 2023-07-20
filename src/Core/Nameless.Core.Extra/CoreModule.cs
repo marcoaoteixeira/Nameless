@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using Autofac.Core;
-using Autofac.Core.Registration;
 using Nameless.Autofac;
 using Nameless.Services;
 using Nameless.Services.Impl;
@@ -14,24 +12,14 @@ namespace Nameless {
                 .RegisterInstance(NullApplicationContext.Instance);
 
             builder
-                .RegisterInstance(DefaultClock.Instance);
+                .RegisterInstance(ClockService.Instance);
 
             builder
                 .RegisterType<XmlSchemaValidator>()
                 .As<IXmlSchemaValidator>()
-                .InstancePerDependency();
+                .SingleInstance();
 
             base.Load(builder);
-        }
-
-        protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
-            registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolverMiddleware(
-                    serviceType: typeof(IClock),
-                    factory: (member, ctx) => ctx.Resolve<IClock>()
-                ));
-            };
-            base.AttachToComponentRegistration(componentRegistry, registration);
         }
 
         #endregion

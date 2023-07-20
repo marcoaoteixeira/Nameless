@@ -4,9 +4,7 @@ using NHibernate.Criterion;
 using NHibernate.Linq;
 
 namespace Nameless.Persistence.NHibernate {
-
     public sealed class Writer : IWriter {
-
         #region Private Read-Only Fields
 
         private readonly ISession _session;
@@ -16,7 +14,7 @@ namespace Nameless.Persistence.NHibernate {
         #region Public Constructors
 
         public Writer(ISession session) {
-            Garda.Prevent.Null(session, nameof(session));
+            Prevent.Against.Null(session, nameof(session));
 
             _session = session;
         }
@@ -49,7 +47,7 @@ namespace Nameless.Persistence.NHibernate {
 
         private static int UpSert<TEntity>(ISession session, TEntity entity, Expression<Func<TEntity, bool>>? filter = null)
             where TEntity : class {
-            Garda.Prevent.Null(entity, nameof(entity));
+            Prevent.Against.Null(entity, nameof(entity));
 
             var exists = false;
             if (entity != null && filter != null) {

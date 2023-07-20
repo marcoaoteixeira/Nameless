@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Localization {
-
     public interface IStringLocalizerFactory {
-
         #region Methods
 
         /// <summary>

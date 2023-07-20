@@ -1,10 +1,7 @@
-﻿using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
-using MS_LocalizedString = Microsoft.Extensions.Localization.LocalizedString;
+﻿using Microsoft.Extensions.Localization;
 
 namespace Nameless.Localization.Microsoft {
-
-    public sealed class StringLocalizerAdapter : MS_IStringLocalizer {
-
+    public sealed class StringLocalizerAdapter : IMSStringLocalizer {
         #region Private Read-Only Fields
 
         private readonly IStringLocalizer _localizer;
@@ -14,20 +11,20 @@ namespace Nameless.Localization.Microsoft {
         #region Public Constructors
 
         public StringLocalizerAdapter(IStringLocalizer localizer) {
-            Garda.Prevent.Null(localizer, nameof(localizer));
-
-            _localizer = localizer;
+            _localizer = Prevent.Against.Null(localizer, nameof(localizer));
         }
 
         #endregion
 
         #region MS_IStringLocalizer Members
 
-        public MS_LocalizedString this[string name] => _localizer[name].ToLocalizedString();
+        public LocalizedString this[string name]
+            => _localizer[name].ToLocalizedString();
 
-        public MS_LocalizedString this[string name, params object[] arguments] => _localizer[name, args: arguments].ToLocalizedString();
+        public LocalizedString this[string name, params object[] arguments]
+            => _localizer[name, args: arguments].ToLocalizedString();
 
-        public IEnumerable<MS_LocalizedString> GetAllStrings(bool includeParentCultures) {
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) {
             var items = _localizer.List(includeParentCultures);
             foreach (var item in items) {
                 yield return item.ToLocalizedString();

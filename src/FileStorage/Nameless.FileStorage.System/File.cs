@@ -2,9 +2,7 @@ using Nameless.Infrastructure;
 using Sys_Path = System.IO.Path;
 
 namespace Nameless.FileStorage.System {
-
     public sealed class File : IFile {
-
         #region Private Properties
 
         private string Root { get; }
@@ -49,12 +47,12 @@ namespace Nameless.FileStorage.System {
         /// <exception cref="FileStorageException">
         /// Thrown if the current file does not exist.
         /// </exception>
-        public async Task<Stream> OpenAsync(CancellationToken cancellationToken = default) {
+        public Task<Stream> OpenAsync(CancellationToken cancellationToken = default) {
             if (!Exists) { throw new FileStorageException("File not found."); }
 
             // We are setting buffer size to 1 to prevent FileStream from
             // allocating it's internal buffer 0 causes constructor to throw
-            var result = new FileStream(
+            Stream result = new FileStream(
                 path: CurrentFile.FullName,
                 mode: FileMode.Open,
                 access: FileAccess.Read,
@@ -64,12 +62,12 @@ namespace Nameless.FileStorage.System {
             );
 
             if (cancellationToken.IsCancellationRequested) {
-                await result.DisposeAsync();
+                result.Dispose();
 
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            return result;
+            return Task.FromResult(result);
         }
 
         /// <inheritdoc />
@@ -106,7 +104,7 @@ namespace Nameless.FileStorage.System {
         /// <paramref name="destFilePath" /> is empty or white spaces.
         /// </exception>
         public Task CopyAsync(string destFilePath, bool overwrite = false, CancellationToken cancellationToken = default) {
-            Garda.Prevent.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
+            Prevent.Against.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
 
             var destination = PathHelper.GetPhysicalPath(Root, destFilePath);
 
@@ -150,7 +148,7 @@ namespace Nameless.FileStorage.System {
         /// middle of the <c>string</c>.
         /// </exception>
         public Task MoveAsync(string destFilePath, CancellationToken cancellationToken = default) {
-            Garda.Prevent.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
+            Prevent.Against.NullOrWhiteSpace(destFilePath, nameof(destFilePath));
 
             var destination = PathHelper.GetPhysicalPath(Root, destFilePath);
 

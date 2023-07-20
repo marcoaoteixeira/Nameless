@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Collections.Generic {
-
     public sealed class AsyncEnumerable<T> : IAsyncEnumerable<T> {
-
         #region Private Read-Only Fields
 
         private readonly IEnumerable<T> _enumerable;
@@ -11,7 +9,7 @@
         #region Public Constructors
 
         public AsyncEnumerable(IEnumerable<T> enumerable) {
-            Garda.Prevent.Null(enumerable, nameof(enumerable));
+            Prevent.Against.Null(enumerable, nameof(enumerable));
 
             _enumerable = enumerable;
         }
@@ -27,7 +25,6 @@
     }
 
     public sealed class AsyncEnumerator<T> : IAsyncEnumerator<T> {
-
         #region Private Read-Only Fields
 
         private readonly CancellationToken _cancellationToken;
@@ -44,7 +41,7 @@
         #region Public Constructors
 
         public AsyncEnumerator(IEnumerable<T> enumerable, CancellationToken cancellationToken = default) {
-            Garda.Prevent.Null(enumerable, nameof(enumerable));
+            Prevent.Against.Null(enumerable, nameof(enumerable));
 
             _enumerator = enumerable.GetEnumerator();
             _cancellationToken = cancellationToken;

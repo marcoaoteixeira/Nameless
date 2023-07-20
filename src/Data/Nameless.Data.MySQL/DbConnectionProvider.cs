@@ -3,23 +3,16 @@ using MySql.Data.MySqlClient;
 using Nameless.Logging;
 
 namespace Nameless.Data.MySQL {
-
     public sealed class DbConnectionProvider : IDbConnectionFactory {
-
         #region Private Read-Only Fields
 
         private readonly DatabaseOptions _options;
 
         #endregion
 
-        #region Private Fields
-
-        private ILogger _logger = null!;
-
-        #endregion
-
         #region Public Properties
 
+        private ILogger? _logger;
         public ILogger Logger {
             get { return _logger ??= NullLogger.Instance; }
             set { _logger = value; }
@@ -29,7 +22,7 @@ namespace Nameless.Data.MySQL {
 
         #region Public Constructors
 
-        public DbConnectionProvider(DatabaseOptions options) {
+        public DbConnectionProvider(DatabaseOptions? options = null) {
             _options = options ?? DatabaseOptions.Default;
         }
 

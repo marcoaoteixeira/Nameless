@@ -1,11 +1,9 @@
 ﻿namespace Nameless.Collections.Generic {
-
     /// <summary>
     /// Defines methods and properties that will represent a page of items.
     /// </summary>
     /// <typeparam name="T">Type of the page.</typeparam>
     public interface IPage<T> : IEnumerable<T> {
-
         #region Properties
 
         /// <summary>

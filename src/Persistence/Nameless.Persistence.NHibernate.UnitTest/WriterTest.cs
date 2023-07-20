@@ -1,5 +1,6 @@
 using System.Data.SQLite;
 using Nameless.NHibernate;
+using Nameless.NHibernate.Services.Impl;
 using Nameless.Persistence.NHibernate.UnitTesting.Fixtures;
 using NHibernate;
 using NHibernate.Cfg;

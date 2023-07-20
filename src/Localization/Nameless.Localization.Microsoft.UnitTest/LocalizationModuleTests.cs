@@ -3,9 +3,9 @@ using Autofac;
 using FluentAssertions;
 using Nameless.FileStorage.System;
 using Nameless.Localization.Json;
-using Nameless.Localization.Microsoft.UnitTests.Fixtures;
+using Nameless.Localization.Microsoft.UnitTest.Fixtures;
 
-namespace Nameless.Localization.Microsoft.UnitTests {
+namespace Nameless.Localization.Microsoft.UnitTest {
     public class LocalizationModuleTests {
 
         private static IContainer CreateContainer(Action<ContainerBuilder>? builder = default) {

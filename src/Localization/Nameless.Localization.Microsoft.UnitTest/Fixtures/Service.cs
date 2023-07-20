@@ -1,13 +1,11 @@
-﻿using MS_IStringLocalizer = Microsoft.Extensions.Localization.IStringLocalizer;
-
-namespace Nameless.Localization.Microsoft.UnitTests.Fixtures {
+﻿namespace Nameless.Localization.Microsoft.UnitTest.Fixtures {
 
     public class Service {
 
-        private MS_IStringLocalizer _localizer = default!;
-        public MS_IStringLocalizer Localizer {
-            get { return _localizer ??= NullStringLocalizer.Instance; }
-            set { _localizer = value ?? NullStringLocalizer.Instance; }
+        private IMSStringLocalizer _localizer = default!;
+        public IMSStringLocalizer Localizer {
+            get { return _localizer ??= MSNullStringLocalizer.Instance; }
+            set { _localizer = value; }
         }
 
         public string Get(string key, params object[] args) {

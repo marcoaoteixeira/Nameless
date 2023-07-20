@@ -17,8 +17,10 @@ namespace Nameless {
         /// <returns>The stream as a string.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="InvalidOperationException">if <paramref name="self"/> can't be read.</exception>
-        public static string ToText(this Stream self, Encoding? encoding = default, BufferSize bufferSize = BufferSize.Small) {
-            if (!self.CanRead) { throw new InvalidOperationException("Can't read stream."); }
+        public static string ToText(this Stream self, Encoding? encoding = null, BufferSize bufferSize = BufferSize.Small) {
+            if (!self.CanRead) {
+                throw new InvalidOperationException("Can't read stream.");
+            }
 
             using var reader = new StreamReader(self, encoding: encoding ?? Defaults.Encodings.UTF8, bufferSize: (int)bufferSize);
             return reader.ReadToEnd();
