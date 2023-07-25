@@ -3,11 +3,9 @@ using Autofac.Builder;
 using Autofac.Features.LightweightAdapters;
 
 namespace Nameless.Autofac {
-
     public sealed class RegistrationDecoratorBuilder<TService, TImplementation> : IRegistrationDecoratorBuilder<TService, TImplementation>
         where TService : notnull
         where TImplementation : notnull, TService {
-
         #region Private Read-Only Fields
 
         private readonly ContainerBuilder _builder;
@@ -16,16 +14,14 @@ namespace Nameless.Autofac {
 
         #region Private Properties
 
-        private IList<Type> Decorators { get; } = new List<Type>();
+        private List<Type> Decorators { get; } = new();
 
         #endregion
 
         #region Public Constructors
 
         public RegistrationDecoratorBuilder(ContainerBuilder builder) {
-            Prevent.Against.Null(builder, nameof(builder));
-
-            _builder = builder;
+            _builder = Prevent.Against.Null(builder, nameof(builder));
         }
 
         #endregion
@@ -93,12 +89,13 @@ namespace Nameless.Autofac {
                     serviceType: lastDecorator
                 );
 
-            return _builder.RegisterDecorator<TService>(
-                (context, inner) => (TService)context.ResolveKeyed(
+            return _builder.RegisterDecorator<TService>((context, inner)
+                => (TService)context.ResolveKeyed(
                     lastDecorator.FullName!,
                     lastDecorator,
-                    new TypedParameter(typeof(TService), inner)),
-                registrationName);
+                    new TypedParameter(typeof(TService), inner)
+                ), registrationName
+            );
         }
 
         #endregion

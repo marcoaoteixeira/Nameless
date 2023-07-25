@@ -32,7 +32,7 @@ namespace Nameless.Logging.Microsoft {
             static string? join(string? previous, string? actual) {
                 return string.IsNullOrEmpty(previous)
                     ? actual
-                    : string.Concat(previous, Constants.Separators.Space, actual);
+                    : string.Concat(previous, Constants.Separators.SPACE, actual);
             }
 
             externalScopeProvider.ForEachScope((scope, @event) => {
