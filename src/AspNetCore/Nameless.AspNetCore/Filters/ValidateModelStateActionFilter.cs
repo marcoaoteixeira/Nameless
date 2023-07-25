@@ -12,7 +12,8 @@ namespace Nameless.AspNetCore.Filters {
         /// <inheritdoc />
         public override void OnActionExecuting(ActionExecutingContext context) {
             if (!context.ModelState.IsValid) {
-                context.Result = new BadRequestObjectResult(context.ModelState.CreateBadRequestOutput());
+                var errorCollection = context.ModelState.ToErrorCollection();
+                context.Result = new BadRequestObjectResult(errorCollection);
             }
         }
 

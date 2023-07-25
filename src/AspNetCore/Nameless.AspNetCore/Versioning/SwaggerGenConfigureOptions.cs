@@ -40,7 +40,7 @@ namespace Nameless.AspNetCore.Versioning {
         #region Private Static Methods
 
         private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description, IHostEnvironment hostEnvironment, SwaggerPageOptions settings) {
-            return new OpenApiInfo {
+            return new() {
                 Title = hostEnvironment.ApplicationName,
                 Version = description.ApiVersion.ToString(),
                 Description = $"{(description.IsDeprecated ? "[DEPRECATED] " : string.Empty)}{settings.Description}",

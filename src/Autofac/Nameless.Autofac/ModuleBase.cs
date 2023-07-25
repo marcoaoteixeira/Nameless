@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 
 namespace Nameless.Autofac {
-
     public abstract class ModuleBase : global::Autofac.Module {
-
         #region Protected Properties
 
         /// <summary>

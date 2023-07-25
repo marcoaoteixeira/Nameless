@@ -29,10 +29,9 @@ namespace Nameless.AspNetCore {
 
         #region Private Static Methods
 
-        private const string X_FORWARDED_FOR_KEY = "X-Forwarded-For";
         private static IPAddress GetIPAddress(HttpContext httpContext)
-            => httpContext.Request.Headers.ContainsKey(X_FORWARDED_FOR_KEY)
-                ? IPAddress.Parse(httpContext.Request.Headers[X_FORWARDED_FOR_KEY].ToString())
+            => httpContext.Request.Headers.ContainsKey(Constants.HttpRequestHeaders.X_FORWARDED_FOR)
+                ? IPAddress.Parse(httpContext.Request.Headers[Constants.HttpRequestHeaders.X_FORWARDED_FOR].ToString())
                 : httpContext.Connection.RemoteIpAddress ?? IPAddress.None;
 
         #endregion

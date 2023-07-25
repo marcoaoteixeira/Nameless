@@ -6,11 +6,11 @@
 
             #region Public Constants
 
-            public const char Space = ' ';
-            public const char Dash = '-';
-            public const char Comma = ',';
-            public const char Semicolon = ';';
-            public const char Dot = '.';
+            public const char SPACE = ' ';
+            public const char DASH = '-';
+            public const char COMMA = ',';
+            public const char SEMICOLON = ';';
+            public const char DOT = '.';
 
             #endregion
         }

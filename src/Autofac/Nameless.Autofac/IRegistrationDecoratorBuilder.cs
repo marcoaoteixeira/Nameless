@@ -2,7 +2,6 @@
 using Autofac.Features.LightweightAdapters;
 
 namespace Nameless.Autofac {
-
     public interface IRegistrationDecoratorBuilder<TService, TImplementation>
         where TService : notnull
         where TImplementation : notnull, TService {

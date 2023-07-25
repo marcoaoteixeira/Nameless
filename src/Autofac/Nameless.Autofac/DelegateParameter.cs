@@ -4,9 +4,7 @@ using Autofac;
 using Autofac.Core;
 
 namespace Nameless.Autofac {
-
     public class DelegateParameter : Parameter {
-
         #region Private Read-Only Fields
 
         private readonly string _name;

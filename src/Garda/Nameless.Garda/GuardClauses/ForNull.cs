@@ -7,7 +7,7 @@ namespace Nameless {
 
         [DebuggerStepThrough]
         public static T Null<T>(this Prevent _, [NotNull] T input, string name, string? message = null)
-            => input ?? throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
+            => input ?? throw new ArgumentNullException(name, message ?? $"Argument {name} cannot be null.");
     }
 
     #endregion
