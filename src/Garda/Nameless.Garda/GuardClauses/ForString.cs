@@ -6,13 +6,26 @@ namespace Nameless {
         #region Public Static Methods
 
         [DebuggerStepThrough]
-        public static string NullOrWhiteSpace(this Prevent self, [NotNull] string input, string name, string? message = null) {
+        public static string NullOrEmpty(this Prevent _, [NotNull] string input, string name, string? message = null) {
             if (input == null) {
-                throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
+                throw new ArgumentNullException(name, message ?? $"Argument {name} cannot be null.");
+            }
+
+            if (input.Length == 0) {
+                throw new ArgumentException(message ?? $"Argument {name} cannot be empty.", name);
+            }
+
+            return input;
+        }
+
+        [DebuggerStepThrough]
+        public static string NullOrWhiteSpace(this Prevent _, [NotNull] string input, string name, string? message = null) {
+            if (input == null) {
+                throw new ArgumentNullException(name, message ?? $"Argument {name} cannot be null.");
             }
 
             if (input.Trim().Length == 0) {
-                throw new ArgumentException(message ?? $"Argument {name} is empty or white space.", name);
+                throw new ArgumentException(message ?? $"Argument {name} cannot be empty or white space.", name);
             }
 
             return input;

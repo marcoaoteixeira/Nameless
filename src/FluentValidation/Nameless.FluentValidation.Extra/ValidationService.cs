@@ -3,7 +3,7 @@ using FluentValidation;
 using FluentValidation.Results;
 
 namespace Nameless.FluentValidation {
-    public sealed class ValidatorProvider : IValidatorProvider {
+    public sealed class ValidationService : IValidationService {
         #region Private Read-Only Fields
 
         private readonly ILifetimeScope _scope;
@@ -12,7 +12,7 @@ namespace Nameless.FluentValidation {
 
         #region Public Constructors
 
-        public ValidatorProvider(ILifetimeScope scope) {
+        public ValidationService(ILifetimeScope scope) {
             _scope = Prevent.Against.Null(scope, nameof(scope));
         }
 
@@ -23,11 +23,7 @@ namespace Nameless.FluentValidation {
         public Task<ValidationResult> ValidateAsync<T>(T instance, bool throwOnError = false, CancellationToken cancellationToken = default) {
             Prevent.Against.Null(instance, nameof(instance));
 
-            var validator = _scope.ResolveOptional<IValidator<T>>();
-
-            if (validator == null) {
-                return Task.FromResult(new ValidationResult());
-            }
+            var validator = _scope.Resolve<IValidator<T>>();
 
             return validator.ValidateAsync(
                 instance,

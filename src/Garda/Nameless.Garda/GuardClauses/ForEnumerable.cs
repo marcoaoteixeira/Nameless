@@ -9,12 +9,12 @@ namespace Nameless {
         [DebuggerStepThrough]
         public static T NullOrEmpty<T>(this Prevent _, [NotNull] T input, string name, string? message = null) where T : class, IEnumerable {
             if (input == null) {
-                throw new ArgumentNullException(name, message ?? $"Argument {name} is null.");
+                throw new ArgumentNullException(name, message ?? $"Argument {name} cannot be null.");
             }
 
             // Costs O(1)
             if (input is ICollection collection && collection.Count == 0) {
-                throw new ArgumentException(message ?? $"Argument {name} is empty.", name);
+                throw new ArgumentException(message ?? $"Argument {name} cannot be empty.", name);
             }
 
             // Costs O(N)
@@ -24,7 +24,7 @@ namespace Nameless {
                 disposable.Dispose();
             }
             if (!canMoveNext) {
-                throw new ArgumentException(message ?? $"Argument {name} is empty.", name);
+                throw new ArgumentException(message ?? $"Argument {name} cannot be empty.", name);
             }
             return input;
         }
