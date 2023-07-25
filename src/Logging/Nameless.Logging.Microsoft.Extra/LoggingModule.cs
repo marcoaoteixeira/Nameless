@@ -4,7 +4,7 @@ using Autofac.Core.Registration;
 using Nameless.Autofac;
 using Nameless.Logging.log4net;
 
-namespace Nameless.Logging.Microsoft.Extra {
+namespace Nameless.Logging.Microsoft {
     public sealed class LoggingModule : ModuleBase {
         #region Protected Override Methods
 

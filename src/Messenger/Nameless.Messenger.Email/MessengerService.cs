@@ -58,7 +58,7 @@ namespace Nameless.Messenger.Email {
                 throw new InvalidOperationException("Pickup directory not specified or invalid.");
             }
 
-            var now = _clock.UtcNow;
+            var now = _clock.GetUtcNow();
             var path = Path.Combine(_fileStorage.Root, _opts.PickupDirectoryFolder, $"{now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.eml");
             using var stream = new FileStream(path, FileMode.Create);
             await message.WriteToAsync(stream, headersOnly: false, cancellationToken);

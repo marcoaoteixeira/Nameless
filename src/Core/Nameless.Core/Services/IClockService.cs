@@ -2,8 +2,8 @@
     public interface IClockService {
         #region Properties
 
-        DateTime UtcNow { get; }
-        DateTimeOffset OffsetUtcNow { get; }
+        DateTime GetUtcNow();
+        DateTimeOffset GetUtcNowOffset();
 
         #endregion
     }

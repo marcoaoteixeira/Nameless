@@ -10,7 +10,7 @@ namespace Nameless.AspNetCore {
             Prevent.Against.Null(optionsProvider, nameof(optionsProvider));
 
             var opts = optionsProvider();
-            var key = GetSectionKey<TOptions>();
+            var key = typeof(TOptions).Name.RemoveTail(Internals.ClassTokens.OPTIONS, Internals.ClassTokens.SETTINGS);
             configuration.Bind(key, opts);
             self.AddSingleton(opts);
             return self;
@@ -18,16 +18,6 @@ namespace Nameless.AspNetCore {
 
         public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration) where TOptions : class, new()
             => PushOptions(self, configuration, () => new TOptions());
-
-        #endregion
-
-        #region Private Static Methods
-
-        private static string GetSectionKey<TOptions>() {
-            return typeof(TOptions).Name
-                .Replace("Options", string.Empty)
-                .Replace("Settings", string.Empty);
-        }
 
         #endregion
     }
