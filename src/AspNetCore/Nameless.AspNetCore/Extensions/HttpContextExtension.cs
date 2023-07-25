@@ -30,8 +30,8 @@ namespace Nameless.AspNetCore {
         #region Private Static Methods
 
         private static IPAddress GetIPAddress(HttpContext httpContext)
-            => httpContext.Request.Headers.ContainsKey(Constants.HttpRequestHeaders.X_FORWARDED_FOR)
-                ? IPAddress.Parse(httpContext.Request.Headers[Constants.HttpRequestHeaders.X_FORWARDED_FOR].ToString())
+            => httpContext.Request.Headers.ContainsKey(Internals.HttpRequestHeaders.X_FORWARDED_FOR)
+                ? IPAddress.Parse(httpContext.Request.Headers[Internals.HttpRequestHeaders.X_FORWARDED_FOR].ToString())
                 : httpContext.Connection.RemoteIpAddress ?? IPAddress.None;
 
         #endregion

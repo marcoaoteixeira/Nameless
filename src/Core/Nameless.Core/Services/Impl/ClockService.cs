@@ -35,15 +35,13 @@
 
         #region IClock Members
 
-        public DateTime UtcNow => DateTime.UtcNow;
-        public DateTimeOffset OffsetUtcNow {
-            get {
-                return new(new DateTime(
-                    ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
-                    kind: DateTimeKind.Utc
-                ));
-            }
-        }
+        public DateTime GetUtcNow()
+            => DateTime.UtcNow;
+        public DateTimeOffset GetUtcNowOffset()
+            => new(new DateTime(
+                ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
+                kind: DateTimeKind.Utc
+            ));
 
         #endregion
     }

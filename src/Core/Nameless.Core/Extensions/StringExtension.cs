@@ -536,7 +536,7 @@ namespace Nameless {
         /// <param name="self">The current instance of <see cref="string"/>.</param>
         /// <param name="values">A collection of values to match.</param>
         /// <returns>The current <see cref="string"/> without the matching end, if exists.</returns>
-        public static string TrimEnd(this string self, params string[] values) {
+        public static string RemoveTail(this string self, params string[] values) {
             foreach (var value in values) {
                 if (self.EndsWith(value)) {
                     return self[..self.LastIndexOf(value)];
