@@ -223,9 +223,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Garda.UnitTest", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FluentValidation", "FluentValidation", "{4215F055-1E7D-4A30-9592-433FA73BBCF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.FluentValidation.Extra", "src\FluentValidation\Nameless.FluentValidation.Extra\Nameless.FluentValidation.Extra.csproj", "{2850E94C-622D-4FC7-A04B-5908B7BC36D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FluentValidation.Extra", "src\FluentValidation\Nameless.FluentValidation.Extra\Nameless.FluentValidation.Extra.csproj", "{2850E94C-622D-4FC7-A04B-5908B7BC36D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.FluentValidation", "src\FluentValidation\Nameless.FluentValidation\Nameless.FluentValidation.csproj", "{C69C49E2-4129-43AB-8885-EFB0C363F304}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FluentValidation", "src\FluentValidation\Nameless.FluentValidation\Nameless.FluentValidation.csproj", "{C69C49E2-4129-43AB-8885-EFB0C363F304}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.AutoMapper.Extra", "src\AutoMapper\Nameless.AutoMapper.Extra\Nameless.AutoMapper.Extra.csproj", "{612F2E58-9391-4C68-B64B-F62AB9DA4982}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AutoMapper", "AutoMapper", "{7FAC1AA0-C73F-49D9-8BC8-AE6FB21F0689}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{AA8AFEF8-3CFD-40DA-8F18-B0EFD43A01D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Microservice.Core", "apps\Microservice\Nameless.Microservice.Core\Nameless.Microservice.Core.csproj", "{47E2D016-AC87-45F2-9C01-D3842F3CDA45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservice", "Microservice", "{B8DCE16F-1049-4A93-AD3B-CDAC1DAE37A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Microservice.Web", "apps\Microservice\Nameless.Microservice.Web\Nameless.Microservice.Web.csproj", "{2B545ABA-9D40-4054-87E1-E63DD03C2AFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -577,6 +589,18 @@ Global
 		{C69C49E2-4129-43AB-8885-EFB0C363F304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C69C49E2-4129-43AB-8885-EFB0C363F304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C69C49E2-4129-43AB-8885-EFB0C363F304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{612F2E58-9391-4C68-B64B-F62AB9DA4982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{612F2E58-9391-4C68-B64B-F62AB9DA4982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{612F2E58-9391-4C68-B64B-F62AB9DA4982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{612F2E58-9391-4C68-B64B-F62AB9DA4982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47E2D016-AC87-45F2-9C01-D3842F3CDA45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47E2D016-AC87-45F2-9C01-D3842F3CDA45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47E2D016-AC87-45F2-9C01-D3842F3CDA45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47E2D016-AC87-45F2-9C01-D3842F3CDA45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B545ABA-9D40-4054-87E1-E63DD03C2AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B545ABA-9D40-4054-87E1-E63DD03C2AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B545ABA-9D40-4054-87E1-E63DD03C2AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B545ABA-9D40-4054-87E1-E63DD03C2AFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -692,6 +716,11 @@ Global
 		{4215F055-1E7D-4A30-9592-433FA73BBCF8} = {94B6A03B-BC5A-4376-880C-DA59F030A953}
 		{2850E94C-622D-4FC7-A04B-5908B7BC36D5} = {4215F055-1E7D-4A30-9592-433FA73BBCF8}
 		{C69C49E2-4129-43AB-8885-EFB0C363F304} = {4215F055-1E7D-4A30-9592-433FA73BBCF8}
+		{612F2E58-9391-4C68-B64B-F62AB9DA4982} = {7FAC1AA0-C73F-49D9-8BC8-AE6FB21F0689}
+		{7FAC1AA0-C73F-49D9-8BC8-AE6FB21F0689} = {94B6A03B-BC5A-4376-880C-DA59F030A953}
+		{47E2D016-AC87-45F2-9C01-D3842F3CDA45} = {B8DCE16F-1049-4A93-AD3B-CDAC1DAE37A1}
+		{B8DCE16F-1049-4A93-AD3B-CDAC1DAE37A1} = {AA8AFEF8-3CFD-40DA-8F18-B0EFD43A01D8}
+		{2B545ABA-9D40-4054-87E1-E63DD03C2AFD} = {B8DCE16F-1049-4A93-AD3B-CDAC1DAE37A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0218EE4E-9F2A-4987-8829-99002E04A58F}

@@ -5,7 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Nameless.AspNetCore</RootNamespace>
+		<RootNamespace>Nameless.Microservice</RootNamespace>
 
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -15,11 +15,11 @@
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
-		<Description>Library to be used in conjunction with ASP.NET Core.</Description>
+		<Description>ASP.NET Core Microservice core library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/AspNetCore/Nameless.AspNetCore</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/apps/Microservice/Nameless.Microservice.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -43,14 +43,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\AspNetCore\Nameless.AspNetCore\Nameless.AspNetCore.csproj" />
+	  <ProjectReference Include="..\..\..\src\Core\Nameless.Core\Nameless.Core.csproj" />
+	  <ProjectReference Include="..\..\..\src\Logging\Nameless.Logging.Abstractions\Nameless.Logging.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

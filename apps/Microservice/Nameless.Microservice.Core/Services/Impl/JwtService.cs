@@ -1,14 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
-using Nameless.AspNetCore.Options;
+using Nameless.Logging;
+using Nameless.Microservice.Options;
 using Nameless.Services;
 using Nameless.Services.Impl;
 
-namespace Nameless.AspNetCore.Services.Impl {
+namespace Nameless.Microservice.Services.Impl {
     public sealed class JwtService : IJwtService {
         #region Private Read-Only Fields
 
@@ -98,7 +97,7 @@ namespace Nameless.AspNetCore.Services.Impl {
                 if (!validate) { principal = null; }
 
                 return validate;
-            } catch (Exception ex) { Logger.LogError(ex, ex.Message); }
+            } catch (Exception ex) { Logger.Error(ex, ex.Message); }
 
             return false;
         }

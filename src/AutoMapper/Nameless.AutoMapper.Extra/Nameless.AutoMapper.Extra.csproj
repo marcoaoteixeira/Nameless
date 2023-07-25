@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Nameless.FluentValidation</RootNamespace>
+		<RootNamespace>Nameless.AutoMapper</RootNamespace>
 
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -15,11 +15,11 @@
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
-		<Description>FluentValidation extra library.</Description>
+		<Description>AutoMapper extra library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/FluentValidation/Nameless.FluentValidation</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/AutoMapper/Nameless.AutoMapper.Extra</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -32,18 +32,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="readme.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="11.5.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-	</ItemGroup>
-
+	
 </Project>

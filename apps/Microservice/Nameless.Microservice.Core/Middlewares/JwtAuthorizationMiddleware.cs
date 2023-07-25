@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Nameless.AspNetCore.Services;
+using Nameless.Microservice.Services;
 
-namespace Nameless.AspNetCore.Middlewares {
+namespace Nameless.Microservice.Middlewares {
     public sealed class JwtAuthorizationMiddleware {
         #region Private Read-Only Fields
 

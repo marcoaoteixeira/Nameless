@@ -1,4 +1,4 @@
-﻿namespace Nameless.AspNetCore.Options {
+﻿namespace Nameless.Microservice.Options {
     public sealed class JwtOptions {
         #region Public Static Read-Only Properties
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Nameless.AspNetCore.Options;
+using Nameless.Microservice.Options;
 
-namespace Nameless.AspNetCore {
+namespace Nameless.Microservice {
     public static class JwtOptionsExtension {
         #region Public Static Methods
 
