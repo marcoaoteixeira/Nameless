@@ -5,7 +5,7 @@ namespace Nameless.AutoMapper {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection ConfigureAutoMapper(this IServiceCollection services, params Assembly[] assemblies)
+        public static IServiceCollection PrepareAutoMapper(this IServiceCollection services, params Assembly[] assemblies)
             => services.AddAutoMapper(assemblies);
 
         #endregion

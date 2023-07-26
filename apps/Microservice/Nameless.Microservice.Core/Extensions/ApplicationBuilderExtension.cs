@@ -63,6 +63,14 @@ namespace Nameless.Microservice.Extensions {
             return app;
         }
 
+        public static IApplicationBuilder ApplyErrorHandling(this IApplicationBuilder app, IHostEnvironment env) {
+            if (env.IsDevelopment()) {
+                app.UseExceptionHandler("/error");
+            }
+
+            return app;
+        }
+
         #endregion
     }
 }
