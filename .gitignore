@@ -68,7 +68,7 @@ _TeamCity*
 # Remove builded nupkg folder
 nuget_packages
 **/packages/
-nuget.config
+NuGet.Config
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
