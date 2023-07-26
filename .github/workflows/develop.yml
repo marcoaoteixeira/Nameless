@@ -34,7 +34,7 @@ jobs:
         run: |
           dotnet nuget add source \
           --username marcoaoteixeira \
-          --password ${{ secrets.GITHUB_TOKEN }} \
+          --password ${{ secrets.NUPKG_API_KEY }} \
           --store-password-in-clear-text \
           --name github ${{ vars.NUPKG_SOURCE_URL }}
 
