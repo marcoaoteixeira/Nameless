@@ -33,7 +33,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-		<PackageReference Include="Nameless.Garda" Version="1.2.4" />
+		<PackageReference Include="Nameless.AutoMapper.Extra" Version="1.2.6" />
+		<PackageReference Include="Nameless.FluentValidation.Extra" Version="1.2.6" />
+		<PackageReference Include="Nameless.Microservice.Core" Version="1.2.6" />
 	</ItemGroup>
 
 </Project>

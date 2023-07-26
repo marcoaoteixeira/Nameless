@@ -68,14 +68,6 @@ namespace Nameless.Microservice.Extensions {
             return services;
         }
 
-        public static IApplicationBuilder PrepareErrorHandling(this IApplicationBuilder app, IHostEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseExceptionHandler("/error");
-            }
-
-            return app;
-        }
-
         public static IServiceCollection PrepareHealthCheck(this IServiceCollection services) {
             services.AddHealthChecks();
 
