@@ -30,6 +30,14 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
+      - name: Add GitHub Package Registry
+        run: |
+          dotnet nuget add source \
+          --username marcoaoteixeira \
+          --password ${{ secrets.GITHUB_TOKEN }} \
+          --store-password-in-clear-text \
+          --name github ${{ vars.NUGET_SOURCE_URL }}
+
       - name: Restore Solution
         run: dotnet restore
 
