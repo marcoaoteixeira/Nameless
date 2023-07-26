@@ -1,4 +1,4 @@
-//using Autofac.Extensions.DependencyInjection;
+using Autofac.Extensions.DependencyInjection;
 
 namespace Nameless.Microservice.Web {
     public static class EntryPoint {
@@ -8,21 +8,21 @@ namespace Nameless.Microservice.Web {
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(builder => {
                     builder
                         .ConfigureAppConfiguration((ctx, config) => {
                             config.AddJsonFile("AppSettings.json", optional: true, reloadOnChange: true);
                             config.AddJsonFile($"AppSettings.{ctx.HostingEnvironment.EnvironmentName}.json", optional: true);
                             config.AddEnvironmentVariables();
-                            //config.AddUserSecrets<StartUp>();
+                            config.AddUserSecrets<StartUp>();
                         })
                         .ConfigureLogging((webHostBuilderContext, loggingBuilder) => {
                             loggingBuilder.AddConfiguration(webHostBuilderContext.Configuration.GetSection("Logging"));
                             loggingBuilder.AddConsole();
                             loggingBuilder.AddDebug();
-                        });
-                        //.UseStartup<StartUp>();
+                        })
+                        .UseStartup<StartUp>();
                 });
 
         #endregion

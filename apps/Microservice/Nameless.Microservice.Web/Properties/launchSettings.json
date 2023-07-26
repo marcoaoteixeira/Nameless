@@ -1,8 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-
   "profiles": {
-    "Swagger over HTTP": {
+    "Run with HTTP": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -10,10 +8,9 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:50000"
+      "applicationUrl": "http://localhost:5080"
     },
-
-    "Swagger over HTTPS": {
+    "Run with HTTPS": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -21,33 +18,37 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:50001;http://localhost:50000"
+      "applicationUrl": "https://localhost:5443;http://localhost:5080"
     },
-
-    "Swagger on IIS Express": {
+    "Run with IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:50080/swagger",
+      "sslPort": 44300
     },
-
-    "Swagger on Docker": {
+    "Run with Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "publishAllPorts": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "httpPort": 5080,
+      "sslPort": 5443,
       "useSSL": true
     }
   },
-
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5000/swagger",
-      "sslPort": 44325
+      "applicationUrl": "http://localhost:50180/",
+      "sslPort": 44330
     }
   }
 }

@@ -1,6 +1,6 @@
-﻿# Nameless ASP.NET Core
+﻿# Nameless Microservice Core
 
-Library to use with ASP.NET Core projects.
+Library to use with Nameless Microservice (template) projects.
 
 _I tried to mention every person that I got something from. If you find code
 that needs to be given the correct authorship, please, let me know._
@@ -23,9 +23,9 @@ Well, no need to install anything.
 
 ### Testing
 
-There is a test projects. Maybe you'll need to install the coverage tool and a
-report tool. If I'm not mistaken, Visual Studio already has those dependencies
-installed for you after restore. But...
+There is a test projects, or maybe not. Maybe you'll need to install the
+coverage tool and a report tool. If I'm not mistaken, Visual Studio
+already has those dependencies installed for you after restore. But...
 
 _.NET Coverlet Tool_
 
@@ -45,8 +45,7 @@ Nothing defined, use your good sense.
 
 ## Deployment
 
-I'm using GitHub Actions to act as a CI/CD. All files are located in the
-.github folder.
+TBD
 
 ## Contribuition
 

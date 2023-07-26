@@ -1,6 +1,6 @@
-﻿# Nameless ASP.NET Core
+﻿# Nameless Microservice (template)
 
-Library to use with ASP.NET Core projects.
+A small template to be used when creating microservices.
 
 _I tried to mention every person that I got something from. If you find code
 that needs to be given the correct authorship, please, let me know._
@@ -45,8 +45,7 @@ Nothing defined, use your good sense.
 
 ## Deployment
 
-I'm using GitHub Actions to act as a CI/CD. All files are located in the
-.github folder.
+TBD
 
 ## Contribuition
 
