@@ -60,5 +60,5 @@ jobs:
           cd ${{ env.ARTIFACTS_FOLDER_PATH }}
           dotnet nuget push *.nupkg \
           --source ${{ vars.NUGET_SOURCE_URL }} \
-          --api-key ${{ secrets.GITHUB_TOKEN }} \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
           --skip-duplicate
