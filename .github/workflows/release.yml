@@ -57,8 +57,8 @@ jobs:
       - name: Publish NuGet packages
         if: success()
         run: |
-          dotnet nuget push \
-          ${{ env.ARTIFACTS_FOLDER_PATH }}/*.nupkg \
+          cd ${{ env.ARTIFACTS_FOLDER_PATH }}
+          dotnet nuget push *.nupkg \
           --source ${{ vars.NUGET_SOURCE_URL }} \
           --api-key ${{ secrets.GITHUB_TOKEN }} \
           --skip-duplicate
