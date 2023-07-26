@@ -34,7 +34,7 @@ jobs:
         run: |
           dotnet nuget add source \
           --username marcoaoteixeira \
-          --password *Vi4spluspO!
+          --password *Vi4spluspO! \
           --store-password-in-clear-text \
           --name github ${{ vars.NUPKG_SOURCE_URL }}
 
