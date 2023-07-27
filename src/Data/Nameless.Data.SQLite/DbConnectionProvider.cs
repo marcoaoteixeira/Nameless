@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Data.SQLite {
     public sealed class DbConnectionProvider : IDbConnectionFactory {
@@ -14,7 +15,7 @@ namespace Nameless.Data.SQLite {
 
         private ILogger? _logger;
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
+            get => _logger ??= NullLogger.Instance;
             set { _logger = value; }
         }
 
@@ -37,7 +38,7 @@ namespace Nameless.Data.SQLite {
 
             if (connection.State != ConnectionState.Open) {
                 try { connection.Open(); }
-                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
             }
 
             return connection;

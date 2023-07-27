@@ -32,6 +32,24 @@ namespace Nameless.FluentValidation {
             );
         }
 
+        public async Task<ValidationResult> ValidateAsync(object instance, bool throwOnError = false, CancellationToken cancellationToken = default) {
+            Prevent.Against.Null(instance, nameof(instance));
+
+            var instanceType = instance.GetType();
+            var validatorType = typeof(IValidator<>).MakeGenericType(instanceType);
+            var validator = _scope.Resolve(validatorType) as IValidator
+                ?? throw new InvalidOperationException($"Could not found validator for {instanceType.FullName}");
+            var validationContextType = typeof(ValidationContext<>).MakeGenericType(instanceType);
+            var validationContext = Activator.CreateInstance(validationContextType, instance) as IValidationContext;
+
+            var validationResult = await validator.ValidateAsync(validationContext, cancellationToken);
+            if (validationResult.Failure() && throwOnError) {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+            return validationResult;
+        }
+
         #endregion
     }
 }

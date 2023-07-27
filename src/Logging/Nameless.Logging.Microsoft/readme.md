@@ -1,4 +1,4 @@
-﻿# Nameless Core
+﻿# Nameless Logging (Microsoft)
 
 This code has no intents to be something great. Just random pieces of code that
 a written (or copy) over the years. And nowadays its used in most of my

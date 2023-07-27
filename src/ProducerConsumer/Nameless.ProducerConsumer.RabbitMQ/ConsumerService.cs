@@ -1,7 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -77,14 +78,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     Unregister(registration);
                 }
 
-                Logger.Error(ex, $"{registration}: Handler creation failed. Reason: {ex.Message}");
+                Logger.LogError(ex, $"{registration}: Handler creation failed. Reason: {ex.Message}");
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
             }
 
             if (handler == null) {
-                Logger.Warning($"{registration}: No suitable handler found.");
+                Logger.LogWarning($"{registration}: No suitable handler found.");
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
@@ -92,7 +93,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
             var envelope = JsonSerializer.Deserialize<Envelope>(deliverEventArgs.Body.ToArray());
             if (envelope == null) {
-                Logger.Warning($"{registration}: Envelope deserialization failed.");
+                Logger.LogWarning($"{registration}: Envelope deserialization failed.");
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
@@ -101,14 +102,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // Here, envelope.Message is a JsonElement.
             // So, we'll deserialize it to the type that the handler is expecting.
             if (envelope.Message is not JsonElement json) {
-                Logger.Warning($"{registration}: Message is not a {typeof(JsonElement)}.");
+                Logger.LogWarning($"{registration}: Message is not a {typeof(JsonElement)}.");
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
             }
 
             if (json.Deserialize<T>() is not T message) {
-                Logger.Warning($"{registration}: Unable to deserialize the message to expecting type {typeof(T)}.");
+                Logger.LogWarning($"{registration}: Unable to deserialize the message to expecting type {typeof(T)}.");
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
@@ -118,7 +119,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 await handler(message);
                 Ack(_channel, deliverEventArgs, consumerArgs);
             } catch (Exception ex) {
-                Logger.Error(ex, $"{registration}: Error when handling the message. Reason: {ex.Message}");
+                Logger.LogError(ex, $"{registration}: Error when handling the message. Reason: {ex.Message}");
                 NAck(_channel, deliverEventArgs, consumerArgs);
             }
         }
@@ -170,8 +171,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             var tag = GenerateTag(handler);
 
             var registration = _registrations.GetOrAdd(tag, tag => {
-                Logger.Information($"Initialize registration of consumer: {tag}");
-                Logger.Information($"Consumer arguments: {args.ToJson()}");
+                Logger.LogInformation($"Initialize registration of consumer: {tag}");
+                Logger.LogInformation($"Consumer arguments: {args.ToJson()}");
 
                 // creates registration
                 var registration = new Registration<T>(tag, topic, handler);

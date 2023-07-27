@@ -1,6 +1,7 @@
 using System.Data;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using MySql.Data.MySqlClient;
-using Nameless.Logging;
 
 namespace Nameless.Data.MySQL {
     public sealed class DbConnectionProvider : IDbConnectionFactory {
@@ -37,7 +38,7 @@ namespace Nameless.Data.MySQL {
 
             if (connection.State != ConnectionState.Open) {
                 try { connection.Open(); }
-                catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+                catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
             }
 
             return connection;

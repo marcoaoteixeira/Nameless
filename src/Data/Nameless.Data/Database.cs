@@ -1,5 +1,6 @@
 ﻿using System.Data;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Data {
     /// <summary>
@@ -145,7 +146,7 @@ namespace Nameless.Data {
             using var command = CreateCommand(text, type, parameters);
 
             try { return command.ExecuteNonQuery(); }
-            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
         }
 
         /// <inheritdoc/>
@@ -158,7 +159,7 @@ namespace Nameless.Data {
 
             IDataReader reader;
             try { reader = command.ExecuteReader(); }
-            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
             using (reader) {
                 while (reader.Read()) {
                     yield return mapper(reader);
@@ -175,7 +176,7 @@ namespace Nameless.Data {
             using var command = CreateCommand(text, type, parameters);
 
             try { return (TResult?)command.ExecuteScalar(); }
-            catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
         }
 
         #endregion

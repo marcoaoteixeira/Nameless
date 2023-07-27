@@ -4,8 +4,6 @@ using Autofac.Extensions.DependencyInjection;
 using Nameless.AutoMapper;
 using Nameless.FluentValidation;
 using Nameless.Microservice.Extensions;
-using Nameless.Microservice.Services;
-using Nameless.Microservice.Services.Impl;
 using Nameless.Services.Impl;
 
 namespace Nameless.Microservice.Web {
@@ -67,11 +65,6 @@ namespace Nameless.Microservice.Web {
         public void ConfigureContainer(ContainerBuilder builder) {
             builder
                 .RegisterInstance(ClockService.Instance);
-
-            builder
-                .RegisterType<JwtService>()
-                .As<IJwtService>()
-                .SingleInstance();
         }
 
         #endregion

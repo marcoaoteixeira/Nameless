@@ -1,4 +1,5 @@
-﻿using Nameless.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
@@ -46,7 +47,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     basicProperties: properties,
                     body: envelope.CreateBuffer()
                 );
-            } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            } catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
 
             return Task.CompletedTask;
         }

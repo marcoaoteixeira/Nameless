@@ -14,6 +14,8 @@ using Nameless.AspNetCore.Options;
 using Nameless.AspNetCore.Versioning;
 using Nameless.Microservice.Infrastructure;
 using Nameless.Microservice.Options;
+using Nameless.Microservice.Services;
+using Nameless.Microservice.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Nameless.Microservice.Extensions {
@@ -28,7 +30,7 @@ namespace Nameless.Microservice.Extensions {
             var options = config
                .GetSection(sectionName)
                .Get<JwtOptions>() ?? JwtOptions.Default;
-
+            
             services
                 .AddAuthorization(setupAuthorization)
                 .AddAuthentication(configure => {
@@ -49,6 +51,9 @@ namespace Nameless.Microservice.Extensions {
                         }
                     };
                 });
+
+            services
+                .AddSingleton<IJwtService, JwtService>();
 
             return services;
         }
