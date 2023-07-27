@@ -19,6 +19,9 @@ jobs:
         dotnet-version: ['7.0.100']
 
     steps:
+      - name: Print GitHub info
+        run: echo ${{ toJson(github) }}
+
       - name: Get build version
         id: build
         run: |

@@ -22,6 +22,9 @@ jobs:
         dotnet-version: ['7.0.100']
 
     steps:
+      - name: Print GitHub info
+        run: echo ${{ toJson(github) }}
+
       - name: Checkout source code
         uses: actions/checkout@v3
 
@@ -30,7 +33,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: Add GitHub Package Registry
+      - name: Setup GitHub package registry for NuGet
         run: |
           dotnet nuget add source \
           --username marcoaoteixeira \
