@@ -6,7 +6,7 @@ namespace Nameless.FluentValidation {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection PrepareFluentValidation(this IServiceCollection services, params Assembly[] assemblies)
+        public static IServiceCollection RegisterFluentValidation(this IServiceCollection services, params Assembly[] assemblies)
             => services.AddValidatorsFromAssemblies(assemblies);
 
         #endregion

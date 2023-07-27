@@ -1,6 +1,6 @@
-﻿using Autofac;
+﻿using Asp.Versioning.ApiExplorer;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Nameless.AutoMapper;
 using Nameless.FluentValidation;
 using Nameless.Microservice.Extensions;
@@ -31,27 +31,29 @@ namespace Nameless.Microservice.Web {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services
-                .PrepareOptions(Config)
-                .ConfigureAutoMapper(typeof(StartUp).Assembly)
-                .ConfigureFluentValidation(typeof(StartUp).Assembly)
-                .PrepareCors()
-                .PrepareRouting()
-                .PrepareHealthCheck()
-                .PrepareEndpoints(typeof(StartUp).Assembly)
-                .PrepareSwagger()
-                .PrepareVersioning();
+                .RegisterOptions(Config)
+                .RegisterAutoMapper(typeof(StartUp).Assembly)
+                .RegisterFluentValidation(typeof(StartUp).Assembly)
+                .RegisterCors()
+                .RegisterRouting()
+                .RegisterAuth(Config)
+                .RegisterHealthChecks()
+                .RegisterEndpoints(typeof(StartUp).Assembly)
+                .RegisterSwagger()
+                .RegisterVersioning();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IApiVersionDescriptionProvider versioning) {
             app
-                .ApplyCors()
-                .ApplyRouting()
-                .ApplyAuth()
-                .ApplyEndpoints()
-                .ApplySwagger(Env, versioning)
-                .ApplyHttpSecurity(Env)
-                .PrepareErrorHandling(Env);
+                .ResolveCors()
+                .ResolveRouting()
+                .ResolveAuth()
+                .ResolveHealthChecks()
+                .ResolveEndpoints()
+                .ResolveSwagger(Env, versioning)
+                .ResolveHttpSecurity(Env)
+                .ResolveErrorHandling(Env);
 
             // Tear down the composition root and free all resources.
             var container = app.ApplicationServices.GetAutofacRoot();
