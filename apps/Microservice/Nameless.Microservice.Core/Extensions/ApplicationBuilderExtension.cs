@@ -1,38 +1,49 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Microservice.Infrastructure;
 using Nameless.Microservice.Middlewares;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Nameless.Microservice.Extensions {
     public static class ApplicationBuilderExtension {
         #region Public Static Methods
 
-        public static IApplicationBuilder ApplyAuth(this IApplicationBuilder app)
-            => app.UseAuthentication()
-                .UseAuthorization()
+        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder app)
+            => app.UseAuthorization()
+                .UseAuthentication()
                 .UseJwtAuthorization();
 
-        public static IApplicationBuilder ApplyCors(this IApplicationBuilder app)
+        public static IApplicationBuilder ResolveCors(this IApplicationBuilder app)
             => app.UseCors(configure
                 => configure
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
 
-        public static IApplicationBuilder ApplyEndpoints(this IApplicationBuilder app)
-            => app.UseEndpoints(configure => {
+        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder app)
+            => ResolveEndpoints(app, setup => {
                 var endpoints = app.ApplicationServices.GetServices<IEndpoint>();
                 foreach (var endpoint in endpoints) {
-                    endpoint.Map(configure);
+                    endpoint.Map(setup);
                 }
             });
 
-        public static IApplicationBuilder ApplyHealthCheck(this IApplicationBuilder app)
+        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder app, Action<IEndpointRouteBuilder> setup)
+            => app.UseEndpoints(setup);
+
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder app)
             => app.UseHealthChecks("/healthz");
 
-        public static IApplicationBuilder ApplyHttpSecurity(this IApplicationBuilder app, IHostEnvironment env) {
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder app, PathString path, int port, HealthCheckOptions options)
+            => app.UseHealthChecks(path, port, options);
+
+        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder app, IHostEnvironment env) {
             if (!env.IsDevelopment()) {
                 // The default HSTS value is 30 days. You may want to change
                 // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -44,26 +55,32 @@ namespace Nameless.Microservice.Extensions {
             return app;
         }
 
-        public static IApplicationBuilder ApplyRouting(this IApplicationBuilder app)
+        public static IApplicationBuilder ResolveRouting(this IApplicationBuilder app)
             => app.UseRouting();
 
-        public static IApplicationBuilder ApplySwagger(this IApplicationBuilder app, IHostEnvironment env, IApiVersionDescriptionProvider versioning) {
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env)
+            => ResolveSwagger(app, env, setupSwagger => { }, setupSwaggerUI => { });
+
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env, IApiVersionDescriptionProvider versioning)
+            => ResolveSwagger(app, env, setupSwagger => { }, setupSwaggerUI => {
+                foreach (var description in versioning.ApiVersionDescriptions) {
+                    setupSwaggerUI.SwaggerEndpoint(
+                        url: $"/swagger/{description.GroupName}/swagger.json",
+                        name: description.GroupName.ToUpperInvariant()
+                    );
+                }
+            });
+
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env, Action<SwaggerOptions> setupSwagger, Action<SwaggerUIOptions> setupSwaggerUI) {
             if (env.IsDevelopment()) {
-                app.UseSwagger();
-                app.UseSwaggerUI(opts => {
-                    foreach (var description in versioning.ApiVersionDescriptions) {
-                        opts.SwaggerEndpoint(
-                            url: $"/swagger/{description.GroupName}/swagger.json",
-                            name: description.GroupName.ToUpperInvariant()
-                        );
-                    }
-                });
+                app.UseSwagger(setupSwagger);
+                app.UseSwaggerUI(setupSwaggerUI);
             }
 
             return app;
         }
 
-        public static IApplicationBuilder ApplyErrorHandling(this IApplicationBuilder app, IHostEnvironment env) {
+        public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder app, IHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseExceptionHandler("/error");
             }

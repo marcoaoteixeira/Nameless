@@ -5,7 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Nameless.Microservice</RootNamespace>
+		<RootNamespace>Nameless.Microservice.Web</RootNamespace>
 
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -29,13 +29,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Http" Version="7.0.0" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.0.0" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-		<PackageReference Include="Nameless.AutoMapper.Extra" Version="1.2.6" />
-		<PackageReference Include="Nameless.FluentValidation.Extra" Version="1.2.6" />
-		<PackageReference Include="Nameless.Microservice.Core" Version="1.2.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\AutoMapper\Nameless.AutoMapper.Extra\Nameless.AutoMapper.Extra.csproj" />
+	  <ProjectReference Include="..\..\..\src\FluentValidation\Nameless.FluentValidation.Extra\Nameless.FluentValidation.Extra.csproj" />
+	  <ProjectReference Include="..\Nameless.Microservice.Core\Nameless.Microservice.Core.csproj" />
 	</ItemGroup>
 
 </Project>

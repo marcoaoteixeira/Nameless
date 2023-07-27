@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -12,7 +12,7 @@ namespace Nameless.AspNetCore.Versioning {
     /// </summary>
     /// <remarks>This allows API versioning to define a Swagger document per API version after the
     /// <see cref="IApiVersionDescriptionProvider"/> service has been resolved from the service container.</remarks>
-    public sealed class SwaggerGenConfigureOptions : IConfigureOptions<SwaggerGenOptions> {
+    public sealed class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions> {
         #region Private Read-Only Fields
 
         private readonly IApiVersionDescriptionProvider _provider;
@@ -29,7 +29,7 @@ namespace Nameless.AspNetCore.Versioning {
         /// <param name="provider">The <see cref="IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
         /// <param name="hostEnvironment">The <see cref="IHostEnvironment"/>hostEnvironment.</param>
         /// <param name="options">The <see cref="SwaggerPageOptions"/>applicationOptions.</param>
-        public SwaggerGenConfigureOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, SwaggerPageOptions? options = null) {
+        public ConfigureSwaggerGenOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, SwaggerPageOptions? options = null) {
             _provider = Prevent.Against.Null(provider, nameof(provider));
             _hostEnvironment = Prevent.Against.Null(hostEnvironment, nameof(hostEnvironment));
             _options = options ?? SwaggerPageOptions.Default;
