@@ -1,13 +1,13 @@
 ﻿using System.Data;
 using System.Text;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Nameless.Data {
     internal static class LoggerExtension {
         #region Internal Static Methods
 
         internal static void DbCommand(this ILogger self, IDbCommand command) {
-            if (!self.IsEnabled(Level.Debug)) { return; }
+            if (!self.IsEnabled(LogLevel.Debug)) { return; }
 
             var sb = new StringBuilder();
 
@@ -21,7 +21,7 @@ namespace Nameless.Data {
 
             var log = sb.ToString();
 
-            self.Debug(log);
+            self.LogDebug(log);
         }
 
         #endregion

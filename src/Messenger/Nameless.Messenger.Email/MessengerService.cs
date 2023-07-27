@@ -1,8 +1,9 @@
 ﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using MimeKit;
 using MimeKit.Text;
 using Nameless.FileStorage;
-using Nameless.Logging;
 using Nameless.Services;
 using Nameless.Services.Impl;
 
@@ -74,7 +75,7 @@ namespace Nameless.Messenger.Email {
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
                     await client.AuthenticateAsync(_opts.UserName, _opts.Password, cancellationToken);
                 }
-            } catch (Exception ex) { Logger.Error(ex, ex.Message); throw; }
+            } catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
 
             // Send message
             await client.SendAsync(message, cancellationToken: cancellationToken);

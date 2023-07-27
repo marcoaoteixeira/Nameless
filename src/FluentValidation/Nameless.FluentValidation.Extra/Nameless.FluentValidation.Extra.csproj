@@ -32,21 +32,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="7.0.1" />
-	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
-	  <ProjectReference Include="..\Nameless.FluentValidation\Nameless.FluentValidation.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="readme.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+		<ProjectReference Include="..\Nameless.FluentValidation\Nameless.FluentValidation.csproj" />
+	</ItemGroup>
+	
 </Project>

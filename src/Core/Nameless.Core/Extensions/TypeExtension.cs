@@ -162,6 +162,15 @@ namespace Nameless {
             return self.GetInterfaces().Any(_ => interfaceType.IsAssignableFrom(_) || interfaceType.IsAssignableFromGenericType(_));
         }
 
+        public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false) where TAttribute : Attribute
+            => HasAttribute(self, typeof(TAttribute), inherit);
+
+        public static bool HasAttribute(this Type self, Type attributeType, bool inherit = false) {
+            Prevent.Against.Null(attributeType, nameof(attributeType));
+
+            return self.GetCustomAttribute(attributeType, inherit) != null;
+        }
+
         #endregion
     }
 }

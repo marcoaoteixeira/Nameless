@@ -23,6 +23,16 @@ namespace Nameless.FluentValidation {
             return result;
         }
 
+        public static IDictionary<string, string[]> ToDictionary(this ValidationResult self) {
+            var result = new Dictionary<string, string[]>();
+            if (!self.IsValid) {
+                foreach (var item in self.Errors) {
+                    result.Add(item.ErrorCode, new[] { item.ErrorMessage });
+                }
+            }
+            return result;
+        }
+
         #endregion
     }
 }

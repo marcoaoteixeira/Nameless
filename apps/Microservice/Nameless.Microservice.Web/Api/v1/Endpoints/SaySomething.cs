@@ -1,13 +1,13 @@
-﻿using Nameless.Microservice.Infrastructure;
-using Nameless.Microservice.Services;
+﻿using Nameless.FluentValidation;
+using Nameless.Microservice.Infrastructure;
 using Nameless.Microservice.Web.Api.v1.Models;
 
 namespace Nameless.Microservice.Web.Api.v1.Endpoints {
-    public class SayHello : IEndpoint {
+    public class SaySomething : IEndpoint {
         #region Public Static Methods
 
-        public static Task<IResult> HandleAsync(IJwtService jwtService) {
-            var result = Results.Ok(new SayHelloOutput { Message = $"JWTService: {jwtService != null}" });
+        public static Task<IResult> HandleAsync(SaySomethingInput input) {
+            var result = Results.Ok(new SayHelloOutput { Message = $"You said {input.Message}" });
 
             return Task.FromResult(result);
         }
@@ -18,11 +18,12 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
 
         public void Map(IEndpointRouteBuilder builder)
             => builder
-                .MapGet($"{Internals.Endpoints.BaseApiPath}/sayhello", HandleAsync)
-                .Produces<SayHelloOutput>()
+                .MapPost($"{Internals.Endpoints.BaseApiPath}/saysomething", HandleAsync)
+                .Produces<SaySomethingOutput>()
+                .AddEndpointFilter<ValidationEndpointFilter>()
                 .WithApiVersionSet(builder.NewApiVersionSet("Greetings").Build())
                 .HasApiVersion(1)
-                .WithName(nameof(SayHello))
+                .WithName(nameof(SaySomething))
                 .WithDescription("Greetings API")
                 .WithSummary("Greetings API")
                 .WithOpenApi();

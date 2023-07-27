@@ -40,12 +40,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\Logging\Nameless.Logging.Abstractions\Nameless.Logging.Abstractions.csproj" />
 		<ProjectReference Include="..\..\FileStorage\Nameless.FileStorage.Abstractions\Nameless.FileStorage.Abstractions.csproj" />
 		<ProjectReference Include="..\Nameless.Messenger.Abstractions\Nameless.Messenger.Abstractions.csproj" />
 	</ItemGroup>

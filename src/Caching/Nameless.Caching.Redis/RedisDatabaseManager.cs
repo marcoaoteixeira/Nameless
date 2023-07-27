@@ -1,7 +1,9 @@
 ﻿using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using Nameless.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using StackExchange.Redis;
+using Nameless.Logging.Microsoft;
 
 namespace Nameless.Caching.Redis {
     public sealed class RedisDatabaseManager : IRedisDatabaseManager, IDisposable {
@@ -87,7 +89,7 @@ namespace Nameless.Caching.Redis {
             var inner = new X509Certificate2(_options.Certificate.Pem);
             var verdict = certificate.Issuer == inner.Subject;
 
-            Logger.On(verdict).Information("Certificate error: {0}", sslPolicyErrors);
+            Logger.On(verdict).LogInformation($"Certificate error: {sslPolicyErrors}");
 
             return verdict;
         }
