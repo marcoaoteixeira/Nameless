@@ -10,6 +10,7 @@ env:
   CODE_COVERAGE_FOLDER_PATH: './code_coverage'
   CODE_COVERAGE_COBERTURA_FILE_PATH: './code_coverage/**/coverage.cobertura.xml'
   CODE_COVERAGE_REPORT_FOLDER_PATH: './code_coverage/coverage_report'
+  GITHUB_CONTEXT: ${{ toJson(github) }}
 
 jobs:
 
@@ -23,7 +24,7 @@ jobs:
 
     steps:
       - name: Print GitHub info
-        run: echo ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Checkout source code
         uses: actions/checkout@v3
