@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace Nameless.FluentValidation {
-    public sealed class ValidationEndpointFilter : IEndpointFilter {
+    public sealed class FluentValidationEndpointFilter : IEndpointFilter {
         #region Private Read-Only Fields
 
-        private readonly IValidationService _validationService;
+        private readonly IFluentValidatorService _validationService;
 
         #endregion
 
         #region Public Constructors
 
-        public ValidationEndpointFilter(IValidationService validationService) {
+        public FluentValidationEndpointFilter(IFluentValidatorService validationService) {
             _validationService = Prevent.Against.Null(validationService, nameof(validationService));
         }
 

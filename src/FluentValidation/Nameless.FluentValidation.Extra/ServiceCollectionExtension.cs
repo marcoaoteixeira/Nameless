@@ -8,7 +8,7 @@ namespace Nameless.FluentValidation {
 
         public static IServiceCollection RegisterFluentValidation(this IServiceCollection services, params Assembly[] assemblies)
             => services
-                .AddSingleton<IValidationService, ValidationService>()
+                .AddSingleton<IFluentValidatorService, FluentValidatorService>()
                 .AddValidatorsFromAssemblies(assemblies);
 
         #endregion
