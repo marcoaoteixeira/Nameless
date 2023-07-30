@@ -1,32 +1,32 @@
 ﻿using FluentValidation.Results;
 
 namespace Nameless.FluentValidation {
-    public sealed class NullValidationService : IValidationService {
+    public sealed class NullFluentValidatorService : IFluentValidatorService {
         #region Private Static Read-Only Fields
 
-        private static readonly NullValidationService _instance = new();
+        private static readonly NullFluentValidatorService _instance = new();
 
         #endregion
 
         #region Public Static Read-Only Properties
 
-        public static IValidationService Instance => _instance;
+        public static IFluentValidatorService Instance => _instance;
 
         #endregion
 
         #region Static Constructors
 
-        static NullValidationService() { }
+        static NullFluentValidatorService() { }
 
         #endregion
 
         #region Private Constructors
 
-        private NullValidationService() { }
+        private NullFluentValidatorService() { }
 
         #endregion
 
-        #region IValidationService Members
+        #region IFluentValidatorService Members
 
         public Task<ValidationResult> ValidateAsync<T>(T instance, bool throwOnError = false, CancellationToken cancellationToken = default)
             => Task.FromResult(new ValidationResult());

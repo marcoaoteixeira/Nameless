@@ -21,6 +21,9 @@ namespace Nameless.AspNetCore {
         public static bool IsDeveloperMachine(this IHostEnvironment self)
             => self.IsEnvironment(DeveloperMachine);
 
+        public static bool IsRunningOnContainer(this IHostEnvironment _)
+            => Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER").IsTrueString();
+
         #endregion
     }
 }

@@ -20,7 +20,7 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
             => builder
                 .MapPost($"{Internals.Endpoints.BaseApiPath}/saysomething", HandleAsync)
                 .Produces<SaySomethingOutput>()
-                .AddEndpointFilter<ValidationEndpointFilter>()
+                .AddEndpointFilter<FluentValidationEndpointFilter>()
                 .WithApiVersionSet(builder.NewApiVersionSet("Greetings").Build())
                 .HasApiVersion(1)
                 .WithName(nameof(SaySomething))
