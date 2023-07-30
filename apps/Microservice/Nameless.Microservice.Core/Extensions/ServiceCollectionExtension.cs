@@ -133,19 +133,32 @@ namespace Nameless.Microservice.Extensions {
         public static IServiceCollection RegisterVersioning(this IServiceCollection services) {
             services
                 .AddApiVersioning(configure => {
+                    // Add the headers "api-supported-versions" and "api-deprecated-versions"
+                    // This is better for discoverability
                     configure.ReportApiVersions = true;
+
+                    // AssumeDefaultVersionWhenUnspecified should only be enabled when supporting legacy services that did not previously
+                    // support API versioning. Forcing existing clients to specify an explicit API version for an
+                    // existing service introduces a breaking change. Conceptually, clients in this situation are
+                    // bound to some API version of a service, but they don't know what it is and never explicit request it.
                     configure.AssumeDefaultVersionWhenUnspecified = true;
                     configure.DefaultApiVersion = new ApiVersion(1);
+
+                    // Defines how an API version is read from the current HTTP request
+                    configure.ApiVersionReader = ApiVersionReader.Combine(
+                        new HeaderApiVersionReader("api-version"),
+                        new UrlSegmentApiVersionReader()
+                    );
                 })
                 .AddApiExplorer(opts => {
-                // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-                // note: the specified format code will format the version as "'v'major[.minor][-status]"
-                opts.GroupNameFormat = "'v'VVV";
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    opts.GroupNameFormat = "'v'VVV";
 
-                // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-                // can also be used to control the format of the API version in route templates
-                opts.SubstituteApiVersionInUrl = true;
-            });
+                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                    // can also be used to control the format of the API version in route templates
+                    opts.SubstituteApiVersionInUrl = true;
+                });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
 
