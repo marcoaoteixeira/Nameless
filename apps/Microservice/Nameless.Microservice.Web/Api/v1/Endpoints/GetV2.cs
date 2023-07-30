@@ -6,8 +6,8 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
     public class GetV2 : IEndpoint {
         #region Public Static Methods
 
-        public static Task<IResult> HandleAsync([FromQuery] string value) {
-            var output = new GetOutput { Message = value.ToString() };
+        public static Task<IResult> HandleAsync([AsParameters] GetValues getValues) {
+            var output = new GetOutput { Message = getValues.ToString() };
             var result = Results.Ok(output);
 
             return Task.FromResult(result);
@@ -19,15 +19,28 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
 
         public void Map(IEndpointRouteBuilder builder)
             => builder
-                .MapGet($"{Internals.Endpoints.BaseApiPath}/get", HandleAsync)
+                .MapGet("api/v{version:apiVersion}/getwithobj", HandleAsync)
+
                 .Produces<GetOutput>()
-                .WithApiVersionSet(builder.NewApiVersionSet("Greetings").Build())
-                .HasApiVersion(2)
+
+                .WithOpenApi()
+
                 .WithName(nameof(GetV2))
                 .WithDescription("Greetings API")
                 .WithSummary("Greetings API")
-                .WithOpenApi();
+
+                .WithApiVersionSet(builder.NewApiVersionSet("Greetings").Build())
+                .HasApiVersion(2);
 
         #endregion
+    }
+
+    public record GetValues {
+        public int Id { get; set; }
+        public string? Message { get; set; }
+
+        public override string ToString() => $"Id: {Id} / Message: {Message}";
+
+        
     }
 }
