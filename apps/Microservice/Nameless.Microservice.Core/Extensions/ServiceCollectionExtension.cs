@@ -106,7 +106,6 @@ namespace Nameless.Microservice.Extensions {
         public static IServiceCollection RegisterSwagger(this IServiceCollection services) {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(configure => {
-                configure.OperationFilter<SwaggerDefaultValuesOperationFilter>();
                 configure.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new() {
                     In = ParameterLocation.Header,
                     Description = "Enter JSON Web Token",
