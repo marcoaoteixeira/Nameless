@@ -22,16 +22,16 @@ namespace Nameless.Microservice.Extensions {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection RegisterAuth(this IServiceCollection services, IConfiguration config)
-            => RegisterAuth(services, config, setup => { });
+        public static IServiceCollection RegisterAuth(this IServiceCollection self, IConfiguration config)
+            => RegisterAuth(self, config, setup => { });
 
-        public static IServiceCollection RegisterAuth(this IServiceCollection services, IConfiguration config, Action<AuthorizationOptions> setupAuthorization) {
+        public static IServiceCollection RegisterAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions> setupAuthorization) {
             var sectionName = nameof(JwtOptions).RemoveTail(Internals.ClassTokens.OPTIONS);
             var options = config
                .GetSection(sectionName)
                .Get<JwtOptions>() ?? JwtOptions.Default;
             
-            services
+            self
                 .AddAuthorization(setupAuthorization)
                 .AddAuthentication(configure => {
                     configure.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,21 +52,21 @@ namespace Nameless.Microservice.Extensions {
                     };
                 });
 
-            services
+            self
                 .AddSingleton<IJwtService, JwtService>();
 
-            return services;
+            return self;
         }
 
         // CORS defines a way in which a browser and server can interact to determine
         // whether or not it is safe to allow the cross-origin request.
-        public static IServiceCollection RegisterCors(this IServiceCollection services)
-            => RegisterCors(services, setup => { });
+        public static IServiceCollection RegisterCors(this IServiceCollection self)
+            => RegisterCors(self, setup => { });
 
-        public static IServiceCollection RegisterCors(this IServiceCollection services, Action<CorsOptions> setup)
-            => services.AddCors(setup);
+        public static IServiceCollection RegisterCors(this IServiceCollection self, Action<CorsOptions> setup)
+            => self.AddCors(setup);
 
-        public static IServiceCollection RegisterEndpoints(this IServiceCollection services, params Assembly[] assemblies) {
+        public static IServiceCollection RegisterEndpoints(this IServiceCollection self, params Assembly[] assemblies) {
             Prevent.Against.Null(assemblies, nameof(assemblies));
 
             var implementations = assemblies
@@ -75,37 +75,37 @@ namespace Nameless.Microservice.Extensions {
                 .ToArray();
 
             foreach (var implementation in implementations) {
-                services.AddScoped(typeof(IEndpoint), implementation);
+                self.AddScoped(typeof(IEndpoint), implementation);
             }
 
-            return services;
+            return self;
         }
 
-        public static IServiceCollection RegisterHealthChecks(this IServiceCollection services) {
-            services.AddHealthChecks();
+        public static IServiceCollection RegisterHealthChecks(this IServiceCollection self) {
+            self.AddHealthChecks();
 
-            return services;
+            return self;
         }
 
-        public static IServiceCollection RegisterOptions(this IServiceCollection services, IConfiguration config) {
-            services.AddOptions();
+        public static IServiceCollection RegisterOptions(this IServiceCollection self, IConfiguration config) {
+            self.AddOptions();
 
-            services
+            self
                 .PushOptions<SwaggerPageOptions>(config)
                 .PushOptions<JwtOptions>(config);
 
-            return services;
+            return self;
         }
 
-        public static IServiceCollection RegisterRouting(this IServiceCollection services)
-           => RegisterRouting(services, setup => { });
+        public static IServiceCollection RegisterRouting(this IServiceCollection self)
+           => RegisterRouting(self, setup => { });
 
-        public static IServiceCollection RegisterRouting(this IServiceCollection services, Action<RouteOptions> setup)
-           => services.AddRouting(setup);
+        public static IServiceCollection RegisterRouting(this IServiceCollection self, Action<RouteOptions> setup)
+           => self.AddRouting(setup);
 
-        public static IServiceCollection RegisterSwagger(this IServiceCollection services) {
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(configure => {
+        public static IServiceCollection RegisterSwagger(this IServiceCollection self) {
+            self.AddEndpointsApiExplorer();
+            self.AddSwaggerGen(configure => {
                 configure.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new() {
                     In = ParameterLocation.Header,
                     Description = "Enter JSON Web Token",
@@ -127,11 +127,11 @@ namespace Nameless.Microservice.Extensions {
                 });
             });
 
-            return services;
+            return self;
         }
 
-        public static IServiceCollection RegisterVersioning(this IServiceCollection services) {
-            services
+        public static IServiceCollection RegisterVersioning(this IServiceCollection self) {
+            self
                 .AddApiVersioning(configure => {
                     // Add the headers "api-supported-versions" and "api-deprecated-versions"
                     // This is better for discoverability
@@ -160,9 +160,9 @@ namespace Nameless.Microservice.Extensions {
                     opts.SubstituteApiVersionInUrl = true;
                 });
 
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
+            self.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
 
-            return services;
+            return self;
         }
 
         #endregion

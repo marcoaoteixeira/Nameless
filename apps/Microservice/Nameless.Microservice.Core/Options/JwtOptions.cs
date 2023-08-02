@@ -9,7 +9,8 @@
         #region Public Constructors
 
         public JwtOptions() {
-            Secret = Environment.GetEnvironmentVariable(Internals.EnvironmentTokens.JWT_SECRET) ?? Internals.Secrets.Jwt;
+            Secret = Environment.GetEnvironmentVariable(Internals.EnvironmentTokens.JWT_SECRET)
+                ?? Internals.Secrets.JWT;
         }
 
         #endregion

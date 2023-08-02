@@ -14,55 +14,55 @@ namespace Nameless.Microservice.Extensions {
     public static class ApplicationBuilderExtension {
         #region Public Static Methods
 
-        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder app)
-            => app.UseAuthorization()
+        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder self)
+            => self.UseAuthorization()
                 .UseAuthentication()
                 .UseJwtAuthorization();
 
-        public static IApplicationBuilder ResolveCors(this IApplicationBuilder app)
-            => app.UseCors(configure
+        public static IApplicationBuilder ResolveCors(this IApplicationBuilder self)
+            => self.UseCors(configure
                 => configure
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
 
-        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder app)
-            => ResolveEndpoints(app, setup => {
-                var endpoints = app.ApplicationServices.GetServices<IEndpoint>();
+        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder self)
+            => ResolveEndpoints(self, setup => {
+                var endpoints = self.ApplicationServices.GetServices<IEndpoint>();
                 foreach (var endpoint in endpoints) {
                     endpoint.Map(setup);
                 }
             });
 
-        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder app, Action<IEndpointRouteBuilder> setup)
-            => app.UseEndpoints(setup);
+        public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder self, Action<IEndpointRouteBuilder> setup)
+            => self.UseEndpoints(setup);
 
-        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder app)
-            => app.UseHealthChecks("/healthz");
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self)
+            => self.UseHealthChecks("/healthz");
 
-        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder app, PathString path, int port, HealthCheckOptions options)
-            => app.UseHealthChecks(path, port, options);
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self, PathString path, int port, HealthCheckOptions options)
+            => self.UseHealthChecks(path, port, options);
 
-        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder app, IHostEnvironment env) {
+        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, IHostEnvironment env) {
             if (!env.IsDevelopment()) {
                 // The default HSTS value is 30 days. You may want to change
                 // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                self.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            self.UseHttpsRedirection();
 
-            return app;
+            return self;
         }
 
-        public static IApplicationBuilder ResolveRouting(this IApplicationBuilder app)
-            => app.UseRouting();
+        public static IApplicationBuilder ResolveRouting(this IApplicationBuilder self)
+            => self.UseRouting();
 
-        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env)
-            => ResolveSwagger(app, env, setupSwagger => { }, setupSwaggerUI => { });
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder self, IHostEnvironment env)
+            => ResolveSwagger(self, env, setupSwagger => { }, setupSwaggerUI => { });
 
-        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env, IApiVersionDescriptionProvider versioning)
-            => ResolveSwagger(app, env, setupSwagger => { }, setupSwaggerUI => {
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder self, IHostEnvironment env, IApiVersionDescriptionProvider versioning)
+            => ResolveSwagger(self, env, setupSwagger => { }, setupSwaggerUI => {
                 foreach (var description in versioning.ApiVersionDescriptions) {
                     setupSwaggerUI.SwaggerEndpoint(
                         url: $"/swagger/{description.GroupName}/swagger.json",
@@ -71,21 +71,21 @@ namespace Nameless.Microservice.Extensions {
                 }
             });
 
-        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder app, IHostEnvironment env, Action<SwaggerOptions> setupSwagger, Action<SwaggerUIOptions> setupSwaggerUI) {
+        public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder self, IHostEnvironment env, Action<SwaggerOptions> setupSwagger, Action<SwaggerUIOptions> setupSwaggerUI) {
             if (env.IsDevelopment()) {
-                app.UseSwagger(setupSwagger);
-                app.UseSwaggerUI(setupSwaggerUI);
+                self.UseSwagger(setupSwagger);
+                self.UseSwaggerUI(setupSwaggerUI);
             }
 
-            return app;
+            return self;
         }
 
-        public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder app, IHostEnvironment env) {
+        public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self, IHostEnvironment env) {
             if (env.IsDevelopment()) {
-                app.UseExceptionHandler("/error");
+                self.UseExceptionHandler("/error");
             }
 
-            return app;
+            return self;
         }
 
         #endregion

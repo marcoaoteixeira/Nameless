@@ -4,20 +4,18 @@ using Nameless.Microservice.Web.Api.v1.Models;
 using Nameless.Microservice.Web.Services;
 
 namespace Nameless.Microservice.Web.Api.v1.Endpoints {
-    public class Post : IEndpoint {
+    public class Put : IEndpoint {
         #region Public Static Methods
 
-        public static IResult Handle([FromBody] CreateTodoInput input, TodoService todoService) {
+        public static IResult Handle([FromBody] UpdateTodoInput input, TodoService todoService) {
             try {
-                var entity = todoService.Create(input.Description);
-                var output = new TodoOutput {
-                    Id = entity.Id,
-                    Description = entity.Description,
-                    CreatedAt = entity.CreatedAt,
-                    FinishedAt = entity.FinishedAt,
-                };
+                todoService.SetDescription(input.Id, input.Description);
 
-                return Results.Ok(output);
+                if (input.FinishedAt.GetValueOrDefault() != DateTime.MinValue) {
+                    todoService.SetFinished(input.Id);
+                }
+
+                return Results.NoContent();
             } catch (ArgumentException ex) {
                 return Results.Problem(ex.Message, statusCode: StatusCodes.Status400BadRequest);
             } catch (Exception ex) {
@@ -31,15 +29,15 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
 
         public void Map(IEndpointRouteBuilder builder)
             => builder
-                .MapPost($"{Internals.Endpoints.BaseApiPath}/todo", Handle)
+                .MapPut($"{Internals.Endpoints.BaseApiPath}/todo", Handle)
 
-                .Produces<TodoOutput>()
+                .Produces(StatusCodes.Status204NoContent)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .ProducesProblem(StatusCodes.Status500InternalServerError)
 
                 .WithOpenApi()
 
-                .WithName(nameof(Post))
+                .WithName(nameof(Put))
                 .WithDescription("Create a new To-Do")
                 .WithSummary("Create a new To-Do")
 

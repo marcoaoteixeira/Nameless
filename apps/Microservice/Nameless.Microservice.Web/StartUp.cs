@@ -4,6 +4,8 @@ using Autofac.Extensions.DependencyInjection;
 using Nameless.AutoMapper;
 using Nameless.FluentValidation;
 using Nameless.Microservice.Extensions;
+using Nameless.Microservice.Web.Repositories;
+using Nameless.Microservice.Web.Services;
 using Nameless.Services.Impl;
 
 namespace Nameless.Microservice.Web {
@@ -65,6 +67,15 @@ namespace Nameless.Microservice.Web {
         public void ConfigureContainer(ContainerBuilder builder) {
             builder
                 .RegisterInstance(ClockService.Instance);
+
+            // Example
+            var path = typeof(StartUp).Assembly.GetDirectoryPath("data/database.json");
+            builder
+                .RegisterInstance(new TodoRepository(path))
+                .SingleInstance();
+            builder
+                .Register(ctx => new TodoService(ctx.Resolve<TodoRepository>()))
+                .SingleInstance();
         }
 
         #endregion
