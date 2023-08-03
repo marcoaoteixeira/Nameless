@@ -40,4 +40,14 @@
 	  <ProjectReference Include="..\Nameless.Microservice.Core\Nameless.Microservice.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Data\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Data\database.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 </Project>

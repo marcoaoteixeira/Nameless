@@ -1,26 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nameless.Microservice.Infrastructure;
-using Nameless.Microservice.Web.Api.v1.Models;
 using Nameless.Microservice.Web.Services;
 
 namespace Nameless.Microservice.Web.Api.v1.Endpoints {
-    public class Post : IEndpoint {
+    public class Delete : IEndpoint {
         #region Public Static Methods
 
-        public static IResult Handle([FromBody] CreateTodoInput input, TodoService todoService) {
+        public static IResult Handle([FromRoute] Guid id, TodoService todoService) {
             try {
-                var entity = todoService.Create(input.Description);
-                var output = new TodoOutput {
-                    Id = entity.Id,
-                    Description = entity.Description,
-                    CreatedAt = entity.CreatedAt,
-                    FinishedAt = entity.FinishedAt,
-                };
+                todoService.Delete(id);
 
-                return Results.Ok(output);
-            } catch (ArgumentException ex) {
+                return Results.NoContent();
+            }
+            catch (ArgumentException ex) {
                 return Results.Problem(ex.Message, statusCode: StatusCodes.Status400BadRequest);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return Results.Problem(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
             }
         }
@@ -31,17 +26,17 @@ namespace Nameless.Microservice.Web.Api.v1.Endpoints {
 
         public void Map(IEndpointRouteBuilder builder)
             => builder
-                .MapPost($"{Internals.Endpoints.BaseApiPath}/todo", Handle)
+                .MapDelete($"{Internals.Endpoints.BaseApiPath}/todo/{{id}}", Handle)
 
-                .Produces<TodoOutput>()
+                .Produces(StatusCodes.Status204NoContent)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .ProducesProblem(StatusCodes.Status500InternalServerError)
 
                 .WithOpenApi()
 
-                .WithName(nameof(Post))
-                .WithDescription("Create a new To-Do")
-                .WithSummary("Create a new To-Do")
+                .WithName(nameof(Delete))
+                .WithDescription("Delete a To-Do")
+                .WithSummary("Delete a To-Do")
 
                 .WithApiVersionSet(builder.NewApiVersionSet("To-Do").Build())
                 .HasApiVersion(1);
