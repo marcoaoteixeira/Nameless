@@ -43,6 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nameless.Localization.Microsoft.Extra\Nameless.Localization.Microsoft.Json.Extra.csproj" />
+    <ProjectReference Include="..\Nameless.Localization.Microsoft.Json.Extra\Nameless.Localization.Microsoft.Json.Extra.csproj" />
   </ItemGroup>
 </Project>

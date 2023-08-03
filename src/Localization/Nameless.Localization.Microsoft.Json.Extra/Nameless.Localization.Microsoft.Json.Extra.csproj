@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
-    <ProjectReference Include="..\Nameless.Localization.Microsoft\Nameless.Localization.Microsoft.Json.csproj" />
+    <ProjectReference Include="..\Nameless.Localization.Microsoft.Json\Nameless.Localization.Microsoft.Json.csproj" />
   </ItemGroup>
 
 </Project>
