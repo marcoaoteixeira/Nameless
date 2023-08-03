@@ -1,17 +1,17 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
+using Microsoft.Extensions.Localization;
 using Nameless.Autofac;
-using Nameless.Localization.Json;
-using Nameless.Localization.Json.Services;
-using Nameless.Localization.Json.Services.Impl;
+using Nameless.Localization.Microsoft.Json.Infrastructure;
+using Nameless.Localization.Microsoft.Json.Infrastructure.Impl;
 
-namespace Nameless.Localization.Microsoft {
+namespace Nameless.Localization.Microsoft.Json {
     public sealed class LocalizationModule : ModuleBase {
         #region Private Constants
 
         private const string CULTURE_CONTEXT_TOKEN = "CultureContext.fe8a69c2-2543-42fd-a3f9-1c6e8ae1ab66";
-        private const string TRANSLATION_PROVIDER_TOKEN = "TranslationProvider.9ecf2edd-1b0d-4402-8c38-07a205f74ad6";
+        private const string TRANSLATION_MANAGER_TOKEN = "TranslationManager.9ecf2edd-1b0d-4402-8c38-07a205f74ad6";
 
         #endregion
 
@@ -24,8 +24,8 @@ namespace Nameless.Localization.Microsoft {
                .SingleInstance();
 
             builder
-               .RegisterType<FileTranslationProvider>()
-               .Named<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN)
+               .RegisterType<FileTranslationManager>()
+               .Named<ITranslationManager>(TRANSLATION_MANAGER_TOKEN)
                .SingleInstance();
 
             builder
@@ -33,33 +33,18 @@ namespace Nameless.Localization.Microsoft {
                 .As<IStringLocalizerFactory>()
                 .SingleInstance();
 
-            builder
-                .RegisterType<StringLocalizerFactoryAdapter>()
-                .As<IMSStringLocalizerFactory>()
-                .SingleInstance();
-
             base.Load(builder);
         }
 
         /// <inheritdoc/>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration) {
-            registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolveMiddleware(
+            registration.PipelineBuilding += (sender, pipeline)
+                => pipeline.Use(new PropertyResolveMiddleware(
                     serviceType: typeof(IStringLocalizer),
                     factory: (member, context) => member.DeclaringType != null
                         ? context.Resolve<IStringLocalizerFactory>().Create(member.DeclaringType)
                         : NullStringLocalizer.Instance
                 ));
-            };
-
-            registration.PipelineBuilding += (sender, pipeline) => {
-                pipeline.Use(new PropertyResolveMiddleware(
-                    serviceType: typeof(IMSStringLocalizer),
-                    factory: (member, context) => member.DeclaringType != null
-                        ? context.Resolve<IMSStringLocalizerFactory>().Create(member.DeclaringType)
-                        : MSNullStringLocalizer.Instance
-                ));
-            };
 
             base.AttachToComponentRegistration(componentRegistry, registration);
         }
@@ -68,12 +53,11 @@ namespace Nameless.Localization.Microsoft {
 
         #region Private Static Methods
 
-        private static IStringLocalizerFactory StringLocalizerFactoryResolver(IComponentContext context) {
-            var cultureContext = context.ResolveNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN);
-            var translationProvider = context.ResolveNamed<ITranslationProvider>(TRANSLATION_PROVIDER_TOKEN);
-            var stringLocalizerFactory = new StringLocalizerFactory(cultureContext, translationProvider);
+        private static IStringLocalizerFactory StringLocalizerFactoryResolver(IComponentContext ctx) {
+            var cultureContext = ctx.ResolveNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN);
+            var localizationOptions = ctx.ResolveNamed<ITranslationManager>(TRANSLATION_MANAGER_TOKEN);
 
-            return stringLocalizerFactory;
+            return new StringLocalizerFactory(cultureContext, localizationOptions);
         }
 
         #endregion

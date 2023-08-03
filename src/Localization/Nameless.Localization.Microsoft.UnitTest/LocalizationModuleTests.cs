@@ -1,19 +1,18 @@
 using System.Globalization;
 using Autofac;
 using FluentAssertions;
-using Nameless.FileStorage.System;
-using Nameless.Localization.Json;
-using Nameless.Localization.Microsoft.UnitTest.Fixtures;
+using Microsoft.Extensions.FileProviders;
+using Nameless.Localization.Microsoft.Json.UnitTest.Fixtures;
+using NUnit.Framework;
 
-namespace Nameless.Localization.Microsoft.UnitTest {
+namespace Nameless.Localization.Microsoft.Json.UnitTest {
     public class LocalizationModuleTests {
 
         private static IContainer CreateContainer(Action<ContainerBuilder>? builder = default) {
             var inner = new ContainerBuilder();
             inner
-                .RegisterInstance(NullApplicationContext.Instance);
-            inner
-                .RegisterModule<FileStorageModule>();
+                .RegisterInstance(new PhysicalFileProvider(typeof(Service).Assembly.GetDirectoryPath()))
+                .As<IFileProvider>();
             inner
                 .RegisterInstance(LocalizationOptions.Default);
             inner

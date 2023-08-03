@@ -1,7 +1,7 @@
 ﻿{
   "Culture": "es-ES",
-  "Branches": {
-    "[Nameless.Localization.Microsoft.UnitTest] Nameless.Localization.Microsoft.UnitTest.Fixtures.Service": {
+  "Regions": {
+    "[Nameless.Localization.Microsoft.Json.UnitTest] Nameless.Localization.Microsoft.Json.UnitTest.Fixtures.Service": {
       "Hello World!": "¡Hola Mundo!"
     }
   }

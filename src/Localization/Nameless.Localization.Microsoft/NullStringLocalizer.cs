@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Localization;
 
-namespace Nameless.Localization.Microsoft {
+namespace Nameless.Localization.Microsoft.Json {
     [Singleton]
-    public sealed class NullStringLocalizer : IMSStringLocalizer {
+    public sealed class NullStringLocalizer : IStringLocalizer {
         #region Private Static Read-Only Fields
 
         private static readonly NullStringLocalizer _instance = new();
@@ -14,7 +14,7 @@ namespace Nameless.Localization.Microsoft {
         /// <summary>
         /// Gets the unique instance of Localizer.
         /// </summary>
-        public static IMSStringLocalizer Instance => _instance;
+        public static IStringLocalizer Instance => _instance;
 
         #endregion
 
