@@ -4,7 +4,7 @@ This repository contains all code that I assume is useful in most of the cases
 where I need to build something. So, if you think that it could be useful for
 you, feel free to fork, clone, etc. Also, I tried to mention every person that
 I got something from. If you find code that needs to be given the correct
-authorship, please, let me know.
+authorship, please, let me know. 
 
 ## Starting
 
