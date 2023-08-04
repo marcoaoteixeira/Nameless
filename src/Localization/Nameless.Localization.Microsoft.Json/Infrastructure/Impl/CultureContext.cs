@@ -34,8 +34,20 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region ICultureContext Members
 
-        public CultureInfo GetCurrentCulture()
-            => Thread.CurrentThread.CurrentUICulture;
+        public CultureInfo GetCurrentCulture() {
+            var currentCulture = Thread.CurrentThread.CurrentCulture;
+            var currentUICulture = Thread.CurrentThread.CurrentUICulture;
+            
+            if (!string.IsNullOrWhiteSpace(currentUICulture.Name)) {
+                return currentUICulture;
+            }
+
+            if (!string.IsNullOrWhiteSpace(currentCulture.Name)) {
+                return currentCulture;
+            }
+
+            return new CultureInfo("en-US");
+        }
 
         #endregion
     }
