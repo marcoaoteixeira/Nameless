@@ -90,9 +90,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         #region ITranslationManager Members
 
         public Translation GetTranslation(string culture) {
-            Prevent.Against.NullOrWhiteSpace(culture, nameof(culture));
-
-            if (!TranslationFileExists(culture)) {
+            if (string.IsNullOrWhiteSpace(culture) || !TranslationFileExists(culture)) {
                 return Translation.Empty;
             }
 
