@@ -1,0 +1,8 @@
+﻿{
+  "Culture": "pt-BR",
+  "Regions": {
+    "[Nameless.Localization.Microsoft.Json.UnitTest] Nameless.Localization.Microsoft.Json.UnitTest.Fixtures.Service": {
+      "Hello World!": "Olá Mundo!"
+    }
+  }
+}
