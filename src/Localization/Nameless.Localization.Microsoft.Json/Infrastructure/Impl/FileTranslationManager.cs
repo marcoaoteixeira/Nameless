@@ -51,7 +51,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         }
 
         private string GetTranslationFilePath(string culture) {
-            var path = Path.Combine(_options.TranslationFolder, $"{culture.ToLowerInvariant()}.json");
+            var path = Path.Combine(_options.TranslationFolder, $"{culture}.json");
             return path;
         }
 
@@ -59,7 +59,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             var file = _fileProvider.GetFileInfo(path);
             using var reader = new StreamReader(file.CreateReadStream());
             var content = reader.ReadToEnd();
-            return content; ;
+            return content;
         }
 
         private IDisposable? CreateFileChangeHandler(string culture, string path) {
