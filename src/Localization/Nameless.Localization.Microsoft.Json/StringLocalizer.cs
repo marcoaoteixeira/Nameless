@@ -23,11 +23,11 @@ namespace Nameless.Localization.Microsoft.Json {
         #region Public Constructors
 
         public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, Region region, Func<CultureInfo, string, string, IStringLocalizer> factory) {
-            _culture = Prevent.Against.Null(culture, nameof(culture));
-            _resourceName = Prevent.Against.NullOrWhiteSpace(resourceName, nameof(resourceName));
-            _resourcePath = Prevent.Against.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
-            _region = Prevent.Against.Null(region, nameof(region));
-            _factory = Prevent.Against.Null(factory, nameof(factory));
+            _culture = Guard.Against.Null(culture, nameof(culture));
+            _resourceName = Guard.Against.NullOrWhiteSpace(resourceName, nameof(resourceName));
+            _resourcePath = Guard.Against.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
+            _region = Guard.Against.Null(region, nameof(region));
+            _factory = Guard.Against.Null(factory, nameof(factory));
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace Nameless.Localization.Microsoft.Json {
 
         private LocalizedString GetLocalizedString(string text, params object[] args) {
             var found = _region.TryGetValue(text, out var message);
-            (var name, var value) = message != null
+            (var name, var value) = message is not null
                 ? (message.ID, message.Text)
                 : (text, text);
 

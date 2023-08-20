@@ -15,8 +15,8 @@ namespace Nameless.Localization.Microsoft.Json {
         #region Public Constructors
 
         public StringLocalizerFactory(ICultureContext cultureContext, ITranslationManager translationManager) {
-            _cultureContext = Prevent.Against.Null(cultureContext, nameof(cultureContext));
-            _translationManager = Prevent.Against.Null(translationManager, nameof(translationManager));
+            _cultureContext = Guard.Against.Null(cultureContext, nameof(cultureContext));
+            _translationManager = Guard.Against.Null(translationManager, nameof(translationManager));
         }
 
         #endregion

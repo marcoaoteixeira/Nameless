@@ -6,33 +6,40 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless.Lucene</RootNamespace>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
 
+		<!-- CODE ANALYSIS -->
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 
-		<!-- PACKING -->
+		<!-- NUGET PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless Lucene Library</Title>
 		<Company>Nameless</Company>
-		<Description>Library to be used in conjunction with Lucene.net.</Description>
+		<Description>Lucene library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Lucene/Nameless.Lucene</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="readme.md">
+		<Content Include="README.md">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="readme.md">
+		<None Update="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
@@ -44,12 +51,10 @@
 		<PackageReference Include="Lucene.Net.Queries" Version="4.8.0" />
 		<PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0" />
 		<PackageReference Include="Lucene.Net.Sandbox" Version="4.8.0" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\Nameless.Lucene.Abstractions\Nameless.Lucene.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -2,22 +2,17 @@
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
     public static class ProducerArgsExtension {
-        #region Private Constants
-
-        private const string EXCHANGE_NAME_TOKEN = "ExchangeName";
-
-        #endregion
-
         #region Public Static Methods
 
         public static string GetExchangeName(this ProducerArgs self) {
-            var arg = self.Get(EXCHANGE_NAME_TOKEN) ?? Constants.DEFAULT_EXCHANGE_NAME;
+            var arg = self.Get(Root.ProducerArgsTokens.EXCHANGE_NAME)
+                ?? Root.Defaults.EXCHANGE_NAME;
 
             return (string)arg;
         }
 
         public static ProducerArgs SetExchangeName(this ProducerArgs self, string value) {
-            self.Set(EXCHANGE_NAME_TOKEN, value ?? Constants.DEFAULT_EXCHANGE_NAME);
+            self.Set(Root.ProducerArgsTokens.EXCHANGE_NAME, value ?? Root.Defaults.EXCHANGE_NAME);
             return self;
         }
 
@@ -28,7 +23,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetAppId(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.AppId), value);
             }
             return self;
@@ -41,7 +36,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetClusterId(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.ClusterId), value);
             }
             return self;
@@ -54,7 +49,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetContentEncoding(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.ContentEncoding), value);
             }
             return self;
@@ -67,7 +62,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetContentType(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.ContentType), value);
             }
             return self;
@@ -80,7 +75,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetCorrelationId(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.CorrelationId), value);
             }
             return self;
@@ -104,7 +99,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetExpiration(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.Expiration), value);
             }
             return self;
@@ -117,7 +112,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetHeaders(this ProducerArgs self, IDictionary<string, object> value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.Headers), value);
             }
             return self;
@@ -130,7 +125,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetMessageId(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.MessageId), value);
             }
             return self;
@@ -165,7 +160,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetReplyTo(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.ReplyTo), value);
             }
             return self;
@@ -178,7 +173,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetReplyToAddress(this ProducerArgs self, PublicationAddress? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.ReplyToAddress), value);
             }
             return self;
@@ -202,7 +197,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetTypeProp(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.Type), value);
             }
             return self;
@@ -215,7 +210,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetUserId(this ProducerArgs self, string? value) {
-            if (value != null) {
+            if (value is not null) {
                 self.Set(nameof(IBasicProperties.UserId), value);
             }
             return self;

@@ -25,8 +25,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         private ILogger? _logger;
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value; }
+            get => _logger ??= NullLogger.Instance;
+            set => _logger = value;
         }
 
         #endregion
@@ -34,7 +34,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public ConsumerService(IModel channel) {
-            _channel = Prevent.Against.Null(channel, nameof(channel));
+            _channel = Guard.Against.Null(channel, nameof(channel));
         }
 
         #endregion
@@ -78,22 +78,22 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     Unregister(registration);
                 }
 
-                Logger.LogError(ex, $"{registration}: Handler creation failed. Reason: {ex.Message}");
+                Logger.LogError(ex, "{registration}: Handler creation failed. Reason: {ex.Message}", registration, ex.Message);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
             }
 
-            if (handler == null) {
-                Logger.LogWarning($"{registration}: No suitable handler found.");
+            if (handler is null) {
+                Logger.LogWarning("{registration}: No suitable handler found.", registration);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
             }
 
             var envelope = JsonSerializer.Deserialize<Envelope>(deliverEventArgs.Body.ToArray());
-            if (envelope == null) {
-                Logger.LogWarning($"{registration}: Envelope deserialization failed.");
+            if (envelope is null) {
+                Logger.LogWarning("{registration}: Envelope deserialization failed.", registration);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
@@ -102,14 +102,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // Here, envelope.Message is a JsonElement.
             // So, we'll deserialize it to the type that the handler is expecting.
             if (envelope.Message is not JsonElement json) {
-                Logger.LogWarning($"{registration}: Message is not a {typeof(JsonElement)}.");
+                Logger.LogWarning("{registration}: Message is not a {type}.", registration, typeof(JsonElement));
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
             }
 
             if (json.Deserialize<T>() is not T message) {
-                Logger.LogWarning($"{registration}: Unable to deserialize the message to expecting type {typeof(T)}.");
+                Logger.LogWarning("{registration}: Unable to deserialize the message to expecting type {type}.", registration, typeof(T));
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
                 return;
@@ -119,7 +119,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 await handler(message);
                 Ack(_channel, deliverEventArgs, consumerArgs);
             } catch (Exception ex) {
-                Logger.LogError(ex, $"{registration}: Error when handling the message. Reason: {ex.Message}");
+                Logger.LogError(ex, "{registration}: Error when handling the message. Reason: {ex.Message}", registration, ex.Message);
                 NAck(_channel, deliverEventArgs, consumerArgs);
             }
         }
@@ -129,7 +129,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Static Methods
 
         private static string GenerateTag<T>(MessageHandler<T> handler) {
-            if (handler == null) { return string.Empty; }
+            if (handler is null) { return string.Empty; }
 
             var method = handler.Method;
             var parameters = method.GetParameters().Select(_ => $"{_.ParameterType.Name} {_.Name}").ToArray();
@@ -171,8 +171,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             var tag = GenerateTag(handler);
 
             var registration = _registrations.GetOrAdd(tag, tag => {
-                Logger.LogInformation($"Initialize registration of consumer: {tag}");
-                Logger.LogInformation($"Consumer arguments: {args.ToJson()}");
+                Logger.LogInformation("Initialize registration of consumer: {tag}", tag);
+                Logger.LogInformation("Consumer arguments: {json}", consumerArgs.ToJson());
 
                 // creates registration
                 var registration = new Registration<T>(tag, topic, handler);
@@ -199,7 +199,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public bool Unregister<T>(Registration<T> registration) {
             BlockAccessAfterDispose();
 
-            Prevent.Against.Null(registration, nameof(registration));
+            Guard.Against.Null(registration, nameof(registration));
 
             if (_registrations.Remove(registration.Tag, out var disposable)) {
                 _channel.BasicCancel(registration.Tag);

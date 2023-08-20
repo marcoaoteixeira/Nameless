@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Nameless.Helpers;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
     /// <summary>
@@ -29,7 +28,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
         #region Public Constructors
 
         public Translation(CultureInfo culture) {
-            Culture = Prevent.Against.Null(culture, nameof(culture));
+            Culture = Guard.Against.Null(culture, nameof(culture));
         }
 
         #endregion
@@ -37,7 +36,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
         #region Public Methods
 
         public void Add(Region region) {
-            Prevent.Against.Null(region, nameof(region));
+            Guard.Against.Null(region, nameof(region));
 
             Regions.AddOrChange(region.Name, region);
         }
@@ -46,7 +45,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Regions.TryGetValue(name, out output);
 
         public bool Equals(Translation? other)
-            => other != null
+            => other is not null
             && other.Culture.Name == Culture.Name;
 
         #endregion
@@ -57,7 +56,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Equals(obj as Translation);
 
         public override int GetHashCode()
-            => SimpleHash.Compute(Culture.Name);
+            => HashCode.Combine(Culture.Name);
 
         #endregion
 

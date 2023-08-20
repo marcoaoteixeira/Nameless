@@ -24,16 +24,14 @@ namespace Nameless {
         /// - <see cref="SecurityException"/>
         /// - <see cref="SEHException"/>
         /// </remarks>
-        public static bool IsFatal(this Exception self) {
-            return self is FatalException ||
-                self is StackOverflowException ||
-                self is OutOfMemoryException ||
-                self is AccessViolationException ||
-                self is AppDomainUnloadedException ||
-                self is ThreadAbortException ||
-                self is SecurityException ||
-                self is SEHException;
-        }
+        public static bool IsFatal(this Exception self) => self is FatalException or
+                StackOverflowException or
+                OutOfMemoryException or
+                AccessViolationException or
+                AppDomainUnloadedException or
+                ThreadAbortException or
+                SecurityException or
+                SEHException;
 
         #endregion Public Static Methods
     }

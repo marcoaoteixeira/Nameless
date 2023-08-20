@@ -19,9 +19,6 @@ namespace Nameless {
 
         #region Public Static Methods
 
-        public static bool IsSingleton(this Type self)
-            => self.GetCustomAttribute<SingletonAttribute>(inherit: false) != null;
-
         /// <summary>
         /// Verifies if the <see cref="Type"/> is an instance of <see cref="Nullable"/>.
         /// </summary>
@@ -50,9 +47,9 @@ namespace Nameless {
         /// <param name="returnType">Method return type.</param>
         /// <returns>Returns an instance of <see cref="MethodInfo"/> representing the generic method.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static MethodInfo? GetGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = default, Type? returnType = default) {
-            Prevent.Against.NullOrWhiteSpace(name, nameof(name));
-            Prevent.Against.Null(genericArgumentTypes, nameof(genericArgumentTypes));
+        public static MethodInfo? GetGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = null, Type? returnType = null) {
+            Guard.Against.NullOrWhiteSpace(name, nameof(name));
+            Guard.Against.Null(genericArgumentTypes, nameof(genericArgumentTypes));
 
             var innerArgumentTypes = argumentTypes ?? Array.Empty<Type>();
             var innerReturnType = returnType ?? typeof(void);
@@ -78,7 +75,7 @@ namespace Nameless {
         /// otherwise, <c>false</c>.
         /// </returns>
         public static bool IsAssignableTo(this Type self, Type type) {
-            Prevent.Against.Null(type, nameof(type));
+            Guard.Against.Null(type, nameof(type));
 
             return type.IsAssignableFrom(self);
         }
@@ -102,9 +99,8 @@ namespace Nameless {
         /// <param name="self">The self type.</param>
         /// <returns><c>true</c> if is simple type; otherwise, <c>false</c>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static bool IsSimple(this Type self) {
-            return self.IsPrimitive || WriteTypes.Contains(self);
-        }
+        public static bool IsSimple(this Type self)
+            => self.IsPrimitive || WriteTypes.Contains(self);
 
         /// <summary>
         /// Retrieves the first occurrence of the specified generic argument.
@@ -114,9 +110,9 @@ namespace Nameless {
         /// <returns>The generic argument type, if found.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="genericArgumentType"/> is <c>null</c>.</exception>
         public static Type? GetFirstOccurrenceOfGenericArgument(this Type? self, Type genericArgumentType) {
-            if (self == null) { return null; }
+            if (self is null) { return null; }
 
-            Prevent.Against.Null(genericArgumentType, nameof(genericArgumentType));
+            Guard.Against.Null(genericArgumentType, nameof(genericArgumentType));
 
             var args = self.GetGenericArguments();
             var result = args.FirstOrDefault(genericArgumentType.IsAssignableFromGenericType);
@@ -130,7 +126,7 @@ namespace Nameless {
         /// <param name="type">The assignable from type.</param>
         /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
         public static bool IsAssignableFromGenericType(this Type self, Type? type) {
-            if (type == null) { return false; }
+            if (type is null) { return false; }
 
             foreach (var item in type.GetInterfaces()) {
                 if (item.IsGenericType && item.GetGenericTypeDefinition() == self) {
@@ -157,18 +153,22 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="interfaceType"/> is <c>null</c>.</exception>
         public static bool HasInterface(this Type self, Type interfaceType) {
-            Prevent.Against.Null(interfaceType, nameof(interfaceType));
+            Guard.Against.Null(interfaceType, nameof(interfaceType));
 
-            return self.GetInterfaces().Any(_ => interfaceType.IsAssignableFrom(_) || interfaceType.IsAssignableFromGenericType(_));
+            return self.GetInterfaces().Any(_
+                => interfaceType.IsAssignableFrom(_) ||
+                   interfaceType.IsAssignableFromGenericType(_)
+            );
         }
 
-        public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false) where TAttribute : Attribute
+        public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)
+            where TAttribute : Attribute
             => HasAttribute(self, typeof(TAttribute), inherit);
 
         public static bool HasAttribute(this Type self, Type attributeType, bool inherit = false) {
-            Prevent.Against.Null(attributeType, nameof(attributeType));
+            Guard.Against.Null(attributeType, nameof(attributeType));
 
-            return self.GetCustomAttribute(attributeType, inherit) != null;
+            return self.GetCustomAttribute(attributeType, inherit) is not null;
         }
 
         #endregion

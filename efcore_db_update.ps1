@@ -7,7 +7,7 @@
     Update all project databases using EF Core.
 
     .LINK
-	Project home: https://github.com/marcoaoteixeira/adventure_works
+	Project home: https://github.com/marcoaoteixeira/nameless
 
 	.NOTES
 	Author:

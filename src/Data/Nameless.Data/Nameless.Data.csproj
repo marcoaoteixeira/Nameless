@@ -6,45 +6,51 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless.Data</RootNamespace>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
 
+		<!-- CODE ANALYSIS -->
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 
-		<!-- PACKING -->
+		<!-- NUGET PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless Data Library</Title>
 		<Company>Nameless</Company>
-		<Description>Base library to be used in conjunction with ADO.Net.</Description>
+		<Description>The data library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Data/Nameless.Data</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="readme.md">
+		<Content Include="README.md">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="readme.md">
+		<None Update="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

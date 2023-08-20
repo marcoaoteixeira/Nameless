@@ -1,69 +1,26 @@
 ﻿# Nameless Autofac
 
-Library to use with [Autofac](https://github.com/autofac/Autofac)
+[Autofac](https://autofac.readthedocs.io/en/latest/index.html) extension library.
 
-_I tried to mention every person that I got something from. If you find code
-that needs to be given the correct authorship, please, let me know._
+## Content
 
-## Starting
+**_ModuleBase_**: This abstract class should be used when you want to create
+an [_Autofac.Module_](https://autofac.readthedocs.io/en/latest/configuration/modules.html).
 
-Instructions below will show your the way to get things working.
+Methods:
 
-### Pre-requirements
+- _GetImplementation\<TService\>_: Retrieves, from support assemblies, a single
+implementation from the given service type.
+- _GetImplementation(Type serviceType)_: Non-generic version of _GetImplementation\<TService\>_.
+- _GetImplementations\<TService\>_: Retrieves, from support assemblies, all
+implementations from the given service type.
+- _GetImplementations(Type serviceType)_: Non-generic version of _GetImplementations\<TService\>_.
 
-```
-No pre-requirements
-```
+Note: All those methods searches for implementations that are:
+- Exportable types
+- Non-Interface
+- Non-Abstract
+- Not marked with SingletonAttribute (Nameless.Core)
+- Should be assignable from (or generic) the given type.
 
-### Installing
-
-```
-Well, no need to install anything.
-```
-
-### Testing
-
-There is a test projects. Maybe you'll need to install the coverage tool and a
-report tool. If I'm not mistaken, Visual Studio already has those dependencies
-installed for you after restore. But...
-
-_.NET Coverlet Tool_
-
-```
-dotnet tool install -g coverlet.console
-```
-
-_.NET Report Generator Tool_
-
-```
-dotnet tool install -g dotnet-reportgenerator-globaltool
-```
-
-### Coding Styles
-
-Nothing defined, use your good sense.
-
-## Deployment
-
-I'm using GitHub Actions to act as a CI/CD. All files are located in the
-.github folder.
-
-## Contribuition
-
-Just me, at the moment.
-
-## Versioning
-
-Using [SemVer](http://semver.org/) for assembly versioning.
-
-## Authors
-
-- **Marco Teixeira (marcoaoteixeira)** - _initial work_
-
-## License
-
-MIT
-
-## Acknowledgement
-
-- Hat tip to anyone whose code was used.
+**_PropertyResolveMiddleware_**: Useful to inject properties, using a factory.

@@ -12,8 +12,8 @@
 
         private EvictionCallback? _evictionCallback = null;
         public EvictionCallback EvictionCallback {
-            get { return _evictionCallback ??= EmptyEvictionCallback; }
-            set { _evictionCallback = value; }
+            get => _evictionCallback ??= EmptyEvictionCallback;
+            set => _evictionCallback = value;
         }
 
         #endregion

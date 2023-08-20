@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
@@ -6,27 +6,34 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless.Logging.Microsoft</RootNamespace>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
 
+		<!-- CODE ANALYSIS -->
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 
-		<!-- PACKING -->
+		<!-- NUGET PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless Logging Library for Microsoft</Title>
 		<Company>Nameless</Company>
-		<Description>Logging lib to extend Microsoft.Extensions.Logging library.</Description>
+		<Description>The logging library for Microsoft.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Logging/Nameless.Logging.Microsoft</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="readme.md">
+		<Content Include="README.md">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
@@ -36,7 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="readme.md">
+		<None Update="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>

@@ -1,62 +1,25 @@
-﻿# Nameless Core
+﻿# Nameless Localization Microsoft Extensions Json
 
-This code has no intents to be something great. Just random pieces of code that
-a written (or copy) over the years. And nowadays its used in most of my
-personal developments.
+JSON based file localization library for Microsoft Extensions Localization.
 
-## Starting
+## Content
 
-Instructions below will show your the way to get things working.
+### How To Use It
 
-### Pre-requirements
+Simply add all support services and replace the current _IStringLocalizerFactory_
+with this library implementation.
+
+e.g.:
 
 ```
-No pre-requirements
+// On Configure(IServiceCollection services) method
+// Do not forget to add IFileProvider (Physical) extensions
+
+// call to AddLocalization
+services.AddLocalization();
+
+// Add support services and replace localizer factory
+services.AddSingleton<ICultureContext, CultureContext>();
+services.AddSingleton<ITranslationManager, FileTranslationManager>();
+services.AddSingleton<IStringLocalizerFactory, StringLocalizerFactory>();
 ```
-
-### Installing
-
-Well, no need to install anything.
-
-### Testing
-
-There is a test project, inside the "test" folder. Maybe you'll need to install
-the coverage tool and a report tool
-
-*Coverlet*
-```
-dotnet tool install -g coverlet.console
-```
-
-*.NET Report Generator*
-```
-dotnet tool install -g dotnet-reportgenerator-globaltool
-```
-
-### Coding Styles
-
-Nothing defined, just use the good sense.
-
-## Deployment
-
-There are informations to deploy the NuGet packages, inside the project file.
-
-## Contribuition
-
-Just me, at the moment.
-
-## Versioning
-
-Using [SemVer](http://semver.org/) for assembly versioning.
-
-## Authors
-
-* **Marco Teixeira (marcoaoteixeira)** - *initial work*
-
-## License
-
-MIT
-
-## Acknowledgement
-
-* Hat tip to anyone whose code was used. 

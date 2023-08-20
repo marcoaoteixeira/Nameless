@@ -11,10 +11,8 @@ namespace Nameless.Caching.Redis {
 
         #region Public Constructors
 
-        public RedisCache(IRedisDatabaseManager manager) {
-            Prevent.Against.Null(manager, nameof(manager));
-
-            _database = manager.GetDatabase();
+        public RedisCache(IDatabase database) {
+            _database = Guard.Against.Null(database, nameof(database));
         }
 
         #endregion
@@ -25,7 +23,7 @@ namespace Nameless.Caching.Redis {
             cancellationToken.ThrowIfCancellationRequested();
 
             var json = JsonSerializer.Serialize(value);
-            var expiry = opts != null && opts.ExpiresIn != default
+            var expiry = opts is not null && opts.ExpiresIn != default
                 ? (TimeSpan?)opts.ExpiresIn
                 : null;
 

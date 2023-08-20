@@ -16,7 +16,7 @@ namespace Nameless.Helpers {
         /// <param name="obj">The source <see cref="object" />.</param>
         /// <returns>A XML <see cref="string"/>.</returns>
         public static string? ToXml(object obj) {
-            Prevent.Against.Null(obj, nameof(obj));
+            Guard.Against.Null(obj, nameof(obj));
 
             return !obj.IsAnonymous()
                 ? ConvertComplexObjectToXml(obj)
@@ -29,14 +29,15 @@ namespace Nameless.Helpers {
         /// <typeparam name="T">Type of the struct</typeparam>
         /// <param name="value">The source value.</param>
         /// <returns>A nullable value.</returns>
-        public static T? AsNullable<T>(T value) where T : struct => new T?(value);
+        public static T? AsNullable<T>(T value) where T : struct
+            => new T?(value);
 
         #endregion
 
         #region Private Static Methods
 
         private static string ConvertComplexObjectToXml(object input) {
-            if (input == null) { return string.Empty; }
+            if (input is null) { return string.Empty; }
 
             using var memoryStream = new MemoryStream();
             using var streamReader = new StreamReader(memoryStream);
@@ -50,13 +51,13 @@ namespace Nameless.Helpers {
         }
 
         private static XElement? ConvertAnonymousObjectToXml(object input) {
-            if (input == null) { return null; }
+            if (input is null) { return null; }
 
             return ConvertAnonymousObjectToXml(input, null);
         }
 
         private static XElement? ConvertAnonymousObjectToXml(object input, string? element) {
-            if (input == null) { return null; }
+            if (input is null) { return null; }
             if (string.IsNullOrEmpty(element)) { element = "root"; }
 
             element = XmlConvert.EncodeName(element);
@@ -78,7 +79,7 @@ namespace Nameless.Helpers {
                                     ? new XElement(name, val)
                                     : ConvertAnonymousObjectToXml(val, name))
 
-                           where value != null
+                           where value is not null
 
                            select value;
 
@@ -88,7 +89,7 @@ namespace Nameless.Helpers {
         }
 
         private static XElement? GetArrayElement(PropertyInfo info, Array? input) {
-            if (input == null) { return null; }
+            if (input is null) { return null; }
 
             var name = XmlConvert.EncodeName(info.Name);
             var rootElement = new XElement(name);
@@ -96,7 +97,7 @@ namespace Nameless.Helpers {
 
             for (var idx = 0; idx < arrayCount; idx++) {
                 var value = input.GetValue(idx);
-                if (value == null) { continue; }
+                if (value is null) { continue; }
 
                 var childElement = value.GetType().IsSimple()
                     ? new XElement(string.Concat(name, "Child"), value)

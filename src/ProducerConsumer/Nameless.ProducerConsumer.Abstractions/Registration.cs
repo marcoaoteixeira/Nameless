@@ -36,16 +36,14 @@ namespace Nameless.ProducerConsumer {
         /// <param name="callback">The message handler.</param>
         /// <param name="tag">The registration tag.</param>
         public Registration(string tag, string topic, MessageHandler<T> handler) {
-            Prevent.Against.NullOrWhiteSpace(tag, nameof(tag));
-            Prevent.Against.NullOrWhiteSpace(topic, nameof(topic));
-            Prevent.Against.Null(handler, nameof(handler));
+            Guard.Against.Null(handler, nameof(handler));
 
-            Tag = tag;
-            Topic = topic;
+            Tag = Guard.Against.NullOrWhiteSpace(tag, nameof(tag));
+            Topic = Guard.Against.NullOrWhiteSpace(topic, nameof(topic));
 
             _handler = handler.Method;
             _target = new WeakReference(handler.Target);
-            _staticHandler = handler.Target == null;
+            _staticHandler = handler.Target is null;
         }
 
         #endregion
@@ -55,15 +53,15 @@ namespace Nameless.ProducerConsumer {
         /// <summary>
         /// Destructor
         /// </summary>
-        ~Registration() => Dispose(disposing: false);
+        ~Registration()
+            => Dispose(disposing: false);
 
         #endregion
 
         #region Public Override Methods
 
-        public override string ToString() {
-            return $"[{Topic};{Tag}]";
-        }
+        public override string ToString()
+            => $"[{Topic};{Tag}]";
 
         #endregion
 
@@ -76,7 +74,7 @@ namespace Nameless.ProducerConsumer {
         public MessageHandler<T>? CreateHandler() {
             BlockAccessAfterDispose();
 
-            if (_target.Target != default && _target.IsAlive) {
+            if (_target.Target is not null && _target.IsAlive) {
                 return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>), _target.Target);
             }
 
@@ -84,7 +82,7 @@ namespace Nameless.ProducerConsumer {
                 return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>));
             }
 
-            return default;
+            return null;
         }
 
         #endregion

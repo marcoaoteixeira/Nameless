@@ -5,18 +5,12 @@ namespace Nameless {
     /// </summary>
     [Singleton]
     public sealed class NullProgress<T> : IProgress<T> {
-        #region Private Static Read-Only Fields
-
-        private static readonly NullProgress<T> _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="NullProgress{T}" />.
         /// </summary>
-        public static IProgress<T> Instance => _instance;
+        public static IProgress<T> Instance { get; } = new NullProgress<T>();
 
         #endregion
 
@@ -47,18 +41,12 @@ namespace Nameless {
     /// </summary>
     [Singleton]
     public sealed class NullProgress : IProgress<int> {
-        #region Private Static Read-Only Fields
-
-        private static readonly NullProgress _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="NullProgress" />.
         /// </summary>
-        public static IProgress<int> Instance => _instance;
+        public static IProgress<int> Instance { get; } = new NullProgress();
 
         #endregion
 

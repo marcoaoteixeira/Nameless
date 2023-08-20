@@ -36,9 +36,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         /// Initializes a new instance of <see cref="Envelope"/>.
         /// </summary>
         public Envelope(object message, string? messageId = default, string? correlationId = default, DateTime publishedAt = default) {
-            Prevent.Against.Null(message, nameof(message));
-
-            Message = message;
+            Message = Guard.Against.Null(message, nameof(message));
             MessageId = messageId ?? string.Empty;
             CorrelationId = correlationId ?? string.Empty;
             PublishedAt = publishedAt;

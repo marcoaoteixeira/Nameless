@@ -4,18 +4,12 @@
     /// </summary>
     [Singleton]
     public sealed class ClockService : IClockService {
-        #region Private Static Read-Only Fields
-
-        private static readonly ClockService _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="ClockService" />.
         /// </summary>
-        public static IClockService Instance => _instance;
+        public static IClockService Instance { get; } = new ClockService();
 
         #endregion
 
@@ -33,7 +27,7 @@
 
         #endregion
 
-        #region IClock Members
+        #region IClockService Members
 
         public DateTime GetUtcNow()
             => DateTime.UtcNow;

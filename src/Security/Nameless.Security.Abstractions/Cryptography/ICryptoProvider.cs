@@ -1,7 +1,5 @@
 ﻿namespace Nameless.Security.Cryptography {
-
     public interface ICryptoProvider {
-
         #region Methods
 
         /// <summary>

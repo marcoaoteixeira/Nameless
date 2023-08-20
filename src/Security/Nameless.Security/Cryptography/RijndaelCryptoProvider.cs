@@ -2,7 +2,6 @@
 using System.Text;
 
 namespace Nameless.Security.Cryptography {
-
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and
     /// decrypt data. As long as it is initialized with the same constructor
@@ -19,38 +18,6 @@ namespace Nameless.Security.Cryptography {
     /// instance when a cryptographic exception occurs.
     /// </remarks>
     public sealed class RijndaelCryptoProvider : ICryptoProvider, IDisposable {
-
-        #region Private Constants
-
-        private const string DEFAULT_PASS_PHRASE = "29850952b3ef9f90";
-        private const string DEFAULT_INITIALIZATION_VECTOR = "9e209040c863f84a";
-        private const string DEFAULT_SALT = @"c11083b4b0a7743af748c85d343dfee9fbb8b2576c05f3a7f0d632b0926aadfc
-2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-08eac03b80adc33dc7d8fbe44b7c7b05d3a2c511166bdb43fcb710b03ba919e7
-9e209040c863f84a31e719795b2577523954739fe5ed3b58a75cff2127075ed1
-e4ba5cbd251c98e6cd1c23f126a3b81d8d8328abc95387229850952b3ef9f904
-d1d3ec2e6f20fd420d50e2642992841d8338a314b8ea157c9e18477aaef226ab
-5206b8b8a996cf5320cb12ca91c7b790fba9f030408efe83ebb83548dc3007bd
-a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
-
-        // If key size is not specified, use the longest 256-bit key.
-        private const KeySize DEFAULT_KEY_SIZE = KeySize.Large;
-
-        // Do not allow salt to be longer than 255 bytes, because we have only
-        // 1 byte to store its length.
-        private const int MAXIMUN_ALLOWED_SALT_LENGTH = 255;
-
-        // Do not allow salt to be smaller than 4 bytes, because we use the first
-        // 4 bytes of salt to store its length.
-        private const int MINIMUN_ALLOWED_SALT_LENGHT = 4;
-
-        // Random salt value will be between 4 and 8 bytes long.
-        private const int DEFAULT_MINIMUN_SALT_LENGHT = MINIMUN_ALLOWED_SALT_LENGHT;
-
-        private const int DEFAULT_MAXIMUN_SALT_LENGHT = 8;
-
-        #endregion
-
         #region Private Fields
 
         // These members will be used to perform encryption and decryption.
@@ -62,9 +29,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
         #region Private Read-Only Fields
 
-        // Use these members to save min and max salt lengths.
-        private readonly int _minimunSaltLength = -1;
-        private readonly int _maximunSaltLength = -1;
+        private readonly RijndaelCryptoOptions _options;
 
         #endregion
 
@@ -75,70 +40,24 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
         /// decryption with the key derived from the explicitly specified
         /// parameters.
         /// </summary>
-        /// <param name="passPhrase">
-        /// Passphrase from which a pseudo-random password will be derived.
-        /// The derived password will be used to generate the encryption key
-        /// Passphrase can be any string. In this example we assume that the
-        /// passphrase is an ASCII string. Passphrase value must be kept in
-        /// secret. Default value is: <value>DefaultPassPhrase</value>
-        /// </param>
-        /// <param name="initializationVector">
-        /// Initialization vector (IV). This value is required to encrypt the
-        /// first block of plaintext data. For RijndaelManaged class IV must be
-        /// exactly 16 ASCII characters long. IV value does not have to be kept
-        /// in secret. Default value is: <value>DefaultInitializationVector</value>
-        /// </param>
-        /// <param name="minimunSaltLength">
-        /// Min size (in bytes) of randomly generated salt which will be added at
-        /// the beginning of plain text before encryption is performed. When this
-        /// value is less than 4, the default min value will be used (currently 4
-        /// bytes).
-        /// </param>
-        /// <param name="maximunSaltLength">
-        /// Max size (in bytes) of randomly generated salt which will be added at
-        /// the beginning of plain text before encryption is performed. When this
-        /// value is negative or greater than 255, the default max value will be
-        /// used (currently 8 bytes). If max value is 0 (zero) or if it is smaller
-        /// than the specified min value (which can be adjusted to default value),
-        /// salt will not be used and plain text value will be encrypted as is.
-        /// In this case, salt will not be processed during decryption either.
-        /// </param>
-        /// <param name="keySize">
-        /// Size of symmetric key (in bits): 128, 192, or 256.
-        /// </param>
-        /// <param name="saltValue">
-        /// Salt value used for password hashing during key generation. This is
-        /// not the same as the salt we will use during encryption. This parameter
-        /// can be any string.
-        /// </param>
-        /// <param name="passwordIterations">
-        /// Number of iterations used to hash password. More iterations are
-        /// considered more secure but may take longer.
-        /// </param>
-        public RijndaelCryptoProvider(string? passPhrase = null, string? initializationVector = null, int minimunSaltLength = DEFAULT_MINIMUN_SALT_LENGHT, int maximunSaltLength = DEFAULT_MAXIMUN_SALT_LENGHT, KeySize keySize = DEFAULT_KEY_SIZE, string? saltValue = null, int passwordIterations = 1) {
-            // Save min salt length; set it to default if invalid value is passed.
-            _minimunSaltLength = minimunSaltLength < MINIMUN_ALLOWED_SALT_LENGHT
-                ? DEFAULT_MINIMUN_SALT_LENGHT
-                : minimunSaltLength;
-
-            // Save max salt length; set it to default if invalid value is passed.
-            _maximunSaltLength = maximunSaltLength < MAXIMUN_ALLOWED_SALT_LENGTH
-                ? DEFAULT_MAXIMUN_SALT_LENGHT
-                : maximunSaltLength;
+        /// <param name="options">The options.</param>
+        public RijndaelCryptoProvider(RijndaelCryptoOptions? options = null) {
+            _options = options ?? RijndaelCryptoOptions.Default;
 
             // Initialization vector converted to a byte array.
             // Get bytes of initialization vector.
-            var initializationVectorBytes = Encoding.ASCII.GetBytes(initializationVector ?? DEFAULT_INITIALIZATION_VECTOR);
+            var ivBytes = Encoding.ASCII.GetBytes(_options.IV);
 
             // Salt used for password hashing (to generate the key, not during
             // encryption) converted to a byte array.
             // Get bytes of salt (used in hashing).
-            var saltValueBytes = Encoding.ASCII.GetBytes(saltValue ?? DEFAULT_SALT);
+            var saltValueBytes = Encoding.ASCII.GetBytes(_options.Salt);
 
             byte[]? keyBytes = null;
             // Generate password, which will be used to derive the key.
-            using (var password = new Rfc2898DeriveBytes(passPhrase ?? DEFAULT_PASS_PHRASE, saltValueBytes, passwordIterations, HashAlgorithmName.SHA256)) {
+            using (var password = new Rfc2898DeriveBytes(_options.Passphrase, saltValueBytes, _options.PasswordIterations, HashAlgorithmName.SHA256)) {
                 // Convert key to a byte array adjusting the size from bits to bytes.
+                var keySize = _options.KeySize == KeySize.None ? KeySize.Large : _options.KeySize;
                 keyBytes = password.GetBytes((int)keySize / 8);
             }
 
@@ -146,10 +65,10 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
             using var symmetricKey = Aes.Create();
             // If we do not have initialization vector, we cannot use the CBC mode.
             // The only alternative is the ECB mode (which is not as good).
-            symmetricKey.Mode = initializationVectorBytes.Length == 0 ? CipherMode.ECB : CipherMode.CBC;
+            symmetricKey.Mode = ivBytes.Length == 0 ? CipherMode.ECB : CipherMode.CBC;
 
-            _encryptor = symmetricKey.CreateEncryptor(keyBytes, initializationVectorBytes);
-            _decryptor = symmetricKey.CreateDecryptor(keyBytes, initializationVectorBytes);
+            _encryptor = symmetricKey.CreateEncryptor(keyBytes, ivBytes);
+            _decryptor = symmetricKey.CreateDecryptor(keyBytes, ivBytes);
         }
 
         #endregion
@@ -180,13 +99,6 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
         /// beginning of the plain text bytes.
         /// </returns>
         private byte[] AddSalt(byte[] plainTextBytes) {
-            // The max salt value of 0 (zero) indicates that we should not use
-            // salt. Also do not use salt if the max salt value is smaller than
-            // the min value.
-            if (_maximunSaltLength == 0 || _maximunSaltLength < _minimunSaltLength) {
-                return plainTextBytes;
-            }
-
             // Generate the salt.
             var saltBytes = GenerateSalt();
 
@@ -217,17 +129,17 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
         private byte[] GenerateSalt() {
             // We don't have the length, yet.
             // If min and max salt values are the same, it should not be random.
-            var saltLength = _minimunSaltLength != _maximunSaltLength
-                ? GenerateRandomNumber(_minimunSaltLength, _maximunSaltLength)
-                : _minimunSaltLength;
+            var saltLength = _options.MinimumSaltSize != _options.MaximumSaltSize
+                ? GenerateRandomNumber(_options.MinimumSaltSize, _options.MaximumSaltSize)
+                : _options.MinimumSaltSize;
 
             // Allocate byte array to hold our salt.
             var salt = new byte[saltLength];
 
             // Populate salt with cryptographically strong bytes.
-            using (var rng = RandomNumberGenerator.Create()) {
-                rng.GetBytes(salt);
-            }
+            using var rng = RandomNumberGenerator.Create();
+
+            rng.GetBytes(salt);
 
             // Split salt length (always one byte) into four two-bit pieces and
             // store these pieces in the first four bytes of the salt array.
@@ -245,13 +157,8 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
             }
 
             if (disposing) {
-                if (_encryptor != null) {
-                    _encryptor.Dispose();
-                }
-
-                if (_decryptor != null) {
-                    _decryptor.Dispose();
-                }
+                _encryptor?.Dispose();
+                _decryptor?.Dispose();
             }
 
             _encryptor = null;
@@ -311,7 +218,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
         /// <inheritdoc />
         public byte[] Encrypt(Stream stream) {
-            Prevent.Against.Null(stream, nameof(stream));
+            Guard.Against.Null(stream, nameof(stream));
 
             BlockAccesAfterDispose();
 
@@ -339,7 +246,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
         /// <inheritdoc />
         public byte[] Decrypt(Stream stream) {
-            Prevent.Against.Null(stream, nameof(stream));
+            Guard.Against.Null(stream, nameof(stream));
 
             BlockAccesAfterDispose();
 
@@ -371,7 +278,7 @@ a49670c3c18b9e079b9cfaf51634f563dc8ae3070db2c4a8544305df1b60f007";
 
             // If we are using salt, get its length from the first 4 bytes of plain
             // text data.
-            if (_maximunSaltLength > 0 && _maximunSaltLength >= _minimunSaltLength) {
+            if (_options.MaximumSaltSize > 0 && _options.MaximumSaltSize >= _options.MinimumSaltSize) {
                 saltLength = (decryptedBytes[0] & 0x03) |
                              (decryptedBytes[1] & 0x0c) |
                              (decryptedBytes[2] & 0x30) |

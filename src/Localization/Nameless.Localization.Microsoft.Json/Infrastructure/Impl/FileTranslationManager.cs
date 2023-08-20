@@ -26,7 +26,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         #region Public Constructors
 
         public FileTranslationManager(IFileProvider fileProvider, LocalizationOptions? options = null) {
-            _fileProvider = Prevent.Against.Null(fileProvider, nameof(fileProvider));
+            _fileProvider = Guard.Against.Null(fileProvider, nameof(fileProvider));
             _options = options ?? LocalizationOptions.Default;
         }
 
@@ -35,7 +35,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         #region Private Methods
 
         private void HandleFileChange(object? state) {
-            if (state == null) { return; }
+            if (state is null) { return; }
 
             var culture = (string)state;
 
@@ -90,7 +90,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         #region ITranslationManager Members
 
         public Translation GetTranslation(string culture) {
-            Prevent.Against.NullOrWhiteSpace(culture, nameof(culture));
+            Guard.Against.NullOrWhiteSpace(culture, nameof(culture));
 
             if (!TranslationFileExists(culture)) {
                 return Translation.Empty;

@@ -17,7 +17,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             self.Persistent = args.GetPersistent();
             self.Priority = args.GetPriority();
             self.ReplyTo = args.GetReplyTo();
-            if (args.GetReplyToAddress() != null) {
+            if (args.GetReplyToAddress() is not null) {
                 self.ReplyToAddress = args.GetReplyToAddress();
             }
             self.Timestamp = args.GetTimestamp();

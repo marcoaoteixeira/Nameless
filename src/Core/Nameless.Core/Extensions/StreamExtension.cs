@@ -22,7 +22,7 @@ namespace Nameless {
                 throw new InvalidOperationException("Can't read stream.");
             }
 
-            using var reader = new StreamReader(self, encoding: encoding ?? Defaults.Encodings.UTF8, bufferSize: (int)bufferSize);
+            using var reader = new StreamReader(self, encoding: encoding ?? Root.Defaults.Encoding, bufferSize: (int)bufferSize);
             return reader.ReadToEnd();
         }
 
@@ -35,7 +35,9 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="InvalidOperationException">if <paramref name="self"/> can't be read.</exception>
         public static byte[] ToByteArray(this Stream self, BufferSize bufferSize = BufferSize.Small) {
-            if (!self.CanRead) { throw new InvalidOperationException("Can't read stream."); }
+            if (!self.CanRead) {
+                throw new InvalidOperationException("Can't read stream.");
+            }
 
             // Return faster...
             if (self is MemoryStream ms) { return ms.ToArray(); }

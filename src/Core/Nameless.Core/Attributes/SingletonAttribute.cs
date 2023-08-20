@@ -2,7 +2,6 @@
 using System.Reflection;
 
 namespace Nameless {
-
     /// <summary>
     /// Classes marked with <see cref="SingletonAttribute"/> must have a static
     /// property, defined in <see cref="AccessorName"/>, that will return the
@@ -11,7 +10,6 @@ namespace Nameless {
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed class SingletonAttribute : Attribute {
-
         #region Public Constants
 
         public const string DEFAULT_ACCESSOR_NAME = "Instance";
@@ -26,8 +24,8 @@ namespace Nameless {
         /// the singleton instance of the annotated class.
         /// </summary>
         public string AccessorName {
-            get { return _accessorName ??= DEFAULT_ACCESSOR_NAME; }
-            set { _accessorName = value; }
+            get => _accessorName ??= DEFAULT_ACCESSOR_NAME;
+            set => _accessorName = value;
         }
 
         #endregion
@@ -52,7 +50,7 @@ namespace Nameless {
         /// or doesn't have a defined single instance accessor property.
         /// .</returns>
         public static object? GetInstance(Type? type) {
-            if (type == null) { return null; }
+            if (type is null) { return null; }
 
             if (!HasAttribute(type, out var attr)) { return null; }
             if (!HasAccessorProperty(type, attr.AccessorName, out var accessor)) { return null; }
@@ -66,13 +64,13 @@ namespace Nameless {
 
         private static bool HasAttribute(Type type, [NotNullWhen(true)] out SingletonAttribute? attr) {
             attr = type.GetCustomAttribute<SingletonAttribute>(inherit: false);
-            return attr != null;
+            return attr is not null;
         }
 
         private static bool HasAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
             var currentAccessor = string.IsNullOrWhiteSpace(accessorName) ? DEFAULT_ACCESSOR_NAME : accessorName;
             accessor = type.GetProperty(currentAccessor, BindingFlags.Public | BindingFlags.Static);
-            return accessor != null;
+            return accessor is not null;
         }
 
         #endregion

@@ -16,7 +16,6 @@
 using System.Security.Cryptography;
 
 namespace Nameless.Security {
-
     /// <summary>
     /// This class can generate random passwords, which do not include ambiguous
     /// characters, such as I, l, and 1. The generated password will be made of
@@ -27,35 +26,38 @@ namespace Nameless.Security {
     /// this because some back-end systems do not like certain special
     /// characters in the first position).
     /// </summary>
+    [Singleton]
     public sealed class RandomPasswordGenerator : IPasswordGenerator {
+        #region Public Static Read-Only Properties
 
-        #region Public Constants
-
-        public const string DEFAULT_UPPER_CASE_CHARS = "ABCDEFGIJKMNOPQRSTWXYZ";
-        public const string DEFAULT_NUMERIC_CHARS = "0123456789";
+        public static IPasswordGenerator Instance { get; } = new RandomPasswordGenerator();
 
         #endregion
 
-        #region Private Read-Only Fields
+        #region Static Constructors
 
-        private readonly PasswordGeneratorOptions _options;
+        static RandomPasswordGenerator() {
+
+        }
 
         #endregion
 
-        #region Public Constructors
+        #region Private Constructors
 
-        public RandomPasswordGenerator(PasswordGeneratorOptions options) {
-            _options = options ?? PasswordGeneratorOptions.Default;
+        private RandomPasswordGenerator() {
+        
         }
 
         #endregion
 
         #region IPasswordGenerator Members
 
-        public string Generate() {
+        public string Generate(PasswordOptions? options = null) {
+            var opts = options ?? PasswordOptions.Default;
+
             // Make sure that input parameters are valid.
-            var minLength = _options.MinLength;
-            var maxLength = _options.MaxLength;
+            var minLength = opts.MinLength;
+            var maxLength = opts.MaxLength;
 
             if (minLength <= 0 || maxLength <= 0 || minLength > maxLength) {
                 return string.Empty;
@@ -64,28 +66,29 @@ namespace Nameless.Security {
             // Create a local array containing supported password characters
             // grouped by types. You can remove character groups from this
             // array, but doing so will weaken the password strength.
-            var charList = new List<char[]>();
-            if (!string.IsNullOrWhiteSpace(_options.LowerCasesChars)) { charList.Add(_options.LowerCasesChars.ToCharArray()); }
-            if (!string.IsNullOrWhiteSpace(_options.UpperCasesChars)) { charList.Add(_options.UpperCasesChars.ToCharArray()); }
-            if (!string.IsNullOrWhiteSpace(_options.NumericChars)) { charList.Add(_options.NumericChars.ToCharArray()); }
-            if (!string.IsNullOrWhiteSpace(_options.SpecialChars)) { charList.Add(_options.SpecialChars.ToCharArray()); }
-            if (charList.Count == 0) {
-                charList.Add(DEFAULT_UPPER_CASE_CHARS.ToCharArray());
-                charList.Add(DEFAULT_NUMERIC_CHARS.ToCharArray());
+            var chars = new List<char[]> {
+                (opts.LowerCases ?? string.Empty).ToCharArray(),
+                (opts.UpperCases ?? string.Empty).ToCharArray(),
+                (opts.Numerics ?? string.Empty).ToCharArray(),
+                (opts.Symbols ?? string.Empty).ToCharArray()
+            };
+            if (chars.Count == 0) {
+                chars.Add(Root.Defaults.UPPER_CASE_CHARS.ToCharArray());
+                chars.Add(Root.Defaults.NUMERIC_CHARS.ToCharArray());
             }
-            var charGroups = charList.ToArray();
+            var charArray = chars.ToArray();
 
             // Use this array to track the number of unused characters in each
             // character group.
-            var charsLeftInGroup = new int[charGroups.Length];
+            var charsLeftInGroup = new int[charArray.Length];
 
             // Initially, all characters in each group are not used.
             for (var idx = 0; idx < charsLeftInGroup.Length; idx++) {
-                charsLeftInGroup[idx] = charGroups[idx].Length;
+                charsLeftInGroup[idx] = charArray[idx].Length;
             }
 
             // Use this array to track (iterate through) unused character groups.
-            var leftGroupsOrder = new int[charGroups.Length];
+            var leftGroupsOrder = new int[charArray.Length];
 
             // Initially, all character groups are not used.
             for (var idx = 0; idx < leftGroupsOrder.Length; idx++) {
@@ -106,9 +109,9 @@ namespace Nameless.Security {
             rng.GetBytes(randomBytes);
 
             // Convert 4 bytes into a 32-bit integer value.
-            var seed = (randomBytes[0] & 0x7f) << 24 |
-                       randomBytes[1] << 16 |
-                       randomBytes[2] << 8 |
+            var seed = ((randomBytes[0] & 0x7f) << 24) |
+                       (randomBytes[1] << 16) |
+                       (randomBytes[2] << 8) |
                        randomBytes[3];
 
             // Now, this is real randomization.
@@ -152,7 +155,7 @@ namespace Nameless.Security {
                     : 0;
 
                 // Add this character to the password.
-                password[idx] = charGroups[nextGroupIdx][nextCharIdx];
+                password[idx] = charArray[nextGroupIdx][nextCharIdx];
 
                 // There are more unprocessed characters left.
                 if (lastCharIdx != 0) {
@@ -160,17 +163,17 @@ namespace Nameless.Security {
                     // so that we don't pick it until we process all characters in
                     // this group.
                     if (lastCharIdx != nextCharIdx) {
-                        var temp = charGroups[nextGroupIdx][lastCharIdx];
+                        var temp = charArray[nextGroupIdx][lastCharIdx];
 
-                        charGroups[nextGroupIdx][lastCharIdx] = charGroups[nextGroupIdx][nextCharIdx];
-                        charGroups[nextGroupIdx][nextCharIdx] = temp;
+                        charArray[nextGroupIdx][lastCharIdx] = charArray[nextGroupIdx][nextCharIdx];
+                        charArray[nextGroupIdx][nextCharIdx] = temp;
                     }
                     // Decrement the number of unprocessed characters in
                     // this group.
                     charsLeftInGroup[nextGroupIdx]--;
                 } else {
                     // If we processed the last character in this group, start over.
-                    charsLeftInGroup[nextGroupIdx] = charGroups[nextGroupIdx].Length;
+                    charsLeftInGroup[nextGroupIdx] = charArray[nextGroupIdx].Length;
                 }
 
                 // There are more unprocessed groups left.
@@ -178,7 +181,10 @@ namespace Nameless.Security {
                     // Swap processed group with the last unprocessed group
                     // so that we don't pick it until we process all groups.
                     if (lastLeftGroupsOrderIdx != nextLeftGroupsOrderIdx) {
-                        (leftGroupsOrder[nextLeftGroupsOrderIdx], leftGroupsOrder[lastLeftGroupsOrderIdx]) = (leftGroupsOrder[lastLeftGroupsOrderIdx], leftGroupsOrder[nextLeftGroupsOrderIdx]);
+                        var temp = leftGroupsOrder[lastLeftGroupsOrderIdx];
+
+                        leftGroupsOrder[lastLeftGroupsOrderIdx] = leftGroupsOrder[nextLeftGroupsOrderIdx];
+                        leftGroupsOrder[nextLeftGroupsOrderIdx] = temp;
                     }
                     // Decrement the number of unprocessed groups.
                     lastLeftGroupsOrderIdx--;

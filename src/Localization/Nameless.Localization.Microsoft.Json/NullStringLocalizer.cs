@@ -3,18 +3,12 @@
 namespace Nameless.Localization.Microsoft.Json {
     [Singleton]
     public sealed class NullStringLocalizer : IStringLocalizer {
-        #region Private Static Read-Only Fields
-
-        private static readonly NullStringLocalizer _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of Localizer.
         /// </summary>
-        public static IStringLocalizer Instance => _instance;
+        public static IStringLocalizer Instance { get; } = new NullStringLocalizer();
 
         #endregion
 

@@ -1,18 +1,12 @@
 namespace Nameless {
     [Singleton]
     public sealed class NullDisposable : IDisposable {
-        #region Private Static Read-Only Fields
-
-        private static readonly NullDisposable _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="NullDisposable" />.
         /// </summary>
-        public static IDisposable Instance => _instance;
+        public static IDisposable Instance { get; } = new NullDisposable();
 
         #endregion
 

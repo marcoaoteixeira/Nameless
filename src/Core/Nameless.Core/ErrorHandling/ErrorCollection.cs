@@ -17,8 +17,8 @@ namespace Nameless.ErrorHandling {
         #region Public Methods
 
         public void Push(string code, params string[] problems) {
-            Prevent.Against.Null(code, nameof(code));
-            Prevent.Against.Null(problems, nameof(problems));
+            Guard.Against.Null(code, nameof(code));
+            Guard.Against.Null(problems, nameof(problems));
 
             var error = AssertError(code);
 
@@ -59,7 +59,7 @@ namespace Nameless.ErrorHandling {
 
         #region IEnumerable<Error> Members
 
-        IEnumerator<Error> IEnumerable<Error>.GetEnumerator()
+        public IEnumerator<Error> GetEnumerator()
             => GetEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()

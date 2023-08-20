@@ -25,7 +25,7 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="fallback"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if <paramref name="fallback"/> is empty or white spaces.</exception>
         public static string OnBlank(this string? self, string fallback) {
-            Prevent.Against.NullOrWhiteSpace(fallback, nameof(fallback));
+            Guard.Against.NullOrWhiteSpace(fallback, nameof(fallback));
 
             return string.IsNullOrWhiteSpace(self) ? fallback : self;
         }
@@ -56,7 +56,7 @@ namespace Nameless {
         /// <param name="times">Times to repeat.</param>
         /// <returns>A new <see cref="string"/> representing the <paramref name="self"/> repeated N times.</returns>
         public static string Repeat(this string self, int times) {
-            if (self == null || times <= 0) { return string.Empty; }
+            if (self is null || times <= 0) { return string.Empty; }
 
             var builder = new StringBuilder();
             for (var counter = 0; counter < times; counter++) {
@@ -73,7 +73,7 @@ namespace Nameless {
         /// <returns>An instance of <see cref="MemoryStream"/> representing the current <see cref="string"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static Stream ToStream(this string self, Encoding? encoding = default)
-            => new MemoryStream((encoding ?? Defaults.Encodings.UTF8).GetBytes(self));
+            => new MemoryStream((encoding ?? Root.Defaults.Encoding).GetBytes(self));
 
         /// <summary>
         /// Separates a phrase by camel case.
@@ -86,7 +86,7 @@ namespace Nameless {
             for (var idx = self.Length - 1; idx > 0; idx--) {
                 var current = result[idx];
 
-                if ('A' <= current && current <= 'Z') {
+                if (current is >= 'A' and <='Z') {
                     result.Insert(idx, ' ');
                 }
             }
@@ -106,7 +106,7 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="ellipsis"/> is <c>null</c>.</exception>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string Ellipsize(this string self, int characterCount, string ellipsis = "&#160;&#8230;", bool wordBoundary = false) {
-            Prevent.Against.Null(ellipsis, nameof(ellipsis));
+            Guard.Against.Null(ellipsis, nameof(ellipsis));
 
             if (characterCount < 0 || self.Length <= characterCount) {
                 return self;
@@ -138,12 +138,11 @@ namespace Nameless {
         /// <param name="self">The current <see cref="string"/>.</param>
         /// <returns>An array of <see cref="byte"/>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static byte[] FromHexToByteArray(this string self) {
-            return Enumerable.Range(0, self.Length).
-                Where(_ => _ % 2 == 0).
-                Select(_ => Convert.ToByte(self.Substring(_, 2), fromBase: 16 /* hexadecimal */ )).
-                ToArray();
-        }
+        public static byte[] FromHexToByteArray(this string self)
+            => Enumerable.Range(0, self.Length)
+                .Where(_ => _ % 2 == 0)
+                .Select(_ => Convert.ToByte(self.Substring(_, 2), fromBase: 16 /* hexadecimal */ ))
+                .ToArray();
 
         /// <summary>
         /// Replaces all occurrences from <paramref name="self"/> with the values presents
@@ -154,7 +153,7 @@ namespace Nameless {
         /// <returns>A replaced <see cref="string"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="replacements"/> is <c>null</c>.</exception>
         public static string ReplaceAll(this string self, IDictionary<string, string> replacements) {
-            Prevent.Against.Null(replacements, nameof(replacements));
+            Guard.Against.Null(replacements, nameof(replacements));
 
             var pattern = string.Format("{0}", string.Join("|", replacements.Keys));
 
@@ -169,7 +168,7 @@ namespace Nameless {
         /// <returns>The Base64 <see cref="string"/> representation.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string ToBase64(this string self, Encoding? encoding = default)
-            => Convert.ToBase64String((encoding ?? Defaults.Encodings.UTF8).GetBytes(self));
+            => Convert.ToBase64String((encoding ?? Root.Defaults.Encoding).GetBytes(self));
 
         /// <summary>
         /// Converts from a Base64 <see cref="string"/> representation.
@@ -179,7 +178,7 @@ namespace Nameless {
         /// <returns>The <see cref="string"/> representation.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string FromBase64(this string self, Encoding? encoding = default)
-            => (encoding ?? Defaults.Encodings.UTF8).GetString(Convert.FromBase64String(self));
+            => (encoding ?? Root.Defaults.Encoding).GetString(Convert.FromBase64String(self));
 
         /// <summary>
         /// Strips a <see cref="string"/> by the specified <see cref="char"/> from <paramref name="stripped"/>.
@@ -210,7 +209,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="predicate"/> is <c>null</c>.</exception>
         public static string Strip(this string self, Func<char, bool> predicate) {
-            Prevent.Against.Null(predicate, nameof(predicate));
+            Guard.Against.Null(predicate, nameof(predicate));
 
             var result = new char[self.Length];
             var cursor = 0;
@@ -234,7 +233,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException"> <paramref name="chars"/> is <c>null</c>.</exception>
         public static bool Any(this string self, params char[] chars) {
-            Prevent.Against.Null(chars, nameof(chars));
+            Guard.Against.Null(chars, nameof(chars));
 
             if (!chars.Any()) { return false; }
 
@@ -257,7 +256,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if or <paramref name="chars"/> is <c>null</c>.</exception>
         public static bool All(this string self, params char[] chars) {
-            Prevent.Against.Null(chars, nameof(chars));
+            Guard.Against.Null(chars, nameof(chars));
 
             for (var idx = 0; idx < self.Length; idx++) {
                 var current = self[idx];
@@ -279,8 +278,8 @@ namespace Nameless {
         /// <returns>The translated representation of <paramref name="self"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="from"/> or <paramref name="to"/> is <c>null</c>.</exception>
         public static string Translate(this string self, char[] from, char[] to) {
-            Prevent.Against.Null(from, nameof(from));
-            Prevent.Against.Null(to, nameof(to));
+            Guard.Against.Null(from, nameof(from));
+            Guard.Against.Null(to, nameof(to));
 
             if (string.IsNullOrEmpty(self)) { return string.Empty; }
 
@@ -345,7 +344,7 @@ namespace Nameless {
             var cursor = 0;
             var inside = false;
             for (var idx = 0; idx < self.Length; idx++) {
-                char current = self[idx];
+                var current = self[idx];
 
                 switch (current) {
                     case '<':
@@ -422,7 +421,7 @@ namespace Nameless {
         /// <returns>An array of <see cref="byte"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static byte[] GetBytes(this string self, Encoding? encoding = default)
-            => (encoding ?? Defaults.Encodings.UTF8).GetBytes(self);
+            => (encoding ?? Root.Defaults.Encoding).GetBytes(self);
 
         /// <summary>
         /// Splits the <paramref name="self"/> <see cref="string"/> by camel case.
@@ -463,38 +462,10 @@ namespace Nameless {
         /// <returns>The MD5 representation for the <paramref name="self"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string GetMD5(this string self, Encoding? encoding = default) {
-            var buffer = (encoding ?? Defaults.Encodings.UTF8).GetBytes(self);
+            var buffer = (encoding ?? Root.Defaults.Encoding).GetBytes(self);
             var result = MD5.HashData(buffer);
 
             return BitConverter.ToString(result);
-        }
-
-        /// <summary>
-        /// Removes the prefix.
-        /// </summary>
-        /// <param name="self">The self string.</param>
-        /// <param name="prefix">The specified prefix</param>
-        /// <returns>The current <see cref="string"/> without the <paramref name="prefix"/></returns>
-        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">if <paramref name="prefix"/> is <c>null</c>.</exception>
-        public static string TrimPrefix(this string self, string prefix) {
-            Prevent.Against.Null(prefix, nameof(prefix));
-
-            return self.StartsWith(prefix, StringComparison.Ordinal) ? self[prefix.Length..] : self;
-        }
-
-        /// <summary>
-        /// Removes the suffix.
-        /// </summary>
-        /// <param name="self">The self string.</param>
-        /// <param name="suffix">The specified suffix.</param>
-        /// <returns>The current <see cref="string"/> without the <paramref name="suffix"/>.</returns>
-        /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">if <paramref name="suffix"/> is <c>null</c>.</exception>
-        public static string TrimSuffix(this string self, string suffix) {
-            Prevent.Against.Null(suffix, nameof(suffix));
-
-            return self.EndsWith(suffix, StringComparison.Ordinal) ? self[..^suffix.Length] : self;
         }
 
         /// <summary>
@@ -505,7 +476,7 @@ namespace Nameless {
         /// <param name="length">The length value.</param>
         /// <returns>A <see cref="string"/> representing the substring value.</returns>
         public static string SafeSubstring(this string? self, int start, int length) {
-            if (self == null || start < 0 || length <= 0 || self.Length <= start ) {
+            if (self is null || start < 0 || length <= 0 || self.Length <= start) {
                 return string.Empty;
             }
 
@@ -518,7 +489,7 @@ namespace Nameless {
 
         public static bool IsTrueString(this string? self) {
             // we'll consider null as false.
-            if (self == null) { return false; }
+            if (self is null) { return false; }
 
             // any numeric value less than 0 is false.
             if (double.TryParse(self, out var result)) {
@@ -530,18 +501,50 @@ namespace Nameless {
         }
 
         /// <summary>
-        /// Removes, from the end of the current string, the first occurence of
-        /// <paramref name="values"/>.
+        /// Removes, from the start of the current string, the first occurence of
+        /// any value of <paramref name="values"/>.
         /// </summary>
         /// <param name="self">The current instance of <see cref="string"/>.</param>
         /// <param name="values">A collection of values to match.</param>
-        /// <returns>The current <see cref="string"/> without the matching end, if exists.</returns>
-        public static string RemoveTail(this string self, params string[] values) {
+        /// <param name="comparison">The comparison type.</param>
+        /// <returns>The current <see cref="string"/> without the matching start, if exists.</returns>
+        public static string RemoveHead(this string self, string[] values, StringComparison comparison = StringComparison.OrdinalIgnoreCase) {
+            Guard.Against.Null(values, nameof(values));
+
             foreach (var value in values) {
-                if (self.EndsWith(value)) {
-                    return self[..self.LastIndexOf(value)];
+                if (string.IsNullOrWhiteSpace(value)) {
+                    continue;
+                }
+
+                if (self.StartsWith(value, comparison)) {
+                    return self[value.Length..];
                 }
             }
+
+            return self;
+        }
+
+        /// <summary>
+        /// Removes, from the end of the current string, the first occurence of
+        /// any value of <paramref name="values"/>.
+        /// </summary>
+        /// <param name="self">The current instance of <see cref="string"/>.</param>
+        /// <param name="values">A collection of values to match.</param>
+        /// <param name="comparison">The comparison type.</param>
+        /// <returns>The current <see cref="string"/> without the matching end, if exists.</returns>
+        public static string RemoveTail(this string self, string[] values, StringComparison comparison = StringComparison.Ordinal) {
+            Guard.Against.Null(values, nameof(values));
+
+            foreach (var value in values) {
+                if (string.IsNullOrWhiteSpace(value)) {
+                    continue;
+                }
+
+                if (self.EndsWith(value, comparison)) {
+                    return self[..^value.Length];
+                }
+            }
+
             return self;
         }
 

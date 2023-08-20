@@ -1,5 +1,4 @@
-﻿using Nameless.NHibernate.Services;
-using NHibernate.Cfg;
+﻿using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 
@@ -22,7 +21,7 @@ namespace Nameless.NHibernate.Services.Impl {
         #region Private Static Methods
 
         private static bool IsMappingType(Type? type) {
-            if (type == null || type.IsAbstract || type.IsInterface) {
+            if (type is null || type.IsAbstract || type.IsInterface) {
                 return false;
             }
 
@@ -40,17 +39,23 @@ namespace Nameless.NHibernate.Services.Impl {
             var configuration = new Configuration();
             configuration.SetProperties(_options.ToDictionary());
 
-            var entityBaseTypes = _options.EntityRootTypes.Select(Type.GetType).ToArray();
-            var modelInspector = new ModelInspector(entityBaseTypes!);
+            var entityRootTypes = _options.EntityRootTypes
+                .Select(Type.GetType)
+                .ToArray();
+            var modelInspector = new ModelInspector(entityRootTypes!);
             var modelMapper = new ModelMapper(modelInspector);
 
-            var mappingTypes = _options.MappingTypes
+            var mappings = _options.MappingTypes
                 .Select(Type.GetType)
                 .Where(IsMappingType)
                 .ToArray();
-            modelMapper.AddMappings(mappingTypes);
+            modelMapper.AddMappings(mappings);
 
-            configuration.AddDeserializedMapping(modelMapper.CompileMappingForAllExplicitlyAddedEntities(), documentFileName: null);
+            var mappingDocument = modelMapper.CompileMappingForAllExplicitlyAddedEntities();
+            configuration.AddDeserializedMapping(
+                mappingDocument,
+                documentFileName: null
+            );
 
             return configuration;
         }

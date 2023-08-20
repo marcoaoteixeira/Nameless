@@ -10,8 +10,8 @@
         #region Public Constructors
 
         public Message(string id, string text) {
-            ID = Prevent.Against.Null(id, nameof(id));
-            Text = Prevent.Against.Null(text, nameof(text));
+            ID = Guard.Against.Null(id, nameof(id));
+            Text = Guard.Against.Null(text, nameof(text));
         }
 
         #endregion

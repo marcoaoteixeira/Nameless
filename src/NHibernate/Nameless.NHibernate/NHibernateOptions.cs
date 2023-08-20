@@ -13,10 +13,12 @@ namespace Nameless.NHibernate {
             foreach (var property in properties) {
                 var key = property.GetDescription() ?? property.Name;
                 var obj = property.GetValue(this);
-                if (obj == default) { continue; }
+                if (obj is null) { continue; }
 
                 var value = obj is Enum @enum ? @enum.GetDescription() : obj.ToString();
-                yield return new KeyValuePair<string, string>(key, value!);
+                if (value is null) { continue; }
+
+                yield return new(key, value);
             }
         }
 
@@ -32,6 +34,7 @@ namespace Nameless.NHibernate {
 
         #region Public Properties
 
+        public NHibernateSchemaExportOptions SchemaExport { get; set; } = new();
         public NHibernateCommonOptions Common { get; set; } = new();
         public NHibernateConnectionOptions Connection { get; set; } = new();
         public NHibernateAdoNetOptions AdoNet { get; set; } = new();
@@ -50,7 +53,7 @@ namespace Nameless.NHibernate {
 
         #region Public Methods
 
-        public IDictionary<string, string> ToDictionary() {
+        public Dictionary<string, string> ToDictionary() {
             var configs = new List<KeyValuePair<string, string>>();
 
             var properties = GetType()
@@ -58,13 +61,33 @@ namespace Nameless.NHibernate {
                 .Where(_ => typeof(NHibernateOptionsBase).IsAssignableFrom(_.PropertyType));
 
             foreach (var property in properties) {
-                var config = (NHibernateOptionsBase)property.GetValue(this)!;
-                if (config == null) { continue; }
+                if (property.GetValue(this) is not NHibernateOptionsBase config) {
+                    continue;
+                }
+
                 configs.AddRange(config.GetConfigValues());
             }
 
-            return new Dictionary<string, string>(configs.ToArray());
+            return new(configs.ToArray());
         }
+
+        #endregion
+    }
+
+    public sealed class NHibernateSchemaExportOptions {
+        #region Public Static Read-Only Properties
+
+        public static NHibernateSchemaExportOptions Default => new();
+
+        #endregion
+
+        #region Public Properties
+
+        public bool ExecuteSchemaExport { get; set; } = true;
+        public bool ConsoleOutput { get; set; }
+        public bool FileOutput { get; set; }
+        public bool DropBeforeExecution { get; set; }
+        public string OutputFolder { get; set; } = Path.Combine("App_Data", "NHibernate");
 
         #endregion
     }

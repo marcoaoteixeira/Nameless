@@ -9,7 +9,7 @@
         #region Public Constructors
 
         public AsyncEnumerable(IEnumerable<T> enumerable) {
-            Prevent.Against.Null(enumerable, nameof(enumerable));
+            Guard.Against.Null(enumerable, nameof(enumerable));
 
             _enumerable = enumerable;
         }
@@ -41,7 +41,7 @@
         #region Public Constructors
 
         public AsyncEnumerator(IEnumerable<T> enumerable, CancellationToken cancellationToken = default) {
-            Prevent.Against.Null(enumerable, nameof(enumerable));
+            Guard.Against.Null(enumerable, nameof(enumerable));
 
             _enumerator = enumerable.GetEnumerator();
             _cancellationToken = cancellationToken;
@@ -60,7 +60,7 @@
 
         private void BlockAccessAfterDispose() {
             if (_disposed) {
-                throw new ObjectDisposedException(GetType().FullName);
+                throw new ObjectDisposedException(typeof(AsyncEnumerable<T>).FullName);
             }
         }
 
@@ -70,7 +70,7 @@
                 _enumerator?.Dispose();
             }
 
-            _enumerator = default;
+            _enumerator = null;
             _disposed = true;
         }
 

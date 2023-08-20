@@ -2,7 +2,6 @@
 using System.Dynamic;
 
 namespace Nameless.Collections {
-
     /// <summary>
     /// Class to add support for dynamic fields with NHibernate.
     /// </summary>
@@ -20,7 +19,6 @@ namespace Nameless.Collections {
     /// }
     /// </example>
     public sealed class HashtableDynamicObject : DynamicObject {
-
         #region Private Read-Only Fields
 
         private readonly IDictionary _dictionary;
@@ -43,7 +41,7 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TryGetMember(GetMemberBinder binder, out object? result) {
-            Prevent.Against.Null(binder, nameof(binder));
+            Guard.Against.Null(binder, nameof(binder));
 
             result = _dictionary[binder.Name];
             return _dictionary.Contains(binder.Name);
@@ -51,7 +49,7 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TrySetMember(SetMemberBinder binder, object? value) {
-            Prevent.Against.Null(binder, nameof(binder));
+            Guard.Against.Null(binder, nameof(binder));
 
             _dictionary[binder.Name] = value;
 
@@ -60,8 +58,8 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result) {
-            Prevent.Against.Null(binder, nameof(binder));
-            Prevent.Against.Null(indexes, nameof(indexes));
+            Guard.Against.Null(binder, nameof(binder));
+            Guard.Against.Null(indexes, nameof(indexes));
 
             if (indexes.Length != 1) {
                 throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));
@@ -73,8 +71,8 @@ namespace Nameless.Collections {
 
         /// <inheritdoc/>
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value) {
-            Prevent.Against.Null(binder, nameof(binder));
-            Prevent.Against.Null(indexes, nameof(indexes));
+            Guard.Against.Null(binder, nameof(binder));
+            Guard.Against.Null(indexes, nameof(indexes));
 
             if (indexes.Length != 1) {
                 throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));

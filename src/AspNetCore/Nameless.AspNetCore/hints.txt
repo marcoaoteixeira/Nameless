@@ -1,5 +1,0 @@
-When using ASP.NET Core API and Versioning, use these attributes at the
-controller level to route all methods calls:
-
-- [ApiVersion("1")]
-- [Route("api/v{version:apiVersion}/[controller]")]
