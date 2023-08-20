@@ -55,9 +55,9 @@ jobs:
           dotnet test \
           --no-restore \
           --no-build \
-          --logger:"Html;LogFileName=coverage-logger.html" \
+          --logger:"Html;LogFileName=code-coverage-log.html" \
           --collect:"XPlat Code Coverage" \
-          --results-directory ${{ env.CODE_COVERAGE_FOLDER_PATH }} \
+          --results-directory ./code-coverage/ \
           --verbosity normal
 
       - name: Prepare for coverage report
@@ -72,8 +72,8 @@ jobs:
         if: success()
         run: |
           reportgenerator \
-          "-reports:${{ env.CODE_COVERAGE_COBERTURA_FILE_PATH }}" \
-          "-targetdir:${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}" \
+          "-reports:./code-coverage/**/coverage.cobertura.xml" \
+          "-targetdir:./code-coverage/report" \
           -reporttypes:Html
 
       - name: Upload coverage report
