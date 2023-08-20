@@ -69,9 +69,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Security.Abstracti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Security", "src\Security\Nameless.Security\Nameless.Security.csproj", "{C3620202-AC05-4788-8F5F-E6A8BD2E811C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MongoDb", "MongoDb", "{E1B3D195-033A-4E15-B7FD-E8C707596333}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MongoDB", "MongoDB", "{E1B3D195-033A-4E15-B7FD-E8C707596333}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.MongoDB", "src\MongoDb\Nameless.MongoDb\Nameless.MongoDB.csproj", "{6029FD27-D716-4BCD-B6B4-E4F4164787A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.MongoDB", "src\MongoDB\Nameless.MongoDB\Nameless.MongoDB.csproj", "{6029FD27-D716-4BCD-B6B4-E4F4164787A3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Caching.InMemory.DependencyInjection", "src\Caching\Nameless.Caching.InMemory.DependencyInjection\Nameless.Caching.InMemory.DependencyInjection.csproj", "{542ADE67-5351-414B-A8BD-EC7E55042BCC}"
 EndProject
