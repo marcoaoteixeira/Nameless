@@ -3,18 +3,12 @@
 namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
     [Singleton]
     public sealed class CultureContext : ICultureContext {
-        #region Private Static Read-Only Fields
-
-        private static readonly CultureContext _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="CultureContext" />.
         /// </summary>
-        public static ICultureContext Instance => _instance;
+        public static ICultureContext Instance { get; } = new CultureContext();
 
         #endregion
 

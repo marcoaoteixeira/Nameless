@@ -6,18 +6,12 @@ namespace Nameless.NHibernate {
     /// </summary>
     [Singleton]
     public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
-        #region Private Static Read-Only Fields
-
-        private static readonly UUIDHexCombGeneratorDef _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="UUIDHexCombGeneratorDef" />.
         /// </summary>
-        public static IGeneratorDef Instance => _instance;
+        public static IGeneratorDef Instance { get; } = new UUIDHexCombGeneratorDef();
 
         #endregion
 

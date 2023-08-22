@@ -62,7 +62,7 @@ namespace Nameless {
         /// <returns>An expression composition.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
-            Prevent.Against.Null(right, nameof(right));
+            Guard.Against.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.And(
@@ -81,8 +81,8 @@ namespace Nameless {
         /// <returns>An expression composition.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> or <paramref name="right"/> is <c>null</c>.</exception>
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> right) {
-            Prevent.Against.Null(self, nameof(self));
-            Prevent.Against.Null(right, nameof(right));
+            Guard.Against.Null(self, nameof(self));
+            Guard.Against.Null(right, nameof(right));
 
             var param = Expression.Parameter(typeof(T), "_");
             var body = Expression.Or(
@@ -96,21 +96,19 @@ namespace Nameless {
 
         #region Private Static Methods
 
-        private static string GetExpressionMemberName(Expression expression) {
-            return expression switch {
+        private static string GetExpressionMemberName(Expression expression)
+            => expression switch {
                 MemberExpression => ((MemberExpression)expression).Member.Name,
                 MethodCallExpression => ((MethodCallExpression)expression).Method.Name,
                 UnaryExpression => GetUnaryExpressionMemberName((UnaryExpression)expression),
                 _ => throw new ArgumentException("Invalid expression.", nameof(expression)),
             };
-        }
 
-        private static string GetUnaryExpressionMemberName(UnaryExpression expression) {
-            return expression.Operand switch {
+        private static string GetUnaryExpressionMemberName(UnaryExpression expression)
+            => expression.Operand switch {
                 MethodCallExpression => ((MethodCallExpression)expression.Operand).Method.Name,
                 _ => ((MemberExpression)expression.Operand).Member.Name,
             };
-        }
 
         #endregion
     }

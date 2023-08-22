@@ -3,18 +3,12 @@
 namespace Nameless {
     [Singleton]
     public sealed class NullApplicationContext : IApplicationContext {
-        #region Private Static Read-Only Fields
-
-        private static readonly NullApplicationContext _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="NullDisposable" />.
         /// </summary>
-        public static IApplicationContext Instance => _instance;
+        public static IApplicationContext Instance { get; } = new NullApplicationContext();
 
         #endregion
 
@@ -39,8 +33,6 @@ namespace Nameless {
         public string ApplicationName => "Application";
 
         public string BasePath => typeof(NullApplicationContext).Assembly.GetDirectoryPath();
-
-        public string DataDirectoryPath => Path.Combine(BasePath, "App_Data");
 
         #endregion
     }

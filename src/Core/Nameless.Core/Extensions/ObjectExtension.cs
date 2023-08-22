@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 
 namespace Nameless {
     /// <summary>
@@ -19,7 +18,7 @@ namespace Nameless {
             var type = self as Type ?? self.GetType();
 
             return
-                type.GetCustomAttribute<CompilerGeneratedAttribute>(inherit: true) != default &&
+                type.GetCustomAttribute<CompilerGeneratedAttribute>(inherit: true) is not null &&
                 type.IsGenericType &&
                 type.Name.Contains("AnonymousType") &&
                 (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"));

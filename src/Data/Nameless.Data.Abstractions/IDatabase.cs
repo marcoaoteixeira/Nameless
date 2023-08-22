@@ -1,16 +1,26 @@
 ﻿using System.Data;
 
 namespace Nameless.Data {
-
     /// <summary>
     /// Contract to a database accessor that works with ADO.Net
     /// </summary>
     public interface IDatabase {
-
         #region Methods
 
+        /// <summary>
+        /// Starts a new transaction.
+        /// </summary>
+        /// <param name="isolationLevel">The isolation level of the transaction.</param>
         void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified);
+
+        /// <summary>
+        /// Commits the current transaction.
+        /// </summary>
         void CommitTransaction();
+
+        /// <summary>
+        /// Rolls-back the current transaction.
+        /// </summary>
         void RollbackTransaction();
 
         /// <summary>

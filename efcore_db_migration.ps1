@@ -7,7 +7,7 @@
     Execute EF Core db migration for specified project.
 
     .LINK
-	Project home: https://github.com/marcoaoteixeira/adventure_works
+	Project home: https://github.com/marcoaoteixeira/nameless
 
 	.NOTES
 	Author:

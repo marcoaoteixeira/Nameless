@@ -4,7 +4,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
     public sealed class ConnectionManager : IConnectionManager, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly ProducerConsumerOptions _options;
+        private readonly RabbitMQOptions _options;
 
         #endregion
 
@@ -18,8 +18,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
 
         #region Public Constructors
 
-        public ConnectionManager(ProducerConsumerOptions? options = null) {
-            _options = options ?? ProducerConsumerOptions.Default;
+        public ConnectionManager(RabbitMQOptions? options = null) {
+            _options = options ?? RabbitMQOptions.Default;
         }
 
         #endregion
@@ -27,7 +27,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
         #region Private Methods
 
         private ConnectionFactory GetConnectionFactory() {
-            if (_factory == null) {
+            if (_factory is null) {
                 _factory = new ConnectionFactory {
                     HostName = _options.Server.Hostname,
                     Port = _options.Server.Port,

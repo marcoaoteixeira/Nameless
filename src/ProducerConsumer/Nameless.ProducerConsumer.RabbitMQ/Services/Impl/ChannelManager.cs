@@ -4,7 +4,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
     public sealed class ChannelManager : IChannelManager, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IConnectionManager _connectionManager;
+        private readonly IConnection _connection;
 
         #endregion
 
@@ -17,8 +17,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
 
         #region Public Constructors
 
-        public ChannelManager(IConnectionManager connectionManager) {
-            _connectionManager = Prevent.Against.Null(connectionManager, nameof(connectionManager));
+        public ChannelManager(IConnection connection) {
+            _connection = Guard.Against.Null(connection, nameof(connection));
         }
 
         #endregion
@@ -56,7 +56,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
         public IModel GetChannel() {
             BlockAccessAfterDispose();
 
-            return _channel ??= _connectionManager.GetConnection().CreateModel();
+            return _channel ??= _connection.CreateModel();
         }
 
         #endregion

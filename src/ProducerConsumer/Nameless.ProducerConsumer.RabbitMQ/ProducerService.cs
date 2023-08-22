@@ -14,8 +14,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         private ILogger? _logger;
         public ILogger Logger {
-            get { return _logger ??= NullLogger.Instance; }
-            set { _logger = value; }
+            get => _logger ??= NullLogger.Instance;
+            set => _logger = value;
         }
 
         #endregion
@@ -23,7 +23,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public ProducerService(IModel channel) {
-            _channel = Prevent.Against.Null(channel, nameof(channel));
+            _channel = Guard.Against.Null(channel, nameof(channel));
         }
 
         #endregion
@@ -47,7 +47,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     basicProperties: properties,
                     body: envelope.CreateBuffer()
                 );
-            } catch (Exception ex) { Logger.LogError(ex, ex.Message); throw; }
+            } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex.Message); throw; }
 
             return Task.CompletedTask;
         }

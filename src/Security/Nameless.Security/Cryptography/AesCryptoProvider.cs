@@ -1,19 +1,17 @@
 ﻿using System.Security.Cryptography;
 
 namespace Nameless.Security.Cryptography {
-
     public sealed class AesCryptoProvider : ICryptoProvider {
-
         #region Private Read-Only Fields
 
-        private readonly CryptoOptions _options;
+        private readonly AesCryptoOptions _options;
 
         #endregion
 
         #region Public Constructors
 
-        public AesCryptoProvider(CryptoOptions options) {
-            _options = options ?? CryptoOptions.Default;
+        public AesCryptoProvider(AesCryptoOptions options) {
+            _options = options ?? AesCryptoOptions.Default;
         }
 
         #endregion
@@ -21,7 +19,7 @@ namespace Nameless.Security.Cryptography {
         #region ICryptoProvider Members
 
         public byte[] Encrypt(Stream stream) {
-            Prevent.Against.Null(stream, nameof(stream));
+            Guard.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return Array.Empty<byte>(); }
@@ -43,7 +41,7 @@ namespace Nameless.Security.Cryptography {
         }
 
         public byte[] Decrypt(Stream stream) {
-            Prevent.Against.Null(stream, nameof(stream));
+            Guard.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return Array.Empty<byte>(); }
@@ -60,9 +58,9 @@ namespace Nameless.Security.Cryptography {
             using var memoryStream = new MemoryStream(buffer);
             using var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             using var streamReader = new StreamReader(cryptoStream);
-            var decrypted = streamReader.ReadToEnd();
+            var result = streamReader.ReadToEnd();
 
-            return _options.Encoding.GetBytes(decrypted);
+            return _options.Encoding.GetBytes(result);
         }
 
         #endregion

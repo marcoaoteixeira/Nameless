@@ -15,8 +15,8 @@ namespace Nameless.Autofac {
         #region Public Constructors
 
         public PropertyResolveMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
-            _serviceType = Prevent.Against.Null(serviceType, nameof(serviceType));
-            _factory = Prevent.Against.Null(factory, nameof(factory));
+            _serviceType = Guard.Against.Null(serviceType, nameof(serviceType));
+            _factory = Guard.Against.Null(factory, nameof(factory));
         }
 
         #endregion
@@ -51,7 +51,7 @@ namespace Nameless.Autofac {
 
             next(context);
 
-            if (context.NewInstanceActivated && context.Instance != null) {
+            if (context.NewInstanceActivated && context.Instance is not null) {
                 var implementationType = context.Instance.GetType();
                 var properties = GetProperties(implementationType, _serviceType);
                 foreach (var property in properties) {

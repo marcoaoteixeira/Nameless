@@ -7,7 +7,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            ArrayExtension.TryGetByIndex(array, 1, out var item);
+            ArrayExtension.TryElementAt(array, 1, out var item);
 
             // assert
             Assert.That(item, Is.EqualTo(2));
@@ -19,7 +19,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            var exists = ArrayExtension.TryGetByIndex(array, 1, out var item);
+            var exists = ArrayExtension.TryElementAt(array, 1, out var item);
 
             // assert
             Assert.That(item, Is.EqualTo(2));
@@ -32,7 +32,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            var exists = ArrayExtension.TryGetByIndex(array, 5, out var item);
+            var exists = ArrayExtension.TryElementAt(array, 5, out var item);
 
             // assert
             Assert.That(item, Is.EqualTo(default(int)));
@@ -45,7 +45,7 @@
             int[] array = default!;
 
             // act
-            var exists = ArrayExtension.TryGetByIndex(array, 5, out var item);
+            var exists = ArrayExtension.TryElementAt(array, 5, out var item);
 
             // assert
             Assert.That(item, Is.EqualTo(default(int)));

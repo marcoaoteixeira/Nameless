@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using Nameless.Helpers;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
     public sealed class Region : IEnumerable<Message> {
@@ -25,7 +24,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
         #region Public Constructors
 
         public Region(string name) {
-            Name = Prevent.Against.Null(name, nameof(name));
+            Name = Guard.Against.Null(name, nameof(name));
         }
 
         #endregion
@@ -33,7 +32,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
         #region Public Methods
 
         public void Add(Message message) {
-            Prevent.Against.Null(message, nameof(message));
+            Guard.Against.Null(message, nameof(message));
 
             Messages.AddOrChange(message.ID, message);
         }
@@ -42,7 +41,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Messages.TryGetValue(id, out output);
 
         public bool Equals(Region? other)
-            => other != null
+            => other is not null
             && other.Name == Name;
 
         #endregion
@@ -53,7 +52,7 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Equals(obj as Region);
 
         public override int GetHashCode()
-            => SimpleHash.Compute(Name);
+            => HashCode.Combine(Name);
 
         #endregion
 

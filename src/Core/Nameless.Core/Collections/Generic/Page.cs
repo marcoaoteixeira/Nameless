@@ -6,12 +6,12 @@ namespace Nameless.Collections.Generic {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public sealed class Page<T> : IPage<T> {
-        #region Public Static Read-Only Fields
+        #region Public Static Read-Only Properties
 
         /// <summary>
         /// Gets a empty page of the defined type <see cref="T"/>.
         /// </summary>
-        public static readonly Page<T> Empty = new(Array.Empty<T>());
+        public static Page<T> Empty => new(Array.Empty<T>());
 
         #endregion
 
@@ -39,7 +39,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         public Page(IQueryable<T> items, int index = 0, int size = 10) {
-            Prevent.Against.Null(items, nameof(items));
+            Guard.Against.Null(items, nameof(items));
 
             index = index >= 0 ? index : 0;
             size = size > 0 ? size : 10;
@@ -74,14 +74,12 @@ namespace Nameless.Collections.Generic {
         #region IEnumerable<T> Members
 
         /// <inheritdocs />
-        public IEnumerator<T> GetEnumerator() {
-            return Items.AsEnumerable().GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator()
+            => Items.AsEnumerable().GetEnumerator();
 
         /// <inheritdocs />
-        IEnumerator IEnumerable.GetEnumerator() {
-            return Items.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator()
+            => Items.GetEnumerator();
 
         #endregion
     }

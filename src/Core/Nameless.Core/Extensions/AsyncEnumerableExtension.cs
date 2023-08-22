@@ -35,8 +35,8 @@ namespace Nameless {
         /// <returns>An instance of <see cref="IAsyncEnumerable{TOutput}"/></returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="project"/> is <c>null</c>.</exception>
-        public async static IAsyncEnumerable<TOutput> Project<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
-            Prevent.Against.Null(project, nameof(project));
+        public async static IAsyncEnumerable<TOutput> ProjectAsync<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+            Guard.Against.Null(project, nameof(project));
 
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 

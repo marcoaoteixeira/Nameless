@@ -7,7 +7,7 @@ namespace Nameless.Autofac {
         /// <summary>
         /// Gets the support assemblies.
         /// </summary>
-        protected IEnumerable<Assembly> SupportAssemblies { get; }
+        protected Assembly[] SupportAssemblies { get; }
 
         #endregion
 
@@ -17,7 +17,7 @@ namespace Nameless.Autofac {
         /// Protected constructor.
         /// </summary>
         /// <param name="supportAssemblies">The support assemblies.</param>
-        protected ModuleBase(params Assembly[] supportAssemblies) {
+        protected ModuleBase(Assembly[] supportAssemblies) {
             SupportAssemblies = supportAssemblies ?? Array.Empty<Assembly>();
         }
 
@@ -26,54 +26,47 @@ namespace Nameless.Autofac {
         #region Protected Methods
 
         /// <summary>
-        /// Searches for an implementation for a given service type.
+        /// Retrieves, from support assemblies, a single implementation from the given service type.
         /// </summary>
-        /// <typeparam name="TType">The service type.</typeparam>
-        /// <returns>The service type implementation</returns>
-        /// <exception cref="InvalidOperationException">If more that one implementation is found.</exception>
-        protected Type? SearchForImplementation<TType>() {
-            return SearchForImplementation(typeof(TType));
-        }
+        /// <typeparam name="TService">The service type.</typeparam>
+        /// <returns>The service implementation <see cref="Type"/>.</returns>
+        /// <exception cref="InvalidOperationException">If more than one implementation were found.</exception>
+        protected Type? GetImplementation<TService>()
+            => GetImplementations(typeof(TService)).SingleOrDefault();
 
         /// <summary>
-        /// Searches for implementations for a given service type.
+        /// Retrieves, from support assemblies, a single implementation from the given service type.
         /// </summary>
-        /// <typeparam name="TType">The service type.</typeparam>
-        /// <returns>An array of types</returns>
-        protected Type[] SearchForImplementations<TType>() {
-            return SearchForImplementations(typeof(TType));
-        }
+        /// <param name="serviceType">The service type.</param>
+        /// <returns>The service implementation <see cref="Type"/>.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="serviceType"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">If more than one implementation were found.</exception>
+        protected Type? GetImplementation(Type serviceType)
+            => GetImplementations(serviceType).SingleOrDefault();
 
         /// <summary>
-        /// Searches for an implementation for a given service type.
+        /// Retrieves, from support assemblies, all implementations from the given service type.
         /// </summary>
-        /// <param name="serviceType">The service type</param>
-        /// <returns>The service type implementation</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="serviceType" /> is <see langword="null" />.</exception>
-        /// <exception cref="InvalidOperationException">If more that one implementation is found.</exception>
-        protected Type? SearchForImplementation(Type serviceType) {
-            return SearchForImplementations(serviceType).SingleOrDefault();
-        }
+        /// <typeparam name="TService">The service type.</typeparam>
+        /// <returns>An <see cref="IEnumerable{Type}"/> that contains all possible implementation types.</returns>
+        protected IEnumerable<Type> GetImplementations<TService>()
+            => GetImplementations(typeof(TService));
 
         /// <summary>
-        /// Searches for implementations for a given service type.
+        /// Retrieves, from support assemblies, all implementations from the given service type.
         /// </summary>
-        /// <param name="serviceType">The service type</param>
-        /// <exception cref="ArgumentNullException"><paramref name="serviceType" /> is <see langword="null" />.</exception>
-        /// <returns>An array of types</returns>
-        protected Type[] SearchForImplementations(Type serviceType) {
-            Prevent.Against.Null(serviceType, nameof(serviceType));
+        /// <param name="serviceType">The service type.</param>
+        /// <returns>An <see cref="IEnumerable{Type}"/> that contains all possible implementation types.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="serviceType"/> is <c>null</c>.</exception>
+        protected IEnumerable<Type> GetImplementations(Type serviceType) {
+            Guard.Against.Null(serviceType, nameof(serviceType));
 
-            if (!SupportAssemblies.Any()) { return Array.Empty<Type>(); }
-
-            var result = SupportAssemblies
+            return SupportAssemblies
                 .SelectMany(assembly => assembly.GetExportedTypes())
                 .Where(type => !type.IsInterface)
                 .Where(type => !type.IsAbstract)
-                .Where(type => !type.IsSingleton())
+                .Where(type => !type.HasAttribute<SingletonAttribute>())
                 .Where(type => serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type));
-
-            return result.ToArray();
         }
 
         #endregion

@@ -10,8 +10,8 @@
         #region Public Constructors
 
         public Error(string code, string[] problems) {
-            Code = Prevent.Against.Null(code, nameof(code));
-            Problems = Prevent.Against.Null(problems, nameof(problems));
+            Code = Guard.Against.Null(code, nameof(code));
+            Problems = Guard.Against.Null(problems, nameof(problems));
         }
 
         #endregion

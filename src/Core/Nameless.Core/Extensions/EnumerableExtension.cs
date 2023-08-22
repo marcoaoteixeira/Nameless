@@ -17,9 +17,8 @@ namespace Nameless {
         /// <param name="action">The iterator action.</param>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
-        public static void Each<T>(this IEnumerable<T> self, Action<T> action) {
-            Each(self, (current, _) => action(current));
-        }
+        public static void Each<T>(this IEnumerable<T> self, Action<T> action)
+            => Each(self, (current, _) => action(current));
 
         /// <summary>
         /// Interact through an instance of <see cref="IEnumerable{T}"/>.
@@ -31,10 +30,9 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each<T>(this IEnumerable<T> self, Action<T, int> action) {
-            Prevent.Against.Null(action, nameof(action));
+            Guard.Against.Null(action, nameof(action));
 
             var counter = 0;
-
             using var enumerator = self.GetEnumerator();
             while (enumerator.MoveNext()) {
                 action(enumerator.Current, counter++);
@@ -48,9 +46,8 @@ namespace Nameless {
         /// <param name="action">The iterator action.</param>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
-        public static void Each(this IEnumerable self, Action<object> action) {
-            Each(self, (current, _) => action(current));
-        }
+        public static void Each(this IEnumerable self, Action<object> action)
+            => Each(self, (current, _) => action(current));
 
         /// <summary>
         /// Interact through an instance of <see cref="IEnumerable"/>.
@@ -61,7 +58,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
         public static void Each(this IEnumerable self, Action<object, int> action) {
-            Prevent.Against.Null(action, nameof(action));
+            Guard.Against.Null(action, nameof(action));
 
             var counter = 0;
             var enumerator = self.GetEnumerator();
@@ -81,7 +78,7 @@ namespace Nameless {
         /// <param name="self">The <see cref="IEnumerable"/> instance.</param>
         /// <returns><c>true</c>, if is empty, otherwise, <c>false</c>.</returns>
         public static bool IsNullOrEmpty([NotNullWhen(false)] this IEnumerable? self) {
-            if (self == null) { return true; }
+            if (self is null) { return true; }
 
             // Costs O(1)
             if (self is ICollection collection) { return collection.Count == 0; }

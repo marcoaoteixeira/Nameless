@@ -16,7 +16,7 @@ namespace Nameless {
         /// <returns><c>true</c> if is present, otherwise, <c>false</c>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool HasAttribute(this XElement self, string attributeName)
-            => self.Attribute(attributeName) != default;
+            => self.Attribute(attributeName) is not null;
 
         #endregion
     }

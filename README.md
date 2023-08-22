@@ -82,25 +82,26 @@ If you want to know more about the report tool, see their [FAQ](https://reportge
 
 ## Coding Styles
 
-Nothing written into stone, use your good sense. But you can refere to this
-page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
+Nothing written into stone, use your ol'good common sense. But you can refere
+to this page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
 
 ### Some Ideas to Keep in Mind
 
-- When I create a new extension method I never check for nullability the target
-  instance. If the target instance is **_null_**, you'll get
+- When I create a new extension method I never check for nullability of the
+  target instance. If the target instance is **_null_**, you'll get
   an **_NullReferenceException_** on your face, punk!
 - **_default_** vs **_null_** :
   - Am I sure is a reference type? **null**
   - Am I sure is a value type? **default**
   - I'm not sure at all: **default**
 - I think that most of my developer's life I spent writing C# code. But I like
-  that kind of code organization from Java so, I use, almost, that same style
-  of code identation on my projects.
+  that kind of code organization from Java. So, I use, almost, the same code
+  style identation on my projects.
 - Methods that returns arrays, collections or enumerables in general,
-  **DO NOT RETURN NULL VALUE EVER!!!** If there is no value to return, just
+  **DO NOT RETURN _NULL_ VALUE EVER!!!** If there's no value to return, just
   return an empty enumerable from the same type. Use [_Array.Empty\<T\>()_](https://learn.microsoft.com/en-us/dotnet/api/system.array.empty?view=net-7.0) or
-  [_Enumerable.Empty\<T\>()_](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=net-7.0)
+  [_Enumerable.Empty\<T\>()_](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=net-7.0),
+  or I'll cut the tips of your fingers with a rust scissor...thanks.
   - If you're returning an **_IEnumerable\<T\>_**, probably you should use the
   **_yield_** keywork on your method return directive.
 
@@ -123,7 +124,7 @@ But I'll advocate for [Autofac](https://autofac.readthedocs.io/en/latest/index.h
 It has way more road beneath its codebase and has some amazing features. Like
 [Decorators](https://autofac.readthedocs.io/en/latest/advanced/adapters-decorators.html) and
 [Type Interceptors](https://autofac.readthedocs.io/en/latest/advanced/interceptors.html).
-So, that said, all projects inside this repository will favor Autofac. 🤘 😜
+So, that said, all projects inside this repository will favor Autofac. 🤘😜
 
 ## Deployment
 

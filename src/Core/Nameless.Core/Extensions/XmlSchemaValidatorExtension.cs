@@ -18,8 +18,8 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="schemaFilePath"/> or <paramref name="xmlFilePath"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if <paramref name="schemaFilePath"/> or <paramref name="xmlFilePath"/> is empty or white spaces.</exception>
         public static bool Validate(this IXmlSchemaValidator self, string schemaFilePath, string xmlFilePath) {
-            Prevent.Against.NullOrWhiteSpace(schemaFilePath, nameof(schemaFilePath));
-            Prevent.Against.NullOrWhiteSpace(xmlFilePath, nameof(xmlFilePath));
+            Guard.Against.NullOrWhiteSpace(schemaFilePath, nameof(schemaFilePath));
+            Guard.Against.NullOrWhiteSpace(xmlFilePath, nameof(xmlFilePath));
 
             using var schema = new FileStream(schemaFilePath, FileMode.Open, FileAccess.Read);
             using var xml = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read);

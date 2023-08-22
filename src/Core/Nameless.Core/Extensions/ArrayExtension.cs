@@ -1,10 +1,8 @@
 ﻿namespace Nameless {
-
     /// <summary>
-    /// Generic arrays extension methods.
+    /// <see cref="Array"/> extension methods
     /// </summary>
     public static class ArrayExtension {
-
         #region Public Static Methods
 
         /// <summary>
@@ -15,10 +13,10 @@
         /// <param name="index">The index</param>
         /// <param name="output">The output value for the index</param>
         /// <returns><c>true</c> if the value in the specified index was found; otherwise <c>false</c></returns>
-        public static bool TryGetByIndex<T>(this T[] self, int index, out T? output) {
+        public static bool TryElementAt<T>(this T[] self, int index, out T? output) {
             output = default;
 
-            if (self == null) { return false; }
+            if (self is null) { return false; }
 
             if (self.Length > index) {
                 output = self[index];

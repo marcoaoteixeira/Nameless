@@ -14,7 +14,7 @@
         /// <summary>
         /// Gets or sets the index directory name.
         /// </summary>
-        public string IndexesDirectoryName { get; set; } = Path.Combine("Lucene", "Indexes");
+        public string IndexFolder { get; set; } = Path.Combine("App_Data", "Lucene");
 
         #endregion
     }

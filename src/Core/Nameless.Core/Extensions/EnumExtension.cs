@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Reflection;
 
 namespace Nameless {
-
     /// <summary>
     /// <see cref="Enum"/> extension methods.
     /// </summary>
@@ -19,7 +18,7 @@ namespace Nameless {
         public static TAttribute? GetAttribute<TAttribute>(this Enum self, bool inherited = false) where TAttribute : Attribute {
             var field = self.GetType().GetField(self.ToString());
 
-            if (field == null) { return null; }
+            if (field is null) { return null; }
 
             return field.GetCustomAttribute<TAttribute>(inherit: inherited);
         }
@@ -32,7 +31,7 @@ namespace Nameless {
         public static string GetDescription(this Enum self) {
             var attr = GetAttribute<DescriptionAttribute>(self);
 
-            return attr != null ? attr.Description : self.ToString();
+            return attr is not null ? attr.Description : self.ToString();
         }
 
         #endregion

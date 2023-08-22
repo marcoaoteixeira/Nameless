@@ -24,7 +24,7 @@ namespace Nameless.Helpers {
         /// </para>
         /// </remarks>
         public static string Normalize(string path) {
-            Prevent.Against.NullOrWhiteSpace(path, nameof(path));
+            Guard.Against.NullOrWhiteSpace(path, nameof(path));
 
             var result = OperatingSystem.IsWindows()
                 ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
@@ -51,8 +51,8 @@ namespace Nameless.Helpers {
         /// </param>
         /// <returns>The physical path to the content.</returns>
         public static string GetPhysicalPath(string root, string relativePath) {
-            Prevent.Against.NullOrWhiteSpace(root, nameof(root));
-            Prevent.Against.NullOrWhiteSpace(relativePath, nameof(relativePath));
+            Guard.Against.NullOrWhiteSpace(root, nameof(root));
+            Guard.Against.NullOrWhiteSpace(relativePath, nameof(relativePath));
 
             root = Normalize(root);
             relativePath = Normalize(relativePath);

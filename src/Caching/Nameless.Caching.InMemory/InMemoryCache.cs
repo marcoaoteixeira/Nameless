@@ -2,26 +2,17 @@
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
-    public sealed class InMemoryCache : ICache, IDisposable {
-        #region Private Fields
+    public sealed class InMemoryCache : ICache {
+        #region Private Read-Only Fields
 
-        private IMemoryCache _cache;
-        private bool _disposed;
+        private readonly IMemoryCache _memoryCache;
 
         #endregion
 
         #region Public Constructors
 
-        public InMemoryCache(MemoryCacheOptions options) {
-            _cache = new MemoryCache(options);
-        }
-
-        #endregion
-
-        #region Destructor
-
-        ~InMemoryCache() {
-            Dispose(disposing: false);
+        public InMemoryCache(IMemoryCache memoryCache) {
+            _memoryCache = Guard.Against.Null(memoryCache, nameof(memoryCache));
         }
 
         #endregion
@@ -36,37 +27,16 @@ namespace Nameless.Caching.InMemory {
         private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = null) {
             var result = new MemoryCacheEntryOptions();
 
-            if (opts == null || opts.ExpiresIn == default) { return result; }
+            if (opts is null || opts.ExpiresIn == default) { return result; }
 
             var cts = new CancellationTokenSource(opts.ExpiresIn);
             var changeToken = new CancellationChangeToken(cts.Token);
             result.ExpirationTokens.Add(changeToken);
 
-            result.RegisterPostEvictionCallback((key, value, reason, state) => {
-                OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts);
-            });
+            result.RegisterPostEvictionCallback((key, value, reason, state)
+                => OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts));
 
             return result;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void Dispose(bool disposing) {
-            if (_disposed) { return; }
-            if (disposing) {
-                _cache.Dispose();
-            }
-
-            _cache = null!;
-            _disposed = true;
-        }
-
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
         }
 
         #endregion
@@ -74,49 +44,34 @@ namespace Nameless.Caching.InMemory {
         #region ICache Members
 
         public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
-            BlockAccessAfterDispose();
-
-            Prevent.Against.NullOrWhiteSpace(key, nameof(key));
-            Prevent.Against.Null(value, nameof(value));
+            Guard.Against.NullOrWhiteSpace(key, nameof(key));
+            Guard.Against.Null(value, nameof(value));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _cache.Set(key, value, GetOptions(opts)) != null;
+            var result = _memoryCache.Set(key, value, GetOptions(opts)) is not null;
 
             return Task.FromResult(result);
         }
 
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
-            BlockAccessAfterDispose();
-
-            Prevent.Against.NullOrWhiteSpace(key, nameof(key));
+            Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var value = _cache.Get(key);
+            var value = _memoryCache.Get(key);
 
             return Task.FromResult(value is T result ? result : default);
         }
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
-            BlockAccessAfterDispose();
-
-            Prevent.Against.NullOrWhiteSpace(key, nameof(key));
+            Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            _cache.Remove(key);
+            _memoryCache.Remove(key);
 
             return Task.FromResult(true);
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose() {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion

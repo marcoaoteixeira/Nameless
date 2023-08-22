@@ -8,18 +8,12 @@ namespace Nameless.NHibernate {
     /// </summary>
     [Singleton]
     public sealed class DynamicResultTransformer : IResultTransformer {
-        #region Private Static Read-Only Fields
-
-        private static readonly DynamicResultTransformer _instance = new();
-
-        #endregion
-
         #region Public Static Properties
 
         /// <summary>
         /// Gets the unique instance of <see cref="DynamicResultTransformer" />.
         /// </summary>
-        public static IResultTransformer Instance => _instance;
+        public static IResultTransformer Instance { get; } = new DynamicResultTransformer();
 
         #endregion
 
@@ -42,13 +36,13 @@ namespace Nameless.NHibernate {
         public IList TransformList(IList collection) => collection;
 
         public object TransformTuple(object[] tuple, string[] aliases) {
-            Prevent.Against.Null(tuple, nameof(tuple));
-            Prevent.Against.Null(aliases, nameof(aliases));
+            Guard.Against.Null(tuple, nameof(tuple));
+            Guard.Against.Null(aliases, nameof(aliases));
 
             var result = new ExpandoObject() as IDictionary<string, object>;
             tuple.Each((current, idx) => {
-                if (aliases.TryGetByIndex(idx, out var alias)) {
-                    if (alias != null) {
+                if (aliases.TryElementAt(idx, out var alias)) {
+                    if (alias is not null) {
                         result[alias] = current;
                     }
                 }

@@ -22,10 +22,8 @@ namespace Nameless.Lucene {
         #region Public Constructors
 
         public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
-            Prevent.Against.Null(analyzer, nameof(analyzer));
-
+            Analyzer = Guard.Against.Null(analyzer, nameof(analyzer));
             Priority = priority;
-            Analyzer = analyzer;
         }
 
         #endregion

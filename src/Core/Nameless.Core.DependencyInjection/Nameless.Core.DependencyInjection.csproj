@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>Nameless.DependencyInjection</RootNamespace>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+
+		<!-- CODE ANALYSIS -->
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+
+		<!-- NUGET PACKING -->
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless Core Library (DI)</Title>
+		<Company>Nameless</Company>
+		<Description>The core library (DI).</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Core/Nameless.Core.DependencyInjection</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+	  <ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+</Project>

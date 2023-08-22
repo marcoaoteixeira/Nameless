@@ -6,20 +6,12 @@
 
         #endregion
 
-        #region Public Constructors
-
-        public LocalizationOptions() {
-            TranslationFolder = "App_Data/Localization/";
-        }
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
         /// Gets or sets the relative path to the translation files folder.
         /// </summary>
-        public string TranslationFolder { get; set; }
+        public string TranslationFolder { get; set; } = Path.Combine("App_Data", "Localization");
         /// <summary>
         /// Gets or sets whether will watch the translation files for changes
         /// and reload if necessary.

@@ -1,0 +1,3 @@
+﻿# Nameless Core
+
+Core library.
