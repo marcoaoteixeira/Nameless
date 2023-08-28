@@ -8,8 +8,8 @@ namespace Nameless.Web.Infrastructure {
         public string Name { get; }
         public string Summary { get; }
         public string Description { get; }
-        public string ApiSet { get; }
-        public int ApiVersion { get; }
+        public string Group { get; }
+        public int Version { get; }
 
         #endregion
 
