@@ -1,6 +1,4 @@
-﻿# Nameless Data Library
-
-Data library to work with ADO.Net
+﻿# Nameless Data (Common) Documentation
 
 ## Content
 

@@ -1,6 +1,4 @@
-﻿# Nameless Core (DI)
-
-Core library (DI).
+﻿# Nameless Core (Dependency Injection) Documentation
 
 ## Content
 

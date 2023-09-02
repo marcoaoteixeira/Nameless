@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Nameless.FluentValidation</RootNamespace>
+		<RootNamespace>Nameless.MediatR.Integration</RootNamespace>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
 
 		<!-- CODE ANALYSIS -->
@@ -19,13 +19,13 @@
 		<!-- NUGET PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
-		<Title>Nameless FluentValidation Library</Title>
+		<Title>Nameless MediatR Integration Library</Title>
 		<Company>Nameless</Company>
-		<Description>FluentValidation library.</Description>
+		<Description>MediatR integration library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/FluentValidation/Nameless.FluentValidation</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/MediatR/Nameless.MediatR.Integration</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -39,20 +39,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="7.1.0" />
-		<PackageReference Include="FluentValidation" Version="11.7.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.7.1" />
+		<PackageReference Include="MediatR" Version="12.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	</ItemGroup>
 
 </Project>

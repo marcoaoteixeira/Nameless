@@ -1,0 +1,152 @@
+[
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9690824Z",
+        "Description": "Wake up at 7:00 AM",
+        "Id": "8993ee21-cc3d-415a-a08b-9784154b202c"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Brush teeth and wash face",
+        "Id": "acc68302-9c48-40c1-bf15-0b63111b03ce"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Morning meditation for 10 minutes",
+        "Id": "a003a923-9336-4289-854c-063bde46df39"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691088Z",
+        "Description": "Prepare and have a healthy breakfast",
+        "Id": "cf836b33-49a1-496b-a4f9-7bac21283fae"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Review and prioritize tasks for the day",
+        "Id": "5fc643c3-3939-4c36-81db-07f82320eea0"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Check and respond to urgent emails",
+        "Id": "c42892d4-13d3-41dc-b715-9ec626083f62"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Attend virtual team meeting at 9:30 AM",
+        "Id": "536a57ba-326e-4385-a424-b18bd800dcf2"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Work on the project proposal for 2 hours",
+        "Id": "5e5f31f4-f5f1-4967-a5ad-8c6a7f00d23c"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Take a 15-minute break to stretch and hydrate",
+        "Id": "dd25e68e-750b-4c69-b036-f29a7d30e45a"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691112Z",
+        "Description": "Follow up with clients via phone calls",
+        "Id": "edc49865-a0f6-402a-95ad-6101bf5c9703"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691114Z",
+        "Description": "Lunch break at 12:30 PM",
+        "Id": "0a3aebbf-f6a0-485d-a1c8-078fb2835492"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691115Z",
+        "Description": "Go for a 30-minute walk outdoors",
+        "Id": "c1057943-2e95-4257-a0b8-1af9d7fcd9fd"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691119Z",
+        "Description": "Read a chapter from the current book",
+        "Id": "3022eb4a-b645-4ec6-9ed5-ddc40611fe95"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Complete financial report for the month",
+        "Id": "2b4ed179-62db-4d46-a5c6-76a895f93d38"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Attend online webinar at 3:00 PM",
+        "Id": "926b1e03-808c-4697-8ec4-2baa8cb66494"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Review social media content for the week",
+        "Id": "8a3c71be-e749-4682-af01-14e708d821da"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691124Z",
+        "Description": "Schedule posts for social media platforms",
+        "Id": "4e546e53-7c33-4ab8-8bb8-a618b2e8c748"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691126Z",
+        "Description": "Prepare a grocery list for the week",
+        "Id": "54f76a9e-3b86-4e81-9ec6-1d0c2136e40a"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691128Z",
+        "Description": "Do a 20-minute workout routine",
+        "Id": "5f0a346d-1974-48e2-9630-3118f4354084"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Spend quality time with family",
+        "Id": "8bdbfde9-1f11-4a12-bf62-e14bc090a455"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Cook a nutritious dinner",
+        "Id": "190783b2-88c8-41b6-a5b4-120d68ea1149"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Practice playing the guitar for 30 minutes",
+        "Id": "2d2e5c1f-2a33-45a3-a3ed-f853db9be219"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Plan the next day's tasks and priorities",
+        "Id": "7f82e3ee-d5c6-413c-a563-9deee16f0fe4"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.9691136Z",
+        "Description": "Reflect on accomplishments of the day",
+        "Id": "99e1d0b8-83cb-40d6-b5c2-cb3a67ab6f6a"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Set goals for the following day",
+        "Id": "dfec0dad-e004-400b-979a-84c587cd6df1"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Wind down with 15 minutes of deep breathing",
+        "Id": "4fba77d2-b522-4030-bf2b-91207847c2ff"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Read and reply to personal messages",
+        "Id": "7eba35eb-5dce-46bb-915e-471dd0f40e0c"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Turn off electronic devices by 10:00 PM",
+        "Id": "58aa77d0-dade-49dd-beec-9d15555754d2"
+    },
+    {
+        "CheckedAt": null,
+        "Description": "Write in the gratitude journal",
+        "Id": "bb078493-da03-48d7-be5a-98f616ae4515"
+    },
+    {
+        "CheckedAt": "2023-08-31T02:14:12.969126Z",
+        "Description": "Go to bed at 10:30 PM",
+        "Id": "c7c31783-d004-4848-ac6e-e27b8566f7d4"
+    }
+]
