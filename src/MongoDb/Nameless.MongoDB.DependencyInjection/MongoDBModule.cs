@@ -4,11 +4,9 @@ using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Nameless.Autofac;
-using Nameless.MongoDB;
-using Nameless.MongoDB.DependencyInjection;
 using Nameless.MongoDB.Impl;
 
-namespace Nameless.Data.SQLServer.DependencyInjection {
+namespace Nameless.MongoDB.DependencyInjection {
     public sealed class MongoDBModule : ModuleBase {
         #region Private Constants
 
