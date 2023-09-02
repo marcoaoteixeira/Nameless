@@ -3,13 +3,11 @@ using Autofac;
 using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
-using Nameless.ProducerConsumer.RabbitMQ;
-using Nameless.ProducerConsumer.RabbitMQ.DependencyInjection;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using RabbitMQ.Client;
 
-namespace Nameless.Data.SQLServer.DependencyInjection {
+namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public sealed class ProducerConsumerModule : ModuleBase {
         #region Private Constants
 

@@ -7,7 +7,7 @@ using Nameless.Web.Options;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
 
-namespace Nameless.NHibernate.DependencyInjection {
+namespace Nameless.Web.DependencyInjection {
     public sealed class WebModule : ModuleBase {
         #region Public Constructors
 

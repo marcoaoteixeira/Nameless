@@ -3,9 +3,8 @@ using Autofac;
 using Autofac.Core.Registration;
 using FluentValidation;
 using Nameless.Autofac;
-using Nameless.FluentValidation;
 
-namespace Nameless.Data.SQLServer.DependencyInjection {
+namespace Nameless.FluentValidation.DependencyInjection {
     public sealed class FluentValidationModule : ModuleBase {
         #region Public Constructors
 

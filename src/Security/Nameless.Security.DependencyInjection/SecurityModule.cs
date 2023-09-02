@@ -3,10 +3,9 @@ using Autofac;
 using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
-using Nameless.Security;
 using Nameless.Security.Cryptography;
 
-namespace Nameless.NHibernate.DependencyInjection {
+namespace Nameless.Security.DependencyInjection {
     public sealed class SecurityModule : ModuleBase {
         #region Public Constructors
 
