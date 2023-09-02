@@ -69,7 +69,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddCaching(this ContainerBuilder self)
+        public static IModuleRegistrar AddData(this ContainerBuilder self)
             => self.RegisterModule<DataModule>();
 
         #endregion
