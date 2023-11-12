@@ -24,11 +24,6 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveMemoryCache)
-                .Named<IMemoryCache>(MEMORY_CACHE_TOKEN)
-                .SingleInstance();
-
-            builder
                 .Register(ResolveCache)
                 .As<ICache>()
                 .SingleInstance();
@@ -49,15 +44,9 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
             return options ?? new();
         }
 
-        private static IMemoryCache ResolveMemoryCache(IComponentContext ctx) {
-            var memoryCache = GetMemoryCacheOptions(ctx);
-            var result = new MemoryCache(memoryCache);
-
-            return result;
-        }
-
         private static ICache ResolveCache(IComponentContext ctx) {
-            var memoryCache = ctx.ResolveNamed<IMemoryCache>(MEMORY_CACHE_TOKEN);
+            var memoryCacheOptions = GetMemoryCacheOptions(ctx);
+            var memoryCache = new MemoryCache(memoryCacheOptions);
             var result = new InMemoryCache(memoryCache);
 
             return result;

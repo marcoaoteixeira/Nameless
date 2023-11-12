@@ -117,6 +117,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepeatIt", "RepeatIt", "{E0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.RepeatIt.Web", "samples\RepeatIt\Nameless.RepeatIt.Web\Nameless.RepeatIt.Web.csproj", "{96E26022-D189-49D8-BD9B-583D5B2012A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Caching.InMemory.UnitTest", "src\Caching\Nameless.Caching.InMemory.UnitTest\Nameless.Caching.InMemory.UnitTest.csproj", "{E14A9ACF-D517-476A-BD76-85264EA08A2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -275,6 +277,10 @@ Global
 		{96E26022-D189-49D8-BD9B-583D5B2012A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96E26022-D189-49D8-BD9B-583D5B2012A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96E26022-D189-49D8-BD9B-583D5B2012A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E14A9ACF-D517-476A-BD76-85264EA08A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E14A9ACF-D517-476A-BD76-85264EA08A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E14A9ACF-D517-476A-BD76-85264EA08A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E14A9ACF-D517-476A-BD76-85264EA08A2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -335,6 +341,7 @@ Global
 		{9B894C58-6F60-41B9-AA38-8460179198E0} = {0A58B5B6-831C-477D-BA0F-00DE3A4027B8}
 		{E041EBCF-2E95-42EC-8443-FF4ED885230D} = {96BF87E7-B13B-42B9-B218-9C40B40D0FC2}
 		{96E26022-D189-49D8-BD9B-583D5B2012A6} = {E041EBCF-2E95-42EC-8443-FF4ED885230D}
+		{E14A9ACF-D517-476A-BD76-85264EA08A2D} = {5D3964FC-42F8-4490-882D-EB71329A15A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80F3F3F1-58D2-42D1-A772-A78B809F2745}
