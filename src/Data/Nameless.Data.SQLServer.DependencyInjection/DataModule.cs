@@ -23,11 +23,6 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveDbConnectionManager)
-                .Named<IDbConnectionManager>(DB_CONNECTION_MANAGER_TOKEN)
-                .SingleInstance();
-
-            builder
                 .Register(ResolveDatabase)
                 .As<IDatabase>()
                 .SingleInstance();
@@ -48,15 +43,9 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
             return options;
         }
 
-        private static IDbConnectionManager ResolveDbConnectionManager(IComponentContext ctx) {
-            var options = GetSQLServerOptions(ctx);
-            var result = new DbConnectionManager(options);
-
-            return result;
-        }
-
         private static IDatabase ResolveDatabase(IComponentContext ctx) {
-            var dbConnectionManager = ctx.ResolveNamed<IDbConnectionManager>(DB_CONNECTION_MANAGER_TOKEN);
+            var sqlServerOptions = GetSQLServerOptions(ctx);
+            var dbConnectionManager = new DbConnectionManager(sqlServerOptions);
             var connection = dbConnectionManager.GetDbConnection();
             var result = new Database(connection);
 
