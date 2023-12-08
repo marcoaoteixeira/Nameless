@@ -29,7 +29,7 @@ namespace Nameless.Autofac {
                 .Where(_ =>
                     _.PropertyType.IsAssignableTo(serviceType) &&
                     _.CanWrite &&
-                    _.GetIndexParameters().Any() == false
+                    _.GetIndexParameters().Length == 0
                 )
                 .ToArray();
 

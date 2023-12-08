@@ -4,13 +4,14 @@ using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Security.Cryptography;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Security.DependencyInjection {
     public sealed class SecurityModule : ModuleBase {
         #region Public Constructors
 
         public SecurityModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -37,7 +38,7 @@ namespace Nameless.Security.DependencyInjection {
         private static RijndaelCryptoOptions? GetRijndaelCryptoOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(RijndaelCryptoOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(RijndaelCryptoOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<RijndaelCryptoOptions>();
 
             return options;

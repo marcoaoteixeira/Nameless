@@ -12,7 +12,10 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Private Static Read-Only Fields
 
-        private static readonly Dictionary<string, CacheEntry> Cache = new();
+        private static readonly Dictionary<string, CacheEntry> Cache = [];
+        private static readonly JsonSerializerOptions JsonSerializerOpts = new() {
+            Converters = { TranslationJsonConverter.Default }
+        };
 
         #endregion
 
@@ -77,10 +80,11 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             var path = GetTranslationFilePath(culture);
             var fileContent = GetFileContent(path);
             var fileChangeHandler = CreateFileChangeHandler(culture, path);
+            var translation = JsonSerializer.Deserialize<Translation>(fileContent, JsonSerializerOpts);
 
-            var translation = JsonSerializer.Deserialize<Translation>(fileContent, new JsonSerializerOptions {
-                Converters = { TranslationJsonConverter.Default }
-            }) ?? throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}");
+            if (translation is null) {
+                throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}");
+            }
 
             return new(culture, translation, fileChangeHandler);
         }
@@ -96,12 +100,13 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
                 return Translation.Empty;
             }
 
-            if (!Cache.ContainsKey(culture)) {
+            if (!Cache.TryGetValue(culture, out var value)) {
                 var entry = CreateCacheEntry(culture);
-                Cache.Add(culture, entry);
+                value = entry;
+                Cache.Add(culture, value);
             }
 
-            return Cache[culture].Content;
+            return value.Content;
         }
 
         #endregion

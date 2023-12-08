@@ -68,8 +68,13 @@ namespace Nameless {
         }
 
         private static bool HasAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
-            var currentAccessor = string.IsNullOrWhiteSpace(accessorName) ? DEFAULT_ACCESSOR_NAME : accessorName;
-            accessor = type.GetProperty(currentAccessor, BindingFlags.Public | BindingFlags.Static);
+            var currentAccessor = string.IsNullOrWhiteSpace(accessorName)
+                ? DEFAULT_ACCESSOR_NAME
+                : accessorName;
+            accessor = type.GetProperty(
+                name: currentAccessor,
+                bindingAttr: BindingFlags.Public | BindingFlags.Static
+            );
             return accessor is not null;
         }
 

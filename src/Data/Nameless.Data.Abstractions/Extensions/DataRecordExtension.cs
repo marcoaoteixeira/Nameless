@@ -221,7 +221,7 @@ namespace Nameless.Data {
         /// <param name="fallback">The default value.</param>
         /// <returns>A byte array value.</returns>
         public static byte[] GetBlob(this IDataRecord self, string fieldName)
-            => self.GetBlob(fieldName, Array.Empty<byte>());
+            => self.GetBlob(fieldName, []);
 
         /// <summary>
         /// Retrieves a byte array (BLOB) value or the default value.

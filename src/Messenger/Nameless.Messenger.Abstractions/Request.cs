@@ -24,12 +24,12 @@ namespace Nameless.Messenger {
         /// Gets or sets an array of address from the
         /// person (or people) who sends the message
         /// </summary>
-        public string[] From { get; init; } = Array.Empty<string>();
+        public string[] From { get; init; } = [];
         /// <summary>
         /// Gets or sets an array of address to the
         /// person (or people) who receives the message
         /// </summary>
-        public string[] To { get; init; } = Array.Empty<string>();
+        public string[] To { get; init; } = [];
         /// <summary>
         /// A dictionary of properties that can be used
         /// by the messenger.

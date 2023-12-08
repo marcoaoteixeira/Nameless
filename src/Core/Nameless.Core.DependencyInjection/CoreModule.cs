@@ -10,7 +10,7 @@ namespace Nameless.DependencyInjection {
         #region Public Constructors
 
         public CoreModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 

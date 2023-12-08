@@ -34,7 +34,7 @@ namespace Nameless.FluentValidation {
 
         public Task<ValidationResult> ValidateAsync<T>(T instance, bool throwOnError = false, CancellationToken cancellationToken = default) {
             Guard.Against.Null(instance, nameof(instance));
-            
+
             var validator = _scope.ResolveOptional<IValidator<T>>();
 
             if (validator is null) {

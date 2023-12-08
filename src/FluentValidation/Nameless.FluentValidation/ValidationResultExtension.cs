@@ -32,10 +32,10 @@ namespace Nameless.FluentValidation {
 
         #region Private Static Methods
 
-        private static IDictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures) {
+        private static Dictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures) {
             var result = new Dictionary<string, string[]>();
             foreach (var failure in failures) {
-                result.Add(failure.ErrorCode, new[] { failure.ErrorMessage });
+                result.Add(failure.ErrorCode, [failure.ErrorMessage]);
             }
             return result;
         }

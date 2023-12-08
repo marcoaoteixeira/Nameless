@@ -26,9 +26,9 @@ namespace Nameless.Checklist.Web {
     public sealed class StartUp {
         #region Private Static Properties
 
-        private static Assembly[] SupportAssemblies { get; } = new[] {
+        private static Assembly[] SupportAssemblies { get; } = [
             typeof(StartUp).Assembly
-        };
+        ];
 
         #endregion
 
@@ -105,7 +105,7 @@ namespace Nameless.Checklist.Web {
                     configure.Events = new JwtBearerEvents {
                         OnAuthenticationFailed = ctx => {
                             if (ctx.Exception is SecurityTokenExpiredException) {
-                                ctx.Response.Headers.Add(WebRoot.HttpResponseHeaders.X_JWT_EXPIRED, bool.TrueString);
+                                ctx.Response.Headers.Append(WebRoot.HttpResponseHeaders.X_JWT_EXPIRED, bool.TrueString);
                             }
                             return Task.CompletedTask;
                         }

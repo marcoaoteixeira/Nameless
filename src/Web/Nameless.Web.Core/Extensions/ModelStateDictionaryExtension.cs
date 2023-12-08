@@ -31,7 +31,7 @@ namespace Nameless.Web {
 
             yield return $"[{ex.GetType().Name}] {ex.Message}";
 
-            var stackTrace = ex.StackTrace?.Split(Environment.NewLine) ?? Array.Empty<string>();
+            var stackTrace = ex.StackTrace?.Split(Environment.NewLine) ?? [];
             foreach (var item in stackTrace) {
                 yield return item;
             }

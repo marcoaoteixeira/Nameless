@@ -235,7 +235,7 @@ namespace Nameless {
         public static bool Any(this string self, params char[] chars) {
             Guard.Against.Null(chars, nameof(chars));
 
-            if (!chars.Any()) { return false; }
+            if (chars.Length == 0) { return false; }
 
             for (var idx = 0; idx < self.Length; idx++) {
                 var current = self[idx];

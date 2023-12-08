@@ -6,6 +6,7 @@ using Nameless.Autofac;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using RabbitMQ.Client;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public sealed class ProducerConsumerModule : ModuleBase {
@@ -19,7 +20,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
         #region Public Constructors
 
         public ProducerConsumerModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -56,7 +57,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
         private static RabbitMQOptions? GetRabbitMQOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(RabbitMQOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(RabbitMQOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<RabbitMQOptions>();
 
             return options;

@@ -15,8 +15,7 @@ namespace Nameless {
         /// <typeparam name="TValue">Type of the value.</typeparam>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static void AddOrChange<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key, TValue value) {
-            if (!self.ContainsKey(key)) { self.Add(key, value); }
-            else { self[key] = value; }
+            if (!self.ContainsKey(key)) { self.Add(key, value); } else { self[key] = value; }
         }
 
         #endregion

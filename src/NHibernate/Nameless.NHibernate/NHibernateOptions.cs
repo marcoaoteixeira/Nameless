@@ -46,8 +46,8 @@ namespace Nameless.NHibernate {
         public NHibernateCollectionTypeOptions CollectionType { get; set; } = new();
         public NHibernateTransactionOptions Transaction { get; set; } = new();
         public NHibernateSpecificOptions Specific { get; set; } = new();
-        public string[] EntityRootTypes { get; set; } = Array.Empty<string>();
-        public string[] MappingTypes { get; set; } = Array.Empty<string>();
+        public string[] EntityRootTypes { get; set; } = [];
+        public string[] MappingTypes { get; set; } = [];
 
         #endregion
 

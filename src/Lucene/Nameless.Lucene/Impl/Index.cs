@@ -109,8 +109,7 @@ namespace Nameless.Lucene {
                     case IndexableType.Text:
                         var textValue = (string)fieldValue;
                         if (sanitize) { textValue = textValue.RemoveHtmlTags(); }
-                        if (analyze) { luceneDocument.Add(new Lucene_TextField(fieldName, textValue, store)); }
-                        else { luceneDocument.Add(new Lucene_StringField(fieldName, textValue, store)); }
+                        if (analyze) { luceneDocument.Add(new Lucene_TextField(fieldName, textValue, store)); } else { luceneDocument.Add(new Lucene_StringField(fieldName, textValue, store)); }
                         break;
 
                     case IndexableType.DateTime:

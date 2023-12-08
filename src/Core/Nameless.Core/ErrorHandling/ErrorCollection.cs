@@ -43,15 +43,16 @@ namespace Nameless.ErrorHandling {
         #region Private Methods
 
         private ISet<string> AssertError(string code) {
-            if (!Errors.ContainsKey(code)) {
-                Errors.Add(code, new HashSet<string>());
+            if (!Errors.TryGetValue(code, out var value)) {
+                value = new HashSet<string>();
+                Errors.Add(code, value);
             }
-            return Errors[code];
+            return value;
         }
 
         private IEnumerable<Error> GetEnumerable() {
             foreach (var item in Errors) {
-                yield return new(item.Key, item.Value.ToArray());
+                yield return new(item.Key, [.. item.Value]);
             }
         }
 

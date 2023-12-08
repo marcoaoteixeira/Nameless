@@ -15,7 +15,7 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Private Fields
 
-        private IConnectionMultiplexer? _multiplexer;
+        private ConnectionMultiplexer? _multiplexer;
         private bool _disposed;
 
         #endregion
@@ -47,11 +47,8 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(typeof(ConnectionMultiplexerManager).FullName);
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(ConnectionMultiplexerManager));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
@@ -96,7 +93,7 @@ namespace Nameless.Caching.Redis.Impl {
             return opts;
         }
 
-        private IConnectionMultiplexer CreateMultiplexer() {
+        private ConnectionMultiplexer CreateMultiplexer() {
             var opts = GetConfigurationOptions();
 
             return ConnectionMultiplexer.Connect(opts);

@@ -4,9 +4,9 @@ using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
-using Nameless.Web.Options;
 using Nameless.Services;
 using Nameless.Services.Impl;
+using Nameless.Web.Options;
 
 namespace Nameless.Web.Services.Impl {
     public sealed class JwtService : IJwtService {

@@ -25,7 +25,7 @@ namespace Nameless {
         /// <param name="self">The self type.</param>
         /// <returns><c>true</c>, if is instance of <see cref="Nullable"/>, otherwise, <c>false</c>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static bool IsNullable(this Type self) 
+        public static bool IsNullable(this Type self)
             => self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Nameless {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.Null(genericArgumentTypes, nameof(genericArgumentTypes));
 
-            var innerArgumentTypes = argumentTypes ?? Array.Empty<Type>();
+            var innerArgumentTypes = argumentTypes ?? [];
             var innerReturnType = returnType ?? typeof(void);
 
             return self.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)

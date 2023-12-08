@@ -22,7 +22,7 @@ namespace Nameless.Security.Cryptography {
             Guard.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-            if (stream.Length == 0) { return Array.Empty<byte>(); }
+            if (stream.Length == 0) { return []; }
 
             var text = stream.ToText(_options.Encoding);
             var iv = new byte[16];
@@ -44,7 +44,7 @@ namespace Nameless.Security.Cryptography {
             Guard.Against.Null(stream, nameof(stream));
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-            if (stream.Length == 0) { return Array.Empty<byte>(); }
+            if (stream.Length == 0) { return []; }
 
             var text = stream.ToText(_options.Encoding);
             var iv = new byte[16];

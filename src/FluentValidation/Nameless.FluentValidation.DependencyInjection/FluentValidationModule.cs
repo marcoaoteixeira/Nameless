@@ -9,7 +9,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
         #region Public Constructors
 
         public FluentValidationModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         public FluentValidationModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }

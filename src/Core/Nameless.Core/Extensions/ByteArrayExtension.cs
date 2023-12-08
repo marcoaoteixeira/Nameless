@@ -12,7 +12,7 @@
         /// <returns>A hexadecimal <see cref="string"/> representation of the <see cref="byte"/> array.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string ToHexString(this byte[] self)
-            => BitConverter.ToString(self ?? Array.Empty<byte>()).Replace("-", string.Empty);
+            => BitConverter.ToString(self ?? []).Replace("-", string.Empty);
 
         #endregion
     }

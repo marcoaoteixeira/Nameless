@@ -166,11 +166,8 @@ namespace Nameless.Security.Cryptography {
             _disposed = true;
         }
 
-        private void BlockAccesAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(RijndaelCryptoProvider));
-            }
-        }
+        private void BlockAccesAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(RijndaelCryptoProvider));
 
         #endregion
 
@@ -223,7 +220,7 @@ namespace Nameless.Security.Cryptography {
             BlockAccesAfterDispose();
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-            if (stream.Length == 0) { return Array.Empty<byte>(); }
+            if (stream.Length == 0) { return []; }
 
             // Let's make cryptographic operations thread-safe.
             lock (this) {
@@ -251,7 +248,7 @@ namespace Nameless.Security.Cryptography {
             BlockAccesAfterDispose();
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-            if (stream.Length == 0) { return Array.Empty<byte>(); }
+            if (stream.Length == 0) { return []; }
 
             byte[] decryptedBytes;
             var decryptedByteCount = 0;

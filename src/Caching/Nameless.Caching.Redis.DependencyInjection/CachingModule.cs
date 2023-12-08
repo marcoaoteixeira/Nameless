@@ -4,6 +4,7 @@ using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Caching.Redis.Impl;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
@@ -16,7 +17,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         #region Public Constructors
 
         public CachingModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -43,7 +44,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         private static RedisOptions? GetRedisOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(RedisOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(RedisOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<RedisOptions>();
 
             return options;

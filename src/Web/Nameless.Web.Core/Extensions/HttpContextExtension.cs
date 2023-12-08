@@ -54,8 +54,8 @@ namespace Nameless.Web {
                 : IPAddress.None;
 
         private static IPAddress GetIPAddress(HttpContext httpContext)
-            => httpContext.Request.Headers.ContainsKey(Root.HttpRequestHeaders.X_FORWARDED_FOR)
-                ? IPAddress.Parse(httpContext.Request.Headers[Root.HttpRequestHeaders.X_FORWARDED_FOR].ToString())
+            => httpContext.Request.Headers.TryGetValue(Root.HttpRequestHeaders.X_FORWARDED_FOR, out var xForwardedFor)
+                ? IPAddress.Parse(xForwardedFor.ToString())
                 : httpContext.Connection.RemoteIpAddress ?? IPAddress.None;
 
         #endregion

@@ -32,7 +32,7 @@ namespace Nameless.Lucene.Impl {
 
         #region Private Methods
 
-        private IDocument Set(IndexableType type, string name, object value, FieldOptions options) {
+        private Document Set(IndexableType type, string name, object value, FieldOptions options) {
             _fields[name] = new(
                 name: name,
                 value: value,
