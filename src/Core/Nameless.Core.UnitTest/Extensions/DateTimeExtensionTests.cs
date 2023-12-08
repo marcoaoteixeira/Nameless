@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nameless.Core.UnitTest.Extensions {
+﻿namespace Nameless.Core.UnitTest.Extensions {
     public class DateTimeExtensionTests {
         [TestCase("2000-6-1", "2005-5-1", 4)]
         [TestCase("2000-6-1", "2005-6-1", 5)]

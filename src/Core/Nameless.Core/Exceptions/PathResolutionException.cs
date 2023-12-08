@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Nameless {
+﻿namespace Nameless {
     [Serializable]
     public class PathResolutionException : Exception {
         #region Public Constructors
@@ -8,12 +6,6 @@ namespace Nameless {
         public PathResolutionException() { }
         public PathResolutionException(string message) : base(message) { }
         public PathResolutionException(string message, Exception inner) : base(message, inner) { }
-
-        #endregion
-
-        #region Protected Constructors
-
-        protected PathResolutionException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         #endregion
     }

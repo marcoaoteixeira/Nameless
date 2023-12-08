@@ -49,11 +49,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(ConsumerService));
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(ConsumerService));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

@@ -33,11 +33,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(ChannelManager));
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(ChannelManager));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

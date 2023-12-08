@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Linq;
 
 namespace Nameless.Core.UnitTest.Extensions {
     public class CultureInfoExtensionTests {

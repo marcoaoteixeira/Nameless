@@ -72,11 +72,8 @@ namespace Nameless.Data {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(Database));
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(Database));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

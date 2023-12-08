@@ -4,6 +4,7 @@ using Autofac.Core.Registration;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Caching.InMemory.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
@@ -16,7 +17,7 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
         #region Public Constructors
 
         public CachingModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -38,7 +39,7 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
         private static MemoryCacheOptions GetMemoryCacheOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(MemoryCacheOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(MemoryCacheOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<MemoryCacheOptions>();
 
             return options ?? new();

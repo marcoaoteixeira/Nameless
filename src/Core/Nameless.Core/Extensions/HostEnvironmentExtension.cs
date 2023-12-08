@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace Nameless {
     /// <summary>

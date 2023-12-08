@@ -57,7 +57,7 @@ namespace Nameless {
         public async static Task<IList<T>> ToListAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
-            IList<T> result = new List<T>();
+            var result = new List<T>();
             while (await enumerator.MoveNextAsync()) {
                 cancellationToken.ThrowIfCancellationRequested();
                 result.Add(enumerator.Current);

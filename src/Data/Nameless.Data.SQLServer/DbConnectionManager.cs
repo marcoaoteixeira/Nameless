@@ -11,7 +11,7 @@ namespace Nameless.Data.SQLServer {
 
         #region Private Fields
 
-        private IDbConnection? _connection;
+        private SqlConnection? _connection;
         private bool _disposed;
 
         #endregion
@@ -34,11 +34,8 @@ namespace Nameless.Data.SQLServer {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(typeof(DbConnectionManager).FullName);
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(DbConnectionManager));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
@@ -50,7 +47,7 @@ namespace Nameless.Data.SQLServer {
             _disposed = true;
         }
 
-        private IDbConnection CreateDbConnection() {
+        private SqlConnection CreateDbConnection() {
             var connectionString = _options.GetConnectionString();
             var connection = new SqlConnection(connectionString);
 

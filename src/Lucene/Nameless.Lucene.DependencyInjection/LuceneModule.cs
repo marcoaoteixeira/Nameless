@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Impl;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Lucene.DependencyInjection {
     public sealed class LuceneModule : ModuleBase {
@@ -18,7 +19,7 @@ namespace Nameless.Lucene.DependencyInjection {
         #region Public Constructors
 
         public LuceneModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -58,7 +59,7 @@ namespace Nameless.Lucene.DependencyInjection {
         private static LuceneOptions? GetLuceneOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(LuceneOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(LuceneOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<LuceneOptions>();
 
             return options;

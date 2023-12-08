@@ -7,6 +7,7 @@ using Microsoft.Extensions.Localization;
 using Nameless.Autofac;
 using Nameless.Localization.Microsoft.Json.Infrastructure;
 using Nameless.Localization.Microsoft.Json.Infrastructure.Impl;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
     public sealed class LocalizationModule : ModuleBase {
@@ -21,7 +22,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
         #region Public Constructors
 
         public LocalizationModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -63,7 +64,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
         private static LocalizationOptions? GetLocalizationOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(LocalizationOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(LocalizationOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<LocalizationOptions>();
 
             return options;

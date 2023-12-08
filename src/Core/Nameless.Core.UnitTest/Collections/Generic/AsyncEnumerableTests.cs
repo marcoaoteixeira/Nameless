@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Nameless.Collections.Generic;
+﻿using Nameless.Collections.Generic;
 
 namespace Nameless.Core.UnitTests.Collections.Generic {
 
     public class AsyncEnumerableTests {
+        private static readonly int[] sourceArray = [1, 2, 3, 4, 5];
 
         [Test]
         public void Can_Create_AsyncEnumerable() {
             // arrange
-            var items = new[] { 1, 2, 3, 4, 5 }.AsEnumerable();
+            var items = sourceArray.AsEnumerable();
 
             // act
             var enumerable = new AsyncEnumerable<int>(items);
@@ -23,7 +20,7 @@ namespace Nameless.Core.UnitTests.Collections.Generic {
         [Test]
         public void GetAsyncEnumerator_From_AsyncEnumerable() {
             // arrange
-            var items = new[] { 1, 2, 3, 4, 5 }.AsEnumerable();
+            var items = sourceArray.AsEnumerable();
 
             // act
             var enumerator = new AsyncEnumerable<int>(items).GetAsyncEnumerator(CancellationToken.None);

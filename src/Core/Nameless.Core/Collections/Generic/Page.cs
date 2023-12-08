@@ -11,7 +11,7 @@ namespace Nameless.Collections.Generic {
         /// <summary>
         /// Gets a empty page of the defined type <see cref="T"/>.
         /// </summary>
-        public static Page<T> Empty => new(Array.Empty<T>());
+        public static Page<T> Empty => new([]);
 
         #endregion
 
@@ -30,7 +30,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         public Page(IEnumerable<T> items, int index = 0, int size = 10)
-            : this((items ?? Array.Empty<T>()).AsQueryable(), index, size) { }
+            : this((items ?? []).AsQueryable(), index, size) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Page{T}"/>.
@@ -47,7 +47,7 @@ namespace Nameless.Collections.Generic {
             Index = index;
             Size = size;
             Total = items.Count();
-            Items = items.Skip(index * size).Take(size).ToArray();
+            Items = [.. items.Skip(index * size).Take(size)];
         }
 
         #endregion

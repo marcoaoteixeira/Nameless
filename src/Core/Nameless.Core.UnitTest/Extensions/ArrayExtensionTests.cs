@@ -22,8 +22,10 @@
             var exists = ArrayExtension.TryElementAt(array, 1, out var item);
 
             // assert
-            Assert.That(item, Is.EqualTo(2));
-            Assert.That(exists, Is.True);
+            Assert.Multiple(() => {
+                Assert.That(item, Is.EqualTo(2));
+                Assert.That(exists, Is.True);
+            });
         }
 
         [Test]
@@ -35,8 +37,10 @@
             var exists = ArrayExtension.TryElementAt(array, 5, out var item);
 
             // assert
-            Assert.That(item, Is.EqualTo(default(int)));
-            Assert.That(exists, Is.False);
+            Assert.Multiple(() => {
+                Assert.That(item, Is.EqualTo(default(int)));
+                Assert.That(exists, Is.False);
+            });
         }
 
         [Test]
@@ -48,8 +52,10 @@
             var exists = ArrayExtension.TryElementAt(array, 5, out var item);
 
             // assert
-            Assert.That(item, Is.EqualTo(default(int)));
-            Assert.That(exists, Is.False);
+            Assert.Multiple(() => {
+                Assert.That(item, Is.EqualTo(default(int)));
+                Assert.That(exists, Is.False);
+            });
         }
     }
 }

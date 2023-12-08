@@ -4,13 +4,14 @@ using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Messenger.Email.DependencyInjection {
     public sealed class MessengerModule : ModuleBase {
         #region Public Constructors
 
         public MessengerModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -32,7 +33,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
         private static MessengerOptions? GetMessengerOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(MessengerOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(MessengerOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<MessengerOptions>();
 
             return options;

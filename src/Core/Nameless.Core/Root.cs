@@ -13,13 +13,19 @@ namespace Nameless {
         #region Public Static Inner Classes
 
         public static class Defaults {
+            #region Public Constants
+
+            public const string APP_DATA_FOLDER_NAME = "App_Data";
+
+            #endregion
+
             #region Public Static Read-Only Properties
 
             /// <summary>
             /// Gets the default encoding (UTF-8 without BOM)
             /// </summary>
             public static Encoding Encoding { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-            public const string APP_DATA_FOLDER_NAME = "App_Data";
+            public static string[] OptsSetsTails { get; } = ["Options", "Settings"];
 
             #endregion
         }

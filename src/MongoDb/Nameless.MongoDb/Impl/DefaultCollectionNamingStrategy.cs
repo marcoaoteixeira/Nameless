@@ -30,7 +30,7 @@ namespace Nameless.MongoDB.Impl {
         #region ICollectionNamingStrategy Members
 
         public string? GetCollectionName(Type? type) {
-            if (type is null) { throw new ArgumentNullException(nameof(type)); }
+            Guard.Against.Null(type, nameof(type));
 
             var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
             if (attr is not null && !string.IsNullOrWhiteSpace(attr.Name)) { return attr.Name; }

@@ -3,9 +3,7 @@
     [Singleton(AccessorName = "Default")]
     public sealed class MySingletonClassWithDifferentAccessor {
 
-        private static readonly MySingletonClassWithDifferentAccessor _instance = new();
-
-        public static MySingletonClassWithDifferentAccessor Default => _instance;
+        public static MySingletonClassWithDifferentAccessor Default { get; } = new();
 
         private MySingletonClassWithDifferentAccessor() { }
 

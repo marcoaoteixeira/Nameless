@@ -8,6 +8,7 @@ using Nameless.NHibernate.Services.Impl;
 using NHibernate;
 using MS_IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using N_IConfigurationBuilder = Nameless.NHibernate.Services.IConfigurationBuilder;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
@@ -21,7 +22,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         #region Public Constructors
 
         public NHibernateModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -58,7 +59,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         private static NHibernateOptions? GetNHibernateOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<MS_IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(NHibernateOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(NHibernateOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<NHibernateOptions>();
 
             return options;

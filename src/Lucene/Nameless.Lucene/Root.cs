@@ -1,6 +1,5 @@
-﻿using System.Text;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 
 namespace Nameless.Lucene {

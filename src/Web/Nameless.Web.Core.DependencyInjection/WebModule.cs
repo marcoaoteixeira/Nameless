@@ -6,13 +6,14 @@ using Nameless.Autofac;
 using Nameless.Web.Options;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Web.DependencyInjection {
     public sealed class WebModule : ModuleBase {
         #region Public Constructors
 
         public WebModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         public WebModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
@@ -37,7 +38,7 @@ namespace Nameless.Web.DependencyInjection {
         private static JwtOptions? GetJwtOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(JwtOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(JwtOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<JwtOptions>();
 
             return options;

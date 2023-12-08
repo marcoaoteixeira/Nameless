@@ -23,7 +23,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         #region Public Constructors
 
         public Bootstrapper(Type[] mappings) {
-            _mappings = mappings ?? Array.Empty<Type>();
+            _mappings = mappings ?? [];
         }
 
         #endregion
@@ -32,8 +32,7 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         public void Start() {
             foreach (var mapping in _mappings) {
-                try { Activator.CreateInstance(mapping); }
-                catch (Exception ex) { Logger.LogError(ex, "Error while running mapping {mapping}", mapping); }
+                try { Activator.CreateInstance(mapping); } catch (Exception ex) { Logger.LogError(ex, "Error while running mapping {mapping}", mapping); }
             }
         }
 

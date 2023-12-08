@@ -22,7 +22,7 @@ namespace Nameless.Caching.InMemory {
 
             // act
             var result = await cache.SetAsync("Key", value);
-            
+
             // assert
             Assert.Multiple(() => {
                 Assert.That(result, Is.True);

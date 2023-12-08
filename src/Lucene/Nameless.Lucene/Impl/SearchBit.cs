@@ -25,7 +25,7 @@ namespace Nameless.Lucene.Impl {
 
         #region Private Methods
 
-        private ISearchBit Apply(ISearchBit other, Action<OpenBitSet, OpenBitSet> operation) {
+        private SearchBit Apply(ISearchBit other, Action<OpenBitSet, OpenBitSet> operation) {
             var bitset = (OpenBitSet)_openBitSet.Clone();
 
             if (other is not SearchBit otherBitSet) {

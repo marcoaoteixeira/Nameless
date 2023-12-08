@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Nameless.Autofac;
 using Nameless.MongoDB.Impl;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.MongoDB.DependencyInjection {
     public sealed class MongoDBModule : ModuleBase {
@@ -18,7 +19,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         #region Public Constructors
 
         public MongoDBModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         public MongoDBModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
@@ -62,7 +63,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         private static MongoOptions GetMongoOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(MongoOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(MongoOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<MongoOptions>();
 
             return options ?? MongoOptions.Default;

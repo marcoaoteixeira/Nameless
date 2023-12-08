@@ -56,7 +56,7 @@ namespace Nameless.Helpers {
                 var currentReturnType = returnType ?? typeof(void);
                 if (method.ReturnType != currentReturnType) { return false; }
 
-                if (methodAttributeType is not null && !method.GetCustomAttributes(methodAttributeType, inherit: true).Any()) {
+                if (methodAttributeType is not null && method.GetCustomAttributes(methodAttributeType, inherit: true).Length == 0) {
                     return false;
                 }
 

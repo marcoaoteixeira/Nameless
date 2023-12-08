@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Data.SQLServer.DependencyInjection {
     public sealed class DataModule : ModuleBase {
@@ -15,7 +16,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
         #region Public Constructors
 
         public DataModule()
-            : base(Array.Empty<Assembly>()) { }
+            : base([]) { }
 
         #endregion
 
@@ -37,7 +38,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
         private static SQLServerOptions? GetSQLServerOptions(IComponentContext ctx) {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             var options = configuration?
-                .GetSection(nameof(SQLServerOptions).RemoveTail(new[] { "Options" }))
+                .GetSection(nameof(SQLServerOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
                 .Get<SQLServerOptions>();
 
             return options;

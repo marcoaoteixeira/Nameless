@@ -7,7 +7,7 @@ namespace Nameless.Checklist.Web.Domain.Repositories {
     public sealed class TodoItemRepository : IRepository<ChecklistItem> {
         #region Private Read-Only Fields
 
-        private readonly IDictionary<Guid, ChecklistItem> _todoItems;
+        private readonly Dictionary<Guid, ChecklistItem> _todoItems;
 
         #endregion
 
@@ -16,7 +16,7 @@ namespace Nameless.Checklist.Web.Domain.Repositories {
         public TodoItemRepository(string connectionString) {
             var json = File.ReadAllText(connectionString);
             var array = JsonSerializer.Deserialize<ChecklistItem[]>(json)
-                ?? throw new ArgumentNullException("array");
+                ?? throw new InvalidOperationException("Deserialization failed.");
 
             _todoItems = array.ToDictionary(
                 _ => _.Id,
@@ -29,19 +29,17 @@ namespace Nameless.Checklist.Web.Domain.Repositories {
         #region IRepository<TodoItem> Members
 
         public Task<ChecklistItem> CreateAsync(ChecklistItem entity, CancellationToken cancellationToken = default) {
-            if (!_todoItems.ContainsKey(entity.Id)) {
-                _todoItems.Add(entity.Id, entity);
-            }
+            _todoItems.TryAdd(entity.Id, entity);
 
             return Task.FromResult(entity);
         }
-        
+
         public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default) {
             var result = _todoItems.Remove(id);
 
             return Task.FromResult(result);
         }
-        
+
         public Task<ChecklistItem[]> ListAsync(Expression<Func<ChecklistItem, bool>>? where = null, Expression<Func<ChecklistItem, object>>? orderBy = null, bool orderByDescending = false, CancellationToken cancellationToken = default) {
             var query = _todoItems
                 .Values
@@ -63,8 +61,8 @@ namespace Nameless.Checklist.Web.Domain.Repositories {
         }
 
         public Task<ChecklistItem?> GetAsync(Guid id, CancellationToken cancellationToken = default) {
-            var result = _todoItems.ContainsKey(id)
-                ? _todoItems[id]
+            var result = _todoItems.TryGetValue(id, out var value)
+                ? value
                 : null;
 
             return Task.FromResult(result);

@@ -18,7 +18,7 @@ namespace Nameless.Autofac {
         /// </summary>
         /// <param name="supportAssemblies">The support assemblies.</param>
         protected ModuleBase(Assembly[] supportAssemblies) {
-            SupportAssemblies = supportAssemblies ?? Array.Empty<Assembly>();
+            SupportAssemblies = supportAssemblies ?? [];
         }
 
         #endregion

@@ -6,7 +6,7 @@ namespace Nameless.Checklist.Web.Api.v1.Models.Input {
 
         [JsonPropertyName("description_like")]
         public string? DescriptionLike { get; init; }
-        
+
         [JsonPropertyName("checked_before")]
         public DateTime? CheckedBefore { get; init; }
 

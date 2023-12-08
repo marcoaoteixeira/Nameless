@@ -11,7 +11,12 @@ namespace Nameless.Data {
             self.LogDebug("Command text: {command.CommandText}", command);
             self.LogDebug("Parameter list:");
             foreach (var parameter in command.Parameters.OfType<IDbDataParameter>()) {
-                self.LogDebug("\t[{parameter.DbType}] {parameter.ParameterName} => {parameter.Value}", parameter);
+                self.LogDebug(
+                    "\t[{parameter.DbType}] {parameter.ParameterName} => {parameter.Value}",
+                    parameter.DbType,
+                    parameter.ParameterName,
+                    parameter.Value
+                );
             }
         }
 

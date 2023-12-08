@@ -22,8 +22,8 @@ namespace Nameless.Lucene.Impl {
 
         private readonly Analyzer _analyzer;
         private readonly Func<IndexSearcher> _indexSearcherFactory;
-        private readonly IList<BooleanClause> _clauses = new List<BooleanClause>();
-        private readonly IList<BooleanClause> _filters = new List<BooleanClause>();
+        private readonly List<BooleanClause> _clauses = [];
+        private readonly List<BooleanClause> _filters = [];
 
         #endregion
 

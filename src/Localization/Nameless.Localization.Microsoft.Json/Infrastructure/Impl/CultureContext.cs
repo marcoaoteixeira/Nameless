@@ -31,7 +31,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         public CultureInfo GetCurrentCulture() {
             var currentCulture = Thread.CurrentThread.CurrentCulture;
             var currentUICulture = Thread.CurrentThread.CurrentUICulture;
-            
+
             if (!string.IsNullOrWhiteSpace(currentUICulture.Name)) {
                 return currentUICulture;
             }

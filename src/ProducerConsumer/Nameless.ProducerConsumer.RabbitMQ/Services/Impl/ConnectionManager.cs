@@ -47,11 +47,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
             return _factory;
         }
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(ConnectionManager));
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(ConnectionManager));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

@@ -58,11 +58,8 @@
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(typeof(AsyncEnumerable<T>).FullName);
-            }
-        }
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, typeof(AsyncEnumerator<>));
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
