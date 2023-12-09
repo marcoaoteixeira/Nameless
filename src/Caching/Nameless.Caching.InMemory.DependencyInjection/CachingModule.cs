@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
@@ -59,8 +57,11 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddCaching(this ContainerBuilder self)
-            => self.RegisterModule<CachingModule>();
+        public static ContainerBuilder AddCaching(this ContainerBuilder self) {
+            self.RegisterModule<CachingModule>();
+
+            return self;
+        }
 
         #endregion
     }

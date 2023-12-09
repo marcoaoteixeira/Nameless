@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Web.Options;
@@ -57,8 +56,11 @@ namespace Nameless.Web.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddWeb(this ContainerBuilder self, params Assembly[] supportAssemblies)
-            => self.RegisterModule(new WebModule(supportAssemblies));
+        public static ContainerBuilder AddWeb(this ContainerBuilder self, params Assembly[] supportAssemblies) {
+            self.RegisterModule(new WebModule(supportAssemblies));
+
+            return self;
+        }
 
         #endregion
     }

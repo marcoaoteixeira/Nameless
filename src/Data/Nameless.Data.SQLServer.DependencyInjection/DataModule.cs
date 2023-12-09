@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using CoreRoot = Nameless.Root;
@@ -59,8 +57,11 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddData(this ContainerBuilder self)
-            => self.RegisterModule<DataModule>();
+        public static ContainerBuilder AddData(this ContainerBuilder self) {
+            self.RegisterModule<DataModule>();
+
+            return self;
+        }
 
         #endregion
     }

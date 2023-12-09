@@ -1,14 +1,12 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.NHibernate.Services.Impl;
 using NHibernate;
+using CoreRoot = Nameless.Root;
 using MS_IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using N_IConfigurationBuilder = Nameless.NHibernate.Services.IConfigurationBuilder;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
@@ -105,8 +103,11 @@ namespace Nameless.NHibernate.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddNHibernate(this ContainerBuilder self)
-            => self.RegisterModule<NHibernateModule>();
+        public static ContainerBuilder AddNHibernate(this ContainerBuilder self) {
+            self.RegisterModule<NHibernateModule>();
+
+            return self;
+        }
 
         #endregion
     }

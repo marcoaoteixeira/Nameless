@@ -16,6 +16,13 @@ namespace Nameless.Autofac {
         /// <summary>
         /// Protected constructor.
         /// </summary>
+        protected ModuleBase() {
+            SupportAssemblies = [];
+        }
+
+        /// <summary>
+        /// Protected constructor.
+        /// </summary>
         /// <param name="supportAssemblies">The support assemblies.</param>
         protected ModuleBase(Assembly[] supportAssemblies) {
             SupportAssemblies = supportAssemblies ?? [];

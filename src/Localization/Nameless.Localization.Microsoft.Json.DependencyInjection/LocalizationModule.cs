@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
@@ -95,8 +93,11 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddLocalization(this ContainerBuilder self)
-            => self.RegisterModule<LocalizationModule>();
+        public static ContainerBuilder AddLocalization(this ContainerBuilder self) {
+            self.RegisterModule<LocalizationModule>();
+
+            return self;
+        }
 
         #endregion
     }
