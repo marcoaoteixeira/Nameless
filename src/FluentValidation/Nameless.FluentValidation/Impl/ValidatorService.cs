@@ -4,8 +4,8 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Nameless.FluentValidation {
-    public sealed class ValidatorManager : IValidatorManager {
+namespace Nameless.FluentValidation.Impl {
+    public sealed class ValidatorService : IValidatorService {
         #region Private Read-Only Fields
 
         private readonly ILifetimeScope _scope;
@@ -24,7 +24,7 @@ namespace Nameless.FluentValidation {
 
         #region Public Constructors
 
-        public ValidatorManager(ILifetimeScope scope) {
+        public ValidatorService(ILifetimeScope scope) {
             _scope = Guard.Against.Null(scope, nameof(scope));
         }
 
