@@ -20,6 +20,16 @@ namespace Nameless.MediatR.Integration {
 
         #region IPipelineBehavior<TRequest, TResponse> Members
 
+        /// <summary>
+        /// Handles the request validation, if available.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="next">The next handler.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The final handler result.</returns>
+        /// <exception cref="ValidationException">
+        /// If <see cref="IValidator{T}"/> is available and the validation fails.
+        /// </exception>
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
             if (_validator is not null) {
                 await _validator

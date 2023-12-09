@@ -18,7 +18,7 @@ namespace Nameless {
         public static string GetDirectoryPath(this Assembly self, params string[] combineWith) {
             Guard.Against.Null(combineWith, nameof(combineWith));
 
-            var location = OperatingSystem.IsWindows() ? self.Location : $"file://{self.Location}";
+            var location = $"file://{self.Location}";
             var uri = new UriBuilder(location);
             var path = Uri.UnescapeDataString(uri.Path);
 

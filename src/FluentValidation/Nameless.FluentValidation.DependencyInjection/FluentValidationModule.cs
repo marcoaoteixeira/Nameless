@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Core.Registration;
 using FluentValidation;
 using Nameless.Autofac;
+using Nameless.FluentValidation.Impl;
 
 namespace Nameless.FluentValidation.DependencyInjection {
     public sealed class FluentValidationModule : ModuleBase {
@@ -28,8 +29,8 @@ namespace Nameless.FluentValidation.DependencyInjection {
                 );
 
             builder
-                .RegisterType<ValidatorManager>()
-                .As<IValidatorManager>()
+                .RegisterType<ValidatorService>()
+                .As<IValidatorService>()
                 .SingleInstance();
 
             base.Load(builder);
