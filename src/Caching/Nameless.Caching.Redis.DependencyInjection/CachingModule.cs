@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Caching.Redis.Impl;
@@ -72,8 +70,11 @@ namespace Nameless.Caching.Redis.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddCaching(this ContainerBuilder self)
-            => self.RegisterModule<CachingModule>();
+        public static ContainerBuilder AddCaching(this ContainerBuilder self) {
+            self.RegisterModule<CachingModule>();
+
+            return self;
+        }
 
         #endregion
     }

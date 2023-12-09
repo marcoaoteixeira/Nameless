@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Core.Registration;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Nameless.Autofac;
@@ -100,8 +99,11 @@ namespace Nameless.MongoDB.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddMongoDB(this ContainerBuilder self)
-            => self.RegisterModule<MongoDBModule>();
+        public static ContainerBuilder AddMongoDB(this ContainerBuilder self) {
+            self.RegisterModule<MongoDBModule>();
+
+            return self;
+        }
 
         #endregion
     }

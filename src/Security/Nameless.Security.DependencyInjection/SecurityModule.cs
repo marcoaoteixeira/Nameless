@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Security.Cryptography;
@@ -57,8 +55,11 @@ namespace Nameless.Security.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddSecurity(this ContainerBuilder self)
-            => self.RegisterModule<SecurityModule>();
+        public static ContainerBuilder AddSecurity(this ContainerBuilder self) {
+            self.RegisterModule<SecurityModule>();
+
+            return self;
+        }
 
         #endregion
     }

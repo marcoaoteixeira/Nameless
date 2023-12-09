@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Core.Registration;
 using FluentValidation;
 using Nameless.Autofac;
 using Nameless.FluentValidation.Impl;
@@ -42,8 +41,11 @@ namespace Nameless.FluentValidation.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddFluentValidation(this ContainerBuilder self, params Assembly[] supportAssemblies)
-            => self.RegisterModule(new FluentValidationModule(supportAssemblies));
+        public static ContainerBuilder AddFluentValidation(this ContainerBuilder self, params Assembly[] supportAssemblies) {
+            self.RegisterModule(new FluentValidationModule(supportAssemblies));
+
+            return self;
+        }
 
         #endregion
     }

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
@@ -81,8 +79,11 @@ namespace Nameless.Lucene.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddLucene(this ContainerBuilder self)
-            => self.RegisterModule<LuceneModule>();
+        public static ContainerBuilder AddLucene(this ContainerBuilder self) {
+            self.RegisterModule<LuceneModule>();
+
+            return self;
+        }
 
         #endregion
     }

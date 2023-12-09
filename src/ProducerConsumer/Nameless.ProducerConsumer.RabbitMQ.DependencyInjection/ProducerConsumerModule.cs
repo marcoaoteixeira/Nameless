@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
@@ -99,8 +97,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddProducerConsumer(this ContainerBuilder self)
-            => self.RegisterModule<ProducerConsumerModule>();
+        public static ContainerBuilder AddProducerConsumer(this ContainerBuilder self) {
+            self.RegisterModule<ProducerConsumerModule>();
+
+            return self;
+        }
 
         #endregion
     }

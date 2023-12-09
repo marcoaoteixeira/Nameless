@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Autofac.Core.Registration;
+﻿using Autofac;
 using Nameless.Autofac;
 using Nameless.Services;
 using Nameless.Services.Impl;
@@ -36,8 +34,11 @@ namespace Nameless.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static IModuleRegistrar AddCore(this ContainerBuilder self)
-            => self.RegisterModule<CoreModule>();
+        public static ContainerBuilder AddCore(this ContainerBuilder self) {
+            self.RegisterModule<CoreModule>();
+
+            return self;
+        }
 
         #endregion
     }
