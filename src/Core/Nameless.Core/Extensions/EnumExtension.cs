@@ -12,15 +12,14 @@ namespace Nameless {
         /// Retrieves the attributes from an <see cref="Enum"/>.
         /// </summary>
         /// <param name="self">The <see cref="Enum"/> value.</param>
-        /// <param name="inherited">Marks as inherited attributes.</param>
         /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
         /// <returns>The <typeparamref name="TAttribute" /> annotated in the enum.</returns>
-        public static TAttribute? GetAttribute<TAttribute>(this Enum self, bool inherited = false) where TAttribute : Attribute {
+        public static TAttribute? GetAttribute<TAttribute>(this Enum self) where TAttribute : Attribute {
             var field = self.GetType().GetField(self.ToString());
 
             if (field is null) { return null; }
 
-            return field.GetCustomAttribute<TAttribute>(inherit: inherited);
+            return field.GetCustomAttribute<TAttribute>(inherit: false);
         }
 
         /// <summary>

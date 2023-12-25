@@ -5,10 +5,21 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RootNamespace>Nameless</RootNamespace>
+		<LangVersion>latest</LangVersion>
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Content\LoremIpsun.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Content\LoremIpsun.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" Version="6.12.0" />

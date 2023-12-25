@@ -100,8 +100,8 @@ namespace Nameless {
         /// <typeparam name="T">The type of the enumerable.</typeparam>
         /// <param name="self">The self <see cref="IEnumerable{T}"/>.</param>
         /// <returns>An <see cref="IReadOnlyCollection{T}"/> instance.</returns>
-        public static IList<T> ToReadOnlyCollection<T>(this IEnumerable<T> self)
-            => new ReadOnlyCollection<T>((self ?? Enumerable.Empty<T>()).ToList());
+        public static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> self)
+            => new(self.ToList());
 
         /// <summary>
         /// Selects distinct the self <see cref="IEnumerable{T}"/> by an expression.

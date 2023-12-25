@@ -13,24 +13,6 @@ namespace Nameless {
         #region Public Static Methods
 
         /// <summary>
-        /// Returns <paramref name="fallback"/> if <see cref="string"/> is
-        /// <c>null</c>, empty or white spaces.
-        /// </summary>
-        /// <param name="self">The current <see cref="string"/>.</param>
-        /// <param name="fallback">The fallback <see cref="string"/>.</param>
-        /// <returns>
-        /// The <paramref name="self"/> if not <c>null</c>, empty or
-        /// white spaces, otherwise, <paramref name="fallback"/>.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="fallback"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">if <paramref name="fallback"/> is empty or white spaces.</exception>
-        public static string OnBlank(this string? self, string fallback) {
-            Guard.Against.NullOrWhiteSpace(fallback, nameof(fallback));
-
-            return string.IsNullOrWhiteSpace(self) ? fallback : self;
-        }
-
-        /// <summary>
         /// Remove diacritics from <paramref name="self"/> <see cref="string"/>.
         /// Diacritics are signs, such as an accent or cedilla, which when written above or below a letter indicates
         /// a difference in pronunciation from the same letter when unmarked or differently marked.
@@ -46,7 +28,9 @@ namespace Nameless {
                     stringBuilder.Append(@char);
                 }
             }
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
         }
 
         /// <summary>
@@ -56,7 +40,7 @@ namespace Nameless {
         /// <param name="times">Times to repeat.</param>
         /// <returns>A new <see cref="string"/> representing the <paramref name="self"/> repeated N times.</returns>
         public static string Repeat(this string self, int times) {
-            if (self is null || times <= 0) { return string.Empty; }
+            if (self is null || times <= 0) { return self ?? string.Empty; }
 
             var builder = new StringBuilder();
             for (var counter = 0; counter < times; counter++) {
@@ -72,8 +56,8 @@ namespace Nameless {
         /// <param name="encoding">The encoding. Default is <see cref="Encoding.UTF8" /> without BOM</param>
         /// <returns>An instance of <see cref="MemoryStream"/> representing the current <see cref="string"/>.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static Stream ToStream(this string self, Encoding? encoding = default)
-            => new MemoryStream((encoding ?? Root.Defaults.Encoding).GetBytes(self));
+        public static MemoryStream ToMemoryStream(this string self, Encoding? encoding = default)
+            => new((encoding ?? Root.Defaults.Encoding).GetBytes(self));
 
         /// <summary>
         /// Separates a phrase by camel case.
@@ -83,9 +67,9 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string CamelFriendly(this string self) {
             var result = new StringBuilder(self);
+            
             for (var idx = self.Length - 1; idx > 0; idx--) {
                 var current = result[idx];
-
                 if (current is >= 'A' and <='Z') {
                     result.Insert(idx, ' ');
                 }
