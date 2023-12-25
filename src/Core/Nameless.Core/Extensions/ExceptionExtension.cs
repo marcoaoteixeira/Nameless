@@ -24,7 +24,8 @@ namespace Nameless {
         /// - <see cref="SecurityException"/>
         /// - <see cref="SEHException"/>
         /// </remarks>
-        public static bool IsFatal(this Exception self) => self is FatalException or
+        public static bool IsFatal(this Exception self)
+            => self is FatalException or
                 StackOverflowException or
                 OutOfMemoryException or
                 AccessViolationException or

@@ -1,8 +1,8 @@
-﻿namespace Nameless.Exnsions {
+﻿namespace Nameless {
     /// <summary>
     /// <see cref="int"/> extension methods.
     /// </summary>
-    public static class NumberExtension {
+    public static class IntegerExtension {
         #region Public Static Methods
 
         /// <summary>
@@ -34,6 +34,6 @@
             }
         }
 
-        #endregion Public Static Methods
+        #endregion
     }
 }

@@ -15,7 +15,7 @@ namespace Nameless {
         /// <param name="propertyName">The property name.</param>
         /// <returns>The ordered queryable.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> self, string propertyName) where T : class
+        public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> self, string propertyName) where T : class
             => InnerOrderBy(self, propertyName, ascending: true);
 
         /// <summary>
@@ -26,14 +26,14 @@ namespace Nameless {
         /// <param name="propertyName">The property name.</param>
         /// <returns>The ordered queryable.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static IQueryable<T> OrderByDescending<T>(this IQueryable<T> self, string propertyName) where T : class
+        public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> self, string propertyName) where T : class
             => InnerOrderBy(self, propertyName, ascending: false);
 
         #endregion
 
         #region Private Static Methods
 
-        private static IQueryable<T> InnerOrderBy<T>(IQueryable<T> self, string propertyName, bool ascending = true) where T : class {
+        private static IOrderedQueryable<T> InnerOrderBy<T>(IQueryable<T> self, string propertyName, bool ascending = true) where T : class {
             var type = typeof(T);
             var property = type.GetProperty(propertyName)
                 ?? throw new MissingMemberException($"Property \"{propertyName}\" not found in type {typeof(T).FullName}.");
@@ -47,11 +47,13 @@ namespace Nameless {
             var queryExpression = Expression.Call(
                 type: typeof(Queryable),
                 methodName: queryableMethodName,
-                typeArguments: new[] { type, property.PropertyType },
-                arguments: new[] { self.Expression, Expression.Quote(propertyExpression) }
+                typeArguments: [type, property.PropertyType],
+                arguments: [self.Expression, Expression.Quote(propertyExpression)]
             );
+            
+            var query = self.Provider.CreateQuery<T>(queryExpression);
 
-            return self.Provider.CreateQuery<T>(queryExpression);
+            return (IOrderedQueryable<T>)query;
         }
 
         #endregion
