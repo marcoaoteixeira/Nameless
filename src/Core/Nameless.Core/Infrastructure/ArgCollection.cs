@@ -4,7 +4,7 @@ namespace Nameless.Infrastructure {
     public abstract class ArgCollection : IEnumerable<Arg> {
         #region Private Read-Only Fields
 
-        private readonly Dictionary<string, object> _dictionary = new();
+        private readonly Dictionary<string, object> _dictionary = [];
 
         #endregion
 
@@ -20,11 +20,13 @@ namespace Nameless.Infrastructure {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.Null(value, nameof(value));
 
-            _dictionary.AddOrChange(name, value);
+            _dictionary[name] = value;
         }
 
         public object? Get(string name)
-            => _dictionary.TryGetValue(name, out var value) ? value : null;
+            => _dictionary.TryGetValue(name, out var value)
+                ? value
+                : null;
 
         #endregion
 

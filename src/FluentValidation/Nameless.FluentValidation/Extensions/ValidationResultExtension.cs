@@ -7,20 +7,15 @@ namespace Nameless.FluentValidation {
         #region Public Static Methods
 
         // Syntax sugar
-        public static bool Successful(this ValidationResult self)
+        public static bool Success(this ValidationResult self)
             => self.IsValid;
 
         // Syntax sugar
         public static bool Failure(this ValidationResult self)
             => !self.IsValid;
 
-        public static ErrorCollection ToErrorCollection(this ValidationResult self) {
-            var result = new ErrorCollection();
-            foreach (var item in self.Errors) {
-                result.Push(item.ErrorCode, item.ErrorMessage);
-            }
-            return result;
-        }
+        public static ErrorCollection ToErrorCollection(this ValidationResult self)
+            => new(ToDictionary(self));
 
         public static IDictionary<string, string[]> ToDictionary(this ValidationResult self)
             => ToDictionary(self.Errors);
@@ -35,7 +30,10 @@ namespace Nameless.FluentValidation {
         private static Dictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures) {
             var result = new Dictionary<string, string[]>();
             foreach (var failure in failures) {
-                result.Add(failure.ErrorCode, [failure.ErrorMessage]);
+                result.Add(
+                    key: failure.PropertyName ?? failure.ErrorCode,
+                    value: [failure.ErrorMessage]
+                );
             }
             return result;
         }

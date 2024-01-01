@@ -2,7 +2,8 @@
     public sealed class CacheEntryOptions {
         #region Private Static Read-Only Fields
 
-        private static readonly EvictionCallback EmptyEvictionCallback = (key, value, reason) => { };
+        private static readonly EvictionCallback EmptyEvictionCallback = (key, value, reason)
+            => { };
 
         #endregion
 

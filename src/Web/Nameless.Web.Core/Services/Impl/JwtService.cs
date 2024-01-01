@@ -18,9 +18,9 @@ namespace Nameless.Web.Services.Impl {
 
         #region Public Properties
 
-        private IClockService? _clock;
-        public IClockService Clock {
-            get => _clock ??= ClockService.Instance;
+        private IClock? _clock;
+        public IClock Clock {
+            get => _clock ??= SystemClock.Instance;
             set => _clock = value;
         }
 

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 
 namespace Nameless.Messenger {
-    public sealed record Request {
+    public sealed record MessageRequest {
         #region Public Properties
 
         /// <summary>
@@ -11,7 +11,7 @@ namespace Nameless.Messenger {
         /// <summary>
         /// Gets or sets the message content.
         /// </summary>
-        public string Message { get; init; } = null!;
+        public string Content { get; init; } = null!;
         /// <summary>
         /// Gets or sets the message language.
         /// </summary>
@@ -34,7 +34,7 @@ namespace Nameless.Messenger {
         /// A dictionary of properties that can be used
         /// by the messenger.
         /// </summary>
-        public MessengerArgs Args { get; } = new();
+        public MessageArgs Args { get; } = new();
         /// <summary>
         /// Gets or sets the message priority.
         /// </summary>

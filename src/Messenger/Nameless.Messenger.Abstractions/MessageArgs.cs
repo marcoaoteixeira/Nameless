@@ -1,10 +1,10 @@
 ﻿using Nameless.Infrastructure;
 
 namespace Nameless.Messenger {
-    public sealed class MessengerArgs : ArgCollection {
+    public sealed class MessageArgs : ArgCollection {
         #region Public Static Read-Only Properties
 
-        public static MessengerArgs Default => new();
+        public static MessageArgs Default => new();
 
         #endregion
     }

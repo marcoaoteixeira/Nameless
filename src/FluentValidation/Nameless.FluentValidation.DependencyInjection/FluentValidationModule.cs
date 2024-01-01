@@ -8,9 +8,6 @@ namespace Nameless.FluentValidation.DependencyInjection {
     public sealed class FluentValidationModule : ModuleBase {
         #region Public Constructors
 
-        public FluentValidationModule()
-            : base([]) { }
-
         public FluentValidationModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
 
@@ -24,15 +21,28 @@ namespace Nameless.FluentValidation.DependencyInjection {
                 .ForEach(result => builder
                     .RegisterType(result.ValidatorType)
                     .As(result.InterfaceType)
+                    .As<IValidator>()
                     .InstancePerLifetimeScope()
                 );
 
             builder
-                .RegisterType<ValidatorService>()
-                .As<IValidatorService>()
+                .Register(ResolveValidatorManager)
+                .As<IValidatorManager>()
                 .SingleInstance();
 
             base.Load(builder);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static IValidatorManager ResolveValidatorManager(IComponentContext ctx) {
+            var validators = ctx.Resolve<IValidator[]>();
+            var logger = GetLoggerFromContext<ValidatorManager>(ctx);
+            var result = new ValidatorManager(validators, logger);
+
+            return result;
         }
 
         #endregion

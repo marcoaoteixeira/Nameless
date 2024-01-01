@@ -14,6 +14,18 @@ namespace Nameless.ErrorHandling {
 
         #endregion
 
+        #region Public Constructors
+
+        public ErrorCollection() { }
+
+        public ErrorCollection(IDictionary<string, string[]> errors) {
+            foreach (var error in errors) {
+                Push(error.Key, error.Value);
+            }
+        }
+
+        #endregion
+
         #region Public Methods
 
         public void Push(string code, params string[] problems) {

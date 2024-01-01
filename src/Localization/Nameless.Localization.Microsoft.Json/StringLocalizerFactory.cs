@@ -27,7 +27,9 @@ namespace Nameless.Localization.Microsoft.Json {
             var key = $"[{resourceName}] {resourcePath}";
             var translation = _translationManager.GetTranslation(culture.Name);
 
-            return translation.TryGetValue(key, out var region) ? region : new(key);
+            return translation.TryGetValue(key, out var region)
+                ? region
+                : new() { Name = key };
         }
 
         private StringLocalizer GetLocalizer(CultureInfo culture, string resourceName, string resourcePath) {

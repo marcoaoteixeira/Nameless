@@ -88,7 +88,7 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         private static IMongoCollectionProvider ResolveMongoCollectionProvider(IComponentContext ctx) {
             var database = ctx.ResolveNamed<IMongoDatabase>(MONGO_DATABASE_TOKEN);
-            var result = new MongoCollectionProvider(database, DefaultCollectionNamingStrategy.Instance);
+            var result = new MongoCollectionProvider(database, CollectionNamingStrategy.Instance);
 
             return result;
         }

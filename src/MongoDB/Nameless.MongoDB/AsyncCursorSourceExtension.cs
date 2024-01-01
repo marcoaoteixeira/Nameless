@@ -21,9 +21,8 @@ namespace Nameless.MongoDB {
 
             #region IAsyncEnumerable<T> Members
 
-            IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken) {
-                return new AsyncEnumeratorAdapter<T>(_source, cancellationToken);
-            }
+            IAsyncEnumerator<T> IAsyncEnumerable<T>.GetAsyncEnumerator(CancellationToken cancellationToken)
+                => new AsyncEnumeratorAdapter<T>(_source, cancellationToken);
 
             #endregion
         }

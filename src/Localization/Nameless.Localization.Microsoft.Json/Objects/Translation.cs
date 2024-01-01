@@ -1,52 +1,31 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
     /// <summary>
     /// This class represents a translation, in other words, a file for a culture.
     /// </summary>
-    public sealed class Translation : IEnumerable<Region> {
+    public sealed class Translation {
         #region Public Static Read-Only Properties
 
-        public static Translation Empty => new(new(string.Empty));
+        public static Translation Empty => new();
 
         #endregion
 
         #region Public Properties
 
-        public CultureInfo Culture { get; }
-
-        #endregion
-
-        #region Internal Properties
-
-        internal Dictionary<string, Region> Regions { get; } = new();
-
-        #endregion
-
-        #region Public Constructors
-
-        public Translation(CultureInfo culture) {
-            Culture = Guard.Against.Null(culture, nameof(culture));
-        }
+        public string Culture { get; init; } = string.Empty;
+        public HashSet<Region> Regions { get; init; } = [];
 
         #endregion
 
         #region Public Methods
 
-        public void Add(Region region) {
-            Guard.Against.Null(region, nameof(region));
-
-            Regions.AddOrChange(region.Name, region);
-        }
-
         public bool TryGetValue(string name, [NotNullWhen(true)] out Region? output)
-            => Regions.TryGetValue(name, out output);
+            => Regions.TryGetValue(new() { Name = name }, out output);
 
-        public bool Equals(Translation? other)
-            => other is not null
-            && other.Culture.Name == Culture.Name;
+        public bool Equals(Translation? obj)
+            => obj is not null &&
+               obj.Culture == Culture;
 
         #endregion
 
@@ -56,17 +35,10 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Equals(obj as Translation);
 
         public override int GetHashCode()
-            => HashCode.Combine(Culture.Name);
+            => (Culture ?? string.Empty).GetHashCode();
 
-        #endregion
-
-        #region IEnumerable<EntryCollection> Members
-
-        IEnumerator<Region> IEnumerable<Region>.GetEnumerator()
-            => Regions.Values.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => Regions.Values.GetEnumerator();
+        public override string ToString()
+            => Culture;
 
         #endregion
     }

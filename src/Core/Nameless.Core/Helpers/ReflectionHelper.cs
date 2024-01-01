@@ -52,26 +52,33 @@ namespace Nameless.Helpers {
         public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {
             Guard.Against.Null(type, nameof(type));
 
-            return type.GetRuntimeMethods().Where(method => {
-                var currentReturnType = returnType ?? typeof(void);
-                if (method.ReturnType != currentReturnType) { return false; }
+            return type
+                .GetRuntimeMethods()
+                .Where(method => {
+                    var currentReturnType = returnType ?? typeof(void);
+                    if (method.ReturnType != currentReturnType) {
+                        return false;
+                    }
 
-                if (methodAttributeType is not null && method.GetCustomAttributes(methodAttributeType, inherit: true).Length == 0) {
-                    return false;
-                }
+                    if (methodAttributeType is not null && method.GetCustomAttributes(methodAttributeType, inherit: true).Length == 0) {
+                        return false;
+                    }
 
-                var parameters = method.GetParameters();
-                var currentParameterTypes = (parameterTypes ?? Enumerable.Empty<Type>()).ToArray();
-                if (parameters.Length != currentParameterTypes.Length) { return false; }
+                    var parameters = method.GetParameters();
+                    var currentParameterTypes = (parameterTypes ?? []).ToArray();
+                    if (parameters.Length != currentParameterTypes.Length) {
+                        return false;
+                    }
 
-                return currentParameterTypes
-                    .Select((parameterType, index) => {
-                        var match = parameters[index].ParameterType == parameterType;
-                        var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
+                    return currentParameterTypes
+                        .Select((parameterType, index) => {
+                            var match = parameters[index].ParameterType == parameterType;
+                            var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
 
-                        return match || (assignable && matchParameterInheritance);
-                    }).All(result => result);
-            });
+                            return match || (assignable && matchParameterInheritance);
+                        })
+                        .All(result => result);
+                });
         }
 
         #endregion
@@ -79,7 +86,10 @@ namespace Nameless.Helpers {
         #region Private Static Methods
 
         private static FieldInfo? GetPrivateField(Type type, string name) {
-            var result = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
+            var result = type.GetField(
+                name,
+                bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic
+            );
 
             if (result is null && type.BaseType is not null) {
                 return GetPrivateField(type.BaseType, name);

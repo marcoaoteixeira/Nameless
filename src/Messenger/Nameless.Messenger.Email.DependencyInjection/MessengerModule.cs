@@ -1,21 +1,30 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
-using CoreRoot = Nameless.Root;
+using Nameless.Messenger.Email.Impl;
 
 namespace Nameless.Messenger.Email.DependencyInjection {
     public sealed class MessengerModule : ModuleBase {
-        #region Public Constructors
+        #region Private Constants
 
-        public MessengerModule()
-            : base([]) { }
+        private const string SMTP_CLIENT_FACTORY_TOKEN = $"{nameof(SmtpClientFactory)}::8e654864-5b82-47cc-8a71-feeea6d89bbc";
+        private const string DELIVERY_HANDLER_TOKEN = $"{nameof(IDeliveryHandler)}::8e654864-5b82-47cc-8a71-feeea6d89bbc";
 
         #endregion
 
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
+            builder
+                .Register(ResolveSmtpClientFactory)
+                .Named<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_TOKEN)
+                .SingleInstance();
+
+            builder
+                .Register(ResolveDeliveryHandler)
+                .Named<IDeliveryHandler>(DELIVERY_HANDLER_TOKEN)
+                .SingleInstance();
+
             builder
                 .Register(ResolveMessenger)
                 .As<IMessenger>()
@@ -28,20 +37,53 @@ namespace Nameless.Messenger.Email.DependencyInjection {
 
         #region Private Static Methods
 
-        private static MessengerOptions? GetMessengerOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(MessengerOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<MessengerOptions>();
+        private static ISmtpClientFactory ResolveSmtpClientFactory(IComponentContext ctx) {
+            var options = GetOptionsFromContext<MessengerOptions>(ctx)
+                ?? MessengerOptions.Default;
+            var result = new SmtpClientFactory(options);
 
-            return options;
+            return result;
+        }
+
+        private static IDeliveryHandler ResolveDeliveryHandler(IComponentContext ctx) {
+            var options = GetOptionsFromContext<MessengerOptions>(ctx)
+                ?? MessengerOptions.Default;
+
+            return options.DeliveryMode switch {
+                DeliveryMode.Network => ResolveSmtpClientDeliveryHandler(ctx),
+                DeliveryMode.PickupDirectory => ResolvePickupDirectoryDeliveryHandler(ctx),
+                _ => throw new InvalidOperationException("Undefined delivery mode")
+            };
+        }
+
+        private static IDeliveryHandler ResolveSmtpClientDeliveryHandler(IComponentContext ctx) {
+            var smtpClientFactory = ctx
+                .ResolveNamed<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_TOKEN);
+            var smtpClientDeliveryHandler = new SmtpClientDeliveryHandler(
+                smtpClientFactory
+            );
+
+            return smtpClientDeliveryHandler;
+        }
+
+        private static IDeliveryHandler ResolvePickupDirectoryDeliveryHandler(IComponentContext ctx) {
+            var applicationContext = ctx.ResolveOptional<IApplicationContext>()
+                ?? NullApplicationContext.Instance;
+            var options = GetOptionsFromContext<MessengerOptions>(ctx)
+                ?? MessengerOptions.Default;
+
+            var result = new PickupDirectoryDeliveryHandler(
+                applicationContext,
+                options,
+                Root.Defaults.FileNameGenerator
+            );
+
+            return result;
         }
 
         private static IMessenger ResolveMessenger(IComponentContext ctx) {
-            var applicationContext = ctx.ResolveOptional<IApplicationContext>()
-                ?? NullApplicationContext.Instance;
-            var options = GetMessengerOptions(ctx);
-            var result = new EmailMessenger(applicationContext, options);
+            var deliveryHandler = ctx.ResolveNamed<IDeliveryHandler>(DELIVERY_HANDLER_TOKEN);
+            var result = new EmailMessenger(deliveryHandler);
 
             return result;
         }

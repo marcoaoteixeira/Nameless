@@ -9,7 +9,8 @@ namespace Nameless.Data {
     public sealed class Database : IDatabase, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IDbConnection _connection;
+        private readonly IDbConnection _dbConnection;
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -19,19 +20,9 @@ namespace Nameless.Data {
 
         #endregion
 
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
-
-        #endregion
-
         #region Private Properties
 
-        private IDbTransaction? _transaction;
+        private IDbTransaction? _dbTransaction;
 
         #endregion
 
@@ -40,9 +31,13 @@ namespace Nameless.Data {
         /// <summary>
         /// Initializes a new instance of <see cref="Database"/>.
         /// </summary>
-        /// <param name="connection">The database connection.</param>
-        public Database(IDbConnection connection) {
-            _connection = Guard.Against.Null(connection, nameof(connection));
+        /// <param name="dbConnection">The database connection.</param>
+        /// <param name="logger">The logger.</param>
+        public Database(IDbConnection dbConnection, ILogger logger) {
+            _dbConnection = Guard.Against.Null(dbConnection, nameof(dbConnection));
+            _logger = logger ?? NullLogger.Instance;
+
+            _dbConnection.EnsureOpen();
         }
 
         #endregion
@@ -78,19 +73,19 @@ namespace Nameless.Data {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _transaction?.Rollback();
-                _transaction?.Dispose();
+                _dbTransaction?.Rollback();
+                _dbTransaction?.Dispose();
             }
 
-            _transaction = null;
+            _dbTransaction = null;
             _disposed = true;
         }
 
         private IDbCommand CreateCommand(string text, CommandType type, Parameter[] parameters) {
-            var command = _connection.CreateCommand();
+            var command = _dbConnection.CreateCommand();
             command.CommandText = text;
             command.CommandType = type;
-            command.Transaction = _transaction;
+            command.Transaction = _dbTransaction;
 
             foreach (var parameter in parameters) {
                 command.Parameters.Add(
@@ -98,7 +93,7 @@ namespace Nameless.Data {
                 );
             }
 
-            Logger.DbCommand(command);
+            _logger.DbCommand(command);
 
             return command;
         }
@@ -111,21 +106,21 @@ namespace Nameless.Data {
         public void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
             BlockAccessAfterDispose();
 
-            _transaction ??= _connection.BeginTransaction(isolationLevel);
+            _dbTransaction ??= _dbConnection.BeginTransaction(isolationLevel);
         }
 
         public void CommitTransaction() {
             BlockAccessAfterDispose();
 
-            _transaction?.Commit();
-            _transaction = null;
+            _dbTransaction?.Commit();
+            _dbTransaction = null;
         }
 
         public void RollbackTransaction() {
             BlockAccessAfterDispose();
 
-            _transaction?.Rollback();
-            _transaction = null;
+            _dbTransaction?.Rollback();
+            _dbTransaction = null;
         }
 
         /// <inheritdoc/>
@@ -136,7 +131,15 @@ namespace Nameless.Data {
 
             using var command = CreateCommand(text, type, parameters);
 
-            try { return command.ExecuteNonQuery(); } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex); throw; }
+            try { return command.ExecuteNonQuery(); }
+            catch (Exception ex) {
+                _logger.LogError(
+                    exception: ex,
+                    message: "Error while executing non-query. {Message}",
+                    args: ex.Message
+                );
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -148,7 +151,15 @@ namespace Nameless.Data {
             using var command = CreateCommand(text, type, parameters);
 
             IDataReader reader;
-            try { reader = command.ExecuteReader(); } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex); throw; }
+            try { reader = command.ExecuteReader(); }
+            catch (Exception ex) {
+                _logger.LogError(
+                    exception: ex,
+                    message: "Error while executing reader. {Message}",
+                    args: ex.Message
+                );
+                throw;
+            }
             using (reader) {
                 while (reader.Read()) {
                     yield return mapper(reader);
@@ -164,7 +175,15 @@ namespace Nameless.Data {
 
             using var command = CreateCommand(text, type, parameters);
 
-            try { return (TResult?)command.ExecuteScalar(); } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex); throw; }
+            try { return (TResult?)command.ExecuteScalar(); }
+            catch (Exception ex) {
+                _logger.LogError(
+                    exception: ex,
+                    message: "Error while executing scalar. {Message}",
+                    args: ex.Message
+                );
+                throw;
+            }
         }
 
         #endregion

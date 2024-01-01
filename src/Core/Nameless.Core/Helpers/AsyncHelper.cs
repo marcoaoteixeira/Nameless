@@ -8,7 +8,7 @@
         /// <param name="function">The async method.</param>
         public static void RunSync(Func<Task> function, int millisecondsTimeout = -1)
             => Task.WaitAny(
-                tasks: new[] { function() },
+                tasks: [function()],
                 cancellationToken: GenerateCancellationToken(millisecondsTimeout)
             );
 

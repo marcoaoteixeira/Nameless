@@ -2,7 +2,7 @@
     public interface IMessenger {
         #region Methods
 
-        Task<Response> SendAsync(Request request, CancellationToken cancellationToken = default);
+        Task<MessageResponse> SendAsync(MessageRequest request, CancellationToken cancellationToken = default);
 
         #endregion
     }

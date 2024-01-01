@@ -10,30 +10,23 @@ namespace Nameless.Caching.Redis.Impl {
         #region Private Read-Only Fields
 
         private readonly RedisOptions _options;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Private Fields
 
         private ConnectionMultiplexer? _multiplexer;
+        private ConfigurationOptions? _multiplexerConfigOpts;
         private bool _disposed;
-
-        #endregion
-
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
 
         #endregion
 
         #region Public Constructors
 
-        public ConnectionMultiplexerManager(RedisOptions? options = null) {
+        public ConnectionMultiplexerManager(RedisOptions options, ILogger logger) {
             _options = options ?? RedisOptions.Default;
+            _logger = logger ?? NullLogger.Instance;
         }
 
         #endregion
@@ -53,6 +46,10 @@ namespace Nameless.Caching.Redis.Impl {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
+                if (_multiplexerConfigOpts is not null) {
+                    _multiplexerConfigOpts.CertificateSelection -= CertificateSelectionHandler;
+                    _multiplexerConfigOpts.CertificateValidation -= CertificateValidationHandler;
+                }
                 _multiplexer?.Dispose();
             }
 
@@ -60,10 +57,18 @@ namespace Nameless.Caching.Redis.Impl {
             _disposed = true;
         }
 
-        private ConfigurationOptions GetConfigurationOptions() {
-            var host = _options.Ssl.Available ? _options.Ssl.Host : _options.Host;
-            var port = _options.Ssl.Available ? _options.Ssl.Port : _options.Port;
-            var sslProtocols = _options.Ssl.Available ? _options.Ssl.SslProtocol : SslProtocols.None;
+        private ConfigurationOptions CreateMultiplexerConfigurationOptions() {
+            var host = _options.Ssl.Available
+                ? _options.Ssl.Host
+                : _options.Host;
+
+            var port = _options.Ssl.Available
+                ? _options.Ssl.Port
+                : _options.Port;
+
+            var sslProtocols = _options.Ssl.Available
+                ? _options.Ssl.SslProtocol
+                : SslProtocols.None;
 
             var opts = new ConfigurationOptions {
                 EndPoints = { { host, port } },
@@ -75,28 +80,41 @@ namespace Nameless.Caching.Redis.Impl {
             };
 
             if (_options.Certificate.Available) {
-                opts.CertificateSelection += (sender, targetHost, localCertificates, remoteCertificate, acceptableIssuers)
-                    => new X509Certificate2(_options.Certificate.Pfx, _options.Certificate.Pass);
-
-                opts.CertificateValidation += (sender, certificate, chain, sslPolicyErrors) => {
-                    if (certificate is null) { return false; }
-
-                    var inner = new X509Certificate2(_options.Certificate.Pem);
-                    var verdict = certificate.Issuer == inner.Subject;
-
-                    Logger.On(verdict).LogInformation("Certificate error: {sslPolicyErrors}", sslPolicyErrors);
-
-                    return verdict;
-                };
+                opts.CertificateSelection += CertificateSelectionHandler;
+                opts.CertificateValidation += CertificateValidationHandler;
             }
 
             return opts;
         }
 
-        private ConnectionMultiplexer CreateMultiplexer() {
-            var opts = GetConfigurationOptions();
+        private X509Certificate2 CertificateSelectionHandler(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
+            => new(
+                fileName: _options.Certificate.Pfx!,
+                password: _options.Certificate.Pass
+            );
 
-            return ConnectionMultiplexer.Connect(opts);
+        private bool CertificateValidationHandler(object sender, X509Certificate? certificate, X509Chain? chain, System.Net.Security.SslPolicyErrors sslPolicyErrors) {
+            if (certificate is null) {
+                return false;
+            }
+
+            var inner = new X509Certificate2(_options.Certificate.Pem!);
+            var verdict = certificate.Issuer == inner.Subject;
+
+            _logger
+                .On(verdict)
+                .LogInformation(
+                    message: "Certificate error: {sslPolicyErrors}",
+                    args: sslPolicyErrors
+                );
+
+            return verdict;
+        }
+
+        private ConnectionMultiplexer CreateMultiplexer() {
+            _multiplexerConfigOpts = CreateMultiplexerConfigurationOptions();
+
+            return ConnectionMultiplexer.Connect(_multiplexerConfigOpts);
         }
 
         #endregion

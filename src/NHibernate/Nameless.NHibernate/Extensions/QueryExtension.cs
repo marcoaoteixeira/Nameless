@@ -9,8 +9,10 @@ namespace Nameless.NHibernate {
         /// </summary>
         /// <param name="self">The source <see cref="T:NHibernate.IQuery" />.</param>
         /// <returns>A collection of dynamics, representing the query result.</returns>
-        public static IList<dynamic> AsDynamicList(this IQuery self)
-            => self.SetResultTransformer(DynamicResultTransformer.Instance).List<dynamic>();
+        public static IList<dynamic> ToDynamicList(this IQuery self)
+            => self
+                .SetResultTransformer(DynamicResultTransformer.Instance)
+                .List<dynamic>();
 
         #endregion
     }

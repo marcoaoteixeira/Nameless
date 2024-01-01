@@ -19,22 +19,38 @@ namespace Nameless.Caching.InMemory {
 
         #region Private Static Methods
 
-        private static void OnEviction(EvictionCallback evictionCallback, string key, object? value, string reason, CancellationTokenSource cts) {
+        private static void OnEviction(
+            EvictionCallback evictionCallback,
+            string key,
+            object? value,
+            string reason,
+            CancellationTokenSource cts
+        ) {
             evictionCallback(key, value, reason);
             cts.Dispose();
         }
 
-        private static MemoryCacheEntryOptions GetOptions(CacheEntryOptions? opts = null) {
-            var result = new MemoryCacheEntryOptions();
-
-            if (opts is null || opts.ExpiresIn == default) { return result; }
+        private static MemoryCacheEntryOptions GetOptions(
+            CacheEntryOptions? opts = null
+        ) {
+            if (opts is null || opts.ExpiresIn == default) {
+                return new();
+            }
 
             var cts = new CancellationTokenSource(opts.ExpiresIn);
             var changeToken = new CancellationChangeToken(cts.Token);
+            var result = new MemoryCacheEntryOptions();
+
             result.ExpirationTokens.Add(changeToken);
 
             result.RegisterPostEvictionCallback((key, value, reason, state)
-                => OnEviction(opts.EvictionCallback, (string)key, value, reason.ToString(), cts));
+                => OnEviction(
+                    opts.EvictionCallback,
+                    (string)key,
+                    value,
+                    reason.ToString(),
+                    cts
+                ));
 
             return result;
         }
@@ -43,7 +59,12 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(
+            string key,
+            object value,
+            CacheEntryOptions? opts = null,
+            CancellationToken cancellationToken = default
+        ) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
             Guard.Against.Null(value, nameof(value));
 
@@ -54,17 +75,26 @@ namespace Nameless.Caching.InMemory {
             return Task.FromResult(result);
         }
 
-        public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
+        public Task<T?> GetAsync<T>(
+            string key,
+            CancellationToken cancellationToken = default
+        ) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             var value = _memoryCache.Get(key);
 
-            return Task.FromResult(value is T result ? result : default);
+            return Task.FromResult(value is T result
+                ? result
+                : default
+            );
         }
 
-        public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
+        public Task<bool> RemoveAsync(
+            string key,
+            CancellationToken cancellationToken = default
+        ) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
