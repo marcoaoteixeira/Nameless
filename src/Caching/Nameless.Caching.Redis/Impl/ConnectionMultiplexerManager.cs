@@ -87,8 +87,8 @@ namespace Nameless.Caching.Redis.Impl {
             return opts;
         }
 
-        private X509Certificate CertificateSelectionHandler(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
-            => new X509Certificate2(
+        private X509Certificate2 CertificateSelectionHandler(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
+            => new(
                 fileName: _options.Certificate.Pfx!,
                 password: _options.Certificate.Pass
             );

@@ -33,8 +33,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
         private static IDbConnectionManager ResolveDbConnectionManager(IComponentContext ctx) {
             var sqlServerOptions = GetOptionsFromContext<SQLServerOptions>(ctx)
                 ?? SQLServerOptions.Default;
-            var logger = GetLoggerFromContext<DbConnectionManager>(ctx)
-                ?? NullLogger<DbConnectionManager>.Instance;
+            var logger = GetLoggerFromContext<DbConnectionManager>(ctx);
             var result = new DbConnectionManager(sqlServerOptions, logger);
 
             return result;

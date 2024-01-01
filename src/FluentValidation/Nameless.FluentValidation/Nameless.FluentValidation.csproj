@@ -40,9 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="7.1.0" />
 		<PackageReference Include="FluentValidation" Version="11.8.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
