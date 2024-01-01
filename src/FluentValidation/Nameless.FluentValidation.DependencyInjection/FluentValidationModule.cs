@@ -8,9 +8,6 @@ namespace Nameless.FluentValidation.DependencyInjection {
     public sealed class FluentValidationModule : ModuleBase {
         #region Public Constructors
 
-        public FluentValidationModule()
-            : base([]) { }
-
         public FluentValidationModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
 

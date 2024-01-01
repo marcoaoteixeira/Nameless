@@ -33,8 +33,12 @@ namespace Nameless.MediatR.Integration {
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
             if (_validator is not null) {
                 await _validator
-                    .ValidateAsync(request, opts => opts.ThrowOnFailures(), cancellationToken)
-                    .ConfigureAwait(false);
+                    .ValidateAsync(
+                        instance: request,
+                        options: opts => opts.ThrowOnFailures(),
+                        cancellation: cancellationToken
+                    )
+                    .ConfigureAwait(continueOnCapturedContext: false);
             }
 
             return await next();

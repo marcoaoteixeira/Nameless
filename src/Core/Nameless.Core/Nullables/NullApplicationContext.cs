@@ -32,7 +32,9 @@ namespace Nameless {
 
         public string ApplicationName => "Application";
 
-        public string BasePath => typeof(NullApplicationContext).Assembly.GetDirectoryPath();
+        public string BasePath => typeof(NullApplicationContext)
+            .Assembly
+            .GetDirectoryPath();
 
         #endregion
     }

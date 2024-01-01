@@ -9,16 +9,7 @@ namespace Nameless.FluentValidation.Impl {
         #region Private Read-Only Fields
 
         private readonly ILifetimeScope _scope;
-
-        #endregion
-
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -26,28 +17,40 @@ namespace Nameless.FluentValidation.Impl {
 
         public ValidatorService(ILifetimeScope scope) {
             _scope = Guard.Against.Null(scope, nameof(scope));
+            _logger = CreateLogger(scope);
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static ILogger CreateLogger(ILifetimeScope scope) {
+            var loggerFactory = scope.ResolveOptional<ILoggerFactory>();
+            return loggerFactory is not null
+                ? loggerFactory.CreateLogger<ValidatorService>()
+                : NullLogger<ValidatorService>.Instance;
         }
 
         #endregion
 
         #region IValidatorManager Members
 
-        public Task<ValidationResult> ValidateAsync<T>(T instance, bool throwOnError = false, CancellationToken cancellationToken = default) {
+        public Task<ValidationResult> ValidateAsync<T>(T instance, CancellationToken cancellationToken = default) {
             Guard.Against.Null(instance, nameof(instance));
 
             var validator = _scope.ResolveOptional<IValidator<T>>();
 
             if (validator is null) {
-                Logger.LogInformation("Validator for {typeof(T).FullName} not found", typeof(T).FullName);
+                _logger
+                    .LogInformation(
+                        message: "Validator for {FullName} not found",
+                        args: typeof(T).FullName
+                    );
 
                 return Task.FromResult(new ValidationResult());
             }
 
-            return validator.ValidateAsync(
-                instance,
-                opts => { if (throwOnError) { opts.ThrowOnFailures(); } },
-                cancellationToken
-            );
+            return validator.ValidateAsync(instance, cancellationToken);
         }
 
         #endregion

@@ -1,48 +1,28 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
-    public sealed class Region : IEnumerable<Message> {
+    public sealed class Region {
         #region Public Static Read-Only Properties
 
-        public static Region Empty => new(string.Empty);
+        public static Region Empty => new();
 
         #endregion
 
         #region Public Properties
 
-        public string Name { get; }
-
-        #endregion
-
-        #region Internal Properties
-
-        internal Dictionary<string, Message> Messages { get; } = new();
-
-        #endregion
-
-        #region Public Constructors
-
-        public Region(string name) {
-            Name = Guard.Against.Null(name, nameof(name));
-        }
+        public string Name { get; init; } = string.Empty;
+        public HashSet<Message> Messages { get; init; } = [];
 
         #endregion
 
         #region Public Methods
 
-        public void Add(Message message) {
-            Guard.Against.Null(message, nameof(message));
-
-            Messages.AddOrChange(message.ID, message);
-        }
-
         public bool TryGetValue(string id, [NotNullWhen(true)] out Message? output)
-            => Messages.TryGetValue(id, out output);
+            => Messages.TryGetValue(new() { ID = id }, out output);
 
-        public bool Equals(Region? other)
-            => other is not null
-            && other.Name == Name;
+        public bool Equals(Region? obj)
+            => obj is not null &&
+               obj.Name == Name;
 
         #endregion
 
@@ -52,17 +32,10 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
             => Equals(obj as Region);
 
         public override int GetHashCode()
-            => HashCode.Combine(Name);
+            => (Name ?? string.Empty).GetHashCode();
 
-        #endregion
-
-        #region IEnumerable<Message> Members
-
-        IEnumerator<Message> IEnumerable<Message>.GetEnumerator()
-            => Messages.Values.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => Messages.Values.GetEnumerator();
+        public override string ToString()
+            => Name;
 
         #endregion
     }

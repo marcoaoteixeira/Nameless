@@ -1,7 +1,6 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Autofac;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Data.SQLServer.DependencyInjection {
     public sealed class DataModule : ModuleBase {
@@ -11,16 +10,14 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         #endregion
 
-        #region Public Constructors
-
-        public DataModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
+            builder
+                .Register(ResolveDbConnectionManager)
+                .Named<IDbConnectionManager>(DB_CONNECTION_MANAGER_TOKEN)
+                .SingleInstance();
+
             builder
                 .Register(ResolveDatabase)
                 .As<IDatabase>()
@@ -33,20 +30,23 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         #region Private Static Methods
 
-        private static SQLServerOptions? GetSQLServerOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(SQLServerOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<SQLServerOptions>();
+        private static IDbConnectionManager ResolveDbConnectionManager(IComponentContext ctx) {
+            var sqlServerOptions = GetOptionsFromContext<SQLServerOptions>(ctx)
+                ?? SQLServerOptions.Default;
+            var logger = GetLoggerFromContext<DbConnectionManager>(ctx)
+                ?? NullLogger<DbConnectionManager>.Instance;
+            var result = new DbConnectionManager(sqlServerOptions, logger);
 
-            return options;
+            return result;
         }
 
         private static IDatabase ResolveDatabase(IComponentContext ctx) {
-            var sqlServerOptions = GetSQLServerOptions(ctx);
-            var dbConnectionManager = new DbConnectionManager(sqlServerOptions);
-            var connection = dbConnectionManager.GetDbConnection();
-            var result = new Database(connection);
+            var dbConnectionManager = ctx.ResolveNamed<IDbConnectionManager>(
+                DB_CONNECTION_MANAGER_TOKEN
+            );
+            var dbConnection = dbConnectionManager.GetDbConnection();
+            var logger = GetLoggerFromContext<Database>(ctx);
+            var result = new Database(dbConnection, logger);
 
             return result;
         }

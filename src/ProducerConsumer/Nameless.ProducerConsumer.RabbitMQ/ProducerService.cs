@@ -7,23 +7,15 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Read-Only Fields
 
         private readonly IModel _channel;
-
-        #endregion
-
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Public Constructors
 
-        public ProducerService(IModel channel) {
+        public ProducerService(IModel channel, ILogger logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
+            _logger = logger ?? NullLogger.Instance;
         }
 
         #endregion
@@ -47,7 +39,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                     basicProperties: properties,
                     body: envelope.CreateBuffer()
                 );
-            } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex.Message); throw; }
+            } catch (Exception ex) {
+                _logger.LogError(ex, "{Message}", ex.Message);
+                throw;
+            }
 
             return Task.CompletedTask;
         }

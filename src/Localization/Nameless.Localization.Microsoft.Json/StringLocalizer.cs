@@ -59,7 +59,7 @@ namespace Nameless.Localization.Microsoft.Json {
             => GetLocalizedString(name, arguments);
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) {
-            foreach (var entry in _region) {
+            foreach (var entry in _region.Messages) {
                 yield return new(entry.ID, entry.Text, false, Location);
             }
 

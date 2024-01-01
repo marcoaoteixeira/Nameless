@@ -10,31 +10,31 @@
 
         #region Public Static Methods
 
-        public static bool GetUseHtmlBody(this MessengerArgs self) {
+        public static bool GetUseHtmlBody(this MessageArgs self) {
             var arg = self.Get(USE_HTML_BODY) ?? false;
 
             return (bool)arg;
         }
 
-        public static void SetUseHtmlBody(this MessengerArgs self, bool value)
+        public static void SetUseHtmlBody(this MessageArgs self, bool value)
             => self.Set(USE_HTML_BODY, value);
 
-        public static string GetCarbonCopy(this MessengerArgs self) {
+        public static string GetCarbonCopy(this MessageArgs self) {
             var arg = self.Get(CARBON_COPY) ?? string.Empty;
 
             return (string)arg;
         }
 
-        public static void SetCarbonCopy(this MessengerArgs self, string value)
+        public static void SetCarbonCopy(this MessageArgs self, string value)
             => self.Set(CARBON_COPY, value);
 
-        public static string GetBlindCarbonCopy(this MessengerArgs self) {
+        public static string GetBlindCarbonCopy(this MessageArgs self) {
             var arg = self.Get(BLIND_CARBON_COPY) ?? string.Empty;
 
             return (string)arg;
         }
 
-        public static void SetBlindCarbonCopy(this MessengerArgs self, string value)
+        public static void SetBlindCarbonCopy(this MessageArgs self, string value)
             => self.Set(BLIND_CARBON_COPY, value);
 
         #endregion

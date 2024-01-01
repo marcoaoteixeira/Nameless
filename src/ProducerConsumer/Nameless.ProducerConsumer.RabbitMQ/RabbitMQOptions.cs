@@ -4,7 +4,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
     public sealed class RabbitMQOptions {
         #region Private Fields
 
-        private IList<ExchangeOptions>? _exchanges;
+        private List<ExchangeOptions>? _exchanges;
 
         #endregion
 
@@ -17,8 +17,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Properties
 
         public ServerOptions Server { get; set; } = new();
-        public IList<ExchangeOptions> Exchanges {
-            get => _exchanges ??= new List<ExchangeOptions>();
+        public List<ExchangeOptions> Exchanges {
+            get => _exchanges ??= [];
             set => _exchanges = value;
         }
 
@@ -74,8 +74,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
     public sealed class ExchangeOptions {
         #region Private Fields
 
-        private IDictionary<string, object>? _arguments;
-        private IList<QueueOptions>? _queues;
+        private Dictionary<string, object>? _arguments;
+        private List<QueueOptions>? _queues;
 
         #endregion
 
@@ -85,12 +85,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public ExchangeType Type { get; set; }
         public bool Durable { get; set; } = true;
         public bool AutoDelete { get; set; }
-        public IDictionary<string, object> Arguments {
-            get => _arguments ??= new Dictionary<string, object>();
+        public Dictionary<string, object> Arguments {
+            get => _arguments ??= [];
             set => _arguments = value;
         }
-        public IList<QueueOptions> Queues {
-            get => _queues ??= new List<QueueOptions>();
+        public List<QueueOptions> Queues {
+            get => _queues ??= [];
             set => _queues = value;
         }
 
@@ -109,8 +109,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Private Fields
 
-        private IDictionary<string, object>? _arguments;
-        private IDictionary<string, object>? _bindings;
+        private Dictionary<string, object>? _arguments;
+        private Dictionary<string, object>? _bindings;
 
         #endregion
 
@@ -121,12 +121,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public bool Exclusive { get; set; }
         public bool AutoDelete { get; set; }
         public string? RoutingKey { get; set; }
-        public IDictionary<string, object> Arguments {
-            get => _arguments ??= new Dictionary<string, object>();
+        public Dictionary<string, object> Arguments {
+            get => _arguments ??= [];
             set => _arguments = value;
         }
-        public IDictionary<string, object> Bindings {
-            get => _bindings ??= new Dictionary<string, object>();
+        public Dictionary<string, object> Bindings {
+            get => _bindings ??= [];
             set => _bindings = value;
         }
 

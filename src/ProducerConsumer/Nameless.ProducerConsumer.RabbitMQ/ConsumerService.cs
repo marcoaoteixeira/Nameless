@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Read-Only Fields
 
         private readonly IModel _channel;
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -21,20 +23,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #endregion
 
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
-
-        #endregion
-
         #region Public Constructors
 
-        public ConsumerService(IModel channel) {
+        public ConsumerService(IModel channel, ILogger? logger = null) {
             _channel = Guard.Against.Null(channel, nameof(channel));
+            _logger = logger ?? NullLogger.Instance;
         }
 
         #endregion
@@ -68,55 +61,104 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         private async Task OnMessage<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
-            MessageHandler<T>? handler;
+            if (!TryCreateHandler(registration, deliverEventArgs, consumerArgs, out var handler)) {
+                return;
+            }
 
-            try { handler = registration.CreateHandler(); } catch (Exception ex) {
+            if (!TryDeserializeEnvelope(registration, deliverEventArgs, consumerArgs, out var envelope)) {
+                return;
+            }
+
+            if (!TryExtractMessage(envelope, registration, deliverEventArgs, consumerArgs, out var message)) {
+                return;
+            }
+
+            await HandleMessageAsync(
+                handler,
+                message,
+                registration,
+                deliverEventArgs,
+                consumerArgs
+            );
+        }
+
+        private bool TryCreateHandler<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)]out MessageHandler<T>? handler) {
+            handler = null;
+
+            try { handler = registration.CreateHandler(); }
+            catch (Exception ex) {
                 if (ex is ObjectDisposedException) {
                     Unregister(registration);
                 }
 
-                Logger.LogError(ex, "{registration}: Handler creation failed. Reason: {ex.Message}", registration, ex.Message);
+                _logger.LogError(ex, "{registration}: Handler creation failed. Reason: {Message}", registration, ex.Message);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
-                return;
+                return false;
             }
 
             if (handler is null) {
-                Logger.LogWarning("{registration}: No suitable handler found.", registration);
+                _logger.LogWarning("{registration}: No suitable handler found.", registration);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
-                return;
+                return false;
             }
 
-            var envelope = JsonSerializer.Deserialize<Envelope>(deliverEventArgs.Body.ToArray());
+            return true;
+        }
+
+        private bool TryDeserializeEnvelope<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
+            envelope = JsonSerializer.Deserialize<Envelope>(deliverEventArgs.Body.ToArray());
             if (envelope is null) {
-                Logger.LogWarning("{registration}: Envelope deserialization failed.", registration);
+                _logger.LogWarning("{registration}: Envelope deserialization failed.", registration);
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
-                return;
+                return false;
             }
+
+            return true;
+        }
+
+        private bool TryExtractMessage<T>(Envelope envelope, Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out T? message) {
+            message = default;
 
             // Here, envelope.Message is a JsonElement.
             // So, we'll deserialize it to the type that the handler is expecting.
             if (envelope.Message is not JsonElement json) {
-                Logger.LogWarning("{registration}: Message is not a {type}.", registration, typeof(JsonElement));
+                _logger.LogWarning(
+                    message: "{registration}: Message is not a {type}.",
+                    args: [registration, typeof(JsonElement)]
+                );
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
-                return;
+                return false;
             }
 
-            if (json.Deserialize<T>() is not T message) {
-                Logger.LogWarning("{registration}: Unable to deserialize the message to expecting type {type}.", registration, typeof(T));
+            message = json.Deserialize<T>();
+
+            if (message is null) {
+                _logger.LogWarning(
+                    message: "{registration}: Unable to deserialize the message to expecting type {type}.",
+                    args: [registration, typeof(T)]
+                );
                 NAck(_channel, deliverEventArgs, consumerArgs);
 
-                return;
+                return false;
             }
 
+            return true;
+        }
+
+        private async Task HandleMessageAsync<T>(MessageHandler<T> handler, T message, Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
             try {
                 await handler(message);
                 Ack(_channel, deliverEventArgs, consumerArgs);
             } catch (Exception ex) {
-                Logger.LogError(ex, "{registration}: Error when handling the message. Reason: {ex.Message}", registration, ex.Message);
+                _logger.LogError(
+                    exception: ex,
+                    message: "{registration}: Error when handling the message. Reason: {Message}",
+                    args: [registration, ex.Message]
+                );
                 NAck(_channel, deliverEventArgs, consumerArgs);
             }
         }
@@ -168,8 +210,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             var tag = GenerateTag(handler);
 
             var registration = _registrations.GetOrAdd(tag, tag => {
-                Logger.LogInformation("Initialize registration of consumer: {tag}", tag);
-                Logger.LogInformation("Consumer arguments: {json}", consumerArgs.ToJson());
+                _logger.LogInformation("Initialize registration of consumer: {tag}", tag);
+                _logger.LogInformation("Consumer arguments: {json}", consumerArgs.ToJson());
 
                 // creates registration
                 var registration = new Registration<T>(tag, topic, handler);

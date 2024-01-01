@@ -27,7 +27,7 @@
         /// Gets or sets whether should enable SSL. Default value is
         /// <c>false</c>.
         /// </summary>
-        public bool EnableSsl { get; init; }
+        public bool UseSsl { get; init; }
         /// <summary>
         /// Gets or sets the delivery mode. Default value is
         /// <see cref="DeliveryMode.PickupDirectory" />.

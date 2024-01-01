@@ -1,24 +1,9 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Caching.InMemory.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
-        #region Private Constants
-
-        private const string MEMORY_CACHE_TOKEN = $"{nameof(MemoryCache)}::e69a9cb8-f681-476f-935a-d9c2d634947c";
-
-        #endregion
-
-        #region Public Constructors
-
-        public CachingModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -32,19 +17,11 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
 
         #endregion
 
-        #region Private Static Methods
-
-        private static MemoryCacheOptions GetMemoryCacheOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(MemoryCacheOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<MemoryCacheOptions>();
-
-            return options ?? new();
-        }
+        #region Private Static Methods}
 
         private static ICache ResolveCache(IComponentContext ctx) {
-            var memoryCacheOptions = GetMemoryCacheOptions(ctx);
+            var memoryCacheOptions = GetOptionsFromContext<MemoryCacheOptions>(ctx)
+                ?? new MemoryCacheOptions();
             var memoryCache = new MemoryCache(memoryCacheOptions);
             var result = new InMemoryCache(memoryCache);
 

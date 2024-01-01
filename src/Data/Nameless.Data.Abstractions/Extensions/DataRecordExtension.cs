@@ -201,7 +201,8 @@ namespace Nameless.Data {
         /// <param name="fieldName">The field name.</param>
         /// <param name="fallback">The default value.</param>
         /// <returns>An Enum value.</returns>
-        public static TEnum GetEnum<TEnum>(this IDataRecord self, string fieldName, TEnum fallback = default) where TEnum : struct {
+        public static TEnum GetEnum<TEnum>(this IDataRecord self, string fieldName, TEnum fallback = default)
+            where TEnum : struct {
             Guard.Against.NullOrWhiteSpace(fieldName, nameof(fieldName));
 
             if (!typeof(TEnum).IsEnum) {
@@ -210,7 +211,11 @@ namespace Nameless.Data {
 
             var value = SafeGetValue(self, fieldName);
 
-            return value is null ? fallback : (TEnum)Enum.Parse(typeof(TEnum), (string)value);
+            return value switch {
+                string => (TEnum)Enum.Parse(typeof(TEnum), (string)value),
+                int => (TEnum)value,
+                _ => fallback
+            };
         }
 
         /// <summary>
@@ -235,7 +240,9 @@ namespace Nameless.Data {
 
             var value = SafeGetValue(self, fieldName);
 
-            return value is null ? fallback : (byte[])value;
+            return value is null
+                ? fallback
+                : (byte[])value;
         }
 
         #endregion

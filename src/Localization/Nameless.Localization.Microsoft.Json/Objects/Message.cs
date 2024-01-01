@@ -1,18 +1,30 @@
 ﻿namespace Nameless.Localization.Microsoft.Json.Objects {
-    public sealed record Message {
+    public sealed class Message {
         #region Public Properties
 
-        public string ID { get; }
-        public string Text { get; }
+        public string ID { get; init; } = string.Empty;
+        public string Text { get; init; } = string.Empty;
 
         #endregion
 
-        #region Public Constructors
+        #region Public Methods
 
-        public Message(string id, string text) {
-            ID = Guard.Against.Null(id, nameof(id));
-            Text = Guard.Against.Null(text, nameof(text));
-        }
+        public bool Equals(Message? obj)
+            => obj is not null &&
+               obj.ID == ID;
+
+        #endregion
+
+        #region Public Override Methods
+
+        public override bool Equals(object? obj)
+            => Equals(obj as Message);
+
+        public override int GetHashCode()
+            => (ID ?? string.Empty).GetHashCode();
+
+        public override string ToString()
+            => $"{ID} : {Text}";
 
         #endregion
     }

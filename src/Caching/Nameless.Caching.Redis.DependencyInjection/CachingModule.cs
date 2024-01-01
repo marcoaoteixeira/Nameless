@@ -12,13 +12,6 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         #endregion
 
-        #region Public Constructors
-
-        public CachingModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -39,18 +32,11 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         #region Private Static Methods
 
-        private static RedisOptions? GetRedisOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(RedisOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<RedisOptions>();
-
-            return options;
-        }
-
         private static IConnectionMultiplexerManager ResolveConnectionMultiplexerManager(IComponentContext ctx) {
-            var options = GetRedisOptions(ctx);
-            var result = new ConnectionMultiplexerManager(options);
+            var options = GetOptionsFromContext<RedisOptions>(ctx)
+                ?? RedisOptions.Default;
+            var logger = GetLoggerFromContext<ConnectionMultiplexerManager>(ctx);
+            var result = new ConnectionMultiplexerManager(options, logger);
 
             return result;
         }

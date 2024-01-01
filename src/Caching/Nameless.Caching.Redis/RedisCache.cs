@@ -19,7 +19,12 @@ namespace Nameless.Caching.Redis {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = default, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(
+            string key,
+            object value,
+            CacheEntryOptions? opts = null,
+            CancellationToken cancellationToken = default
+        ) {
             cancellationToken.ThrowIfCancellationRequested();
 
             var json = JsonSerializer.Serialize(value);
@@ -37,7 +42,10 @@ namespace Nameless.Caching.Redis {
             );
         }
 
-        public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
+        public async Task<T?> GetAsync<T>(
+            string key,
+            CancellationToken cancellationToken = default
+        ) {
             cancellationToken.ThrowIfCancellationRequested();
 
             var value = await _database
@@ -49,7 +57,10 @@ namespace Nameless.Caching.Redis {
                 : default;
         }
 
-        public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
+        public async Task<bool> RemoveAsync(
+            string key,
+            CancellationToken cancellationToken = default
+        ) {
             cancellationToken.ThrowIfCancellationRequested();
 
             var result = await _database

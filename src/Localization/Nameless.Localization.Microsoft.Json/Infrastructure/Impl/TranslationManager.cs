@@ -3,24 +3,16 @@ using Microsoft.Extensions.FileProviders;
 using Nameless.Localization.Microsoft.Json.Objects;
 
 namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
-    public sealed class FileTranslationManager : ITranslationManager {
+    public sealed class TranslationManager : ITranslationManager {
         #region Private Records
 
         private record CacheEntry(string Culture, Translation Content, IDisposable? FileChangeHandler = null);
 
         #endregion
 
-        #region Private Static Read-Only Fields
-
-        private static readonly Dictionary<string, CacheEntry> Cache = [];
-        private static readonly JsonSerializerOptions JsonSerializerOpts = new() {
-            Converters = { TranslationJsonConverter.Default }
-        };
-
-        #endregion
-
         #region Private Read-Only Fields
 
+        private readonly Dictionary<string, CacheEntry> _cache = [];
         private readonly IFileProvider _fileProvider;
         private readonly LocalizationOptions _options;
 
@@ -28,7 +20,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Public Constructors
 
-        public FileTranslationManager(IFileProvider fileProvider, LocalizationOptions? options = null) {
+        public TranslationManager(IFileProvider fileProvider, LocalizationOptions? options = null) {
             _fileProvider = Guard.Against.Null(fileProvider, nameof(fileProvider));
             _options = options ?? LocalizationOptions.Default;
         }
@@ -37,12 +29,12 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Private Methods
 
-        private void HandleFileChange(object? state) {
+        private void FileChangeHandler(object? state) {
             if (state is null) { return; }
 
             var culture = (string)state;
 
-            if (Cache.Remove(culture, out var entry)) {
+            if (_cache.Remove(culture, out var entry)) {
                 entry.FileChangeHandler?.Dispose();
             }
         }
@@ -50,18 +42,18 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         private bool TranslationFileExists(string culture) {
             var path = GetTranslationFilePath(culture);
             var file = _fileProvider.GetFileInfo(path);
+
             return file.Exists;
         }
 
-        private string GetTranslationFilePath(string culture) {
-            var path = Path.Combine(_options.TranslationFolder, $"{culture}.json");
-            return path;
-        }
+        private string GetTranslationFilePath(string culture)
+            => Path.Combine(_options.TranslationFolder, $"{culture}.json");
 
         private string GetFileContent(string path) {
             var file = _fileProvider.GetFileInfo(path);
             using var reader = new StreamReader(file.CreateReadStream());
             var content = reader.ReadToEnd();
+
             return content;
         }
 
@@ -71,7 +63,11 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             }
 
             var changeToken = _fileProvider.Watch(path);
-            var handler = changeToken.RegisterChangeCallback(HandleFileChange, culture);
+            var handler = changeToken
+                .RegisterChangeCallback(
+                    callback: FileChangeHandler,
+                    state: culture
+                );
 
             return handler;
         }
@@ -80,13 +76,11 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             var path = GetTranslationFilePath(culture);
             var fileContent = GetFileContent(path);
             var fileChangeHandler = CreateFileChangeHandler(culture, path);
-            var translation = JsonSerializer.Deserialize<Translation>(fileContent, JsonSerializerOpts);
+            var translation = JsonSerializer.Deserialize<Translation>(fileContent);
 
-            if (translation is null) {
-                throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}");
-            }
-
-            return new(culture, translation, fileChangeHandler);
+            return translation is null
+                ? throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}")
+                : new(culture, translation, fileChangeHandler);
         }
 
         #endregion
@@ -100,10 +94,10 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
                 return Translation.Empty;
             }
 
-            if (!Cache.TryGetValue(culture, out var value)) {
+            if (!_cache.TryGetValue(culture, out var value)) {
                 var entry = CreateCacheEntry(culture);
                 value = entry;
-                Cache.Add(culture, value);
+                _cache.Add(culture, value);
             }
 
             return value.Content;

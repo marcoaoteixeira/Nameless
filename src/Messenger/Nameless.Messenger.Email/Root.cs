@@ -19,6 +19,15 @@
             #endregion
         }
 
+        public static class Defaults {
+            #region Public Static Methods
+
+            public static string FileNameGenerator()
+                => $"{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.eml";
+
+            #endregion
+        }
+
         #endregion
     }
 }

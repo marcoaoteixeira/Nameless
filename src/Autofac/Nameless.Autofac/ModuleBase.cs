@@ -1,4 +1,8 @@
 ﻿using System.Reflection;
+using Autofac;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Autofac {
     public abstract class ModuleBase : global::Autofac.Module {
@@ -26,6 +30,28 @@ namespace Nameless.Autofac {
         /// <param name="supportAssemblies">The support assemblies.</param>
         protected ModuleBase(Assembly[] supportAssemblies) {
             SupportAssemblies = supportAssemblies ?? [];
+        }
+
+        #endregion
+
+        #region Protected Static Methods
+
+        protected static ILogger<T> GetLoggerFromContext<T>(IComponentContext ctx)
+            where T : class {
+            var loggerFactory = ctx.ResolveOptional<ILoggerFactory>();
+            return loggerFactory is not null
+                ? loggerFactory.CreateLogger<T>()
+                : NullLogger<T>.Instance;
+        }
+
+        protected static TOptions? GetOptionsFromContext<TOptions>(IComponentContext ctx)
+            where TOptions : class {
+            var configuration = ctx.ResolveOptional<IConfiguration>();
+            return configuration is not null
+                ? configuration
+                    .GetSection(typeof(TOptions).Name.RemoveTail(Root.Defaults.OptsSetsTails))
+                    .Get<TOptions>()
+                : default;
         }
 
         #endregion

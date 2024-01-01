@@ -5,24 +5,22 @@ using Nameless.Services.Impl;
 
 namespace Nameless.DependencyInjection {
     public sealed class CoreModule : ModuleBase {
-        #region Public Constructors
-
-        public CoreModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .RegisterInstance(ClockService.Instance)
-                .As<IClockService>()
+                .RegisterInstance(SystemClock.Instance)
+                .As<IClock>()
                 .SingleInstance();
 
             builder
                 .RegisterInstance(XmlSchemaValidator.Instance)
                 .As<IXmlSchemaValidator>()
+                .SingleInstance();
+
+            builder
+                .RegisterInstance(PluralizationRuleProvider.Instance)
+                .As<IPluralizationRuleProvider>()
                 .SingleInstance();
 
             base.Load(builder);

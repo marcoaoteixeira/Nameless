@@ -4,7 +4,7 @@ namespace Nameless.FluentValidation {
     public interface IValidatorService {
         #region Methods
 
-        Task<ValidationResult> ValidateAsync<T>(T instance, bool throwOnError = false, CancellationToken cancellationToken = default);
+        Task<ValidationResult> ValidateAsync<T>(T instance, CancellationToken cancellationToken = default);
 
         #endregion
     }
