@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 using Nameless.Services;
 using Nameless.Services.Impl;
+using Nameless.Web.Extensions;
 using Nameless.Web.Options;
+using MS_JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Nameless.Web.Services.Impl {
     public sealed class JwtService : IJwtService {
@@ -39,7 +41,7 @@ namespace Nameless.Web.Services.Impl {
 
         #region IJwtService Members
 
-        public string Generate(string userId, string userName, string userEmail) {
+        public string Generate(JwtClaims claims) {
             var now = _clock.GetUtcNow();
             var expires = now.AddHours(_options.AccessTokenTtl);
 
@@ -47,31 +49,38 @@ namespace Nameless.Web.Services.Impl {
                 Issuer = _options.Issuer,
                 Audience = _options.Audience,
                 Claims = new Dictionary<string, object> {
-                    // NOTE: Here JwtRegisteredClaimNames.Sub will be substituted
-                    // by ClaimTypes.NameIdentifier
-                    { JwtRegisteredClaimNames.Sub, userId },
-
-                    { JwtRegisteredClaimNames.Exp, expires.ToString() },
-                    { JwtRegisteredClaimNames.Iat, now.ToString() },
-                    { JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() }
+                    { MS_JwtRegisteredClaimNames.Exp, expires.ToString() },
+                    { MS_JwtRegisteredClaimNames.Iat, now.ToString() },
+                    { MS_JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() }
                 },
                 Expires = expires,
                 SigningCredentials = new(
                     key: new SymmetricSecurityKey(_options.Secret.GetBytes()),
                     algorithm: SecurityAlgorithms.HmacSha256Signature
-                ),
-                Subject = new(new Claim[] {
-                    new(ClaimTypes.Name, userName),
-                    new(ClaimTypes.Email, userEmail)
-                })
+                )
             };
 
+            // Add other claims
+            var dictionary = claims.ToDictionary();
+            foreach (var kvp in dictionary) {
+                if (!tokenDescriptor.Claims.TryAdd(kvp.Key, kvp.Value)) {
+                    _logger.LogInformation(
+                        message: "Claim not added to token descriptor. {ClaimType}",
+                        args: kvp.Key
+                    );
+                }
+            }
+
             if (!string.IsNullOrEmpty(_options.Issuer)) {
-                tokenDescriptor.Claims.Add(JwtRegisteredClaimNames.Iss, _options.Issuer);
+                tokenDescriptor.Claims.Add(MS_JwtRegisteredClaimNames.Iss, _options.Issuer);
             }
             if (!string.IsNullOrEmpty(_options.Audience)) {
-                tokenDescriptor.Claims.Add(JwtRegisteredClaimNames.Aud, _options.Audience);
+                tokenDescriptor.Claims.Add(MS_JwtRegisteredClaimNames.Aud, _options.Audience);
             }
+
+            // Force JwtSecurityTokenHandler to use the default claim name
+            // https://stackoverflow.com/questions/57998262/why-is-claimtypes-nameidentifier-not-mapping-to-sub
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
