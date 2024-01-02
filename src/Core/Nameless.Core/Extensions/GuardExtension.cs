@@ -12,6 +12,7 @@ namespace Nameless {
         private const string ARG_EMPTY_WHITESPACES_EX_MESSAGE = "Argument cannot be white spaces.";
         private const string ARG_NO_MATCH_PATTER_EX_MESSAGE = "Argument does not match pattern.";
         private const string ARG_LOWER_THAN_ZERO_EX_MESSAGE = "Parameter must be positive non-zero value.";
+        private const string ARG_OUT_OF_RANGE_EX_MESSAGE = "Parameter must be between min and max values.";
 
         #endregion
 
@@ -89,6 +90,17 @@ namespace Nameless {
                 );
             }
             return timeSpan;
+        }
+
+        [DebuggerStepThrough]
+        public static int OutOfRange(this Guard _, int value, int min, int max, string name, string? message = null) {
+            if (value < min || value > max) {
+                throw new ArgumentOutOfRangeException(
+                    paramName: name,
+                    message: message ?? ARG_OUT_OF_RANGE_EX_MESSAGE
+                );
+            }
+            return value;
         }
 
         #endregion

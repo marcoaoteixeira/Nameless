@@ -22,17 +22,39 @@
         public bool ValidateIssuer { get; set; }
         public string? Audience { get; set; }
         public bool ValidateAudience { get; set; }
+        
+        private int _accessTokenTtl = 24;
         /// <summary>
         /// Gets or sets the token time-to-live in hours.
         /// Default is <c>24 hours</c>.
+        /// Note: Value should be between 1 and 24.
         /// </summary>
-        public int AccessTokenTtl { get; set; } = 24;
+        public int AccessTokenTtl {
+            get => _accessTokenTtl;
+            set => _accessTokenTtl = Guard.Against.OutOfRange(
+                value: value,
+                min: 1,
+                max: 24,
+                name: nameof(value)
+            );
+        }
         public bool ValidateLifetime { get; set; }
+        
+        private int _refreshTokenTtl = 24;
         /// <summary>
         /// Gets or sets the refresh token time-to-live in hours.
-        /// Default is <c>24 days</c>.
+        /// Default is <c>24 hours</c>.
+        /// Note: Value should be between 1 and 24.
         /// </summary>
-        public int RefreshTokenTtl { get; set; } = 24;
+        public int RefreshTokenTtl {
+            get => _refreshTokenTtl;
+            set => _refreshTokenTtl = Guard.Against.OutOfRange(
+                value: value,
+                min: 1,
+                max: 24,
+                name: nameof(value)
+            );
+        }
         public bool RequireHttpsMetadata { get; set; }
         /// <summary>
         /// Gets or sets whether to validate issuer signing key.
@@ -40,7 +62,8 @@
         /// </summary>
         public bool ValidateIssuerSigningKey { get; set; } = true;
         /// <summary>
-        /// Gets or sets the maximum allowable time difference between client and server clock settings in seconds.
+        /// Gets or sets the maximum allowable time difference between client and server clock
+        /// settings in seconds.
         /// Default is <c>0</c>.
         /// </summary>
         public int MaxClockSkew { get; set; }
