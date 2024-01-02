@@ -5,11 +5,8 @@ namespace Nameless.Localization.Microsoft.Json {
         private readonly Dictionary<Action<object?>, object?> _callbacks = [];
         private readonly IDisposable _disposable;
 
-        private bool _hasChanged;
-        public bool HasChanged => _hasChanged;
-
-        private bool _activeChangeCallbacks;
-        public bool ActiveChangeCallbacks => _activeChangeCallbacks;
+        public bool HasChanged { get; private set; }
+        public bool ActiveChangeCallbacks { get; private set; }
 
         public FakeChangeToken(IDisposable disposable) {
             _disposable = disposable;
@@ -25,8 +22,8 @@ namespace Nameless.Localization.Microsoft.Json {
                 kvp.Key?.Invoke(kvp.Value);
             }
 
-            _hasChanged = true;
-            _activeChangeCallbacks = true;
+            HasChanged = true;
+            ActiveChangeCallbacks = true;
         }
     }
 }

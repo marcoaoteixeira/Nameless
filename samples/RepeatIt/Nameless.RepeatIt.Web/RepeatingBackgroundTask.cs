@@ -2,7 +2,7 @@
 namespace Nameless.RepeatIt.Web {
     public class RepeatingBackgroundTask : BackgroundService {
         private readonly ILogger _logger;
-        private PeriodicTimer _timer;
+        private readonly PeriodicTimer _timer;
 
         public RepeatingBackgroundTask(ILogger logger) {
             _timer = new PeriodicTimer(TimeSpan.FromSeconds(2));

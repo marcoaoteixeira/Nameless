@@ -18,8 +18,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
 
         #region Public Constructors
 
-        public ConnectionManager(RabbitMQOptions? options = null) {
-            _options = options ?? RabbitMQOptions.Default;
+        public ConnectionManager()
+            : this(RabbitMQOptions.Default) { }
+
+        public ConnectionManager(RabbitMQOptions options) {
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion

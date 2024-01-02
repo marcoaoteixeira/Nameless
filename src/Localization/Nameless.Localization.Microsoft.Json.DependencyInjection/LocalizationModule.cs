@@ -1,11 +1,9 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Nameless.Autofac;
 using Nameless.Localization.Microsoft.Json.Infrastructure;
 using Nameless.Localization.Microsoft.Json.Infrastructure.Impl;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
     public sealed class LocalizationModule : ModuleBase {
@@ -14,13 +12,6 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
         private const string CULTURE_CONTEXT_TOKEN = $"{nameof(CultureContext)}::ecab0589-3491-4404-945a-d65f290e6e56";
         private const string TRANSLATION_MANAGER_TOKEN = $"{nameof(TranslationManager)}::641b294e-533e-4156-a1ce-92662c2ffcf8";
         private const string FILE_PROVIDER_TOKEN = $"{nameof(PhysicalFileProvider)}::672d2bfd-5fd9-46e6-bc5a-54245ab95d4d";
-
-        #endregion
-
-        #region Public Constructors
-
-        public LocalizationModule()
-            : base([]) { }
 
         #endregion
 
@@ -59,20 +50,12 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
 
         #region Private Static Methods
 
-        private static LocalizationOptions? GetLocalizationOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(LocalizationOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<LocalizationOptions>();
-
-            return options;
-        }
-
         private static IFileProvider RegisterFileProvider(IComponentContext ctx)
             => new PhysicalFileProvider(typeof(LocalizationModule).Assembly.GetDirectoryPath());
 
         private static ITranslationManager ResolveTranslationManager(IComponentContext ctx) {
-            var options = GetLocalizationOptions(ctx);
+            var options = GetOptionsFromContext<LocalizationOptions>(ctx)
+                ?? LocalizationOptions.Default;
             var fileProvider = ctx.ResolveNamed<IFileProvider>(FILE_PROVIDER_TOKEN);
             var result = new TranslationManager(fileProvider, options);
 

@@ -1,10 +1,8 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using RabbitMQ.Client;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public sealed class ProducerConsumerModule : ModuleBase {
@@ -12,13 +10,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         private const string CONNECTION_MANAGER_TOKEN = $"{nameof(IConnectionManager)}::0ee463dd-f42d-407f-bc36-ecd2a5538faf";
         private const string CHANNEL_MANAGER_TOKEN = $"{nameof(IChannelManager)}::9985853c-25aa-4d0d-84af-581d80fac738";
-
-        #endregion
-
-        #region Public Constructors
-
-        public ProducerConsumerModule()
-            : base([]) { }
 
         #endregion
 
@@ -52,17 +43,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         #region Private Static Methods
 
-        private static RabbitMQOptions? GetRabbitMQOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(RabbitMQOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<RabbitMQOptions>();
-
-            return options;
-        }
-
         private static IConnectionManager ResolveConnectionManager(IComponentContext ctx) {
-            var options = GetRabbitMQOptions(ctx);
+            var options = GetOptionsFromContext<RabbitMQOptions>(ctx)
+                ?? RabbitMQOptions.Default;
             var result = new ConnectionManager(options);
 
             return result;
@@ -85,7 +68,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         private static IStartable ResolveBootstrapper(IComponentContext ctx) {
             var channel = ctx.Resolve<IModel>();
-            var options = GetRabbitMQOptions(ctx);
+            var options = GetOptionsFromContext<RabbitMQOptions>(ctx)
+                ?? RabbitMQOptions.Default;
             var result = new Bootstrapper(channel, options);
 
             return result;

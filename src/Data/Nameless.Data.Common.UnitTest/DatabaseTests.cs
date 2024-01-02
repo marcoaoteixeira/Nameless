@@ -5,7 +5,7 @@ using Nameless.Data.Fixtures;
 
 namespace Nameless.Data {
     public class DatabaseTests {
-        private Mock<IDataParameterCollection> CreateDataParameterCollectionMock() {
+        private static Mock<IDataParameterCollection> CreateDataParameterCollectionMock() {
             var dataParameterCollectionMock = new Mock<IDataParameterCollection>();
             dataParameterCollectionMock
                 .Setup(mock => mock.Add(It.IsAny<object>()))
@@ -14,7 +14,7 @@ namespace Nameless.Data {
             return dataParameterCollectionMock;
         }
 
-        private Mock<IDbCommand> CreateDbCommandMock(IDataParameterCollection dataParameterCollection) {
+        private static Mock<IDbCommand> CreateDbCommandMock(IDataParameterCollection dataParameterCollection) {
             var dbCommandMock = new Mock<IDbCommand>();
             dbCommandMock
                 .Setup(mock => mock.CreateParameter())
@@ -27,7 +27,7 @@ namespace Nameless.Data {
             return dbCommandMock;
         }
 
-        private Mock<IDbConnection> CreateDbConnectionMock(IDbCommand? dbCommand = null) {
+        private static Mock<IDbConnection> CreateDbConnectionMock(IDbCommand? dbCommand = null) {
             var dbConnectionMock = new Mock<IDbConnection>();
 
             if (dbCommand is not null) {
@@ -39,7 +39,7 @@ namespace Nameless.Data {
             return dbConnectionMock;
         }
 
-        private Mock<ILogger> CreateLoggerMock(LogLevel enabledLevel = LogLevel.Error) {
+        private static Mock<ILogger> CreateLoggerMock(LogLevel enabledLevel = LogLevel.Error) {
             var loggerMock = new Mock<ILogger>();
 
             loggerMock
@@ -49,9 +49,8 @@ namespace Nameless.Data {
             return loggerMock;
         }
 
-        private Mock<IDataReader> CreateDataReaderMock() {
-            return new Mock<IDataReader>();
-        }
+        private static Mock<IDataReader> CreateDataReaderMock()
+            => new();
 
         [Test]
         public void ExecuteNonQuery_Should_Query_Against_Database() {

@@ -1,18 +1,9 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Security.Cryptography;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Security.DependencyInjection {
     public sealed class SecurityModule : ModuleBase {
-        #region Public Constructors
-
-        public SecurityModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -33,17 +24,9 @@ namespace Nameless.Security.DependencyInjection {
 
         #region Private Static Methods
 
-        private static RijndaelCryptoOptions? GetRijndaelCryptoOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(RijndaelCryptoOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<RijndaelCryptoOptions>();
-
-            return options;
-        }
-
         private static ICryptoProvider ResolveCryptoProvider(IComponentContext ctx) {
-            var options = GetRijndaelCryptoOptions(ctx);
+            var options = GetOptionsFromContext<RijndaelCryptoOptions>(ctx)
+                ?? RijndaelCryptoOptions.Default;
             var result = new RijndaelCryptoProvider(options);
 
             return result;

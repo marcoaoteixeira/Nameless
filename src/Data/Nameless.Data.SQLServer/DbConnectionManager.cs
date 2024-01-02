@@ -21,9 +21,15 @@ namespace Nameless.Data.SQLServer {
 
         #region Public Constructors
 
+        public DbConnectionManager()
+            : this(SQLServerOptions.Default, NullLogger.Instance) { }
+
+        public DbConnectionManager(SQLServerOptions options)
+            : this(options, NullLogger.Instance) { }
+
         public DbConnectionManager(SQLServerOptions options, ILogger logger) {
-            _options = options ?? SQLServerOptions.Default;
-            _logger = logger ?? NullLogger.Instance;
+            _options = Guard.Against.Null(options, nameof(options));
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion

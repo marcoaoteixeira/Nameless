@@ -4,9 +4,20 @@ using Nameless.Autofac;
 
 namespace Nameless.Caching.InMemory.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
+        #region Private Constants
+
+        private const string MEMORY_CACHE_TOKEN = $"{nameof(MemoryCache)}::c041f63c-04a2-4e09-aed6-dd06db9fa188";
+
+        #endregion
+
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
+            builder
+                .Register(ResolveMemoryCache)
+                .Named<IMemoryCache>(MEMORY_CACHE_TOKEN)
+                .SingleInstance();
+
             builder
                 .Register(ResolveCache)
                 .As<ICache>()
@@ -17,12 +28,18 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
 
         #endregion
 
-        #region Private Static Methods}
+        #region Private Static Methods
 
-        private static ICache ResolveCache(IComponentContext ctx) {
+        private static IMemoryCache ResolveMemoryCache(IComponentContext ctx) {
             var memoryCacheOptions = GetOptionsFromContext<MemoryCacheOptions>(ctx)
                 ?? new MemoryCacheOptions();
-            var memoryCache = new MemoryCache(memoryCacheOptions);
+            var result = new MemoryCache(memoryCacheOptions);
+
+            return result;
+        }
+
+        private static ICache ResolveCache(IComponentContext ctx) {
+            var memoryCache = ctx.ResolveNamed<IMemoryCache>(MEMORY_CACHE_TOKEN);
             var result = new InMemoryCache(memoryCache);
 
             return result;

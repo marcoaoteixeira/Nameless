@@ -16,9 +16,12 @@ namespace Nameless.FluentValidation.Impl {
 
         #region Public Constructors
 
+        public ValidatorManager(IValidator[] validators)
+            : this(validators, NullLogger.Instance) { }
+
         public ValidatorManager(IValidator[] validators, ILogger logger) {
             _validators = Guard.Against.Null(validators, nameof(validators));
-            _logger = logger ?? NullLogger.Instance;
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion

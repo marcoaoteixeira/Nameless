@@ -22,7 +22,8 @@ namespace Nameless.MongoDB {
 
         #region Public Constructors
 
-        public EncryptionSerializer() : this(Default_Key, Default_IV) { }
+        public EncryptionSerializer()
+            : this(Default_Key, Default_IV) { }
 
         public EncryptionSerializer(byte[] key, byte[] iv) {
             Guard.Against.NullOrEmpty(key, nameof(key));

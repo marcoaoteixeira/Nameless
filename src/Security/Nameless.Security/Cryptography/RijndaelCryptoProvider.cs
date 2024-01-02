@@ -35,14 +35,17 @@ namespace Nameless.Security.Cryptography {
 
         #region Public Constructors
 
+        public RijndaelCryptoProvider()
+            : this(RijndaelCryptoOptions.Default) { }
+
         /// <summary>
         /// Use this constructor if you are planning to perform encryption/
         /// decryption with the key derived from the explicitly specified
         /// parameters.
         /// </summary>
         /// <param name="options">The options.</param>
-        public RijndaelCryptoProvider(RijndaelCryptoOptions? options = null) {
-            _options = options ?? RijndaelCryptoOptions.Default;
+        public RijndaelCryptoProvider(RijndaelCryptoOptions options) {
+            _options = Guard.Against.Null(options, nameof(options));
 
             // Initialization vector converted to a byte array.
             // Get bytes of initialization vector.
