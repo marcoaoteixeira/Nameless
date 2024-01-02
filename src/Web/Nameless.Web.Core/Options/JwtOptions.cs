@@ -23,35 +23,35 @@
         public string? Audience { get; set; }
         public bool ValidateAudience { get; set; }
         
-        private int _accessTokenTtl = 24;
+        private int _accessTokenTtl = 60;
         /// <summary>
-        /// Gets or sets the token time-to-live in hours.
-        /// Default is <c>24 hours</c>.
-        /// Note: Value should be between 1 and 24.
+        /// Gets or sets the token time-to-live in minutes.
+        /// Default is <c>60 minutes</c>.
+        /// Note: Value should be between 1 and 1440 minutes (one day).
         /// </summary>
         public int AccessTokenTtl {
             get => _accessTokenTtl;
             set => _accessTokenTtl = Guard.Against.OutOfRange(
                 value: value,
                 min: 1,
-                max: 24,
+                max: 24 * 60,
                 name: nameof(value)
             );
         }
         public bool ValidateLifetime { get; set; }
         
-        private int _refreshTokenTtl = 24;
+        private int _refreshTokenTtl = 60;
         /// <summary>
-        /// Gets or sets the refresh token time-to-live in hours.
-        /// Default is <c>24 hours</c>.
-        /// Note: Value should be between 1 and 24.
+        /// Gets or sets the refresh token time-to-live in minutes.
+        /// Default is <c>60 minutes</c>.
+        /// Note: Value should be between 1 and 1440 minutes (one day).
         /// </summary>
         public int RefreshTokenTtl {
             get => _refreshTokenTtl;
             set => _refreshTokenTtl = Guard.Against.OutOfRange(
                 value: value,
                 min: 1,
-                max: 24,
+                max: 24 * 60,
                 name: nameof(value)
             );
         }
