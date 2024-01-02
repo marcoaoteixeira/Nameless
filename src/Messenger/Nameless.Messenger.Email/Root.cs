@@ -22,7 +22,7 @@
         public static class Defaults {
             #region Public Static Methods
 
-            public static string FileNameGenerator()
+            public static string FileNameGeneratorFactory()
                 => $"{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.eml";
 
             #endregion

@@ -56,7 +56,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
             };
         }
 
-        private static IDeliveryHandler ResolveSmtpClientDeliveryHandler(IComponentContext ctx) {
+        private static SmtpClientDeliveryHandler ResolveSmtpClientDeliveryHandler(IComponentContext ctx) {
             var smtpClientFactory = ctx
                 .ResolveNamed<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_TOKEN);
             var smtpClientDeliveryHandler = new SmtpClientDeliveryHandler(
@@ -66,7 +66,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
             return smtpClientDeliveryHandler;
         }
 
-        private static IDeliveryHandler ResolvePickupDirectoryDeliveryHandler(IComponentContext ctx) {
+        private static PickupDirectoryDeliveryHandler ResolvePickupDirectoryDeliveryHandler(IComponentContext ctx) {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var options = GetOptionsFromContext<MessengerOptions>(ctx)
@@ -74,8 +74,8 @@ namespace Nameless.Messenger.Email.DependencyInjection {
 
             var result = new PickupDirectoryDeliveryHandler(
                 applicationContext,
-                options,
-                Root.Defaults.FileNameGenerator
+                Root.Defaults.FileNameGeneratorFactory,
+                options
             );
 
             return result;

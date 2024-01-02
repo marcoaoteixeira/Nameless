@@ -3,33 +3,33 @@ using Nameless.Infrastructure;
 
 namespace Nameless.Messenger.Email.Impl {
     public sealed class PickupDirectoryDeliveryHandler : IDeliveryHandler {
-        #region Public Static Read-Only Fields
-
-        public static Func<string> DefaultFileNameGenerator => Path.GetRandomFileName;
-
-        #endregion
-
         #region Private Read-Only Fields
 
         private readonly IApplicationContext _applicationContext;
         private readonly MessengerOptions _options;
-        private readonly Func<string> _fileNameGenerator;
+        private readonly FileNameGeneratorDelegate _fileNameGenerator;
 
         #endregion
 
         #region Public Constructors
 
-        public PickupDirectoryDeliveryHandler(IApplicationContext applicationContext, MessengerOptions? options = null, Func<string>? fileNameGenerator = null) {
+        public PickupDirectoryDeliveryHandler(IApplicationContext applicationContext)
+            : this(applicationContext, Root.Defaults.FileNameGeneratorFactory, MessengerOptions.Default) { }
+
+        public PickupDirectoryDeliveryHandler(IApplicationContext applicationContext, FileNameGeneratorDelegate fileNameGenerator)
+            : this(applicationContext, fileNameGenerator, MessengerOptions.Default) { }
+
+        public PickupDirectoryDeliveryHandler(IApplicationContext applicationContext, FileNameGeneratorDelegate fileNameGenerator, MessengerOptions options) {
             _applicationContext = Guard.Against.Null(applicationContext, nameof(applicationContext));
-            _options = options ?? MessengerOptions.Default;
-            _fileNameGenerator = fileNameGenerator ?? DefaultFileNameGenerator;
+            _fileNameGenerator = Guard.Against.Null(fileNameGenerator, nameof(fileNameGenerator));
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion
 
         #region Public Methods
 
-        public string GetPickupDirectory()
+        public string GetPickupDirectoryPath()
             => Path.Combine(
                 _applicationContext.BasePath,
                 _options.PickupDirectoryFolder
@@ -41,7 +41,7 @@ namespace Nameless.Messenger.Email.Impl {
 
         private string GetFilePath()
             => Path.Combine(
-                GetPickupDirectory(),
+                GetPickupDirectoryPath(),
                 _fileNameGenerator()
             );
 

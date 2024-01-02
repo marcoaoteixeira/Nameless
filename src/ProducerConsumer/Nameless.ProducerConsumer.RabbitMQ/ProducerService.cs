@@ -13,9 +13,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Public Constructors
 
+        public ProducerService(IModel channel)
+            : this(channel, NullLogger.Instance) { }
+
         public ProducerService(IModel channel, ILogger logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
-            _logger = logger ?? NullLogger.Instance;
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
@@ -25,12 +28,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         public Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default) {
             var innerArgs = args ?? ProducerArgs.Empty;
             var properties = _channel.CreateBasicProperties().FillWith(innerArgs);
-            var envelope = new Envelope(
-                message: message,
-                messageId: properties.MessageId,
-                correlationId: properties.CorrelationId,
-                publishedAt: DateTime.UtcNow
-            );
+            var envelope = new Envelope {
+                Message = message,
+                MessageId = properties.MessageId,
+                CorrelationId = properties.CorrelationId,
+                PublishedAt = DateTime.UtcNow
+            };
 
             try {
                 _channel.BasicPublish(

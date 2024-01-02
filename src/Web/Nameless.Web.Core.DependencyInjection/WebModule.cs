@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Nameless.Autofac;
 using Nameless.Services;
 using Nameless.Services.Impl;
@@ -9,13 +8,6 @@ using Nameless.Web.Services.Impl;
 
 namespace Nameless.Web.DependencyInjection {
     public sealed class WebModule : ModuleBase {
-        #region Public Constructors
-
-        public WebModule(Assembly[] supportAssemblies)
-            : base(supportAssemblies) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -48,8 +40,8 @@ namespace Nameless.Web.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddWeb(this ContainerBuilder self, params Assembly[] supportAssemblies) {
-            self.RegisterModule(new WebModule(supportAssemblies));
+        public static ContainerBuilder AddWeb(this ContainerBuilder self) {
+            self.RegisterModule<WebModule>();
 
             return self;
         }

@@ -10,8 +10,11 @@ namespace Nameless.Security.Cryptography {
 
         #region Public Constructors
 
+        public AesCryptoProvider()
+            : this(AesCryptoOptions.Default) { }
+
         public AesCryptoProvider(AesCryptoOptions options) {
-            _options = options ?? AesCryptoOptions.Default;
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion

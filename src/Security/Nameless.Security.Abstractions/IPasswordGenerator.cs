@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="options">Password generator options</param>
         /// <returns>The <see cref="string"/> representation of the generated password.</returns>
-        string Generate(PasswordOptions? options = null);
+        string Generate(PasswordOptions options);
 
         #endregion
     }

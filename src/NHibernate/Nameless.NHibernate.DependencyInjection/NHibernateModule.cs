@@ -1,26 +1,16 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
+using Nameless.NHibernate.Services;
 using Nameless.NHibernate.Services.Impl;
 using NHibernate;
-using CoreRoot = Nameless.Root;
-using MS_IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
-using N_IConfigurationBuilder = Nameless.NHibernate.Services.IConfigurationBuilder;
 
 namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
         #region Internal Constants
 
-        internal const string CONFIGURATION_BUILDER_TOKEN = $"{nameof(N_IConfigurationBuilder)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
+        internal const string CONFIGURATION_BUILDER_TOKEN = $"{nameof(IConfigurationBuilder)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
         internal const string SESSION_FACTORY_TOKEN = $"{nameof(ISessionFactory)}::dba2ffdf-3c03-4431-83bc-54746b8e47ab";
-
-        #endregion
-
-        #region Public Constructors
-
-        public NHibernateModule()
-            : base([]) { }
 
         #endregion
 
@@ -29,7 +19,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         protected override void Load(ContainerBuilder builder) {
             builder
                 .Register(ResolveConfigurationBuilder)
-                .Named<N_IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
+                .Named<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .SingleInstance();
 
             builder
@@ -54,24 +44,16 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         #region Private Static Methods
 
-        private static NHibernateOptions? GetNHibernateOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<MS_IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(NHibernateOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<NHibernateOptions>();
-
-            return options;
-        }
-
-        private static N_IConfigurationBuilder ResolveConfigurationBuilder(IComponentContext ctx) {
-            var options = GetNHibernateOptions(ctx);
+        private static IConfigurationBuilder ResolveConfigurationBuilder(IComponentContext ctx) {
+            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
+                ?? NHibernateOptions.Default;
             var result = new ConfigurationBuilder(options);
 
             return result;
         }
 
         private static ISessionFactory ResolveSessionFactory(IComponentContext ctx) {
-            var configurationBuilder = ctx.ResolveNamed<N_IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN);
+            var configurationBuilder = ctx.ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN);
             var configuration = configurationBuilder.Build();
             var result = configuration.BuildSessionFactory();
 
@@ -89,9 +71,10 @@ namespace Nameless.NHibernate.DependencyInjection {
             var appContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var session = ctx.Resolve<ISession>();
-            var configuration = ctx.ResolveNamed<N_IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
+            var configuration = ctx.ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .Build();
-            var options = GetNHibernateOptions(ctx);
+            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
+                ?? NHibernateOptions.Default;
             var result = new Bootstrapper(appContext, session, configuration, options?.SchemaExport);
 
             return result;

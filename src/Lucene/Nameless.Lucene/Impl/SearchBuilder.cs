@@ -115,7 +115,7 @@ namespace Nameless.Lucene.Impl {
                 if (_query is TermQuery termQuery) {
                     var term = termQuery.Term;
                     var analyzedText = AnalyzeText(_analyzer, term.Field, term.Text).FirstOrDefault();
-                    _query = new TermQuery(new Term(term.Field, analyzedText));
+                    _query = new TermQuery(new(term.Field, analyzedText));
                 }
 
                 if (_query is TermRangeQuery termRangeQuery) {
@@ -129,14 +129,14 @@ namespace Nameless.Lucene.Impl {
             if (!_exactMatch) {
                 if (_query is TermQuery termQuery) {
                     var term = termQuery.Term;
-                    _query = new PrefixQuery(new Term(term.Field, term.Text));
+                    _query = new PrefixQuery(new(term.Field, term.Text));
                 }
             }
 
             if (_asFilter) {
-                _filters.Add(new BooleanClause(_query, _occur));
+                _filters.Add(new(_query, _occur));
             } else {
-                _clauses.Add(new BooleanClause(_query, _occur));
+                _clauses.Add(new(_query, _occur));
             }
 
             InitializePendingClause();

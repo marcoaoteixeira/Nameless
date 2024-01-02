@@ -32,10 +32,17 @@ namespace Nameless.Data {
         /// Initializes a new instance of <see cref="Database"/>.
         /// </summary>
         /// <param name="dbConnection">The database connection.</param>
+        public Database(IDbConnection dbConnection)
+            : this(dbConnection, NullLogger.Instance) { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="Database"/>.
+        /// </summary>
+        /// <param name="dbConnection">The database connection.</param>
         /// <param name="logger">The logger.</param>
         public Database(IDbConnection dbConnection, ILogger logger) {
             _dbConnection = Guard.Against.Null(dbConnection, nameof(dbConnection));
-            _logger = logger ?? NullLogger.Instance;
+            _logger = Guard.Against.Null(logger, nameof(logger));
 
             _dbConnection.EnsureOpen();
         }

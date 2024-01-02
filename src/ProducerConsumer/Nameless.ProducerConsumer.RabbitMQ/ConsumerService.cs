@@ -25,9 +25,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Public Constructors
 
-        public ConsumerService(IModel channel, ILogger? logger = null) {
+        public ConsumerService(IModel channel)
+            : this(channel, NullLogger.Instance) { }
+
+        public ConsumerService(IModel channel, ILogger logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
-            _logger = logger ?? NullLogger.Instance;
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion

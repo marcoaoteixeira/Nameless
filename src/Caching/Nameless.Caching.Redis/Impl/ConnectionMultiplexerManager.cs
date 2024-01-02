@@ -24,9 +24,15 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Public Constructors
 
+        public ConnectionMultiplexerManager()
+            : this(RedisOptions.Default, NullLogger.Instance) { }
+
+        public ConnectionMultiplexerManager(RedisOptions options)
+            : this(options, NullLogger.Instance) { }
+
         public ConnectionMultiplexerManager(RedisOptions options, ILogger logger) {
-            _options = options ?? RedisOptions.Default;
-            _logger = logger ?? NullLogger.Instance;
+            _options = Guard.Against.Null(options, nameof(options));
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion

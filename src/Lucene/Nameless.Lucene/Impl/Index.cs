@@ -109,7 +109,8 @@ namespace Nameless.Lucene {
                     case IndexableType.Text:
                         var textValue = (string)fieldValue;
                         if (sanitize) { textValue = textValue.RemoveHtmlTags(); }
-                        if (analyze) { luceneDocument.Add(new Lucene_TextField(fieldName, textValue, store)); } else { luceneDocument.Add(new Lucene_StringField(fieldName, textValue, store)); }
+                        if (analyze) { luceneDocument.Add(new Lucene_TextField(fieldName, textValue, store)); }
+                        else { luceneDocument.Add(new Lucene_StringField(fieldName, textValue, store)); }
                         break;
 
                     case IndexableType.DateTime:
@@ -242,7 +243,7 @@ namespace Nameless.Lucene {
                 try {
                     var batch = documentIDs.Skip(page * BatchSize).Take(BatchSize);
                     foreach (var id in batch) {
-                        query.Add(new BooleanClause(new TermQuery(new(nameof(ISearchHit.DocumentID), id.ToString())), Occur.SHOULD));
+                        query.Add(new(new TermQuery(new(nameof(ISearchHit.DocumentID), id.ToString())), Occur.SHOULD));
                     }
                     writer.DeleteDocuments(query);
                 } catch { /* Just skip error */ }

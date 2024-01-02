@@ -22,11 +22,15 @@ namespace Nameless.Web.Infrastructure {
 
         #region Protected Constructors
 
+        protected RecurringTaskHostedService(TimeSpan interval)
+            : this(interval, NullLogger.Instance) { }
+
         protected RecurringTaskHostedService(TimeSpan interval, ILogger logger) {
             Guard.Against.LowerThanZero(interval, nameof(interval));
+            Guard.Against.Null(logger, nameof(logger));
 
             _timer = new PeriodicTimer(interval);
-            _logger = logger ?? NullLogger.Instance;
+            _logger = logger;
         }
 
         #endregion

@@ -30,7 +30,7 @@ namespace Nameless.Caching.InMemory {
             cts.Dispose();
         }
 
-        private static MemoryCacheEntryOptions GetOptions(
+        private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions(
             CacheEntryOptions? opts = null
         ) {
             if (opts is null || opts.ExpiresIn == default) {
@@ -70,7 +70,11 @@ namespace Nameless.Caching.InMemory {
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _memoryCache.Set(key, value, GetOptions(opts)) is not null;
+            var result = _memoryCache.Set(
+                key,
+                value,
+                CreateMemoryCacheEntryOptions(opts)
+            ) is not null;
 
             return Task.FromResult(result);
         }

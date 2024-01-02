@@ -20,9 +20,12 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Public Constructors
 
-        public TranslationManager(IFileProvider fileProvider, LocalizationOptions? options = null) {
+        public TranslationManager(IFileProvider fileProvider)
+            : this(fileProvider, LocalizationOptions.Default) { }
+
+        public TranslationManager(IFileProvider fileProvider, LocalizationOptions options) {
             _fileProvider = Guard.Against.Null(fileProvider, nameof(fileProvider));
-            _options = options ?? LocalizationOptions.Default;
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion

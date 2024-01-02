@@ -12,8 +12,11 @@ namespace Nameless.NHibernate.Services.Impl {
 
         #region Public Constructors
 
-        public ConfigurationBuilder(NHibernateOptions? options = null) {
-            _options = options ?? NHibernateOptions.Default;
+        public ConfigurationBuilder()
+            : this(NHibernateOptions.Default) { }
+
+        public ConfigurationBuilder(NHibernateOptions options) {
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion

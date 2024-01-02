@@ -20,10 +20,19 @@ namespace Nameless.Web.Services.Impl {
 
         #region Public Constructors
 
+        public JwtService()
+            : this (JwtOptions.Default, SystemClock.Instance, NullLogger.Instance) { }
+
+        public JwtService(JwtOptions options)
+            : this(options, SystemClock.Instance, NullLogger.Instance) { }
+
+        public JwtService(JwtOptions options, IClock clock)
+            : this(options, clock, NullLogger.Instance) { }
+
         public JwtService(JwtOptions options, IClock clock, ILogger logger) {
-            _options = options ?? JwtOptions.Default;
-            _clock = clock ?? SystemClock.Instance;
-            _logger = logger ?? NullLogger.Instance;
+            _options = Guard.Against.Null(options, nameof(options));
+            _clock = Guard.Against.Null(clock, nameof(clock));
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion

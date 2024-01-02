@@ -1,10 +1,8 @@
 ﻿using System.Reflection;
 using Autofac;
-using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Nameless.Autofac;
 using Nameless.MongoDB.Impl;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.MongoDB.DependencyInjection {
     public sealed class MongoDBModule : ModuleBase {
@@ -16,9 +14,6 @@ namespace Nameless.MongoDB.DependencyInjection {
         #endregion
 
         #region Public Constructors
-
-        public MongoDBModule()
-            : base([]) { }
 
         public MongoDBModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
@@ -59,17 +54,9 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         #region Private Static Methods
 
-        private static MongoOptions GetMongoOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(MongoOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<MongoOptions>();
-
-            return options ?? MongoOptions.Default;
-        }
-
         private static IMongoClient ResolveMongoClient(IComponentContext ctx) {
-            var options = GetMongoOptions(ctx);
+            var options = GetOptionsFromContext<MongoOptions>(ctx)
+                ?? MongoOptions.Default;
             var settings = new MongoClientSettings {
                 Server = new(options.Host, options.Port)
             };
@@ -79,7 +66,8 @@ namespace Nameless.MongoDB.DependencyInjection {
         }
 
         private static IMongoDatabase ResolveMongoDatabase(IComponentContext ctx) {
-            var options = GetMongoOptions(ctx);
+            var options = GetOptionsFromContext<MongoOptions>(ctx)
+                ?? MongoOptions.Default;
             var client = ctx.ResolveNamed<IMongoClient>(MONGO_CLIENT_TOKEN);
             var result = client.GetDatabase(options.Database);
 
@@ -99,8 +87,8 @@ namespace Nameless.MongoDB.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddMongoDB(this ContainerBuilder self) {
-            self.RegisterModule<MongoDBModule>();
+        public static ContainerBuilder AddMongoDB(this ContainerBuilder self, params Assembly[] supportAssemblies) {
+            self.RegisterModule(new MongoDBModule(supportAssemblies));
 
             return self;
         }

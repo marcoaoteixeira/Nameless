@@ -14,13 +14,6 @@ namespace Nameless.Lucene.DependencyInjection {
 
         #endregion
 
-        #region Public Constructors
-
-        public LuceneModule()
-            : base([]) { }
-
-        #endregion
-
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
@@ -54,20 +47,12 @@ namespace Nameless.Lucene.DependencyInjection {
             return result;
         }
 
-        private static LuceneOptions? GetLuceneOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(LuceneOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<LuceneOptions>();
-
-            return options;
-        }
-
         private static IIndexProvider ResolveIndexProvider(IComponentContext ctx) {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);
-            var options = GetLuceneOptions(ctx);
+            var options = GetOptionsFromContext<LuceneOptions>(ctx)
+                ?? LuceneOptions.Default;
             var result = new IndexProvider(applicationContext, analyzerProvider, options);
 
             return result;

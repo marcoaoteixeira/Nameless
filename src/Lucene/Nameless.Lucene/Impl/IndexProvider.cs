@@ -27,11 +27,19 @@ namespace Nameless.Lucene {
         /// </summary>
 		/// <param name="applicationContext">The application context.</param>
         /// <param name="analyzerProvider">The analyzer provider.</param>
+        public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider)
+            : this (applicationContext, analyzerProvider, LuceneOptions.Default) { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="IndexProvider"/>.
+        /// </summary>
+		/// <param name="applicationContext">The application context.</param>
+        /// <param name="analyzerProvider">The analyzer provider.</param>
         /// <param name="options">The settings.</param>
-        public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions? options = null) {
+        public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions options) {
             _applicationContext = Guard.Against.Null(applicationContext, nameof(applicationContext));
             _analyzerProvider = Guard.Against.Null(analyzerProvider, nameof(analyzerProvider));
-            _options = options ?? LuceneOptions.Default;
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion
