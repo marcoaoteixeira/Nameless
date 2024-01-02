@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Web.Infrastructure {
-    public abstract class RecurringTaskHostedService : IHostedService {
+    public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
         #region Private Read-Only Fields
 
         private readonly ILogger _logger;
@@ -12,78 +12,146 @@ namespace Nameless.Web.Infrastructure {
 
         #region Private Fields
 
+        private Task? _executeTask;
         private PeriodicTimer? _timer;
+        private CancellationTokenSource? _stoppingCts;
 
-        #endregion
-
-        #region Public Properties
-
-        public TimeSpan Interval { get; }
-        public bool Enabled { get; set; }
+        private bool _disposed;
 
         #endregion
 
         #region Protected Constructors
 
-        protected RecurringTaskHostedService(TimeSpan interval, bool enabled = false, ILogger? logger = null) {
-            if (interval <= TimeSpan.Zero) {
-                throw new ArgumentOutOfRangeException(nameof(interval), "Parameter must be positive non-zero value.");
-            }
+        protected RecurringTaskHostedService(TimeSpan interval, ILogger logger) {
+            Guard.Against.LowerThanZero(interval, nameof(interval));
 
-            Interval = interval;
-            Enabled = enabled;
-
+            _timer = new PeriodicTimer(interval);
             _logger = logger ?? NullLogger.Instance;
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~RecurringTaskHostedService() {
+            Dispose(disposing: false);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SetInterval(TimeSpan interval) {
+            BlockAccessAfterDispose();
+
+            Guard.Against.LowerThanZero(interval, nameof(interval));
+
+            if (_timer is not null) {
+                _timer.Period = interval;
+            }
         }
 
         #endregion
 
         #region Public Abstract Methods
 
-        public abstract Task ExecuteAsync(CancellationToken cancellationToken);
+        public abstract Task ExecuteAsync(CancellationToken stoppingToken);
 
         #endregion
 
         #region Private Static Methods
 
-        private static async Task<bool> CanContinueAsync(PeriodicTimer timer, CancellationToken cancellation)
-            => await timer.WaitForNextTickAsync(cancellation) && !cancellation.IsCancellationRequested;
+        private static async Task<bool> ContinueAsync(
+            PeriodicTimer timer,
+            CancellationToken cancellationToken)
+            => await timer.WaitForNextTickAsync(cancellationToken)
+               && !cancellationToken.IsCancellationRequested;
 
         #endregion
 
         #region Private Methods
 
-        private void DestroyTimer() {
-            if (_timer is not null) {
-                _timer.Dispose();
-                _timer = null;
+        private async Task InnerExecuteAsync(CancellationToken stoppingToken) {
+            while (await ContinueAsync(_timer!, stoppingToken)) {
+                try { await ExecuteAsync(stoppingToken); }
+                catch (Exception ex) {
+                    _logger.LogError(
+                        exception: ex,
+                        message: "Error while executing recurring task: {Message}",
+                        args: ex.Message
+                    );
+                }
             }
+        }
+
+        private void BlockAccessAfterDispose()
+            => ObjectDisposedException.ThrowIf(_disposed, GetType());
+
+        private void Dispose(bool disposing) {
+            if (_disposed) {
+                return;
+            }
+
+            if (disposing) {
+                _timer?.Dispose();
+
+                _stoppingCts?.Cancel();
+                _stoppingCts?.Dispose();
+            }
+
+            _timer = null;
+            _stoppingCts = null;
+            _disposed = true;
         }
 
         #endregion
 
         #region IHostedService Members
 
-        async Task IHostedService.StartAsync(CancellationToken cancellationToken) {
-            _timer ??= new PeriodicTimer(Interval);
+        Task IHostedService.StartAsync(CancellationToken cancellationToken) {
+            BlockAccessAfterDispose();
 
-            try {
-                while (await CanContinueAsync(_timer, cancellationToken)) {
-                    await ExecuteAsync(cancellationToken);
-                }
-            } catch (OperationCanceledException) {
-                _logger.LogInformation("Operation cancelled.");
-            } catch (Exception ex) {
-                _logger.LogError(ex, "{ex.Message}", ex.Message);
-            } finally {
-                DestroyTimer();
+            _stoppingCts = CancellationTokenSource
+                .CreateLinkedTokenSource(cancellationToken);
+
+            _executeTask = InnerExecuteAsync(_stoppingCts.Token);
+
+            return _executeTask.IsCompleted
+                ? _executeTask
+                : Task.CompletedTask;
+        }
+
+        async Task IHostedService.StopAsync(CancellationToken cancellationToken) {
+            BlockAccessAfterDispose();
+
+            if (_executeTask is null) {
+                return;
+            }
+
+            try { _stoppingCts!.Cancel(); }
+            finally {
+                // Wait until the task completes or the stop token triggers
+                var taskCompletionSource = new TaskCompletionSource<object>();
+                using var registration = cancellationToken.Register(
+                    callback: state => ((TaskCompletionSource<object>)state!)
+                        .SetCanceled(),
+                    state: taskCompletionSource
+                );
+                // Do not await the _executeTask because cancelling it will throw
+                // an OperationCanceledException which we are explicitly ignoring
+                await Task.WhenAny(
+                    tasks: [_executeTask, taskCompletionSource.Task]
+                ).ConfigureAwait(continueOnCapturedContext: false);
             }
         }
 
-        Task IHostedService.StopAsync(CancellationToken cancellationToken) {
-            DestroyTimer();
+        #endregion
 
-            return Task.CompletedTask;
+        #region IDisposable Members
+
+        public virtual void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

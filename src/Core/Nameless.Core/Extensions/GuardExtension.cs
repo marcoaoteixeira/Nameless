@@ -11,6 +11,7 @@ namespace Nameless {
         private const string ARG_EMPTY_EX_MESSAGE = "Argument cannot be empty.";
         private const string ARG_EMPTY_WHITESPACES_EX_MESSAGE = "Argument cannot be white spaces.";
         private const string ARG_NO_MATCH_PATTER_EX_MESSAGE = "Argument does not match pattern.";
+        private const string ARG_LOWER_THAN_ZERO_EX_MESSAGE = "Parameter must be positive non-zero value.";
 
         #endregion
 
@@ -77,6 +78,17 @@ namespace Nameless {
                 throw new ArgumentException(message ?? ARG_NO_MATCH_PATTER_EX_MESSAGE, name);
             }
             return input;
+        }
+
+        [DebuggerStepThrough]
+        public static TimeSpan LowerThanZero(this Guard _, TimeSpan timeSpan, string name, string? message = null) {
+            if (timeSpan <= TimeSpan.Zero) {
+                throw new ArgumentOutOfRangeException(
+                    paramName: name,
+                    message: message ?? ARG_LOWER_THAN_ZERO_EX_MESSAGE
+                );
+            }
+            return timeSpan;
         }
 
         #endregion
