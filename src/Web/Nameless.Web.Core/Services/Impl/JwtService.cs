@@ -13,29 +13,17 @@ namespace Nameless.Web.Services.Impl {
         #region Private Read-Only Fields
 
         private readonly JwtOptions _options;
-
-        #endregion
-
-        #region Public Properties
-
-        private IClock? _clock;
-        public IClock Clock {
-            get => _clock ??= SystemClock.Instance;
-            set => _clock = value;
-        }
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
+        private readonly IClock _clock;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Public Constructors
 
-        public JwtService(JwtOptions? options = null) {
+        public JwtService(JwtOptions options, IClock clock, ILogger logger) {
             _options = options ?? JwtOptions.Default;
+            _clock = clock ?? SystemClock.Instance;
+            _logger = logger ?? NullLogger.Instance;
         }
 
         #endregion
@@ -43,14 +31,15 @@ namespace Nameless.Web.Services.Impl {
         #region IJwtService Members
 
         public string Generate(string userId, string userName, string userEmail) {
-            var now = Clock.GetUtcNow();
+            var now = _clock.GetUtcNow();
             var expires = now.AddHours(_options.AccessTokenTtl);
 
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Issuer = _options.Issuer,
                 Audience = _options.Audience,
                 Claims = new Dictionary<string, object> {
-                    // NOTE: Here JwtRegisteredClaimNames.Sub will be substituted by ClaimTypes.NameIdentifier
+                    // NOTE: Here JwtRegisteredClaimNames.Sub will be substituted
+                    // by ClaimTypes.NameIdentifier
                     { JwtRegisteredClaimNames.Sub, userId },
 
                     { JwtRegisteredClaimNames.Exp, expires.ToString() },
@@ -98,7 +87,13 @@ namespace Nameless.Web.Services.Impl {
                 if (!validate) { principal = null; }
 
                 return validate;
-            } catch (Exception ex) { Logger.LogError(ex, "{ex.Message}", ex.Message); }
+            } catch (Exception ex) {
+                _logger.LogError(
+                    exception: ex,
+                    message: "{Message}",
+                    args: ex.Message
+                );
+            }
 
             return false;
         }

@@ -4,8 +4,8 @@ namespace Nameless.RepeatIt.Web {
     public class PrintRecurringTask : RecurringTaskHostedService {
         private readonly ILogger<PrintRecurringTask> _logger;
 
-        public PrintRecurringTask(TimeSpan interval, bool enabled, ILogger<PrintRecurringTask> logger)
-            : base(interval, enabled, logger) {
+        public PrintRecurringTask(TimeSpan interval, ILogger<PrintRecurringTask> logger)
+            : base(interval, logger) {
             _logger = logger;
         }
 

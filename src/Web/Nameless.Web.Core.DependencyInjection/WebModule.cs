@@ -1,18 +1,15 @@
 ﻿using System.Reflection;
 using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
+using Nameless.Services;
+using Nameless.Services.Impl;
 using Nameless.Web.Options;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Web.DependencyInjection {
     public sealed class WebModule : ModuleBase {
         #region Public Constructors
-
-        public WebModule()
-            : base([]) { }
 
         public WebModule(Assembly[] supportAssemblies)
             : base(supportAssemblies) { }
@@ -34,18 +31,13 @@ namespace Nameless.Web.DependencyInjection {
 
         #region Private Static Methods
 
-        private static JwtOptions? GetJwtOptions(IComponentContext ctx) {
-            var configuration = ctx.ResolveOptional<IConfiguration>();
-            var options = configuration?
-                .GetSection(nameof(JwtOptions).RemoveTail(CoreRoot.Defaults.OptsSetsTails))
-                .Get<JwtOptions>();
-
-            return options;
-        }
-
         private static IJwtService ResolveJwtService(IComponentContext ctx) {
-            var options = GetJwtOptions(ctx);
-            var result = new JwtService(options);
+            var options = GetOptionsFromContext<JwtOptions>(ctx)
+                ?? JwtOptions.Default;
+            var clock = ctx.ResolveOptional<IClock>()
+                ?? SystemClock.Instance;
+            var logger = GetLoggerFromContext<JwtService>(ctx);
+            var result = new JwtService(options, clock, logger);
 
             return result;
         }
