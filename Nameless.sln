@@ -125,9 +125,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.Abstractions.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.Common.UnitTest", "src\Data\Nameless.Data.Common.UnitTest\Nameless.Data.Common.UnitTest.csproj", "{C1C9982E-E138-4451-A10E-86C31683B2FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.FluentValidation.UnitTest", "src\FluentValidation\Nameless.FluentValidation.UnitTest\Nameless.FluentValidation.UnitTest.csproj", "{C1911958-F8C5-436C-8C74-449947D9E239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.FluentValidation.UnitTest", "src\FluentValidation\Nameless.FluentValidation.UnitTest\Nameless.FluentValidation.UnitTest.csproj", "{C1911958-F8C5-436C-8C74-449947D9E239}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Localization.Microsoft.Json.UnitTest", "src\Localization\Nameless.Localization.Microsoft.Json.UnitTest\Nameless.Localization.Microsoft.Json.UnitTest.csproj", "{C24A30E1-443F-47EF-936C-D48B9599B38E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Microsoft.Json.UnitTest", "src\Localization\Nameless.Localization.Microsoft.Json.UnitTest\Nameless.Localization.Microsoft.Json.UnitTest.csproj", "{C24A30E1-443F-47EF-936C-D48B9599B38E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Core.UnitTest", "src\Web\Nameless.Web.Core.UnitTest\Nameless.Web.Core.UnitTest.csproj", "{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -311,6 +313,10 @@ Global
 		{C24A30E1-443F-47EF-936C-D48B9599B38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C24A30E1-443F-47EF-936C-D48B9599B38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C24A30E1-443F-47EF-936C-D48B9599B38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -377,6 +383,7 @@ Global
 		{C1C9982E-E138-4451-A10E-86C31683B2FD} = {270AB883-BAA8-42FF-8BAB-8F211EC8A40D}
 		{C1911958-F8C5-436C-8C74-449947D9E239} = {7F681D35-81DC-40D3-A5B0-147CF3D6A648}
 		{C24A30E1-443F-47EF-936C-D48B9599B38E} = {BB18E0DB-FDED-4139-8256-035582D9EB7B}
+		{676A73BE-9B92-4C45-A64B-84BAC65C9F7C} = {F732966F-A3CC-4EBF-90F7-43B7CDCB9B86}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80F3F3F1-58D2-42D1-A772-A78B809F2745}

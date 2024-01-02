@@ -39,7 +39,7 @@ namespace Nameless.Web.Services.Impl {
 
         #region IJwtService Members
 
-        public string Generate(string userId, string userName, string userEmail) {
+        public string Generate(params Claim[] claims) {
             var now = _clock.GetUtcNow();
             var expires = now.AddHours(_options.AccessTokenTtl);
 
@@ -47,10 +47,6 @@ namespace Nameless.Web.Services.Impl {
                 Issuer = _options.Issuer,
                 Audience = _options.Audience,
                 Claims = new Dictionary<string, object> {
-                    // NOTE: Here JwtRegisteredClaimNames.Sub will be substituted
-                    // by ClaimTypes.NameIdentifier
-                    { JwtRegisteredClaimNames.Sub, userId },
-
                     { JwtRegisteredClaimNames.Exp, expires.ToString() },
                     { JwtRegisteredClaimNames.Iat, now.ToString() },
                     { JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() }
@@ -60,10 +56,7 @@ namespace Nameless.Web.Services.Impl {
                     key: new SymmetricSecurityKey(_options.Secret.GetBytes()),
                     algorithm: SecurityAlgorithms.HmacSha256Signature
                 ),
-                Subject = new(new Claim[] {
-                    new(ClaimTypes.Name, userName),
-                    new(ClaimTypes.Email, userEmail)
-                })
+                Subject = new(claims)
             };
 
             if (!string.IsNullOrEmpty(_options.Issuer)) {

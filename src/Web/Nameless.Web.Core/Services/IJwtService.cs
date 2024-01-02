@@ -5,7 +5,7 @@ namespace Nameless.Web.Services {
     public interface IJwtService {
         #region Methods
 
-        string Generate(string userId, string userName, string userEmail);
+        string Generate(params Claim[] claims);
 
         bool Validate(string token, [NotNullWhen(true)] out ClaimsPrincipal? principal);
 
