@@ -6,24 +6,19 @@ namespace Nameless.MongoDB.DependencyInjection {
     public sealed class Bootstrapper : IStartable {
         #region Private Read-Only Fields
 
+        private readonly ILogger _logger;
         private readonly Type[] _mappings;
-
-        #endregion
-
-        #region Public Properties
-
-        private ILogger? _logger;
-        public ILogger Logger {
-            get => _logger ??= NullLogger.Instance;
-            set => _logger = value;
-        }
 
         #endregion
 
         #region Public Constructors
 
-        public Bootstrapper(Type[] mappings) {
+        public Bootstrapper(Type[] mappings)
+            : this(mappings, NullLogger.Instance) { }
+
+        public Bootstrapper(Type[] mappings, ILogger logger) {
             _mappings = mappings ?? [];
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
@@ -32,7 +27,14 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         public void Start() {
             foreach (var mapping in _mappings) {
-                try { Activator.CreateInstance(mapping); } catch (Exception ex) { Logger.LogError(ex, "Error while running mapping {mapping}", mapping); }
+                try { Activator.CreateInstance(mapping); }
+                catch (Exception ex) {
+                    _logger.LogError(
+                        exception: ex,
+                        message: "Error while running mapping {mapping}",
+                        args: mapping
+                    );
+                }
             }
         }
 

@@ -94,7 +94,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddMessenger(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterMessengerModule(this ContainerBuilder self) {
             self.RegisterModule<MessengerModule>();
 
             return self;

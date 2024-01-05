@@ -53,8 +53,9 @@ namespace Nameless.NHibernate.DependencyInjection {
         }
 
         private static ISessionFactory ResolveSessionFactory(IComponentContext ctx) {
-            var configurationBuilder = ctx.ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN);
-            var configuration = configurationBuilder.Build();
+            var configuration = ctx
+                .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
+                .Build();
             var result = configuration.BuildSessionFactory();
 
             return result;
@@ -71,11 +72,17 @@ namespace Nameless.NHibernate.DependencyInjection {
             var appContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var session = ctx.Resolve<ISession>();
-            var configuration = ctx.ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
+            var configuration = ctx
+                .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .Build();
             var options = GetOptionsFromContext<NHibernateOptions>(ctx)
                 ?? NHibernateOptions.Default;
-            var result = new Bootstrapper(appContext, session, configuration, options?.SchemaExport);
+            var result = new Bootstrapper(
+                appContext,
+                session,
+                configuration,
+                options.SchemaExport
+            );
 
             return result;
         }
@@ -86,7 +93,7 @@ namespace Nameless.NHibernate.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddNHibernate(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterNHibernateModule(this ContainerBuilder self) {
             self.RegisterModule<NHibernateModule>();
 
             return self;

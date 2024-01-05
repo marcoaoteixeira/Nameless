@@ -76,7 +76,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddLocalization(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterLocalizationModule(this ContainerBuilder self) {
             self.RegisterModule<LocalizationModule>();
 
             return self;

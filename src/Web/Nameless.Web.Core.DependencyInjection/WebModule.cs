@@ -40,7 +40,7 @@ namespace Nameless.Web.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddWeb(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterWebModule(this ContainerBuilder self) {
             self.RegisterModule<WebModule>();
 
             return self;

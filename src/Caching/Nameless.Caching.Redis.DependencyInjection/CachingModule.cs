@@ -1,8 +1,6 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Caching.Redis.Impl;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
@@ -56,7 +54,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddCaching(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterCachingModule(this ContainerBuilder self) {
             self.RegisterModule<CachingModule>();
 
             return self;

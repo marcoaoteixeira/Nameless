@@ -32,7 +32,7 @@ namespace Nameless.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddCore(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterCoreModule(this ContainerBuilder self) {
             self.RegisterModule<CoreModule>();
 
             return self;

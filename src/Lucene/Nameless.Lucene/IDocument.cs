@@ -32,7 +32,7 @@
         /// <summary>
         /// Adds a new <see cref="int"/> value to the document.
         /// </summary>
-        /// <param name="field">The name of the field.</param>
+        /// <param name="name">The name of the field.</param>
         /// <param name="value">The value of the field.</param>
         /// <param name="options">The field options.</param>
         /// <returns>The current instance of <see cref="IDocument"/>.</returns>
@@ -41,7 +41,7 @@
         /// <summary>
         /// Adds a new <see cref="bool"/> value to the document.
         /// </summary>
-        /// <param name="field">The name of the field.</param>
+        /// <param name="name">The name of the field.</param>
         /// <param name="value">The value of the field.</param>
         /// <param name="options">The field options.</param>
         /// <returns>The current instance of <see cref="IDocument"/>.</returns>
@@ -50,7 +50,7 @@
         /// <summary>
         /// Adds a new <see cref="double"/> value to the document.
         /// </summary>
-        /// <param name="field">The name of the field.</param>
+        /// <param name="name">The name of the field.</param>
         /// <param name="value">The value of the field.</param>
         /// <param name="options">The field options.</param>
         /// <returns>The current instance of <see cref="IDocument"/>.</returns>

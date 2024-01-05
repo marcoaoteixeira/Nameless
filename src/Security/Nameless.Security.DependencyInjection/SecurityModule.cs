@@ -38,7 +38,7 @@ namespace Nameless.Security.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddSecurity(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterSecurityModule(this ContainerBuilder self) {
             self.RegisterModule<SecurityModule>();
 
             return self;
