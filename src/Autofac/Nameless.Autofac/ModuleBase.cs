@@ -49,7 +49,7 @@ namespace Nameless.Autofac {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             return configuration is not null
                 ? configuration
-                    .GetSection(typeof(TOptions).Name.RemoveTail(Root.Defaults.OptsSetsTails))
+                    .GetSection(typeof(TOptions).Name.RemoveTail(Root.Defaults.OptionsSettingsTails))
                     .Get<TOptions>()
                 : default;
         }
