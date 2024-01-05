@@ -471,7 +471,7 @@ namespace Nameless {
             return self.Length > length ? self.Substring(start, length) : self;
         }
 
-        public static bool IsTrueString(this string? self) {
+        public static bool ToBoolean(this string? self) {
             // we'll consider null as false.
             if (self is null) { return false; }
 

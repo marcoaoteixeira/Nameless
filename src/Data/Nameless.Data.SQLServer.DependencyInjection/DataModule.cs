@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Autofac;
 
 namespace Nameless.Data.SQLServer.DependencyInjection {
@@ -56,7 +55,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddData(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterDataModule(this ContainerBuilder self) {
             self.RegisterModule<DataModule>();
 
             return self;

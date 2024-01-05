@@ -51,7 +51,7 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddCaching(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterCachingModule(this ContainerBuilder self) {
             self.RegisterModule<CachingModule>();
 
             return self;
