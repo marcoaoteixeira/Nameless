@@ -1,9 +1,7 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Configuration;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Impl;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Lucene.DependencyInjection {
     public sealed class LuceneModule : ModuleBase {

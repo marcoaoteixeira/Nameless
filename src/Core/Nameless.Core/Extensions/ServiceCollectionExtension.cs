@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nameless.Web {
+namespace Nameless {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
@@ -19,7 +19,7 @@ namespace Nameless.Web {
             Guard.Against.Null(optionsProvider, nameof(optionsProvider));
 
             var opts = optionsProvider();
-            var key = typeof(TOptions).Name.RemoveTail(Root.Defaults.OptionsSettingsTail);
+            var key = typeof(TOptions).Name.RemoveTail(Root.Defaults.OptionsSettingsTails);
             configuration.Bind(key, opts);
             self.AddSingleton(opts);
             return self;
