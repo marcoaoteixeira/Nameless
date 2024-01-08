@@ -1,8 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-using System.Text.Json;
-#else
-using Newtonsoft.Json;
-#endif
+﻿using System.Text.Json;
 
 namespace Nameless.Utils {
     public static class DeepCopy {
@@ -26,13 +22,8 @@ namespace Nameless.Utils {
                 throw new InvalidOperationException($"Cannot clone abstract classes, interfaces or pointers. Object type: {type}");
             }
 
-#if NET6_0_OR_GREATER
             var json = JsonSerializer.Serialize(value);
             var result = JsonSerializer.Deserialize(json, type);
-#else
-            var json = JsonConvert.SerializeObject(value);
-            var result = JsonConvert.DeserializeObject(json, type);
-#endif
 
             return result!;
         }

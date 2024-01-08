@@ -91,7 +91,7 @@
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
 
-            return ValueTask.CompletedTask;
+            return default;
         }
 
         public ValueTask<bool> MoveNextAsync() {
@@ -99,7 +99,9 @@
 
             _cancellationToken.ThrowIfCancellationRequested();
 
-            return ValueTask.FromResult(_enumerator!.MoveNext());
+            var result = _enumerator!.MoveNext();
+
+            return new ValueTask<bool>(result);
         }
 
         #endregion

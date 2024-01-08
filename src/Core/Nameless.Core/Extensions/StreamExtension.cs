@@ -21,22 +21,13 @@ namespace Nameless {
             if (!self.CanRead) {
                 throw new InvalidOperationException("Can't read stream.");
             }
-
-#if NET6_0_OR_GREATER
-            using var reader = new StreamReader(
-                stream: self,
-                encoding: encoding ?? Root.Defaults.Encoding,
-                bufferSize: (int)bufferSize
-            );
-
-#else
             using var reader = new StreamReader(
                 stream: self,
                 encoding: encoding ?? Root.Defaults.Encoding,
                 detectEncodingFromByteOrderMarks: true,
                 bufferSize: (int)bufferSize
             );
-#endif
+
             return reader.ReadToEnd();
         }
 

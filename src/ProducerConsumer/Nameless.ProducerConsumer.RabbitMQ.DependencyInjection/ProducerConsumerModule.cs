@@ -81,7 +81,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddProducerConsumer(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterProducerConsumerModule(this ContainerBuilder self) {
             self.RegisterModule<ProducerConsumerModule>();
 
             return self;

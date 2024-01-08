@@ -46,8 +46,11 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, typeof(ConnectionMultiplexerManager));
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(ConnectionMultiplexerManager));
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
@@ -65,8 +68,8 @@ namespace Nameless.Caching.Redis.Impl {
 
         private ConfigurationOptions CreateMultiplexerConfigurationOptions() {
             var host = _options.Ssl.Available
-                ? _options.Ssl.Host
-                : _options.Host;
+                ? _options.Ssl.Host ?? throw new ArgumentNullException("SSL Host")
+                : _options.Host ?? throw new ArgumentNullException("Host");
 
             var port = _options.Ssl.Available
                 ? _options.Ssl.Port

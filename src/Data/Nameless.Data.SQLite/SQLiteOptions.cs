@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Nameless.Data.SQLite {
     public sealed class SQLiteOptions {
@@ -22,11 +24,14 @@ namespace Nameless.Data.SQLite {
         public bool UseInMemory { get; set; }
         public string DatabaseName { get; set; } = "database";
         public string Password { get; }
+
+#if NET6_0_OR_GREATER
         [MemberNotNullWhen(true, nameof(Password))]
+#endif
         public bool UseCredentials
             => !string.IsNullOrWhiteSpace(Password);
 
-        #endregion
+#endregion
 
         #region Public Methods
 

@@ -55,7 +55,7 @@ namespace Nameless.Data.SQLite.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddData(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterDataModule(this ContainerBuilder self) {
             self.RegisterModule<DataModule>();
 
             return self;

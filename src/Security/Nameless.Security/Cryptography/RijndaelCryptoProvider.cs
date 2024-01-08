@@ -169,8 +169,11 @@ namespace Nameless.Security.Cryptography {
             _disposed = true;
         }
 
-        private void BlockAccesAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, typeof(RijndaelCryptoProvider));
+        private void BlockAccesAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(RijndaelCryptoProvider));
+            }
+        }
 
         #endregion
 

@@ -137,8 +137,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.SQLite.Depend
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.UnitTest", "src\Lucene\Nameless.Lucene.UnitTest\Nameless.Lucene.UnitTest.csproj", "{6D3EE04B-3748-4C79-958D-3FD828752912}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Core.Standard", "src\Core\Nameless.Core.Standard\Nameless.Core.Standard.csproj", "{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -337,10 +335,6 @@ Global
 		{6D3EE04B-3748-4C79-958D-3FD828752912}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D3EE04B-3748-4C79-958D-3FD828752912}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D3EE04B-3748-4C79-958D-3FD828752912}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -411,7 +405,6 @@ Global
 		{25CF6B52-4828-402C-B5CF-F2187F2F0EE2} = {270AB883-BAA8-42FF-8BAB-8F211EC8A40D}
 		{999284DE-5C6A-455B-950A-5A5001970472} = {270AB883-BAA8-42FF-8BAB-8F211EC8A40D}
 		{6D3EE04B-3748-4C79-958D-3FD828752912} = {48208DDC-77D1-44BF-AAE3-59F2BB767244}
-		{D57FF4D4-1CFA-43C8-AA4A-840A1BF312C3} = {6AABEC80-E439-4B1D-8397-EF985BA30E1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80F3F3F1-58D2-42D1-A772-A78B809F2745}

@@ -70,10 +70,10 @@ Write-Verbose "[$($THIS_SCRIPT_NAME)] Starting at $($scriptStartTime.TimeOfDay.T
 Write-Verbose "Using PowerShell Version: $($PSVersionTable.PSVersion.ToString())."
 
 Try {
-	$OutputDir = "$(pwd)/CodeCoverage"
-	$TestResultsDir = "$OutputDir/TestResults"
-	$CoverageReportDir = "$OutputDir/CoverageReport"
-	$CoverageHistoryDir = "$OutputDir/CoverageHistory"
+	$OutputDir = "$(pwd)/code_coverage"
+	$TestResultsDir = "$OutputDir/test_results"
+	$CoverageReportDir = "$OutputDir/coverage_report"
+	$CoverageHistoryDir = "$OutputDir/coverage_history"
 	
 	# Delete previous test run results (there's a bunch of subfolders named with guids)
 	If (Test-Path -Path $TestResultsDir) {
@@ -92,7 +92,7 @@ Try {
 	dotnet test `
 		--no-restore `
 		--no-build `
-		--logger:"Html;LogFileName=$OutputDir/CodeCoverageLog.html" `
+		--logger:"Html;LogFileName=$OutputDir/code_coverage_log.html" `
 		--collect:"XPlat Code Coverage" `
 		--results-directory $TestResultsDir `
 		--verbosity normal

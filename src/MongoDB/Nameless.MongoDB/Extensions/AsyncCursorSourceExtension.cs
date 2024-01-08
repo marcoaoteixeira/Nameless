@@ -84,7 +84,7 @@ namespace Nameless.MongoDB {
                 _asyncCursor?.Dispose();
                 _asyncCursor = null;
 
-                return ValueTask.CompletedTask;
+                return default;
             }
 
             #endregion

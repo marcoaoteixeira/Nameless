@@ -10,8 +10,8 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
 
         #region Public Properties
 
-        public string Name { get; init; } = string.Empty;
-        public HashSet<Message> Messages { get; init; } = [];
+        public string Name { get; set; } = string.Empty;
+        public HashSet<Message> Messages { get; set; } = [];
 
         #endregion
 

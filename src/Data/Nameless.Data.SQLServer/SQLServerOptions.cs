@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Nameless.Data.SQLServer {
     public sealed class SQLServerOptions {
@@ -25,14 +27,16 @@ namespace Nameless.Data.SQLServer {
         public string Database { get; set; } = "master";
         public string UserName { get; }
         public string Password { get; }
+#if NET6_0_OR_GREATER
         [MemberNotNullWhen(true, nameof(UserName), nameof(Password))]
+#endif
         public bool UseCredentials
             => !string.IsNullOrWhiteSpace(UserName) &&
                !string.IsNullOrWhiteSpace(Password);
         public bool UseAttachedDb { get; set; }
         public bool UseIntegratedSecurity { get; set; }
 
-        #endregion
+#endregion
 
         #region Public Methods
 

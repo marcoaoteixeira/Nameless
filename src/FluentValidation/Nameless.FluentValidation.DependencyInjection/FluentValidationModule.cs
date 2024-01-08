@@ -51,7 +51,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddFluentValidation(this ContainerBuilder self, params Assembly[] supportAssemblies) {
+        public static ContainerBuilder RegisterFluentValidationModule(this ContainerBuilder self, params Assembly[] supportAssemblies) {
             self.RegisterModule(new FluentValidationModule(supportAssemblies));
 
             return self;

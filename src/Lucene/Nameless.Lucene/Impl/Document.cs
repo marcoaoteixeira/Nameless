@@ -45,7 +45,7 @@ namespace Nameless.Lucene.Impl {
 
         #endregion
 
-        #region IDocumentIndex Members
+        #region IDocument Members
 
         /// <summary>
         /// Gets the document ID.
@@ -53,24 +53,24 @@ namespace Nameless.Lucene.Impl {
         public string ID { get; }
 
         /// <inheritdoc />
-        public IDocument Set(string name, string value, FieldOptions options)
-            => Set(IndexableType.Text, name, value, options);
+        public IDocument Set(string field, string value, FieldOptions options)
+            => Set(IndexableType.Text, field, value, options);
 
         /// <inheritdoc />
-        public IDocument Set(string name, DateTimeOffset value, FieldOptions options)
-            => Set(IndexableType.DateTime, name, value, options);
+        public IDocument Set(string field, DateTimeOffset value, FieldOptions options)
+            => Set(IndexableType.DateTime, field, value, options);
 
         /// <inheritdoc />
-        public IDocument Set(string name, int value, FieldOptions options)
-            => Set(IndexableType.Integer, name, value, options);
+        public IDocument Set(string field, int value, FieldOptions options)
+            => Set(IndexableType.Integer, field, value, options);
 
         /// <inheritdoc />
-        public IDocument Set(string name, bool value, FieldOptions options)
-            => Set(IndexableType.Boolean, name, value, options);
+        public IDocument Set(string field, bool value, FieldOptions options)
+            => Set(IndexableType.Boolean, field, value, options);
 
         /// <inheritdoc />
-        public IDocument Set(string name, double value, FieldOptions options)
-            => Set(IndexableType.Number, name, value, options);
+        public IDocument Set(string field, double value, FieldOptions options)
+            => Set(IndexableType.Number, field, value, options);
 
         #endregion
 

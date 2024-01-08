@@ -2,7 +2,7 @@
     /// <summary>
     /// Defines methods for an index provider.
     /// </summary>
-    public interface IIndexProvider {
+    public interface IIndexManager {
         #region Methods
 
         /// <summary>

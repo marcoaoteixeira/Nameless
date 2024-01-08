@@ -7,7 +7,7 @@ namespace Nameless.Caching.InMemory {
         public void Register_And_Resolve_Service() {
             // arrange
             var builder = new ContainerBuilder();
-            builder.AddCaching();
+            builder.RegisterCachingModule();
 
             // act
             using var container = builder.Build();

@@ -2,7 +2,7 @@
     public sealed record MessageResponse {
         #region Public Properties
 
-        public Exception? Error { get; init; }
+        public Exception? Error { get; set; }
         public bool Succeeded => Error is null;
 
         #endregion

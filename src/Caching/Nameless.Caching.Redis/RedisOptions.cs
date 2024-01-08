@@ -43,7 +43,9 @@ namespace Nameless.Caching.Redis {
 
         #region Public Properties
 
+#if NET6_0_OR_GREATER
         [MemberNotNullWhen(true, nameof(Host))]
+#endif
         public bool Available
             => !string.IsNullOrWhiteSpace(Host) &&
                Port > 0 &&
@@ -78,7 +80,9 @@ namespace Nameless.Caching.Redis {
 
         #region Public Properties
 
+#if NET6_0_OR_GREATER
         [MemberNotNullWhen(true, nameof(Pfx), nameof(Pem), nameof(Pass))]
+#endif
         public bool Available
             => !string.IsNullOrWhiteSpace(Pfx) &&
                !string.IsNullOrWhiteSpace(Pem) &&

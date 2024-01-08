@@ -53,7 +53,7 @@ namespace Nameless.Messenger.Email.Impl {
             => csv
                 .Split(
                     separator: CoreRoot.Separators.COMMA,
-                    options: StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+                    options: StringSplitOptions.RemoveEmptyEntries
                 );
 
         #endregion

@@ -22,7 +22,7 @@
         /// <summary>
         /// Gets the number of indexed documents
         /// </summary>
-        int TotalDocuments();
+        int CountDocuments();
 
         /// <summary>
         /// Creates an empty document
@@ -31,14 +31,14 @@
         IDocument NewDocument(string documentID);
 
         /// <summary>
-        /// Adds a set of new document to the index
+        /// Stores all documents into the index.
         /// </summary>
-        void StoreDocuments(params IDocument[] documents);
+        void StoreDocuments(IDocument[] documents);
 
         /// <summary>
-        /// Removes a set of existing document from the index
+        /// Removes all documents from the index.
         /// </summary>
-        void DeleteDocuments(params string[] documentIDs);
+        void DeleteDocuments(IDocument[] documents);
 
         /// <summary>
         /// Creates a search builder for this provider

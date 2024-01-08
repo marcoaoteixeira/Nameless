@@ -13,8 +13,8 @@ namespace Nameless.Localization.Microsoft.Json.Objects {
 
         #region Public Properties
 
-        public string Culture { get; init; } = string.Empty;
-        public HashSet<Region> Regions { get; init; } = [];
+        public string Culture { get; set; } = string.Empty;
+        public HashSet<Region> Regions { get; set; } = [];
 
         #endregion
 

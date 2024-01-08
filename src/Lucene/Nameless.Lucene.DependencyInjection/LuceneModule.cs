@@ -17,7 +17,7 @@ namespace Nameless.Lucene.DependencyInjection {
         protected override void Load(ContainerBuilder builder) {
             builder
                 .Register(ResolveIndexProvider)
-                .As<IIndexProvider>()
+                .As<IIndexManager>()
                 .SingleInstance();
 
             var analyzerSelectors = GetImplementations<IAnalyzerSelector>().ToArray();
@@ -45,13 +45,13 @@ namespace Nameless.Lucene.DependencyInjection {
             return result;
         }
 
-        private static IIndexProvider ResolveIndexProvider(IComponentContext ctx) {
+        private static IIndexManager ResolveIndexProvider(IComponentContext ctx) {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);
             var options = GetOptionsFromContext<LuceneOptions>(ctx)
                 ?? LuceneOptions.Default;
-            var result = new IndexProvider(applicationContext, analyzerProvider, options);
+            var result = new IndexManager(applicationContext, analyzerProvider, options);
 
             return result;
         }
@@ -62,7 +62,7 @@ namespace Nameless.Lucene.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddLucene(this ContainerBuilder self) {
+        public static ContainerBuilder RegisterLuceneModule(this ContainerBuilder self) {
             self.RegisterModule<LuceneModule>();
 
             return self;

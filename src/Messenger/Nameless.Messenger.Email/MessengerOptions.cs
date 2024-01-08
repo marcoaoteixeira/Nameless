@@ -14,31 +14,31 @@
         /// <summary>
         /// Gets or sets the SMTP server address. Default value is "localhost".
         /// </summary>
-        public string Host { get; init; } = "localhost";
+        public string Host { get; set; } = "localhost";
         /// <summary>
         /// Gets or sets the SMTP server port. Default value is 25.
         /// </summary>
-        public int Port { get; init; } = 25;
+        public int Port { get; set; } = 25;
         /// <summary>
         /// Gets or sets the credentials.
         /// </summary>
-        public Credentials Credentials { get; init; } = new();
+        public Credentials Credentials { get; set; } = new();
         /// <summary>
         /// Gets or sets whether should enable SSL. Default value is
         /// <c>false</c>.
         /// </summary>
-        public bool UseSsl { get; init; }
+        public bool UseSsl { get; set; }
         /// <summary>
         /// Gets or sets the delivery mode. Default value is
         /// <see cref="DeliveryMode.PickupDirectory" />.
         /// </summary>
-        public DeliveryMode DeliveryMode { get; init; } = DeliveryMode.PickupDirectory;
+        public DeliveryMode DeliveryMode { get; set; } = DeliveryMode.PickupDirectory;
         /// <summary>
         /// Gets or sets the pickup directory path, relative to the
         /// application file storage. Default value is
         /// "App_Data/Messenger/PickupDirectory".
         /// </summary>
-        public string PickupDirectoryFolder { get; init; } = Path.Combine("App_Data", "Messenger", "PickupDirectory");
+        public string PickupDirectoryFolder { get; set; } = Path.Combine("App_Data", "Messenger", "PickupDirectory");
 
         #endregion
     }

@@ -89,8 +89,11 @@ namespace Nameless.ProducerConsumer {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, typeof(Registration<>));
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(typeof(Registration<>).Name);
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

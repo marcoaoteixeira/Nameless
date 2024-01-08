@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Nameless.MongoDB {
     public sealed class MongoOptions {
@@ -27,11 +29,13 @@ namespace Nameless.MongoDB {
         public string UserName { get; }
         public string Password { get; }
 
-        [MemberNotNullWhen(true, nameof(UserName), nameof(Password))]
+#if NET6_0_OR_GREATER
+[MemberNotNullWhen(true, nameof(UserName), nameof(Password))]
+#endif
         public bool UseCredentials
             => !string.IsNullOrWhiteSpace(UserName) &&
                !string.IsNullOrWhiteSpace(Password);
 
-        #endregion
+#endregion
     }
 }

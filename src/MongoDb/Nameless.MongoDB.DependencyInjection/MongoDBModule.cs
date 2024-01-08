@@ -87,7 +87,7 @@ namespace Nameless.MongoDB.DependencyInjection {
     public static class ContainerBuilderExtension {
         #region Public Static Methods
 
-        public static ContainerBuilder AddMongoDB(this ContainerBuilder self, params Assembly[] supportAssemblies) {
+        public static ContainerBuilder RegisterMongoDBModule(this ContainerBuilder self, params Assembly[] supportAssemblies) {
             self.RegisterModule(new MongoDBModule(supportAssemblies));
 
             return self;
