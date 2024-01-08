@@ -58,8 +58,11 @@
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, typeof(AsyncEnumerator<>));
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(typeof(AsyncEnumerable<>).Name);
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
@@ -88,7 +91,7 @@
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
 
-            return ValueTask.CompletedTask;
+            return default;
         }
 
         public ValueTask<bool> MoveNextAsync() {
@@ -96,7 +99,9 @@
 
             _cancellationToken.ThrowIfCancellationRequested();
 
-            return ValueTask.FromResult(_enumerator!.MoveNext());
+            var result = _enumerator!.MoveNext();
+
+            return new ValueTask<bool>(result);
         }
 
         #endregion

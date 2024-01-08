@@ -44,8 +44,11 @@ namespace Nameless.Data.SQLite {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, typeof(DbConnectionManager));
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(DbConnectionManager));
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

@@ -447,8 +447,10 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string GetMD5(this string self, Encoding? encoding = default) {
             var buffer = (encoding ?? Root.Defaults.Encoding).GetBytes(self);
-            var result = MD5.HashData(buffer);
-
+            
+            using var md5 = MD5.Create();
+            var result = md5.ComputeHash(buffer);
+            
             return BitConverter.ToString(result);
         }
 
@@ -532,6 +534,6 @@ namespace Nameless {
             return self;
         }
 
-        #endregion
+#endregion
     }
 }

@@ -55,8 +55,11 @@ namespace Nameless.Lucene {
 
         #region Private Methods
 
-        private void BlockAccessAfterDispose()
-            => ObjectDisposedException.ThrowIf(_disposed, this);
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(IndexManager));
+            }
+        }
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }

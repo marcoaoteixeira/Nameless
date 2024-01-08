@@ -131,11 +131,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Localization.Micro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Web.Core.UnitTest", "src\Web\Nameless.Web.Core.UnitTest\Nameless.Web.Core.UnitTest.csproj", "{676A73BE-9B92-4C45-A64B-84BAC65C9F7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SQLite", "src\Data\Nameless.Data.SQLite\Nameless.Data.SQLite.csproj", "{25CF6B52-4828-402C-B5CF-F2187F2F0EE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.SQLite", "src\Data\Nameless.Data.SQLite\Nameless.Data.SQLite.csproj", "{25CF6B52-4828-402C-B5CF-F2187F2F0EE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SQLite.DependencyInjection", "src\Data\Nameless.Data.SQLite.DependencyInjection\Nameless.Data.SQLite.DependencyInjection.csproj", "{999284DE-5C6A-455B-950A-5A5001970472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Data.SQLite.DependencyInjection", "src\Data\Nameless.Data.SQLite.DependencyInjection\Nameless.Data.SQLite.DependencyInjection.csproj", "{999284DE-5C6A-455B-950A-5A5001970472}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Lucene.UnitTest", "src\Lucene\Nameless.Lucene.UnitTest\Nameless.Lucene.UnitTest.csproj", "{6D3EE04B-3748-4C79-958D-3FD828752912}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Lucene.UnitTest", "src\Lucene\Nameless.Lucene.UnitTest\Nameless.Lucene.UnitTest.csproj", "{6D3EE04B-3748-4C79-958D-3FD828752912}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

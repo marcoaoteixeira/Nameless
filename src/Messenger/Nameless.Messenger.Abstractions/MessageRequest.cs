@@ -7,29 +7,29 @@ namespace Nameless.Messenger {
         /// <summary>
         /// Gets or sets the message subject.
         /// </summary>
-        public string Subject { get; init; } = null!;
+        public string Subject { get; set; } = null!;
         /// <summary>
         /// Gets or sets the message content.
         /// </summary>
-        public string Content { get; init; } = null!;
+        public string Content { get; set; } = null!;
         /// <summary>
         /// Gets or sets the message language.
         /// </summary>
-        public string? Language { get; init; }
+        public string? Language { get; set; }
         /// <summary>
         /// Gets or sets the message encoding.
         /// </summary>
-        public Encoding Encoding { get; init; } = Encoding.UTF8;
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
         /// <summary>
         /// Gets or sets an array of address from the
         /// person (or people) who sends the message
         /// </summary>
-        public string[] From { get; init; } = [];
+        public string[] From { get; set; } = [];
         /// <summary>
         /// Gets or sets an array of address to the
         /// person (or people) who receives the message
         /// </summary>
-        public string[] To { get; init; } = [];
+        public string[] To { get; set; } = [];
         /// <summary>
         /// A dictionary of properties that can be used
         /// by the messenger.
@@ -38,7 +38,7 @@ namespace Nameless.Messenger {
         /// <summary>
         /// Gets or sets the message priority.
         /// </summary>
-        public Priority Priority { get; init; } = Priority.Normal;
+        public Priority Priority { get; set; } = Priority.Normal;
 
         #endregion
     }

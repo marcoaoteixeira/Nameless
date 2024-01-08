@@ -2,8 +2,8 @@
     public sealed class Message {
         #region Public Properties
 
-        public string ID { get; init; } = string.Empty;
-        public string Text { get; init; } = string.Empty;
+        public string ID { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
 
         #endregion
 

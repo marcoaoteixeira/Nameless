@@ -6,7 +6,15 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
     public sealed class TranslationManager : ITranslationManager {
         #region Private Records
 
-        private record CacheEntry(string Culture, Translation Content, IDisposable? FileChangeHandler = null);
+        private record CacheEntry {
+            #region Public Properties
+
+            public string Culture { get; set; } = string.Empty;
+            public Translation Translation { get; set; } = Translation.Empty;
+            public IDisposable? FileChangeHandler { get; set; }
+
+            #endregion
+        }
 
         #endregion
 
@@ -81,9 +89,13 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             var fileChangeHandler = CreateFileChangeHandler(culture, path);
             var translation = JsonSerializer.Deserialize<Translation>(fileContent);
 
-            return translation is null
-                ? throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}")
-                : new(culture, translation, fileChangeHandler);
+            return translation is not null
+                ? new() {
+                    Culture = culture,
+                    Translation = translation,
+                    FileChangeHandler = fileChangeHandler
+                }
+                : throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}");
         }
 
         #endregion
@@ -103,7 +115,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
                 _cache.Add(culture, value);
             }
 
-            return value.Content;
+            return value.Translation;
         }
 
         #endregion

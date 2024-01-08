@@ -26,15 +26,19 @@ namespace Nameless.Helpers {
         public static string Normalize(string path) {
             Guard.Against.NullOrWhiteSpace(path, nameof(path));
 
-            var result = OperatingSystem.IsWindows()
+            var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+
+            var result = isWindows
                 ? path.Replace(UNIX_DIRECTORY_SEPARATOR_CHAR, WINDOWS_DIRECTORY_SEPARATOR_CHAR)
                 : path.Replace(WINDOWS_DIRECTORY_SEPARATOR_CHAR, UNIX_DIRECTORY_SEPARATOR_CHAR);
 
             // On Windows we'll leave the path as it is.
-            if (OperatingSystem.IsWindows()) { return result; }
+            if (isWindows) { return result; }
 
             // For Linux, MacOS, Android, let's "fix"
-            return result.StartsWith(UNIX_DIRECTORY_SEPARATOR_CHAR) ? result : $"{UNIX_DIRECTORY_SEPARATOR_CHAR}{result}";
+            return result.StartsWith(UNIX_DIRECTORY_SEPARATOR_CHAR)
+                ? result :
+                $"{UNIX_DIRECTORY_SEPARATOR_CHAR}{result}";
         }
 
         /// <summary>
@@ -68,6 +72,6 @@ namespace Nameless.Helpers {
             return result;
         }
 
-        #endregion
+#endregion
     }
 }
