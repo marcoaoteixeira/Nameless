@@ -29,6 +29,14 @@ namespace Nameless {
                 : Path.Combine(combineWith.Prepend(result).ToArray());
         }
 
+        public static string GetSemanticVersion(this Assembly self) {
+            var version = self.GetName().Version;
+
+            return version is not null
+                ? $"v{version.Major}.{version.Minor}.{version.Build}"
+                : "v0.0.0";
+        }
+
         #endregion
     }
 }
