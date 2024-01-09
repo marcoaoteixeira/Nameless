@@ -9,6 +9,15 @@ namespace Nameless.Data {
     public static class DataRecordExtension {
         #region Public Static Methods
 
+        /// <summary>
+        /// Tries retrieve the value for the specific row/colum of a data record.
+        /// </summary>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="self">The data record.</param>
+        /// <param name="columnName">The colum name.</param>
+        /// <param name="output">The output.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
+        /// <returns><c>true</c> if was able to retrieve the data; otherwise <c>false</c>.</returns>
         public static bool TryGet<T>(this IDataRecord self, string columnName, [NotNullWhen(returnValue: true)] out T? output, IFormatProvider? formatProvider = null) {
             Guard.Against.NullOrWhiteSpace(columnName, nameof(columnName));
 
@@ -17,7 +26,7 @@ namespace Nameless.Data {
             var value = SafeGetValue(self, columnName);
             if (value is null) { return false; }
 
-            var current = Transform(value, typeof(T), formatProvider ?? CultureInfo.InvariantCulture);
+            var current = Transform(value, typeof(T), formatProvider ?? CultureInfo.CurrentCulture);
 
             output = (T?)current;
             return current is not null;
@@ -28,7 +37,7 @@ namespace Nameless.Data {
         /// </summary>
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
-        /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A string value.</returns>
         public static string GetString(this IDataRecord self, string columnName, IFormatProvider? formatProvider = null)
             => TryGet<string>(self, columnName, out var result, formatProvider) ? result : string.Empty;
@@ -39,6 +48,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A string value.</returns>
         public static string GetString(this IDataRecord self, string columnName, string fallback, IFormatProvider? formatProvider = null)
             => TryGet<string>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -49,6 +59,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A boolean value.</returns>
         public static bool GetBoolean(this IDataRecord self, string columnName, bool fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<bool>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -59,6 +70,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A char value.</returns>
         public static char GetChar(this IDataRecord self, string columnName, char fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<char>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -69,6 +81,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A sbyte value.</returns>
         public static sbyte GetSByte(this IDataRecord self, string columnName, sbyte fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<sbyte>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -79,6 +92,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A byte value.</returns>
         public static byte GetByte(this IDataRecord self, string columnName, byte fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<byte>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -89,6 +103,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A short value.</returns>
         public static short GetInt16(this IDataRecord self, string columnName, short fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<short>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -99,6 +114,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>An ushort value.</returns>
         public static ushort GetUInt16(this IDataRecord self, string columnName, ushort fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<ushort>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -109,6 +125,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>An int value.</returns>
         public static int GetInt32(this IDataRecord self, string columnName, int fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<int>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -119,6 +136,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>An uint value.</returns>
         public static uint GetUInt32(this IDataRecord self, string columnName, uint fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<uint>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -129,6 +147,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A long value.</returns>
         public static long GetInt64(this IDataRecord self, string columnName, long fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<long>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -139,6 +158,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>An ulong value.</returns>
         public static ulong GetUInt64(this IDataRecord self, string columnName, ulong fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<ulong>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -149,6 +169,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A float value.</returns>
         public static float GetSingle(this IDataRecord self, string columnName, float fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<float>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -159,6 +180,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A double value.</returns>
         public static double GetDouble(this IDataRecord self, string columnName, double fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<double>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -169,6 +191,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A decimal value.</returns>
         public static decimal GetDecimal(this IDataRecord self, string columnName, decimal fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<decimal>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -179,6 +202,7 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A date/time value.</returns>
         public static DateTime GetDateTime(this IDataRecord self, string columnName, DateTime fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<DateTime>(self, columnName, out var result, formatProvider) ? result : fallback;
@@ -189,8 +213,8 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A date/time offset value.</returns>
-
         public static DateTimeOffset GetDateTimeOffset(this IDataRecord self, string columnName, DateTimeOffset fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<DateTimeOffset>(self, columnName, out var result, formatProvider) ? result : fallback;
 
@@ -200,8 +224,8 @@ namespace Nameless.Data {
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
         /// <param name="fallback">The default value.</param>
+        /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
         /// <returns>A time span value.</returns>
-
         public static TimeSpan GetTimeSpan(this IDataRecord self, string columnName, TimeSpan fallback = default, IFormatProvider? formatProvider = null)
             => TryGet<TimeSpan>(self, columnName, out var result, formatProvider) ? result : fallback;
 
@@ -238,7 +262,6 @@ namespace Nameless.Data {
         /// </summary>
         /// <param name="self">The data record instance.</param>
         /// <param name="columnName">The column name.</param>
-        /// <param name="fallback">The default value.</param>
         /// <returns>A byte array value.</returns>
         public static byte[] GetBlob(this IDataRecord self, string columnName)
             => TryGet<byte[]>(self, columnName, out var result, formatProvider: null) ? result : [];
