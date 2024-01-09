@@ -45,11 +45,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
 		<ProjectReference Include="..\Nameless.NHibernate\Nameless.NHibernate.csproj" />
 	</ItemGroup>
