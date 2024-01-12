@@ -274,7 +274,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
 
             // assert
             dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
@@ -296,7 +296,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
             sut.CommitTransaction();
 
             // assert
@@ -320,7 +320,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
             sut.RollbackTransaction();
 
             // assert
@@ -344,7 +344,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
             sut.Dispose();
 
             // assert
@@ -369,7 +369,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
             sut.Dispose();
             sut.Dispose();
 

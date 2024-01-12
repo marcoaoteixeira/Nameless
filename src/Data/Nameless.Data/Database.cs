@@ -9,20 +9,15 @@ namespace Nameless.Data {
     public sealed class Database : IDatabase, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IDbConnection _dbConnection;
+        private readonly IDbConnectionFactory _dbConnectionFactory;
         private readonly ILogger _logger;
 
         #endregion
 
         #region Private Fields
 
+        private IDbConnection? _dbConnection;
         private bool _disposed;
-
-        #endregion
-
-        #region Private Properties
-
-        private IDbTransaction? _dbTransaction;
 
         #endregion
 
@@ -31,20 +26,18 @@ namespace Nameless.Data {
         /// <summary>
         /// Initializes a new instance of <see cref="Database"/>.
         /// </summary>
-        /// <param name="dbConnection">The database connection.</param>
-        public Database(IDbConnection dbConnection)
-            : this(dbConnection, NullLogger.Instance) { }
+        /// <param name="dbConnectionFactory">The database connection factory.</param>
+        public Database(IDbConnectionFactory dbConnectionFactory)
+            : this(dbConnectionFactory, NullLogger.Instance) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Database"/>.
         /// </summary>
-        /// <param name="dbConnection">The database connection.</param>
+        /// <param name="dbConnectionFactory">The database connection factory.</param>
         /// <param name="logger">The logger.</param>
-        public Database(IDbConnection dbConnection, ILogger logger) {
-            _dbConnection = Guard.Against.Null(dbConnection, nameof(dbConnection));
+        public Database(IDbConnectionFactory dbConnectionFactory, ILogger logger) {
+            _dbConnectionFactory = Guard.Against.Null(dbConnectionFactory, nameof(dbConnectionFactory));
             _logger = Guard.Against.Null(logger, nameof(logger));
-
-            _dbConnection.EnsureOpen();
         }
 
         #endregion
@@ -74,6 +67,15 @@ namespace Nameless.Data {
 
         #region Private Methods
 
+        private IDbConnection GetDbConnection() {
+            if (_dbConnection is null) {
+                _dbConnection = _dbConnectionFactory.CreateDbConnection();
+                _dbConnection.EnsureOpen();
+            }
+
+            return _dbConnection;
+        }
+
         private void BlockAccessAfterDispose() {
             if (_disposed) {
                 throw new ObjectDisposedException(nameof(Database));
@@ -83,19 +85,17 @@ namespace Nameless.Data {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _dbTransaction?.Rollback();
-                _dbTransaction?.Dispose();
+                _dbConnection?.Dispose();
             }
 
-            _dbTransaction = null;
+            _dbConnection = null;
             _disposed = true;
         }
 
         private IDbCommand CreateCommand(string text, CommandType type, Parameter[] parameters) {
-            var command = _dbConnection.CreateCommand();
+            var command = GetDbConnection().CreateCommand();
             command.CommandText = text;
             command.CommandType = type;
-            command.Transaction = _dbTransaction;
 
             foreach (var parameter in parameters) {
                 command.Parameters.Add(
@@ -113,24 +113,10 @@ namespace Nameless.Data {
         #region IDatabase Members
 
         /// <inheritdoc/>
-        public void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
+        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
             BlockAccessAfterDispose();
 
-            _dbTransaction ??= _dbConnection.BeginTransaction(isolationLevel);
-        }
-
-        public void CommitTransaction() {
-            BlockAccessAfterDispose();
-
-            _dbTransaction?.Commit();
-            _dbTransaction = null;
-        }
-
-        public void RollbackTransaction() {
-            BlockAccessAfterDispose();
-
-            _dbTransaction?.Rollback();
-            _dbTransaction = null;
+            return GetDbConnection().BeginTransaction(isolationLevel);
         }
 
         /// <inheritdoc/>

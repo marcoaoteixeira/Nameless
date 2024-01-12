@@ -6,7 +6,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
         #region Private Constants
 
-        private const string CONNECTION_MULTIPLEXER_MANAGER_TOKEN = $"{nameof(IConnectionMultiplexerManager)}::ded40b71-3532-47ed-a3c9-9a5d76e37916";
+        private const string CONNECTION_MULTIPLEXER_MANAGER_TOKEN = $"{nameof(ConnectionMultiplexerManager)}::ded40b71-3532-47ed-a3c9-9a5d76e37916";
 
         #endregion
 

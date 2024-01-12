@@ -8,20 +8,10 @@ namespace Nameless.Data {
         #region Methods
 
         /// <summary>
-        /// Starts a new transaction.
+        /// Creates a new transaction.
         /// </summary>
         /// <param name="isolationLevel">The isolation level of the transaction.</param>
-        void StartTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified);
-
-        /// <summary>
-        /// Commits the current transaction.
-        /// </summary>
-        void CommitTransaction();
-
-        /// <summary>
-        /// Rolls-back the current transaction.
-        /// </summary>
-        void RollbackTransaction();
+        IDbTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified);
 
         /// <summary>
         /// Executes a not-query command against the data base.
@@ -37,7 +27,7 @@ namespace Nameless.Data {
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="text">The command text.</param>
-        /// <param name="type">The command type.</param>
+        /// <param name="type">The command type. Default is <see cref="CommandType.Text"/></param>
         /// <param name="mapper">The mapper for result projection.</param>
         /// <param name="parameters">The command parameters.</param>
         /// <returns>A <see cref="IEnumerable{TResult}"/> implementation instance, representing a collection of results.</returns>
@@ -47,7 +37,7 @@ namespace Nameless.Data {
         /// Executes a scalar command against the data base.
         /// </summary>
         /// <param name="text">The command text.</param>
-        /// <param name="type">The command type.</param>
+        /// <param name="type">The command type. Default is <see cref="CommandType.Text"/></param>
         /// <param name="parameters">The command parameters.</param>
         /// <returns>A <see cref="TResult"/> representing the query result.</returns>
         TResult? ExecuteScalar<TResult>(string text, CommandType type = CommandType.Text, params Parameter[] parameters);

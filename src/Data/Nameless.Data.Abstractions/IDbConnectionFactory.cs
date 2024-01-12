@@ -1,7 +1,7 @@
 using System.Data;
 
 namespace Nameless.Data {
-    public interface IDbConnectionManager {
+    public interface IDbConnectionFactory {
         #region Properties
 
         string ProviderName { get; }
@@ -11,10 +11,10 @@ namespace Nameless.Data {
         #region Methods
 
         /// <summary>
-        /// Retrieves a database connection.
+        /// Creates a database connection.
         /// </summary>
         /// <returns>An instance of <see cref="IDbConnection" />.</returns>
-        IDbConnection GetDbConnection();
+        IDbConnection CreateDbConnection();
 
         #endregion
     }

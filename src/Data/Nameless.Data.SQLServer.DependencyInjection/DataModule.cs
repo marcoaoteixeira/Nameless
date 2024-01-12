@@ -5,7 +5,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
     public sealed class DataModule : ModuleBase {
         #region Private Constants
 
-        private const string DB_CONNECTION_MANAGER_TOKEN = $"{nameof(DbConnectionManager)}::5f162895-ef20-43be-8e9f-f00241f8aa62";
+        private const string DB_CONNECTION_FACTORY_TOKEN = $"{nameof(DbConnectionFactory)}::5f162895-ef20-43be-8e9f-f00241f8aa62";
 
         #endregion
 
@@ -14,7 +14,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
         protected override void Load(ContainerBuilder builder) {
             builder
                 .Register(ResolveDbConnectionManager)
-                .Named<IDbConnectionManager>(DB_CONNECTION_MANAGER_TOKEN)
+                .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
@@ -29,22 +29,20 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IDbConnectionManager ResolveDbConnectionManager(IComponentContext ctx) {
+        private static IDbConnectionFactory ResolveDbConnectionManager(IComponentContext ctx) {
             var sqlServerOptions = GetOptionsFromContext<SQLServerOptions>(ctx)
                 ?? SQLServerOptions.Default;
-            var logger = GetLoggerFromContext<DbConnectionManager>(ctx);
-            var result = new DbConnectionManager(sqlServerOptions, logger);
+            var result = new DbConnectionFactory(sqlServerOptions);
 
             return result;
         }
 
         private static IDatabase ResolveDatabase(IComponentContext ctx) {
-            var dbConnectionManager = ctx.ResolveNamed<IDbConnectionManager>(
-                DB_CONNECTION_MANAGER_TOKEN
+            var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(
+                DB_CONNECTION_FACTORY_TOKEN
             );
-            var dbConnection = dbConnectionManager.GetDbConnection();
             var logger = GetLoggerFromContext<Database>(ctx);
-            var result = new Database(dbConnection, logger);
+            var result = new Database(dbConnectionFactory, logger);
 
             return result;
         }
