@@ -12,9 +12,9 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the index directory name.
+        /// Gets or sets the indexes root folder name.
         /// </summary>
-        public string IndexFolder { get; set; } = Path.Combine("App_Data", "Lucene");
+        public string IndexesRootFolderName { get; set; } = "Lucene";
 
         #endregion
     }

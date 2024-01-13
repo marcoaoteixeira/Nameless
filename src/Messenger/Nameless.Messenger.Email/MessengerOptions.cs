@@ -36,9 +36,9 @@
         /// <summary>
         /// Gets or sets the pickup directory path, relative to the
         /// application file storage. Default value is
-        /// "App_Data/Messenger/PickupDirectory".
+        /// "Messenger/PickupDirectory".
         /// </summary>
-        public string PickupDirectoryFolder { get; set; } = Path.Combine("App_Data", "Messenger", "PickupDirectory");
+        public string PickupDirectoryFolderName { get; set; } = "Messenger_PickupDirectory";
 
         #endregion
     }

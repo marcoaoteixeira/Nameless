@@ -20,8 +20,8 @@ namespace Nameless.FluentValidation.DependencyInjection {
                 .FindValidatorsInAssemblies(SupportAssemblies)
                 .ForEach(result => builder
                     .RegisterType(result.ValidatorType)
+                    .As(result.ValidatorType)
                     .As(result.InterfaceType)
-                    .As<IValidator>()
                     .InstancePerLifetimeScope()
                 );
 

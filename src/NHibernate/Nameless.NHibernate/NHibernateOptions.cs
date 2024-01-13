@@ -87,7 +87,7 @@ namespace Nameless.NHibernate {
         public bool ConsoleOutput { get; set; }
         public bool FileOutput { get; set; }
         public bool DropBeforeExecution { get; set; }
-        public string OutputFolder { get; set; } = Path.Combine("App_Data", "NHibernate");
+        public string OutputFolderName { get; set; } = "NHibernate";
 
         #endregion
     }

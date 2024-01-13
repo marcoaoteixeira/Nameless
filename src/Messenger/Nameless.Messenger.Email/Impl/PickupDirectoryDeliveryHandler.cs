@@ -31,8 +31,8 @@ namespace Nameless.Messenger.Email.Impl {
 
         public string GetPickupDirectoryPath()
             => Path.Combine(
-                _applicationContext.BasePath,
-                _options.PickupDirectoryFolder
+                _applicationContext.ApplicationDataFolderPath,
+                _options.PickupDirectoryFolderName
             );
 
         #endregion

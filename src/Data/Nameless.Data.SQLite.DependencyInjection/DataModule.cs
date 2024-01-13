@@ -5,7 +5,7 @@ namespace Nameless.Data.SQLite.DependencyInjection {
     public sealed class DataModule : ModuleBase {
         #region Private Constants
 
-        private const string DB_CONNECTION_MANAGER_TOKEN = $"{nameof(DbConnectionManager)}::a2ea46d6-b47e-4885-9fa1-ab7206ab3909";
+        private const string DB_CONNECTION_FACTORY_TOKEN = $"{nameof(DbConnectionFactory)}::a2ea46d6-b47e-4885-9fa1-ab7206ab3909";
 
         #endregion
 
@@ -13,14 +13,14 @@ namespace Nameless.Data.SQLite.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveDbConnectionManager)
-                .Named<IDbConnectionManager>(DB_CONNECTION_MANAGER_TOKEN)
+                .Register(ResolveDbConnectionFactory)
+                .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
                 .Register(ResolveDatabase)
                 .As<IDatabase>()
-                .SingleInstance();
+                .InstancePerLifetimeScope();
 
             base.Load(builder);
         }
@@ -29,22 +29,20 @@ namespace Nameless.Data.SQLite.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IDbConnectionManager ResolveDbConnectionManager(IComponentContext ctx) {
+        private static IDbConnectionFactory ResolveDbConnectionFactory(IComponentContext ctx) {
             var sqlServerOptions = GetOptionsFromContext<SQLiteOptions>(ctx)
                 ?? SQLiteOptions.Default;
-            var logger = GetLoggerFromContext<DbConnectionManager>(ctx);
-            var result = new DbConnectionManager(sqlServerOptions, logger);
+            var result = new DbConnectionFactory(sqlServerOptions);
 
             return result;
         }
 
         private static IDatabase ResolveDatabase(IComponentContext ctx) {
-            var dbConnectionManager = ctx.ResolveNamed<IDbConnectionManager>(
-                DB_CONNECTION_MANAGER_TOKEN
+            var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(
+                DB_CONNECTION_FACTORY_TOKEN
             );
-            var dbConnection = dbConnectionManager.GetDbConnection();
             var logger = GetLoggerFromContext<Database>(ctx);
-            var result = new Database(dbConnection, logger);
+            var result = new Database(dbConnectionFactory, logger);
 
             return result;
         }

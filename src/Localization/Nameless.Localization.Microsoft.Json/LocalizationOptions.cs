@@ -9,9 +9,10 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the relative path to the translation files folder.
+        /// Gets or sets the name of the folder that will be the place
+        /// to look for translations. Relative to the application base path.
         /// </summary>
-        public string TranslationFolder { get; set; } = Path.Combine("App_Data", "Localization");
+        public string TranslationFolderName { get; set; } = "Localization";
         /// <summary>
         /// Gets or sets whether will watch the translation files for changes
         /// and reload if necessary.

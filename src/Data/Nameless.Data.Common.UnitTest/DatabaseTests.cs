@@ -27,6 +27,16 @@ namespace Nameless.Data {
             return dbCommandMock;
         }
 
+        private static Mock<IDbConnectionFactory> CreateDbConnectionFactoryMock(IDbConnection dbConnection) {
+            var result = new Mock<IDbConnectionFactory>();
+
+            result
+                .Setup(mock => mock.CreateDbConnection())
+                .Returns(dbConnection);
+
+            return result;
+        }
+
         private static Mock<IDbConnection> CreateDbConnectionMock(IDbCommand? dbCommand = null) {
             var dbConnectionMock = new Mock<IDbConnection>();
 
@@ -63,9 +73,10 @@ namespace Nameless.Data {
                 .Returns(1);
 
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: Mock.Of<ILogger>()
             );
 
@@ -93,8 +104,10 @@ namespace Nameless.Data {
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var loggerMock = CreateLoggerMock();
 
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
+
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
 
@@ -129,9 +142,10 @@ namespace Nameless.Data {
                 .Returns("Field");
 
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: Mock.Of<ILogger>()
             );
 
@@ -158,9 +172,10 @@ namespace Nameless.Data {
 
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var loggerMock = CreateLoggerMock();
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
 
@@ -201,9 +216,10 @@ namespace Nameless.Data {
                 .Returns(dataReaderMock.Object);
 
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: Mock.Of<ILogger>()
             );
             var expected = new Animal { Name = "Dog" };
@@ -234,9 +250,10 @@ namespace Nameless.Data {
 
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var loggerMock = CreateLoggerMock();
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
 
@@ -268,115 +285,18 @@ namespace Nameless.Data {
                 .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
                 .Returns(Mock.Of<IDbTransaction>());
 
+            var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
+
             var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
+                dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: Mock.Of<ILogger>()
             );
 
             // act
-            sut.StartTransaction();
+            sut.BeginTransaction();
 
             // assert
             dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
-        }
-
-        [Test]
-        public void CommitTransaction_Should_Commit_Current_Transaction() {
-            // arrange
-            var dbTransactioMock = new Mock<IDbTransaction>();
-
-            var dbConnectionMock = CreateDbConnectionMock();
-            dbConnectionMock
-                .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
-                .Returns(dbTransactioMock.Object);
-
-            var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
-                logger: Mock.Of<ILogger>()
-            );
-
-            // act
-            sut.StartTransaction();
-            sut.CommitTransaction();
-
-            // assert
-            dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
-            dbTransactioMock.Verify(mock => mock.Commit());
-        }
-
-        [Test]
-        public void RollbackTransaction_Should_Rollback_Current_Transaction() {
-            // arrange
-            var dbTransactioMock = new Mock<IDbTransaction>();
-
-            var dbConnectionMock = CreateDbConnectionMock();
-            dbConnectionMock
-                .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
-                .Returns(dbTransactioMock.Object);
-
-            var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
-                logger: Mock.Of<ILogger>()
-            );
-
-            // act
-            sut.StartTransaction();
-            sut.RollbackTransaction();
-
-            // assert
-            dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
-            dbTransactioMock.Verify(mock => mock.Rollback());
-        }
-
-        [Test]
-        public void Call_Dispose_Should_Rollback_And_Dispose_Current_Transaction_If_Exists() {
-            // arrange
-            var dbTransactioMock = new Mock<IDbTransaction>();
-
-            var dbConnectionMock = CreateDbConnectionMock();
-            dbConnectionMock
-                .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
-                .Returns(dbTransactioMock.Object);
-
-            var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
-                logger: Mock.Of<ILogger>()
-            );
-
-            // act
-            sut.StartTransaction();
-            sut.Dispose();
-
-            // assert
-            dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
-            dbTransactioMock.Verify(mock => mock.Rollback());
-            dbTransactioMock.Verify(mock => mock.Dispose());
-        }
-
-        [Test]
-        public void Call_Two_Times_Dispose_Should_Rollback_And_Dispose_Current_Transaction_Just_Once() {
-            // arrange
-            var dbTransactioMock = new Mock<IDbTransaction>();
-
-            var dbConnectionMock = CreateDbConnectionMock();
-            dbConnectionMock
-                .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
-                .Returns(dbTransactioMock.Object);
-
-            var sut = new Database(
-                dbConnection: dbConnectionMock.Object,
-                logger: Mock.Of<ILogger>()
-            );
-
-            // act
-            sut.StartTransaction();
-            sut.Dispose();
-            sut.Dispose();
-
-            // assert
-            dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
-            dbTransactioMock.Verify(mock => mock.Rollback(), Times.Once);
-            dbTransactioMock.Verify(mock => mock.Dispose(), Times.Once);
         }
     }
 }

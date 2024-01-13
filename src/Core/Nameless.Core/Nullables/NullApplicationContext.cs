@@ -22,19 +22,32 @@ namespace Nameless {
 
         #region Private Constructors
 
-        private NullApplicationContext() { }
+        private NullApplicationContext() {
+            var assembly = typeof(NullApplicationContext).Assembly;
+
+            BasePath = assembly.GetDirectoryPath();
+
+            ApplicationDataFolderPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create),
+                ApplicationName
+            );
+
+            var version = assembly
+                .GetName()
+                .Version ?? new(major: 1, minor: 0, build: 0);
+
+            SemVer = $"{version.Major}.{version.Minor}.{version.Build}";
+        }
 
         #endregion
 
         #region IApplicationContext Members
 
         public string EnvironmentName => "Development";
-
-        public string ApplicationName => "Application";
-
-        public string BasePath => typeof(NullApplicationContext)
-            .Assembly
-            .GetDirectoryPath();
+        public string ApplicationName => "NullApplication";
+        public string BasePath { get; }
+        public string ApplicationDataFolderPath { get; }
+        public string SemVer { get; }
 
         #endregion
     }
