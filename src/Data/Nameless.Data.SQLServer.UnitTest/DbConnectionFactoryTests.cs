@@ -1,7 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 
 namespace Nameless.Data.SQLServer {
-    public class DbConnectionManagerTests {
+    public class DbConnectionFactoryTests {
+        [Ignore("This should be an integration test")]
         [Test]
         public void GetDbConnection_Should_Return_A_SqlConnection() {
             // arrange
@@ -16,8 +17,9 @@ namespace Nameless.Data.SQLServer {
             Assert.That(actual, Is.InstanceOf<SqlConnection>());
         }
 
+        [Ignore("This should be an integration test")]
         [Test]
-        public void Two_Calls_To_GetDbConnection_Should_Return_Same_SqlConnection() {
+        public void Two_Calls_To_GetDbConnection_Should_Return_Different_SqlConnection() {
             // arrange
             var sut = new DbConnectionFactory(
                 SQLServerOptions.Default
@@ -31,7 +33,7 @@ namespace Nameless.Data.SQLServer {
             Assert.Multiple(() => {
                 Assert.That(first, Is.InstanceOf<SqlConnection>());
                 Assert.That(second, Is.InstanceOf<SqlConnection>());
-                Assert.That(first.GetHashCode(), Is.EqualTo(second.GetHashCode()));
+                Assert.That(first.GetHashCode(), Is.Not.EqualTo(second.GetHashCode()));
             });
         }
     }
