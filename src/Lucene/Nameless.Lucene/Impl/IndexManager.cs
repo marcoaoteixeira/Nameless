@@ -78,8 +78,8 @@ namespace Nameless.Lucene {
 
         private string GetIndexDirectoryPath(string indexName)
             => Path.Combine(
-                _applicationContext.BasePath,
-                _options.IndexFolder,
+                _applicationContext.ApplicationDataFolderPath,
+                _options.IndexesRootFolderName,
                 indexName
             );
 

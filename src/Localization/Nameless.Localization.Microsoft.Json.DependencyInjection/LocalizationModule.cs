@@ -11,7 +11,6 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
 
         private const string CULTURE_CONTEXT_TOKEN = $"{nameof(CultureContext)}::ecab0589-3491-4404-945a-d65f290e6e56";
         private const string TRANSLATION_MANAGER_TOKEN = $"{nameof(TranslationManager)}::641b294e-533e-4156-a1ce-92662c2ffcf8";
-        private const string FILE_PROVIDER_TOKEN = $"{nameof(PhysicalFileProvider)}::672d2bfd-5fd9-46e6-bc5a-54245ab95d4d";
 
         #endregion
 
@@ -21,11 +20,6 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
             builder
                 .RegisterInstance(CultureContext.Instance)
                 .Named<ICultureContext>(CULTURE_CONTEXT_TOKEN)
-                .SingleInstance();
-
-            builder
-                .Register(RegisterFileProvider)
-                .Named<IFileProvider>(FILE_PROVIDER_TOKEN)
                 .SingleInstance();
 
             builder
@@ -50,13 +44,10 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IFileProvider RegisterFileProvider(IComponentContext ctx)
-            => new PhysicalFileProvider(typeof(LocalizationModule).Assembly.GetDirectoryPath());
-
         private static ITranslationManager ResolveTranslationManager(IComponentContext ctx) {
             var options = GetOptionsFromContext<LocalizationOptions>(ctx)
                 ?? LocalizationOptions.Default;
-            var fileProvider = ctx.ResolveNamed<IFileProvider>(FILE_PROVIDER_TOKEN);
+            var fileProvider = ctx.Resolve<IFileProvider>();
             var result = new TranslationManager(fileProvider, options);
 
             return result;

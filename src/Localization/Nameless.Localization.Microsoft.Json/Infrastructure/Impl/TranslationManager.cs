@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Nameless.Localization.Microsoft.Json.Objects;
 
@@ -20,7 +21,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Private Read-Only Fields
 
-        private readonly Dictionary<string, CacheEntry> _cache = [];
+        private readonly ConcurrentDictionary<string, CacheEntry> Cache = [];
         private readonly IFileProvider _fileProvider;
         private readonly LocalizationOptions _options;
 
@@ -45,7 +46,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
             var culture = (string)state;
 
-            if (_cache.Remove(culture, out var entry)) {
+            if (Cache.TryRemove(culture, out var entry)) {
                 entry.FileChangeHandler?.Dispose();
             }
         }
@@ -58,7 +59,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         }
 
         private string GetTranslationFilePath(string culture)
-            => Path.Combine(_options.TranslationFolder, $"{culture}.json");
+            => Path.Combine(_options.TranslationFolderName, $"{culture}.json");
 
         private string GetFileContent(string path) {
             var file = _fileProvider.GetFileInfo(path);
@@ -109,13 +110,9 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
                 return Translation.Empty;
             }
 
-            if (!_cache.TryGetValue(culture, out var value)) {
-                var entry = CreateCacheEntry(culture);
-                value = entry;
-                _cache.Add(culture, value);
-            }
+            var entry = Cache.GetOrAdd(culture, CreateCacheEntry);
 
-            return value.Translation;
+            return entry.Translation;
         }
 
         #endregion

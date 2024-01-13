@@ -13,14 +13,18 @@ namespace Nameless.NHibernate.DependencyInjection {
         private readonly IApplicationContext _appContext;
         private readonly ISession _session;
         private readonly Configuration _configuration;
-        private NHibernateSchemaExportOptions _schemaExportOptions;
+        private readonly NHibernateSchemaExportOptions _schemaExportOptions;
 
         #endregion
 
         #region Private Properties
 
         private string OutputFilePath
-            => Path.Combine(_appContext.BasePath, _schemaExportOptions.OutputFolder, $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.txt");
+            => Path.Combine(
+                _appContext.ApplicationDataFolderPath,
+                _schemaExportOptions.OutputFolderName,
+                $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.txt"
+            );
 
         #endregion
 
