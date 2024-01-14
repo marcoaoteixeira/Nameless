@@ -19,17 +19,5 @@
         }
 
         #endregion
-
-        #region Internal Static Inner Classes
-
-        internal static class Defaults {
-            #region Internal Static Read-Only Properties
-
-            internal const string SQLITE_PASS = "123456@AbC";
-
-            #endregion
-        }
-
-        #endregion
     }
 }
