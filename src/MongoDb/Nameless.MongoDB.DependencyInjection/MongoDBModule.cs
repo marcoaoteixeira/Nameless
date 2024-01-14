@@ -23,20 +23,18 @@ namespace Nameless.MongoDB.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
-            GetImplementations(typeof(ClassMappingBase<>));
-
             builder
-                .Register(ResolveMongoClient)
+                .Register(MongoClientResolver)
                 .Named<IMongoClient>(MONGO_CLIENT_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveMongoDatabase)
+                .Register(MongoDatabaseResolver)
                 .Named<IMongoDatabase>(MONGO_DATABASE_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveMongoCollectionProvider)
+                .Register(MongoCollectionProviderResolver)
                 .As<IMongoCollectionProvider>()
                 .SingleInstance();
 
@@ -54,7 +52,7 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IMongoClient ResolveMongoClient(IComponentContext ctx) {
+        private static IMongoClient MongoClientResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<MongoOptions>(ctx)
                 ?? MongoOptions.Default;
             var settings = new MongoClientSettings {
@@ -65,7 +63,7 @@ namespace Nameless.MongoDB.DependencyInjection {
             return result;
         }
 
-        private static IMongoDatabase ResolveMongoDatabase(IComponentContext ctx) {
+        private static IMongoDatabase MongoDatabaseResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<MongoOptions>(ctx)
                 ?? MongoOptions.Default;
             var client = ctx.ResolveNamed<IMongoClient>(MONGO_CLIENT_TOKEN);
@@ -74,7 +72,7 @@ namespace Nameless.MongoDB.DependencyInjection {
             return result;
         }
 
-        private static IMongoCollectionProvider ResolveMongoCollectionProvider(IComponentContext ctx) {
+        private static IMongoCollectionProvider MongoCollectionProviderResolver(IComponentContext ctx) {
             var database = ctx.ResolveNamed<IMongoDatabase>(MONGO_DATABASE_TOKEN);
             var result = new MongoCollectionProvider(database, CollectionNamingStrategy.Instance);
 

@@ -26,7 +26,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
                 );
 
             builder
-                .Register(ResolveValidatorManager)
+                .Register(ValidatorManagerResolver)
                 .As<IValidatorManager>()
                 .SingleInstance();
 
@@ -37,7 +37,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IValidatorManager ResolveValidatorManager(IComponentContext ctx) {
+        private static IValidatorManager ValidatorManagerResolver(IComponentContext ctx) {
             var validators = ctx.Resolve<IValidator[]>();
             var logger = GetLoggerFromContext<ValidatorManager>(ctx);
             var result = new ValidatorManager(validators, logger);

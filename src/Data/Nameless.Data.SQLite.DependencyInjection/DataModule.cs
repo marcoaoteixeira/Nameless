@@ -13,12 +13,12 @@ namespace Nameless.Data.SQLite.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveDbConnectionFactory)
+                .Register(DbConnectionFactoryResolver)
                 .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveDatabase)
+                .Register(DatabaseResolver)
                 .As<IDatabase>()
                 .InstancePerLifetimeScope();
 
@@ -29,7 +29,7 @@ namespace Nameless.Data.SQLite.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IDbConnectionFactory ResolveDbConnectionFactory(IComponentContext ctx) {
+        private static IDbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx) {
             var sqlServerOptions = GetOptionsFromContext<SQLiteOptions>(ctx)
                 ?? SQLiteOptions.Default;
             var result = new DbConnectionFactory(sqlServerOptions);
@@ -37,7 +37,7 @@ namespace Nameless.Data.SQLite.DependencyInjection {
             return result;
         }
 
-        private static IDatabase ResolveDatabase(IComponentContext ctx) {
+        private static IDatabase DatabaseResolver(IComponentContext ctx) {
             var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(
                 DB_CONNECTION_FACTORY_TOKEN
             );

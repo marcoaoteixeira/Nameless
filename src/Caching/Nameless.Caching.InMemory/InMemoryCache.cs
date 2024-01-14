@@ -2,37 +2,61 @@
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
-    public sealed class InMemoryCache : ICache {
+    public sealed class InMemoryCache : ICache, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IMemoryCache _memoryCache;
+        private readonly MemoryCacheOptions _options;
+
+        #endregion
+
+        #region Private Fields
+
+        private IMemoryCache? _memoryCache;
+        private bool _disposed;
 
         #endregion
 
         #region Public Constructors
 
-        public InMemoryCache(IMemoryCache memoryCache) {
-            _memoryCache = Guard.Against.Null(memoryCache, nameof(memoryCache));
+        public InMemoryCache()
+            : this(new()) { }
+
+        public InMemoryCache(MemoryCacheOptions options) {
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion
 
         #region Private Static Methods
 
-        private static void OnEviction(
-            EvictionCallback evictionCallback,
-            string key,
-            object? value,
-            string reason,
-            CancellationTokenSource cts
-        ) {
+        private void BlockAccessAfterDispose() {
+            if (_disposed) {
+                throw new ObjectDisposedException(nameof(InMemoryCache));
+            }
+        }
+
+        private void Dispose(bool disposing) {
+            if (_disposed) {
+                return;
+            }
+
+            if (disposing) {
+                _memoryCache?.Dispose();
+            }
+
+            _memoryCache = null;
+            _disposed = true;
+        }
+
+        private IMemoryCache GetMemoryCache()
+            => _memoryCache ??= new MemoryCache(_options);
+
+        private static void OnEviction(EvictionCallback evictionCallback, string key, object? value, string reason, CancellationTokenSource cts) {
             evictionCallback(key, value, reason);
             cts.Dispose();
         }
 
-        private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions(
-            CacheEntryOptions? opts = null
-        ) {
+        private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions(CacheEntryOptions? opts) {
             if (opts is null || opts.ExpiresIn == default) {
                 return new();
             }
@@ -59,35 +83,27 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(
-            string key,
-            object value,
-            CacheEntryOptions? opts = null,
-            CancellationToken cancellationToken = default
-        ) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts, CancellationToken cancellationToken) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
             Guard.Against.Null(value, nameof(value));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _memoryCache.Set(
+            var entry = GetMemoryCache().Set(
                 key,
                 value,
                 CreateMemoryCacheEntryOptions(opts)
-            ) is not null;
+            );
 
-            return Task.FromResult(result);
+            return Task.FromResult(entry is not null);
         }
 
-        public Task<T?> GetAsync<T>(
-            string key,
-            CancellationToken cancellationToken = default
-        ) {
+        public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var value = _memoryCache.Get(key);
+            var value = GetMemoryCache().Get(key);
 
             return Task.FromResult(value is T result
                 ? result
@@ -95,17 +111,23 @@ namespace Nameless.Caching.InMemory {
             );
         }
 
-        public Task<bool> RemoveAsync(
-            string key,
-            CancellationToken cancellationToken = default
-        ) {
+        public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            _memoryCache.Remove(key);
+            GetMemoryCache().Remove(key);
 
             return Task.FromResult(true);
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

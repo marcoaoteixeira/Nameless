@@ -28,8 +28,6 @@ namespace Nameless.Data.SQLServer {
             var connectionString = _options.GetConnectionString();
             var result = new SqlConnection(connectionString);
 
-            result.Open();
-
             return result;
         }
 

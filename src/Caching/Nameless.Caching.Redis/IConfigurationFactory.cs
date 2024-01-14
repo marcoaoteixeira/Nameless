@@ -1,10 +1,10 @@
 ﻿using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
-    public interface IConnectionMultiplexerManager {
+    public interface IConfigurationFactory {
         #region Methods
 
-        IConnectionMultiplexer GetMultiplexer();
+        ConfigurationOptions CreateConfigurationOptions();
 
         #endregion
     }

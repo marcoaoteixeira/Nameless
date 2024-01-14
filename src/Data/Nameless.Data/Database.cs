@@ -113,14 +113,14 @@ namespace Nameless.Data {
         #region IDatabase Members
 
         /// <inheritdoc/>
-        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified) {
+        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) {
             BlockAccessAfterDispose();
 
             return GetDbConnection().BeginTransaction(isolationLevel);
         }
 
         /// <inheritdoc/>
-        public int ExecuteNonQuery(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
+        public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
             Guard.Against.NullOrWhiteSpace(text, nameof(text));
@@ -139,7 +139,7 @@ namespace Nameless.Data {
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type = CommandType.Text, params Parameter[] parameters) {
+        public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
             Guard.Against.NullOrWhiteSpace(text, nameof(text));
@@ -164,7 +164,7 @@ namespace Nameless.Data {
         }
 
         /// <inheritdoc/>
-        public TResult? ExecuteScalar<TResult>(string text, CommandType type = CommandType.Text, params Parameter[] parameters) {
+        public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
             BlockAccessAfterDispose();
 
             Guard.Against.NullOrWhiteSpace(text, nameof(text));

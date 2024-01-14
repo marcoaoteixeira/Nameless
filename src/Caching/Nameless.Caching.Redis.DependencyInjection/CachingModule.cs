@@ -6,7 +6,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
         #region Private Constants
 
-        private const string CONNECTION_MULTIPLEXER_MANAGER_TOKEN = $"{nameof(ConnectionMultiplexerManager)}::ded40b71-3532-47ed-a3c9-9a5d76e37916";
+        private const string CONFIGURATION_FACTORY_TOKEN = $"{nameof(IConfigurationFactory)}::cb35ebee-c898-43de-8c3b-abbe8e9c71b2";
 
         #endregion
 
@@ -14,12 +14,12 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveConnectionMultiplexerManager)
-                .Named<IConnectionMultiplexerManager>(CONNECTION_MULTIPLEXER_MANAGER_TOKEN)
+                .Register(ConfigurationFactoryResolver)
+                .As<IConfigurationFactory>()
                 .SingleInstance();
 
             builder
-                .Register(ResolveRedisCache)
+                .Register(CacheResolver)
                 .As<ICache>()
                 .SingleInstance();
 
@@ -30,20 +30,18 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IConnectionMultiplexerManager ResolveConnectionMultiplexerManager(IComponentContext ctx) {
+        private static IConfigurationFactory ConfigurationFactoryResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<RedisOptions>(ctx)
                 ?? RedisOptions.Default;
-            var logger = GetLoggerFromContext<ConnectionMultiplexerManager>(ctx);
-            var result = new ConnectionMultiplexerManager(options, logger);
+            var logger = GetLoggerFromContext<RedisCache>(ctx);
+            var result = new ConfigurationFactory(options, logger);
 
             return result;
         }
 
-        private static ICache ResolveRedisCache(IComponentContext ctx) {
-            var connectionMultiplexerManager = ctx.ResolveNamed<IConnectionMultiplexerManager>(CONNECTION_MULTIPLEXER_MANAGER_TOKEN);
-            var multiplexer = connectionMultiplexerManager.GetMultiplexer();
-            var database = multiplexer.GetDatabase();
-            var result = new RedisCache(database);
+        private static ICache CacheResolver(IComponentContext ctx) {
+            var configurationFactory = ctx.ResolveNamed<IConfigurationFactory>(CONFIGURATION_FACTORY_TOKEN);
+            var result = new RedisCache(configurationFactory);
 
             return result;
         }

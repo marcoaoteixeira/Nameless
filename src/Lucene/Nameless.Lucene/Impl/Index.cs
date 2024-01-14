@@ -105,14 +105,10 @@ namespace Nameless.Lucene {
 
         #region Private Methods
 
-        private void Initialize() {
-            _directory = FSDirectory.Open(
+        private void Initialize()
+            => _directory = FSDirectory.Open(
                 path: new DirectoryInfo(_indexDirectoryPath)
             );
-
-            // Creates the index structure
-            //ConsumeIndexWriter(_ => { });
-        }
 
         private bool IndexDirectoryExists()
             => System.IO.Directory.Exists(_indexDirectoryPath);
