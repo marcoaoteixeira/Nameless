@@ -13,8 +13,7 @@ namespace Nameless.Data.SQLite {
         #region Public Constructors
 
         public SQLiteOptions() {
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS)
-                ?? Root.Defaults.SQLITE_PASS;
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS);
         }
 
         #endregion
@@ -31,18 +30,15 @@ namespace Nameless.Data.SQLite {
         public bool UseCredentials
             => !string.IsNullOrWhiteSpace(Password);
 
-#endregion
+        #endregion
 
         #region Public Methods
 
         public string GetConnectionString() {
             var connStr = string.Empty;
 
-            connStr += $"Data Source={(UseInMemory ? DatabaseName : ":memory:")};";
-
-            connStr += UseCredentials
-                ? $"Password={Password};"
-                : string.Empty;
+            connStr += $"Data Source={(UseInMemory ? ":memory:" : DatabaseName)};";
+            connStr += UseCredentials ? $"Password={Password};" : string.Empty;
 
             return connStr;
         }
