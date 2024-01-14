@@ -13,7 +13,8 @@ namespace Nameless.Data.SQLite {
         #region Public Constructors
 
         public SQLiteOptions() {
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS);
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS)
+                ?? string.Empty;
         }
 
         #endregion
