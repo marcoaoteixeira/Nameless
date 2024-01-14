@@ -13,12 +13,12 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveDbConnectionManager)
+                .Register(DbConnectionFactoryResolver)
                 .Named<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveDatabase)
+                .Register(DatabaseResolver)
                 .As<IDatabase>()
                 .SingleInstance();
 
@@ -29,7 +29,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IDbConnectionFactory ResolveDbConnectionManager(IComponentContext ctx) {
+        private static IDbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx) {
             var sqlServerOptions = GetOptionsFromContext<SQLServerOptions>(ctx)
                 ?? SQLServerOptions.Default;
             var result = new DbConnectionFactory(sqlServerOptions);
@@ -37,7 +37,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
             return result;
         }
 
-        private static IDatabase ResolveDatabase(IComponentContext ctx) {
+        private static IDatabase DatabaseResolver(IComponentContext ctx) {
             var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(
                 DB_CONNECTION_FACTORY_TOKEN
             );

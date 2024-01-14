@@ -16,7 +16,7 @@ namespace Nameless.Lucene.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveIndexProvider)
+                .Register(IndexProviderResolver)
                 .As<IIndexManager>()
                 .SingleInstance();
 
@@ -27,7 +27,7 @@ namespace Nameless.Lucene.DependencyInjection {
                 .SingleInstance();
 
             builder
-                .Register(ResolveAnalyzerProvider)
+                .Register(AnalyzerProviderResolver)
                 .Named<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN)
                 .SingleInstance();
 
@@ -38,14 +38,14 @@ namespace Nameless.Lucene.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IAnalyzerProvider ResolveAnalyzerProvider(IComponentContext ctx) {
+        private static IAnalyzerProvider AnalyzerProviderResolver(IComponentContext ctx) {
             var analyzerSelector = ctx.ResolveNamed<IAnalyzerSelector[]>(ANALYZER_SELECTOR_TOKEN);
             var result = new AnalyzerProvider(analyzerSelector);
 
             return result;
         }
 
-        private static IIndexManager ResolveIndexProvider(IComponentContext ctx) {
+        private static IIndexManager IndexProviderResolver(IComponentContext ctx) {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);

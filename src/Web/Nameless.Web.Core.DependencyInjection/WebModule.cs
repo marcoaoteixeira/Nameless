@@ -12,7 +12,7 @@ namespace Nameless.Web.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveJwtService)
+                .Register(JwtServiceResolver)
                 .As<IJwtService>()
                 .SingleInstance();
 
@@ -23,7 +23,7 @@ namespace Nameless.Web.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IJwtService ResolveJwtService(IComponentContext ctx) {
+        private static IJwtService JwtServiceResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<JwtOptions>(ctx)
                 ?? JwtOptions.Default;
             var clock = ctx.ResolveOptional<IClock>()

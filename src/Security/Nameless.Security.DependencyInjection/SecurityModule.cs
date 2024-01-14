@@ -8,7 +8,7 @@ namespace Nameless.Security.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveCryptoProvider)
+                .Register(CryptoProviderResolver)
                 .As<ICryptoProvider>()
                 .InstancePerLifetimeScope();
 
@@ -24,7 +24,7 @@ namespace Nameless.Security.DependencyInjection {
 
         #region Private Static Methods
 
-        private static ICryptoProvider ResolveCryptoProvider(IComponentContext ctx) {
+        private static ICryptoProvider CryptoProviderResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<RijndaelCryptoOptions>(ctx)
                 ?? RijndaelCryptoOptions.Default;
             var result = new RijndaelCryptoProvider(options);

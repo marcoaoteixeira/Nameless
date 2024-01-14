@@ -16,12 +16,12 @@ namespace Nameless.Messenger.Email.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveSmtpClientFactory)
+                .Register(SmtpClientFactoryResolver)
                 .Named<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveDeliveryHandler)
+                .Register(DeliveryHandlerResolver)
                 .Named<IDeliveryHandler>(DELIVERY_HANDLER_TOKEN)
                 .SingleInstance();
 
@@ -37,7 +37,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
 
         #region Private Static Methods
 
-        private static ISmtpClientFactory ResolveSmtpClientFactory(IComponentContext ctx) {
+        private static ISmtpClientFactory SmtpClientFactoryResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<MessengerOptions>(ctx)
                 ?? MessengerOptions.Default;
             var result = new SmtpClientFactory(options);
@@ -45,18 +45,18 @@ namespace Nameless.Messenger.Email.DependencyInjection {
             return result;
         }
 
-        private static IDeliveryHandler ResolveDeliveryHandler(IComponentContext ctx) {
+        private static IDeliveryHandler DeliveryHandlerResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<MessengerOptions>(ctx)
                 ?? MessengerOptions.Default;
 
             return options.DeliveryMode switch {
-                DeliveryMode.Network => ResolveSmtpClientDeliveryHandler(ctx),
-                DeliveryMode.PickupDirectory => ResolvePickupDirectoryDeliveryHandler(ctx),
+                DeliveryMode.Network => SmtpClientDeliveryHandlerResolver(ctx),
+                DeliveryMode.PickupDirectory => PickupDirectoryDeliveryHandlerResolver(ctx),
                 _ => throw new InvalidOperationException("Undefined delivery mode")
             };
         }
 
-        private static SmtpClientDeliveryHandler ResolveSmtpClientDeliveryHandler(IComponentContext ctx) {
+        private static SmtpClientDeliveryHandler SmtpClientDeliveryHandlerResolver(IComponentContext ctx) {
             var smtpClientFactory = ctx
                 .ResolveNamed<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_TOKEN);
             var smtpClientDeliveryHandler = new SmtpClientDeliveryHandler(
@@ -66,7 +66,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
             return smtpClientDeliveryHandler;
         }
 
-        private static PickupDirectoryDeliveryHandler ResolvePickupDirectoryDeliveryHandler(IComponentContext ctx) {
+        private static PickupDirectoryDeliveryHandler PickupDirectoryDeliveryHandlerResolver(IComponentContext ctx) {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var options = GetOptionsFromContext<MessengerOptions>(ctx)

@@ -23,12 +23,12 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
                 .SingleInstance();
 
             builder
-                .Register(ResolveTranslationManager)
+                .Register(TranslationManagerResolver)
                 .Named<ITranslationManager>(TRANSLATION_MANAGER_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveStringLocalizerFactory)
+                .Register(StringLocalizerFactoryResolver)
                 .As<IStringLocalizerFactory>()
                 .SingleInstance();
 
@@ -44,7 +44,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
 
         #region Private Static Methods
 
-        private static ITranslationManager ResolveTranslationManager(IComponentContext ctx) {
+        private static ITranslationManager TranslationManagerResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<LocalizationOptions>(ctx)
                 ?? LocalizationOptions.Default;
             var fileProvider = ctx.Resolve<IFileProvider>();
@@ -53,7 +53,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
             return result;
         }
 
-        private static IStringLocalizerFactory ResolveStringLocalizerFactory(IComponentContext ctx) {
+        private static IStringLocalizerFactory StringLocalizerFactoryResolver(IComponentContext ctx) {
             var cultureContext = ctx.ResolveNamed<ICultureContext>(CULTURE_CONTEXT_TOKEN);
             var translationManager = ctx.ResolveNamed<ITranslationManager>(TRANSLATION_MANAGER_TOKEN);
             var result = new StringLocalizerFactory(cultureContext, translationManager);

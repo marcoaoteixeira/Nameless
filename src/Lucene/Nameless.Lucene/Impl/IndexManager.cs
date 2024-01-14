@@ -8,7 +8,8 @@ namespace Nameless.Lucene {
     public sealed class IndexManager : IIndexManager, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly ConcurrentDictionary<string, IIndex> _cache = new(StringComparer.InvariantCultureIgnoreCase);
+        private readonly ConcurrentDictionary<string, IIndex> Cache = new(StringComparer.InvariantCultureIgnoreCase);
+
         private readonly IApplicationContext _applicationContext;
         private readonly IAnalyzerProvider _analyzerProvider;
         private readonly LuceneOptions _options;
@@ -64,13 +65,13 @@ namespace Nameless.Lucene {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                var indexes = _cache.Values.ToArray();
+                var indexes = Cache.Values.ToArray();
                 foreach (var index in indexes) {
                     if (index is IDisposable disposable) {
                         disposable.Dispose();
                     }
                 }
-                _cache.Clear();
+                Cache.Clear();
             }
 
             _disposed = true;
@@ -92,13 +93,13 @@ namespace Nameless.Lucene {
 
         #endregion
 
-        #region IIndexProvider Members
+        #region IIndexManager Members
 
         /// <inheritdoc />
         public void Delete(string indexName) {
             BlockAccessAfterDispose();
 
-            if (_cache.TryRemove(indexName, out var index)) {
+            if (Cache.TryRemove(indexName, out var index)) {
                 if (index is IDisposable disposable) {
                     disposable.Dispose();
                 }
@@ -114,21 +115,21 @@ namespace Nameless.Lucene {
         public bool Exists(string indexName) {
             BlockAccessAfterDispose();
 
-            return _cache.ContainsKey(indexName);
+            return Cache.ContainsKey(indexName);
         }
 
         /// <inheritdoc />
         public IIndex GetOrCreate(string indexName) {
             BlockAccessAfterDispose();
 
-            return _cache.GetOrAdd(indexName, Create);
+            return Cache.GetOrAdd(indexName, Create);
         }
 
         /// <inheritdoc />
         public IEnumerable<string> List() {
             BlockAccessAfterDispose();
 
-            return _cache.Keys;
+            return Cache.Keys;
         }
 
         #endregion

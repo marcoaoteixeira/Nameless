@@ -20,16 +20,15 @@ namespace Nameless.Autofac {
         /// <summary>
         /// Protected constructor.
         /// </summary>
-        protected ModuleBase() {
-            SupportAssemblies = [];
-        }
+        protected ModuleBase()
+            : this([]) { }
 
         /// <summary>
         /// Protected constructor.
         /// </summary>
         /// <param name="supportAssemblies">The support assemblies.</param>
         protected ModuleBase(Assembly[] supportAssemblies) {
-            SupportAssemblies = supportAssemblies ?? [];
+            SupportAssemblies = Guard.Against.Null(supportAssemblies, nameof(supportAssemblies));
         }
 
         #endregion
@@ -49,7 +48,11 @@ namespace Nameless.Autofac {
             var configuration = ctx.ResolveOptional<IConfiguration>();
             return configuration is not null
                 ? configuration
-                    .GetSection(typeof(TOptions).Name.RemoveTail(Root.Defaults.OptionsSettingsTails))
+                    .GetSection(
+                        key: typeof(TOptions)
+                            .Name
+                            .RemoveTail(Root.Defaults.OptionsSettingsTails)
+                    )
                     .Get<TOptions>()
                 : default;
         }

@@ -1,9 +1,11 @@
 ﻿using Autofac;
+using Autofac.Core;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.NHibernate.Services;
 using Nameless.NHibernate.Services.Impl;
 using NHibernate;
+using NHibernate.Tool.hbm2ddl;
 
 namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
@@ -18,24 +20,20 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ResolveConfigurationBuilder)
+                .Register(ConfigurationBuilderResolver)
                 .Named<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .SingleInstance();
 
             builder
-                .Register(ResolveSessionFactory)
+                .Register(SessionFactoryResolver)
                 .Named<ISessionFactory>(SESSION_FACTORY_TOKEN)
+                .OnActivated(NHibernateStartUpRoutine) // StartUp should only occurs once.
                 .SingleInstance();
 
             builder
-                .Register(ResolveSession)
+                .Register(SessionResolver)
                 .As<ISession>()
                 .InstancePerLifetimeScope();
-
-            builder
-                .Register(ResolveBootstrapper)
-                .As<IStartable>()
-                .InstancePerDependency();
 
             base.Load(builder);
         }
@@ -44,7 +42,7 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IConfigurationBuilder ResolveConfigurationBuilder(IComponentContext ctx) {
+        private static IConfigurationBuilder ConfigurationBuilderResolver(IComponentContext ctx) {
             var options = GetOptionsFromContext<NHibernateOptions>(ctx)
                 ?? NHibernateOptions.Default;
             var result = new ConfigurationBuilder(options);
@@ -52,7 +50,7 @@ namespace Nameless.NHibernate.DependencyInjection {
             return result;
         }
 
-        private static ISessionFactory ResolveSessionFactory(IComponentContext ctx) {
+        private static ISessionFactory SessionFactoryResolver(IComponentContext ctx) {
             var configuration = ctx
                 .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .Build();
@@ -61,30 +59,45 @@ namespace Nameless.NHibernate.DependencyInjection {
             return result;
         }
 
-        private static ISession ResolveSession(IComponentContext ctx) {
+        private static ISession SessionResolver(IComponentContext ctx) {
             var sessionFactory = ctx.ResolveNamed<ISessionFactory>(SESSION_FACTORY_TOKEN);
             var result = sessionFactory.OpenSession();
 
             return result;
         }
 
-        private static IStartable ResolveBootstrapper(IComponentContext ctx) {
+        private static void NHibernateStartUpRoutine(IActivatedEventArgs<ISessionFactory> args) {
+            var ctx = args.Context;
+            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
+                ?? NHibernateOptions.Default;
+
+            if (!options.SchemaExport.ExecuteSchemaExport) {
+                return;
+            }
+
             var appContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
-            var session = ctx.Resolve<ISession>();
+            var outputFilePath = Path.Combine(
+                appContext.ApplicationDataFolderPath,
+                options.SchemaExport.OutputFolderName,
+                $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.txt"
+            );
+
+            using var writer = options.SchemaExport.FileOutput
+                ? File.CreateText(outputFilePath)
+                : TextWriter.Null;
+
+            using var session = args.Instance.OpenSession();
             var configuration = ctx
                 .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
                 .Build();
-            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
-                ?? NHibernateOptions.Default;
-            var result = new Bootstrapper(
-                appContext,
-                session,
-                configuration,
-                options.SchemaExport
+            new SchemaExport(configuration).Execute(
+                useStdOut: options.SchemaExport.ConsoleOutput,
+                execute: true,
+                justDrop: false,
+                connection: session.Connection,
+                exportOutput: writer
             );
-
-            return result;
         }
 
         #endregion

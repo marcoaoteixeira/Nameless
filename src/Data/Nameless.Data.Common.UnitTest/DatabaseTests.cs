@@ -293,7 +293,7 @@ namespace Nameless.Data {
             );
 
             // act
-            sut.BeginTransaction();
+            sut.BeginTransaction(IsolationLevel.Unspecified);
 
             // assert
             dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
