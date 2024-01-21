@@ -49,8 +49,7 @@ namespace Nameless.Lucene.DependencyInjection {
             var applicationContext = ctx.ResolveOptional<IApplicationContext>()
                 ?? NullApplicationContext.Instance;
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);
-            var options = GetOptionsFromContext<LuceneOptions>(ctx)
-                ?? LuceneOptions.Default;
+            var options = ctx.GetOptions<LuceneOptions>();
             var result = new IndexManager(applicationContext, analyzerProvider, options);
 
             return result;

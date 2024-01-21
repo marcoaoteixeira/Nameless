@@ -20,18 +20,5 @@
         }
 
         #endregion
-
-        #region Internal Static Inner Classes
-
-        internal static class Defaults {
-            #region Internal Static Read-Only Properties
-
-            internal const string SQLSERVER_USER = "sa";
-            internal const string SQLSERVER_PASS = "123456@AbC";
-
-            #endregion
-        }
-
-        #endregion
     }
 }

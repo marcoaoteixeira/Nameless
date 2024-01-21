@@ -16,6 +16,30 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return self;
         }
 
+        public static string[] GetRoutingKeys(this ProducerArgs self) {
+            var arg = self.Get(Root.ProducerArgsTokens.ROUTING_KEYS)
+                ?? Array.Empty<string>();
+
+            return (string[])arg;
+        }
+
+        public static ProducerArgs SetRoutingKeys(this ProducerArgs self, string[] value) {
+            self.Set(Root.ProducerArgsTokens.ROUTING_KEYS, value ?? []);
+            return self;
+        }
+
+        public static bool GetMandatory(this ProducerArgs self) {
+            var arg = self.Get(Root.ProducerArgsTokens.MANDATORY)
+                ?? false;
+
+            return (bool)arg;
+        }
+
+        public static ProducerArgs SetMandatory(this ProducerArgs self, bool value) {
+            self.Set(Root.ProducerArgsTokens.MANDATORY, value);
+            return self;
+        }
+
         public static string? GetAppId(this ProducerArgs self) {
             var arg = self.Get(nameof(IBasicProperties.AppId));
 

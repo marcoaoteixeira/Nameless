@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Nameless.Autofac;
 using Nameless.Caching.Redis.Impl;
+using Nameless.Caching.Redis.Options;
 
 namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
@@ -31,10 +32,10 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         #region Private Static Methods
 
         private static IConfigurationFactory ConfigurationFactoryResolver(IComponentContext ctx) {
-            var options = GetOptionsFromContext<RedisOptions>(ctx)
-                ?? RedisOptions.Default;
-            var logger = GetLoggerFromContext<RedisCache>(ctx);
-            var result = new ConfigurationFactory(options, logger);
+            var result = new ConfigurationFactory(
+                options: ctx.GetOptions<RedisOptions>(),
+                logger: ctx.GetLogger<RedisCache>()
+            );
 
             return result;
         }

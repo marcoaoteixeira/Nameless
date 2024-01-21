@@ -47,7 +47,7 @@ namespace Nameless.Web.Services.Impl {
                 var name = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Name);
                 Assert.That(name, Is.Not.Null);
                 Assert.That(name.Value, Is.EqualTo(jwtClaims.Name));
-                
+
                 var email = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email);
                 Assert.That(email, Is.Not.Null);
                 Assert.That(email.Value, Is.EqualTo(jwtClaims.Email));

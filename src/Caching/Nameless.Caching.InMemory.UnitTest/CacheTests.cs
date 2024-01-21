@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-
-namespace Nameless.Caching.InMemory {
+﻿namespace Nameless.Caching.InMemory {
     public class CacheTests {
         [Test]
         public async Task Set_New_Object_To_Cache() {
             // arrange
-            ICacheEntry entry = new FakeCacheEntry();
             var value = new {
                 Id = 1,
                 Name = "Test"
@@ -17,9 +14,7 @@ namespace Nameless.Caching.InMemory {
             var result = await cache.SetAsync("Key", value);
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(result, Is.True);
-            });
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -54,9 +49,7 @@ namespace Nameless.Caching.InMemory {
             var result = await cache.RemoveAsync("Key");
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(result, Is.True);
-            });
+            Assert.That(result, Is.True);
         }
     }
 }

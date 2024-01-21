@@ -29,7 +29,7 @@ namespace Nameless.Lucene {
 
             var indexManager = container.Resolve<IIndexManager>();
             var index = indexManager.GetOrCreate("temporary");
-            
+
             var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
                 .Set("Name", "Test User", FieldOptions.Store)
                 .Set("Email", "test_user@test.com", FieldOptions.Store)
@@ -40,9 +40,7 @@ namespace Nameless.Lucene {
 
             index.StoreDocuments([document]);
 
-            Assert.Multiple(() => {
-                Assert.That(index, Is.Not.Null);
-            });
+            Assert.That(index, Is.Not.Null);
         }
 
         [Test, Ignore("Just for local machine")]

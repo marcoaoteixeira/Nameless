@@ -77,8 +77,7 @@ namespace Nameless.Web.Infrastructure {
 
         private async Task InnerExecuteAsync(CancellationToken stoppingToken) {
             while (await ContinueAsync(_timer!, stoppingToken)) {
-                try { await ExecuteAsync(stoppingToken); }
-                catch (Exception ex) {
+                try { await ExecuteAsync(stoppingToken); } catch (Exception ex) {
                     _logger.LogError(
                         exception: ex,
                         message: "Error while executing recurring task: {Message}",
@@ -132,8 +131,7 @@ namespace Nameless.Web.Infrastructure {
                 return;
             }
 
-            try { _stoppingCts!.Cancel(); }
-            finally {
+            try { _stoppingCts!.Cancel(); } finally {
                 // Wait until the task completes or the stop token triggers
                 var taskCompletionSource = new TaskCompletionSource<object>();
                 using var registration = cancellationToken.Register(

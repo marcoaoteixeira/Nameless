@@ -5,7 +5,7 @@
             // arrange
             var sut = new Region {
                 Messages = [
-                    new() { ID = "Message A", Text = "Message A"},
+                    new() { ID = "Message A", Text = "Message A" },
                     new() { ID = "Message B", Text = "Message B" },
                     new() { ID = "Message C", Text = "Message C" }
                 ]

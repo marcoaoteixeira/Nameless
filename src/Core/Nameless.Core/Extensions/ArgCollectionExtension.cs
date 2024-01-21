@@ -7,7 +7,7 @@ namespace Nameless {
 
         public static string ToJson(this ArgCollection? self)
             => self is not null
-                ? JsonSerializer.Serialize(self)
+                ? JsonSerializer.Serialize(self.ToArray())
                 : string.Empty;
 
         #endregion

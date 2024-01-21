@@ -223,8 +223,7 @@ namespace Nameless {
             var lambda = Expression.Lambda<Func<object, object>>(converted, fakeParameter);
             Func<object, object> func;
 
-            try { func = lambda.Compile(); }
-            catch (InvalidOperationException ex) {
+            try { func = lambda.Compile(); } catch (InvalidOperationException ex) {
                 throw new InvalidOperationException(
                     message: $"Invalid indexer expression. {indexExpression} : {parentExpression.Parameters[0].Name}",
                     innerException: ex

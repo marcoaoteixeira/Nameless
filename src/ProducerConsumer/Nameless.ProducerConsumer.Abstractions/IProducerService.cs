@@ -6,12 +6,12 @@
         #region Methods
 
         /// <summary>
-        /// Produces a message for a specific topic.
+        /// Produces a payload for a specific topic.
         /// </summary>
         /// <param name="topic">The topic.</param>
-        /// <param name="message">The message.</param>
+        /// <param name="payload">The payload.</param>
         /// <param name="args">The arguments.</param>
-        Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default);
+        Task ProduceAsync(string topic, object payload, ProducerArgs? args = null, CancellationToken cancellationToken = default);
 
         #endregion Methods
     }

@@ -3,6 +3,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.Caching.Redis.Options;
 using Nameless.Logging.Microsoft;
 using StackExchange.Redis;
 
@@ -30,15 +31,15 @@ namespace Nameless.Caching.Redis.Impl {
         #region IConfigurationFactory Members
 
         public ConfigurationOptions CreateConfigurationOptions() {
-            var host = _options.Ssl.Available
+            var host = _options.Ssl.IsAvailable()
                 ? _options.Ssl.Host ?? throw new ArgumentNullException("SSL Host")
                 : _options.Host ?? throw new ArgumentNullException("Host");
 
-            var port = _options.Ssl.Available
+            var port = _options.Ssl.IsAvailable()
                 ? _options.Ssl.Port
                 : _options.Port;
 
-            var sslProtocols = _options.Ssl.Available
+            var sslProtocols = _options.Ssl.IsAvailable()
                 ? _options.Ssl.SslProtocol
                 : SslProtocols.None;
 
@@ -47,12 +48,12 @@ namespace Nameless.Caching.Redis.Impl {
                 User = _options.Username,
                 Password = _options.Password,
                 KeepAlive = _options.KeepAlive,
-                Ssl = _options.Ssl.Available,
+                Ssl = _options.Ssl.IsAvailable(),
                 SslProtocols = sslProtocols,
 
             };
 
-            if (_options.Certificate.Available) {
+            if (_options.Certificate.IsAvailable()) {
                 result.CertificateSelection += (object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
                     => new(
                     fileName: _options.Certificate.Pfx,
@@ -64,7 +65,7 @@ namespace Nameless.Caching.Redis.Impl {
                         return false;
                     }
 
-                    var inner = new X509Certificate2(_options.Certificate.Pem!);
+                    var inner = new X509Certificate2(_options.Certificate.Pem);
                     var verdict = certificate.Issuer == inner.Subject;
 
                     _logger

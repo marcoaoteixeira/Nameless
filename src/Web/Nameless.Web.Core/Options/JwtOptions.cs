@@ -22,7 +22,7 @@
         public bool ValidateIssuer { get; set; }
         public string? Audience { get; set; }
         public bool ValidateAudience { get; set; }
-        
+
         private int _accessTokenTtl = 60;
         /// <summary>
         /// Gets or sets the token time-to-live in minutes.
@@ -39,7 +39,7 @@
             );
         }
         public bool ValidateLifetime { get; set; }
-        
+
         private int _refreshTokenTtl = 60;
         /// <summary>
         /// Gets or sets the refresh token time-to-live in minutes.

@@ -30,7 +30,7 @@ namespace Nameless.Lucene {
         /// <param name="applicationContext">The application context.</param>
         /// <param name="analyzerProvider">The analyzer provider.</param>
         public IndexManager(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider)
-            : this (applicationContext, analyzerProvider, LuceneOptions.Default) { }
+            : this(applicationContext, analyzerProvider, LuceneOptions.Default) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="IndexManager"/>.

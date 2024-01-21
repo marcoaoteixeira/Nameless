@@ -67,7 +67,7 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string CamelFriendly(this string self) {
             var result = new StringBuilder(self);
-            
+
             for (var idx = self.Length - 1; idx > 0; idx--) {
                 var current = result[idx];
                 if (current is >= 'A' and <='Z') {
@@ -447,10 +447,16 @@ namespace Nameless {
         /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static string GetMD5(this string self, Encoding? encoding = default) {
             var buffer = (encoding ?? Root.Defaults.Encoding).GetBytes(self);
-            
+
+#if NETSTANDARD2_1_OR_GREATER
             using var md5 = MD5.Create();
             var result = md5.ComputeHash(buffer);
-            
+#endif
+
+#if NET6_0_OR_GREATER
+            var result = MD5.HashData(buffer);
+#endif
+
             return BitConverter.ToString(result);
         }
 
@@ -534,6 +540,6 @@ namespace Nameless {
             return self;
         }
 
-#endregion
+        #endregion
     }
 }

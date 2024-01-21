@@ -20,8 +20,7 @@ namespace Nameless.Helpers {
                 return true;
             } catch (CultureNotFoundException) {
                 if (!string.IsNullOrWhiteSpace(defaultCultureName)) {
-                    try { culture = CultureInfo.GetCultureInfo(defaultCultureName); }
-                    catch (CultureNotFoundException) { culture = CultureInfo.CurrentCulture; }
+                    try { culture = CultureInfo.GetCultureInfo(defaultCultureName); } catch (CultureNotFoundException) { culture = CultureInfo.CurrentCulture; }
                 } else { culture = CultureInfo.CurrentCulture; }
             }
             return false;

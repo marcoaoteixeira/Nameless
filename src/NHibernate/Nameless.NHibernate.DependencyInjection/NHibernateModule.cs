@@ -27,11 +27,14 @@ namespace Nameless.NHibernate.DependencyInjection {
             builder
                 .Register(SessionFactoryResolver)
                 .Named<ISessionFactory>(SESSION_FACTORY_TOKEN)
-                .OnActivated(NHibernateStartUpRoutine) // StartUp should only occurs once.
+                .OnActivated(StartUp) // StartUp should only occurs once.
                 .SingleInstance();
 
             builder
                 .Register(SessionResolver)
+                // Here, our Session will be a singleton.
+                // So, this will be the perfect place to setup
+                // our StartUp code. This must occurs only once.
                 .As<ISession>()
                 .InstancePerLifetimeScope();
 
@@ -43,8 +46,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         #region Private Static Methods
 
         private static IConfigurationBuilder ConfigurationBuilderResolver(IComponentContext ctx) {
-            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
-                ?? NHibernateOptions.Default;
+            var options = ctx.GetOptions<NHibernateOptions>();
             var result = new ConfigurationBuilder(options);
 
             return result;
@@ -66,10 +68,9 @@ namespace Nameless.NHibernate.DependencyInjection {
             return result;
         }
 
-        private static void NHibernateStartUpRoutine(IActivatedEventArgs<ISessionFactory> args) {
+        private static void StartUp(IActivatedEventArgs<ISessionFactory> args) {
             var ctx = args.Context;
-            var options = GetOptionsFromContext<NHibernateOptions>(ctx)
-                ?? NHibernateOptions.Default;
+            var options = ctx.GetOptions<NHibernateOptions>();
 
             if (!options.SchemaExport.ExecuteSchemaExport) {
                 return;

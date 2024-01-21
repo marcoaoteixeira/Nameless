@@ -15,6 +15,7 @@
 
             public const string REDIS_USER = nameof(REDIS_USER);
             public const string REDIS_PASS = nameof(REDIS_PASS);
+
             public const string REDIS_CERT_PFX = nameof(REDIS_CERT_PFX);
             public const string REDIS_CERT_PEM = nameof(REDIS_CERT_PEM);
             public const string REDIS_CERT_PASS = nameof(REDIS_CERT_PASS);

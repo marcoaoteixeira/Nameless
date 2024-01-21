@@ -48,8 +48,7 @@ namespace Nameless.Web {
         private static IMinimalEndpoint? Create(Type type, ILogger logger) {
             IMinimalEndpoint? result = null;
 
-            try { result = Activator.CreateInstance(type) as IMinimalEndpoint; }
-            catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
+            try { result = Activator.CreateInstance(type) as IMinimalEndpoint; } catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
 
             return result;
         }

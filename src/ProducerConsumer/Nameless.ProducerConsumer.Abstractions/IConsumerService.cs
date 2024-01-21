@@ -6,7 +6,7 @@ namespace Nameless.ProducerConsumer {
         #region Methods
 
         /// <summary>
-        /// Registers a handle to process a message for a specific topic.
+        /// Registers a handler to process a message for a specific topic.
         /// </summary>
         /// <param name="topic">The topic.</param>
         /// <param name="handler">The message event handler.</param>

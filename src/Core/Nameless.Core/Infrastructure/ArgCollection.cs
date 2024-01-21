@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace Nameless.Infrastructure {
-    public abstract class ArgCollection : IEnumerable<Arg> {
+    public class ArgCollection : IEnumerable<Arg> {
         #region Private Read-Only Fields
 
         private readonly Dictionary<string, object> _dictionary = [];

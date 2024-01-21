@@ -64,7 +64,7 @@ namespace Nameless {
             var array = Array.Empty<Student>();
 
             // act
-            
+
             // assert
             Assert.Throws<MissingMemberException>(
                 code: () => array.AsQueryable().OrderBy("Address")

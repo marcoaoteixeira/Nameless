@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Nameless.Autofac;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using RabbitMQ.Client;
@@ -9,8 +10,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
     public sealed class ProducerConsumerModule : ModuleBase {
         #region Private Constants
 
-        private const string CONNECTION_MANAGER_TOKEN = $"{nameof(IConnectionManager)}::0ee463dd-f42d-407f-bc36-ecd2a5538faf";
-        private const string CHANNEL_MANAGER_TOKEN = $"{nameof(IChannelManager)}::9985853c-25aa-4d0d-84af-581d80fac738";
+        private const string CHANNEL_FACTORY_TOKEN = $"{nameof(IChannelFactory)}::9985853c-25aa-4d0d-84af-581d80fac738";
 
         #endregion
 
@@ -18,19 +18,17 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ConnectionManagerResolver)
-                .Named<IConnectionManager>(CONNECTION_MANAGER_TOKEN)
-                .SingleInstance();
-
-            builder
-                .Register(ChannelManagerResolver)
-                .Named<IChannelManager>(CHANNEL_MANAGER_TOKEN)
+                .Register(ChannelFactoryResolver)
+                .Named<IChannelFactory>(CHANNEL_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
                 .Register(ChannelResolver)
                 .As<IModel>()
-                .OnActivated(RabbitMQStartUpRoutine) // StartUp should only occurs once.
+                // Here, our Channel will be a singleton.
+                // So, this will be the perfect place to setup
+                // our StartUp code. This must occurs only once.
+                .OnActivated(StartUp)
                 .SingleInstance();
 
             base.Load(builder);
@@ -40,67 +38,72 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IConnectionManager ConnectionManagerResolver(IComponentContext ctx) {
-            var options = GetOptionsFromContext<RabbitMQOptions>(ctx)
-                ?? RabbitMQOptions.Default;
-            var result = new ConnectionManager(options);
-
-            return result;
-        }
-
-        private static IChannelManager ChannelManagerResolver(IComponentContext ctx) {
-            var connectionManager = ctx.ResolveNamed<IConnectionManager>(CONNECTION_MANAGER_TOKEN);
-            var connection = connectionManager.GetConnection();
-            var result = new ChannelManager(connection);
+        private static ChannelFactory ChannelFactoryResolver(IComponentContext ctx) {
+            var result = new ChannelFactory(
+                options: ctx.GetOptions<RabbitMQOptions>(),
+                logger: ctx.GetLogger<ChannelFactory>()
+            );
 
             return result;
         }
 
         private static IModel ChannelResolver(IComponentContext ctx) {
-            var channelManager = ctx.ResolveNamed<IChannelManager>(CHANNEL_MANAGER_TOKEN);
-            var result = channelManager.GetChannel();
+            var channelFactory = ctx
+                .ResolveNamed<IChannelFactory>(CHANNEL_FACTORY_TOKEN);
+            var result = channelFactory.CreateChannel();
 
             return result;
         }
 
-        private static void RabbitMQStartUpRoutine(IActivatedEventArgs<IModel> args) {
-            var options = GetOptionsFromContext<RabbitMQOptions>(args.Context)
-                ?? RabbitMQOptions.Default;
+        private static void StartUp(IActivatedEventArgs<IModel> args) {
+            var options = args.Context.GetOptions<RabbitMQOptions>();
+            var channel = args.Instance;
+
+            // when we declare a exchange/queue, if the exchange/queue
+            // doesn't exists, it will be created for us. Otherwise
+            // RabbitMQ will just ignore.
 
             foreach (var exchange in options.Exchanges) {
-                ConfigureExchange(args.Instance, exchange);
-                ConfigureQueues(args.Instance, exchange.Name, exchange.Queues);
+                // let's declare our exchange
+                DeclareExchange(channel, exchange);
+
+                foreach (var queue in exchange.Queues) {
+                    // let's declare our queue
+                    DeclareQueue(channel, queue);
+
+                    // let's declare our bindings
+                    foreach (var binding in queue.Bindings) {
+                        DeclareBinding(channel, exchange, queue, binding);
+                    }
+                }
             }
         }
 
-        private static void ConfigureExchange(IModel channel, ExchangeOptions exchange)
+        private static void DeclareBinding(IModel channel, ExchangeOptions exchange, QueueOptions queue, BindingOptions binding)
+            => channel.QueueBind(
+                queue: queue.Name,
+                exchange: exchange.Name,
+                routingKey: binding.RoutingKey,
+                arguments: binding.Arguments
+            );
+
+        private static void DeclareQueue(IModel channel, QueueOptions queue)
+            => channel.QueueDeclare(
+                queue: queue.Name,
+                durable: queue.Durable,
+                exclusive: queue.Exclusive,
+                autoDelete: queue.AutoDelete,
+                arguments: queue.Arguments
+            );
+
+        private static void DeclareExchange(IModel channel, ExchangeOptions exchange)
             => channel.ExchangeDeclare(
-                    exchange: exchange.Name,
-                    type: exchange.Type.GetDescription(),
-                    durable: exchange.Durable,
-                    autoDelete: exchange.AutoDelete,
-                    arguments: exchange.Arguments
-                );
-
-        private static void ConfigureQueues(IModel channel, string exchangeName, IEnumerable<QueueOptions> queues) {
-            foreach (var queue in queues) {
-                channel.QueueDeclare(
-                    queue: queue.Name,
-                    durable: queue.Durable,
-                    exclusive: queue.Exclusive,
-                    autoDelete: queue.AutoDelete,
-                    arguments: queue.Arguments
-                );
-
-                channel.QueueBind(
-                    queue: queue.Name,
-                    exchange: exchangeName,
-                    routingKey: queue.RoutingKey ?? queue.Name,
-                    arguments: queue.Bindings
-                );
-            }
-        }
-
+                exchange: exchange.Name,
+                type: exchange.Type.GetDescription(),
+                durable: exchange.Durable,
+                autoDelete: exchange.AutoDelete,
+                arguments: exchange.Arguments
+            );
         #endregion
     }
 
