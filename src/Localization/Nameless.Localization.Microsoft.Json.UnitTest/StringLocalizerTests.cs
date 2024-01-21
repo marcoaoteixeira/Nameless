@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Nameless.Localization.Microsoft.Json.Objects;
 
@@ -147,7 +146,7 @@ namespace Nameless.Localization.Microsoft.Json {
                 .GetAllStrings(includeParentCultures: true)
                 .Select(localizedString => localizedString.Name);
 
-            var expected = 
+            var expected =
                 regionPtBr
                     .Messages
                     .Select(message => message.ID)

@@ -11,7 +11,7 @@ namespace Nameless.Caching.InMemory {
 
         #region Private Fields
 
-        private IMemoryCache? _memoryCache;
+        private MemoryCache? _memoryCache;
         private bool _disposed;
 
         #endregion

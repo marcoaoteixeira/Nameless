@@ -285,8 +285,7 @@ namespace Nameless.Data {
 
             object? result;
 
-            try { result = row[columnName]; }
-            catch { result = null; }
+            try { result = row[columnName]; } catch { result = null; }
 
             return result == DBNull.Value ? null : result;
         }

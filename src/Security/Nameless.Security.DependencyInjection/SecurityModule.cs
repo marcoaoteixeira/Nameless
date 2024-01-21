@@ -25,8 +25,7 @@ namespace Nameless.Security.DependencyInjection {
         #region Private Static Methods
 
         private static ICryptoProvider CryptoProviderResolver(IComponentContext ctx) {
-            var options = GetOptionsFromContext<RijndaelCryptoOptions>(ctx)
-                ?? RijndaelCryptoOptions.Default;
+            var options = ctx.GetOptions<RijndaelCryptoOptions>();
             var result = new RijndaelCryptoProvider(options);
 
             return result;

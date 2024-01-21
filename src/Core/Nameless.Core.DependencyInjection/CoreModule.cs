@@ -22,7 +22,7 @@ namespace Nameless.DependencyInjection {
                 .RegisterInstance(PluralizationRuleProvider.Instance)
                 .As<IPluralizationRuleProvider>()
                 .SingleInstance();
-            
+
             base.Load(builder);
         }
 

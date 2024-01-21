@@ -14,6 +14,9 @@
         public static string ToHexString(this byte[] self)
             => BitConverter.ToString(self ?? []).Replace("-", string.Empty);
 
+        public static string ToBase64String(this byte[] self, Base64FormattingOptions options = Base64FormattingOptions.None)
+            => Convert.ToBase64String(self, options);
+
         #endregion
     }
 }

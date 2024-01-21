@@ -127,8 +127,7 @@ namespace Nameless.Data {
 
             using var command = CreateCommand(text, type, parameters);
 
-            try { return command.ExecuteNonQuery(); }
-            catch (Exception ex) {
+            try { return command.ExecuteNonQuery(); } catch (Exception ex) {
                 _logger.LogError(
                     exception: ex,
                     message: "Error while executing non-query. {Message}",
@@ -147,8 +146,7 @@ namespace Nameless.Data {
             using var command = CreateCommand(text, type, parameters);
 
             IDataReader reader;
-            try { reader = command.ExecuteReader(); }
-            catch (Exception ex) {
+            try { reader = command.ExecuteReader(); } catch (Exception ex) {
                 _logger.LogError(
                     exception: ex,
                     message: "Error while executing reader. {Message}",
@@ -171,8 +169,7 @@ namespace Nameless.Data {
 
             using var command = CreateCommand(text, type, parameters);
 
-            try { return (TResult?)command.ExecuteScalar(); }
-            catch (Exception ex) {
+            try { return (TResult?)command.ExecuteScalar(); } catch (Exception ex) {
                 _logger.LogError(
                     exception: ex,
                     message: "Error while executing scalar. {Message}",

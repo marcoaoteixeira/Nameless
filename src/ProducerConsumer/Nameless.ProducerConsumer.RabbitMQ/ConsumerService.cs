@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,6 +10,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
     public sealed class ConsumerService : IConsumerService, IDisposable {
         #region Private Read-Only Fields
 
+        private readonly ConcurrentDictionary<string, IDisposable> Cache = new();
+
         private readonly IModel _channel;
         private readonly ILogger _logger;
 
@@ -18,7 +19,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region Private Fields
 
-        private ConcurrentDictionary<string, IDisposable> _registrations = new();
         private bool _disposed;
 
         #endregion
@@ -35,14 +35,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #endregion
 
-        #region Destructor
-
-        ~ConsumerService() {
-            Dispose(disposing: false);
-        }
-
-        #endregion
-
         #region Private Methods
 
         private void BlockAccessAfterDispose() {
@@ -54,58 +46,113 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                var registrations = _registrations.Values.ToArray();
-                _registrations.Clear();
+                var registrations = Cache.Values.ToArray();
+
+                Cache.Clear();
 
                 foreach (var registration in registrations) {
                     registration.Dispose();
                 }
             }
 
-            _registrations = null!;
             _disposed = true;
         }
 
-        private async Task OnMessage<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+        private Task OnMessageAsync<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
             if (!TryCreateHandler(registration, deliverEventArgs, consumerArgs, out var handler)) {
-                return;
+                return Task.CompletedTask;
             }
 
-            if (!TryDeserializeEnvelope(registration, deliverEventArgs, consumerArgs, out var envelope)) {
-                return;
+            if (!TryDeserializeEnvelope<T>(deliverEventArgs, consumerArgs, out var envelope)) {
+                return Task.CompletedTask;
             }
 
-            if (!TryExtractMessage(envelope, registration, deliverEventArgs, consumerArgs, out var message)) {
-                return;
+            if (!TryExtractMessage<T>(envelope, deliverEventArgs, consumerArgs, out var message)) {
+                return Task.CompletedTask;
             }
 
-            await HandleMessageAsync(
-                handler,
-                message,
-                registration,
-                deliverEventArgs,
-                consumerArgs
+            return HandleMessageAsync(
+                handler: handler,
+                message: message,
+                deliverEventArgs: deliverEventArgs,
+                consumerArgs: consumerArgs
             );
         }
 
-        private bool TryCreateHandler<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)]out MessageHandler<T>? handler) {
+        private bool TryCreateHandler<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out MessageHandler<T>? handler) {
             handler = null;
 
-            try { handler = registration.CreateHandler(); }
-            catch (Exception ex) {
+            // Let's try create the handler delegate
+            try { handler = registration.CreateHandler(); } catch (Exception ex) {
+                // Ok, registration was disposed?
                 if (ex is ObjectDisposedException) {
                     Unregister(registration);
                 }
 
-                _logger.LogError(ex, "{registration}: Handler creation failed. Reason: {Message}", registration, ex.Message);
-                NAck(_channel, deliverEventArgs, consumerArgs);
+                // Log the error
+                _logger.LogError(
+                    exception: ex,
+                    message: "Consumer handler creation failed. Reason: {Message}",
+                    args: [ex.Message]
+                );
+
+                // Send NACK (consumer args defined)
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
 
                 return false;
             }
 
+            // For some reason, registration was ok but we were
+            // not able to create the delegate.
             if (handler is null) {
-                _logger.LogWarning("{registration}: No suitable handler found.", registration);
-                NAck(_channel, deliverEventArgs, consumerArgs);
+                // Log notification
+                _logger.LogWarning(
+                    message: "No suitable handler found."
+
+                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net6.0)'
+                Before:
+                                );
+
+                                // Send NACK (consumer args defined)
+                After:
+                                );
+
+                                // Send NACK (consumer args defined)
+                */
+
+                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net7.0)'
+                Before:
+                                );
+
+                                // Send NACK (consumer args defined)
+                After:
+                                );
+
+                                // Send NACK (consumer args defined)
+                */
+
+                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net8.0)'
+                Before:
+                                );
+
+                                // Send NACK (consumer args defined)
+                After:
+                                );
+
+                                // Send NACK (consumer args defined)
+                */
+                );
+
+                // Send NACK (consumer args defined)
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
 
                 return false;
             }
@@ -113,11 +160,21 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return true;
         }
 
-        private bool TryDeserializeEnvelope<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
-            envelope = JsonSerializer.Deserialize<Envelope>(deliverEventArgs.Body.ToArray());
+        private bool TryDeserializeEnvelope<T>(BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
+            envelope = deliverEventArgs.GetEnvelope();
+
+            // We were not able to retrieve the envelope for some reason.
             if (envelope is null) {
-                _logger.LogWarning("{registration}: Envelope deserialization failed.", registration);
-                NAck(_channel, deliverEventArgs, consumerArgs);
+                _logger.LogWarning(
+                    message: "Envelope deserialization failed."
+                );
+
+                // Send NACK (consumer args defined)
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
 
                 return false;
             }
@@ -125,29 +182,46 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return true;
         }
 
-        private bool TryExtractMessage<T>(Envelope envelope, Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out T? message) {
+        private bool TryExtractMessage<T>(Envelope envelope, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out T? message) {
             message = default;
 
-            // Here, envelope.Message is a JsonElement.
-            // So, we'll deserialize it to the type that the handler is expecting.
+            // Here, if the envelope.Message is not a JsonElement.
+            // We'll log the info and return nothing.
             if (envelope.Message is not JsonElement json) {
+
                 _logger.LogWarning(
-                    message: "{registration}: Message is not a {type}.",
-                    args: [registration, typeof(JsonElement)]
+                    message: "Message was not a {type}.",
+                    args: [nameof(JsonElement)]
                 );
-                NAck(_channel, deliverEventArgs, consumerArgs);
+
+                // Send NACK (consumer args defined)
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
 
                 return false;
             }
 
+            // If it is a JsonElement, we'll deserialize it to the type
+            // that the handler is expecting.
             message = json.Deserialize<T>();
 
+            // For some reason, we were not able to deserialize the message
             if (message is null) {
+                // Let's log this info
                 _logger.LogWarning(
-                    message: "{registration}: Unable to deserialize the message to expecting type {type}.",
-                    args: [registration, typeof(T)]
+                    message: "Unable to deserialize the message to expecting type {type}.",
+                    args: [typeof(T)]
                 );
-                NAck(_channel, deliverEventArgs, consumerArgs);
+
+                // Send NACK (consumer args defined)
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
 
                 return false;
             }
@@ -155,17 +229,31 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return true;
         }
 
-        private async Task HandleMessageAsync<T>(MessageHandler<T> handler, T message, Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+        private async Task HandleMessageAsync<T>(MessageHandler<T> handler, T message, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
             try {
+                // Let's execute the handler with the received message
                 await handler(message);
-                Ack(_channel, deliverEventArgs, consumerArgs);
+
+                // If everything goes ok, let's ack the message received.
+                // Check consumer args for 
+                PositiveAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
+
             } catch (Exception ex) {
                 _logger.LogError(
                     exception: ex,
-                    message: "{registration}: Error when handling the message. Reason: {Message}",
-                    args: [registration, ex.Message]
+                    message: "Error when handling the message. Reason: {Message}",
+                    args: [ex.Message]
                 );
-                NAck(_channel, deliverEventArgs, consumerArgs);
+
+                NegativeAck(
+                    channel: _channel,
+                    deliverEventArgs: deliverEventArgs,
+                    consumerArgs: consumerArgs
+                );
             }
         }
 
@@ -177,15 +265,21 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             if (handler is null) { return string.Empty; }
 
             var method = handler.Method;
-            var parameters = method.GetParameters().Select(_ => $"{_.ParameterType.Name} {_.Name}").ToArray();
-            var signature = $"{method.DeclaringType?.FullName}.{method.Name}({string.Join(", ", parameters)})";
-            var buffer = Encoding.UTF8.GetBytes(signature);
+            var parameters = method
+                .GetParameters()
+                .Select(_ => $"{_.ParameterType.Name} {_.Name}")
+                .ToArray();
 
-            return Convert.ToBase64String(buffer);
+            var signature = $"{method.DeclaringType?.FullName}.{method.Name}({string.Join(", ", parameters)})";
+            var buffer = signature.GetBytes();
+
+            return buffer.ToBase64String();
         }
 
-        private static void Ack(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
-            if (!consumerArgs.GetAckOnSuccess()) { return; }
+        private static void PositiveAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+            if (!consumerArgs.GetAckOnSuccess() || consumerArgs.GetAutoAck()) {
+                return;
+            }
 
             channel.BasicAck(
                 deliveryTag: deliverEventArgs.DeliveryTag,
@@ -193,8 +287,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             );
         }
 
-        private static void NAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
-            if (!consumerArgs.GetNAckOnFailure()) { return; }
+        private static void NegativeAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+            if (!consumerArgs.GetNAckOnFailure()) {
+                return;
+            }
 
             channel.BasicNack(
                 deliveryTag: deliverEventArgs.DeliveryTag,
@@ -207,17 +303,29 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region IConsumerService Members
 
+        /// <summary>
+        /// Registers a message handler.
+        /// </summary>
+        /// <typeparam name="T">Type of the payload</typeparam>
+        /// <param name="topic">
+        /// The topic to listen. If queue name is set through
+        /// <c>ConsumerArgs.SetQueueName()</c> method, it will
+        /// take precedence over <paramref name="topic"/>.
+        /// </param>
+        /// <param name="handler">The handler.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
         public Registration<T> Register<T>(string topic, MessageHandler<T> handler, ConsumerArgs? args = null) {
             BlockAccessAfterDispose();
 
-            var consumerArgs = args ?? ConsumerArgs.Empty;
+            var innerArgs = args ?? ConsumerArgs.Empty;
 
             // create callback tag
             var tag = GenerateTag(handler);
 
-            var registration = _registrations.GetOrAdd(tag, tag => {
+            var registration = Cache.GetOrAdd(tag, tag => {
                 _logger.LogInformation("Initialize registration of consumer: {tag}", tag);
-                _logger.LogInformation("Consumer arguments: {json}", consumerArgs.ToJson());
+                _logger.LogInformation("Consumer arguments: {json}", innerArgs.ToJson());
 
                 // creates registration
                 var registration = new Registration<T>(tag, topic, handler);
@@ -225,12 +333,15 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 // creates the consumer event
                 var consumer = new AsyncEventingBasicConsumer(_channel);
                 consumer.Received += (sender, deliverEventArgs)
-                    => OnMessage(registration, deliverEventArgs, consumerArgs);
+                    => OnMessageAsync(registration, deliverEventArgs, innerArgs);
 
                 // attach the consumer
-                var consumerTag = _channel.BasicConsume(
-                    queue: topic,
-                    autoAck: consumerArgs.GetAutoAck(),
+                var queue = innerArgs.GetQueueName();
+                _ = _channel.BasicConsume(
+                    queue: string.IsNullOrWhiteSpace(queue)
+                        ? topic
+                        : queue,
+                    autoAck: innerArgs.GetAutoAck(),
                     consumerTag: tag,
                     consumer: consumer
                 );
@@ -246,7 +357,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
             Guard.Against.Null(registration, nameof(registration));
 
-            if (_registrations.Remove(registration.Tag, out var disposable)) {
+            if (Cache.Remove(registration.Tag, out var disposable)) {
                 _channel.BasicCancel(registration.Tag);
                 disposable.Dispose();
 

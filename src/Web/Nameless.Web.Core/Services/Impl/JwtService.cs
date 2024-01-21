@@ -23,7 +23,7 @@ namespace Nameless.Web.Services.Impl {
         #region Public Constructors
 
         public JwtService()
-            : this (JwtOptions.Default, SystemClock.Instance, NullLogger.Instance) { }
+            : this(JwtOptions.Default, SystemClock.Instance, NullLogger.Instance) { }
 
         public JwtService(JwtOptions options)
             : this(options, SystemClock.Instance, NullLogger.Instance) { }

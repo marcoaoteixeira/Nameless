@@ -8,11 +8,18 @@
             public const string RABBITMQ_USER = nameof(RABBITMQ_USER);
             public const string RABBITMQ_PASS = nameof(RABBITMQ_PASS);
 
+            public const string RABBITMQ_SSL_SERVERNAME = nameof(RABBITMQ_SSL_SERVERNAME);
+            public const string RABBITMQ_CERT_PFX = nameof(RABBITMQ_CERT_PFX);
+            public const string RABBITMQ_CERT_PEM = nameof(RABBITMQ_CERT_PEM);
+            public const string RABBITMQ_CERT_PASS = nameof(RABBITMQ_CERT_PASS);
+
             #endregion
         }
 
         public static class ConsumerArgsTokens {
             #region Public Constants
+
+            public const string QUEUE_NAME = "QueueName";
 
             public const string ACK_ON_SUCCESS = "AckOnSuccess";
             public const string ACK_MULTIPLE = "AckMultiple";
@@ -30,6 +37,8 @@
             #region Public Constants
 
             public const string EXCHANGE_NAME = "ExchangeName";
+            public const string ROUTING_KEYS = "RoutingKeys";
+            public const string MANDATORY = "Mandatory";
 
             #endregion
         }
@@ -41,8 +50,9 @@
         internal static class Defaults {
             #region Internal Constants
 
+            internal const string SSL_SERVERNAME = "localhost";
             internal const string EXCHANGE_NAME = "";
-            internal const string QUEUE_NAME = "default";
+            internal const string QUEUE_NAME = "q.default";
             internal const string RABBITMQ_USER = "guest";
             internal const string RABBITMQ_PASS = "guest";
 

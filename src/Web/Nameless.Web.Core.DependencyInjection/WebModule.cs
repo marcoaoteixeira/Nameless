@@ -24,11 +24,10 @@ namespace Nameless.Web.DependencyInjection {
         #region Private Static Methods
 
         private static IJwtService JwtServiceResolver(IComponentContext ctx) {
-            var options = GetOptionsFromContext<JwtOptions>(ctx)
-                ?? JwtOptions.Default;
+            var options = ctx.GetOptions<JwtOptions>();
             var clock = ctx.ResolveOptional<IClock>()
                 ?? SystemClock.Instance;
-            var logger = GetLoggerFromContext<JwtService>(ctx);
+            var logger = ctx.GetLogger<JwtService>();
             var result = new JwtService(options, clock, logger);
 
             return result;

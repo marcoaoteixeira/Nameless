@@ -5,11 +5,16 @@ namespace Nameless.ProducerConsumer {
     /// Represents a consumer registration, also holds the reference to the callback method.
     /// </summary>
     public sealed class Registration<T> : IDisposable {
+        #region Private Read-Only Fields
+
+        private readonly bool _isStatic;
+
+        #endregion
+
         #region Private Fields
 
-        private MethodInfo _handler;
-        private WeakReference _target;
-        private bool _staticHandler;
+        private MethodInfo? _method;
+        private WeakReference? _ref;
         private bool _disposed;
 
         #endregion
@@ -39,29 +44,19 @@ namespace Nameless.ProducerConsumer {
             Guard.Against.Null(handler, nameof(handler));
 
             Tag = Guard.Against.NullOrWhiteSpace(tag, nameof(tag));
-            Topic = Guard.Against.NullOrWhiteSpace(topic, nameof(topic));
+            Topic = Guard.Against.Null(topic, nameof(topic));
 
-            _handler = handler.Method;
-            _target = new WeakReference(handler.Target);
-            _staticHandler = handler.Target is null;
+            _method = handler.Method;
+            _ref = new(handler.Target);
+            _isStatic = handler.Target is null;
         }
-
-        #endregion
-
-        #region Destructor
-
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~Registration()
-            => Dispose(disposing: false);
 
         #endregion
 
         #region Public Override Methods
 
         public override string ToString()
-            => $"[{Topic};{Tag}]";
+            => $"{{ \"Topic\": \"{Topic}\", \"Tag\": \"{Tag}\" }}";
 
         #endregion
 
@@ -74,12 +69,19 @@ namespace Nameless.ProducerConsumer {
         public MessageHandler<T>? CreateHandler() {
             BlockAccessAfterDispose();
 
-            if (_target.Target is not null && _target.IsAlive) {
-                return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>), _target.Target);
+            if (GetRef().Target is not null && GetRef().IsAlive) {
+                return (MessageHandler<T>)GetMethod()
+                    .CreateDelegate(
+                        delegateType: typeof(MessageHandler<T>),
+                        target: GetRef().Target
+                    );
             }
 
-            if (_staticHandler) {
-                return (MessageHandler<T>)_handler.CreateDelegate(typeof(MessageHandler<T>));
+            if (_isStatic) {
+                return (MessageHandler<T>)GetMethod()
+                    .CreateDelegate(
+                        delegateType: typeof(MessageHandler<T>)
+                    );
             }
 
             return null;
@@ -89,6 +91,11 @@ namespace Nameless.ProducerConsumer {
 
         #region Private Methods
 
+        private MethodInfo GetMethod()
+            => _method ?? throw new ArgumentNullException(nameof(_method));
+        private WeakReference GetRef()
+            => _ref ?? throw new ArgumentNullException(nameof(_ref));
+
         private void BlockAccessAfterDispose() {
             if (_disposed) {
                 throw new ObjectDisposedException(typeof(Registration<>).Name);
@@ -97,12 +104,10 @@ namespace Nameless.ProducerConsumer {
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
-            if (disposing) { /* Dispose managed resources */ }
-            // Dispose unmanaged resources
+            if (disposing) { }
 
-            _handler = null!;
-            _target = null!;
-            _staticHandler = false;
+            _method = null;
+            _ref = null;
 
             _disposed = true;
         }

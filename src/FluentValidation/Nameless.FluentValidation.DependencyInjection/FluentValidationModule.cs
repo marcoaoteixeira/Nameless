@@ -39,7 +39,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
 
         private static IValidatorManager ValidatorManagerResolver(IComponentContext ctx) {
             var validators = ctx.Resolve<IValidator[]>();
-            var logger = GetLoggerFromContext<ValidatorManager>(ctx);
+            var logger = ctx.GetLogger<ValidatorManager>();
             var result = new ValidatorManager(validators, logger);
 
             return result;

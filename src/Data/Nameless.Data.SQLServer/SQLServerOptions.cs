@@ -14,9 +14,9 @@ namespace Nameless.Data.SQLServer {
 
         public SQLServerOptions() {
             UserName = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER)
-                ?? Root.Defaults.SQLSERVER_USER;
+                ?? string.Empty;
             Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_PASS)
-                ?? Root.Defaults.SQLSERVER_PASS;
+                ?? string.Empty;
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace Nameless.Data.SQLServer {
         public bool UseAttachedDb { get; set; }
         public bool UseIntegratedSecurity { get; set; }
 
-#endregion
+        #endregion
 
         #region Public Methods
 

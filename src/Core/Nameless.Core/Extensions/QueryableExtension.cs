@@ -50,7 +50,7 @@ namespace Nameless {
                 typeArguments: [type, property.PropertyType],
                 arguments: [self.Expression, Expression.Quote(propertyExpression)]
             );
-            
+
             var query = self.Provider.CreateQuery<T>(queryExpression);
 
             return (IOrderedQueryable<T>)query;

@@ -11,7 +11,7 @@ namespace Nameless.Caching.Redis {
 
         #region Private Fields
 
-        private IConnectionMultiplexer? _multiplexer;
+        private ConnectionMultiplexer? _multiplexer;
         private IDatabase? _database;
         private bool _disposed;
 

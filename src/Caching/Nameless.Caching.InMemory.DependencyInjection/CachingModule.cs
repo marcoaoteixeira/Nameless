@@ -20,9 +20,9 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
         #region Private Static Methods
 
         private static ICache CacheResolver(IComponentContext ctx) {
-            var memoryCacheOptions = GetOptionsFromContext<MemoryCacheOptions>(ctx)
-                ?? new();
-            var result = new InMemoryCache(memoryCacheOptions);
+            var result = new InMemoryCache(
+                options: ctx.GetOptions<MemoryCacheOptions>()
+            );
 
             return result;
         }

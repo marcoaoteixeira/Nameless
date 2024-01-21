@@ -23,29 +23,47 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #endregion
 
-        #region IProducerService Members
+        #region Private Static Methods
 
-        public Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default) {
-            var innerArgs = args ?? ProducerArgs.Empty;
-            var properties = _channel.CreateBasicProperties().FillWith(innerArgs);
-            var envelope = new Envelope {
+        private static Envelope CreateEnvelope(object message, IBasicProperties properties)
+            => new() {
                 Message = message,
                 MessageId = properties.MessageId,
                 CorrelationId = properties.CorrelationId,
                 PublishedAt = DateTime.UtcNow
             };
 
+        private static IBasicProperties CreateProperties(IModel channel, ProducerArgs innerArgs)
+            => channel
+                .CreateBasicProperties()
+                .FillWith(innerArgs);
+
+        #endregion
+
+        #region IProducerService Members
+
+        public Task ProduceAsync(string topic, object message, ProducerArgs? args, CancellationToken cancellationToken) {
+            var innerArgs = args ?? ProducerArgs.Empty;
+            var properties = CreateProperties(_channel, innerArgs);
+            var envelope = CreateEnvelope(message, properties);
+
             try {
-                _channel.BasicPublish(
-                    exchange: innerArgs.GetExchangeName(),
-                    routingKey: topic,
-                    basicProperties: properties,
-                    body: envelope.CreateBuffer()
-                );
-            } catch (Exception ex) {
-                _logger.LogError(ex, "{Message}", ex.Message);
-                throw;
-            }
+                var routingKeys = innerArgs.GetRoutingKeys().Append(topic);
+                var batch = _channel.CreateBasicPublishBatch();
+                var buffer = envelope.CreateBuffer();
+
+                foreach (var routingKey in routingKeys) {
+                    batch.Add(
+                        exchange: innerArgs.GetExchangeName(),
+                        routingKey: topic,
+                        mandatory: innerArgs.GetMandatory(),
+                        properties: properties,
+                        body: buffer
+                    );
+                }
+
+                batch.Publish();
+            } catch (Exception ex) { _logger.LogError(ex, "{Message}", ex.Message); throw; }
 
             return Task.CompletedTask;
         }

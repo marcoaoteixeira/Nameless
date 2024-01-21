@@ -2,7 +2,7 @@
 
 namespace Nameless {
     public class ObjectExtensionTests {
-        [Test]  
+        [Test]
         public void IsAnonymous_Should_Returns_True_If_Anonymous_Object_Instance() {
             // arrange
             var obj = new {

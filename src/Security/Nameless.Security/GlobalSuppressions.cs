@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0180:Use tuple to swap values", Justification = "Change will make it to hard to read.", Scope = "member", Target = "~M:Nameless.Security.RandomPasswordGenerator.Generate(Nameless.Security.PasswordOptions)~System.String")]
+[assembly: SuppressMessage("Maintainability", "CA1513:Use ObjectDisposedException throw helper", Justification = "ThrowIf is not available for netstandard2.1, to keep code consistent we'll use the common pattern.", Scope = "member", Target = "~M:Nameless.Security.Cryptography.RijndaelCryptoProvider.BlockAccesAfterDispose")]
