@@ -32,7 +32,7 @@ namespace Nameless.Messenger.Email.Impl {
             if (_options.Credentials.UseCredentials && client.Capabilities.HasFlag(SmtpCapabilities.Authentication)) {
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(
-                    _options.Credentials.UserName,
+                    _options.Credentials.Username,
                     _options.Credentials.Password,
                     cancellationToken
                 );

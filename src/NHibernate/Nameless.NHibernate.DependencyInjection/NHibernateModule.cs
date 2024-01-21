@@ -2,6 +2,7 @@
 using Autofac.Core;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
+using Nameless.NHibernate.Options;
 using Nameless.NHibernate.Services;
 using Nameless.NHibernate.Services.Impl;
 using NHibernate;

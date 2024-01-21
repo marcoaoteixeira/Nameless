@@ -2,6 +2,8 @@
 using System.Text;
 
 namespace Nameless.Security.Cryptography {
+    // TODO: Refactor to use lazy initialization.
+
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and
     /// decrypt data. As long as it is initialized with the same constructor
@@ -72,17 +74,6 @@ namespace Nameless.Security.Cryptography {
 
             _encryptor = symmetricKey.CreateEncryptor(keyBytes, ivBytes);
             _decryptor = symmetricKey.CreateDecryptor(keyBytes, ivBytes);
-        }
-
-        #endregion
-
-        #region Destructors
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~RijndaelCryptoProvider() {
-            Dispose(false);
         }
 
         #endregion

@@ -35,14 +35,6 @@ namespace Nameless.Web.Infrastructure {
 
         #endregion
 
-        #region Destructor
-
-        ~RecurringTaskHostedService() {
-            Dispose(disposing: false);
-        }
-
-        #endregion
-
         #region Public Methods
 
         public void SetInterval(TimeSpan interval) {
@@ -65,19 +57,20 @@ namespace Nameless.Web.Infrastructure {
 
         #region Private Static Methods
 
-        private static async Task<bool> ContinueAsync(
-            PeriodicTimer timer,
-            CancellationToken cancellationToken)
-            => await timer.WaitForNextTickAsync(cancellationToken)
-               && !cancellationToken.IsCancellationRequested;
+        private static async Task<bool> ContinueAsync(PeriodicTimer timer, CancellationToken cancellationToken)
+            => await timer.WaitForNextTickAsync(cancellationToken) &&
+                !cancellationToken.IsCancellationRequested;
 
         #endregion
 
         #region Private Methods
 
         private async Task InnerExecuteAsync(CancellationToken stoppingToken) {
-            while (await ContinueAsync(_timer!, stoppingToken)) {
-                try { await ExecuteAsync(stoppingToken); } catch (Exception ex) {
+            if (_timer is null) { return; }
+
+            while (await ContinueAsync(_timer, stoppingToken)) {
+                try { await ExecuteAsync(stoppingToken); }
+                catch (Exception ex) {
                     _logger.LogError(
                         exception: ex,
                         message: "Error while executing recurring task: {Message}",
@@ -131,19 +124,22 @@ namespace Nameless.Web.Infrastructure {
                 return;
             }
 
-            try { _stoppingCts!.Cancel(); } finally {
+            try { _stoppingCts?.Cancel(); } finally {
                 // Wait until the task completes or the stop token triggers
                 var taskCompletionSource = new TaskCompletionSource<object>();
                 using var registration = cancellationToken.Register(
-                    callback: state => ((TaskCompletionSource<object>)state!)
-                        .SetCanceled(),
+                    callback: state => {
+                        if (state is TaskCompletionSource<object> tcs) {
+                            tcs.SetCanceled();
+                        }
+                    },
                     state: taskCompletionSource
                 );
                 // Do not await the _executeTask because cancelling it will throw
                 // an OperationCanceledException which we are explicitly ignoring
-                await Task.WhenAny(
-                    tasks: [_executeTask, taskCompletionSource.Task]
-                ).ConfigureAwait(continueOnCapturedContext: false);
+                await Task
+                    .WhenAny([_executeTask, taskCompletionSource.Task])
+                    .ConfigureAwait(continueOnCapturedContext: false);
             }
         }
 

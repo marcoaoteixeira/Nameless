@@ -53,17 +53,6 @@ namespace Nameless.Lucene {
 
         #endregion
 
-        #region Destructor
-
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~Index() {
-            Dispose(disposing: false);
-        }
-
-        #endregion
-
         #region Private Static Methods
 
         private static void InnerStoreDocuments(IndexWriter writer, IDocument[] documents) {

@@ -13,7 +13,7 @@ namespace Nameless.Data.SQLServer {
         #region Public Constructors
 
         public SQLServerOptions() {
-            UserName = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER)
+            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER)
                 ?? string.Empty;
             Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_PASS)
                 ?? string.Empty;
@@ -25,13 +25,13 @@ namespace Nameless.Data.SQLServer {
 
         public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
         public string Database { get; set; } = "master";
-        public string UserName { get; }
+        public string Username { get; }
         public string Password { get; }
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(UserName), nameof(Password))]
+        [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
 #endif
         public bool UseCredentials
-            => !string.IsNullOrWhiteSpace(UserName) &&
+            => !string.IsNullOrWhiteSpace(Username) &&
                !string.IsNullOrWhiteSpace(Password);
         public bool UseAttachedDb { get; set; }
         public bool UseIntegratedSecurity { get; set; }
@@ -50,7 +50,7 @@ namespace Nameless.Data.SQLServer {
                 : $"Database={Database};";
 
             connStr += UseCredentials
-                ? $"User Id={UserName};Password={Password};"
+                ? $"User Id={Username};Password={Password};"
                 : string.Empty;
 
             connStr += UseIntegratedSecurity

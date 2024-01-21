@@ -49,13 +49,6 @@
 
         #endregion
 
-        #region Destructor
-
-        ~AsyncEnumerator()
-            => Dispose(disposing: false);
-
-        #endregion
-
         #region Private Methods
 
         private void BlockAccessAfterDispose() {

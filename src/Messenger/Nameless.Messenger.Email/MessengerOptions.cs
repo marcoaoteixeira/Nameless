@@ -49,7 +49,7 @@
         /// <summary>
         /// Gets or sets the user name credential.
         /// </summary>
-        public string? UserName { get; }
+        public string? Username { get; }
 
         /// <summary>
         /// Gets or sets the password credential.
@@ -57,7 +57,7 @@
         public string? Password { get; }
 
         public bool UseCredentials
-            => UserName is not null &&
+            => Username is not null &&
                Password is not null;
 
         #endregion
@@ -65,7 +65,7 @@
         #region Public Constructors
 
         public Credentials() {
-            UserName = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_USER);
+            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_USER);
             Password = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_PASS);
         }
 
