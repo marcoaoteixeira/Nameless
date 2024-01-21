@@ -1,4 +1,5 @@
-﻿using NHibernate.Cfg;
+﻿using Nameless.NHibernate.Options;
+using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 

@@ -135,6 +135,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.MongoDB", "src\Mon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.MongoDB.DependencyInjection", "src\MongoDB\Nameless.MongoDB.DependencyInjection\Nameless.MongoDB.DependencyInjection.csproj", "{EBA66A7E-2DEE-45EB-A335-99FF753A01B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.MongoDB.UnitTest", "src\MongoDB\Nameless.MongoDB.UnitTest\Nameless.MongoDB.UnitTest.csproj", "{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -337,6 +339,10 @@ Global
 		{EBA66A7E-2DEE-45EB-A335-99FF753A01B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBA66A7E-2DEE-45EB-A335-99FF753A01B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBA66A7E-2DEE-45EB-A335-99FF753A01B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -406,6 +412,7 @@ Global
 		{6285EFCE-3D17-41C8-911E-4BACDE76202C} = {B0F8B265-A654-479F-A240-D7A0806CD2E4}
 		{4CB2F4D4-7700-41A6-9F3B-A22495F79A45} = {6285EFCE-3D17-41C8-911E-4BACDE76202C}
 		{EBA66A7E-2DEE-45EB-A335-99FF753A01B2} = {6285EFCE-3D17-41C8-911E-4BACDE76202C}
+		{03A30C1F-BFDE-4D3E-8A76-A9C78373E08E} = {6285EFCE-3D17-41C8-911E-4BACDE76202C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {717ADD35-E5EC-479F-ACB1-ADB14FF8A89C}

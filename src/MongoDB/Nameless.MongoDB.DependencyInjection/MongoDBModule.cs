@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Core;
 using MongoDB.Driver;
 using Nameless.Autofac;
 using Nameless.MongoDB.Impl;
+using Nameless.MongoDB.Options;
 
 namespace Nameless.MongoDB.DependencyInjection {
     public sealed class MongoDBModule : ModuleBase {
@@ -10,6 +12,7 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         private const string MONGO_CLIENT_TOKEN = $"{nameof(IMongoClient)}::4883bd96-fc1e-4fb5-b986-7388163b6be6";
         private const string MONGO_DATABASE_TOKEN = $"{nameof(IMongoDatabase)}::849cd42e-1df2-4097-82b1-bbf88e906808";
+        private const string BOOTSTRAPPER_TOKEN = $"{nameof(Bootstrapper)}::6a921d17-56ed-404d-a63d-3bdd9af4b52d";
 
         #endregion
 
@@ -36,13 +39,17 @@ namespace Nameless.MongoDB.DependencyInjection {
             builder
                 .Register(MongoCollectionProviderResolver)
                 .As<IMongoCollectionProvider>()
+                // Here, our MongoCollectionProvider will be a singleton.
+                // So, this will be the perfect place to setup
+                // our StartUp code. This must occurs only once.
+                .OnActivated(StartUp)
                 .SingleInstance();
 
-            var mappings = GetImplementations(typeof(ClassMappingBase<>));
+            var mappings = GetImplementations(typeof(ClassMappingBase<>)).ToArray();
             builder
                 .RegisterType<Bootstrapper>()
                 .WithParameter(TypedParameter.From(mappings))
-                .As<IStartable>()
+                .Named<Bootstrapper>(BOOTSTRAPPER_TOKEN)
                 .InstancePerDependency();
 
             base.Load(builder);
@@ -57,6 +64,24 @@ namespace Nameless.MongoDB.DependencyInjection {
             var settings = new MongoClientSettings {
                 Server = new(options.Host, options.Port)
             };
+
+            if (options.Credentials.UseCredentials()) {
+                var identity = new MongoInternalIdentity(
+                    databaseName: options.Credentials.Database,
+                    username: options.Credentials.Username
+                );
+                var evidence = new PasswordEvidence(
+                    password: options.Credentials.Password
+                );
+                var credential = new MongoCredential(
+                    mechanism: options.Credentials.Mechanism,
+                    identity: identity,
+                    evidence: evidence
+                );
+
+                settings.Credential = credential;
+            }
+
             var result = new MongoClient(settings);
 
             return result;
@@ -72,10 +97,16 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         private static IMongoCollectionProvider MongoCollectionProviderResolver(IComponentContext ctx) {
             var database = ctx.ResolveNamed<IMongoDatabase>(MONGO_DATABASE_TOKEN);
-            var result = new MongoCollectionProvider(database, CollectionNamingStrategy.Instance);
+            var result = new MongoCollectionProvider(
+                database,
+                CollectionNamingStrategy.Instance
+            );
 
             return result;
         }
+
+        private static void StartUp(IActivatedEventArgs<IMongoCollectionProvider> args)
+            => args.Context.ResolveNamed<Bootstrapper>(BOOTSTRAPPER_TOKEN).Run();
 
         #endregion
     }

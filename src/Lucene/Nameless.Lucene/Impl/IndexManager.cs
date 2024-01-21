@@ -46,14 +46,6 @@ namespace Nameless.Lucene {
 
         #endregion
 
-        #region Destructor
-
-        ~IndexManager() {
-            Dispose(disposing: false);
-        }
-
-        #endregion
-
         #region Private Methods
 
         private void BlockAccessAfterDispose() {

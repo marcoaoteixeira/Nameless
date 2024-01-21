@@ -16,7 +16,7 @@ namespace Nameless.MongoDB.Impl {
 
         public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
             _database = Guard.Against.Null(database, nameof(database));
-            _collectionNamingStrategy = collectionNamingStrategy ?? CollectionNamingStrategy.Instance;
+            _collectionNamingStrategy = Guard.Against.Null(collectionNamingStrategy, nameof(collectionNamingStrategy));
         }
 
         #endregion
