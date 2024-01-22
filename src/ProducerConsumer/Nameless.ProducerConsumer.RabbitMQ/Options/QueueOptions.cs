@@ -10,19 +10,14 @@
 
         private Dictionary<string, object>? _arguments;
         private BindingOptions[]? _bindings;
-
-        #endregion
-
-        #region Private Fields
-
-        private string _name = Root.Defaults.QUEUE_NAME;
+        private string? _name;
 
         #endregion
 
         #region Public Properties
 
         public string Name {
-            get => _name;
+            get => _name ??= Root.Defaults.QUEUE_NAME;
             set => _name = Guard.Against.NullOrWhiteSpace(value, nameof(value));
         }
 

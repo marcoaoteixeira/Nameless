@@ -1,4 +1,6 @@
-﻿namespace Nameless.Security.Cryptography {
+﻿using Nameless.Security.Cryptography;
+
+namespace Nameless.Security.Options {
     public sealed class RijndaelCryptoOptions {
         #region Public Constants
 

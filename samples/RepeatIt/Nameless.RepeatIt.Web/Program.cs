@@ -31,7 +31,9 @@ namespace Nameless.RepeatIt.Web {
                     .Where(hostedService => typeof(RecurringTaskHostedService).IsAssignableFrom(hostedService.GetType()))
                     .FirstOrDefault();
 
-                ((RecurringTaskHostedService)recurring).SetInterval(TimeSpan.FromSeconds(0.5));
+                if (recurring is RecurringTaskHostedService recurringTaskHostedService) {
+                    recurringTaskHostedService.SetInterval(TimeSpan.FromSeconds(0.5));
+                }
             });
 
             app.Run();

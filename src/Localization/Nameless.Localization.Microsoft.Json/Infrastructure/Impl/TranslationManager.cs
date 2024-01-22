@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Nameless.Localization.Microsoft.Json.Objects;
+using Nameless.Localization.Microsoft.Json.Options;
 
 namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
     public sealed class TranslationManager : ITranslationManager {

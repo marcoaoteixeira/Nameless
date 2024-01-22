@@ -6,15 +6,6 @@
 
         #endregion
 
-        #region Public Constructors
-
-        public JwtOptions() {
-            Secret = Environment.GetEnvironmentVariable(Root.EnvTokens.JWT_SECRET)
-                ?? Root.Defaults.JWT_SECRET;
-        }
-
-        #endregion
-
         #region Public Properties
 
         public string Secret { get; }
@@ -68,6 +59,15 @@
         /// </summary>
         public int MaxClockSkew { get; set; }
         public bool SaveTokens { get; set; } = true;
+
+        #endregion
+
+        #region Public Constructors
+
+        public JwtOptions() {
+            Secret = Environment.GetEnvironmentVariable(Root.EnvTokens.JWT_SECRET)
+                ?? Root.Defaults.JWT_SECRET;
+        }
 
         #endregion
     }

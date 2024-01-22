@@ -1,4 +1,4 @@
-﻿namespace Nameless.Localization.Microsoft.Json {
+﻿namespace Nameless.Localization.Microsoft.Json.Options {
     public sealed class LocalizationOptions {
         #region Public Static Read-Only Properties
 

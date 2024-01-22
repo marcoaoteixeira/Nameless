@@ -10,30 +10,26 @@ namespace Nameless.MongoDB.Options {
 
         #endregion
 
+        #region Public Properties
+
+        public string Database { get; set; } = Root.Defaults.MONGO_CRED_DATABASE;
+
+        public string Mechanism { get; set; } = Root.Defaults.MONGO_CRED_MECHANISM;
+
+        public string Username { get; }
+
+        public string Password { get; }
+
+        #endregion
+
         #region Public Constructors
 
         public CredentialsOptions() {
-            Database = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_DATABASE)
-                ?? Root.Defaults.MONGO_CRED_DATABASE;
-            Mechanism = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_MECHANISM)
-                ?? Root.Defaults.MONGO_CRED_MECHANISM;
             Username = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_USER)
                 ?? Root.Defaults.MONGO_CRED_USER;
             Password = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_PASS)
                 ?? Root.Defaults.MONGO_CRED_PASS;
         }
-
-        #endregion
-
-        #region Public Properties
-
-        public string Database { get; }
-
-        public string Mechanism { get; }
-
-        public string Username { get; }
-
-        public string Password { get; }
 
         #endregion
 

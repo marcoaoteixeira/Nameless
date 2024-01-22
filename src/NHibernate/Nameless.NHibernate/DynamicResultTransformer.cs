@@ -33,7 +33,8 @@ namespace Nameless.NHibernate {
 
         #region IResultTransformer Members
 
-        public IList TransformList(IList collection) => collection;
+        public IList TransformList(IList collection)
+            => collection;
 
         public object TransformTuple(object[] tuple, string[] aliases) {
             Guard.Against.Null(tuple, nameof(tuple));

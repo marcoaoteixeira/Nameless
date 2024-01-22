@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Nameless.Autofac;
+using Nameless.Data.SQLite.Options;
 
 namespace Nameless.Data.SQLite.DependencyInjection {
     public sealed class DataModule : ModuleBase {

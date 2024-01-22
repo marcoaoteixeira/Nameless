@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using CoreRoot = Nameless.Root;
 
-namespace Nameless.Security.Cryptography {
+namespace Nameless.Security.Options {
     public sealed class AesCryptoOptions {
         #region Public Static Read-Only Properties
 

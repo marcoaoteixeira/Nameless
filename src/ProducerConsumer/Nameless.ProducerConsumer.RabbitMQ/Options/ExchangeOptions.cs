@@ -10,20 +10,15 @@
 
         private Dictionary<string, object>? _arguments;
         private QueueOptions[]? _queues;
-
-        #endregion
-
-        #region Private Fields
-
-        private string _name = Root.Defaults.EXCHANGE_NAME;
+        private string? _name;
 
         #endregion
 
         #region Public Properties
 
         public string Name {
-            get => _name;
-            set => _name = Guard.Against.Null(value, nameof(value));
+            get => _name ??= Root.Defaults.EXCHANGE_NAME;
+            set => _name = value ?? Root.Defaults.EXCHANGE_NAME;
         }
 
         public ExchangeType Type { get; set; }

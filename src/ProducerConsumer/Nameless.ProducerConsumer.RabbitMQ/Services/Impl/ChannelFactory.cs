@@ -1,5 +1,4 @@
-﻿using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Logging.Microsoft;
@@ -76,37 +75,33 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
                     _connectionFactory.Ssl = new(_options.Server.Ssl.ServerName, enabled: _options.Server.Ssl.Enabled) {
                         Version = _options.Server.Ssl.Protocol,
                         AcceptablePolicyErrors = _options.Server.Ssl.PolicyError,
-                        CertificateSelectionCallback = CertificateSelectionHandler,
-                        CertificateValidationCallback = CertificateValidationHandler
+                        CertificateSelectionCallback = (sender, targetHost, localCertificates, remoteCertificate, acceptableIssuers)
+                            => new(
+                            fileName: _options.Server.Certificate.Pfx,
+                            password: _options.Server.Certificate.Password
+                        ),
+                        CertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => {
+                            if (certificate is null) {
+                                return false;
+                            }
+
+                            var inner = new X509Certificate2(_options.Server.Certificate.Pem);
+                            var verdict = certificate.Issuer == inner.Subject;
+
+                            _logger
+                                .On(verdict)
+                                .LogInformation(
+                                    message: "Certificate error: {sslPolicyErrors}",
+                                    args: sslPolicyErrors
+                                );
+
+                            return verdict;
+                        }
                     };
                 }
             }
 
             return _connectionFactory;
-        }
-
-        private X509Certificate CertificateSelectionHandler(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
-            => new(
-                fileName: _options.Server.Certificate.Pfx!,
-                password: _options.Server.Certificate.Pass
-            );
-
-        private bool CertificateValidationHandler(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) {
-            if (certificate is null) {
-                return false;
-            }
-
-            var inner = new X509Certificate2(_options.Server.Certificate.Pem!);
-            var verdict = certificate.Issuer == inner.Subject;
-
-            _logger
-                .On(verdict)
-                .LogInformation(
-                    message: "Certificate error: {sslPolicyErrors}",
-                    args: sslPolicyErrors
-                );
-
-            return verdict;
         }
 
         private IConnection GetConnection()

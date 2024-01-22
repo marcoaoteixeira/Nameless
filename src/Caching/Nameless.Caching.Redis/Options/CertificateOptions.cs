@@ -10,47 +10,43 @@ namespace Nameless.Caching.Redis.Options {
 
         #endregion
 
-        #region Public Constructors
-
-        public CertificateOptions() {
-            Pfx = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PFX);
-            Pem = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PEM);
-            Pass = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PASS);
-        }
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
-        /// Gets the .pfx file path. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.REDIS_CERT_PFX"/>.
+        /// Gets the .pfx file path.
         /// </summary>
-        public string? Pfx { get; }
+        public string Pfx { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets the .pem file path. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.REDIS_CERT_PEM"/>.
+        /// Gets the .pem file path.
         /// </summary>
-        public string? Pem { get; }
+        public string Pem { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets the certificate password. This property is provided by the environment
         /// variable <see cref="Root.EnvTokens.REDIS_CERT_PASS"/>.
         /// </summary>
-        public string? Pass { get; }
+        public string? Password { get; }
+
+        #endregion
+
+        #region Public Constructors
+
+        public CertificateOptions() {
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PASS);
+        }
 
         #endregion
 
         #region Public Methods
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Pfx), nameof(Pem), nameof(Pass))]
+        [MemberNotNullWhen(true, nameof(Pfx), nameof(Pem), nameof(Password))]
 #endif
         public bool IsAvailable()
             => !string.IsNullOrWhiteSpace(Pfx) &&
                !string.IsNullOrWhiteSpace(Pem) &&
-               !string.IsNullOrWhiteSpace(Pass);
+               !string.IsNullOrWhiteSpace(Password);
 
         #endregion
     }

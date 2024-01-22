@@ -2,6 +2,7 @@
 using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Impl;
+using Nameless.Lucene.Options;
 
 namespace Nameless.Lucene.DependencyInjection {
     public sealed class LuceneModule : ModuleBase {

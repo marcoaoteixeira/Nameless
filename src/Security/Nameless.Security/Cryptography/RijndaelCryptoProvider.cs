@@ -1,9 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Nameless.Security.Options;
 
 namespace Nameless.Security.Cryptography {
-    // TODO: Refactor to use lazy initialization.
-
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and
     /// decrypt data. As long as it is initialized with the same constructor

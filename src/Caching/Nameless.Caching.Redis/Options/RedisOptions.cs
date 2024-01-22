@@ -13,17 +13,6 @@
 
         #endregion
 
-        #region Public Constructors
-
-        public RedisOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_USER)
-                ?? Root.Defaults.REDIS_USER;
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_PASS)
-                ?? Root.Defaults.REDIS_PASS;
-        }
-
-        #endregion
-
         #region Public Properties
 
         public string Host { get; set; } = "localhost";
@@ -52,6 +41,17 @@
         public CertificateOptions Certificate {
             get => _certificate ??= CertificateOptions.Default;
             set => _certificate = value ?? CertificateOptions.Default;
+        }
+
+        #endregion
+
+        #region Public Constructors
+
+        public RedisOptions() {
+            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_USER)
+                ?? Root.Defaults.REDIS_USER;
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_PASS)
+                ?? Root.Defaults.REDIS_PASS;
         }
 
         #endregion

@@ -2,10 +2,11 @@
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Moq;
+using Nameless.Localization.Microsoft.Json.Options;
 
 namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
     public class TranslationManagerTests {
-        private static Stream CreateFakeStream(string? culture = null) {
+        private static MemoryStream CreateFakeStream(string culture = null) {
             var sb = new StringBuilder();
 
             sb.AppendLine("{");
@@ -26,7 +27,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             return new MemoryStream(Encoding.UTF8.GetBytes(value));
         }
 
-        private static Mock<IFileInfo> CreateFileInfoMock(string? culture = null) {
+        private static Mock<IFileInfo> CreateFileInfoMock(string culture = null) {
             var fileInfoMock = new Mock<IFileInfo>();
             fileInfoMock
                 .Setup(mock => mock.Exists)
@@ -41,20 +42,20 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         private static Mock<IDisposable> CreateFileChangeHandlerMock()
             => new();
 
-        private static Mock<IChangeToken> CreateChangeTokenMock(IDisposable? fileChangeHandler = null) {
+        private static Mock<IChangeToken> CreateChangeTokenMock(IDisposable fileChangeHandler = null) {
             var changeTokenMock = new Mock<IChangeToken>(); ;
 
             changeTokenMock
                 .Setup(mock => mock.RegisterChangeCallback(
-                    It.IsAny<Action<object?>>(),
-                    It.IsAny<object?>()
+                    It.IsAny<Action<object>>(),
+                    It.IsAny<object>()
                 ))
                 .Returns(fileChangeHandler ?? NullDisposable.Instance);
 
             return changeTokenMock;
         }
 
-        private static Mock<IFileProvider> CreateFileProviderMock(IFileInfo? fileInfo = null, IChangeToken? changeToken = null) {
+        private static Mock<IFileProvider> CreateFileProviderMock(IFileInfo fileInfo = null, IChangeToken changeToken = null) {
             var fileProviderMock = new Mock<IFileProvider>();
 
             if (fileInfo is not null) {
@@ -132,8 +133,8 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
                 Assert.That(translation.Culture, Is.EqualTo(culture));
                 fileProviderMock.Verify(mock => mock.Watch(It.IsAny<string>()));
                 changeTokenMock.Verify(mock => mock.RegisterChangeCallback(
-                    It.IsAny<Action<object?>>(),
-                    It.IsAny<object?>()
+                    It.IsAny<Action<object>>(),
+                    It.IsAny<object>()
                 ));
             });
         }
