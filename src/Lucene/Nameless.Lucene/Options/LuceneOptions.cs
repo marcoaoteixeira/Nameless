@@ -1,4 +1,4 @@
-﻿namespace Nameless.Lucene {
+﻿namespace Nameless.Lucene.Options {
     /// <summary>
     /// Lucene Search Settings.
     /// </summary>

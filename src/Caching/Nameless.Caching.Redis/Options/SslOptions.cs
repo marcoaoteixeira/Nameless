@@ -16,7 +16,7 @@ namespace Nameless.Caching.Redis.Options {
         /// <summary>
         /// Gets or sets the SSL host.
         /// </summary>
-        public string? Host { get; set; }
+        public string Host { get; set; } = "localhost";
         /// <summary>
         /// Gets or sets the SSL port.
         /// </summary>
@@ -24,7 +24,7 @@ namespace Nameless.Caching.Redis.Options {
         /// <summary>
         /// Gets or sets the SSL protocol.
         /// </summary>
-        public SslProtocols SslProtocol { get; set; }
+        public SslProtocols Protocol { get; set; }
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace Nameless.Caching.Redis.Options {
         public bool IsAvailable()
             => !string.IsNullOrWhiteSpace(Host) &&
                Port > 0 &&
-               SslProtocol != SslProtocols.None;
+               Protocol != SslProtocols.None;
 
         #endregion
     }

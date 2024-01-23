@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
+using Nameless.Data.SQLServer.Options;
 
 namespace Nameless.Data.SQLServer {
     public sealed class DbConnectionFactory : IDbConnectionFactory {

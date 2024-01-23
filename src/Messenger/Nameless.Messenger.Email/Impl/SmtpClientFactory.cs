@@ -10,8 +10,11 @@ namespace Nameless.Messenger.Email.Impl {
 
         #region Public Constructors
 
-        public SmtpClientFactory(MessengerOptions? options = null) {
-            _options = options ?? MessengerOptions.Default;
+        public SmtpClientFactory()
+            : this(MessengerOptions.Default) { }
+
+        public SmtpClientFactory(MessengerOptions options) {
+            _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion
@@ -29,11 +32,11 @@ namespace Nameless.Messenger.Email.Impl {
             );
 
             // Authenticate if possible and needed.
-            if (_options.Credentials.UseCredentials && client.Capabilities.HasFlag(SmtpCapabilities.Authentication)) {
+            if (_options.UseCredentials() && client.Capabilities.HasFlag(SmtpCapabilities.Authentication)) {
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(
-                    _options.Credentials.Username,
-                    _options.Credentials.Password,
+                    _options.Username,
+                    _options.Password,
                     cancellationToken
                 );
             }

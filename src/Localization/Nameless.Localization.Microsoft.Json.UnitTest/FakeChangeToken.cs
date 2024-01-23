@@ -2,7 +2,7 @@
 
 namespace Nameless.Localization.Microsoft.Json {
     public class FakeChangeToken : IChangeToken {
-        private readonly Dictionary<Action<object?>, object?> _callbacks = [];
+        private readonly Dictionary<Action<object>, object> _callbacks = [];
         private readonly IDisposable _disposable;
 
         public bool HasChanged { get; private set; }
@@ -12,7 +12,7 @@ namespace Nameless.Localization.Microsoft.Json {
             _disposable = disposable;
         }
 
-        public IDisposable RegisterChangeCallback(Action<object?> callback, object? state) {
+        public IDisposable RegisterChangeCallback(Action<object> callback, object state) {
             _callbacks.Add(callback, state);
             return _disposable;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Nameless.Infrastructure;
+using Nameless.Lucene.Options;
 
 namespace Nameless.Lucene {
     /// <summary>

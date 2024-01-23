@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.Data.Sqlite;
+using Nameless.Data.SQLite.Options;
 
 namespace Nameless.Data.SQLite {
     public sealed class DbConnectionFactory : IDbConnectionFactory {

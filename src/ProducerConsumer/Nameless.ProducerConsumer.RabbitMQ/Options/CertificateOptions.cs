@@ -10,31 +10,34 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         #endregion
 
+        #region Public Properties
+
+        public string Pfx { get; set; } = string.Empty;
+
+        public string Pem { get; set; } = string.Empty;
+
+        public string Password { get; } = string.Empty;
+
+        #endregion
+
         #region Public Constructors
 
         public CertificateOptions() {
-            Pfx = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PFX);
-            Pem = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PEM);
-            Pass = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PASS);
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PASS)
+                ?? string.Empty;
         }
 
         #endregion
 
-        #region Public Properties
+        #region Public Methods
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(returnValue: true, nameof(Pfx), nameof(Pem), nameof(Pass))]
+        [MemberNotNullWhen(returnValue: true, nameof(Pfx), nameof(Pem), nameof(Password))]
 #endif
         public bool IsAvailable()
             => !string.IsNullOrWhiteSpace(Pfx) &&
                !string.IsNullOrWhiteSpace(Pem) &&
-               !string.IsNullOrWhiteSpace(Pass);
-
-        public string? Pfx { get; }
-
-        public string? Pem { get; }
-
-        public string? Pass { get; }
+               !string.IsNullOrWhiteSpace(Password);
 
         #endregion
     }

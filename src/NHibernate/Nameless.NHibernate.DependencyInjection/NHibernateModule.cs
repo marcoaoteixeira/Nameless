@@ -2,9 +2,8 @@
 using Autofac.Core;
 using Nameless.Autofac;
 using Nameless.Infrastructure;
+using Nameless.NHibernate.Impl;
 using Nameless.NHibernate.Options;
-using Nameless.NHibernate.Services;
-using Nameless.NHibernate.Services.Impl;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 
@@ -12,7 +11,7 @@ namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
         #region Internal Constants
 
-        internal const string CONFIGURATION_BUILDER_TOKEN = $"{nameof(IConfigurationBuilder)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
+        internal const string CONFIGURATION_BUILDER_TOKEN = $"{nameof(IConfigurationFactory)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
         internal const string SESSION_FACTORY_TOKEN = $"{nameof(ISessionFactory)}::dba2ffdf-3c03-4431-83bc-54746b8e47ab";
 
         #endregion
@@ -21,21 +20,21 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(ConfigurationBuilderResolver)
-                .Named<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
+                .Register(ConfigurationFactoryResolver)
+                .Named<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
                 .SingleInstance();
 
             builder
                 .Register(SessionFactoryResolver)
                 .Named<ISessionFactory>(SESSION_FACTORY_TOKEN)
-                .OnActivated(StartUp) // StartUp should only occurs once.
+                // Here, our SessionFactory will be a singleton.
+                // So, this will be the perfect place to setup
+                // our StartUp code. This must occurs only once.
+                .OnActivated(StartUp)
                 .SingleInstance();
 
             builder
                 .Register(SessionResolver)
-                // Here, our Session will be a singleton.
-                // So, this will be the perfect place to setup
-                // our StartUp code. This must occurs only once.
                 .As<ISession>()
                 .InstancePerLifetimeScope();
 
@@ -46,17 +45,17 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IConfigurationBuilder ConfigurationBuilderResolver(IComponentContext ctx) {
+        private static IConfigurationFactory ConfigurationFactoryResolver(IComponentContext ctx) {
             var options = ctx.GetOptions<NHibernateOptions>();
-            var result = new ConfigurationBuilder(options);
+            var result = new ConfigurationFactory(options);
 
             return result;
         }
 
         private static ISessionFactory SessionFactoryResolver(IComponentContext ctx) {
             var configuration = ctx
-                .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
-                .Build();
+                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
+                .CreateConfiguration();
             var result = configuration.BuildSessionFactory();
 
             return result;
@@ -91,8 +90,8 @@ namespace Nameless.NHibernate.DependencyInjection {
 
             using var session = args.Instance.OpenSession();
             var configuration = ctx
-                .ResolveNamed<IConfigurationBuilder>(CONFIGURATION_BUILDER_TOKEN)
-                .Build();
+                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
+                .CreateConfiguration();
             new SchemaExport(configuration).Execute(
                 useStdOut: options.SchemaExport.ConsoleOutput,
                 execute: true,

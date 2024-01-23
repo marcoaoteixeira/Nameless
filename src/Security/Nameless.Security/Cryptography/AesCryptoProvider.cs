@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Nameless.Security.Options;
 
 namespace Nameless.Security.Cryptography {
     public sealed class AesCryptoProvider : ICryptoProvider {

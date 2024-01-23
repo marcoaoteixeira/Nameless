@@ -17,17 +17,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         #endregion
 
-        #region Public Constructors
-
-        public ServerOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_USER)
-                ?? Root.Defaults.RABBITMQ_USER;
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_PASS)
-                ?? Root.Defaults.RABBITMQ_PASS;
-        }
-
-        #endregion
-
         #region Public Properties
 
         public string Protocol { get; set; } = "amqp";
@@ -59,6 +48,17 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
         public CertificateOptions Certificate {
             get => _certificate ??= CertificateOptions.Default;
             set => _certificate = value ?? CertificateOptions.Default;
+        }
+
+        #endregion
+
+        #region Public Constructors
+
+        public ServerOptions() {
+            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_USER)
+                ?? Root.Defaults.RABBITMQ_USER;
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_PASS)
+                ?? Root.Defaults.RABBITMQ_PASS;
         }
 
         #endregion

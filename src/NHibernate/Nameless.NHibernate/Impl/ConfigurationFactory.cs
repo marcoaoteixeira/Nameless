@@ -3,8 +3,8 @@ using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist;
 
-namespace Nameless.NHibernate.Services.Impl {
-    public sealed class ConfigurationBuilder : IConfigurationBuilder {
+namespace Nameless.NHibernate.Impl {
+    public sealed class ConfigurationFactory : IConfigurationFactory {
         #region Private Read-Only Fields
 
         private readonly NHibernateOptions _options;
@@ -13,10 +13,10 @@ namespace Nameless.NHibernate.Services.Impl {
 
         #region Public Constructors
 
-        public ConfigurationBuilder()
+        public ConfigurationFactory()
             : this(NHibernateOptions.Default) { }
 
-        public ConfigurationBuilder(NHibernateOptions options) {
+        public ConfigurationFactory(NHibernateOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
         }
 
@@ -37,9 +37,9 @@ namespace Nameless.NHibernate.Services.Impl {
 
         #endregion
 
-        #region IConfigurationBuilder Members
+        #region IConfigurationFactory Members
 
-        public Configuration Build() {
+        public Configuration CreateConfiguration() {
             var configuration = new Configuration();
             configuration.SetProperties(_options.ToDictionary());
 
@@ -55,9 +55,10 @@ namespace Nameless.NHibernate.Services.Impl {
                 .ToArray();
             modelMapper.AddMappings(mappings);
 
-            var mappingDocument = modelMapper.CompileMappingForAllExplicitlyAddedEntities();
+            var mappingDocument = modelMapper
+                .CompileMappingForAllExplicitlyAddedEntities();
             configuration.AddDeserializedMapping(
-                mappingDocument,
+                mappingDocument: mappingDocument,
                 documentFileName: null
             );
 

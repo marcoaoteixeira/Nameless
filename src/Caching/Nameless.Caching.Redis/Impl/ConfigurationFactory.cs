@@ -31,17 +31,9 @@ namespace Nameless.Caching.Redis.Impl {
         #region IConfigurationFactory Members
 
         public ConfigurationOptions CreateConfigurationOptions() {
-            var host = _options.Ssl.IsAvailable()
-                ? _options.Ssl.Host ?? throw new ArgumentNullException("SSL Host")
-                : _options.Host ?? throw new ArgumentNullException("Host");
-
-            var port = _options.Ssl.IsAvailable()
-                ? _options.Ssl.Port
-                : _options.Port;
-
-            var sslProtocols = _options.Ssl.IsAvailable()
-                ? _options.Ssl.SslProtocol
-                : SslProtocols.None;
+            var (host, port, protocol) = _options.Ssl.IsAvailable()
+                ? (_options.Ssl.Host, _options.Ssl.Port, _options.Ssl.Protocol)
+                : (_options.Host, _options.Port, SslProtocols.None);
 
             var result = new ConfigurationOptions {
                 EndPoints = { { host, port } },
@@ -49,16 +41,15 @@ namespace Nameless.Caching.Redis.Impl {
                 Password = _options.Password,
                 KeepAlive = _options.KeepAlive,
                 Ssl = _options.Ssl.IsAvailable(),
-                SslProtocols = sslProtocols,
-
+                SslProtocols = protocol
             };
 
             if (_options.Certificate.IsAvailable()) {
                 result.CertificateSelection += (object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
                     => new(
-                    fileName: _options.Certificate.Pfx,
-                    password: _options.Certificate.Pass
-                );
+                        fileName: _options.Certificate.Pfx,
+                        password: _options.Certificate.Password
+                    );
 
                 result.CertificateValidation += (object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) => {
                     if (certificate is null) {

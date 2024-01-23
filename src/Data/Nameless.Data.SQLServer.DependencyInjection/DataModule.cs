@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Nameless.Autofac;
+using Nameless.Data.SQLServer.Options;
 
 namespace Nameless.Data.SQLServer.DependencyInjection {
     public sealed class DataModule : ModuleBase {

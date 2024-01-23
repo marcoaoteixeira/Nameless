@@ -14,8 +14,8 @@
 
         #region Public Properties
 
-        public string Host { get; set; } = "localhost";
-        public int Port { get; set; } = 27017;
+        public string Host { get; set; } = Root.Defaults.MONGO_HOST;
+        public int Port { get; set; } = Root.Defaults.MONGO_PORT;
         public string? Database { get; set; }
         public CredentialsOptions Credentials {
             get => _credentials ??= CredentialsOptions.Default;

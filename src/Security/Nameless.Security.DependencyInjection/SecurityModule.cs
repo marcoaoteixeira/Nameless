@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Nameless.Autofac;
 using Nameless.Security.Cryptography;
+using Nameless.Security.Options;
 
 namespace Nameless.Security.DependencyInjection {
     public sealed class SecurityModule : ModuleBase {

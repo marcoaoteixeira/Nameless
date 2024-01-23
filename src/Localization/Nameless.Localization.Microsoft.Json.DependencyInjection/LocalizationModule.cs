@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using Nameless.Autofac;
 using Nameless.Localization.Microsoft.Json.Infrastructure;
 using Nameless.Localization.Microsoft.Json.Infrastructure.Impl;
+using Nameless.Localization.Microsoft.Json.Options;
 
 namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
     public sealed class LocalizationModule : ModuleBase {

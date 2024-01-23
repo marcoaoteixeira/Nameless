@@ -9,8 +9,6 @@
             public const string RABBITMQ_PASS = nameof(RABBITMQ_PASS);
 
             public const string RABBITMQ_SSL_SERVERNAME = nameof(RABBITMQ_SSL_SERVERNAME);
-            public const string RABBITMQ_CERT_PFX = nameof(RABBITMQ_CERT_PFX);
-            public const string RABBITMQ_CERT_PEM = nameof(RABBITMQ_CERT_PEM);
             public const string RABBITMQ_CERT_PASS = nameof(RABBITMQ_CERT_PASS);
 
             #endregion
