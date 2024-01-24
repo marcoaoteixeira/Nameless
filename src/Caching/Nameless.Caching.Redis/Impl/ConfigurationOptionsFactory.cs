@@ -8,7 +8,7 @@ using Nameless.Logging.Microsoft;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis.Impl {
-    public sealed class ConfigurationFactory : IConfigurationFactory {
+    public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
         #region Private Read-Only Fields
 
         private readonly RedisOptions _options;
@@ -18,17 +18,17 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Public Constructors
 
-        public ConfigurationFactory()
+        public ConfigurationOptionsFactory()
             : this(RedisOptions.Default, NullLogger.Instance) { }
 
-        public ConfigurationFactory(RedisOptions options, ILogger logger) {
+        public ConfigurationOptionsFactory(RedisOptions options, ILogger logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
 
-        #region IConfigurationFactory Members
+        #region IConfigurationOptionsFactory Members
 
         public ConfigurationOptions CreateConfigurationOptions() {
             var (host, port, protocol) = _options.Ssl.IsAvailable()

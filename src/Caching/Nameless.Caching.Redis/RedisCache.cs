@@ -5,7 +5,7 @@ namespace Nameless.Caching.Redis {
     public sealed class RedisCache : ICache, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly IConfigurationFactory _configurationFactory;
+        private readonly ConfigurationOptions _configurationOptions;
 
         #endregion
 
@@ -19,8 +19,8 @@ namespace Nameless.Caching.Redis {
 
         #region Public Constructors
 
-        public RedisCache(IConfigurationFactory configurationFactory) {
-            _configurationFactory = Guard.Against.Null(configurationFactory, nameof(configurationFactory));
+        public RedisCache(ConfigurationOptions configurationOptions) {
+            _configurationOptions = Guard.Against.Null(configurationOptions, nameof(configurationOptions));
         }
 
         #endregion
@@ -29,7 +29,7 @@ namespace Nameless.Caching.Redis {
 
         private IConnectionMultiplexer GetMultiplexer()
             => _multiplexer ??= ConnectionMultiplexer.Connect(
-                configuration: _configurationFactory.CreateConfigurationOptions()
+                configuration: _configurationOptions
             );
 
         private IDatabase GetDatabase()

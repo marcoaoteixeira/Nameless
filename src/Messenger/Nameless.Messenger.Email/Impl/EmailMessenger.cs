@@ -78,7 +78,8 @@ namespace Nameless.Messenger.Email.Impl {
             SetRecipients(mail.Cc, SplitAddresses(request.Args.GetCarbonCopy()));
             SetRecipients(mail.Bcc, SplitAddresses(request.Args.GetBlindCarbonCopy()));
 
-            try { await _deliveryHandler.HandleAsync(mail, cancellationToken); } catch (Exception ex) { return MessageResponse.Failure(ex); }
+            try { await _deliveryHandler.HandleAsync(mail, cancellationToken); }
+            catch (Exception ex) { return MessageResponse.Failure(ex); }
 
             return MessageResponse.Success();
         }

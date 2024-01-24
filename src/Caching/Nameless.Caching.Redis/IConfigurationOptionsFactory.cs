@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
-    public interface IConfigurationFactory {
+    public interface IConfigurationOptionsFactory {
         #region Methods
 
         ConfigurationOptions CreateConfigurationOptions();
