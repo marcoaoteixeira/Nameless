@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace Nameless.ErrorHandling {
-    public sealed class ErrorCollection : IEnumerable<Error> {
+    public sealed class ErrorCollection : ICollection<Error> {
         #region Public Static Read-Only Properties
 
         public static ErrorCollection Empty => new();
@@ -10,7 +10,7 @@ namespace Nameless.ErrorHandling {
 
         #region Private Read-Only Properties
 
-        private Dictionary<string, ISet<string>> Errors { get; } = new(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, ISet<string>> Cache { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         #endregion
 
@@ -55,22 +55,41 @@ namespace Nameless.ErrorHandling {
         #region Private Methods
 
         private ISet<string> AssertError(string code) {
-            if (!Errors.TryGetValue(code, out var value)) {
+            if (!Cache.TryGetValue(code, out var value)) {
                 value = new HashSet<string>();
-                Errors.Add(code, value);
+                Cache.Add(code, value);
             }
             return value;
         }
 
         private IEnumerable<Error> GetEnumerable() {
-            foreach (var item in Errors) {
+            foreach (var item in Cache) {
                 yield return new(item.Key, [.. item.Value]);
             }
         }
 
         #endregion
 
-        #region IEnumerable<Error> Members
+        #region ICollection<Error> Members
+
+        public int Count => Cache.Count;
+
+        bool ICollection<Error>.IsReadOnly => false;
+
+        void ICollection<Error>.Add(Error item)
+            => Cache[item.Code] = item.Problems.ToHashSet();
+
+        void ICollection<Error>.Clear()
+            => Cache.Clear();
+
+        bool ICollection<Error>.Contains(Error item)
+            => Cache.ContainsKey(item.Code);
+
+        void ICollection<Error>.CopyTo(Error[] array, int arrayIndex)
+            => this.ToArray().CopyTo(array, arrayIndex);
+
+        bool ICollection<Error>.Remove(Error item)
+            => Cache.Remove(item.Code);
 
         public IEnumerator<Error> GetEnumerator()
             => GetEnumerable().GetEnumerator();
