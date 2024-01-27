@@ -47,8 +47,7 @@ namespace Nameless.Lucene.DependencyInjection {
         }
 
         private static IIndexManager IndexProviderResolver(IComponentContext ctx) {
-            var applicationContext = ctx.ResolveOptional<IApplicationContext>()
-                ?? NullApplicationContext.Instance;
+            var applicationContext = ctx.Resolve<IApplicationContext>();
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);
             var options = ctx.GetOptions<LuceneOptions>();
             var result = new IndexManager(applicationContext, analyzerProvider, options);
