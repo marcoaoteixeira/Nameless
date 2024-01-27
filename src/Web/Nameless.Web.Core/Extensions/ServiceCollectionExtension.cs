@@ -2,12 +2,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Nameless.Infrastructure;
-using Nameless.Infrastructure.Impl;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CoreRoot = Nameless.Root;
@@ -15,53 +12,6 @@ using CoreRoot = Nameless.Root;
 namespace Nameless.Web {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
-
-        /// <summary>
-        /// Registers an object to act like an option that will get its values
-        /// from <see cref="IConfiguration"/> (using the Bind method).
-        /// </summary>
-        /// <typeparam name="TOptions">The type of the object.</typeparam>
-        /// <param name="self">The service collection.</param>
-        /// <param name="configuration">The configuration.</param>
-        /// <param name="optionsProvider">The option provider.</param>
-        /// <returns>The service collection.</returns>
-        public static IServiceCollection RegisterOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
-            Guard.Against.Null(configuration, nameof(configuration));
-            Guard.Against.Null(optionsProvider, nameof(optionsProvider));
-
-            var opts = optionsProvider();
-            var key = typeof(TOptions)
-                .Name
-                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
-
-            configuration.Bind(key, opts);
-            self.AddSingleton(opts);
-
-            return self;
-        }
-
-        /// <summary>
-        /// Registers an object to act like an option that will get its values
-        /// from <see cref="IConfiguration"/> (using the Bind method).
-        /// </summary>
-        /// <typeparam name="TOptions">The type of the object.</typeparam>
-        /// <param name="self">The service collection.</param>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>The service collection.</returns>
-        public static IServiceCollection RegisterOptions<TOptions>(this IServiceCollection self, IConfiguration configuration) where TOptions : class, new()
-            => RegisterOptions(self, configuration, () => new TOptions());
-
-        public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, Version? appVersion = null)
-            => self
-                .AddSingleton<IApplicationContext>(provider => {
-                    var hostEnvironment = provider.GetRequiredService<IHostEnvironment>();
-
-                    return new ApplicationContext(
-                        hostEnvironment,
-                        useAppDataSpecialFolder: false,
-                        appVersion: appVersion ?? new(major: 0, minor: 0, build: 0)
-                    );
-                });
 
         public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection self)
             => self

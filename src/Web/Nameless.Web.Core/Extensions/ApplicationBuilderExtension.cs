@@ -19,10 +19,10 @@ namespace Nameless.Web {
         #region Public Static Methods
 
         /// <summary>
-        /// 
+        /// Resolves all defined minimal endpoints.
         /// </summary>
-        /// <param name="self"></param>
-        /// <param name="assemblies"></param>
+        /// <param name="self">The application builder.</param>
+        /// <param name="assemblies">The assemblies for scanning.</param>
         /// <returns></returns>
         public static IApplicationBuilder ResolveMinimalEndpoints(this IApplicationBuilder self, params Assembly[] assemblies)
             => self.UseEndpoints(setup => {

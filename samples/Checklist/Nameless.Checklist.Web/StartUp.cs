@@ -53,8 +53,8 @@ namespace Nameless.Checklist.Web {
             // Configure options
             services
                 .AddOptions()
-                .PushOptions<SwaggerPageOptions>(Configuration)
-                .PushOptions<JwtOptions>(Configuration);
+                .RegisterOptions<SwaggerPageOptions>(Configuration)
+                .RegisterOptions<JwtOptions>(Configuration);
 
             // AutoMapper
             services
