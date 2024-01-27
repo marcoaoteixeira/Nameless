@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Nameless.Infrastructure;
+using Nameless.Infrastructure.Impl;
 
 namespace Nameless {
     public static class ServiceCollectionExtension {
@@ -14,14 +17,18 @@ namespace Nameless {
         /// <param name="configuration">The configuration.</param>
         /// <param name="optionsProvider">The option provider.</param>
         /// <returns>The service collection.</returns>
-        public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
+        public static IServiceCollection RegisterOptions<TOptions>(this IServiceCollection self, IConfiguration configuration, Func<TOptions> optionsProvider) where TOptions : class {
             Guard.Against.Null(configuration, nameof(configuration));
             Guard.Against.Null(optionsProvider, nameof(optionsProvider));
 
             var opts = optionsProvider();
-            var key = typeof(TOptions).Name.RemoveTail(Root.Defaults.OptionsSettingsTails);
+            var key = typeof(TOptions)
+                .Name
+                .RemoveTail(Root.Defaults.OptionsSettingsTails);
+
             configuration.Bind(key, opts);
             self.AddSingleton(opts);
+
             return self;
         }
 
@@ -33,8 +40,20 @@ namespace Nameless {
         /// <param name="self">The service collection.</param>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The service collection.</returns>
-        public static IServiceCollection PushOptions<TOptions>(this IServiceCollection self, IConfiguration configuration) where TOptions : class, new()
-            => PushOptions(self, configuration, () => new TOptions());
+        public static IServiceCollection RegisterOptions<TOptions>(this IServiceCollection self, IConfiguration configuration) where TOptions : class, new()
+            => RegisterOptions(self, configuration, () => new TOptions());
+
+        public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, bool useAppDataSpecialFolder = false, Version? appVersion = null)
+            => self
+                .AddSingleton<IApplicationContext>(provider => {
+                    var hostEnvironment = provider.GetRequiredService<IHostEnvironment>();
+
+                    return new ApplicationContext(
+                        hostEnvironment,
+                        useAppDataSpecialFolder,
+                        appVersion ?? new(major: 0, minor: 0, build: 0)
+                    );
+                });
 
         #endregion
     }
