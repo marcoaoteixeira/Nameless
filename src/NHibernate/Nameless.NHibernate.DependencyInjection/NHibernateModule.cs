@@ -76,8 +76,7 @@ namespace Nameless.NHibernate.DependencyInjection {
                 return;
             }
 
-            var appContext = ctx.ResolveOptional<IApplicationContext>()
-                ?? NullApplicationContext.Instance;
+            var appContext = ctx.Resolve<IApplicationContext>();
             var outputFilePath = Path.Combine(
                 appContext.ApplicationDataFolderPath,
                 options.SchemaExport.OutputFolderName,

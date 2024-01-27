@@ -204,7 +204,7 @@ namespace Nameless.Checklist.Web {
 
             // Minimal Endpoints
             app
-                .UseMinimalEndpoints(SupportAssemblies);
+                .ResolveMinimalEndpoints(SupportAssemblies);
 
             // Swagger
             app

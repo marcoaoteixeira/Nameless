@@ -65,8 +65,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
         }
 
         private static PickupDirectoryDeliveryHandler PickupDirectoryDeliveryHandlerResolver(IComponentContext ctx) {
-            var applicationContext = ctx.ResolveOptional<IApplicationContext>()
-                ?? NullApplicationContext.Instance;
+            var applicationContext = ctx.Resolve<IApplicationContext>();
             var options = ctx.GetOptions<MessengerOptions>();
 
             var result = new PickupDirectoryDeliveryHandler(
