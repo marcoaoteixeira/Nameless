@@ -70,7 +70,7 @@ code-coverage/
 # Remove builded nupkg folder
 nuget_packages
 **/packages/
-NuGet.Config
+[Nn]u[Gg]et.config
 
 # Visual Studio cache files
 # files ending in .cache can be ignored

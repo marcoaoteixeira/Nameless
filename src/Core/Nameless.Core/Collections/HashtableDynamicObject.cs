@@ -11,7 +11,6 @@ namespace Nameless.Collections {
     ///     private readonly IDictionary _attributes; // This will be our access field for NHibernate
     ///     private readonly HashtableDynamicObject _proxy;
     ///     public virtual dynamic Attributes => _proxy;
-    ///     
     ///     public Entity() {
     ///          _attributes = new Hashtable();
     ///          _proxy = new HashtableDynamicObject(_attributes);
