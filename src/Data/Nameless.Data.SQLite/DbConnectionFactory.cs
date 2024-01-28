@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using Nameless.Data.SQLite.Options;
 
 namespace Nameless.Data.SQLite {
@@ -27,7 +27,7 @@ namespace Nameless.Data.SQLite {
 
         public IDbConnection CreateDbConnection() {
             var connectionString = _options.GetConnectionString();
-            var result = new SqliteConnection(connectionString);
+            var result = new SQLiteConnection(connectionString);
 
             result.Open();
 
