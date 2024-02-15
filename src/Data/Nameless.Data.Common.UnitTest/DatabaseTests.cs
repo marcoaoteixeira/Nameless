@@ -125,7 +125,7 @@ namespace Nameless.Data {
                 .Verify(mock => mock.Log(
                     It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                     It.Is<EventId>(eventId => eventId.Id == 0),
-                    It.Is<It.IsAnyType>((obj, type) => type.Name == "FormattedLogValues"),
+                    It.Is<It.IsAnyType>((_, type) => type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ));
@@ -193,7 +193,7 @@ namespace Nameless.Data {
                 .Verify(mock => mock.Log(
                     It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                     It.Is<EventId>(eventId => eventId.Id == 0),
-                    It.Is<It.IsAnyType>((obj, type) => type.Name == "FormattedLogValues"),
+                    It.Is<It.IsAnyType>((_, type) => type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ));
@@ -224,6 +224,8 @@ namespace Nameless.Data {
             );
             var expected = new Animal { Name = "Dog" };
             static Animal mapper(IDataRecord reader) {
+                ArgumentNullException.ThrowIfNull(reader);
+
                 return new Animal { Name = "Dog" };
             }
 
@@ -233,7 +235,7 @@ namespace Nameless.Data {
             ]).ToArray();
 
             // assert
-            Assert.That(actual.First(), Is.EqualTo(expected));
+            Assert.That(actual[0], Is.EqualTo(expected));
             dbCommandMock.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
         }
@@ -261,7 +263,7 @@ namespace Nameless.Data {
 
             // assert
             Assert.Throws<InvalidOperationException>(
-                code: () => sut.ExecuteReader("STATEMENT", (record) => new Animal { Name = "ERROR" }, CommandType.Text, [
+                code: () => sut.ExecuteReader("STATEMENT", (_) => new Animal { Name = "ERROR" }, CommandType.Text, [
                     new Parameter("Param", 1, DbType.Int32)
                 ]).ToArray()
             );
@@ -271,7 +273,7 @@ namespace Nameless.Data {
                 .Verify(mock => mock.Log(
                     It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
                     It.Is<EventId>(eventId => eventId.Id == 0),
-                    It.Is<It.IsAnyType>((obj, type) => type.Name == "FormattedLogValues"),
+                    It.Is<It.IsAnyType>((_, type) => type.Name == "FormattedLogValues"),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ));

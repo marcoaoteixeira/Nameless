@@ -38,8 +38,9 @@ namespace Nameless.ProducerConsumer {
         /// <summary>
         /// Initializes a new instance of <see cref="Subscription"/>.
         /// </summary>
-        /// <param name="callback">The message handler.</param>
         /// <param name="tag">The registration tag.</param>
+        /// <param name="topic">The topic.</param>
+        /// <param name="handler">The message handler.</param>
         public Registration(string tag, string topic, MessageHandler<T> handler) {
             Guard.Against.Null(handler, nameof(handler));
 

@@ -35,7 +35,6 @@ namespace Nameless.Infrastructure.Impl {
         /// </list>
         /// Otherwise, will point to <see cref="BasePath"/> + "App_Data"
         /// </param>
-        /// <param name="appVersion">The application version.</param>
         public ApplicationContext(IHostEnvironment hostEnvironment, bool useAppDataSpecialFolder)
             : this(hostEnvironment, useAppDataSpecialFolder, appVersion: BaseVersion) { }
 

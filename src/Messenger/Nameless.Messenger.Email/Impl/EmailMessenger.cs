@@ -24,11 +24,12 @@ namespace Nameless.Messenger.Email.Impl {
             var format = request.Args.GetUseHtmlBody()
                 ? TextFormat.Html
                 : TextFormat.Plain;
-            var mimeMessage = new MimeMessage {
+
+            return new() {
                 Body = new TextPart(format) {
                     Text = request.Content
                 },
-                Sender = MailboxAddress.Parse(request.From.First()),
+                Sender = MailboxAddress.Parse(request.From[0]),
                 Subject = request.Subject,
                 Priority = request.Priority switch {
                     Priority.Low => MessagePriority.NonUrgent,
@@ -37,8 +38,6 @@ namespace Nameless.Messenger.Email.Impl {
                     _ => MessagePriority.Normal
                 }
             };
-
-            return mimeMessage;
         }
 
         private static void SetRecipients(InternetAddressList addressList, string[] addresses) {

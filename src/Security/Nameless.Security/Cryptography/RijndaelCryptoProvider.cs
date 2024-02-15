@@ -31,6 +31,7 @@ namespace Nameless.Security.Cryptography {
         #region Private Read-Only Fields
 
         private readonly RijndaelCryptoOptions _options;
+        private readonly object _syncLock = new();
 
         #endregion
 
@@ -219,7 +220,7 @@ namespace Nameless.Security.Cryptography {
             if (stream.Length == 0) { return []; }
 
             // Let's make cryptographic operations thread-safe.
-            lock (this) {
+            lock (_syncLock) {
                 try {
                     // To perform encryption, we must use the Write mode.
                     using var memoryStream = new MemoryStream();
@@ -251,7 +252,7 @@ namespace Nameless.Security.Cryptography {
             var saltLength = 0;
 
             // Let's make cryptographic operations thread-safe.
-            lock (this) {
+            lock (_syncLock) {
                 try {
                     var value = stream.ToByteArray();
 

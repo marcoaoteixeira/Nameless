@@ -71,13 +71,13 @@ namespace Nameless.Services.Impl {
 
         #region IPluralizationRuleProvider Members
 
-        /// <inheritdocs />
+        /// <inheritdoc />
         public bool TryGet(CultureInfo culture, out PluralizationRuleDelegate? rule) {
             Guard.Against.Null(culture, nameof(culture));
 
             rule = null;
 
-            if (culture.Name == string.Empty) {
+            if (string.IsNullOrWhiteSpace(culture.Name)) {
                 return false;
             }
 

@@ -67,7 +67,7 @@ namespace Nameless.Caching.InMemory {
 
             result.ExpirationTokens.Add(changeToken);
 
-            result.RegisterPostEvictionCallback((key, value, reason, state)
+            result.RegisterPostEvictionCallback((key, value, reason, _)
                 => OnEviction(
                     opts.EvictionCallback,
                     (string)key,
@@ -84,6 +84,8 @@ namespace Nameless.Caching.InMemory {
         #region ICache Members
 
         public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts, CancellationToken cancellationToken) {
+            BlockAccessAfterDispose();
+
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
             Guard.Against.Null(value, nameof(value));
 
@@ -99,6 +101,8 @@ namespace Nameless.Caching.InMemory {
         }
 
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
+            BlockAccessAfterDispose();
+
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -112,6 +116,8 @@ namespace Nameless.Caching.InMemory {
         }
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
+            BlockAccessAfterDispose();
+
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -43,7 +43,7 @@ namespace Nameless.Autofac {
             context.ChangeParameters(context.Parameters.Union(
                 new[] {
                     new ResolvedParameter(
-                        predicate: (param, ctx) => param.ParameterType == _serviceType,
+                        predicate: (param, _) => param.ParameterType == _serviceType,
                         valueAccessor: (param, ctx) => _factory(param.Member, ctx)
                     )
                 }
