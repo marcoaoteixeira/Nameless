@@ -129,7 +129,7 @@ namespace Nameless.Data {
                 { nameof(DataRecordExtension.GetDateTimeOffset), new DateTimeOffset(now).ToString(culture) },
                 { nameof(DataRecordExtension.GetTimeSpan), TimeSpan.FromSeconds(15).ToString() },
                 { nameof(DataRecordExtension.GetGuid), guid.ToString() },
-                { nameof(DataRecordExtension.GetEnum) + "string", DayOfWeek.Wednesday.ToString() },
+                { nameof(DataRecordExtension.GetEnum) + "string", nameof(DayOfWeek.Wednesday) },
                 { nameof(DataRecordExtension.GetEnum) + "int", (int)DayOfWeek.Wednesday },
             };
             var dataRecordMock = new Mock<IDataRecord>();

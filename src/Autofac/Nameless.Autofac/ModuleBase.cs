@@ -70,10 +70,11 @@ namespace Nameless.Autofac {
 
             return SupportAssemblies
                 .SelectMany(assembly => assembly.GetExportedTypes())
-                .Where(type => !type.IsInterface)
-                .Where(type => !type.IsAbstract)
-                .Where(type => !type.HasAttribute<SingletonAttribute>())
-                .Where(type => serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type));
+                .Where(type => !type.IsInterface &&
+                               !type.IsAbstract &&
+                               !type.HasAttribute<SingletonAttribute>() &&
+                               (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type))
+                );
         }
 
         #endregion

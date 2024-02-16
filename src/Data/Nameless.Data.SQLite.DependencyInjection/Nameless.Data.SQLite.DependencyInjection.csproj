@@ -46,8 +46,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+		<ProjectReference Include="..\Nameless.Data.Common\Nameless.Data.Common.csproj" />
 		<ProjectReference Include="..\Nameless.Data.SQLite\Nameless.Data.SQLite.csproj" />
-		<ProjectReference Include="..\Nameless.Data\Nameless.Data.Common.csproj" />
 	</ItemGroup>
 
 </Project>

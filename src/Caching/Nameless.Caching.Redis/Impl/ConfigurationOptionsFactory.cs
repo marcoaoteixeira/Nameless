@@ -28,6 +28,34 @@ namespace Nameless.Caching.Redis.Impl {
 
         #endregion
 
+        #region Private Methods
+
+        private X509Certificate OnCertificateSelection(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
+            => new(
+                fileName: _options.Certificate.Pfx,
+                password: _options.Certificate.Password
+            );
+
+        private bool OnCertificateValidation(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) {
+            if (certificate is null) {
+                return false;
+            }
+
+            var inner = new X509Certificate2(_options.Certificate.Pem);
+            var verdict = certificate.Issuer == inner.Subject;
+
+            _logger
+                .On(verdict)
+                .LogInformation(
+                    message: "Certificate error: {sslPolicyErrors}",
+                    args: sslPolicyErrors
+                );
+
+            return verdict;
+        }
+
+        #endregion
+
         #region IConfigurationOptionsFactory Members
 
         public ConfigurationOptions CreateConfigurationOptions() {
@@ -45,29 +73,8 @@ namespace Nameless.Caching.Redis.Impl {
             };
 
             if (_options.Certificate.IsAvailable()) {
-                result.CertificateSelection += (object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
-                    => new(
-                        fileName: _options.Certificate.Pfx,
-                        password: _options.Certificate.Password
-                    );
-
-                result.CertificateValidation += (object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) => {
-                    if (certificate is null) {
-                        return false;
-                    }
-
-                    var inner = new X509Certificate2(_options.Certificate.Pem);
-                    var verdict = certificate.Issuer == inner.Subject;
-
-                    _logger
-                        .On(verdict)
-                        .LogInformation(
-                            message: "Certificate error: {sslPolicyErrors}",
-                            args: sslPolicyErrors
-                        );
-
-                    return verdict;
-                };
+                result.CertificateSelection += OnCertificateSelection;
+                result.CertificateValidation += OnCertificateValidation;
             }
 
             return result;

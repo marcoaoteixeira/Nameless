@@ -73,11 +73,11 @@ namespace Nameless.Collections.Generic {
 
         #region IEnumerable<T> Members
 
-        /// <inheritdocs />
+        /// <inheritdoc />
         public IEnumerator<T> GetEnumerator()
             => Items.AsEnumerable().GetEnumerator();
 
-        /// <inheritdocs />
+        /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
             => Items.GetEnumerator();
 

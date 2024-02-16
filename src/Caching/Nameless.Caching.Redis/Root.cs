@@ -1,11 +1,11 @@
 ﻿namespace Nameless.Caching.Redis {
     /// <summary>
-    /// This class was defined to be an entrypoint for this project assembly.
-    /// 
-    /// *** DO NOT IMPLEMENT ANYTHING HERE ***
-    /// 
+    /// <para>This class was defined to be an entrypoint for this project assembly.</para>
+    /// <para>*** DO NOT IMPLEMENT ANYTHING HERE ***</para>
+    /// <para>
     /// But, it's allow to use this class as a repository for all constants or
     /// default values that we'll use throughout this project.
+    /// </para>
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes

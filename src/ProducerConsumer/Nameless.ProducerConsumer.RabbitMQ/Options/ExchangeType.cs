@@ -11,6 +11,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
         [Description("fanout")]
         Fanout = 4,
         [Description("headers")]
-        Headers = 8
+        Headers = 8,
+        [Description("x-consistent-hash")]
+        ConsistentHash = 16
     }
 }

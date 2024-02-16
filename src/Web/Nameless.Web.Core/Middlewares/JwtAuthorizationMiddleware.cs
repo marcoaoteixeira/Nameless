@@ -24,7 +24,7 @@ namespace Nameless.Web.Middlewares {
         #region Public Methods
 
         public async Task InvokeAsync(HttpContext context) {
-            var key = HttpRequestHeader.Authorization.ToString();
+            const string key = nameof(HttpRequestHeader.Authorization);
             var header = context.Request.Headers[key].FirstOrDefault();
 
             if (header is not null) {

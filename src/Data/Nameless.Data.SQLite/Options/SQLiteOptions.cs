@@ -14,7 +14,7 @@ namespace Nameless.Data.SQLite.Options {
 
         public bool UseInMemory { get; set; }
         
-        public string DatabaseName { get; set; } = "database";
+        public string DatabasePath { get; set; } = $".{Path.DirectorySeparatorChar}database.db";
         
         public string Password { get; }
 
@@ -34,7 +34,7 @@ namespace Nameless.Data.SQLite.Options {
         public string GetConnectionString() {
             var connStr = string.Empty;
 
-            connStr += $"Data Source={(UseInMemory ? ":memory:" : DatabaseName)};";
+            connStr += $"Data Source={(UseInMemory ? ":memory:" : DatabasePath)};";
             connStr += UseCredentials()
                 ? $"Password={Password};"
                 : string.Empty;

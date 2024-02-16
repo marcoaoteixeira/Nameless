@@ -3,7 +3,7 @@
         #region Public Static Methods
 
         public static Task<T> GetOrSetAsync<T>(this ICache self, string key, T value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default)
-            => GetOrSetAsync(self, key, (key) => value, opts, cancellationToken);
+            => GetOrSetAsync(self, key, _ => value, opts, cancellationToken);
 
         public static async Task<T> GetOrSetAsync<T>(this ICache self, string key, Func<string, T> valueFactory, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             var current = await self.GetAsync<T>(key, cancellationToken);

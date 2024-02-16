@@ -49,10 +49,6 @@ namespace Nameless.Helpers {
         /// <param name="relativePath">
         /// The relative path to the <paramref name="root" />.
         /// </param>
-        /// <param name="allowOutsideFileSystem">
-        /// <c>true</c> if allow search outside the root; otherwise
-        /// <c>false</c>.
-        /// </param>
         /// <returns>The physical path to the content.</returns>
         public static string GetPhysicalPath(string root, string relativePath) {
             Guard.Against.NullOrWhiteSpace(root, nameof(root));

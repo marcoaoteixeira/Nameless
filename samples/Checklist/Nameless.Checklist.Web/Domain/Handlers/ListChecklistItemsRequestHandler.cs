@@ -29,7 +29,7 @@ namespace Nameless.Checklist.Web.Domain.Handlers {
         public async Task<ChecklistItemDto[]> Handle(ListChecklistItemsRequest request, CancellationToken cancellationToken) {
             Expression<Func<ChecklistItem, bool>> where = entity
                 => entity.Description.Contains(request.DescriptionLike ?? string.Empty) &&
-                   (entity.CheckedAt <= request.CheckedBefore.GetValueOrDefault(DateTime.UtcNow) || !request.CheckedBefore.HasValue);
+                   (entity.CheckedAt <= (request.CheckedBefore ?? DateTime.UtcNow)|| !request.CheckedBefore.HasValue);
 
             var result = await _repository.ListAsync(where: where, cancellationToken: cancellationToken);
             var dtos = _mapper.Map<ChecklistItemDto[]>(result);
