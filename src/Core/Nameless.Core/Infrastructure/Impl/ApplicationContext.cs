@@ -88,12 +88,7 @@ namespace Nameless.Infrastructure.Impl {
                     option: Environment.SpecialFolderOption.Create
                 );
 
-                var normalizedApplicationName = applicationName
-                    .RemoveDiacritics()
-                    .Replace(Root.Separators.SPACE, Root.Separators.UNDERSCORE)
-                    .Replace(Root.Separators.DOT, Root.Separators.UNDERSCORE);
-
-                result = Path.Combine(specialFolder, normalizedApplicationName);
+                result = Path.Combine(specialFolder, applicationName);
             } else {
                 result = Path.Combine(basePath, "App_Data");
             }
