@@ -5,11 +5,11 @@ namespace Nameless.Web.Infrastructure {
     public interface IMinimalEndpoint {
         #region Properties
 
-        public string Name { get; }
-        public string Summary { get; }
-        public string Description { get; }
-        public string Group { get; }
-        public int Version { get; }
+        string Name { get; }
+        string Summary { get; }
+        string Description { get; }
+        string Group { get; }
+        int Version { get; }
 
         #endregion
 
