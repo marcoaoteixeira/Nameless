@@ -18,6 +18,58 @@ namespace Nameless.Web {
     public static class ApplicationBuilderExtension {
         #region Public Static Methods
 
+        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder self)
+            => self
+                .UseAuthorization()
+                .UseAuthentication()
+                .UseMiddleware<JwtAuthorizationMiddleware>();
+
+        public static IApplicationBuilder ResolveAutofac(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
+            // Tear down the composition root and free all resources.
+            var container = self.ApplicationServices.GetAutofacRoot();
+            lifetime.ApplicationStopped.Register(container.Dispose);
+
+            return self;
+        }
+
+        public static IApplicationBuilder ResolveCors(this IApplicationBuilder self)
+            => self
+                .UseCors(configure
+                    => configure
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                );
+
+        public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self) {
+            self.UseExceptionHandler(configure =>
+                configure.Run(async ctx => {
+                    if (await TryHandleValidationException(ctx)) {
+                        return;
+                    }
+
+                    await Results.Problem().ExecuteAsync(ctx);
+                })
+            );
+
+            return self;
+        }
+
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self)
+            => self
+                .UseHealthChecks("/healthz");
+
+        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, IHostEnvironment env) {
+            if (!env.IsDevelopment()) {
+                // The default HSTS value is 30 days. You may want to change
+                // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                self.UseHsts();
+            }
+            self.UseHttpsRedirection();
+
+            return self;
+        }
+
         /// <summary>
         /// Resolves all defined minimal endpoints.
         /// </summary>
@@ -55,28 +107,9 @@ namespace Nameless.Web {
                 }
             });
 
-        public static IApplicationBuilder ResolveCors(this IApplicationBuilder self)
-            => self
-                .UseCors(configure
-                    => configure
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                );
-
         public static IApplicationBuilder ResolveRouting(this IApplicationBuilder self)
             => self
                 .UseRouting();
-
-        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder self)
-            => self
-                .UseAuthorization()
-                .UseAuthentication()
-                .UseMiddleware<JwtAuthorizationMiddleware>();
-
-        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self)
-            => self
-                .UseHealthChecks("/healthz");
 
         public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder self, IApiVersionDescriptionProvider versioning)
             => self
@@ -90,39 +123,6 @@ namespace Nameless.Web {
                     }
                 });
 
-        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, IHostEnvironment env) {
-            if (!env.IsDevelopment()) {
-                // The default HSTS value is 30 days. You may want to change
-                // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                self.UseHsts();
-            }
-            self.UseHttpsRedirection();
-
-            return self;
-        }
-
-        public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self) {
-            self.UseExceptionHandler(configure =>
-                configure.Run(async ctx => {
-                    if (await TryHandleValidationException(ctx)) {
-                        return;
-                    }
-
-                    await Results.Problem().ExecuteAsync(ctx);
-                })
-            );
-
-            return self;
-        }
-
-        public static IApplicationBuilder ResolveAutofac(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
-            // Tear down the composition root and free all resources.
-            var container = self.ApplicationServices.GetAutofacRoot();
-            lifetime.ApplicationStopped.Register(container.Dispose);
-
-            return self;
-        }
-
         #endregion
 
         #region Private Static Methods
@@ -130,8 +130,7 @@ namespace Nameless.Web {
         private static bool TryCreateEndpoint(Type type, ILogger logger, [NotNullWhen(returnValue: true)] out IMinimalEndpoint? endpoint) {
             endpoint = null;
 
-            try { endpoint = Activator.CreateInstance(type) as IMinimalEndpoint; }
-            catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
+            try { endpoint = Activator.CreateInstance(type) as IMinimalEndpoint; } catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
 
             return endpoint is not null;
         }

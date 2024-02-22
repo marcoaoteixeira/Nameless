@@ -70,7 +70,7 @@ namespace Nameless.Infrastructure.Impl {
 
             EnvironmentName = hostEnvironment.EnvironmentName;
             ApplicationName = hostEnvironment.ApplicationName;
-            BasePath = GetType().Assembly.GetDirectoryPath();
+            BasePath = AppDomain.CurrentDomain.BaseDirectory;
             ApplicationDataFolderPath = GetApplicationDataFolder(ApplicationName, BasePath, useAppDataSpecialFolder);
             SemVer = $"v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}";
         }
@@ -87,7 +87,7 @@ namespace Nameless.Infrastructure.Impl {
                     folder: Environment.SpecialFolder.LocalApplicationData,
                     option: Environment.SpecialFolderOption.Create
                 );
-
+                
                 result = Path.Combine(specialFolder, applicationName);
             } else {
                 result = Path.Combine(basePath, "App_Data");

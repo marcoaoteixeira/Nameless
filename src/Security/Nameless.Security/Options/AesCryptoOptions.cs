@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using CoreRoot = Nameless.Root;
+using RootFromCore = Nameless.Root;
 
 namespace Nameless.Security.Options {
     public sealed class AesCryptoOptions {
@@ -25,7 +25,7 @@ namespace Nameless.Security.Options {
         /// <summary>
         /// Gets or sets the encoding. Default value is "utf-8".
         /// </summary>
-        public string EncodingName { get; set; } = CoreRoot.Defaults.Encoding.BodyName;
+        public string EncodingName { get; set; } = RootFromCore.Defaults.Encoding.BodyName;
 
         #endregion
 

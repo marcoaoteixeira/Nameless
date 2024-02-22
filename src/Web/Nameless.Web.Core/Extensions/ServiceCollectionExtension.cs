@@ -7,27 +7,30 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using CoreRoot = Nameless.Root;
+using RootFromCore = Nameless.Root;
 
 namespace Nameless.Web {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection self)
-            => self
-                .AddHttpContextAccessor();
-
         public static IServiceCollection RegisterCors(this IServiceCollection self)
             => self
                 .AddCors();
 
-        public static IServiceCollection RegisterRouting(this IServiceCollection self)
+        public static IServiceCollection RegisterHealthChecks(this IServiceCollection self) {
+            self
+                .AddHealthChecks();
+
+            return self;
+        }
+
+        public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection self)
             => self
-                .AddRouting();
+                .AddHttpContextAccessor();
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config) {
             var sectionName = nameof(JwtOptions)
-                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
+                .RemoveTail(RootFromCore.Defaults.OptionsSettingsTails);
             var options = config
                .GetSection(sectionName)
                .Get<JwtOptions>() ?? JwtOptions.Default;
@@ -56,12 +59,12 @@ namespace Nameless.Web {
             return self;
         }
 
-        public static IServiceCollection RegisterHealthChecks(this IServiceCollection self) {
-            self
-                .AddHealthChecks();
+        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self)
+            => self.AddProblemDetails();
 
-            return self;
-        }
+        public static IServiceCollection RegisterRouting(this IServiceCollection self)
+            => self
+                .AddRouting();
 
         public static IServiceCollection RegisterSwagger(this IServiceCollection self) {
             self
@@ -130,9 +133,6 @@ namespace Nameless.Web {
 
             return self;
         }
-
-        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self)
-            => self.AddProblemDetails();
 
         #endregion
     }

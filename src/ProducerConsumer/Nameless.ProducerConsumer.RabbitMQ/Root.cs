@@ -1,4 +1,12 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ {
+    /// <summary>
+    /// This class was proposed to be an root point for this assembly.
+    /// 
+    /// *** DO NOT IMPLEMENT ANYTHING HERE ***
+    /// 
+    /// But, it's allowed to use it as a repository for all constants or
+    /// default values that you'll use throughout this project.
+    /// </summary>
     public static class Root {
         #region Public Static Inner Classes
 
