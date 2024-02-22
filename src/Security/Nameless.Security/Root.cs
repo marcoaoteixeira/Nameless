@@ -1,11 +1,11 @@
 ﻿namespace Nameless.Security {
     /// <summary>
-    /// This class was defined to be an entrypoint for this project assembly.
+    /// This class was proposed to be an root point for this assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
-    /// But, it's allow to use this class as a repository for all constants or
-    /// default values that we'll use throughout this project.
+    /// But, it's allowed to use it as a repository for all constants or
+    /// default values that you'll use throughout this project.
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes

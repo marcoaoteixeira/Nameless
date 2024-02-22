@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 using Nameless.Web.Services;
-using CoreRoot = Nameless.Root;
+using RootFromCore = Nameless.Root;
 
 namespace Nameless.Web.Middlewares {
     public sealed class JwtAuthorizationMiddleware {
@@ -28,7 +28,7 @@ namespace Nameless.Web.Middlewares {
             var header = context.Request.Headers[key].FirstOrDefault();
 
             if (header is not null) {
-                var token = header.Split(CoreRoot.Separators.SPACE).Last();
+                var token = header.Split(RootFromCore.Separators.SPACE).Last();
                 if (_jwtService.Validate(token, out var principal)) {
                     context.User = principal;
                 }

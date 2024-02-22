@@ -20,7 +20,7 @@ using Nameless.Web.Options;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using WebRoot = Nameless.Web.Root;
+using RootFromWeb = Nameless.Web.Root;
 
 namespace Nameless.Checklist.Web {
     public sealed class StartUp {
@@ -53,8 +53,8 @@ namespace Nameless.Checklist.Web {
             // Configure options
             services
                 .AddOptions()
-                .RegisterOptions<SwaggerPageOptions>(Configuration)
-                .RegisterOptions<JwtOptions>(Configuration);
+                .RegisterPocoOptions<SwaggerPageOptions>(Configuration)
+                .RegisterPocoOptions<JwtOptions>(Configuration);
 
             // AutoMapper
             services
@@ -105,7 +105,7 @@ namespace Nameless.Checklist.Web {
                     configure.Events = new JwtBearerEvents {
                         OnAuthenticationFailed = ctx => {
                             if (ctx.Exception is SecurityTokenExpiredException) {
-                                ctx.Response.Headers.Append(WebRoot.HttpResponseHeaders.X_JWT_EXPIRED, bool.TrueString);
+                                ctx.Response.Headers.Append(RootFromWeb.HttpResponseHeaders.X_JWT_EXPIRED, bool.TrueString);
                             }
                             return Task.CompletedTask;
                         }

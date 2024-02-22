@@ -1,6 +1,6 @@
 ﻿using MimeKit;
 using MimeKit.Text;
-using CoreRoot = Nameless.Root;
+using RootFromCore = Nameless.Root;
 
 namespace Nameless.Messenger.Email.Impl {
     public sealed class EmailMessenger : IMessenger {
@@ -51,7 +51,7 @@ namespace Nameless.Messenger.Email.Impl {
         private static string[] SplitAddresses(string csv)
             => csv
                 .Split(
-                    separator: CoreRoot.Separators.COMMA,
+                    separator: RootFromCore.Separators.COMMA,
                     options: StringSplitOptions.RemoveEmptyEntries
                 );
 

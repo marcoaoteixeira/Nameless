@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using CoreRoot = Nameless.Root;
+using RootFromCore = Nameless.Root;
 
 namespace Nameless.MongoDB.Impl {
     public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
@@ -38,7 +38,7 @@ namespace Nameless.MongoDB.Impl {
             }
 
             return string.Join(
-                separator: CoreRoot.Separators.UNDERSCORE,
+                separator: RootFromCore.Separators.UNDERSCORE,
                 type.Name.SplitUpperCase()
             ).ToLower();
         }
