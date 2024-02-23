@@ -40,7 +40,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         private static ChannelFactory ChannelFactoryResolver(IComponentContext ctx) {
             var result = new ChannelFactory(
-                options: ctx.GetOptions<RabbitMQOptions>(),
+                options: ctx.GetPocoOptions<RabbitMQOptions>(),
                 logger: ctx.GetLogger<ChannelFactory>()
             );
 
@@ -56,7 +56,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
         }
 
         private static void StartUp(IActivatedEventArgs<IModel> args) {
-            var options = args.Context.GetOptions<RabbitMQOptions>();
+            var options = args.Context.GetPocoOptions<RabbitMQOptions>();
             var channel = args.Instance;
 
             // when we declare a exchange/queue, if the exchange/queue

@@ -21,7 +21,7 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
 
         private static ICache CacheResolver(IComponentContext ctx) {
             var result = new InMemoryCache(
-                options: ctx.GetOptions<MemoryCacheOptions>()
+                options: ctx.GetPocoOptions<MemoryCacheOptions>()
             );
 
             return result;

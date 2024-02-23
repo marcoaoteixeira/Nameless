@@ -46,7 +46,7 @@ namespace Nameless.Localization.Microsoft.Json.DependencyInjection {
         #region Private Static Methods
 
         private static ITranslationManager TranslationManagerResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<LocalizationOptions>();
+            var options = ctx.GetPocoOptions<LocalizationOptions>();
             var fileProvider = ctx.Resolve<IFileProvider>();
             var result = new TranslationManager(fileProvider, options);
 

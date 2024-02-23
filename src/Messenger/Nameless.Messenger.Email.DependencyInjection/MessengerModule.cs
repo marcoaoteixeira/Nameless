@@ -38,14 +38,14 @@ namespace Nameless.Messenger.Email.DependencyInjection {
         #region Private Static Methods
 
         private static ISmtpClientFactory SmtpClientFactoryResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<MessengerOptions>();
+            var options = ctx.GetPocoOptions<MessengerOptions>();
             var result = new SmtpClientFactory(options);
 
             return result;
         }
 
         private static IDeliveryHandler DeliveryHandlerResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<MessengerOptions>();
+            var options = ctx.GetPocoOptions<MessengerOptions>();
 
             return options.DeliveryMode switch {
                 DeliveryMode.Network => SmtpClientDeliveryHandlerResolver(ctx),
@@ -66,7 +66,7 @@ namespace Nameless.Messenger.Email.DependencyInjection {
 
         private static PickupDirectoryDeliveryHandler PickupDirectoryDeliveryHandlerResolver(IComponentContext ctx) {
             var applicationContext = ctx.Resolve<IApplicationContext>();
-            var options = ctx.GetOptions<MessengerOptions>();
+            var options = ctx.GetPocoOptions<MessengerOptions>();
 
             var result = new PickupDirectoryDeliveryHandler(
                 applicationContext,

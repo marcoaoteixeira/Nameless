@@ -32,7 +32,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         private static DbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx) {
             var result = new DbConnectionFactory(
-                options: ctx.GetOptions<SQLServerOptions>()
+                options: ctx.GetPocoOptions<SQLServerOptions>()
             );
 
             return result;

@@ -46,7 +46,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         #region Private Static Methods
 
         private static IConfigurationFactory ConfigurationFactoryResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<NHibernateOptions>();
+            var options = ctx.GetPocoOptions<NHibernateOptions>();
             var result = new ConfigurationFactory(options);
 
             return result;
@@ -70,7 +70,7 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         private static void StartUp(IActivatedEventArgs<ISessionFactory> args) {
             var ctx = args.Context;
-            var options = ctx.GetOptions<NHibernateOptions>();
+            var options = ctx.GetPocoOptions<NHibernateOptions>();
 
             if (!options.SchemaExport.ExecuteSchemaExport) {
                 return;
