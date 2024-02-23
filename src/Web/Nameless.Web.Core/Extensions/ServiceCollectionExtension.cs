@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -28,7 +29,10 @@ namespace Nameless.Web {
             => self
                 .AddHttpContextAccessor();
 
-        public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config) {
+        public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config)
+            => RegisterJwtAuth(self, config, opts => { });
+
+        public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions> configureAuthorization) {
             var sectionName = nameof(JwtOptions)
                 .RemoveTail(RootFromCore.Defaults.OptionsSettingsTails);
             var options = config
@@ -36,7 +40,7 @@ namespace Nameless.Web {
                .Get<JwtOptions>() ?? JwtOptions.Default;
 
             self
-                .AddAuthorization()
+                .AddAuthorization(configureAuthorization)
                 .AddAuthentication(configure => {
                     configure.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     configure.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

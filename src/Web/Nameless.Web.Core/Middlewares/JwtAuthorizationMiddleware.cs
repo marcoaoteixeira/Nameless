@@ -29,7 +29,7 @@ namespace Nameless.Web.Middlewares {
 
             if (header is not null) {
                 var token = header.Split(RootFromCore.Separators.SPACE).Last();
-                if (_jwtService.Validate(token, out var principal)) {
+                if (_jwtService.TryValidate(token, out var principal)) {
                     context.User = principal;
                 }
             }

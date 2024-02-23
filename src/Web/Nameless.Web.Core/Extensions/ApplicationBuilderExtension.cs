@@ -6,10 +6,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.FluentValidation;
 using Nameless.Web.Infrastructure;
 using Nameless.Web.Middlewares;
@@ -18,11 +16,11 @@ namespace Nameless.Web {
     public static class ApplicationBuilderExtension {
         #region Public Static Methods
 
-        public static IApplicationBuilder ResolveAuth(this IApplicationBuilder self)
+        public static IApplicationBuilder ResolveJwtAuth(this IApplicationBuilder self)
             => self
+                .UseMiddleware<JwtAuthorizationMiddleware>()
                 .UseAuthorization()
-                .UseAuthentication()
-                .UseMiddleware<JwtAuthorizationMiddleware>();
+                .UseAuthentication();
 
         public static IApplicationBuilder ResolveAutofac(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
             // Tear down the composition root and free all resources.
@@ -79,16 +77,18 @@ namespace Nameless.Web {
         public static IApplicationBuilder ResolveMinimalEndpoints(this IApplicationBuilder self, params Assembly[] assemblies)
             => self.UseEndpoints(setup => {
                 var endpointTypes = assemblies
-                    .SelectMany(_ => _.ExportedTypes)
-                    .Where(_ => typeof(IMinimalEndpoint).IsAssignableFrom(_))
+                    .SelectMany(type => type.ExportedTypes)
+                    .Where(type =>
+                        !type.IsInterface &&
+                        !type.IsAbstract &&
+                         typeof(IMinimalEndpoint).IsAssignableFrom(type)
+                    )
                     .ToArray();
 
                 if (endpointTypes.Length == 0) { return; }
 
-                var loggerFactory = self.ApplicationServices.GetService<ILoggerFactory>();
-                var logger = loggerFactory is not null
-                    ? loggerFactory.CreateLogger(typeof(ApplicationBuilderExtension))
-                    : NullLogger.Instance;
+                var logger = self.ApplicationServices
+                    .GetLogger(typeof(ApplicationBuilderExtension));
 
                 foreach (var endpointType in endpointTypes) {
                     if (TryCreateEndpoint(endpointType, logger, out var endpoint)) {
@@ -130,7 +130,8 @@ namespace Nameless.Web {
         private static bool TryCreateEndpoint(Type type, ILogger logger, [NotNullWhen(returnValue: true)] out IMinimalEndpoint? endpoint) {
             endpoint = null;
 
-            try { endpoint = Activator.CreateInstance(type) as IMinimalEndpoint; } catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
+            try { endpoint = Activator.CreateInstance(type) as IMinimalEndpoint; }
+            catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
 
             return endpoint is not null;
         }
