@@ -7,17 +7,20 @@ namespace Nameless.Autofac {
     public static class ComponentContextExtension {
         #region Public Static Methods
 
-        public static ILogger GetLogger<T>(this IComponentContext self) {
+        public static ILogger GetLogger<T>(this IComponentContext self)
+            => GetLogger(self, typeof(T));
+
+        public static ILogger GetLogger(this IComponentContext self, Type type) {
             var loggerFactory = self.ResolveOptional<ILoggerFactory>();
 
             return loggerFactory is not null
-                ? loggerFactory.CreateLogger<T>()
-                : NullLogger<T>.Instance;
+                ? loggerFactory.CreateLogger(type)
+                : NullLogger.Instance;
         }
 
-        public static TOptions GetOptions<TOptions>(this IComponentContext self)
+        public static TOptions GetPocoOptions<TOptions>(this IComponentContext self)
             where TOptions : class, new() {
-            // let's try resolve from inside the container
+            // let's first check if we have it on our container
             var options = self.ResolveOptional<TOptions>();
             if (options is not null) {
                 return options;
@@ -25,13 +28,15 @@ namespace Nameless.Autofac {
 
             // ok, no good. let's try get from the configuration
             var configuration = self.ResolveOptional<IConfiguration>();
-            var key = typeof(TOptions)
+            var sectionName = typeof(TOptions)
                 .Name
                 .RemoveTail(Root.Defaults.OptionsSettingsTails);
 
             TOptions? result = default;
             if (configuration is not null) {
-                result = configuration.GetSection(key).Get<TOptions>();
+                result = configuration
+                    .GetSection(sectionName)
+                    .Get<TOptions>();
             }
 
             // returns from configuration or build.

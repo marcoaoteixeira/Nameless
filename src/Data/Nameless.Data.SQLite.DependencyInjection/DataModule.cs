@@ -32,7 +32,7 @@ namespace Nameless.Data.SQLite.DependencyInjection {
 
         private static DbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx) {
             var result = new DbConnectionFactory(
-                options: ctx.GetOptions<SQLiteOptions>()
+                options: ctx.GetPocoOptions<SQLiteOptions>()
             );
 
             return result;

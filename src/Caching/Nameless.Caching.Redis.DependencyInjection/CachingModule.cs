@@ -33,7 +33,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         private static IConfigurationOptionsFactory ConfigurationFactoryResolver(IComponentContext ctx) {
             var result = new ConfigurationOptionsFactory(
-                options: ctx.GetOptions<RedisOptions>(),
+                options: ctx.GetPocoOptions<RedisOptions>(),
                 logger: ctx.GetLogger<RedisCache>()
             );
 

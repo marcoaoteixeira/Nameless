@@ -7,14 +7,26 @@ namespace Nameless {
     public static class ServiceProviderExtension {
         #region Public Static Methods
 
+        public static ILogger GetLogger<T>(this IServiceProvider self)
+            => GetLogger(self, typeof(T));
+
+        public static ILogger GetLogger(this IServiceProvider self, Type type) {
+            var loggerFactory = self.GetService<ILoggerFactory>();
+
+            return loggerFactory is not null
+                ? loggerFactory.CreateLogger(type)
+                : NullLogger.Instance;
+        }
+
         public static TOptions GetPocoOptions<TOptions>(this IServiceProvider self)
             where TOptions : class, new() {
             // let's first check if we have it on our container
-            var opts = self.GetService<TOptions>();
-            if (opts is not null) { return opts; }
+            var options = self.GetService<TOptions>();
+            if (options is not null) {
+                return options;
+            }
 
-            // ok, we didn't register that option, so let's try find
-            // it in our configuration
+            // ok, no good. let's try get from the configuration
             var configuration = self.GetService<IConfiguration>();
             var sectionName = typeof(TOptions)
                 .Name
@@ -27,16 +39,8 @@ namespace Nameless {
                     .Get<TOptions>();
             }
 
-            // if found return; otherwise create it
+            // returns from configuration or build.
             return result ?? new();
-        }
-
-        public static ILogger GetLogger<T>(this IServiceProvider self) {
-            var loggerFactory = self.GetService<ILoggerFactory>();
-
-            return loggerFactory is not null
-                ? loggerFactory.CreateLogger<T>()
-                : NullLogger<T>.Instance;
         }
 
         #endregion

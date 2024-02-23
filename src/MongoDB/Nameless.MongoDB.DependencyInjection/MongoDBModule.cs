@@ -55,7 +55,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         #region Private Static Methods
 
         private static IMongoClient MongoClientResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<MongoOptions>();
+            var options = ctx.GetPocoOptions<MongoOptions>();
             var settings = new MongoClientSettings {
                 Server = new(options.Host, options.Port)
             };
@@ -83,7 +83,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         }
 
         private static IMongoDatabase MongoDatabaseResolver(IComponentContext ctx) {
-            var options = ctx.GetOptions<MongoOptions>();
+            var options = ctx.GetPocoOptions<MongoOptions>();
             var client = ctx.ResolveNamed<IMongoClient>(MONGO_CLIENT_TOKEN);
             var result = client.GetDatabase(options.Database);
 
