@@ -88,7 +88,7 @@ namespace Nameless.Web.Services.Impl {
             return tokenHandler.WriteToken(token);
         }
 
-        public bool Validate(string token, [NotNullWhen(true)] out ClaimsPrincipal? principal) {
+        public bool TryValidate(string token, [NotNullWhen(true)] out ClaimsPrincipal? principal) {
             principal = null;
 
             try {

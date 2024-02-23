@@ -7,7 +7,7 @@ namespace Nameless.Web.Services {
 
         string Generate(JwtClaims claims);
 
-        bool Validate(string token, [NotNullWhen(true)] out ClaimsPrincipal? principal);
+        bool TryValidate(string token, [NotNullWhen(returnValue: true)] out ClaimsPrincipal? principal);
 
         #endregion
     }
