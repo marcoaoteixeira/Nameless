@@ -32,7 +32,7 @@ namespace Nameless.Web.Services.Impl {
             // act
             var token = sut.Generate(jwtClaims);
 
-            var valid = sut.Validate(token, out var principal);
+            var valid = sut.TryValidate(token, out var principal);
 
             // assert
             Assert.Multiple(() => {

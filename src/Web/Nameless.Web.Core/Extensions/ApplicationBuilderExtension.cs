@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Nameless.FluentValidation;
 using Nameless.Web.Infrastructure;
 using Nameless.Web.Middlewares;
+using FluentValidationException = FluentValidation.ValidationException;
 
 namespace Nameless.Web {
     public static class ApplicationBuilderExtension {
@@ -42,7 +43,9 @@ namespace Nameless.Web {
         public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self) {
             self.UseExceptionHandler(configure =>
                 configure.Run(async ctx => {
-                    if (await TryHandleValidationException(ctx)) {
+                    if (TryHandleFluentValidationException(ctx, out var result)) {
+                        await result.ExecuteAsync(ctx);
+
                         return;
                     }
 
@@ -146,14 +149,15 @@ namespace Nameless.Web {
                 : null;
         }
 
-        private static async Task<bool> TryHandleValidationException(HttpContext ctx) {
-            var ex = GetExceptionFromHttpContext<ValidationException>(ctx);
+        private static bool TryHandleFluentValidationException(HttpContext ctx, [NotNullWhen(returnValue: true)]out IResult? result) {
+            result = null;
+
+            var ex = GetExceptionFromHttpContext<FluentValidationException>(ctx);
             if (ex is not null) {
-                await Results.ValidationProblem(
+                result = Results.ValidationProblem(
                     errors: ex.ToDictionary(),
                     detail: ex.Message
-                ).ExecuteAsync(ctx);
-
+                );
                 return true;
             }
             return false;
