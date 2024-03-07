@@ -1,4 +1,4 @@
-﻿namespace Nameless.Core.UnitTest.Extensions {
+﻿namespace Nameless.Extensions {
     public class DictionaryExtensionTests {
         [Test]
         public void Using_AddOrChange_Insert_A_Value_Inside_A_Dictionary() {

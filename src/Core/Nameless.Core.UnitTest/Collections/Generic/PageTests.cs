@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
-using Nameless.Collections.Generic;
 
-namespace Nameless.UnitTests.Collections.Generic {
+namespace Nameless.Collections.Generic {
 
     public class PageTests {
 

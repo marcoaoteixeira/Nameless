@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Nameless.Core.UnitTests {
+namespace Nameless {
     public class ByteArrayExtensionTests {
 
         [Test]

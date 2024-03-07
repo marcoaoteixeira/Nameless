@@ -2,7 +2,7 @@
 using System.Dynamic;
 using Nameless.Collections;
 
-namespace Nameless.Core.UnitTests.Collections {
+namespace Nameless.Collections {
 
     public class HashtableDynamicObjectTests {
 

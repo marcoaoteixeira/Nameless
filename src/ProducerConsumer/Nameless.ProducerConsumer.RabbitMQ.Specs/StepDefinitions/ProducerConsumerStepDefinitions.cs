@@ -1,10 +1,11 @@
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
+using Nameless.Test.Utils;
 using NUnit.Framework;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
-    [Ignore(reason: "This is an integration test. Must run in a specific environment.")]
+    [Category(Categories.Integration)]
     [Binding]
     public sealed class ProducerConsumerStepDefinitions {
         private const string EXCHANGE_NAME = "ex.default";

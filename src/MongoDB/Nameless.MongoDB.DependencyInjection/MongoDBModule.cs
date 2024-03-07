@@ -12,7 +12,7 @@ namespace Nameless.MongoDB.DependencyInjection {
     public sealed class MongoDBModule : ModuleBase {
         #region Private Constants
 
-        private const string MONGO_CLIENT_TOKEN = $"{nameof(IMongoClient)}::4883bd96-fc1e-4fb5-b986-7388163b6be6";
+        private const string MONGO_CLIENT_TOKEN = $"{nameof(MongoClient)}::4883bd96-fc1e-4fb5-b986-7388163b6be6";
         private const string MONGO_DATABASE_TOKEN = $"{nameof(IMongoDatabase)}::849cd42e-1df2-4097-82b1-bbf88e906808";
 
         #endregion
@@ -27,6 +27,8 @@ namespace Nameless.MongoDB.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
+            // Why Mongo client is a singleton here?
+            // See: https://www.mongodb.com/docs/drivers/csharp/current/faq/#how-does-connection-pooling-work-in-the-.net-c--driver-:~:text=Create%20a%20client%20once%20for%20each%20process%2C%20and%20reuse%20it%20for%20all%20operations.%20It%20is%20a%20common%20mistake%20to%20create%20a%20new%20client%20for%20each%20request%2C%20which%20is%20very%20inefficient
             builder
                 .Register(MongoClientResolver)
                 .Named<IMongoClient>(MONGO_CLIENT_TOKEN)

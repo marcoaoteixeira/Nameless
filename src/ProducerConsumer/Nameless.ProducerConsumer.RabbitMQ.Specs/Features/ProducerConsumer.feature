@@ -4,7 +4,7 @@ Producer/Consumer for RabbitMQ
 Link to a feature: [ProducerConsumer](Nameless.ProducerConsumer.RabbitMQ.Specs/Features/ProducerConsumer.feature)
 ***Further read***: **[Learn more about how to generate Living Documentation](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerator/Generating-Documentation.html)**
 
-@Ignore
+@Integration
 @ProducerConsumer
 Scenario: Produce And Consume Message
 	Given that I have a ChannelFactory

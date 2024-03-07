@@ -1,4 +1,4 @@
-﻿namespace Nameless.Core.UnitTests.Fixtures {
+﻿namespace Nameless.Fixtures {
 
     [Singleton(AccessorName = "Default")]
     public sealed class MySingletonClassWithDifferentAccessor {

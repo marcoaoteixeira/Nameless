@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Impossible", Scope = "member", Target = "~M:Nameless.Core.UnitTests.Extensions.CharExtensionTests.IsLetter_Returns_True_When_Letter(System.Boolean,System.Char[])")]
+[assembly: SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Impossible", Scope = "member", Target = "~M:Nameless.Extensions.CharExtensionTests.IsLetter_Returns_True_When_Letter(System.Boolean,System.Char[])")]

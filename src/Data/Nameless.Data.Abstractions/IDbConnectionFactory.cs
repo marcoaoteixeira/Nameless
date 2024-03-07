@@ -13,7 +13,10 @@ namespace Nameless.Data {
         /// <summary>
         /// Creates a database connection.
         /// </summary>
-        /// <returns>An instance of <see cref="IDbConnection" />.</returns>
+        /// <returns>
+        /// An instance of <see cref="IDbConnection" /> implemented by
+        /// the provider defined by <see cref="ProviderName"/>.
+        /// </returns>
         IDbConnection CreateDbConnection();
 
         #endregion

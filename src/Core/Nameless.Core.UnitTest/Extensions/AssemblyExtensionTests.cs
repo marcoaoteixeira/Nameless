@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Moq;
 
-namespace Nameless.Core.UnitTests.Extensions {
+namespace Nameless.Extensions {
     public class AssemblyExtensionTests {
 
         [Test]

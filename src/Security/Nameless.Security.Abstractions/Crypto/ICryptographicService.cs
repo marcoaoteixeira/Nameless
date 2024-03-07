@@ -1,5 +1,5 @@
-﻿namespace Nameless.Security.Cryptography {
-    public interface ICryptoProvider {
+﻿namespace Nameless.Security.Crypto {
+    public interface ICryptographicService {
         #region Methods
 
         /// <summary>

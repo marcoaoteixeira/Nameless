@@ -21,15 +21,13 @@ namespace Nameless.Data.SQLite {
 
         #endregion
 
-        #region IDbConnectionManager Members
+        #region IDbConnectionFactory Members
 
         public string ProviderName => "SQLite";
 
         public IDbConnection CreateDbConnection() {
             var connectionString = _options.GetConnectionString();
             var result = new SQLiteConnection(connectionString);
-
-            result.Open();
 
             return result;
         }

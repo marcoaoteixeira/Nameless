@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
@@ -6,6 +8,7 @@ namespace Nameless.Caching.Redis {
         #region Private Read-Only Fields
 
         private readonly ConfigurationOptions _configurationOptions;
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -19,8 +22,12 @@ namespace Nameless.Caching.Redis {
 
         #region Public Constructors
 
-        public RedisCache(ConfigurationOptions configurationOptions) {
+        public RedisCache(ConfigurationOptions configurationOptions)
+            : this(configurationOptions, NullLogger.Instance) { }
+
+        public RedisCache(ConfigurationOptions configurationOptions, ILogger logger) {
             _configurationOptions = Guard.Against.Null(configurationOptions, nameof(configurationOptions));
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
@@ -37,7 +44,7 @@ namespace Nameless.Caching.Redis {
 
         private void BlockAccessAfterDispose() {
             if (_disposed) {
-                throw new ObjectDisposedException(typeof(RedisCache).Name);
+                throw new ObjectDisposedException(nameof(RedisCache));
             }
         }
 
@@ -64,10 +71,16 @@ namespace Nameless.Caching.Redis {
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            var innerOpts = opts is null ? new() : opts;
+
             var json = JsonSerializer.Serialize(value);
-            var expiry = opts is not null && opts.ExpiresIn != default
-                ? (TimeSpan?)opts.ExpiresIn
+            var expiry = innerOpts.ExpiresIn != default
+                ? (TimeSpan?)innerOpts.ExpiresIn
                 : null;
+
+            if (innerOpts.EvictionCallback is not null) {
+                _logger.LogInformation($"It's not possible to configure eviction callbacks for {nameof(RedisCache)}.");
+            }
 
             return GetDatabase().StringSetAsync(
                 key: key,

@@ -1,4 +1,4 @@
-﻿using Nameless.Security.Cryptography;
+﻿using Nameless.Security.Crypto;
 
 namespace Nameless.Security.Options {
     public sealed class RijndaelCryptoOptions {
@@ -59,11 +59,10 @@ namespace Nameless.Security.Options {
         /// This value should not be smaller than 4 bytes,
         /// because we use the first 4 bytes of salt to store its length.
         /// </summary>
-        private int _minimumSaltSize;
+        private int _minimumSaltSize = 16;
         public int MinimumSaltSize {
             get => _minimumSaltSize;
-            set => _minimumSaltSize = value is >= MINIMUM_ALLOWED_SALT_SIZE and <= MAXIMUM_ALLOWED_SALT_SIZE
-                ? value
+            set => _minimumSaltSize = value >= MINIMUM_ALLOWED_SALT_SIZE && value <= MAXIMUM_ALLOWED_SALT_SIZE               ? value
                 : MINIMUM_ALLOWED_SALT_SIZE;
         }
         /// <summary>
@@ -71,10 +70,10 @@ namespace Nameless.Security.Options {
         /// This value should not be longer than 255 bytes,
         /// because we have only 1 byte to store its length.
         /// </summary>
-        private int _maximumSaltSize;
+        private int _maximumSaltSize = 128;
         public int MaximumSaltSize {
             get => _maximumSaltSize;
-            set => _maximumSaltSize = value is >= MINIMUM_ALLOWED_SALT_SIZE and <= MAXIMUM_ALLOWED_SALT_SIZE
+            set => _maximumSaltSize = value >= MINIMUM_ALLOWED_SALT_SIZE && value <= MAXIMUM_ALLOWED_SALT_SIZE
                 ? value
                 : MAXIMUM_ALLOWED_SALT_SIZE;
         }
@@ -83,10 +82,10 @@ namespace Nameless.Security.Options {
         /// Number of iterations used to hash password. More iterations are
         /// considered more secure but may take longer. Minimum of 1.
         /// </summary>
-        private int _passwordIterations;
+        private int _passwordIterations = 1;
         public int PasswordIterations {
             get => _passwordIterations;
-            set => _passwordIterations = value is >= MINIMUM_PASSWORD_ITERATIONS
+            set => _passwordIterations = value >= MINIMUM_PASSWORD_ITERATIONS
                 ? value
                 : MINIMUM_PASSWORD_ITERATIONS;
         }

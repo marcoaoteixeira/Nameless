@@ -11,7 +11,7 @@ namespace Nameless.NHibernate.DependencyInjection {
     public sealed class NHibernateModule : ModuleBase {
         #region Internal Constants
 
-        internal const string CONFIGURATION_BUILDER_TOKEN = $"{nameof(IConfigurationFactory)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
+        internal const string CONFIGURATION_FACTORY_TOKEN = $"{nameof(IConfigurationFactory)}::18f15589-f72f-47d9-b0a1-af8391072e3f";
         internal const string SESSION_FACTORY_TOKEN = $"{nameof(ISessionFactory)}::dba2ffdf-3c03-4431-83bc-54746b8e47ab";
 
         #endregion
@@ -21,7 +21,7 @@ namespace Nameless.NHibernate.DependencyInjection {
         protected override void Load(ContainerBuilder builder) {
             builder
                 .Register(ConfigurationFactoryResolver)
-                .Named<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
+                .Named<IConfigurationFactory>(CONFIGURATION_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
@@ -54,7 +54,7 @@ namespace Nameless.NHibernate.DependencyInjection {
 
         private static ISessionFactory SessionFactoryResolver(IComponentContext ctx) {
             var configuration = ctx
-                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
+                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_FACTORY_TOKEN)
                 .CreateConfiguration();
             var result = configuration.BuildSessionFactory();
 
@@ -89,7 +89,7 @@ namespace Nameless.NHibernate.DependencyInjection {
 
             using var session = args.Instance.OpenSession();
             var configuration = ctx
-                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_BUILDER_TOKEN)
+                .ResolveNamed<IConfigurationFactory>(CONFIGURATION_FACTORY_TOKEN)
                 .CreateConfiguration();
             new SchemaExport(configuration).Execute(
                 useStdOut: options.SchemaExport.ConsoleOutput,

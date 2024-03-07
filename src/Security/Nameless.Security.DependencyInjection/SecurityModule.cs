@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Nameless.Autofac;
-using Nameless.Security.Cryptography;
+using Nameless.Security.Crypto;
 using Nameless.Security.Options;
 
 namespace Nameless.Security.DependencyInjection {
@@ -9,8 +9,8 @@ namespace Nameless.Security.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(CryptoProviderResolver)
-                .As<ICryptoProvider>()
+                .Register(CryptographicServiceResolver)
+                .As<ICryptographicService>()
                 .InstancePerLifetimeScope();
 
             builder
@@ -25,9 +25,9 @@ namespace Nameless.Security.DependencyInjection {
 
         #region Private Static Methods
 
-        private static ICryptoProvider CryptoProviderResolver(IComponentContext ctx) {
+        private static ICryptographicService CryptographicServiceResolver(IComponentContext ctx) {
             var options = ctx.GetPocoOptions<RijndaelCryptoOptions>();
-            var result = new RijndaelCryptoProvider(options);
+            var result = new RijndaelCryptographicService(options);
 
             return result;
         }
