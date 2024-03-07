@@ -21,7 +21,7 @@ namespace Nameless.Data.SQLServer {
 
         #endregion
 
-        #region IDbConnectionManager Members
+        #region IDbConnectionFactory Members
 
         public string ProviderName => "Microsoft SQL Server";
 

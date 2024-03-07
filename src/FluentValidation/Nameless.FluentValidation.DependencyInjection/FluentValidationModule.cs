@@ -28,7 +28,7 @@ namespace Nameless.FluentValidation.DependencyInjection {
             builder
                 .Register(ValidatorManagerResolver)
                 .As<IValidatorManager>()
-                .SingleInstance();
+                .InstancePerLifetimeScope();
 
             base.Load(builder);
         }

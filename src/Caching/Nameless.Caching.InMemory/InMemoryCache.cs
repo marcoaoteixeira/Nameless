@@ -3,27 +3,10 @@ using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
     public sealed class InMemoryCache : ICache, IDisposable {
-        #region Private Read-Only Fields
-
-        private readonly MemoryCacheOptions _options;
-
-        #endregion
-
         #region Private Fields
 
         private MemoryCache? _memoryCache;
         private bool _disposed;
-
-        #endregion
-
-        #region Public Constructors
-
-        public InMemoryCache()
-            : this(new()) { }
-
-        public InMemoryCache(MemoryCacheOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
 
         #endregion
 
@@ -49,7 +32,7 @@ namespace Nameless.Caching.InMemory {
         }
 
         private IMemoryCache GetMemoryCache()
-            => _memoryCache ??= new MemoryCache(_options);
+            => _memoryCache ??= new MemoryCache(new MemoryCacheOptions());
 
         private static void OnEviction(EvictionCallback evictionCallback, string key, object? value, string reason, CancellationTokenSource cts) {
             evictionCallback(key, value, reason);
@@ -69,7 +52,7 @@ namespace Nameless.Caching.InMemory {
 
             result.RegisterPostEvictionCallback((key, value, reason, _)
                 => OnEviction(
-                    opts.EvictionCallback,
+                    opts.EvictionCallback ?? CacheEntryOptions.EmptyEvictionCallback,
                     (string)key,
                     value,
                     reason.ToString(),

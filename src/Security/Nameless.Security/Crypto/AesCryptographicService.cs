@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 using Nameless.Security.Options;
 
-namespace Nameless.Security.Cryptography {
-    public sealed class AesCryptoProvider : ICryptoProvider {
+namespace Nameless.Security.Crypto {
+    public sealed class AesCryptographicService : ICryptographicService {
         #region Private Read-Only Fields
 
         private readonly AesCryptoOptions _options;
@@ -11,16 +11,16 @@ namespace Nameless.Security.Cryptography {
 
         #region Public Constructors
 
-        public AesCryptoProvider()
+        public AesCryptographicService()
             : this(AesCryptoOptions.Default) { }
 
-        public AesCryptoProvider(AesCryptoOptions options) {
+        public AesCryptographicService(AesCryptoOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
         }
 
         #endregion
 
-        #region ICryptoProvider Members
+        #region ICryptographicService Members
 
         public byte[] Encrypt(Stream stream) {
             Guard.Against.Null(stream, nameof(stream));

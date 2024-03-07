@@ -2,7 +2,7 @@
 using System.Text;
 using Nameless.Security.Options;
 
-namespace Nameless.Security.Cryptography {
+namespace Nameless.Security.Crypto {
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and
     /// decrypt data. As long as it is initialized with the same constructor
@@ -18,7 +18,7 @@ namespace Nameless.Security.Cryptography {
     /// decryption operation. To correct the problem, re-initialize the class
     /// instance when a cryptographic exception occurs.
     /// </remarks>
-    public sealed class RijndaelCryptoProvider : ICryptoProvider, IDisposable {
+    public sealed class RijndaelCryptographicService : ICryptographicService, IDisposable {
         #region Private Fields
 
         // These members will be used to perform encryption and decryption.
@@ -37,7 +37,7 @@ namespace Nameless.Security.Cryptography {
 
         #region Public Constructors
 
-        public RijndaelCryptoProvider()
+        public RijndaelCryptographicService()
             : this(RijndaelCryptoOptions.Default) { }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Nameless.Security.Cryptography {
         /// parameters.
         /// </summary>
         /// <param name="options">The options.</param>
-        public RijndaelCryptoProvider(RijndaelCryptoOptions options) {
+        public RijndaelCryptographicService(RijndaelCryptoOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
 
             // Initialization vector converted to a byte array.
@@ -162,7 +162,7 @@ namespace Nameless.Security.Cryptography {
 
         private void BlockAccesAfterDispose() {
             if (_disposed) {
-                throw new ObjectDisposedException(nameof(RijndaelCryptoProvider));
+                throw new ObjectDisposedException(nameof(RijndaelCryptographicService));
             }
         }
 
@@ -208,7 +208,7 @@ namespace Nameless.Security.Cryptography {
 
         #endregion
 
-        #region ICryptoProvider Members
+        #region ICryptographicService Members
 
         /// <inheritdoc />
         public byte[] Encrypt(Stream stream) {

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Nameless.Core.UnitTests.Fixtures;
+using Nameless.Fixtures;
 
-namespace Nameless.Core.UnitTests.Attributes {
+namespace Nameless.Attributes {
 
     public class SingletonAttributeTests {
 

@@ -1,8 +1,8 @@
 ﻿namespace Nameless.Caching {
     public sealed class CacheEntryOptions {
-        #region Private Static Read-Only Fields
+        #region Public Static Read-Only Fields
 
-        private static readonly EvictionCallback EmptyEvictionCallback = (_, __, ___)
+        public static readonly EvictionCallback EmptyEvictionCallback = (_, __, ___)
             => { };
 
         #endregion
@@ -11,11 +11,7 @@
 
         public TimeSpan ExpiresIn { get; set; }
 
-        private EvictionCallback? _evictionCallback = null;
-        public EvictionCallback EvictionCallback {
-            get => _evictionCallback ??= EmptyEvictionCallback;
-            set => _evictionCallback = value;
-        }
+        public EvictionCallback? EvictionCallback { get; set; }
 
         #endregion
     }

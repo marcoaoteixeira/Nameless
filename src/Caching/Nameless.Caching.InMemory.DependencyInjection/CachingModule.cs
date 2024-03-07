@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Microsoft.Extensions.Caching.Memory;
 using Nameless.Autofac;
 
 namespace Nameless.Caching.InMemory.DependencyInjection {
@@ -8,23 +7,11 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
 
         protected override void Load(ContainerBuilder builder) {
             builder
-                .Register(CacheResolver)
+                .RegisterType<InMemoryCache>()
                 .As<ICache>()
                 .SingleInstance();
 
             base.Load(builder);
-        }
-
-        #endregion
-
-        #region Private Static Methods
-
-        private static ICache CacheResolver(IComponentContext ctx) {
-            var result = new InMemoryCache(
-                options: ctx.GetPocoOptions<MemoryCacheOptions>()
-            );
-
-            return result;
         }
 
         #endregion

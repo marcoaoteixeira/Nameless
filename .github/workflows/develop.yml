@@ -4,7 +4,7 @@ on:
 
   push:
     branches:
-      - 'feature/**'
+      - 'develop'
 
 env:
   CODE_COVERAGE_FOLDER_PATH: './code_coverage'
@@ -58,6 +58,7 @@ jobs:
           --logger:"Html;LogFileName=code-coverage-log.html" \
           --collect:"XPlat Code Coverage" \
           --results-directory ./code-coverage/ \
+          --filter "Category!=Integration" \
           --verbosity normal
 
       - name: Prepare for coverage report

@@ -1,14 +1,32 @@
 ﻿using Autofac;
+using Moq;
+using Nameless.Infrastructure;
 using Nameless.Lucene.DependencyInjection;
 using Nameless.Lucene.Impl;
+using Nameless.Test.Utils;
 
 namespace Nameless.Lucene {
-    public class IntegrationTests {
-        [Test, Ignore("Just for local machine")]
-        public void Integration_Create_Instance() {
+    public class IndexTests {
+        private static IContainer CreateContainer() {
             var builder = new ContainerBuilder();
             builder.RegisterLuceneModule();
-            using var container = builder.Build();
+
+            var applicationContextMock = new Mock<IApplicationContext>();
+            applicationContextMock
+                .Setup(mock => mock.ApplicationDataFolderPath)
+                .Returns(Path.GetTempPath());
+            builder
+                .RegisterInstance(applicationContextMock.Object)
+                .As<IApplicationContext>()
+                .SingleInstance();
+
+            return builder.Build();
+        }
+
+        [Category(Categories.Integration)]
+        [Test]
+        public void Should_Create_Instance_Of_Index_Class() {
+            using var container = CreateContainer();
 
             var indexManager = container.Resolve<IIndexManager>();
             var indexA = indexManager.GetOrCreate("temporary");
@@ -21,11 +39,10 @@ namespace Nameless.Lucene {
             });
         }
 
-        [Test, Ignore("Just for local machine")]
-        public void Integration_Store_Document() {
-            var builder = new ContainerBuilder();
-            builder.RegisterLuceneModule();
-            using var container = builder.Build();
+        [Category(Categories.Integration)]
+        [Test]
+        public void StoreDocument_Should_Create_A_New_Document_In_Index() {
+            using var container = CreateContainer();
 
             var indexManager = container.Resolve<IIndexManager>();
             var index = indexManager.GetOrCreate("temporary");
@@ -43,11 +60,10 @@ namespace Nameless.Lucene {
             Assert.That(index, Is.Not.Null);
         }
 
-        [Test, Ignore("Just for local machine")]
-        public void Integration_Search_Document() {
-            var builder = new ContainerBuilder();
-            builder.RegisterLuceneModule();
-            using var container = builder.Build();
+        [Category(Categories.Integration)]
+        [Test]
+        public void CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
+            using var container = CreateContainer();
 
             var indexManager = container.Resolve<IIndexManager>();
             var index = indexManager.GetOrCreate("temporary");

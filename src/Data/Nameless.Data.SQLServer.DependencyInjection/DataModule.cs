@@ -21,7 +21,7 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
             builder
                 .Register(DatabaseResolver)
                 .As<IDatabase>()
-                .SingleInstance();
+                .InstancePerLifetimeScope();
 
             base.Load(builder);
         }

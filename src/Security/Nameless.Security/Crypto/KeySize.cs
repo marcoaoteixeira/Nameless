@@ -1,4 +1,4 @@
-﻿namespace Nameless.Security.Cryptography {
+﻿namespace Nameless.Security.Crypto {
     /// <summary>
     /// Encryption key sizes.
     /// </summary>

@@ -1,4 +1,4 @@
-﻿namespace Nameless.Core.UnitTests.Extensions {
+﻿namespace Nameless.Extensions {
     public class ArrayExtensionTests {
 
         [Test]

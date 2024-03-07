@@ -13,7 +13,7 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
             public string Culture { get; set; } = string.Empty;
             public Translation Translation { get; set; } = Translation.Empty;
-            public IDisposable? FileChangeHandler { get; set; }
+            public IDisposable FileChangeCallback { get; set; } = NullDisposable.Instance;
 
             #endregion
         }
@@ -42,13 +42,13 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
 
         #region Private Methods
 
-        private void FileChangeHandler(object? state) {
+        private void HandleFileChange(object? state) {
             if (state is null) { return; }
 
             var culture = (string)state;
 
             if (Cache.TryRemove(culture, out var entry)) {
-                entry.FileChangeHandler?.Dispose();
+                entry.FileChangeCallback?.Dispose();
             }
         }
 
@@ -70,15 +70,15 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
             return content;
         }
 
-        private IDisposable? CreateFileChangeHandler(string culture, string path) {
+        private IDisposable CreateFileChangeCallback(string culture, string path) {
             if (!_options.WatchFileForChanges) {
-                return null;
+                return NullDisposable.Instance;
             }
 
             var changeToken = _fileProvider.Watch(path);
             var handler = changeToken
                 .RegisterChangeCallback(
-                    callback: FileChangeHandler,
+                    callback: HandleFileChange,
                     state: culture
                 );
 
@@ -88,14 +88,14 @@ namespace Nameless.Localization.Microsoft.Json.Infrastructure.Impl {
         private CacheEntry CreateCacheEntry(string culture) {
             var path = GetTranslationFilePath(culture);
             var fileContent = GetFileContent(path);
-            var fileChangeHandler = CreateFileChangeHandler(culture, path);
+            var fileChangeCallback = CreateFileChangeCallback(culture, path);
             var translation = JsonSerializer.Deserialize<Translation>(fileContent);
 
             return translation is not null
                 ? new() {
                     Culture = culture,
                     Translation = translation,
-                    FileChangeHandler = fileChangeHandler
+                    FileChangeCallback = fileChangeCallback
                 }
                 : throw new InvalidOperationException($"Couldn't deserialize translation file. Culture: {culture}");
         }

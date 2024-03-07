@@ -8,13 +8,13 @@ namespace Nameless.Caching.InMemory {
             // arrange
             var builder = new ContainerBuilder();
             builder.RegisterCachingModule();
+            using var container = builder.Build();
 
             // act
-            using var container = builder.Build();
-            var cache = container.Resolve<ICache>();
+            var sut = container.Resolve<ICache>();
 
             // assert
-            Assert.That(cache, Is.InstanceOf<InMemoryCache>());
+            Assert.That(sut, Is.InstanceOf<InMemoryCache>());
         }
     }
 }

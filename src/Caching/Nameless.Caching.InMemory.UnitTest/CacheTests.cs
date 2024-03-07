@@ -1,5 +1,8 @@
 ﻿namespace Nameless.Caching.InMemory {
     public class CacheTests {
+        private static ICache CreateSut()
+            => new InMemoryCache();
+
         [Test]
         public async Task Set_New_Object_To_Cache() {
             // arrange
@@ -8,10 +11,10 @@
                 Name = "Test"
             };
 
-            ICache cache = new InMemoryCache();
+            var sut = CreateSut();
 
             // act
-            var result = await cache.SetAsync("Key", value);
+            var result = await sut.SetAsync("Key", value);
 
             // assert
             Assert.That(result, Is.True);
@@ -26,11 +29,11 @@
                 Name = "Test"
             };
 
-            ICache cache = new InMemoryCache();
+            var sut = CreateSut();
 
             // act
-            var objA = await cache.SetAsync(key, value);
-            var result = await cache.GetAsync<object?>(key);
+            var objA = await sut.SetAsync(key, value);
+            var result = await sut.GetAsync<object?>(key);
 
             // assert
             Assert.Multiple(() => {
@@ -43,10 +46,11 @@
 
         [Test]
         public async Task Remove_Object_From_Cache() {
-            var cache = new InMemoryCache();
+            // arrange
+            var sut = CreateSut();
 
             // act
-            var result = await cache.RemoveAsync("Key");
+            var result = await sut.RemoveAsync("Key");
 
             // assert
             Assert.That(result, Is.True);

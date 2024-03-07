@@ -7,7 +7,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
     public sealed class CachingModule : ModuleBase {
         #region Private Constants
 
-        private const string CONFIGURATION_FACTORY_TOKEN = $"{nameof(IConfigurationOptionsFactory)}::cb35ebee-c898-43de-8c3b-abbe8e9c71b2";
+        private const string CONFIGURATION_OPTIONS_FACTORY_TOKEN = $"{nameof(ConfigurationOptionsFactory)}::cb35ebee-c898-43de-8c3b-abbe8e9c71b2";
 
         #endregion
 
@@ -16,7 +16,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         protected override void Load(ContainerBuilder builder) {
             builder
                 .Register(ConfigurationFactoryResolver)
-                .As<IConfigurationOptionsFactory>()
+                .Named<IConfigurationOptionsFactory>(CONFIGURATION_OPTIONS_FACTORY_TOKEN)
                 .SingleInstance();
 
             builder
@@ -41,7 +41,7 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         }
 
         private static ICache CacheResolver(IComponentContext ctx) {
-            var configurationFactory = ctx.ResolveNamed<IConfigurationOptionsFactory>(CONFIGURATION_FACTORY_TOKEN);
+            var configurationFactory = ctx.ResolveNamed<IConfigurationOptionsFactory>(CONFIGURATION_OPTIONS_FACTORY_TOKEN);
             var configurationOptions = configurationFactory.CreateConfigurationOptions();
             var result = new RedisCache(configurationOptions);
 

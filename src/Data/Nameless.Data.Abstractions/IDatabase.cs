@@ -2,7 +2,7 @@
 
 namespace Nameless.Data {
     /// <summary>
-    /// Contract to a database accessor that works with ADO.Net
+    /// Implements methods to work with ADO.Net.
     /// </summary>
     public interface IDatabase {
         #region Methods

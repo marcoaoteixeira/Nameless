@@ -1,6 +1,4 @@
-﻿using Nameless.Collections.Generic;
-
-namespace Nameless.Core.UnitTests.Collections.Generic {
+﻿namespace Nameless.Collections.Generic {
 
     public class AsyncEnumerableTests {
         private static readonly int[] sourceArray = [1, 2, 3, 4, 5];

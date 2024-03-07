@@ -27,21 +27,12 @@ namespace Nameless.Messenger.Email.Impl {
 
         #endregion
 
-        #region Public Methods
-
-        public string GetPickupDirectoryPath()
-            => Path.Combine(
-                _applicationContext.ApplicationDataFolderPath,
-                _options.PickupDirectoryFolderName
-            );
-
-        #endregion
-
         #region Private Methods
 
         private string GetFilePath()
             => Path.Combine(
-                GetPickupDirectoryPath(),
+                _applicationContext.ApplicationDataFolderPath,
+                _options.PickupDirectoryFolderName,
                 _fileNameGenerator()
             );
 

@@ -78,12 +78,12 @@ Link to a feature: [ProducerConsumer](Nameless.ProducerConsumer.RabbitMQ.Specs/F
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Produce And Consume Message")]
-        [NUnit.Framework.IgnoreAttribute("Ignored scenario")]
+        [NUnit.Framework.CategoryAttribute("Integration")]
         [NUnit.Framework.CategoryAttribute("ProducerConsumer")]
         public void ProduceAndConsumeMessage()
         {
             string[] tagsOfScenario = new string[] {
-                    "Ignore",
+                    "Integration",
                     "ProducerConsumer"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce And Consume Message", null, tagsOfScenario, argumentsOfScenario, featureTags);
