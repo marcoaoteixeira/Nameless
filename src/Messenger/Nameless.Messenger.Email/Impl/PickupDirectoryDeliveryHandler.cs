@@ -42,7 +42,7 @@ namespace Nameless.Messenger.Email.Impl {
 
         public DeliveryMode Mode => DeliveryMode.PickupDirectory;
 
-        public async Task HandleAsync(MimeMessage message, CancellationToken cancellationToken = default) {
+        public async Task<string> HandleAsync(MimeMessage message, CancellationToken cancellationToken = default) {
             var path = GetFilePath();
 
             using var stream = new FileStream(path, FileMode.Create);
@@ -51,6 +51,8 @@ namespace Nameless.Messenger.Email.Impl {
                 headersOnly: false,
                 cancellationToken
             );
+
+            return path;
         }
 
         #endregion

@@ -103,7 +103,7 @@ namespace Nameless {
             }
 
             // search previous word
-            while (characterCount > 0 && self[characterCount - 1].IsBlank()) {
+            while (characterCount > 0 && self[characterCount - 1].IsWhiteSpace()) {
                 characterCount--;
             }
 
@@ -165,18 +165,18 @@ namespace Nameless {
             => (encoding ?? Root.Defaults.Encoding).GetString(Convert.FromBase64String(self));
 
         /// <summary>
-        /// Strips a <see cref="string"/> by the specified <see cref="char"/> from <paramref name="stripped"/>.
+        /// Strips a <see cref="string"/> by the specified <see cref="char"/> from <paramref name="chars"/>.
         /// </summary>
         /// <param name="self">The current <see cref="string"/>.</param>
-        /// <param name="stripped">Stripper values</param>
+        /// <param name="chars">Stripper values</param>
         /// <returns>A stripped version of the <paramref name="self"/> parameter.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static string Strip(this string self, params char[] stripped) {
+        public static string Strip(this string self, params char[] chars) {
             var result = new char[self.Length];
             var cursor = 0;
             for (var idx = 0; idx < self.Length; idx++) {
                 var current = self[idx];
-                if (Array.IndexOf(stripped, current) < 0) {
+                if (Array.IndexOf(chars, current) < 0) {
                     result[cursor++] = current;
                 }
             }

@@ -13,8 +13,8 @@
         public static class EnvTokens {
             #region Public Constants
 
-            public const string MESSENGER_USER = nameof(MESSENGER_USER);
-            public const string MESSENGER_PASS = nameof(MESSENGER_PASS);
+            public const string MESSENGER_SMTP_USER = nameof(MESSENGER_SMTP_USER);
+            public const string MESSENGER_SMTP_PASS = nameof(MESSENGER_SMTP_PASS);
 
             #endregion
         }

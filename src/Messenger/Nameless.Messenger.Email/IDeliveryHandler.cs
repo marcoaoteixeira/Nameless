@@ -10,7 +10,7 @@ namespace Nameless.Messenger.Email {
 
         #region Methods
 
-        Task HandleAsync(MimeMessage message, CancellationToken cancellationToken = default);
+        Task<string> HandleAsync(MimeMessage message, CancellationToken cancellationToken = default);
 
         #endregion
     }

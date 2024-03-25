@@ -1,4 +1,5 @@
 ﻿using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace Nameless.Messenger.Email.Impl {
     public sealed class SmtpClientFactory : ISmtpClientFactory {
@@ -27,7 +28,7 @@ namespace Nameless.Messenger.Email.Impl {
             await client.ConnectAsync(
                 _options.Host,
                 _options.Port,
-                _options.UseSsl,
+                _options.SecureSocket,
                 cancellationToken
             );
 

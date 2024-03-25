@@ -62,6 +62,17 @@ _.NET Report Generator Tool_
 dotnet tool install -g dotnet-reportgenerator-globaltool
 ```
 
+### Skipping Tests
+
+Some tests will need a software to run or any other resource that may not be available on your
+build environment. For example, ProducerConsumer for RabbitMQ project needs RabbitMQ to run.
+
+For these tests to run on my GitHub Actions (workflow) I needed a way to "mute" them and run only
+locally, since I could setup, again, RabbitMQ on a Docker container on my machine.
+
+So, if you need to "mute" a test and run it only locally, use the **RunsOnDevMachineAttribute** attribute
+on your test method.
+
 ### Creating Code Coverage Report
 
 When you feel comfortable, you should run all tests and output the coverage

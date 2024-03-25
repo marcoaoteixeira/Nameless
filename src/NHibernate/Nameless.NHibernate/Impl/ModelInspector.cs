@@ -17,7 +17,7 @@ namespace Nameless.NHibernate {
         /// Initializes a new instance of <see cref="ModelInspector" />
         /// </summary>
         public ModelInspector(Type[] entityTypes) {
-            _entityTypes = Guard.Against.NullOrEmpty(entityTypes, nameof(entityTypes));
+            _entityTypes = Guard.Against.Null(entityTypes, nameof(entityTypes));
         }
 
         #endregion
