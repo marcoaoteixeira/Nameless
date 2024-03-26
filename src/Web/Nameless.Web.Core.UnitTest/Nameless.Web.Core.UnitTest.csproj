@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Web.Core.DependencyInjection\Nameless.Web.Core.DependencyInjection.csproj" />
 		<ProjectReference Include="..\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	</ItemGroup>
 

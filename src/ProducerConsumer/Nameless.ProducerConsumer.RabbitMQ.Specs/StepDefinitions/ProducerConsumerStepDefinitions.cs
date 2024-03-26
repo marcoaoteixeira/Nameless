@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
-    [Category(Categories.Integration)]
     [Binding]
     public sealed class ProducerConsumerStepDefinitions {
         private const string EXCHANGE_NAME = "ex.default";

@@ -20,11 +20,13 @@ namespace Nameless.Messenger.Email.Impl {
 
         public DeliveryMode Mode => DeliveryMode.Network;
 
-        public async Task HandleAsync(MimeMessage message, CancellationToken cancellationToken = default) {
+        public async Task<string> HandleAsync(MimeMessage message, CancellationToken cancellationToken = default) {
             using var client = await _smtpClientFactory.CreateAsync(cancellationToken);
 
-            await client.SendAsync(message, cancellationToken: cancellationToken);
+            var result = await client.SendAsync(message, cancellationToken: cancellationToken);
             await client.DisconnectAsync(quit: true, cancellationToken);
+
+            return result;
         }
 
         #endregion

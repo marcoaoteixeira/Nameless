@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="self">The <see cref="char"/>.</param>
         /// <returns><c>true</c> if is a white space, otherwise, <c>false</c>.</returns>
-        public static bool IsBlank(this char self)
+        public static bool IsWhiteSpace(this char self)
             => char.IsWhiteSpace(self);
 
         #endregion

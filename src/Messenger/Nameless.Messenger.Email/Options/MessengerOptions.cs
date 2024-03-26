@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 #endif
 
+using MailKit.Security;
+
 namespace Nameless.Messenger.Email {
     /// <summary>
     /// The configuration for mailing client.
@@ -36,10 +38,10 @@ namespace Nameless.Messenger.Email {
         public string? Password { get; }
 
         /// <summary>
-        /// Gets or sets whether should enable SSL. Default value is
-        /// <c>false</c>.
+        /// Gets or sets secure socket option to use if connection is SSL.
+        /// Default value is <c><see cref="SecureSocketOptions.None"/></c>.
         /// </summary>
-        public bool UseSsl { get; set; }
+        public SecureSocketOptions SecureSocket { get; set; } = SecureSocketOptions.None;
 
         /// <summary>
         /// Gets or sets the delivery mode. Default value is
@@ -59,8 +61,8 @@ namespace Nameless.Messenger.Email {
         #region Public Constructors
 
         public MessengerOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_USER);
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_PASS);
+            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_USER);
+            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_PASS);
         }
 
         #endregion

@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace Nameless.ProducerConsumer {
     /// <summary>
     /// Represents a consumer registration, also holds the reference to the callback method.
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public sealed class Registration<T> : IDisposable {
         #region Private Read-Only Fields
 
@@ -16,6 +18,12 @@ namespace Nameless.ProducerConsumer {
         private MethodInfo? _method;
         private WeakReference? _ref;
         private bool _disposed;
+
+        #endregion
+
+        #region Private Properties
+
+        private string DebuggerDisplay => $"{{ \"Topic\": \"{Topic}\", \"Tag\": \"{Tag}\" }}";
 
         #endregion
 
@@ -51,13 +59,6 @@ namespace Nameless.ProducerConsumer {
             _ref = new(handler.Target);
             _isStatic = handler.Target is null;
         }
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override string ToString()
-            => $"{{ \"Topic\": \"{Topic}\", \"Tag\": \"{Tag}\" }}";
 
         #endregion
 

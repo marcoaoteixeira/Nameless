@@ -23,7 +23,7 @@ namespace Nameless.Lucene {
             return builder.Build();
         }
 
-        [Category(Categories.Integration)]
+        [RunsOnDevMachine]
         [Test]
         public void Should_Create_Instance_Of_Index_Class() {
             using var container = CreateContainer();
@@ -39,7 +39,7 @@ namespace Nameless.Lucene {
             });
         }
 
-        [Category(Categories.Integration)]
+        [RunsOnDevMachine]
         [Test]
         public void StoreDocument_Should_Create_A_New_Document_In_Index() {
             using var container = CreateContainer();
@@ -60,7 +60,7 @@ namespace Nameless.Lucene {
             Assert.That(index, Is.Not.Null);
         }
 
-        [Category(Categories.Integration)]
+        [RunsOnDevMachine]
         [Test]
         public void CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
             using var container = CreateContainer();

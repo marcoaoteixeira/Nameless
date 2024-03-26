@@ -45,5 +45,49 @@
             // assert
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void ToStream_Should_Create_A_MemoryStream_From_A_String() {
+            // arrange
+            const string value = "This is a Test";
+
+            // act
+            using var actual = StringExtension.ToMemoryStream(value);
+
+            // assert
+            Assert.Multiple(() => {
+                Assert.That(actual, Is.Not.Null);
+                Assert.That(actual.ToArray(), Is.Not.Empty);
+                Assert.That(actual, Is.InstanceOf<MemoryStream>());
+            });
+        }
+
+        [Test]
+        public void CamelFriendly_Should_Create_A_Space_Separated_String_From_A_Camel_String_Value() {
+            // arrange
+            const string value = "ThisIsATest";
+            const string expected = "This Is A Test";
+
+            // act
+            var actual = StringExtension.CamelFriendly(value);
+
+            // arrange
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Ellipsize_Should_Return_A_Portion_Of_A_String_Ending_With_Ellipsis() {
+            // arrange
+            const string value = "This Is A Test";
+            const string ellipsis = "...";
+            const string expected = $"This Is{ellipsis}";
+            const int count = 8;
+
+            // act
+            var actual = StringExtension.Ellipsize(value, count, ellipsis, wordBoundary: false);
+
+            // arrange
+            Assert.That(actual, Is.EqualTo(expected));
+        }
     }
 }
