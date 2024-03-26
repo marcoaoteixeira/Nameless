@@ -94,6 +94,7 @@ Try {
 		--no-build `
 		--logger:"Html;LogFileName=$OutputDir/code_coverage_log.html" `
 		--collect:"XPlat Code Coverage" `
+		--filter "Category!=RunsOnDevMachine" `
 		--results-directory $TestResultsDir `
 		--verbosity normal
 	

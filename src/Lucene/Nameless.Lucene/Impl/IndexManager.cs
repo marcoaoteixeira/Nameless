@@ -70,12 +70,15 @@ namespace Nameless.Lucene {
             _disposed = true;
         }
 
-        private string GetIndexDirectoryPath(string indexName)
-            => Path.Combine(
+        private string GetIndexDirectoryPath(string indexName) {
+            var path = Path.Combine(
                 _applicationContext.ApplicationDataFolderPath,
                 _options.IndexesRootFolderName,
                 indexName
             );
+
+            return Directory.CreateDirectory(path).FullName;
+        }
 
         private Index Create(string indexName)
             => new(

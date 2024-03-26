@@ -58,6 +58,7 @@ _TeamCity*
 # DotCover is a Code Coverage Tool
 CodeCoverage/
 code-coverage/
+code_coverage/
 *.dotCover
 
 # Web workbench (sass)
