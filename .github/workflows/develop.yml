@@ -1,25 +1,22 @@
 name: Development Cycle
 
 on:
-
   push:
     branches:
-      - 'develop'
+      - "develop"
 
 env:
-  CODE_COVERAGE_FOLDER_PATH: './code_coverage'
-  CODE_COVERAGE_COBERTURA_FILE_PATH: './code_coverage/**/coverage.cobertura.xml'
-  CODE_COVERAGE_REPORT_FOLDER_PATH: './code_coverage/coverage_report'
+  CODE_COVERAGE_FOLDER_PATH: "./code_coverage"
+  CODE_COVERAGE_COBERTURA_FILE_PATH: "./code_coverage/**/coverage.cobertura.xml"
+  CODE_COVERAGE_REPORT_FOLDER_PATH: "./code_coverage/coverage_report"
 
 jobs:
-
   build_and_test:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        dotnet-version: ['8.0.x']
+        dotnet-version: ["8.0.x"]
 
     steps:
       - name: Checkout source code
@@ -59,6 +56,7 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./code-coverage/ \
           --filter "Category!=RunsOnDevMachine" \
+          --settings .runsettings \
           --verbosity detailed
 
       - name: Prepare for coverage report

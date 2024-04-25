@@ -68,6 +68,7 @@ code_coverage/
 *.nupkg
 # Packages stored here could not be found on nuget.org, so will build it.
 !**/packages/unavailable/*.nupkg
+!**/packages/owned/*.nupkg
 # Remove builded nupkg folder
 nuget_packages
 **/packages/

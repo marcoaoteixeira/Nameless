@@ -12,6 +12,7 @@
     <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
     <PackageReference Include="nunit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\utils\Nameless.Test.Utils\Nameless.Test.Utils.csproj" />
-    <ProjectReference Include="..\Nameless.ProducerConsumer.RabbitMQ\Nameless.ProducerConsumer.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Nameless.ProducerConsumer.RabbitMQ.DependencyInjection\Nameless.ProducerConsumer.RabbitMQ.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

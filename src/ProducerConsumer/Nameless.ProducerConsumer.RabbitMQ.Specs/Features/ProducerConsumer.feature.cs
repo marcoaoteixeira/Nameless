@@ -35,7 +35,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Producer/Consumer", @"Producer/Consumer for RabbitMQ
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Producer/Consumer", @"Simple message publisher / subscriber
 
 Link to a feature: [ProducerConsumer](Nameless.ProducerConsumer.RabbitMQ.Specs/Features/ProducerConsumer.feature)
 ***Further read***: **[Learn more about how to generate Living Documentation](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerator/Generating-Documentation.html)**", ProgrammingLanguage.CSharp, featureTags);
@@ -79,15 +79,13 @@ Link to a feature: [ProducerConsumer](Nameless.ProducerConsumer.RabbitMQ.Specs/F
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Produce And Consume Message")]
         [NUnit.Framework.CategoryAttribute("RunsOnDevMachine")]
-        [NUnit.Framework.CategoryAttribute("ProducerConsumer")]
         public void ProduceAndConsumeMessage()
         {
             string[] tagsOfScenario = new string[] {
-                    "RunsOnDevMachine",
-                    "ProducerConsumer"};
+                    "RunsOnDevMachine"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce And Consume Message", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 9
+#line 8
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -97,27 +95,17 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+#line 9
+ testRunner.Given("that I have the correct infrastructure for sending messages", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
 #line 10
- testRunner.Given("that I have a ChannelFactory", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.And("the message value will be \"This is a test message\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 11
- testRunner.And("that I have a Channel", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I call ProducerService ProduceAsync with that said message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 12
- testRunner.And("that I have a ProducerService", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 13
- testRunner.And("that I have a ConsumerService", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 14
- testRunner.And("that I create a Registration using ConsumerService", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 15
- testRunner.When("I use the ProducerService to publish a message with content This is a test messag" +
-                        "e", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 16
- testRunner.Then("the Handler associated with the Registration should capture the message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the handler created by ConsumerService Register should capture the message", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

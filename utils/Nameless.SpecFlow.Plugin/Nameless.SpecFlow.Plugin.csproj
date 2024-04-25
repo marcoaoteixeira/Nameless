@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- NUGET PACKING -->
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless SpecFlow Plugin</Title>
+		<Company>Nameless</Company>
+		<Description>Nameless SpecFlow plugin library.</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/utils/Nameless.SpecFlow.Plugin</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackageOutputPath>../../packages/owned</PackageOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SpecFlow.CustomPlugin" Version="3.9.74" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Test.Utils\Nameless.Test.Utils.csproj" />
+	</ItemGroup>
+
+</Project>

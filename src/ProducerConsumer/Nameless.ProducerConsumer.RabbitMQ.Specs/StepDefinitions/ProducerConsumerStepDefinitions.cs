@@ -1,12 +1,11 @@
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
-using Nameless.Test.Utils;
 using NUnit.Framework;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
     [Binding]
-    public sealed class ProducerConsumerStepDefinitions {
+    public class ProducerConsumerStepDefinitions {
         private const string EXCHANGE_NAME = "ex.default";
         private const string QUEUE_NAME = "q.default";
 
@@ -15,15 +14,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
         private IProducerService? _producerService;
         private IConsumerService? _consumerService;
 
+        private string? _actual;
         private string? _expected;
-        private string? _message;
 
-        [Given(@"that I have a ChannelFactory")]
-        public void GivenThatIHaveAChannelFactory()
-            => _channelFactory = new ChannelFactory();
-
-        [Given(@"that I have a Channel")]
-        public void GivenThatIHaveAChannel() {
+        [Given(@"that I have the correct infrastructure for sending messages")]
+        public void GivenThatIHaveTheCorrectInfrastructureForSendingMessages() {
+            _channelFactory = new ChannelFactory();
             _channel = _channelFactory!.CreateChannel();
 
             // assert exchange/queue
@@ -47,18 +43,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
                 routingKey: string.Empty,
                 arguments: new Dictionary<string, object>()
             );
-        }
 
-        [Given(@"that I have a ProducerService")]
-        public void GivenThatIHaveAProducerService()
-            => _producerService = new ProducerService(_channel!);
+            _producerService = new ProducerService(_channel!);
+            _consumerService = new ConsumerService(_channel!);
 
-        [Given(@"that I have a ConsumerService")]
-        public void GivenThatIHaveAConsumerService()
-            => _consumerService = new ConsumerService(_channel!);
-
-        [Given(@"that I create a Registration using ConsumerService")]
-        public void GivenThatICreateARegistrationUsingConsumerService() {
             var args = ConsumerArgs.Empty;
 
             args.SetAutoAck(true);
@@ -70,24 +58,27 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
             );
         }
 
-        [When(@"I use the ProducerService to publish a message with content (.*)")]
-        public async Task WhenIUseTheProducerServiceToPublishAMessageWithContent(string message) {
+        [Given(@"the message value will be ""([^""]*)""")]
+        public void GivenTheMessageValueWillBe(string message) {
             _expected = message;
+        }
 
+        [When(@"I call ProducerService ProduceAsync with that said message")]
+        public async Task WhenICallProducerServiceProduceAsyncWithThatSaidMessage() {
             var args = new ProducerArgs();
             args.SetExchangeName(EXCHANGE_NAME);
 
-            await _producerService!.ProduceAsync(string.Empty, message, args);
+            await _producerService!.ProduceAsync(string.Empty, _expected!, args);
         }
 
-        [Then(@"the Handler associated with the Registration should capture the message")]
-        public void ThenTheHandlerAssociatedWithTheRegistrationShouldCaptureTheMessage() {
+        [Then(@"the handler created by ConsumerService Register should capture the message")]
+        public void ThenTheHandlerCreatedByConsumerServiceRegisterShouldCaptureTheMessage() {
             Thread.Sleep(250); // this should be smarter but it works as is.
-            Assert.That(_expected, Is.EqualTo(_message));
+            Assert.That(_actual, Is.EqualTo(_expected));
         }
 
         private Task Handler(string message) {
-            _message = message;
+            _actual = message;
             return Task.CompletedTask;
         }
     }
