@@ -1,10 +1,12 @@
-using System.CodeDom;
+﻿using System.CodeDom;
+using System.ComponentModel;
+using Nameless.Test.Utils;
 using TechTalk.SpecFlow.Generator;
 using TechTalk.SpecFlow.Generator.UnitTestConverter;
 
-namespace Nameless.Test.Utils {
-    public class CategoryAttributeDecorator : ITestClassTagDecorator {
-        private const string TAG_NAME = "Category";
+namespace Nameless.SpecFlow.Plugin {
+    public sealed class CategoryTestClassTagDecorator : ITestClassTagDecorator {
+        internal const string TAG_NAME = "CCategory";
 
         private readonly ITagFilterMatcher _tagFilterMatcher;
 
@@ -12,7 +14,7 @@ namespace Nameless.Test.Utils {
         public bool RemoveProcessedTags { get; }
         public bool ApplyOtherDecoratorsForProcessedTags { get; }
 
-        public CategoryAttributeDecorator(ITagFilterMatcher tagFilterMatcher) {
+        public CategoryTestClassTagDecorator(ITagFilterMatcher tagFilterMatcher) {
             _tagFilterMatcher = tagFilterMatcher ?? throw new ArgumentNullException(nameof(tagFilterMatcher));
         }
 
@@ -21,22 +23,28 @@ namespace Nameless.Test.Utils {
 
         public void DecorateFrom(string tagName, TestClassGenerationContext generationContext) {
             const string nUnitNamespace = "NUnit.Framework.CategoryAttribute";
-
+            var attr = typeof(DescriptionAttribute).FullName;
             var codeTypeReferenceExpression = new CodeTypeReferenceExpression(typeof(Categories));
+
             var codeFieldReferenceExpression = new CodeFieldReferenceExpression(
                 codeTypeReferenceExpression,
                 nameof(Categories.RunsOnDevMachine)
             );
+
             var codeAttributeArgument = new CodeAttributeArgument(
                 codeFieldReferenceExpression
             );
 
-            var codeAttributeDeclaration = new CodeAttributeDeclaration();
+            //var codeAttributeDeclaration = new CodeAttributeDeclaration(
+            //    nUnitNamespace,
+            //    codeAttributeArgument
+            //);
 
-            // var attr = new CodeAttributeDeclaration(
-            //     name: nUnitNamespace,
-            //     arguments: [new CodeAttributeArgument()]
-            // )
+            var codeAttributeDeclaration = new CodeAttributeDeclaration(
+                attr
+            );
+
+            generationContext.TestClass.CustomAttributes.Add(codeAttributeDeclaration);
         }
     }
 }
