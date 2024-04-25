@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SpecFlow.CustomPlugin" Version="3.9.74" />
+  </ItemGroup>
+
 </Project>

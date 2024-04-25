@@ -6,7 +6,7 @@ using Nameless.Test.Utils;
 
 namespace Nameless.MongoDB.UnitTest {
     public class DependencyInjectionTests {
-        [RunsOnDevMachine]
+        [Category(Categories.RunsOnDevMachine)]
         [Test(Description = "You'll need a local mongo instance or configure it to access a remote instance. See README file.")]
         public void Register_Resolve_MongoDB_Services() {
             // arrange
