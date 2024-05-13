@@ -2,54 +2,12 @@
 
 namespace Nameless.Infrastructure.Impl {
     public sealed class ApplicationContext : IApplicationContext {
-        #region Private Static Read-Only Fields
-
-        private static readonly Version BaseVersion = new(major: 0, minor: 0, build: 0);
-
-        #endregion
-
         #region Public Constructors
 
         /// <summary>
         /// Initializes a new instance of <see cref="ApplicationContext"/>
         /// </summary>
         /// <param name="hostEnvironment">The host environment.</param>
-        public ApplicationContext(IHostEnvironment hostEnvironment)
-            : this(hostEnvironment, useAppDataSpecialFolder: false, appVersion: BaseVersion) { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="ApplicationContext"/>
-        /// </summary>
-        /// <param name="hostEnvironment">The host environment.</param>
-        /// <param name="useAppDataSpecialFolder">
-        /// If <c>true</c>, <see cref="ApplicationDataFolderPath"/> will point to:
-        /// <list type="bullet">
-        ///     <item>
-        ///         <term>Windows</term>
-        ///         <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
-        ///     </item>
-        ///     <item>
-        ///         <term>Linux</term>
-        ///         <description>/CURRENT_USER/.local/share/APPLICATION_NAME</description>
-        ///     </item>
-        /// </list>
-        /// Otherwise, will point to <see cref="BasePath"/> + "App_Data"
-        /// </param>
-        public ApplicationContext(IHostEnvironment hostEnvironment, bool useAppDataSpecialFolder)
-            : this(hostEnvironment, useAppDataSpecialFolder, appVersion: BaseVersion) { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="ApplicationContext"/>
-        /// </summary>
-        /// <param name="hostEnvironment">The host environment.</param>
-        /// <param name="appVersion">The application version.</param>
-        public ApplicationContext(IHostEnvironment hostEnvironment, Version appVersion)
-            : this(hostEnvironment, useAppDataSpecialFolder: false, appVersion) { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="ApplicationContext"/>
-        /// </summary>
-        /// <param name="hostEnvironment">The host environment.</param>
         /// <param name="useAppDataSpecialFolder">
         /// If <c>true</c>, <see cref="ApplicationDataFolderPath"/> will point to:
         /// <list type="bullet">
@@ -65,14 +23,16 @@ namespace Nameless.Infrastructure.Impl {
         /// Otherwise, will point to <see cref="BasePath"/> + "App_Data"
         /// </param>
         /// <param name="appVersion">The application version.</param>
-        public ApplicationContext(IHostEnvironment hostEnvironment, bool useAppDataSpecialFolder, Version appVersion) {
+        public ApplicationContext(IHostEnvironment hostEnvironment, bool useAppDataSpecialFolder = true, Version? appVersion = null) {
             Guard.Against.Null(hostEnvironment, nameof(hostEnvironment));
 
             EnvironmentName = hostEnvironment.EnvironmentName;
             ApplicationName = hostEnvironment.ApplicationName;
-            BasePath = AppDomain.CurrentDomain.BaseDirectory;
+
             ApplicationDataFolderPath = GetApplicationDataFolder(ApplicationName, BasePath, useAppDataSpecialFolder);
-            SemVer = $"v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}";
+
+            var version = appVersion ?? new Version(major: 0, minor: 0, build: 0);
+            SemVer = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
         #endregion
@@ -119,7 +79,7 @@ namespace Nameless.Infrastructure.Impl {
         /// Gets the base path of the application. This will always be
         /// the current location of the application assembly.
         /// </summary>
-        public string BasePath { get; }
+        public string BasePath => AppDomain.CurrentDomain.BaseDirectory;
 
         /// <summary>
         /// Gets the application data folder.
