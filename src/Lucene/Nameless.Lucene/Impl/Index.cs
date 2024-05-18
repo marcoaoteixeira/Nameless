@@ -2,9 +2,9 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Nameless.Lucene.Impl;
+using Microsoft.Extensions.Logging;
 
-namespace Nameless.Lucene {
+namespace Nameless.Lucene.Impl {
     /// <summary>
     /// Default implementation of <see cref="IIndex"/>
     /// </summary>
@@ -13,6 +13,7 @@ namespace Nameless.Lucene {
 
         private readonly Analyzer _analyzer;
         private readonly string _indexDirectoryPath;
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -20,6 +21,7 @@ namespace Nameless.Lucene {
 
         private FSDirectory? _directory;
         private IndexReader? _indexReader;
+        private IndexWriter? _indexWriter;
         private IndexSearcher? _indexSearcher;
         private bool _disposed;
 
@@ -41,14 +43,24 @@ namespace Nameless.Lucene {
         /// </summary>
         /// <param name="analyzer">The Lucene analyzer.</param>
         /// <param name="indexDirectoryPath">The base path of the Lucene directory.</param>
+        /// <param name="logger">The <see cref="ILogger{Index}"/> instance.</param>
         /// <param name="name">The index name.</param>
-        public Index(Analyzer analyzer, string indexDirectoryPath, string name) {
+        public Index(Analyzer analyzer, string indexDirectoryPath, ILogger<Index> logger, string name) {
             _analyzer = Guard.Against.Null(analyzer, nameof(analyzer));
             _indexDirectoryPath = Guard.Against.NullOrWhiteSpace(indexDirectoryPath, nameof(indexDirectoryPath));
+            _logger = Guard.Against.Null(logger, nameof(logger));
 
             Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
 
             Initialize();
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~Index() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -103,26 +115,29 @@ namespace Nameless.Lucene {
             => System.IO.Directory.Exists(_indexDirectoryPath);
 
         /// <summary>
-        /// DISPOSE AFTER USE
+        /// Dispose on error.
         /// </summary>
-        private IndexWriter CreateIndexWriter()
-            => new(_directory, new(Root.Defaults.LuceneVersion, _analyzer));
+        private IndexWriter GetIndexWriter()
+            => _indexWriter ??= new IndexWriter(_directory, new IndexWriterConfig(Root.Defaults.LuceneVersion, _analyzer));
 
         private IndexReader GetIndexReader()
             => _indexReader ??= DirectoryReader.Open(_directory);
 
         private IndexSearcher GetIndexSearcher()
-            => _indexSearcher ??= new(GetIndexReader());
+            => _indexSearcher ??= new IndexSearcher(GetIndexReader());
 
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _directory?.Dispose();
+                _indexWriter?.Dispose();
                 _indexReader?.Dispose();
+                _directory?.Dispose();
             }
 
             _directory = null;
             _indexReader = null;
+            _indexWriter = null;
+
             _disposed = true;
         }
 
@@ -147,21 +162,35 @@ namespace Nameless.Lucene {
 
         /// <inheritdoc />
         public void StoreDocuments(IDocument[] documents) {
-            if (documents.IsNullOrEmpty()) { return; }
+            if (documents.Length == 0) { return; }
 
-            using var writer = CreateIndexWriter();
+            var writer = GetIndexWriter();
 
             InnerDeleteDocuments(writer, documents);
             InnerStoreDocuments(writer, documents);
+            InnerCommitChanges(writer);
         }
 
         /// <inheritdoc />
         public void DeleteDocuments(IDocument[] documents) {
-            if (documents.IsNullOrEmpty()) { return; }
+            if (documents.Length == 0) { return; }
 
-            using var writer = CreateIndexWriter();
+            var writer = GetIndexWriter();
 
             InnerDeleteDocuments(writer, documents);
+            InnerCommitChanges(writer);
+        }
+
+        private void InnerCommitChanges(ITwoPhaseCommit writer) {
+            try {
+                writer.PrepareCommit();
+                writer.Commit();
+            }  catch (OutOfMemoryException ex) {
+                _logger.LogError(ex, "Out of memory. Disposing IndexWriter.");
+                _indexWriter?.Dispose();
+            } catch (Exception ex) {
+                _logger.LogError(ex, "Error while flushing and commit Index changes.");
+            }
         }
 
         /// <inheritdoc />

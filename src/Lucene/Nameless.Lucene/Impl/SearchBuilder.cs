@@ -5,7 +5,6 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
-using static Lucene.Net.Queries.Function.ValueSources.MultiFunction;
 
 namespace Nameless.Lucene.Impl {
     /// <summary>

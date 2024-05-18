@@ -2,6 +2,7 @@
 using Moq;
 using Nameless.Infrastructure;
 using Nameless.Lucene.DependencyInjection;
+using Nameless.Lucene.Impl;
 
 namespace Nameless.Lucene {
     public class DependencyInjectionTests {

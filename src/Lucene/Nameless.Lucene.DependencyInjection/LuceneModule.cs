@@ -3,6 +3,7 @@ using Nameless.Autofac;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Impl;
 using Nameless.Lucene.Options;
+using Index = Nameless.Lucene.Impl.Index;
 
 namespace Nameless.Lucene.DependencyInjection {
     public sealed class LuceneModule : ModuleBase {
@@ -50,7 +51,8 @@ namespace Nameless.Lucene.DependencyInjection {
             var applicationContext = ctx.Resolve<IApplicationContext>();
             var analyzerProvider = ctx.ResolveNamed<IAnalyzerProvider>(ANALYZER_PROVIDER_TOKEN);
             var options = ctx.GetPocoOptions<LuceneOptions>();
-            var result = new IndexManager(applicationContext, analyzerProvider, options);
+            var logger = ctx.GetLogger<Index>();
+            var result = new IndexManager(applicationContext, analyzerProvider, logger, options);
 
             return result;
         }
