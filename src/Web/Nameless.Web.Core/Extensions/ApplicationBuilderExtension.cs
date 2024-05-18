@@ -2,7 +2,6 @@
 using System.Reflection;
 using Asp.Versioning.ApiExplorer;
 using Autofac.Extensions.DependencyInjection;
-using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
