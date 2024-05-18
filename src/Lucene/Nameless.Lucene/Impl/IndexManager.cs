@@ -1,20 +1,26 @@
 ﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Options;
 
-namespace Nameless.Lucene {
+namespace Nameless.Lucene.Impl {
     /// <summary>
     /// Default implementation of <see cref="IIndexManager"/>
     /// </summary>
     public sealed class IndexManager : IIndexManager, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly ConcurrentDictionary<string, IIndex> Cache = new(StringComparer.InvariantCultureIgnoreCase);
-
         private readonly IApplicationContext _applicationContext;
         private readonly IAnalyzerProvider _analyzerProvider;
+        private readonly ILogger<Index> _logger;
         private readonly LuceneOptions _options;
 
+        #endregion
+
+        #region Private Properties
+
+        private ConcurrentDictionary<string, IIndex> Cache { get; } = new(StringComparer.InvariantCultureIgnoreCase);
+        
         #endregion
 
         #region Private Fields
@@ -30,19 +36,21 @@ namespace Nameless.Lucene {
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="analyzerProvider">The analyzer provider.</param>
-        public IndexManager(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider)
-            : this(applicationContext, analyzerProvider, LuceneOptions.Default) { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="IndexManager"/>.
-        /// </summary>
-		/// <param name="applicationContext">The application context.</param>
-        /// <param name="analyzerProvider">The analyzer provider.</param>
+        /// <param name="logger">The <see cref="ILogger{Index}"/> that will be passed to the Index when created.</param>
         /// <param name="options">The settings.</param>
-        public IndexManager(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, LuceneOptions options) {
+        public IndexManager(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, ILogger<Index> logger, LuceneOptions options) {
             _applicationContext = Guard.Against.Null(applicationContext, nameof(applicationContext));
             _analyzerProvider = Guard.Against.Null(analyzerProvider, nameof(analyzerProvider));
+            _logger = Guard.Against.Null(logger, nameof(logger));
             _options = Guard.Against.Null(options, nameof(options));
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~IndexManager() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -84,6 +92,7 @@ namespace Nameless.Lucene {
             => new(
                 analyzer: _analyzerProvider.GetAnalyzer(indexName),
                 indexDirectoryPath: GetIndexDirectoryPath(indexName),
+                logger: _logger,
                 name: indexName
             );
 

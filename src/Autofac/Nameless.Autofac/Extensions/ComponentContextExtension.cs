@@ -7,8 +7,8 @@ namespace Nameless.Autofac {
     public static class ComponentContextExtension {
         #region Public Static Methods
 
-        public static ILogger GetLogger<T>(this IComponentContext self)
-            => GetLogger(self, typeof(T));
+        public static ILogger<T> GetLogger<T>(this IComponentContext self)
+            => (ILogger<T>)GetLogger(self, typeof(T));
 
         public static ILogger GetLogger(this IComponentContext self, Type type) {
             var loggerFactory = self.ResolveOptional<ILoggerFactory>();
