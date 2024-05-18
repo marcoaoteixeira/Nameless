@@ -40,6 +40,14 @@
         ISearchBuilder WithField(string field, string value, bool useWildcard);
 
         /// <summary>
+        /// Adds the specified field and values to the search.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        /// <param name="values">The value.</param>
+        /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
+        ISearchBuilder WithField(string field, string[] values);
+
+        /// <summary>
         /// Adds the specified field and value to the search.
         /// </summary>
         /// <param name="fieldName">The field.</param>
@@ -59,54 +67,54 @@
         /// Adds the specified field and value range to the search.
         /// </summary>
         /// <param name="fieldName">The field.</param>
-        /// <param name="minimun">The minimun value.</param>
-        /// <param name="maximun">The maximun value.</param>
-        /// <param name="includeMinimun">Should include minimun value.</param>
-        /// <param name="includeMaximun">Should include maximun value.</param>
+        /// <param name="minimum">The minimum value.</param>
+        /// <param name="maximum">The maximum value.</param>
+        /// <param name="includeMinimum">Should include minimum value.</param>
+        /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, int? minimun, int? maximun, bool includeMinimun = true, bool includeMaximun = true);
+        ISearchBuilder WithinRange(string fieldName, int? minimum, int? maximum, bool includeMinimum = true, bool includeMaximum = true);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
         /// </summary>
         /// <param name="fieldName">The field.</param>
-        /// <param name="minimun">The minimun value.</param>
-        /// <param name="maximun">The maximun value.</param>
-        /// <param name="includeMinimun">Should include minimun value.</param>
-        /// <param name="includeMaximun">Should include maximun value.</param>
+        /// <param name="minimum">The minimum value.</param>
+        /// <param name="maximum">The maximum value.</param>
+        /// <param name="includeMinimum">Should include minimum value.</param>
+        /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, double? minimun, double? maximun, bool includeMinimun = true, bool includeMaximun = true);
+        ISearchBuilder WithinRange(string fieldName, double? minimum, double? maximum, bool includeMinimum = true, bool includeMaximum = true);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
         /// </summary>
         /// <param name="fieldName">The field.</param>
-        /// <param name="minimun">The minimun value.</param>
-        /// <param name="maximun">The maximun value.</param>
-        /// <param name="includeMinimun">Should include minimun value.</param>
-        /// <param name="includeMaximun">Should include maximun value.</param>
+        /// <param name="minimum">The minimum value.</param>
+        /// <param name="maximum">The maximum value.</param>
+        /// <param name="includeMinimum">Should include minimum value.</param>
+        /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, DateTime? minimun, DateTime? maximun, bool includeMinimun = true, bool includeMaximun = true);
+        ISearchBuilder WithinRange(string fieldName, DateTime? minimum, DateTime? maximum, bool includeMinimum = true, bool includeMaximum = true);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
         /// </summary>
         /// <param name="fieldName">The field.</param>
-        /// <param name="minimun">The minimun value.</param>
-        /// <param name="maximun">The maximun value.</param>
-        /// <param name="includeMinimun">Should include minimun value.</param>
-        /// <param name="includeMaximun">Should include maximun value.</param>
+        /// <param name="minimum">The minimum value.</param>
+        /// <param name="maximum">The maximum value.</param>
+        /// <param name="includeMinimum">Should include minimum value.</param>
+        /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, string minimun, string maximun, bool includeMinimun = true, bool includeMaximun = true);
+        ISearchBuilder WithinRange(string fieldName, string? minimum, string? maximum, bool includeMinimum = true, bool includeMaximum = true);
 
         /// <summary>
-        /// Mark a clause as a mandatory match. By default all clauses are optional.
+        /// Marks a clause as a mandatory match. By default, all clauses are optional.
         /// </summary>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
         ISearchBuilder Mandatory();
 
         /// <summary>
-        /// Mark a clause as a forbidden match.
+        /// Marks a clause as a forbidden match.
         /// </summary>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
         ISearchBuilder Forbidden();
@@ -118,7 +126,7 @@
         ISearchBuilder NotAnalyzed();
 
         /// <summary>
-        /// Applied on string clauses, it removes the default Prefix mecanism. Like 'broadcast' won't
+        /// Applied on string clauses, it removes the default Prefix mechanism. Like 'broadcast' won't
         /// return 'broadcasting'.
         /// </summary>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>

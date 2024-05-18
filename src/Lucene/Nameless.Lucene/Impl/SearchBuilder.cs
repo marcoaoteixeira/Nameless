@@ -5,6 +5,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using static Lucene.Net.Queries.Function.ValueSources.MultiFunction;
 
 namespace Nameless.Lucene.Impl {
     /// <summary>
@@ -70,7 +71,7 @@ namespace Nameless.Lucene.Impl {
 
         #region Private Static Methods
 
-        private static List<string> AnalyzeText(Analyzer analyzer, string field, string text) {
+        private static IEnumerable<string> AnalyzeText(Analyzer analyzer, string field, string text) {
             var result = new List<string>();
 
             if (string.IsNullOrEmpty(text)) {
@@ -86,7 +87,7 @@ namespace Nameless.Lucene.Impl {
                     if (attr is not null) {
                         result.Add(attr.ToString());
                     }
-                } catch { }
+                } catch { /* ignored */ }
             }
 
             return result;
@@ -107,7 +108,7 @@ namespace Nameless.Lucene.Impl {
 
         private void CreatePendingClause() {
             if (_query is null) { return; }
-
+            
             // comparing floating-point numbers using an epsilon value
             if (Math.Abs(_boost - 0) > EPSILON) { _query.Boost = _boost; }
 
@@ -119,7 +120,7 @@ namespace Nameless.Lucene.Impl {
                         term.Field,
                         term.Text
                     ).FirstOrDefault();
-                    _query = new TermQuery(new(term.Field, analyzedText));
+                    _query = new TermQuery(new Term(term.Field, analyzedText));
                 }
 
                 if (_query is TermRangeQuery termRangeQuery) {
@@ -148,14 +149,14 @@ namespace Nameless.Lucene.Impl {
             if (!_exactMatch) {
                 if (_query is TermQuery termQuery) {
                     var term = termQuery.Term;
-                    _query = new PrefixQuery(new(term.Field, term.Text));
+                    _query = new PrefixQuery(new Term(term.Field, term.Text));
                 }
             }
 
             if (_asFilter) {
-                _filters.Add(new(_query, _occur));
+                _filters.Add(new BooleanClause(_query, _occur));
             } else {
-                _clauses.Add(new(_query, _occur));
+                _clauses.Add(new BooleanClause(_query, _occur));
             }
 
             InitializePendingClause();
@@ -232,11 +233,9 @@ namespace Nameless.Lucene.Impl {
             CreatePendingClause();
 
             _query = new TermQuery(
-                new Term(
-                    field,
-                    DateTools.DateToString(value, DateResolution.MILLISECOND)
-                )
-            );
+                new Term(field,
+                         DateTools.DateToString(value, 
+                                                DateResolution.MILLISECOND)));
 
             return this;
         }
@@ -245,13 +244,30 @@ namespace Nameless.Lucene.Impl {
         public ISearchBuilder WithField(string field, string value, bool useWildcard) {
             CreatePendingClause();
 
-            if (!string.IsNullOrWhiteSpace(value)) {
-                if (useWildcard) {
-                    _query = new WildcardQuery(new Term(field, value));
-                } else {
-                    _query = new TermQuery(new Term(field, QueryParserBase.Escape(value)));
-                }
+            if (string.IsNullOrWhiteSpace(value)) {
+                return this;
             }
+            
+            if (useWildcard) {
+                _query = new WildcardQuery(new Term(field, value));
+            } else {
+                _query = new TermQuery(new Term(field, QueryParserBase.Escape(value)));
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public ISearchBuilder WithField(string field, string[] values) {
+            CreatePendingClause();
+
+            if (values.Length == 0) { return this; }
+
+            var phraseQuery = new PhraseQuery();
+            foreach (var term in values.Select(value => new Term(field, value))) {
+                phraseQuery.Add(term);
+            }
+            _query = phraseQuery;
 
             return this;
         }
@@ -287,76 +303,76 @@ namespace Nameless.Lucene.Impl {
         }
 
         /// <inheritdoc />
-        public ISearchBuilder WithinRange(string field, int? minimun, int? maximun, bool includeMinimun = true, bool includeMaximun = true) {
+        public ISearchBuilder WithinRange(string field, int? minimum, int? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
             _query = NumericRangeQuery.NewInt32Range(
                 field,
-                minimun,
-                maximun,
-                includeMinimun,
-                includeMaximun
+                minimum,
+                maximum,
+                includeMinimum,
+                includeMaximum
             );
 
             return this;
         }
 
         /// <inheritdoc />
-        public ISearchBuilder WithinRange(string field, double? minimun, double? maximun, bool includeMinimun = true, bool includeMaximun = true) {
+        public ISearchBuilder WithinRange(string field, double? minimum, double? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
             _query = NumericRangeQuery.NewDoubleRange(
                 field,
-                minimun,
-                maximun,
-                includeMinimun,
-                includeMaximun
+                minimum,
+                maximum,
+                includeMinimum,
+                includeMaximum
             );
 
             return this;
         }
 
         /// <inheritdoc />
-        public ISearchBuilder WithinRange(string field, DateTime? minimun, DateTime? maximun, bool includeMinimun = true, bool includeMaximun = true) {
+        public ISearchBuilder WithinRange(string field, DateTime? minimum, DateTime? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
-            var minimunBytesRef = minimun.HasValue
-                ? new BytesRef(DateTools.DateToString(minimun.Value, DateResolution.MILLISECOND))
+            var minimumBytesRef = minimum.HasValue
+                ? new BytesRef(DateTools.DateToString(minimum.Value, DateResolution.MILLISECOND))
                 : null;
 
-            var maximunBytesRef = maximun.HasValue
-                ? new BytesRef(DateTools.DateToString(maximun.Value, DateResolution.MILLISECOND))
+            var maximumBytesRef = maximum.HasValue
+                ? new BytesRef(DateTools.DateToString(maximum.Value, DateResolution.MILLISECOND))
                 : null;
 
             _query = new TermRangeQuery(
                 field,
-                minimunBytesRef,
-                maximunBytesRef,
-                includeMinimun,
-                includeMaximun
+                minimumBytesRef,
+                maximumBytesRef,
+                includeMinimum,
+                includeMaximum
             );
 
             return this;
         }
 
         /// <inheritdoc />
-        public ISearchBuilder WithinRange(string field, string minimun, string maximun, bool includeMinimun = true, bool includeMaximun = true) {
+        public ISearchBuilder WithinRange(string field, string? minimum, string? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
-            var minimunBytesRef = minimun is not null
-                ? new BytesRef(QueryParserBase.Escape(minimun))
+            var minimumBytesRef = minimum is not null
+                ? new BytesRef(QueryParserBase.Escape(minimum))
                 : null;
 
-            var maximunBytesRef = maximun is not null
-                ? new BytesRef(QueryParserBase.Escape(maximun))
+            var maximumBytesRef = maximum is not null
+                ? new BytesRef(QueryParserBase.Escape(maximum))
                 : null;
 
             _query = new TermRangeQuery(
                 field,
-                minimunBytesRef,
-                maximunBytesRef,
-                includeMinimun,
-                includeMaximun
+                minimumBytesRef,
+                maximumBytesRef,
+                includeMinimum,
+                includeMaximum
             );
 
             return this;

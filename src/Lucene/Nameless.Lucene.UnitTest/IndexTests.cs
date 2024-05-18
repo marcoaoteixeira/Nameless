@@ -46,6 +46,8 @@ namespace Nameless.Lucene {
 
             var indexManager = container.Resolve<IIndexManager>();
             var index = indexManager.GetOrCreate("temporary");
+            var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("LoremIpsum.txt");
+            var loremIpsum = File.ReadAllText(loremIpsumFilePath);
 
             var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
                 .Set("Name", "Test User", FieldOptions.Store)
@@ -53,7 +55,8 @@ namespace Nameless.Lucene {
                 .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
                 .Set("Weight", 75d, FieldOptions.Store)
                 .Set("Married", true, FieldOptions.Store)
-                .Set("Age", 50, FieldOptions.Store);
+                .Set("Age", 50, FieldOptions.Store)
+                .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
             index.StoreDocuments([document]);
 
@@ -69,8 +72,25 @@ namespace Nameless.Lucene {
             var index = indexManager.GetOrCreate("temporary");
 
             var searcher = index.CreateSearchBuilder();
+            var tokens = new[] {
+                "ullamcorper",
+                "ultrices",
+                "Morbi",
+                "Sbrubles"
+            };
 
-            searcher.WithField("Name", "*User*", useWildcard: true);
+            searcher
+                .WithField("Content", tokens[0], useWildcard: false)
+                .Mandatory();
+            searcher
+                .WithField("Content", tokens[1], useWildcard: false)
+                .Mandatory();
+            searcher
+                .WithField("Content", tokens[2], useWildcard: false)
+                .ExactMatch();
+            searcher
+                .WithField("Content", tokens[3], useWildcard: false)
+                .ExactMatch();
 
             var result = searcher.Search();
 
