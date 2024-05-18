@@ -7,14 +7,19 @@ namespace Nameless {
     public static class ServiceProviderExtension {
         #region Public Static Methods
 
-        public static ILogger GetLogger<T>(this IServiceProvider self)
-            => GetLogger(self, typeof(T));
-
-        public static ILogger GetLogger(this IServiceProvider self, Type type) {
+        public static ILogger<T> GetLogger<T>(this IServiceProvider self) {
             var loggerFactory = self.GetService<ILoggerFactory>();
 
             return loggerFactory is not null
-                ? loggerFactory.CreateLogger(type)
+                ? loggerFactory.CreateLogger<T>()
+                : NullLogger<T>.Instance;
+        }
+
+        public static ILogger GetLogger(this IServiceProvider self, Type serviceType) {
+            var loggerFactory = self.GetService<ILoggerFactory>();
+
+            return loggerFactory is not null
+                ? loggerFactory.CreateLogger(serviceType)
                 : NullLogger.Instance;
         }
 
@@ -40,7 +45,7 @@ namespace Nameless {
             }
 
             // returns from configuration or build.
-            return result ?? new();
+            return result ?? new TOptions();
         }
 
         #endregion

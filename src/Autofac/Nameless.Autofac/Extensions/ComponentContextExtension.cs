@@ -15,6 +15,14 @@ namespace Nameless.Autofac {
                 : NullLogger<T>.Instance;
         }
 
+        public static ILogger GetLogger(this IComponentContext self, Type serviceType) {
+            var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+
+            return loggerFactory is not null
+                ? loggerFactory.CreateLogger(serviceType)
+                : NullLogger.Instance;
+        }
+
         public static TOptions GetPocoOptions<TOptions>(this IComponentContext self)
             where TOptions : class, new() {
             // let's first check if we have it on our container
@@ -37,7 +45,7 @@ namespace Nameless.Autofac {
             }
 
             // returns from configuration or build.
-            return result ?? new();
+            return result ?? new TOptions();
         }
 
         #endregion
