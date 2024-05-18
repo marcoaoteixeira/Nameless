@@ -21,9 +21,9 @@ namespace Nameless.Lucene.Impl {
         #region Private Read-Only Fields
 
         private readonly Analyzer _analyzer;
-        private readonly Func<IndexSearcher> _indexSearcherProvider;
         private readonly List<BooleanClause> _clauses = [];
         private readonly List<BooleanClause> _filters = [];
+        private readonly IndexSearcher _indexSearcher;
 
         #endregion
 
@@ -51,12 +51,13 @@ namespace Nameless.Lucene.Impl {
         /// <summary>
         /// Initializes a new instance of <see cref="SearchBuilder"/>.
         /// </summary>
-        /// <param name="indexSearcherProvider">The indexes directory factory.</param>
+        /// <param name="indexReader">An instance of <see cref="IndexReader"/>.</param>
         /// <param name="analyzer">The analyzer provider.</param>
-        public SearchBuilder(Analyzer analyzer, Func<IndexSearcher> indexSearcherProvider) {
+        public SearchBuilder(Analyzer analyzer, IndexReader indexReader) {
             _analyzer = Guard.Against.Null(analyzer, nameof(analyzer));
-            _indexSearcherProvider = Guard.Against.Null(indexSearcherProvider, nameof(indexSearcherProvider));
+            Guard.Against.Null(indexReader, nameof(indexReader));
 
+            _indexSearcher = new IndexSearcher(indexReader);
             _count = MAX_RESULTS;
             _skip = 0;
             _sort = string.Empty;
@@ -107,41 +108,32 @@ namespace Nameless.Lucene.Impl {
 
         private void CreatePendingClause() {
             if (_query is null) { return; }
-            
+
             // comparing floating-point numbers using an epsilon value
             if (Math.Abs(_boost - 0) > EPSILON) { _query.Boost = _boost; }
 
             if (!_notAnalyzed) {
                 if (_query is TermQuery termQuery) {
                     var term = termQuery.Term;
-                    var analyzedText = AnalyzeText(
-                        _analyzer,
-                        term.Field,
-                        term.Text
-                    ).FirstOrDefault();
+                    var analyzedText = AnalyzeText(_analyzer,
+                                                   term.Field,
+                                                   term.Text).FirstOrDefault();
                     _query = new TermQuery(new Term(term.Field, analyzedText));
                 }
 
                 if (_query is TermRangeQuery termRangeQuery) {
-                    var lowerTerm = AnalyzeText(
-                        _analyzer,
-                        termRangeQuery.Field,
-                        termRangeQuery.LowerTerm.Utf8ToString()
-                    ).FirstOrDefault();
+                    var lowerTerm = AnalyzeText(_analyzer,
+                                                termRangeQuery.Field,
+                                                termRangeQuery.LowerTerm.Utf8ToString()).FirstOrDefault();
+                    var upperTerm = AnalyzeText(_analyzer,
+                                                termRangeQuery.Field,
+                                                termRangeQuery.UpperTerm.Utf8ToString()).FirstOrDefault();
 
-                    var upperTerm = AnalyzeText(
-                        _analyzer,
-                        termRangeQuery.Field,
-                        termRangeQuery.UpperTerm.Utf8ToString()
-                    ).FirstOrDefault();
-
-                    _query = new TermRangeQuery(
-                        termRangeQuery.Field,
-                        new BytesRef(lowerTerm),
-                        new BytesRef(upperTerm),
-                        termRangeQuery.IncludesLower,
-                        termRangeQuery.IncludesUpper
-                    );
+                    _query = new TermRangeQuery(termRangeQuery.Field,
+                                                new BytesRef(lowerTerm),
+                                                new BytesRef(upperTerm),
+                                                termRangeQuery.IncludesLower,
+                                                termRangeQuery.IncludesUpper);
                 }
             }
 
@@ -190,9 +182,8 @@ namespace Nameless.Lucene.Impl {
                         filter.Add(clause);
                     }
 
-                    resultQuery = new FilteredQuery(
-                        booleanQuery,
-                        new QueryWrapperFilter(filter)
+                    resultQuery = new FilteredQuery(query: booleanQuery,
+                                                    filter: new QueryWrapperFilter(filter)
                     );
                 }
             }
@@ -213,11 +204,9 @@ namespace Nameless.Lucene.Impl {
 
             foreach (var defaultField in defaultFields) {
                 CreatePendingClause();
-                _query = new QueryParser(
-                    Root.Defaults.LuceneVersion,
-                    defaultField,
-                    _analyzer
-                ).Parse(query);
+                _query = new QueryParser(matchVersion: Root.Defaults.LuceneVersion,
+                                         f: defaultField,
+                                         a: _analyzer).Parse(query);
             }
 
             return this;
@@ -233,7 +222,7 @@ namespace Nameless.Lucene.Impl {
 
             _query = new TermQuery(
                 new Term(field,
-                         DateTools.DateToString(value, 
+                         DateTools.DateToString(value,
                                                 DateResolution.MILLISECOND)));
 
             return this;
@@ -246,7 +235,7 @@ namespace Nameless.Lucene.Impl {
             if (string.IsNullOrWhiteSpace(value)) {
                 return this;
             }
-            
+
             if (useWildcard) {
                 _query = new WildcardQuery(new Term(field, value));
             } else {
@@ -275,13 +264,11 @@ namespace Nameless.Lucene.Impl {
         public ISearchBuilder WithField(string field, int value) {
             CreatePendingClause();
 
-            _query = NumericRangeQuery.NewInt32Range(
-                field: field,
-                min: value,
-                max: value,
-                minInclusive: true,
-                maxInclusive: true
-            );
+            _query = NumericRangeQuery.NewInt32Range(field: field,
+                                                     min: value,
+                                                     max: value,
+                                                     minInclusive: true,
+                                                     maxInclusive: true);
 
             return this;
         }
@@ -290,13 +277,11 @@ namespace Nameless.Lucene.Impl {
         public ISearchBuilder WithField(string field, double value) {
             CreatePendingClause();
 
-            _query = NumericRangeQuery.NewDoubleRange(
-                field: field,
-                min: value,
-                max: value,
-                minInclusive: true,
-                maxInclusive: true
-            );
+            _query = NumericRangeQuery.NewDoubleRange(field: field,
+                                                      min: value,
+                                                      max: value,
+                                                      minInclusive: true,
+                                                      maxInclusive: true);
 
             return this;
         }
@@ -305,13 +290,11 @@ namespace Nameless.Lucene.Impl {
         public ISearchBuilder WithinRange(string field, int? minimum, int? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
-            _query = NumericRangeQuery.NewInt32Range(
-                field,
-                minimum,
-                maximum,
-                includeMinimum,
-                includeMaximum
-            );
+            _query = NumericRangeQuery.NewInt32Range(field,
+                                                     minimum,
+                                                     maximum,
+                                                     includeMinimum,
+                                                     includeMaximum);
 
             return this;
         }
@@ -320,13 +303,11 @@ namespace Nameless.Lucene.Impl {
         public ISearchBuilder WithinRange(string field, double? minimum, double? maximum, bool includeMinimum = true, bool includeMaximum = true) {
             CreatePendingClause();
 
-            _query = NumericRangeQuery.NewDoubleRange(
-                field,
-                minimum,
-                maximum,
-                includeMinimum,
-                includeMaximum
-            );
+            _query = NumericRangeQuery.NewDoubleRange(field,
+                                                      minimum,
+                                                      maximum,
+                                                      includeMinimum,
+                                                      includeMaximum);
 
             return this;
         }
@@ -343,13 +324,11 @@ namespace Nameless.Lucene.Impl {
                 ? new BytesRef(DateTools.DateToString(maximum.Value, DateResolution.MILLISECOND))
                 : null;
 
-            _query = new TermRangeQuery(
-                field,
-                minimumBytesRef,
-                maximumBytesRef,
-                includeMinimum,
-                includeMaximum
-            );
+            _query = new TermRangeQuery(field,
+                                        minimumBytesRef,
+                                        maximumBytesRef,
+                                        includeMinimum,
+                                        includeMaximum);
 
             return this;
         }
@@ -366,13 +345,11 @@ namespace Nameless.Lucene.Impl {
                 ? new BytesRef(QueryParserBase.Escape(maximum))
                 : null;
 
-            _query = new TermRangeQuery(
-                field,
-                minimumBytesRef,
-                maximumBytesRef,
-                includeMinimum,
-                includeMaximum
-            );
+            _query = new TermRangeQuery(field,
+                                        minimumBytesRef,
+                                        maximumBytesRef,
+                                        includeMinimum,
+                                        includeMaximum);
 
             return this;
         }
@@ -485,25 +462,21 @@ namespace Nameless.Lucene.Impl {
             var sort = !string.IsNullOrEmpty(_sort)
                 ? new Sort(new SortField(_sort, _comparer, _sortDescending))
                 : Sort.RELEVANCE;
-            var collector = TopFieldCollector.Create(
-                sort: sort,
-                numHits: _count + _skip,
-                fillFields: false,
-                trackDocScores: true,
-                trackMaxScore: false,
-                docsScoredInOrder: true);
+            var collector = TopFieldCollector.Create(sort: sort,
+                                                     numHits: _count + _skip,
+                                                     fillFields: false,
+                                                     trackDocScores: true,
+                                                     trackMaxScore: false,
+                                                     docsScoredInOrder: true);
 
-            var indexSearcher = _indexSearcherProvider();
-            indexSearcher.Search(query, collector);
+            _indexSearcher.Search(query, collector);
 
-            var results = collector
-                .GetTopDocs()
-                .ScoreDocs
-                .Skip(_skip)
-                .Select(scoreDoc => new SearchHit(
-                    indexSearcher.Doc(scoreDoc.Doc),
-                    scoreDoc.Score)
-                ).ToList();
+            var results = collector.GetTopDocs()
+                                   .ScoreDocs
+                                   .Skip(_skip)
+                                   .Select(scoreDoc => new SearchHit(document: _indexSearcher.Doc(scoreDoc.Doc),
+                                                                     score: scoreDoc.Score))
+                                   .ToList();
 
             return results;
         }
@@ -511,19 +484,15 @@ namespace Nameless.Lucene.Impl {
         /// <inheritdoc />
         public ISearchHit GetDocument(Guid documentID) {
             var query = new TermQuery(
-                new Term(
-                    nameof(ISearchHit.DocumentID),
-                    documentID.ToString()
-                )
+                new Term(nameof(ISearchHit.DocumentID),
+                         documentID.ToString())
             );
-            var indexSearcher = _indexSearcherProvider();
-            var hits = indexSearcher.Search(query, 1);
+
+            var hits = _indexSearcher.Search(query: query, n: 1);
 
             return hits.ScoreDocs.Length > 0
-                ? new SearchHit(
-                    indexSearcher.Doc(hits.ScoreDocs[0].Doc),
-                    hits.ScoreDocs[0].Score
-                )
+                ? new SearchHit(document: _indexSearcher.Doc(hits.ScoreDocs[0].Doc),
+                                score: hits.ScoreDocs[0].Score)
                 : EmptySearchHit.Instance;
         }
 
@@ -531,13 +500,10 @@ namespace Nameless.Lucene.Impl {
         public ISearchBit GetBits() {
             var query = CreateQuery();
             var filter = new QueryWrapperFilter(query);
-            var indexSearcher = _indexSearcherProvider();
-            var context = (AtomicReaderContext)indexSearcher.IndexReader.Context;
+            var context = (AtomicReaderContext)_indexSearcher.IndexReader.Context;
             var bits = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            var documentSetIDInterator = new OpenBitSetDISI(
-                bits.GetIterator(),
-                indexSearcher.IndexReader.MaxDoc
-            );
+            var documentSetIDInterator = new OpenBitSetDISI(disi: bits.GetIterator(),
+                                                            maxSize: _indexSearcher.IndexReader.MaxDoc);
 
             return new SearchBit(documentSetIDInterator);
         }
@@ -545,8 +511,7 @@ namespace Nameless.Lucene.Impl {
         /// <inheritdoc />
         public int Count() {
             var query = CreateQuery();
-            var indexSearcher = _indexSearcherProvider();
-            var hits = indexSearcher.Search(query, short.MaxValue);
+            var hits = _indexSearcher.Search(query, short.MaxValue);
             var length = hits.ScoreDocs.Length;
 
             return Math.Min(length - _skip, _count);
