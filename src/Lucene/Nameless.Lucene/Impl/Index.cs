@@ -22,7 +22,6 @@ namespace Nameless.Lucene.Impl {
         private FSDirectory? _directory;
         private IndexReader? _indexReader;
         private IndexWriter? _indexWriter;
-        private IndexSearcher? _indexSearcher;
         private bool _disposed;
 
         #endregion
@@ -123,9 +122,6 @@ namespace Nameless.Lucene.Impl {
         private IndexReader GetIndexReader()
             => _indexReader ??= DirectoryReader.Open(_directory);
 
-        private IndexSearcher GetIndexSearcher()
-            => _indexSearcher ??= new IndexSearcher(GetIndexReader());
-
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
@@ -185,7 +181,13 @@ namespace Nameless.Lucene.Impl {
             try {
                 writer.PrepareCommit();
                 writer.Commit();
-            }  catch (OutOfMemoryException ex) {
+
+                // unfortunately, given the nature of IndexReader,
+                // we need to dispose it after changes in the index,
+                // like store or delete documents.
+                _indexReader?.Dispose();
+                _indexReader = null;
+            } catch (OutOfMemoryException ex) {
                 _logger.LogError(ex, "Out of memory. Disposing IndexWriter.");
                 _indexWriter?.Dispose();
             } catch (Exception ex) {
@@ -195,7 +197,7 @@ namespace Nameless.Lucene.Impl {
 
         /// <inheritdoc />
         public ISearchBuilder CreateSearchBuilder()
-            => new SearchBuilder(_analyzer, GetIndexSearcher);
+            => new SearchBuilder(_analyzer, GetIndexReader());
 
         #endregion
 

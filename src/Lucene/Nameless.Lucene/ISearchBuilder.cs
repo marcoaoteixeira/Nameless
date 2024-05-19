@@ -40,12 +40,12 @@
         ISearchBuilder WithField(string field, string value, bool useWildcard);
 
         /// <summary>
-        /// Adds the specified field and values to the search.
+        /// Adds the specified field and phraseParts to the search.
         /// </summary>
         /// <param name="field">The field.</param>
-        /// <param name="values">The value.</param>
+        /// <param name="phraseParts">The phrase parts. This array will be translated into a PhraseQuery.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithField(string field, string[] values);
+        ISearchBuilder WithField(string field, string[] phraseParts);
 
         /// <summary>
         /// Adds the specified field and value to the search.

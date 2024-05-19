@@ -79,22 +79,18 @@ namespace Nameless.Lucene.Impl {
         }
 
         private string GetIndexDirectoryPath(string indexName) {
-            var path = Path.Combine(
-                _applicationContext.ApplicationDataFolderPath,
-                _options.IndexesRootFolderName,
-                indexName
-            );
+            var path = Path.Combine(_applicationContext.ApplicationDataFolderPath,
+                                    _options.IndexesRootFolderName,
+                                    indexName);
 
             return Directory.CreateDirectory(path).FullName;
         }
 
         private Index Create(string indexName)
-            => new(
-                analyzer: _analyzerProvider.GetAnalyzer(indexName),
-                indexDirectoryPath: GetIndexDirectoryPath(indexName),
-                logger: _logger,
-                name: indexName
-            );
+            => new(analyzer: _analyzerProvider.GetAnalyzer(indexName),
+                   indexDirectoryPath: GetIndexDirectoryPath(indexName),
+                   logger: _logger,
+                   name: indexName);
 
         #endregion
 
