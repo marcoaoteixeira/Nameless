@@ -66,7 +66,7 @@ namespace Nameless.Lucene.Impl {
 
         #region Private Static Methods
 
-        private static void InnerStoreDocuments(IndexWriter writer, IDocument[] documents) {
+        private static void InnerStoreDocuments(IndexWriter writer, IEnumerable<IDocument> documents) {
             foreach (var document in documents) {
                 writer.AddDocument(
                     doc: document.ToLuceneDocument()
@@ -74,10 +74,10 @@ namespace Nameless.Lucene.Impl {
             }
         }
 
-        private static void InnerDeleteDocuments(IndexWriter writer, IDocument[] documents) {
+        private static void InnerDeleteDocuments(IndexWriter writer, IReadOnlyCollection<IDocument> documents) {
             // Process documents by batch as there is a max number
             // of terms a query can contain (1024 by default).
-            var pageCount = (documents.Length / BatchSize) + 1;
+            var pageCount = (documents.Count / BatchSize) + 1;
             for (var page = 0; page < pageCount; page++) {
                 var query = new BooleanQuery();
                 try {
@@ -177,8 +177,9 @@ namespace Nameless.Lucene.Impl {
             InnerCommitChanges(writer);
         }
 
-        private void InnerCommitChanges(ITwoPhaseCommit writer) {
+        private void InnerCommitChanges(IndexWriter writer) {
             try {
+                writer.Flush(triggerMerge: true, applyAllDeletes: true);
                 writer.PrepareCommit();
                 writer.Commit();
 
