@@ -4,7 +4,7 @@ using Nameless.Messenger.Email.Impl;
 using Nameless.Test.Utils;
 
 namespace Nameless.Messenger.Email {
-    [Category(Categories.RunsOnDevMachine)]
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
     public class SmtpClientDeliveryHandlerTests {
         [Test]
         public async Task Send_Email_Using_SmtpClientDeliveryHandler() {

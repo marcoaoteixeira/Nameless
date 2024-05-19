@@ -1,5 +1,5 @@
 namespace Nameless.Test.Utils {
     public static class Categories {
-        public const string RunsOnDevMachine = nameof(RunsOnDevMachine);
+        public const string RUNS_ON_DEV_MACHINE = "RunsOnDevMachine";
     }
 }

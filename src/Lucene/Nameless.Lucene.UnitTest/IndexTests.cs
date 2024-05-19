@@ -31,7 +31,7 @@ namespace Nameless.Lucene {
             catch (Exception ex) { Console.WriteLine(ex.Message); }
         }
 
-        [Category(Categories.RunsOnDevMachine)]
+        [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void Should_Create_Instance_Of_Index_Class() {
             using var container = CreateContainer();
@@ -48,7 +48,7 @@ namespace Nameless.Lucene {
             });
         }
 
-        [Category(Categories.RunsOnDevMachine)]
+        [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void StoreDocument_Should_Create_A_New_Document_In_Index() {
             using var container = CreateContainer();
@@ -74,7 +74,7 @@ namespace Nameless.Lucene {
             Assert.That(index, Is.Not.Null);
         }
 
-        [Category(Categories.RunsOnDevMachine)]
+        [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
             using var container = CreateContainer();
@@ -126,7 +126,7 @@ namespace Nameless.Lucene {
             });
         }
 
-        [Category(Categories.RunsOnDevMachine)]
+        [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void Multiple_Documents_Store_Different_Moments() {
             // setup
