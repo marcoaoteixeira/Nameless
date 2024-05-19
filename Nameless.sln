@@ -149,7 +149,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Security.UnitTest"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.NHibernate.UnitTest", "src\NHibernate\Nameless.NHibernate.UnitTest\Nameless.NHibernate.UnitTest.csproj", "{6C7149B6-72EC-4729-B7AD-5CCF7FE9E647}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.ProducerConsumer.RabbitMQ.Specs", "src\ProducerConsumer\Nameless.ProducerConsumer.RabbitMQ.Specs\Nameless.ProducerConsumer.RabbitMQ.Specs.csproj", "{4F4CDA07-9A6E-490B-94F9-5671184A1748}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.ProducerConsumer.RabbitMQ.Specs", "src\ProducerConsumer\Nameless.ProducerConsumer.RabbitMQ.Specs\Nameless.ProducerConsumer.RabbitMQ.Specs.csproj", "{4F4CDA07-9A6E-490B-94F9-5671184A1748}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{3C174D3A-0809-498C-B2A4-B7685BDE266E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1D129E42-751B-4462-A6FC-32C99867168C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\develop.yml = .github\workflows\develop.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -457,6 +465,7 @@ Global
 		{6CB4AC76-E61B-45F7-B383-D4FFE6D45855} = {7A441387-F933-44EB-99C2-641690D93CE2}
 		{6C7149B6-72EC-4729-B7AD-5CCF7FE9E647} = {46B3C6B1-B550-484C-B641-AA32E77F15C5}
 		{4F4CDA07-9A6E-490B-94F9-5671184A1748} = {405377EF-7190-419F-8D3D-8C1ACA8CFAE5}
+		{1D129E42-751B-4462-A6FC-32C99867168C} = {3C174D3A-0809-498C-B2A4-B7685BDE266E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {717ADD35-E5EC-479F-ACB1-ADB14FF8A89C}
