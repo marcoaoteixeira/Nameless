@@ -246,13 +246,14 @@ namespace Nameless.Lucene.Impl {
         }
 
         /// <inheritdoc />
-        public ISearchBuilder WithField(string field, string[] values) {
+        public ISearchBuilder WithField(string field, string[] phraseParts) {
             CreatePendingClause();
 
-            if (values.Length == 0) { return this; }
+            if (phraseParts.Length == 0) { return this; }
 
             var phraseQuery = new PhraseQuery();
-            foreach (var term in values.Select(value => new Term(field, value))) {
+            var terms = phraseParts.Select(part => new Term(field, part));
+            foreach (var term in terms) {
                 phraseQuery.Add(term);
             }
             _query = phraseQuery;
