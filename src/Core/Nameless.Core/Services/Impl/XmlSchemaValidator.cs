@@ -44,8 +44,7 @@ namespace Nameless.Services.Impl {
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
             settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
-            settings.ValidationEventHandler += (sender, args)
-                => success = true;
+            settings.ValidationEventHandler += (_, _) => success = true;
 
             using var xmlReader = XmlReader.Create(xml, settings);
             while (xmlReader.Read()) { /* Do nothing */ }

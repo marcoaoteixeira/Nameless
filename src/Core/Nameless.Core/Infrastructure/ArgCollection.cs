@@ -24,19 +24,14 @@ namespace Nameless.Infrastructure {
         }
 
         public object? Get(string name)
-            => _dictionary.TryGetValue(name, out var value)
-                ? value
-                : null;
+            => _dictionary.GetValueOrDefault(name);
 
         #endregion
 
         #region Private Methods
 
-        private IEnumerable<Arg> GetArgs() {
-            foreach (var item in _dictionary) {
-                yield return new(item.Key, item.Value);
-            }
-        }
+        private IEnumerable<Arg> GetArgs()
+            => _dictionary.Select(item => new Arg(item.Key, item.Value));
 
         #endregion
 

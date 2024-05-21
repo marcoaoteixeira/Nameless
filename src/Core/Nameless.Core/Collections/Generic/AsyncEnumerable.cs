@@ -9,9 +9,7 @@
         #region Public Constructors
 
         public AsyncEnumerable(IEnumerable<T> enumerable) {
-            Guard.Against.Null(enumerable, nameof(enumerable));
-
-            _enumerable = enumerable;
+            _enumerable = Guard.Against.Null(enumerable, nameof(enumerable));
         }
 
         #endregion
@@ -41,15 +39,29 @@
         #region Public Constructors
 
         public AsyncEnumerator(IEnumerable<T> enumerable, CancellationToken cancellationToken = default) {
-            Guard.Against.Null(enumerable, nameof(enumerable));
-
-            _enumerator = enumerable.GetEnumerator();
+            _enumerator = Guard.Against
+                               .Null(enumerable, nameof(enumerable))
+                               .GetEnumerator();
             _cancellationToken = cancellationToken;
         }
 
         #endregion
 
+        #region Destructor
+
+        ~AsyncEnumerator() {
+            Dispose(disposing: false);
+        }
+
+        #endregion
+
         #region Private Methods
+
+        private IEnumerator<T> GetCurrentEnumerator() {
+            BlockAccessAfterDispose();
+
+            return _enumerator ?? throw new ArgumentNullException(nameof(_enumerator));
+        }
 
         private void BlockAccessAfterDispose() {
             if (_disposed) {
@@ -60,7 +72,7 @@
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                _enumerator?.Dispose();
+                GetCurrentEnumerator().Dispose();
             }
 
             _enumerator = null;
@@ -76,7 +88,8 @@
                 BlockAccessAfterDispose();
 
                 _cancellationToken.ThrowIfCancellationRequested();
-                return _enumerator!.Current;
+
+                return GetCurrentEnumerator().Current;
             }
         }
 
@@ -92,7 +105,7 @@
 
             _cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _enumerator!.MoveNext();
+            var result = GetCurrentEnumerator().MoveNext();
 
             return new ValueTask<bool>(result);
         }

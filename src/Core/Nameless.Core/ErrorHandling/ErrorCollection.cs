@@ -4,7 +4,7 @@ namespace Nameless.ErrorHandling {
     public sealed class ErrorCollection : ICollection<Error> {
         #region Public Static Read-Only Properties
 
-        public static ErrorCollection Empty => new();
+        public static ErrorCollection Empty => [];
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace Nameless.ErrorHandling {
 
         #region Private Static Methods
 
-        private static void PushProblems(ISet<string> entry, string[] problems) {
+        private static void PushProblems(ISet<string> entry, IEnumerable<string> problems) {
             foreach (var problem in problems) {
                 if (string.IsNullOrWhiteSpace(problem)) {
                     continue;
@@ -62,11 +62,8 @@ namespace Nameless.ErrorHandling {
             return value;
         }
 
-        private IEnumerable<Error> GetEnumerable() {
-            foreach (var item in Cache) {
-                yield return new(item.Key, [.. item.Value]);
-            }
-        }
+        private IEnumerable<Error> GetEnumerable()
+            => Cache.Select(item => new Error(item.Key, [.. item.Value]));
 
         #endregion
 

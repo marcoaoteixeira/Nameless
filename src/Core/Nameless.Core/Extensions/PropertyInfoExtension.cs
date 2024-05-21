@@ -14,10 +14,9 @@ namespace Nameless {
         /// <param name="self">The property.</param>
         /// <returns>The description, if exists.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public static string? GetDescription(this PropertyInfo self) {
-            var attr = self.GetCustomAttribute<DescriptionAttribute>(inherit: false);
-            return attr?.Description;
-        }
+        public static string? GetDescription(this PropertyInfo self)
+            => self.GetCustomAttribute<DescriptionAttribute>(inherit: false)?
+                   .Description;
 
         #endregion
     }

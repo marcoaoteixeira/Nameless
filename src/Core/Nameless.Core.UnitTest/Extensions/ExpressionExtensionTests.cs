@@ -6,7 +6,7 @@ namespace Nameless {
         [Test]
         public void GetExpressionPath_Should_Return_Property_Path_Lambda() {
             // arrange
-            LambdaExpression lambda = (Category category) => category.Children[123].Children[456].Name;
+            LambdaExpression? lambda = (Category category) => category.Children[123].Children[456].Name;
             var expected = "category.Children[123].Children[456].Name";
 
             // act
@@ -19,7 +19,7 @@ namespace Nameless {
         [Test]
         public void GetExpressionPath_Should_Return_Empty_If_Method_Path_Lambda() {
             // arrange
-            LambdaExpression lambda = (Category category) => category.Children[123].ToString();
+            LambdaExpression? lambda = (Category category) => category.Children[123].ToString();
 
             // act
             var actual = ExpressionExtension.GetExpressionPath(lambda);

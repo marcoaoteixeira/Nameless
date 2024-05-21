@@ -30,7 +30,7 @@ namespace Nameless.Collections {
         /// Initializes a new instance of <see cref="HashtableDynamicObject"/>.
         /// </summary>
         /// <param name="dictionary">An instance of <see cref="IDictionary"/></param>
-        public HashtableDynamicObject(IDictionary? dictionary = default) {
+        public HashtableDynamicObject(IDictionary? dictionary = null) {
             _dictionary = dictionary ?? new Hashtable();
         }
 

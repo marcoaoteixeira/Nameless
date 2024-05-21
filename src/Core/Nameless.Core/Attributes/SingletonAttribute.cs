@@ -8,7 +8,7 @@ namespace Nameless {
     /// singleton instance object of the type that this attribute was applied.
     /// <see cref="https://en.wikipedia.org/wiki/Singleton_pattern"/>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class SingletonAttribute : Attribute {
         #region Public Constants
 
@@ -49,32 +49,31 @@ namespace Nameless {
         /// or the type doesn't have the <see cref="SingletonAttribute"/> applied
         /// or doesn't have a defined single instance accessor property.
         /// .</returns>
-        public static object? GetInstance(Type? type) {
-            if (type is null) { return null; }
+        public static object? GetInstance(Type type) {
+            Guard.Against.Null(type, nameof(type));
 
-            if (!HasAttribute(type, out var attr)) { return null; }
-            if (!HasAccessorProperty(type, attr.AccessorName, out var accessor)) { return null; }
+            if (!TryGetAttribute(type, out var attr)) { return null; }
 
-            return accessor.GetValue(obj: null /* static instance */);
+            return TryGetAccessorProperty(type, attr.AccessorName, out var accessor)
+                ? accessor.GetValue(obj: null /* static instance */)
+                : null;
         }
 
         #endregion
 
         #region Private Static Methods
 
-        private static bool HasAttribute(Type type, [NotNullWhen(true)] out SingletonAttribute? attr) {
+        private static bool TryGetAttribute(MemberInfo type, [NotNullWhen(true)] out SingletonAttribute? attr) {
             attr = type.GetCustomAttribute<SingletonAttribute>(inherit: false);
             return attr is not null;
         }
 
-        private static bool HasAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
+        private static bool TryGetAccessorProperty(IReflect type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
             var currentAccessor = string.IsNullOrWhiteSpace(accessorName)
                 ? DEFAULT_ACCESSOR_NAME
                 : accessorName;
-            accessor = type.GetProperty(
-                name: currentAccessor,
-                bindingAttr: BindingFlags.Public | BindingFlags.Static
-            );
+            accessor = type.GetProperty(name: currentAccessor,
+                                        bindingAttr: BindingFlags.Public | BindingFlags.Static);
             return accessor is not null;
         }
 

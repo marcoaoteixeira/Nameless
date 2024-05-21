@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Nameless.Services.Impl {
     public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
@@ -61,9 +62,9 @@ namespace Nameless.Services.Impl {
 
         #region Private Methods
 
-        private void AddRule(string[] cultures, PluralizationRuleDelegate rule) {
+        private void AddRule(IEnumerable<string> cultures, PluralizationRuleDelegate rule) {
             foreach (var culture in cultures) {
-                _cache.Add(culture, rule);
+                _cache[culture] = rule;
             }
         }
 
@@ -72,7 +73,7 @@ namespace Nameless.Services.Impl {
         #region IPluralizationRuleProvider Members
 
         /// <inheritdoc />
-        public bool TryGet(CultureInfo culture, out PluralizationRuleDelegate? rule) {
+        public bool TryGet(CultureInfo culture, [NotNullWhen(returnValue: true)] out PluralizationRuleDelegate? rule) {
             Guard.Against.Null(culture, nameof(culture));
 
             rule = null;

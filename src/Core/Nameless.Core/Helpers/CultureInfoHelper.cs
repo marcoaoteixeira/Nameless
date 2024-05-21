@@ -22,7 +22,7 @@ namespace Nameless.Helpers {
             try {
                 culture = CultureInfo.GetCultureInfo(cultureName);
                 result = true;
-            } catch { }
+            } catch { /* ignore */ }
 
             return result;
         }

@@ -46,7 +46,7 @@ namespace Nameless {
         /// <param name="action">The iterator action.</param>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
-        public static void Each(this IEnumerable self, Action<object> action)
+        public static void Each(this IEnumerable self, Action<object?> action)
             => Each(self, (current, _) => action(current));
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Nameless {
         /// <param name="action">The iterator action.</param>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="action"/> were <c>null</c>.</exception>
-        public static void Each(this IEnumerable self, Action<object, int> action) {
+        public static void Each(this IEnumerable self, Action<object?, int> action) {
             Guard.Against.Null(action, nameof(action));
 
             var counter = 0;
@@ -78,10 +78,14 @@ namespace Nameless {
         /// <param name="self">The <see cref="IEnumerable"/> instance.</param>
         /// <returns><c>true</c>, if is empty, otherwise, <c>false</c>.</returns>
         public static bool IsNullOrEmpty([NotNullWhen(false)] this IEnumerable? self) {
-            if (self is null) { return true; }
+            switch (self) {
+                case null:
+                    return true;
 
-            // Costs O(1)
-            if (self is ICollection collection) { return collection.Count == 0; }
+                // Costs O(1)
+                case ICollection collection:
+                    return collection.Count == 0;
+            }
 
             // Costs O(N)
             var enumerator = self.GetEnumerator();

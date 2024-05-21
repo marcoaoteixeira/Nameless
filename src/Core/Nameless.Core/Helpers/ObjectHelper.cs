@@ -30,34 +30,27 @@ namespace Nameless.Helpers {
         /// <param name="value">The source value.</param>
         /// <returns>A nullable value.</returns>
         public static T? AsNullable<T>(T value) where T : struct
-            => new T?(value);
+            => value;
 
         #endregion
 
         #region Private Static Methods
 
         private static string ConvertComplexObjectToXml(object input) {
-            if (input is null) { return string.Empty; }
-
             using var memoryStream = new MemoryStream();
             using var streamReader = new StreamReader(memoryStream);
             var xmlSerializer = new XmlSerializer(input.GetType());
             xmlSerializer.Serialize(memoryStream, input);
-            xmlSerializer = null;
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
             return streamReader.ReadToEnd();
         }
 
-        private static XElement? ConvertAnonymousObjectToXml(object input) {
-            if (input is null) { return null; }
+        private static XElement ConvertAnonymousObjectToXml(object input)
+            => ConvertAnonymousObjectToXml(input, null);
 
-            return ConvertAnonymousObjectToXml(input, null);
-        }
-
-        private static XElement? ConvertAnonymousObjectToXml(object input, string? element) {
-            if (input is null) { return null; }
+        private static XElement ConvertAnonymousObjectToXml(object input, string? element) {
             if (string.IsNullOrEmpty(element)) { element = "root"; }
 
             element = XmlConvert.EncodeName(element);
@@ -88,7 +81,7 @@ namespace Nameless.Helpers {
             return result;
         }
 
-        private static XElement? GetArrayElement(PropertyInfo info, Array? input) {
+        private static XElement? GetArrayElement(MemberInfo info, Array? input) {
             if (input is null) { return null; }
 
             var name = XmlConvert.EncodeName(info.Name);

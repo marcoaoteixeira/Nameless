@@ -54,14 +54,13 @@ namespace Nameless {
             var innerArgumentTypes = argumentTypes ?? [];
             var innerReturnType = returnType ?? typeof(void);
 
-            return self.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
-                .Where(method =>
-                   method.Name == name &&
-                   method.GetGenericArguments().Length == genericArgumentTypes.Length &&
-                   method.GetParameters().Select(parameter => parameter.ParameterType).SequenceEqual(innerArgumentTypes) &&
-                   (method.ReturnType.IsGenericType && !method.ReturnType.IsGenericTypeDefinition ? innerReturnType.GetGenericTypeDefinition() : method.ReturnType) == innerReturnType)
-                .Single()
-                .MakeGenericMethod(genericArgumentTypes);
+            return self
+                   .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+                   .SingleOrDefault(method => method.Name == name &&
+                                              method.GetGenericArguments().Length == genericArgumentTypes.Length &&
+                                              method.GetParameters().Select(parameter => parameter.ParameterType).SequenceEqual(innerArgumentTypes) &&
+                                              (method.ReturnType is { IsGenericType: true, IsGenericTypeDefinition: false } ? innerReturnType.GetGenericTypeDefinition() : method.ReturnType) == innerReturnType)
+                   ?.MakeGenericMethod(genericArgumentTypes);
         }
 
         /// <summary>
@@ -110,13 +109,18 @@ namespace Nameless {
         /// <returns>The generic argument type, if found.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="genericArgumentType"/> is <c>null</c>.</exception>
         public static Type? GetFirstOccurrenceOfGenericArgument(this Type? self, Type genericArgumentType) {
-            if (self is null) { return null; }
+            while (true) {
+                if (self is null) { return null; }
 
-            Guard.Against.Null(genericArgumentType, nameof(genericArgumentType));
+                Guard.Against.Null(genericArgumentType, nameof(genericArgumentType));
 
-            var args = self.GetGenericArguments();
-            var result = args.FirstOrDefault(genericArgumentType.IsAssignableFromGenericType);
-            return result ?? GetFirstOccurrenceOfGenericArgument(self.BaseType, genericArgumentType);
+                var args = self.GetGenericArguments();
+                var result = args.FirstOrDefault(genericArgumentType.IsAssignableFromGenericType);
+
+                if (result is not null) { return result; }
+
+                self = self.BaseType;
+            }
         }
 
         /// <summary>
@@ -126,19 +130,21 @@ namespace Nameless {
         /// <param name="type">The assignable from type.</param>
         /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
         public static bool IsAssignableFromGenericType(this Type self, Type? type) {
-            if (type is null) { return false; }
-
-            foreach (var item in type.GetInterfaces()) {
-                if (item.IsGenericType && item.GetGenericTypeDefinition() == self) {
-                    return true;
-                }
+            bool Assignable(Type current) {
+                return current.IsGenericType &&
+                       current.GetGenericTypeDefinition() == self;
             }
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == self) {
-                return true;
-            }
+            while (true) {
+                if (type is null) { return false; }
 
-            return IsAssignableFromGenericType(self, type.BaseType);
+                var assignable = type.GetInterfaces().Any(Assignable);
+                if (assignable) { return true; }
+                
+                if (Assignable(type)) { return true; }
+
+                type = type.BaseType;
+            }
         }
 
         public static bool HasInterface<TInterface>(this Type self) where TInterface : class
@@ -155,10 +161,8 @@ namespace Nameless {
         public static bool HasInterface(this Type self, Type interfaceType) {
             Guard.Against.Null(interfaceType, nameof(interfaceType));
 
-            return self.GetInterfaces().Any(_
-                => interfaceType.IsAssignableFrom(_) ||
-                   interfaceType.IsAssignableFromGenericType(_)
-            );
+            return self.GetInterfaces().Any(type => interfaceType.IsAssignableFrom(type) ||
+                                                    interfaceType.IsAssignableFromGenericType(type));
         }
 
         public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)

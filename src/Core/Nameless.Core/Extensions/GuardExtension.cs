@@ -51,13 +51,13 @@ namespace Nameless {
         [DebuggerStepThrough]
         public static T NullOrEmpty<T>(this Guard _, [NotNull] T? input, string name, string? message = null)
             where T : class, IEnumerable {
-            if (input is null) {
-                throw new ArgumentNullException(name, message ?? ARG_NULL_EX_MESSAGE);
-            }
+            switch (input) {
+                case null:
+                    throw new ArgumentNullException(name, message ?? ARG_NULL_EX_MESSAGE);
 
-            // Costs O(1)
-            if (input is ICollection collection && collection.Count == 0) {
-                throw new ArgumentException(message ?? ARG_EMPTY_EX_MESSAGE, name);
+                // Costs O(1)
+                case ICollection { Count: 0 }:
+                    throw new ArgumentException(message ?? ARG_EMPTY_EX_MESSAGE, name);
             }
 
             // Costs O(N)
@@ -84,10 +84,8 @@ namespace Nameless {
         [DebuggerStepThrough]
         public static TimeSpan LowerThanZero(this Guard _, TimeSpan timeSpan, string name, string? message = null) {
             if (timeSpan <= TimeSpan.Zero) {
-                throw new ArgumentOutOfRangeException(
-                    paramName: name,
-                    message: message ?? ARG_LOWER_THAN_ZERO_EX_MESSAGE
-                );
+                throw new ArgumentOutOfRangeException(paramName: name,
+                                                      message: message ?? ARG_LOWER_THAN_ZERO_EX_MESSAGE);
             }
             return timeSpan;
         }
@@ -95,10 +93,8 @@ namespace Nameless {
         [DebuggerStepThrough]
         public static int OutOfRange(this Guard _, int value, int min, int max, string name, string? message = null) {
             if (value < min || value > max) {
-                throw new ArgumentOutOfRangeException(
-                    paramName: name,
-                    message: message ?? ARG_OUT_OF_RANGE_EX_MESSAGE
-                );
+                throw new ArgumentOutOfRangeException(paramName: name,
+                                                      message: message ?? ARG_OUT_OF_RANGE_EX_MESSAGE);
             }
             return value;
         }
