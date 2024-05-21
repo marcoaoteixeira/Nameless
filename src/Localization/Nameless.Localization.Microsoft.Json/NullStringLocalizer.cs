@@ -34,8 +34,7 @@ namespace Nameless.Localization.Microsoft.Json {
         public LocalizedString this[string name, params object[] arguments]
             => new(name, string.Format(name, arguments));
 
-        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => Enumerable.Empty<LocalizedString>();
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) => [];
 
         #endregion
     }

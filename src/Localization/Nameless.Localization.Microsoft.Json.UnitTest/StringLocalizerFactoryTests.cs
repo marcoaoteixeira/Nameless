@@ -19,17 +19,11 @@ namespace Nameless.Localization.Microsoft.Json {
 
         private static Mock<ITranslationManager> CreateTranslationManagerMock() {
             var result = new Mock<ITranslationManager>();
-            var translation = new Translation {
-                Culture = CULTURE_NAME,
-                Regions = [
-                    new Region {
-                        Name = $"[{typeof(StringLocalizerFactoryTests).Assembly.GetName().Name}] {typeof(StringLocalizerFactoryTests).FullName}",
-                        Messages = [
-                            new Message { ID = "This is a test", Text = "Isso é um teste" }
-                        ]
-                    }
-                ]
-            };
+            var translation = new Translation(CULTURE_NAME, [
+                    new Region ($"[{typeof(StringLocalizerFactoryTests).Assembly.GetName().Name}] {typeof(StringLocalizerFactoryTests).FullName}", [
+                        new Message("This is a test", "Isso é um teste")
+                    ])
+                ]);
 
             result
                 .Setup(mock => mock.GetTranslation(translation.Culture))

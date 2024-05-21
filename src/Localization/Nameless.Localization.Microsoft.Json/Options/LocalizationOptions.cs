@@ -14,7 +14,7 @@
         /// </summary>
         public string TranslationFolderName { get; set; } = "Localization";
         /// <summary>
-        /// Gets or sets whether will watch the translation files for changes
+        /// Gets or sets whether it will watch the translation files for changes
         /// and reload if necessary.
         /// </summary>
         public bool WatchFileForChanges { get; set; } = true;

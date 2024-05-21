@@ -12,18 +12,13 @@ namespace Nameless.Localization.Microsoft.Json {
             var culture = new CultureInfo("pt-BR");
             const string resourceName = "AssemblyName";
             const string resourcePath = "ClassName";
-            var region = new Region {
-                Name = $"[{resourceName}] {resourcePath}",
-                Messages = [
-                    new() { ID = messageID, Text = expected }
-                ]
-            };
-            var sut = new StringLocalizer(
-                culture,
-                resourceName,
-                resourcePath,
-                region,
-                (c, rn, np) => NullStringLocalizer.Instance
+            var region = new Region($"[{resourceName}] {resourcePath}", [new Message(messageID, expected)]);
+
+            var sut = new StringLocalizer(culture,
+                                          resourceName,
+                                          resourcePath,
+                                          region,
+                                          (c, rn, np) => NullStringLocalizer.Instance
             );
 
             // act
@@ -42,12 +37,7 @@ namespace Nameless.Localization.Microsoft.Json {
             const string resourceName = "AssemblyName";
             const string resourcePath = "ClassName";
             var args = new object[] { 1, 2, 3, 4 };
-            var region = new Region {
-                Name = $"[{resourceName}] {resourcePath}",
-                Messages = [
-                    new() { ID = messageID, Text = expected }
-                ]
-            };
+            var region = new Region($"[{resourceName}] {resourcePath}", [new Message(messageID, expected)]);
             var sut = new StringLocalizer(
                 culture,
                 resourceName,
@@ -69,14 +59,11 @@ namespace Nameless.Localization.Microsoft.Json {
             var culture = new CultureInfo("pt-BR");
             const string resourceName = "AssemblyName";
             const string resourcePath = "ClassName";
-            var region = new Region {
-                Name = $"[{resourceName}] {resourcePath}",
-                Messages = [
-                    new() { ID = "Message A", Text = "Mensagem A" },
-                    new() { ID = "Message B", Text = "Mensagem B" },
-                    new() { ID = "Message C", Text = "Mensagem C" },
-                ]
-            };
+            var region = new Region($"[{resourceName}] {resourcePath}", [
+                new Message("Message A", "Message A"),
+                new Message("Message A", "Message A"),
+                new Message("Message A", "Message A")
+            ]);
             var sut = new StringLocalizer(
                 culture,
                 resourceName,
@@ -104,32 +91,23 @@ namespace Nameless.Localization.Microsoft.Json {
             var culture = new CultureInfo("pt-BR");
             const string resourceName = "AssemblyName";
             const string resourcePath = "ClassName";
-            var regionPtBr = new Region {
-                Name = $"[{resourceName}] {resourcePath}",
-                Messages = [
-                    new() { ID = "Message A", Text = "Mensagem A => pt-BR" },
-                    new() { ID = "Message B", Text = "Mensagem B => pt-BR" },
-                    new() { ID = "Message C", Text = "Mensagem C => pt-BR" },
-                ]
-            };
-            var regionPtPt = new Region {
-                Name = $"[{resourceName}] {resourcePath}",
-                Messages = [
-                    new() { ID = "Message A", Text = "Mensagem A => pt-PT" },
-                    new() { ID = "Message B", Text = "Mensagem B => pt-PT" },
-                    new() { ID = "Message C", Text = "Mensagem C => pt-PT" },
-                ]
-            };
+            var regionPtBr = new Region($"[{resourceName}] {resourcePath}", [
+                new Message("Message A", "Mensagem A => pt-BR"),
+                new Message("Message B", "Mensagem B => pt-BR"),
+                new Message("Message C", "Mensagem C => pt-BR"),
+            ]);
+            var regionPtPt = new Region($"[{resourceName}] {resourcePath}", [
+                new Message("Message A", "Mensagem A => pt-PT"),
+                new Message("Message B", "Mensagem B => pt-PT"),
+                new Message("Message C", "Mensagem C => pt-PT"),
+            ]);
 
             static IStringLocalizer factory(CultureInfo culture, string resourceName, string resourcePath) {
-                var innerRegion = new Region {
-                    Name = $"[{resourceName}] {resourcePath}",
-                    Messages = [
-                        new() { ID = "Message A", Text = $"Mensagem A => {culture.Name}" },
-                        new() { ID = "Message B", Text = $"Mensagem B => {culture.Name}" },
-                        new() { ID = "Message C", Text = $"Mensagem C => {culture.Name}" },
-                    ]
-                };
+                var innerRegion = new Region($"[{resourceName}] {resourcePath}", [
+                    new Message("Message A", $"Mensagem A => {culture.Name}"),
+                    new Message("Message B", $"Mensagem B => {culture.Name}"),
+                    new Message("Message C", $"Mensagem C => {culture.Name}"),
+                ]);
 
                 return new StringLocalizer(culture, resourceName, resourcePath, innerRegion, factory);
             };

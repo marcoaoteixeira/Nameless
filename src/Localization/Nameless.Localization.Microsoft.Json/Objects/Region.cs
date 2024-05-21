@@ -1,41 +1,32 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
-    public sealed class Region {
+    [DebuggerDisplay("{Name}")]
+    public sealed record Region(string Name, Message[] Messages) {
         #region Public Static Read-Only Properties
 
-        public static Region Empty => new();
+        public static Region Empty => new(string.Empty, []);
 
         #endregion
 
         #region Public Properties
 
-        public string Name { get; set; } = string.Empty;
-        public HashSet<Message> Messages { get; set; } = [];
+        public string Name { get; } = Name;
+
+        public Message[] Messages { get; } = Messages;
 
         #endregion
 
         #region Public Methods
 
-        public bool TryGetValue(string id, [NotNullWhen(true)] out Message? output)
-            => Messages.TryGetValue(new() { ID = id }, out output);
+        public bool TryGetMessage(string id, [NotNullWhen(true)] out Message? output) {
+            var current = Messages.SingleOrDefault(item => id == item.ID);
+            
+            output = current;
 
-        public bool Equals(Region? obj)
-            => obj is not null &&
-               obj.Name == Name;
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override bool Equals(object? obj)
-            => Equals(obj as Region);
-
-        public override int GetHashCode()
-            => (Name ?? string.Empty).GetHashCode();
-
-        public override string ToString()
-            => Name;
+            return current is not null;
+        }
 
         #endregion
     }

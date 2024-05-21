@@ -28,9 +28,10 @@ namespace Nameless.FluentValidation {
         #region Private Static Methods
 
         private static Dictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures)
-            => failures.ToDictionary<ValidationFailure?, string, string[]>(
+            => failures.ToDictionary(
                 keySelector: failure => failure.PropertyName ?? failure.ErrorCode,
-                elementSelector: failure => [failure.ErrorMessage]);
+                elementSelector: failure => new[] { failure.ErrorMessage }
+            );
 
         #endregion
     }
