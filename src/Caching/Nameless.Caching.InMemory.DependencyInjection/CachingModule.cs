@@ -6,10 +6,9 @@ namespace Nameless.Caching.InMemory.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
-            builder
-                .RegisterType<InMemoryCache>()
-                .As<ICache>()
-                .SingleInstance();
+            builder.RegisterType<InMemoryCache>()
+                   .As<ICache>()
+                   .SingleInstance();
 
             base.Load(builder);
         }

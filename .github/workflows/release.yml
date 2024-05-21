@@ -1,12 +1,12 @@
 name: Release Cycle
 
 on:
-  
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
-  ARTIFACTS_FOLDER_PATH: './artifacts/nupkgs'
+  OUTPUT_PATH: './nupkgs'
 
 jobs:
 
@@ -19,25 +19,28 @@ jobs:
         dotnet-version: ['8.0.x']
 
     steps:
-      - name: Get build version
+      - name: Fetch Build Version Number
         id: build
         run: |
           if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
           then
-            echo version=${BASH_REMATCH[1]} >> $GITHUB_OUTPUT
+            echo BUILD_VERSION=${BASH_REMATCH[1]} >> $GITHUB_ENV
           else
-            echo version='1.0.0' >> $GITHUB_OUTPUT
+            echo BUILD_VERSION='1.0.0' >> $GITHUB_ENV
           fi
 
-      - name: Checkout source code
-        uses: actions/checkout@v4.1.1
+      - name: Current Build Version Number
+        run: echo ${{ env.BUILD_VERSION }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: Add GitHub Package Registry
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.6
+
+      - name: Set GitHub Package Registry as NuGet Source
         run: |
           dotnet nuget add source \
           --username ${{ github.repository_owner }} \
@@ -45,20 +48,23 @@ jobs:
           --store-password-in-clear-text \
           --name github ${{ vars.NUGET_SOURCE_URL }}
 
-      - name: Pack NuGet packages
+      - name: Pack NuGet Packages
         run: |
           dotnet pack \
-          -p:PackageVersion=${{ steps.build.outputs.version }} \
           --configuration Release \
+          --include-symbols \
           --nologo \
-          --output ${{ env.ARTIFACTS_FOLDER_PATH }} \
-          --verbosity normal
+          --output ${{ env.OUTPUT_PATH }} \
+          --verbosity normal \
+          -p:AssemblyVersion=${{ env.BUILD_VERSION }} \
+          -p:FileVersion=${{ env.BUILD_VERSION }} \
+          -p:PackageVersion=${{ env.BUILD_VERSION }} \
+          -p:Version=${{ env.BUILD_VERSION }}
 
-      - name: Publish NuGet packages
+      - name: Publish NuGet Packages
         if: success()
         run: |
-          cd ${{ env.ARTIFACTS_FOLDER_PATH }}
-          dotnet nuget push *.nupkg \
+          dotnet nuget push ${{ env.OUTPUT_PATH }}/*.nupkg \
           --source ${{ vars.NUGET_SOURCE_URL }} \
           --api-key ${{ secrets.NUGET_API_KEY }} \
           --skip-duplicate

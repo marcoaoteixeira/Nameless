@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\utils\Nameless.Test.Utils\Nameless.Test.Utils.csproj" />
+	  <ProjectReference Include="..\..\..\utils\Nameless.Test.Utils\Nameless.UnitTest.Utils.csproj" />
 	  <ProjectReference Include="..\Nameless.Messenger.Email.DependencyInjection\Nameless.Messenger.Email.DependencyInjection.csproj" />
 	</ItemGroup>
 

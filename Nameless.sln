@@ -143,7 +143,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Messenger.Email.Un
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{C585689E-E359-48AE-AA33-3D64FDB64B42}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Test.Utils", "utils\Nameless.Test.Utils\Nameless.Test.Utils.csproj", "{00D1B66E-8331-4955-9ACC-B409DF873BE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.UnitTest.Utils", "utils\Nameless.Test.Utils\Nameless.UnitTest.Utils.csproj", "{00D1B66E-8331-4955-9ACC-B409DF873BE8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nameless.Security.UnitTest", "src\Security\Nameless.Security.UnitTest\Nameless.Security.UnitTest.csproj", "{6CB4AC76-E61B-45F7-B383-D4FFE6D45855}"
 EndProject

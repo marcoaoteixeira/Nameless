@@ -8,12 +8,12 @@
         public static async Task<T> GetOrSetAsync<T>(this ICache self, string key, Func<string, T> valueFactory, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             var current = await self.GetAsync<T>(key, cancellationToken);
 
-            if (current is null) {
-                current = valueFactory(key)
-                    ?? throw new InvalidOperationException("Factory must return non null value.");
+            if (current is not null) {  return current;  }
 
-                await self.SetAsync(key, current, opts, cancellationToken);
-            }
+            current = valueFactory(key)
+                   ?? throw new InvalidOperationException("Factory must return non null value.");
+
+            await self.SetAsync(key, current, opts ?? CacheEntryOptions.Empty, cancellationToken);
 
             return current;
         }

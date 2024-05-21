@@ -2,7 +2,6 @@
 using Nameless.MongoDB.DependencyInjection;
 using Nameless.MongoDB.Impl;
 using Nameless.MongoDB.Options;
-using Nameless.Test.Utils;
 
 namespace Nameless.MongoDB.UnitTest {
     public class DependencyInjectionTests {

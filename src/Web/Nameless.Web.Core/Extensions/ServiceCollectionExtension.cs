@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,7 +31,7 @@ namespace Nameless.Web {
                 .AddHttpContextAccessor();
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config)
-            => RegisterJwtAuth(self, config, opts => { });
+            => RegisterJwtAuth(self, config, _ => { });
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions> configureAuthorization) {
             var sectionName = nameof(JwtOptions)
@@ -63,8 +64,8 @@ namespace Nameless.Web {
             return self;
         }
 
-        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self)
-            => self.AddProblemDetails();
+        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self, Action<ProblemDetailsOptions>? opts = null)
+            => self.AddProblemDetails(opts);
 
         public static IServiceCollection RegisterRouting(this IServiceCollection self)
             => self

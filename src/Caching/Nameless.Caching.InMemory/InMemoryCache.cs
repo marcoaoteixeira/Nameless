@@ -10,6 +10,14 @@ namespace Nameless.Caching.InMemory {
 
         #endregion
 
+        #region Destructors
+
+        ~InMemoryCache() {
+            Dispose(disposing: false);
+        }
+
+        #endregion
+
         #region Private Static Methods
 
         private void BlockAccessAfterDispose() {
@@ -41,7 +49,7 @@ namespace Nameless.Caching.InMemory {
 
         private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions(CacheEntryOptions? opts) {
             if (opts is null || opts.ExpiresIn == default) {
-                return new();
+                return new MemoryCacheEntryOptions();
             }
 
             var cts = new CancellationTokenSource(opts.ExpiresIn);
@@ -66,7 +74,7 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts, CancellationToken cancellationToken) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
             Guard.Against.NullOrWhiteSpace(key, nameof(key));
@@ -74,13 +82,10 @@ namespace Nameless.Caching.InMemory {
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var entry = GetMemoryCache().Set(
-                key,
-                value,
-                CreateMemoryCacheEntryOptions(opts)
-            );
+            var memoryCacheEntryOptions = CreateMemoryCacheEntryOptions(opts);
+            _ = GetMemoryCache().Set(key, value, memoryCacheEntryOptions);
 
-            return Task.FromResult(entry is not null);
+            return Task.FromResult(true);
         }
 
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {

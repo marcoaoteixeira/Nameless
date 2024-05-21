@@ -28,7 +28,7 @@ namespace Nameless {
                     return new ApplicationContext(
                         hostEnvironment,
                         useAppDataSpecialFolder,
-                        appVersion ?? new(major: 0, minor: 0, build: 0)
+                        appVersion ?? new Version(major: 0, minor: 0, build: 0)
                     );
                 });
 

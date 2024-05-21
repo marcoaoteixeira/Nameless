@@ -23,14 +23,12 @@ namespace Nameless.Autofac {
 
         #region Private Static Methods
 
-        private static PropertyInfo[] GetProperties(Type implementationType, Type serviceType)
+        private static IEnumerable<PropertyInfo> GetProperties(IReflect implementationType, Type serviceType)
             => implementationType
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(_ =>
-                    _.PropertyType.IsAssignableTo(serviceType) &&
-                    _.CanWrite &&
-                    _.GetIndexParameters().Length == 0
-                )
+                .Where(prop => prop.PropertyType.IsAssignableTo(serviceType) &&
+                               prop.CanWrite &&
+                               prop.GetIndexParameters().Length == 0)
                 .ToArray();
 
         #endregion
@@ -51,16 +49,16 @@ namespace Nameless.Autofac {
 
             next(context);
 
-            if (context.NewInstanceActivated && context.Instance is not null) {
-                var implementationType = context.Instance.GetType();
-                var properties = GetProperties(implementationType, _serviceType);
-                foreach (var property in properties) {
-                    property.SetValue(
-                        obj: context.Instance,
-                        value: _factory(property, context),
-                        index: null
-                    );
-                }
+            if (context is not { NewInstanceActivated: true, Instance: not null }) {
+                return;
+            }
+
+            var implementationType = context.Instance.GetType();
+            var properties = GetProperties(implementationType, _serviceType);
+            foreach (var property in properties) {
+                property.SetValue(obj: context.Instance,
+                                  value: _factory(property, context),
+                                  index: null);
             }
         }
 

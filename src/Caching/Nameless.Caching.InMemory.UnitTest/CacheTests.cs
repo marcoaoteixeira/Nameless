@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Caching.InMemory {
     public class CacheTests {
-        private static ICache CreateSut()
+        private static InMemoryCache CreateSut()
             => new InMemoryCache();
 
         [Test]

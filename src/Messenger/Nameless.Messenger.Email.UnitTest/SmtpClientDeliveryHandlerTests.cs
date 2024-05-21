@@ -1,7 +1,6 @@
 ﻿using MimeKit;
 using MimeKit.Text;
 using Nameless.Messenger.Email.Impl;
-using Nameless.Test.Utils;
 
 namespace Nameless.Messenger.Email {
     [Category(Categories.RUNS_ON_DEV_MACHINE)]

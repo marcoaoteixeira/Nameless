@@ -14,15 +14,13 @@ namespace Nameless.Caching.Redis.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
-            builder
-                .Register(ConfigurationFactoryResolver)
-                .Named<IConfigurationOptionsFactory>(CONFIGURATION_OPTIONS_FACTORY_TOKEN)
-                .SingleInstance();
+            builder.Register(ConfigurationFactoryResolver)
+                   .Named<IConfigurationOptionsFactory>(CONFIGURATION_OPTIONS_FACTORY_TOKEN)
+                   .SingleInstance();
 
-            builder
-                .Register(CacheResolver)
-                .As<ICache>()
-                .SingleInstance();
+            builder.Register(CacheResolver)
+                   .As<ICache>()
+                   .SingleInstance();
 
             base.Load(builder);
         }
@@ -31,14 +29,9 @@ namespace Nameless.Caching.Redis.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IConfigurationOptionsFactory ConfigurationFactoryResolver(IComponentContext ctx) {
-            var result = new ConfigurationOptionsFactory(
-                options: ctx.GetPocoOptions<RedisOptions>(),
-                logger: ctx.GetLogger<RedisCache>()
-            );
-
-            return result;
-        }
+        private static IConfigurationOptionsFactory ConfigurationFactoryResolver(IComponentContext ctx)
+            => new ConfigurationOptionsFactory(options: ctx.GetPocoOptions<RedisOptions>(),
+                                               logger: ctx.GetLogger<RedisCache>());
 
         private static ICache CacheResolver(IComponentContext ctx) {
             var configurationFactory = ctx.ResolveNamed<IConfigurationOptionsFactory>(CONFIGURATION_OPTIONS_FACTORY_TOKEN);
