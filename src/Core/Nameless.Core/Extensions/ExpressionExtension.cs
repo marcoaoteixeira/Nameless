@@ -15,7 +15,7 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">The lambda expression.</param>
         /// <returns>The path of the expression.</returns>
-        public static string GetExpressionPath(this LambdaExpression self) {
+        public static string GetExpressionPath(this LambdaExpression? self) {
             if (self is null) {
                 return string.Empty;
             }
@@ -160,10 +160,6 @@ namespace Nameless {
 
                         part = null;
                         break;
-
-                    default:
-                        // Should be unreachable due to handling in above loop.
-                        break;
                 }
             }
 
@@ -212,7 +208,7 @@ namespace Nameless {
 
         #region Private Static Methods
 
-        private static void InsertIndexerInvocationText(StringBuilder builder, Expression indexExpression, LambdaExpression parentExpression) {
+        private static void InsertIndexerInvocationText(StringBuilder builder, Expression indexExpression, LambdaExpression? parentExpression) {
             Guard.Against.Null(builder, nameof(builder));
             Guard.Against.Null(indexExpression, nameof(indexExpression));
             Guard.Against.Null(parentExpression, nameof(parentExpression));
@@ -252,13 +248,8 @@ namespace Nameless {
             // Find default property (the indexer) and confirm its getter is the method in
             // this expression.
             var runtimeProperties = declaringType.GetRuntimeProperties();
-            foreach (var property in runtimeProperties) {
-                if (string.Equals(defaultMember.MemberName, property.Name, StringComparison.Ordinal) && property.GetMethod == methodExpression.Method) {
-                    return true;
-                }
-            }
-
-            return false;
+            return runtimeProperties.Any(property => string.Equals(defaultMember.MemberName, property.Name, StringComparison.Ordinal) &&
+                                                     property.GetMethod == methodExpression.Method);
         }
 
         #endregion

@@ -67,10 +67,10 @@ namespace Nameless.Security {
             // grouped by types. You can remove character groups from this
             // array, but doing so will weaken the password strength.
             var chars = new List<char[]> {
-                (opts.LowerCases ?? string.Empty).ToCharArray(),
-                (opts.UpperCases ?? string.Empty).ToCharArray(),
-                (opts.Numerics ?? string.Empty).ToCharArray(),
-                (opts.Symbols ?? string.Empty).ToCharArray()
+                opts.LowerCases.ToCharArray(),
+                opts.UpperCases.ToCharArray(),
+                opts.Numerics.ToCharArray(),
+                opts.Symbols.ToCharArray()
             };
             if (chars.Count == 0) {
                 chars.Add(Root.Defaults.UPPER_CASE_CHARS.ToCharArray());
@@ -163,10 +163,7 @@ namespace Nameless.Security {
                     // so that we don't pick it until we process all characters in
                     // this group.
                     if (lastCharIdx != nextCharIdx) {
-                        var temp = charArray[nextGroupIdx][lastCharIdx];
-
-                        charArray[nextGroupIdx][lastCharIdx] = charArray[nextGroupIdx][nextCharIdx];
-                        charArray[nextGroupIdx][nextCharIdx] = temp;
+                        (charArray[nextGroupIdx][lastCharIdx], charArray[nextGroupIdx][nextCharIdx]) = (charArray[nextGroupIdx][nextCharIdx], charArray[nextGroupIdx][lastCharIdx]);
                     }
                     // Decrement the number of unprocessed characters in
                     // this group.
@@ -181,10 +178,7 @@ namespace Nameless.Security {
                     // Swap processed group with the last unprocessed group
                     // so that we don't pick it until we process all groups.
                     if (lastLeftGroupsOrderIdx != nextLeftGroupsOrderIdx) {
-                        var temp = leftGroupsOrder[lastLeftGroupsOrderIdx];
-
-                        leftGroupsOrder[lastLeftGroupsOrderIdx] = leftGroupsOrder[nextLeftGroupsOrderIdx];
-                        leftGroupsOrder[nextLeftGroupsOrderIdx] = temp;
+                        (leftGroupsOrder[lastLeftGroupsOrderIdx], leftGroupsOrder[nextLeftGroupsOrderIdx]) = (leftGroupsOrder[nextLeftGroupsOrderIdx], leftGroupsOrder[lastLeftGroupsOrderIdx]);
                     }
                     // Decrement the number of unprocessed groups.
                     lastLeftGroupsOrderIdx--;

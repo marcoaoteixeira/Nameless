@@ -25,7 +25,9 @@ namespace Nameless.Security.Options {
         /// Passphrase can be any string. Passphrase value must be kept in
         /// secret.
         /// </summary>
-        public string Passphrase { get; }
+        public string Passphrase { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RIJNDAEL_PASS_PHRASE)
+                                         ?? Root.Defaults.RIJNDAEL_PASS_PHRASE;
+
         /// <summary>
         /// Gets or sets the initialization vector.
         /// Initialization vector (IV). This value is required to encrypt the
@@ -62,7 +64,8 @@ namespace Nameless.Security.Options {
         private int _minimumSaltSize = 16;
         public int MinimumSaltSize {
             get => _minimumSaltSize;
-            set => _minimumSaltSize = value >= MINIMUM_ALLOWED_SALT_SIZE && value <= MAXIMUM_ALLOWED_SALT_SIZE               ? value
+            set => _minimumSaltSize = value is >= MINIMUM_ALLOWED_SALT_SIZE and <= MAXIMUM_ALLOWED_SALT_SIZE
+                ? value
                 : MINIMUM_ALLOWED_SALT_SIZE;
         }
         /// <summary>
@@ -73,7 +76,7 @@ namespace Nameless.Security.Options {
         private int _maximumSaltSize = 128;
         public int MaximumSaltSize {
             get => _maximumSaltSize;
-            set => _maximumSaltSize = value >= MINIMUM_ALLOWED_SALT_SIZE && value <= MAXIMUM_ALLOWED_SALT_SIZE
+            set => _maximumSaltSize = value is >= MINIMUM_ALLOWED_SALT_SIZE and <= MAXIMUM_ALLOWED_SALT_SIZE
                 ? value
                 : MAXIMUM_ALLOWED_SALT_SIZE;
         }
@@ -88,15 +91,6 @@ namespace Nameless.Security.Options {
             set => _passwordIterations = value >= MINIMUM_PASSWORD_ITERATIONS
                 ? value
                 : MINIMUM_PASSWORD_ITERATIONS;
-        }
-
-        #endregion
-
-        #region Public Constructors
-
-        public RijndaelCryptoOptions() {
-            Passphrase = Environment.GetEnvironmentVariable(Root.EnvTokens.RIJNDAEL_PASS_PHRASE)
-                ?? Root.Defaults.RIJNDAEL_PASS_PHRASE;
         }
 
         #endregion

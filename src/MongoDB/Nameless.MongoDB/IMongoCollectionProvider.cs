@@ -18,7 +18,7 @@ namespace Nameless.MongoDB {
         /// </param>
         /// <param name="settings">The collection settings.</param>
         /// <returns>The collection.</returns>
-        IMongoCollection<T> GetCollection<T>(string? name = null, MongoCollectionSettings? settings = null);
+        IMongoCollection<T> GetCollection<T>(string name, MongoCollectionSettings settings);
 
         #endregion
     }

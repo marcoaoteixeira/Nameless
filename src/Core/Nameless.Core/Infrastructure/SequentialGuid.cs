@@ -136,7 +136,7 @@ namespace Nameless.Infrastructure {
                 Array.Reverse(timeStampBytes);
             }
 
-            var guidBytes = new byte[16];
+            var buffer = new byte[16];
 
             switch (type) {
                 case SequentialType.AsString:
@@ -147,14 +147,14 @@ namespace Nameless.Infrastructure {
                     Buffer.BlockCopy(
                         src: timeStampBytes,
                         srcOffset: 2,
-                        dst: guidBytes,
+                        dst: buffer,
                         dstOffset: 0,
                         count: 6
                     );
                     Buffer.BlockCopy(
                         src: randomBytes,
                         srcOffset: 0,
-                        dst: guidBytes,
+                        dst: buffer,
                         dstOffset: 6,
                         count: 10
                     );
@@ -165,12 +165,12 @@ namespace Nameless.Infrastructure {
                     // systems.  So again, we have to reverse.
                     if (type == SequentialType.AsString && BitConverter.IsLittleEndian) {
                         Array.Reverse(
-                            array: guidBytes,
+                            array: buffer,
                             index: 0,
                             length: 4
                         );
                         Array.Reverse(
-                            array: guidBytes,
+                            array: buffer,
                             index: 4,
                             length: 2
                         );
@@ -185,21 +185,21 @@ namespace Nameless.Infrastructure {
                     Buffer.BlockCopy(
                         src: randomBytes,
                         srcOffset: 0,
-                        dst: guidBytes,
+                        dst: buffer,
                         dstOffset: 0,
                         count: 10
                     );
                     Buffer.BlockCopy(
                         src: timeStampBytes,
                         srcOffset: 2,
-                        dst: guidBytes,
+                        dst: buffer,
                         dstOffset: 10,
                         count: 6
                     );
                     break;
             }
 
-            return new(guidBytes);
+            return new Guid(buffer);
         }
 
         #endregion

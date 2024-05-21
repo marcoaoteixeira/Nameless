@@ -8,7 +8,9 @@
 
         #region Public Properties
 
-        public string Secret { get; }
+        public string Secret { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.JWT_SECRET)
+                                     ?? Root.Defaults.JWT_SECRET;
+
         public string? Issuer { get; set; }
         public bool ValidateIssuer { get; set; }
         public string? Audience { get; set; }
@@ -22,12 +24,10 @@
         /// </summary>
         public int AccessTokenTtl {
             get => _accessTokenTtl;
-            set => _accessTokenTtl = Guard.Against.OutOfRange(
-                value: value,
-                min: 1,
-                max: 24 * 60,
-                name: nameof(value)
-            );
+            set => _accessTokenTtl = Guard.Against.OutOfRange(value: value,
+                                                              min: 1,
+                                                              max: 24 * 60,
+                                                              name: nameof(value));
         }
         public bool ValidateLifetime { get; set; }
 
@@ -39,12 +39,10 @@
         /// </summary>
         public int RefreshTokenTtl {
             get => _refreshTokenTtl;
-            set => _refreshTokenTtl = Guard.Against.OutOfRange(
-                value: value,
-                min: 1,
-                max: 24 * 60,
-                name: nameof(value)
-            );
+            set => _refreshTokenTtl = Guard.Against.OutOfRange(value: value,
+                                                               min: 1,
+                                                               max: 24 * 60,
+                                                               name: nameof(value));
         }
         public bool RequireHttpsMetadata { get; set; }
         /// <summary>
@@ -59,15 +57,6 @@
         /// </summary>
         public int MaxClockSkew { get; set; }
         public bool SaveTokens { get; set; } = true;
-
-        #endregion
-
-        #region Public Constructors
-
-        public JwtOptions() {
-            Secret = Environment.GetEnvironmentVariable(Root.EnvTokens.JWT_SECRET)
-                ?? Root.Defaults.JWT_SECRET;
-        }
 
         #endregion
     }

@@ -44,12 +44,10 @@ namespace Nameless {
                 ? nameof(Queryable.OrderBy)
                 : nameof(Queryable.OrderByDescending);
 
-            var queryExpression = Expression.Call(
-                type: typeof(Queryable),
-                methodName: queryableMethodName,
-                typeArguments: [type, property.PropertyType],
-                arguments: [self.Expression, Expression.Quote(propertyExpression)]
-            );
+            var queryExpression = Expression.Call(type: typeof(Queryable),
+                                                  methodName: queryableMethodName,
+                                                  typeArguments: [type, property.PropertyType],
+                                                  arguments: [self.Expression, Expression.Quote(propertyExpression)]);
 
             var query = self.Provider.CreateQuery<T>(queryExpression);
 

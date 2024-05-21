@@ -26,13 +26,16 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
         /// variable <see cref="Root.EnvTokens.RABBITMQ_USER"/>. The default
         /// value is <c>guest</c>.
         /// </summary>
-        public string Username { get; }
+        public string Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_USER)
+                                       ?? Root.Defaults.RABBITMQ_USER;
+
         /// <summary>
         /// Gets the user password. This property is provided by the environment
         /// variable <see cref="Root.EnvTokens.RABBITMQ_PASS"/>. The default
         /// value is <c>guest</c>.
         /// </summary>
-        public string Password { get; }
+        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_PASS)
+                                       ?? Root.Defaults.RABBITMQ_PASS;
 
         public string Hostname { get; set; } = "localhost";
 
@@ -42,23 +45,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         public SslOptions Ssl {
             get => _ssl ??= SslOptions.Default;
-            set => _ssl = value ?? SslOptions.Default;
+            set => _ssl = value;
         }
 
         public CertificateOptions Certificate {
             get => _certificate ??= CertificateOptions.Default;
-            set => _certificate = value ?? CertificateOptions.Default;
-        }
-
-        #endregion
-
-        #region Public Constructors
-
-        public ServerOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_USER)
-                ?? Root.Defaults.RABBITMQ_USER;
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_PASS)
-                ?? Root.Defaults.RABBITMQ_PASS;
+            set => _certificate = value;
         }
 
         #endregion

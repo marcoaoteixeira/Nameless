@@ -12,7 +12,7 @@
         /// <param name="escape">Use escape.</param>
         /// <param name="defaultFields">An array of default fields.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder Parse(string query, bool escape = true, params string[] defaultFields);
+        ISearchBuilder Parse(string query, bool escape, params string[] defaultFields);
 
         /// <summary>
         /// Adds the specified field and value to the search.
@@ -72,7 +72,7 @@
         /// <param name="includeMinimum">Should include minimum value.</param>
         /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, int? minimum, int? maximum, bool includeMinimum = true, bool includeMaximum = true);
+        ISearchBuilder WithinRange(string fieldName, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
@@ -83,7 +83,7 @@
         /// <param name="includeMinimum">Should include minimum value.</param>
         /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, double? minimum, double? maximum, bool includeMinimum = true, bool includeMaximum = true);
+        ISearchBuilder WithinRange(string fieldName, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
@@ -94,7 +94,7 @@
         /// <param name="includeMinimum">Should include minimum value.</param>
         /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, DateTime? minimum, DateTime? maximum, bool includeMinimum = true, bool includeMaximum = true);
+        ISearchBuilder WithinRange(string fieldName, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum);
 
         /// <summary>
         /// Adds the specified field and value range to the search.
@@ -105,7 +105,7 @@
         /// <param name="includeMinimum">Should include minimum value.</param>
         /// <param name="includeMaximum">Should include maximum value.</param>
         /// <returns>The current instance of <see cref="ISearchBuilder"/>.</returns>
-        ISearchBuilder WithinRange(string fieldName, string? minimum, string? maximum, bool includeMinimum = true, bool includeMaximum = true);
+        ISearchBuilder WithinRange(string fieldName, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum);
 
         /// <summary>
         /// Marks a clause as a mandatory match. By default, all clauses are optional.

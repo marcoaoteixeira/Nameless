@@ -14,13 +14,10 @@ namespace Nameless {
         /// <param name="self">The <see cref="Enum"/> value.</param>
         /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
         /// <returns>The <typeparamref name="TAttribute" /> annotated in the enum.</returns>
-        public static TAttribute? GetAttribute<TAttribute>(this Enum self) where TAttribute : Attribute {
-            var field = self.GetType().GetField(self.ToString());
-
-            if (field is null) { return null; }
-
-            return field.GetCustomAttribute<TAttribute>(inherit: false);
-        }
+        public static TAttribute? GetAttribute<TAttribute>(this Enum self) where TAttribute : Attribute
+            => self.GetType()
+                   .GetField(self.ToString())?
+                   .GetCustomAttribute<TAttribute>(inherit: false);
 
         /// <summary>
         /// Gets the enumerator description, if exists.

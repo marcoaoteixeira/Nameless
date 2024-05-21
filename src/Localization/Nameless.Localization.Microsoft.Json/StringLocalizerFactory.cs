@@ -27,15 +27,15 @@ namespace Nameless.Localization.Microsoft.Json {
             var key = $"[{resourceName}] {resourcePath}";
             var translation = _translationManager.GetTranslation(culture.Name);
 
-            return translation.TryGetValue(key, out var region)
+            return translation.TryGetRegion(key, out var region)
                 ? region
-                : new() { Name = key };
+                : new Region(Name: key, Messages: []);
         }
 
         private StringLocalizer GetLocalizer(CultureInfo culture, string resourceName, string resourcePath) {
             var region = GetRegion(culture, resourceName, resourcePath);
 
-            return new(culture, resourceName, resourcePath, region, GetLocalizer);
+            return new StringLocalizer(culture, resourceName, resourcePath, region, GetLocalizer);
         }
 
         #endregion

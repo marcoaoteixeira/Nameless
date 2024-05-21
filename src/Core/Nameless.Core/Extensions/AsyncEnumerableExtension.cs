@@ -18,7 +18,7 @@ namespace Nameless {
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The first or default item in the <see cref="IAsyncEnumerable{T}"/></returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public async static Task<T?> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
+        public static async Task<T?> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
             return await enumerator.MoveNextAsync() ? enumerator.Current : default;
@@ -35,7 +35,7 @@ namespace Nameless {
         /// <returns>An instance of <see cref="IAsyncEnumerable{TOutput}"/></returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="project"/> is <c>null</c>.</exception>
-        public async static IAsyncEnumerable<TOutput> ProjectAsync<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+        public static async IAsyncEnumerable<TOutput> ProjectAsync<TInput, TOutput>(this IAsyncEnumerable<TInput> self, Func<TInput, TOutput> project, [EnumeratorCancellation] CancellationToken cancellationToken = default) {
             Guard.Against.Null(project, nameof(project));
 
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
@@ -54,7 +54,7 @@ namespace Nameless {
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An instance of <see cref="IList{T}"/></returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
-        public async static Task<IList<T>> ToListAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
+        public static async Task<IList<T>> ToListAsync<T>(this IAsyncEnumerable<T> self, CancellationToken cancellationToken = default) {
             await using var enumerator = self.GetAsyncEnumerator(cancellationToken);
 
             var result = new List<T>();

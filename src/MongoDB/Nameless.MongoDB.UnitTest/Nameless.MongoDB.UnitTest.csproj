@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\utils\Nameless.Test.Utils\Nameless.Test.Utils.csproj" />
+    <ProjectReference Include="..\..\..\utils\Nameless.Test.Utils\Nameless.UnitTest.Utils.csproj" />
     <ProjectReference Include="..\Nameless.MongoDB.DependencyInjection\Nameless.MongoDB.DependencyInjection.csproj" />
   </ItemGroup>
 

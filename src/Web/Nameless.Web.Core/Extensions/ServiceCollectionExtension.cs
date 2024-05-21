@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using RootFromCore = Nameless.Root;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Web {
     public static class ServiceCollectionExtension {
@@ -30,11 +31,11 @@ namespace Nameless.Web {
                 .AddHttpContextAccessor();
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config)
-            => RegisterJwtAuth(self, config, opts => { });
+            => RegisterJwtAuth(self, config, _ => { });
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions> configureAuthorization) {
             var sectionName = nameof(JwtOptions)
-                .RemoveTail(RootFromCore.Defaults.OptionsSettingsTails);
+                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
             var options = config
                .GetSection(sectionName)
                .Get<JwtOptions>() ?? JwtOptions.Default;
@@ -63,8 +64,8 @@ namespace Nameless.Web {
             return self;
         }
 
-        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self)
-            => self.AddProblemDetails();
+        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self, Action<ProblemDetailsOptions>? opts = null)
+            => self.AddProblemDetails(opts);
 
         public static IServiceCollection RegisterRouting(this IServiceCollection self)
             => self
@@ -87,16 +88,15 @@ namespace Nameless.Web {
                         securityScheme: openApiSecurityScheme
                     );
 
-                    var openApiSecurityRequirement = new OpenApiSecurityRequirement();
-                    openApiSecurityRequirement.Add(
-                        key: new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = JwtBearerDefaults.AuthenticationScheme
-                            }
-                        },
-                        value: []
-                    );
+                    var openApiSecurityRequirement = new OpenApiSecurityRequirement { {
+                            new OpenApiSecurityScheme {
+                                Reference = new OpenApiReference {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = JwtBearerDefaults.AuthenticationScheme
+                                }
+                            }, []
+                        }
+                    };
                     configure.AddSecurityRequirement(openApiSecurityRequirement);
                 });
 

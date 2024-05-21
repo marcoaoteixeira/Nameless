@@ -44,7 +44,7 @@ namespace Nameless.ProducerConsumer {
         #region Public Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="Subscription"/>.
+        /// Initializes a new instance of <see cref="Registration{T}"/>.
         /// </summary>
         /// <param name="tag">The registration tag.</param>
         /// <param name="topic">The topic.</param>
@@ -56,8 +56,16 @@ namespace Nameless.ProducerConsumer {
             Topic = Guard.Against.Null(topic, nameof(topic));
 
             _method = handler.Method;
-            _ref = new(handler.Target);
+            _ref = new WeakReference(handler.Target);
             _isStatic = handler.Target is null;
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~Registration() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -72,18 +80,12 @@ namespace Nameless.ProducerConsumer {
             BlockAccessAfterDispose();
 
             if (GetRef().Target is not null && GetRef().IsAlive) {
-                return (MessageHandler<T>)GetMethod()
-                    .CreateDelegate(
-                        delegateType: typeof(MessageHandler<T>),
-                        target: GetRef().Target
-                    );
+                return (MessageHandler<T>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandler<T>),
+                                                                     target: GetRef().Target);
             }
 
             if (_isStatic) {
-                return (MessageHandler<T>)GetMethod()
-                    .CreateDelegate(
-                        delegateType: typeof(MessageHandler<T>)
-                    );
+                return (MessageHandler<T>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandler<T>));
             }
 
             return null;

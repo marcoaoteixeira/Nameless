@@ -1,14 +1,8 @@
 ﻿namespace Nameless.Lucene {
     public sealed class EmptySearchHit : ISearchHit {
-        #region Private Static Read-Only Fields
+        #region Public Static Read-Only Properties
 
-        private static readonly ISearchHit _instance = new EmptySearchHit();
-
-        #endregion
-
-        #region Public Static Properties
-
-        public static ISearchHit Instance => _instance;
+        public static ISearchHit Instance { get; } = new EmptySearchHit();
 
         #endregion
 

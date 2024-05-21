@@ -1,44 +1,34 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Localization.Microsoft.Json.Objects {
     /// <summary>
     /// This class represents a translation, in other words, a file for a culture.
     /// </summary>
-    public sealed class Translation {
+    [DebuggerDisplay("{Culture}")]
+    public sealed record Translation(string Culture, Region[] Regions) {
         #region Public Static Read-Only Properties
 
-        public static Translation Empty => new();
+        public static Translation Empty => new(string.Empty, []);
 
         #endregion
 
         #region Public Properties
 
-        public string Culture { get; set; } = string.Empty;
-        public HashSet<Region> Regions { get; set; } = [];
+        public string Culture { get; } = Culture;
+        public Region[] Regions { get; } = Regions;
 
         #endregion
 
         #region Public Methods
 
-        public bool TryGetValue(string name, [NotNullWhen(true)] out Region? output)
-            => Regions.TryGetValue(new() { Name = name }, out output);
+        public bool TryGetRegion(string name, [NotNullWhen(true)] out Region? output) {
+            var current = Regions.SingleOrDefault(item => name == item.Name);
 
-        public bool Equals(Translation? obj)
-            => obj is not null &&
-               obj.Culture == Culture;
+            output = current;
 
-        #endregion
-
-        #region Public Override Methods
-
-        public override bool Equals(object? obj)
-            => Equals(obj as Translation);
-
-        public override int GetHashCode()
-            => (Culture ?? string.Empty).GetHashCode();
-
-        public override string ToString()
-            => Culture;
+            return current is not null;
+        }
 
         #endregion
     }

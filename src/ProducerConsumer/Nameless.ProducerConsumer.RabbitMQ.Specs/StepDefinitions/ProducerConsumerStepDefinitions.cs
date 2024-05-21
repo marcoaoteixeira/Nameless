@@ -59,16 +59,15 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
         }
 
         [Given(@"the message value will be ""([^""]*)""")]
-        public void GivenTheMessageValueWillBe(string message) {
-            _expected = message;
-        }
+        public void GivenTheMessageValueWillBe(string message)
+            => _expected = message;
 
         [When(@"I call ProducerService ProduceAsync with that said message")]
         public async Task WhenICallProducerServiceProduceAsyncWithThatSaidMessage() {
             var args = new ProducerArgs();
             args.SetExchangeName(EXCHANGE_NAME);
 
-            await _producerService!.ProduceAsync(string.Empty, _expected!, args);
+            await _producerService!.ProduceAsync(string.Empty, _expected!, args, CancellationToken.None);
         }
 
         [Then(@"the handler created by ConsumerService Register should capture the message")]

@@ -11,10 +11,9 @@ namespace Nameless.Web.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
-            builder
-                .Register(JwtServiceResolver)
-                .As<IJwtService>()
-                .SingleInstance();
+            builder.Register(JwtServiceResolver)
+                   .As<IJwtService>()
+                   .SingleInstance();
 
             base.Load(builder);
         }

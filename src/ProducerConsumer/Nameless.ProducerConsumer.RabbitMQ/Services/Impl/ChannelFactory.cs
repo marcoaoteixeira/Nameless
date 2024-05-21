@@ -25,11 +25,19 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
         #region Public Constructors
 
         public ChannelFactory()
-            : this(RabbitMQOptions.Default, NullLogger.Instance) { }
+            : this(RabbitMQOptions.Default, NullLogger<ChannelFactory>.Instance) { }
 
-        public ChannelFactory(RabbitMQOptions options, ILogger logger) {
+        public ChannelFactory(RabbitMQOptions options, ILogger<ChannelFactory> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _logger = Guard.Against.Null(logger, nameof(logger));
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~ChannelFactory() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -75,12 +83,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
                     _connectionFactory.Ssl = new(_options.Server.Ssl.ServerName, enabled: _options.Server.Ssl.Enabled) {
                         Version = _options.Server.Ssl.Protocol,
                         AcceptablePolicyErrors = _options.Server.Ssl.PolicyError,
-                        CertificateSelectionCallback = (sender, targetHost, localCertificates, remoteCertificate, acceptableIssuers)
-                            => new(
-                            fileName: _options.Server.Certificate.Pfx,
-                            password: _options.Server.Certificate.Password
-                        ),
-                        CertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => {
+                        CertificateSelectionCallback = (_, _, _, _, _)
+                            => new X509Certificate(fileName: _options.Server.Certificate.Pfx,
+                                                   password: _options.Server.Certificate.Password),
+                        CertificateValidationCallback = (_, certificate, _, sslPolicyErrors) => {
                             if (certificate is null) {
                                 return false;
                             }
@@ -90,10 +96,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Services.Impl {
 
                             _logger
                                 .On(verdict)
-                                .LogInformation(
-                                    message: "Certificate error: {sslPolicyErrors}",
-                                    args: sslPolicyErrors
-                                );
+                                .LogInformation(message: "Certificate error: {SSLPolicyErrors}",
+                                                args: sslPolicyErrors);
 
                             return verdict;
                         }

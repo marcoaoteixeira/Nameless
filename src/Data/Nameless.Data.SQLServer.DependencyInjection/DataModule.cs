@@ -30,18 +30,11 @@ namespace Nameless.Data.SQLServer.DependencyInjection {
 
         #region Private Static Methods
 
-        private static DbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx) {
-            var result = new DbConnectionFactory(
-                options: ctx.GetPocoOptions<SQLServerOptions>()
-            );
-
-            return result;
-        }
+        private static DbConnectionFactory DbConnectionFactoryResolver(IComponentContext ctx)
+            => new(options: ctx.GetPocoOptions<SQLServerOptions>());
 
         private static Database DatabaseResolver(IComponentContext ctx) {
-            var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(
-                DB_CONNECTION_FACTORY_TOKEN
-            );
+            var dbConnectionFactory = ctx.ResolveNamed<IDbConnectionFactory>(DB_CONNECTION_FACTORY_TOKEN);
             var logger = ctx.GetLogger<Database>();
             var result = new Database(dbConnectionFactory, logger);
 

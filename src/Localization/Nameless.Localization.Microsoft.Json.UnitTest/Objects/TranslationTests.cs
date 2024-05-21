@@ -3,16 +3,14 @@
         [Test]
         public void TryGetValue_Should_Return_True_When_Region_Found() {
             // arrange
-            var sut = new Translation {
-                Regions = [
-                    new Region { Name = "Test A" },
-                    new Region { Name = "Test B" },
-                    new Region { Name = "Test C" }
-                ]
-            };
+            var sut = new Translation(string.Empty, [
+                new Region("Test A", []),
+                new Region("Test B", []),
+                new Region("Test C", []),
+            ]);
 
             // act
-            var found = sut.TryGetValue("Test B", out var actual);
+            var found = sut.TryGetRegion("Test B", out var actual);
 
             // assert
             Assert.Multiple(() => {
@@ -24,16 +22,14 @@
         [Test]
         public void TryGetValue_Should_Return_False_When_Region_Not_Found() {
             // arrange
-            var sut = new Translation {
-                Regions = [
-                    new Region { Name = "Test A" },
-                    new Region { Name = "Test B" },
-                    new Region { Name = "Test C" }
-                ]
-            };
+            var sut = new Translation(string.Empty, [
+                new Region("Test A", []),
+                new Region("Test B", []),
+                new Region("Test C", []),
+            ]);
 
             // act
-            var found = sut.TryGetValue("Error", out var actual);
+            var found = sut.TryGetRegion("Error", out var actual);
 
             // assert
             Assert.Multiple(() => {
@@ -46,8 +42,8 @@
         [TestCase("pt-BR", "en-US", false)]
         public void Equals_Should_Return_Corresponding_Result(string cultureX, string cultureY, bool expected) {
             // arrange
-            var translationX = new Translation { Culture = cultureX };
-            var translationY = new Translation { Culture = cultureY };
+            var translationX = new Translation(cultureX, []);
+            var translationY = new Translation(cultureY, []);
 
             // act
             var actual = translationX.Equals(translationY);
@@ -60,8 +56,8 @@
         [TestCase("pt-BR", "en-US", false)]
         public void GetHashCode_Should_Return_Corresponding_Result(string cultureX, string cultureY, bool expected) {
             // arrange
-            var translationX = new Translation { Culture = cultureX };
-            var translationY = new Translation { Culture = cultureY };
+            var translationX = new Translation(cultureX, []);
+            var translationY = new Translation(cultureY, []);
 
             // act
             var hashCodeX = translationX.GetHashCode();
@@ -69,19 +65,6 @@
 
             // assert
             Assert.That(hashCodeX == hashCodeY, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ToString_Should_Return_Culture() {
-            // arrange
-            const string expected = "en-US";
-            var translation = new Translation { Culture = expected };
-
-            // act
-            var actual = translation.ToString();
-
-            // assert
-            Assert.That(actual, Is.EqualTo(expected));
         }
     }
 }

@@ -6,10 +6,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Internal Static Methods
 
         internal static Envelope? GetEnvelope(this BasicDeliverEventArgs self)
-            => JsonSerializer
-                .Deserialize<Envelope>(
-                    self.Body.ToArray()
-                );
+            => JsonSerializer.Deserialize<Envelope>(self.Body.ToArray());
 
         #endregion
     }

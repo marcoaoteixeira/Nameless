@@ -32,10 +32,8 @@
         public DateTime GetUtcNow()
             => DateTime.UtcNow;
         public DateTimeOffset GetUtcNowOffset()
-            => new(new DateTime(
-                ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
-                kind: DateTimeKind.Utc
-            ));
+            => new(new DateTime(ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
+                                kind: DateTimeKind.Utc));
 
         #endregion
     }

@@ -18,7 +18,7 @@
 
         public string Name {
             get => _name ??= Root.Defaults.EXCHANGE_NAME;
-            set => _name = value ?? Root.Defaults.EXCHANGE_NAME;
+            set => _name = value;
         }
 
         public ExchangeType Type { get; set; }
@@ -29,12 +29,12 @@
 
         public Dictionary<string, object> Arguments {
             get => _arguments ??= [];
-            set => _arguments = value ?? [];
+            set => _arguments = value;
         }
 
         public QueueOptions[] Queues {
             get => _queues ??= [];
-            set => _queues = value ?? [];
+            set => _queues = value;
         }
 
         #endregion

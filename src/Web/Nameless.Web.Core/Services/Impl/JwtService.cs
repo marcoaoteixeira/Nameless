@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
@@ -23,15 +24,15 @@ namespace Nameless.Web.Services.Impl {
         #region Public Constructors
 
         public JwtService()
-            : this(JwtOptions.Default, SystemClock.Instance, NullLogger.Instance) { }
+            : this(JwtOptions.Default, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
 
         public JwtService(JwtOptions options)
-            : this(options, SystemClock.Instance, NullLogger.Instance) { }
+            : this(options, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
 
         public JwtService(JwtOptions options, IClock clock)
-            : this(options, clock, NullLogger.Instance) { }
+            : this(options, clock, NullLogger<JwtService>.Instance) { }
 
-        public JwtService(JwtOptions options, IClock clock, ILogger logger) {
+        public JwtService(JwtOptions options, IClock clock, ILogger<JwtService> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _clock = Guard.Against.Null(clock, nameof(clock));
             _logger = Guard.Against.Null(logger, nameof(logger));
@@ -49,12 +50,12 @@ namespace Nameless.Web.Services.Impl {
                 Issuer = _options.Issuer,
                 Audience = _options.Audience,
                 Claims = new Dictionary<string, object> {
-                    { MS_JwtRegisteredClaimNames.Exp, expires.ToString() },
-                    { MS_JwtRegisteredClaimNames.Iat, now.ToString() },
+                    { MS_JwtRegisteredClaimNames.Exp, expires.ToString(CultureInfo.InvariantCulture) },
+                    { MS_JwtRegisteredClaimNames.Iat, now.ToString(CultureInfo.InvariantCulture) },
                     { MS_JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() }
                 },
                 Expires = expires,
-                SigningCredentials = new(
+                SigningCredentials = new SigningCredentials(
                     key: new SymmetricSecurityKey(_options.Secret.GetBytes()),
                     algorithm: SecurityAlgorithms.HmacSha256Signature
                 )
@@ -64,10 +65,8 @@ namespace Nameless.Web.Services.Impl {
             var dictionary = claims.ToDictionary();
             foreach (var kvp in dictionary) {
                 if (!tokenDescriptor.Claims.TryAdd(kvp.Key, kvp.Value)) {
-                    _logger.LogInformation(
-                        message: "Claim not added to token descriptor. {ClaimType}",
-                        args: kvp.Key
-                    );
+                    _logger.LogInformation(message: "Claim not added to token descriptor. {ClaimType}",
+                                           args: kvp.Key);
                 }
             }
 
@@ -93,11 +92,9 @@ namespace Nameless.Web.Services.Impl {
 
             try {
                 principal = new JwtSecurityTokenHandler()
-                    .ValidateToken(
-                        token: token,
-                        validationParameters: _options.GetTokenValidationParameters(),
-                        validatedToken: out var securityToken
-                    );
+                    .ValidateToken(token: token,
+                                   validationParameters: _options.GetTokenValidationParameters(),
+                                   validatedToken: out var securityToken);
 
                 var validate = securityToken is JwtSecurityToken jwtSecurityToken &&
                     jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
@@ -105,13 +102,7 @@ namespace Nameless.Web.Services.Impl {
                 if (!validate) { principal = null; }
 
                 return validate;
-            } catch (Exception ex) {
-                _logger.LogError(
-                    exception: ex,
-                    message: "{Message}",
-                    args: ex.Message
-                );
-            }
+            } catch (Exception ex) { _logger.LogError(ex, "Error while validation JWT"); }
 
             return false;
         }

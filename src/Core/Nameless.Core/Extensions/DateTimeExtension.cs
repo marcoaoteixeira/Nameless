@@ -29,7 +29,7 @@
         /// <param name="year">The year</param>
         /// <param name="month">The month</param>
         /// <param name="ordinal">The ordinal number for the working day, example 5.</param>
-        /// <param name="holidays">An list of holidays, for the specified month</param>
+        /// <param name="holidays">A list of holidays, for the specified month</param>
         /// <returns>The number of the first working day of the given month and year.</returns>
         public static int GetFirstWorkingDay(int year, int month, int ordinal, params int[] holidays) {
             var day = 1;

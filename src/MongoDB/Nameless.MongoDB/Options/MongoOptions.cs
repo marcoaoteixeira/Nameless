@@ -19,7 +19,7 @@
         public string? Database { get; set; }
         public CredentialsOptions Credentials {
             get => _credentials ??= CredentialsOptions.Default;
-            set => _credentials = value ?? CredentialsOptions.Default;
+            set => _credentials = value;
         }
 
         #endregion

@@ -29,7 +29,7 @@
 
         public Dictionary<string, object> Arguments {
             get => _arguments ??= [];
-            set => _arguments = value ?? [];
+            set => _arguments = value;
         }
 
         public BindingOptions[] Bindings {

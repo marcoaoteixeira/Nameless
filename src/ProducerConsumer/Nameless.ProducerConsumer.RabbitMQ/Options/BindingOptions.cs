@@ -17,12 +17,12 @@
 
         public string RoutingKey {
             get => _routingKey ??= string.Empty;
-            set => _routingKey = value ?? string.Empty;
+            set => _routingKey = value;
         }
 
         public Dictionary<string, object> Arguments {
             get => _arguments ??= [];
-            set => _arguments = value ?? [];
+            set => _arguments = value;
         }
 
         #endregion

@@ -14,9 +14,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public ProducerService(IModel channel)
-            : this(channel, NullLogger.Instance) { }
+            : this(channel, NullLogger<ProducerService>.Instance) { }
 
-        public ProducerService(IModel channel, ILogger logger) {
+        public ProducerService(IModel channel, ILogger<ProducerService> logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
             _logger = Guard.Against.Null(logger, nameof(logger));
         }
@@ -26,12 +26,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Static Methods
 
         private static Envelope CreateEnvelope(object message, IBasicProperties properties)
-            => new() {
-                Message = message,
-                MessageId = properties.MessageId,
-                CorrelationId = properties.CorrelationId,
-                PublishedAt = DateTime.UtcNow
-            };
+            => new(Message: message,
+                   MessageId: properties.MessageId,
+                   CorrelationId: properties.CorrelationId,
+                   PublishedAt: DateTime.UtcNow);
 
         private static IBasicProperties CreateProperties(IModel channel, ProducerArgs innerArgs)
             => channel
@@ -42,7 +40,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         #region IProducerService Members
 
-        public Task ProduceAsync(string topic, object message, ProducerArgs? args, CancellationToken cancellationToken) {
+        public Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default) {
             var innerArgs = args ?? ProducerArgs.Empty;
             var properties = CreateProperties(_channel, innerArgs);
             var envelope = CreateEnvelope(message, properties);
@@ -53,17 +51,15 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 var buffer = envelope.CreateBuffer();
 
                 foreach (var routingKey in routingKeys) {
-                    batch.Add(
-                        exchange: innerArgs.GetExchangeName(),
-                        routingKey: topic,
-                        mandatory: innerArgs.GetMandatory(),
-                        properties: properties,
-                        body: buffer
-                    );
+                    batch.Add(exchange: innerArgs.GetExchangeName(),
+                              routingKey: routingKey,
+                              mandatory: innerArgs.GetMandatory(),
+                              properties: properties,
+                              body: buffer);
                 }
 
                 batch.Publish();
-            } catch (Exception ex) { _logger.LogError(ex, "{Message}", ex.Message); throw; }
+            } catch (Exception ex) { _logger.LogError(ex, "Error while publishing message."); throw; }
 
             return Task.CompletedTask;
         }

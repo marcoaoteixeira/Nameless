@@ -329,8 +329,6 @@ namespace Nameless.Data {
         #region Private Read-Only Methods
 
         private static object? SafeGetValue(IDataRecord row, string columnName) {
-            if (row is null) { return null; }
-
             object? result;
 
             try { result = row[columnName]; } catch { result = null; }

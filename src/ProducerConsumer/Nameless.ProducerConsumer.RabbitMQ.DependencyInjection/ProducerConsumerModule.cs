@@ -38,14 +38,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
 
         #region Private Static Methods
 
-        private static ChannelFactory ChannelFactoryResolver(IComponentContext ctx) {
-            var result = new ChannelFactory(
-                options: ctx.GetPocoOptions<RabbitMQOptions>(),
-                logger: ctx.GetLogger<ChannelFactory>()
-            );
-
-            return result;
-        }
+        private static ChannelFactory ChannelFactoryResolver(IComponentContext ctx)
+            => new (options: ctx.GetPocoOptions<RabbitMQOptions>(),
+                    logger: ctx.GetLogger<ChannelFactory>());
 
         private static IModel ChannelResolver(IComponentContext ctx) {
             var channelFactory = ctx
@@ -60,7 +55,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
             var channel = args.Instance;
 
             // when we declare a exchange/queue, if the exchange/queue
-            // doesn't exists, it will be created for us. Otherwise
+            // doesn't exist, it will be created for us. Otherwise,
             // RabbitMQ will just ignore.
 
             foreach (var exchange in options.Exchanges) {
@@ -80,30 +75,24 @@ namespace Nameless.ProducerConsumer.RabbitMQ.DependencyInjection {
         }
 
         private static void DeclareBinding(IModel channel, ExchangeOptions exchange, QueueOptions queue, BindingOptions binding)
-            => channel.QueueBind(
-                queue: queue.Name,
-                exchange: exchange.Name,
-                routingKey: binding.RoutingKey,
-                arguments: binding.Arguments
-            );
+            => channel.QueueBind(queue: queue.Name,
+                                 exchange: exchange.Name,
+                                 routingKey: binding.RoutingKey,
+                                 arguments: binding.Arguments);
 
         private static void DeclareQueue(IModel channel, QueueOptions queue)
-            => channel.QueueDeclare(
-                queue: queue.Name,
-                durable: queue.Durable,
-                exclusive: queue.Exclusive,
-                autoDelete: queue.AutoDelete,
-                arguments: queue.Arguments
-            );
+            => channel.QueueDeclare(queue: queue.Name,
+                                    durable: queue.Durable,
+                                    exclusive: queue.Exclusive,
+                                    autoDelete: queue.AutoDelete,
+                                    arguments: queue.Arguments);
 
         private static void DeclareExchange(IModel channel, ExchangeOptions exchange)
-            => channel.ExchangeDeclare(
-                exchange: exchange.Name,
-                type: exchange.Type.GetDescription(),
-                durable: exchange.Durable,
-                autoDelete: exchange.AutoDelete,
-                arguments: exchange.Arguments
-            );
+            => channel.ExchangeDeclare(exchange: exchange.Name,
+                                       type: exchange.Type.GetDescription(),
+                                       durable: exchange.Durable,
+                                       autoDelete: exchange.AutoDelete,
+                                       arguments: exchange.Arguments);
         #endregion
     }
 

@@ -1,4 +1,6 @@
-﻿namespace Nameless {
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless {
     /// <summary>
     /// <see cref="Array"/> extension methods
     /// </summary>
@@ -13,17 +15,15 @@
         /// <param name="index">The index</param>
         /// <param name="output">The output value for the index</param>
         /// <returns><c>true</c> if the value in the specified index was found; otherwise <c>false</c></returns>
-        public static bool TryElementAt<T>(this T[] self, int index, out T? output) {
+        public static bool TryGetElementAt<T>(this T[] self, int index, out T? output) {
             output = default;
 
-            if (self is null) { return false; }
-
-            if (self.Length > index) {
-                output = self[index];
-                return true;
+            if (self.Length <= index) {
+                return false;
             }
 
-            return false;
+            output = self[index];
+            return true;
         }
 
         #endregion

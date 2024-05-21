@@ -16,19 +16,15 @@ namespace Nameless.FluentValidation.DependencyInjection {
         #region Protected Override Methods
 
         protected override void Load(ContainerBuilder builder) {
-            AssemblyScanner
-                .FindValidatorsInAssemblies(SupportAssemblies)
-                .ForEach(result => builder
-                    .RegisterType(result.ValidatorType)
-                    .As(result.ValidatorType)
-                    .As(result.InterfaceType)
-                    .InstancePerLifetimeScope()
-                );
+            AssemblyScanner.FindValidatorsInAssemblies(SupportAssemblies)
+                           .ForEach(result => builder.RegisterType(result.ValidatorType)
+                                                     .As(result.ValidatorType)
+                                                     .As(result.InterfaceType)
+                                                     .InstancePerLifetimeScope());
 
-            builder
-                .Register(ValidatorManagerResolver)
-                .As<IValidatorManager>()
-                .InstancePerLifetimeScope();
+            builder.Register(ValidatorManagerResolver)
+                   .As<IValidationService>()
+                   .InstancePerLifetimeScope();
 
             base.Load(builder);
         }
@@ -37,10 +33,10 @@ namespace Nameless.FluentValidation.DependencyInjection {
 
         #region Private Static Methods
 
-        private static IValidatorManager ValidatorManagerResolver(IComponentContext ctx) {
+        private static IValidationService ValidatorManagerResolver(IComponentContext ctx) {
             var validators = ctx.Resolve<IValidator[]>();
-            var logger = ctx.GetLogger<ValidatorManager>();
-            var result = new ValidatorManager(validators, logger);
+            var logger = ctx.GetLogger<ValidationService>();
+            var result = new ValidationService(validators, logger);
 
             return result;
         }

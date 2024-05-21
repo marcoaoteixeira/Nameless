@@ -88,10 +88,8 @@ namespace Nameless.Lucene.Impl {
                     foreach (var document in batch) {
                         query.Add(new BooleanClause(
                             query: new TermQuery(
-                                t: new Term(
-                                    fld: nameof(ISearchHit.DocumentID),
-                                    text: document.ID
-                                )
+                                t: new Term(fld: nameof(ISearchHit.DocumentID),
+                                            text: document.ID)
                             ),
                             occur: Occur.SHOULD
                         ));
@@ -183,6 +181,7 @@ namespace Nameless.Lucene.Impl {
                 writer.PrepareCommit();
                 writer.Commit();
 
+                // TODO: Try improve here.
                 // unfortunately, given the nature of IndexReader,
                 // we need to dispose it after changes in the index,
                 // like store or delete documents.

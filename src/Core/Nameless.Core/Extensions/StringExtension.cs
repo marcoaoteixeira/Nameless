@@ -28,9 +28,8 @@ namespace Nameless {
                     stringBuilder.Append(@char);
                 }
             }
-            return stringBuilder
-                .ToString()
-                .Normalize(NormalizationForm.FormC);
+            return stringBuilder.ToString()
+                                .Normalize(NormalizationForm.FormC);
         }
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace Nameless {
         /// <param name="times">Times to repeat.</param>
         /// <returns>A new <see cref="string"/> representing the <paramref name="self"/> repeated N times.</returns>
         public static string Repeat(this string self, int times) {
-            if (self is null || times <= 0) { return self ?? string.Empty; }
+            if (times <= 0) { return self; }
 
             var builder = new StringBuilder();
             for (var counter = 0; counter < times; counter++) {
@@ -124,9 +123,9 @@ namespace Nameless {
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static byte[] FromHexToByteArray(this string self)
             => Enumerable.Range(0, self.Length)
-                .Where(_ => _ % 2 == 0)
-                .Select(_ => Convert.ToByte(self.Substring(_, 2), fromBase: 16 /* hexadecimal */ ))
-                .ToArray();
+                         .Where(index => index % 2 == 0)
+                         .Select(index => Convert.ToByte(self.Substring(index, 2), fromBase: 16 /* hexadecimal */ ))
+                         .ToArray();
 
         /// <summary>
         /// Replaces all occurrences from <paramref name="self"/> with the values presents
@@ -139,7 +138,7 @@ namespace Nameless {
         public static string ReplaceAll(this string self, IDictionary<string, string> replacements) {
             Guard.Against.Null(replacements, nameof(replacements));
 
-            var pattern = string.Format("{0}", string.Join("|", replacements.Keys));
+            var pattern = $"{string.Join("|", replacements.Keys)}";
 
             return Regex.Replace(self, pattern, match => replacements[match.Value]);
         }
@@ -174,8 +173,8 @@ namespace Nameless {
         public static string Strip(this string self, params char[] chars) {
             var result = new char[self.Length];
             var cursor = 0;
-            for (var idx = 0; idx < self.Length; idx++) {
-                var current = self[idx];
+            
+            foreach (var current in self) {
                 if (Array.IndexOf(chars, current) < 0) {
                     result[cursor++] = current;
                 }
@@ -198,8 +197,7 @@ namespace Nameless {
             var result = new char[self.Length];
             var cursor = 0;
 
-            for (var idx = 0; idx < self.Length; idx++) {
-                var current = self[idx];
+            foreach (var current in self) {
                 if (!predicate(current)) {
                     result[cursor++] = current;
                 }
@@ -221,8 +219,7 @@ namespace Nameless {
 
             if (chars.Length == 0) { return false; }
 
-            for (var idx = 0; idx < self.Length; idx++) {
-                var current = self[idx];
+            foreach (var current in self) {
                 if (Array.IndexOf(chars, current) >= 0) {
                     return true;
                 }
@@ -242,8 +239,7 @@ namespace Nameless {
         public static bool All(this string self, params char[] chars) {
             Guard.Against.Null(chars, nameof(chars));
 
-            for (var idx = 0; idx < self.Length; idx++) {
-                var current = self[idx];
+            foreach (var current in self) {
                 if (Array.IndexOf(chars, current) < 0) {
                     return false;
                 }
@@ -280,9 +276,7 @@ namespace Nameless {
             for (var idx = 0; idx < self.Length; idx++) {
                 var current = self[idx];
 
-                result[idx] = map.TryGetValue(current, out var value)
-                    ? value
-                    : current;
+                result[idx] = map.GetValueOrDefault(current, current);
             }
             return new string(result);
         }
@@ -327,9 +321,7 @@ namespace Nameless {
 
             var cursor = 0;
             var inside = false;
-            for (var idx = 0; idx < self.Length; idx++) {
-                var current = self[idx];
-
+            foreach (var current in self) {
                 switch (current) {
                     case '<':
                         inside = true;

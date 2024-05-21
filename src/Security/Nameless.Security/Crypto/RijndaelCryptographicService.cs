@@ -58,7 +58,7 @@ namespace Nameless.Security.Crypto {
             // Get bytes of salt (used in hashing).
             var saltValueBytes = Encoding.ASCII.GetBytes(_options.Salt);
 
-            byte[]? keyBytes = null;
+            byte[]? keyBytes;
             // Generate password, which will be used to derive the key.
             using (var password = new Rfc2898DeriveBytes(_options.Passphrase, saltValueBytes, _options.PasswordIterations, HashAlgorithmName.SHA256)) {
                 // Convert key to a byte array adjusting the size from bits to bytes.
@@ -74,6 +74,14 @@ namespace Nameless.Security.Crypto {
 
             _encryptor = symmetricKey.CreateEncryptor(keyBytes, ivBytes);
             _decryptor = symmetricKey.CreateDecryptor(keyBytes, ivBytes);
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~RijndaelCryptographicService() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -160,7 +168,7 @@ namespace Nameless.Security.Crypto {
             _disposed = true;
         }
 
-        private void BlockAccesAfterDispose() {
+        private void BlockAccessAfterDispose() {
             if (_disposed) {
                 throw new ObjectDisposedException(nameof(RijndaelCryptographicService));
             }
@@ -173,10 +181,10 @@ namespace Nameless.Security.Crypto {
         /// <summary>
         /// Generates random integer.
         /// </summary>
-        /// <param name="minimunValue">
+        /// <param name="minimumValue">
         /// Min value (inclusive).
         /// </param>
-        /// <param name="maximunValue">
+        /// <param name="maximumValue">
         /// Max value (inclusive).
         /// </param>
         /// <returns>
@@ -187,7 +195,7 @@ namespace Nameless.Security.Crypto {
         /// class, which - when initialized multiple times within a very short
         /// period of time - can generate the same "random" number.
         /// </remarks>
-        private static int GenerateRandomNumber(int minimunValue, int maximunValue) {
+        private static int GenerateRandomNumber(int minimumValue, int maximumValue) {
             // We will make up an integer seed from 4 bytes of this array.
             var randomBytes = new byte[4];
 
@@ -203,7 +211,7 @@ namespace Nameless.Security.Crypto {
 
             // Now, this looks more like real randomization.
             // And, calculate a random number.
-            return new Random(seed).Next(minimunValue, maximunValue + 1);
+            return new Random(seed).Next(minimumValue, maximumValue + 1);
         }
 
         #endregion
@@ -214,7 +222,7 @@ namespace Nameless.Security.Crypto {
         public byte[] Encrypt(Stream stream) {
             Guard.Against.Null(stream, nameof(stream));
 
-            BlockAccesAfterDispose();
+            BlockAccessAfterDispose();
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return []; }
@@ -242,13 +250,13 @@ namespace Nameless.Security.Crypto {
         public byte[] Decrypt(Stream stream) {
             Guard.Against.Null(stream, nameof(stream));
 
-            BlockAccesAfterDispose();
+            BlockAccessAfterDispose();
 
             if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
             if (stream.Length == 0) { return []; }
 
             byte[] decryptedBytes;
-            var decryptedByteCount = 0;
+            int decryptedByteCount;
             var saltLength = 0;
 
             // Let's make cryptographic operations thread-safe.
@@ -283,7 +291,11 @@ namespace Nameless.Security.Crypto {
             var plainTextBytes = new byte[decryptedByteCount - saltLength];
 
             // Copy original plain text discarding the salt value if needed.
-            Array.Copy(decryptedBytes, saltLength, plainTextBytes, 0, decryptedByteCount - saltLength);
+            Array.Copy(sourceArray: decryptedBytes,
+                       sourceIndex: saltLength,
+                       destinationArray: plainTextBytes,
+                       destinationIndex: 0,
+                       length: decryptedByteCount - saltLength);
 
             // Return original plain text value.
             return plainTextBytes;

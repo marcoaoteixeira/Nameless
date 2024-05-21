@@ -77,11 +77,9 @@ namespace Nameless.NHibernate.DependencyInjection {
             }
 
             var appContext = ctx.Resolve<IApplicationContext>();
-            var outputFilePath = Path.Combine(
-                appContext.ApplicationDataFolderPath,
-                options.SchemaExport.OutputFolderName,
-                $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.txt"
-            );
+            var outputFilePath = Path.Combine(appContext.ApplicationDataFolderPath,
+                                              options.SchemaExport.OutputFolderName,
+                                              $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.txt");
 
             using var writer = options.SchemaExport.FileOutput
                 ? File.CreateText(outputFilePath)
@@ -91,13 +89,11 @@ namespace Nameless.NHibernate.DependencyInjection {
             var configuration = ctx
                 .ResolveNamed<IConfigurationFactory>(CONFIGURATION_FACTORY_TOKEN)
                 .CreateConfiguration();
-            new SchemaExport(configuration).Execute(
-                useStdOut: options.SchemaExport.ConsoleOutput,
-                execute: true,
-                justDrop: false,
-                connection: session.Connection,
-                exportOutput: writer
-            );
+            new SchemaExport(configuration).Execute(useStdOut: options.SchemaExport.ConsoleOutput,
+                                                    execute: true,
+                                                    justDrop: false,
+                                                    connection: session.Connection,
+                                                    exportOutput: writer);
         }
 
         #endregion

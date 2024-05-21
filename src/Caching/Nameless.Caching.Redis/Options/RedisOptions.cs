@@ -20,36 +20,27 @@
         public int Port { get; set; } = 6379;
 
         /// <summary>
-        /// Gets the user name. This property is provided by the environment
+        /// Gets the username. This property is provided by the environment
         /// variable <see cref="Root.EnvTokens.REDIS_USER"/>.
         /// </summary>
-        public string? Username { get; }
+        public string? Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_USER);
 
         /// <summary>
         /// Gets the password. This property is provided by the environment
         /// variable <see cref="Root.EnvTokens.REDIS_PASS"/>.
         /// </summary>
-        public string? Password { get; }
+        public string? Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_PASS);
 
         public int KeepAlive { get; set; } = -1;
 
         public SslOptions Ssl {
             get => _ssl ??= SslOptions.Default;
-            set => _ssl = value ?? SslOptions.Default;
+            set => _ssl = value;
         }
 
         public CertificateOptions Certificate {
             get => _certificate ??= CertificateOptions.Default;
-            set => _certificate = value ?? CertificateOptions.Default;
-        }
-
-        #endregion
-
-        #region Public Constructors
-
-        public RedisOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_USER);
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_PASS);
+            set => _certificate = value;
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿namespace Nameless.MongoDB {
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class CollectionNameAttribute : Attribute {
         #region Public Read-Only Properties
 

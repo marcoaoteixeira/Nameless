@@ -7,17 +7,15 @@ namespace Nameless.Web {
 
         public static ErrorCollection ToErrorCollection(this ModelStateDictionary self) {
             var result = new ErrorCollection();
-            foreach (var kvp in self) {
-                var code = kvp.Key;
+            foreach (var (key, value) in self) {
+                var messageProblems = value.Errors
+                                           .Where(error => !string.IsNullOrWhiteSpace(error.ErrorMessage))
+                                           .Select(error => error.ErrorMessage);
 
-                var messageProblems = kvp.Value.Errors
-                    .Where(_ => !string.IsNullOrWhiteSpace(_.ErrorMessage))
-                    .Select(_ => _.ErrorMessage);
+                var exceptionProblems = value.Errors
+                                             .SelectMany(error => GetProblemsFromException(error.Exception).ToArray());
 
-                var exceptionProblems = kvp.Value.Errors
-                    .SelectMany(_ => GetProblemsFromException(_.Exception).ToArray());
-
-                result.Push(code, messageProblems.Concat(exceptionProblems).ToArray());
+                result.Push(key, messageProblems.Concat(exceptionProblems).ToArray());
             }
             return result;
         }

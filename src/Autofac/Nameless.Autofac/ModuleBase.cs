@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Autofac;
 
 namespace Nameless.Autofac {
     public abstract class ModuleBase : global::Autofac.Module {
@@ -70,11 +69,9 @@ namespace Nameless.Autofac {
 
             return SupportAssemblies
                 .SelectMany(assembly => assembly.GetExportedTypes())
-                .Where(type => !type.IsInterface &&
-                               !type.IsAbstract &&
+                .Where(type => type is { IsInterface: false, IsAbstract: false } &&
                                !type.HasAttribute<SingletonAttribute>() &&
-                               (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type))
-                );
+                               (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type)));
         }
 
         #endregion

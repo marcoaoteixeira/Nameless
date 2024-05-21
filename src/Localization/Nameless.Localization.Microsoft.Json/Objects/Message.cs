@@ -1,30 +1,18 @@
-﻿namespace Nameless.Localization.Microsoft.Json.Objects {
-    public sealed class Message {
+﻿using System.Diagnostics;
+
+namespace Nameless.Localization.Microsoft.Json.Objects {
+    [DebuggerDisplay("{ID}: {Text}")]
+    public sealed record Message(string ID, string Text) {
+        #region Public Static Read-Only Properties
+
+        public static Message Empty => new(string.Empty, string.Empty);
+
+        #endregion
+
         #region Public Properties
 
-        public string ID { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
-
-        #endregion
-
-        #region Public Methods
-
-        public bool Equals(Message? obj)
-            => obj is not null &&
-               obj.ID == ID;
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override bool Equals(object? obj)
-            => Equals(obj as Message);
-
-        public override int GetHashCode()
-            => (ID ?? string.Empty).GetHashCode();
-
-        public override string ToString()
-            => $"{ID} : {Text}";
+        public string ID { get; } = ID;
+        public string Text { get; } = Text;
 
         #endregion
     }

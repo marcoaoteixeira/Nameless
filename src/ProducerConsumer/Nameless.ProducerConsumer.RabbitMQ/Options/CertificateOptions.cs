@@ -16,16 +16,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         public string Pem { get; set; } = string.Empty;
 
-        public string Password { get; } = string.Empty;
-
-        #endregion
-
-        #region Public Constructors
-
-        public CertificateOptions() {
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PASS)
-                ?? string.Empty;
-        }
+        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PASS)
+                                       ?? string.Empty;
 
         #endregion
 

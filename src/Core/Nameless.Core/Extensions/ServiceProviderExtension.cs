@@ -33,15 +33,13 @@ namespace Nameless {
 
             // ok, no good. let's try get from the configuration
             var configuration = self.GetService<IConfiguration>();
-            var sectionName = typeof(TOptions)
-                .Name
-                .RemoveTail(Root.Defaults.OptionsSettingsTails);
+            var sectionName = typeof(TOptions).Name
+                                              .RemoveTail(Root.Defaults.OptionsSettingsTails);
 
             TOptions? result = default;
             if (configuration is not null) {
-                result = configuration
-                    .GetSection(sectionName)
-                    .Get<TOptions>();
+                result = configuration.GetSection(sectionName)
+                                      .Get<TOptions>();
             }
 
             // returns from configuration or build.

@@ -11,10 +11,10 @@ namespace Nameless.Web.Filters {
 
         /// <inheritdoc />
         public override void OnActionExecuting(ActionExecutingContext context) {
-            if (!context.ModelState.IsValid) {
-                var errorCollection = context.ModelState.ToErrorCollection();
-                context.Result = new BadRequestObjectResult(errorCollection);
-            }
+            if (context.ModelState.IsValid) { return; }
+
+            var errorCollection = context.ModelState.ToErrorCollection();
+            context.Result = new BadRequestObjectResult(errorCollection);
         }
 
         #endregion

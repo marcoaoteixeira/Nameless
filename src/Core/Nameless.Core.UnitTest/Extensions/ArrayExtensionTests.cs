@@ -7,7 +7,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            ArrayExtension.TryElementAt(array, 1, out var item);
+            ArrayExtension.TryGetElementAt(array, 1, out var item);
 
             // assert
             Assert.That(item, Is.EqualTo(2));
@@ -19,7 +19,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            var exists = ArrayExtension.TryElementAt(array, 1, out var item);
+            var exists = ArrayExtension.TryGetElementAt(array, 1, out var item);
 
             // assert
             Assert.Multiple(() => {
@@ -34,22 +34,7 @@
             var array = new[] { 1, 2, 3 };
 
             // act
-            var exists = ArrayExtension.TryElementAt(array, 5, out var item);
-
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(item, Is.EqualTo(default(int)));
-                Assert.That(exists, Is.False);
-            });
-        }
-
-        [Test]
-        public void If_Array_Is_Null_Returns_False_And_Output_Default() {
-            // arrange
-            int[] array = default!;
-
-            // act
-            var exists = ArrayExtension.TryElementAt(array, 5, out var item);
+            var exists = ArrayExtension.TryGetElementAt(array, 5, out var item);
 
             // assert
             Assert.Multiple(() => {

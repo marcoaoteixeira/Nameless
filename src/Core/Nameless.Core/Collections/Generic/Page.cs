@@ -29,7 +29,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="items">The <see cref="IEnumerable{T}"/> that will provide the items to this page.</param>
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
-        public Page(IEnumerable<T> items, int index = 0, int size = 10)
+        public Page(IEnumerable<T>? items, int index = 0, int size = 10)
             : this((items ?? []).AsQueryable(), index, size) { }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Nameless.Collections.Generic {
         /// <param name="index">The page index. Default is 0 (zero).</param>
         /// <param name="size">The page desired size. Default is 10.</param>
         /// <returns>An instance of <see cref="Page{T}"/>.</returns>
-        public static IPage<T> AsPage<T>(this IEnumerable<T> self, int index = 0, int size = 10)
+        public static IPage<T> AsPage<T>(this IEnumerable<T>? self, int index = 0, int size = 10)
             => new Page<T>(self, index, size);
 
         /// <summary>

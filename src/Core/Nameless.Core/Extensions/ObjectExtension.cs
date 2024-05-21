@@ -17,11 +17,10 @@ namespace Nameless {
         public static bool IsAnonymous(this object self) {
             var type = self as Type ?? self.GetType();
 
-            return
-                type.GetCustomAttribute<CompilerGeneratedAttribute>(inherit: true) is not null &&
-                type.IsGenericType &&
-                type.Name.Contains("AnonymousType") &&
-                (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"));
+            return type.GetCustomAttribute<CompilerGeneratedAttribute>(inherit: true) is not null &&
+                   type.IsGenericType &&
+                   type.Name.Contains("AnonymousType") &&
+                   (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"));
         }
 
         #endregion

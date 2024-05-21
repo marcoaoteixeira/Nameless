@@ -6,6 +6,7 @@
         /// Executes an asynchronous method synchronous.
         /// </summary>
         /// <param name="function">The async method.</param>
+        /// <param name="millisecondsTimeout">Timeout in milliseconds. Value <c>-1</c> indicates <c>no timeout</c>.</param>
         public static void RunSync(Func<Task> function, int millisecondsTimeout = -1)
             => Task.WaitAny(
                 tasks: [function()],
@@ -17,11 +18,12 @@
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="function">The async method.</param>
+        /// <param name="millisecondsTimeout">Timeout in milliseconds. Value <c>-1</c> indicates <c>no timeout</c>.</param>
         public static TResult RunSync<TResult>(Func<Task<TResult>> function, int millisecondsTimeout = -1) {
             var task = function();
 
             Task.WaitAny(
-                tasks: new[] { task },
+                tasks: [task],
                 cancellationToken: GenerateCancellationToken(millisecondsTimeout)
             );
 

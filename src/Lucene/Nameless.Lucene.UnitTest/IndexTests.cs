@@ -3,7 +3,6 @@ using Moq;
 using Nameless.Infrastructure;
 using Nameless.Lucene.DependencyInjection;
 using Nameless.Lucene.Impl;
-using Nameless.Test.Utils;
 
 namespace Nameless.Lucene {
     public class IndexTests {

@@ -23,11 +23,19 @@ namespace Nameless.Caching.Redis {
         #region Public Constructors
 
         public RedisCache(ConfigurationOptions configurationOptions)
-            : this(configurationOptions, NullLogger.Instance) { }
+            : this(configurationOptions, NullLogger<RedisCache>.Instance) { }
 
-        public RedisCache(ConfigurationOptions configurationOptions, ILogger logger) {
+        public RedisCache(ConfigurationOptions configurationOptions, ILogger<RedisCache> logger) {
             _configurationOptions = Guard.Against.Null(configurationOptions, nameof(configurationOptions));
             _logger = Guard.Against.Null(logger, nameof(logger));
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~RedisCache() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -49,10 +57,7 @@ namespace Nameless.Caching.Redis {
         }
 
         private void Dispose(bool disposing) {
-            if (_disposed) {
-                return;
-            }
-
+            if (_disposed) { return; }
             if (disposing) {
                 _multiplexer?.Dispose();
             }
@@ -66,13 +71,12 @@ namespace Nameless.Caching.Redis {
 
         #region ICache Members
 
-        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts, CancellationToken cancellationToken = default) {
+        public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var innerOpts = opts is null ? new() : opts;
-
+            var innerOpts = opts ?? CacheEntryOptions.Empty;
             var json = JsonSerializer.Serialize(value);
             var expiry = innerOpts.ExpiresIn != default
                 ? (TimeSpan?)innerOpts.ExpiresIn
@@ -82,14 +86,13 @@ namespace Nameless.Caching.Redis {
                 _logger.LogInformation($"It's not possible to configure eviction callbacks for {nameof(RedisCache)}.");
             }
 
-            return GetDatabase().StringSetAsync(
-                key: key,
-                value: json,
-                expiry: expiry,
-                keepTtl: false,
-                when: When.Always,
-                flags: CommandFlags.None
-            );
+            return GetDatabase()
+                .StringSetAsync(key: key,
+                                value: json,
+                                expiry: expiry,
+                                keepTtl: false,
+                                when: When.Always,
+                                flags: CommandFlags.None);
         }
 
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {

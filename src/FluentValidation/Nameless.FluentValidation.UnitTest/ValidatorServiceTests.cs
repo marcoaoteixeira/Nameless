@@ -24,7 +24,7 @@ namespace Nameless.FluentValidation {
             return validatorMock;
         }
 
-        private static Mock<ILogger> CreateLoggerMock()
+        private static Mock<ILogger<ValidationService>> CreateLoggerMock()
             => new();
 
         [Test]
@@ -39,7 +39,7 @@ namespace Nameless.FluentValidation {
                 .As<IValidator>();
 
             var container = builder.Build();
-            var sut = new ValidatorManager(
+            var sut = new ValidationService(
                 validators: container.Resolve<IValidator[]>(),
                 logger: CreateLoggerMock().Object
             );
@@ -60,7 +60,7 @@ namespace Nameless.FluentValidation {
             var builder = new ContainerBuilder();
 
             var container = builder.Build();
-            var sut = new ValidatorManager(
+            var sut = new ValidationService(
                 validators: [],
                 logger: loggerMock.Object
             );
@@ -93,7 +93,7 @@ namespace Nameless.FluentValidation {
                 .As<IValidator>();
 
             var container = builder.Build();
-            var sut = new ValidatorManager(
+            var sut = new ValidationService(
                 validators: container.Resolve<IValidator[]>(),
                 logger: CreateLoggerMock().Object
             );

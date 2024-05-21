@@ -12,7 +12,7 @@
         /// <returns><c>true</c> if can continue; otherwise <c>false</c>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool CanContinue(this Task self)
-            => self.Exception is null && !self.IsCanceled && !self.IsFaulted && self.IsCompleted;
+            => self.Exception is null && self is { IsCanceled: false, IsFaulted: false, IsCompleted: true };
 
         #endregion
     }

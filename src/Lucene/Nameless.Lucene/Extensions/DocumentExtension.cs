@@ -17,13 +17,17 @@ namespace Nameless.Lucene {
 
         #region Private Inner Records
 
-        private record Descriptor(
-            string Name,
-            object Value,
-            Lucene_Field.Store Store,
-            bool Analyze,
-            bool Sanitize
-        );
+        private sealed record Descriptor(string Name, object Value, Lucene_Field.Store Store, bool Analyze, bool Sanitize) {
+            #region Public Properties
+
+            public string Name { get; } = Name;
+            public object Value { get; } = Value;
+            public Lucene_Field.Store Store { get; } = Store;
+            public bool Analyze { get; } = Analyze;
+            public bool Sanitize { get; } = Sanitize;
+
+            #endregion
+        }
 
         #endregion
 
@@ -32,9 +36,6 @@ namespace Nameless.Lucene {
         public static Document ToLuceneDocument(this IDocument self) {
             var result = new Document();
             foreach (var item in self) {
-                if (item.Value is null) {
-                    continue;
-                }
                 var descriptor = CreateDescriptor(item);
                 var field = item.Type switch {
                     IndexableType.Integer => CreateIntegerField(descriptor),
@@ -75,7 +76,7 @@ namespace Nameless.Lucene {
                 _ => MinDate.ToString(DATE_PATTERN),
             };
 
-            return new(descriptor.Name, value, descriptor.Store);
+            return new StringField(descriptor.Name, value, descriptor.Store);
         }
 
         private static StringField CreateBooleanField(Descriptor descriptor)
@@ -109,11 +110,10 @@ namespace Nameless.Lucene {
             }
 
             // self explanatory.
-            return string.Equals(
-                a: value,
-                b: bool.TrueString,
-                comparisonType: StringComparison.OrdinalIgnoreCase
-            ).ToString();
+            return string.Equals(a: value,
+                                 b: bool.TrueString,
+                                 comparisonType: StringComparison.OrdinalIgnoreCase)
+                         .ToString();
         }
 
         #endregion

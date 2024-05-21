@@ -42,7 +42,7 @@ namespace Nameless.NHibernate {
 
             var result = new ExpandoObject() as IDictionary<string, object>;
             tuple.Each((current, idx) => {
-                if (aliases.TryElementAt(idx, out var alias)) {
+                if (aliases.TryGetElementAt(idx, out var alias)) {
                     if (alias is not null) {
                         result[alias] = current;
                     }

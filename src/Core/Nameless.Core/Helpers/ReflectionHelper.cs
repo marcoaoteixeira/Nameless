@@ -55,8 +55,7 @@ namespace Nameless.Helpers {
             return type
                 .GetRuntimeMethods()
                 .Where(method => {
-                    var currentReturnType = returnType ?? typeof(void);
-                    if (method.ReturnType != currentReturnType) {
+                    if (method.ReturnType != (returnType ?? typeof(void))) {
                         return false;
                     }
 
@@ -65,19 +64,14 @@ namespace Nameless.Helpers {
                     }
 
                     var parameters = method.GetParameters();
-                    var currentParameterTypes = (parameterTypes ?? []).ToArray();
-                    if (parameters.Length != currentParameterTypes.Length) {
-                        return false;
-                    }
 
-                    return currentParameterTypes
-                        .Select((parameterType, index) => {
-                            var match = parameters[index].ParameterType == parameterType;
-                            var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
-
-                            return match || (assignable && matchParameterInheritance);
-                        })
-                        .All(result => result);
+                    return parameterTypes
+                           .Select((parameterType, index) => {
+                               var match = parameters[index].ParameterType == parameterType;
+                               var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
+                               return match || (assignable && matchParameterInheritance);
+                            })
+                           .All(result => result);
                 });
         }
 
@@ -86,16 +80,16 @@ namespace Nameless.Helpers {
         #region Private Static Methods
 
         private static FieldInfo? GetPrivateField(Type type, string name) {
-            var result = type.GetField(
-                name,
-                bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic
-            );
+            while (true) {
+                var result = type.GetField(name,
+                                           bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (result is null && type.BaseType is not null) {
-                return GetPrivateField(type.BaseType, name);
+                if (result is not null || type.BaseType is null) {
+                    return result;
+                }
+
+                type = type.BaseType;
             }
-
-            return result;
         }
 
         #endregion

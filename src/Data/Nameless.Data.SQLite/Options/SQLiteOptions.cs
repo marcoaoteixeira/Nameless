@@ -16,16 +16,7 @@ namespace Nameless.Data.SQLite.Options {
         
         public string DatabasePath { get; set; } = $".{Path.DirectorySeparatorChar}database.db";
         
-        public string Password { get; }
-
-        #endregion
-
-        #region Public Constructors
-
-        public SQLiteOptions() {
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS)
-                ?? string.Empty;
-        }
+        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS) ?? string.Empty;
 
         #endregion
 

@@ -35,17 +35,15 @@ namespace Nameless.Localization.Microsoft.Json {
         #region Private Methods
 
         private LocalizedString GetLocalizedString(string text, params object[] args) {
-            var found = _region.TryGetValue(text, out var message);
-            (var name, var value) = message is not null
+            var found = _region.TryGetMessage(text, out var message);
+            var (name, value) = message is not null
                 ? (message.ID, message.Text)
                 : (text, text);
 
-            return new(
-                name: args.Length > 0 ? string.Format(name, args) : name,
-                value: args.Length > 0 ? string.Format(value, args) : value,
-                resourceNotFound: !found,
-                searchedLocation: Location
-            );
+            return new LocalizedString(name: args.Length > 0 ? string.Format(name, args) : name,
+                                       value: args.Length > 0 ? string.Format(value, args) : value,
+                                       resourceNotFound: !found,
+                                       searchedLocation: Location);
         }
 
         #endregion
@@ -60,15 +58,17 @@ namespace Nameless.Localization.Microsoft.Json {
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) {
             foreach (var entry in _region.Messages) {
-                yield return new(entry.ID, entry.Text, false, Location);
+                yield return new LocalizedString(entry.ID, entry.Text, false, Location);
             }
 
-            if (includeParentCultures) {
-                foreach (var culture in _culture.GetParents().Skip(1)) {
-                    var localizer = _factory(culture, _resourceName, _resourcePath);
-                    foreach (var localeString in localizer.GetAllStrings(includeParentCultures: false)) {
-                        yield return localeString;
-                    }
+            if (!includeParentCultures) {
+                yield break;
+            }
+
+            foreach (var culture in _culture.GetParents().Skip(1)) {
+                var localizer = _factory(culture, _resourceName, _resourcePath);
+                foreach (var localeString in localizer.GetAllStrings(includeParentCultures: false)) {
+                    yield return localeString;
                 }
             }
         }
