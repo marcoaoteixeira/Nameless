@@ -4,7 +4,7 @@ using Lucene.Net.Util;
 
 namespace Nameless.Lucene {
     /// <summary>
-    /// This class was proposed to be an root point for this assembly.
+    /// This class was proposed to be a root point for this assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
@@ -15,18 +15,18 @@ namespace Nameless.Lucene {
         #region Public Static Inner Classes
 
         public static class Defaults {
-            #region Internal Static Read-Only Properties
-
-            internal static Analyzer Analyzer { get; } = new StandardAnalyzer(LuceneVersion);
-
-            #endregion
-
-            #region Public Static Read-Only Properties
+            #region Public Static Read-Only Fields
 
             /// <summary>
             /// Gets the Lucene version used.
             /// </summary>
-            public static LuceneVersion LuceneVersion { get; } = LuceneVersion.LUCENE_48;
+            public static readonly LuceneVersion LuceneVersion = LuceneVersion.LUCENE_48;
+
+            #endregion
+
+            #region Internal Static Read-Only Properties
+
+            internal static Analyzer Analyzer { get; } = new StandardAnalyzer(matchVersion: LuceneVersion);
 
             #endregion
         }

@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis;
-using Nameless;
 
 namespace Nameless.Lucene.Impl {
     /// <summary>
@@ -29,12 +28,18 @@ namespace Nameless.Lucene.Impl {
 
         /// <inheritdoc />
         public Analyzer GetAnalyzer(string indexName) {
-            var analyzer = _selectors
-                .Select(_ => _.GetAnalyzer(indexName))
-                .OrderByDescending(_ => _.Priority)
-                .FirstOrDefault();
+            var selectors = _selectors
+                           .Select(selector => selector.GetAnalyzer(indexName));
 
-            return analyzer?.Analyzer ?? Root.Defaults.Analyzer;
+            var selector = selectors
+#if NET6_0_OR_GREATER
+                .MaxBy(selector => selector.Priority);
+#else
+                .OrderByDescending(selector => selector.Priority)
+                .FirstOrDefault();
+#endif
+
+            return selector?.Analyzer ?? Root.Defaults.Analyzer;
         }
 
         #endregion

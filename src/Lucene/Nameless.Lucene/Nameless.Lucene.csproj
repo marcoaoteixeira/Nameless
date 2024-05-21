@@ -33,6 +33,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Internal.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="README.md" />
 	</ItemGroup>
 
