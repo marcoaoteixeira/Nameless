@@ -11,7 +11,8 @@
         /// <param name="topic">The topic.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="args">The arguments.</param>
-        Task ProduceAsync(string topic, object payload, ProducerArgs? args = null, CancellationToken cancellationToken = default);
+        /// <param name="cancellationToken"></param>
+        Task ProduceAsync(string topic, object payload, ProducerArgs args, CancellationToken cancellationToken);
 
         #endregion Methods
     }

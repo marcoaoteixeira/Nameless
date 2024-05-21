@@ -136,9 +136,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetHeaders(this ProducerArgs self, IDictionary<string, object> value) {
-            if (value is not null) {
-                self.Set(nameof(IBasicProperties.Headers), value);
-            }
+            self.Set(nameof(IBasicProperties.Headers), value);
+
             return self;
         }
 

@@ -68,7 +68,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
             var args = new ProducerArgs();
             args.SetExchangeName(EXCHANGE_NAME);
 
-            await _producerService!.ProduceAsync(string.Empty, _expected!, args);
+            await _producerService!.ProduceAsync(string.Empty, _expected!, args, CancellationToken.None);
         }
 
         [Then(@"the handler created by ConsumerService Register should capture the message")]

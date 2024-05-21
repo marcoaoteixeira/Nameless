@@ -16,19 +16,11 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         public bool Enabled { get; set; }
 
-        public string? ServerName { get; }
+        public string? ServerName { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_SSL_SERVERNAME);
 
         public SslProtocols Protocol { get; set; }
 
         public SslPolicyErrors PolicyError { get; set; }
-
-        #endregion
-
-        #region Public Constructors
-
-        public SslOptions() {
-            ServerName = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_SSL_SERVERNAME);
-        }
 
         #endregion
 

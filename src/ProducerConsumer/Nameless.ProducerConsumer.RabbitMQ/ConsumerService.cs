@@ -10,8 +10,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
     public sealed class ConsumerService : IConsumerService, IDisposable {
         #region Private Read-Only Fields
 
-        private readonly ConcurrentDictionary<string, IDisposable> Cache = new();
-
+        private readonly ConcurrentDictionary<string, IDisposable> _cache = [];
         private readonly IModel _channel;
         private readonly ILogger _logger;
 
@@ -26,11 +25,19 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Public Constructors
 
         public ConsumerService(IModel channel)
-            : this(channel, NullLogger.Instance) { }
+            : this(channel, NullLogger<ConsumerService>.Instance) { }
 
-        public ConsumerService(IModel channel, ILogger logger) {
+        public ConsumerService(IModel channel, ILogger<ConsumerService> logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
             _logger = Guard.Against.Null(logger, nameof(logger));
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~ConsumerService() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -46,9 +53,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         private void Dispose(bool disposing) {
             if (_disposed) { return; }
             if (disposing) {
-                var registrations = Cache.Values.ToArray();
+                var registrations = _cache.Values.ToArray();
 
-                Cache.Clear();
+                _cache.Clear();
 
                 foreach (var registration in registrations) {
                     registration.Dispose();
@@ -83,25 +90,22 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             handler = null;
 
             // Let's try create the handler delegate
-            try { handler = registration.CreateHandler(); } catch (Exception ex) {
+            try { handler = registration.CreateHandler(); }
+            catch (Exception ex) {
                 // Ok, registration was disposed?
                 if (ex is ObjectDisposedException) {
                     Unregister(registration);
                 }
 
                 // Log the error
-                _logger.LogError(
-                    exception: ex,
-                    message: "Consumer handler creation failed. Reason: {Message}",
-                    args: [ex.Message]
-                );
+                _logger.LogError(exception: ex,
+                                 message: "Consumer handler creation failed. Reason: {Error}",
+                                 args: [ex.Message]);
 
                 // Send NACK (consumer args defined)
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
                 return false;
             }
@@ -110,49 +114,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // not able to create the delegate.
             if (handler is null) {
                 // Log notification
-                _logger.LogWarning(
-                    message: "No suitable handler found."
-
-                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net6.0)'
-                Before:
-                                );
-
-                                // Send NACK (consumer args defined)
-                After:
-                                );
-
-                                // Send NACK (consumer args defined)
-                */
-
-                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net7.0)'
-                Before:
-                                );
-
-                                // Send NACK (consumer args defined)
-                After:
-                                );
-
-                                // Send NACK (consumer args defined)
-                */
-
-                /* Unmerged change from project 'Nameless.ProducerConsumer.RabbitMQ (net8.0)'
-                Before:
-                                );
-
-                                // Send NACK (consumer args defined)
-                After:
-                                );
-
-                                // Send NACK (consumer args defined)
-                */
-                );
+                _logger.LogWarning(message: "No suitable handler found.");
 
                 // Send NACK (consumer args defined)
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
                 return false;
             }
@@ -165,16 +132,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
             // We were not able to retrieve the envelope for some reason.
             if (envelope is null) {
-                _logger.LogWarning(
-                    message: "Envelope deserialization failed."
-                );
+                _logger.LogWarning(message: "Envelope deserialization failed.");
 
                 // Send NACK (consumer args defined)
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
                 return false;
             }
@@ -188,18 +151,12 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // Here, if the envelope.Message is not a JsonElement.
             // We'll log the info and return nothing.
             if (envelope.Message is not JsonElement json) {
-
-                _logger.LogWarning(
-                    message: "Message was not a {type}.",
-                    args: [nameof(JsonElement)]
-                );
+                _logger.LogError("Message was not valid JSON.");
 
                 // Send NACK (consumer args defined)
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
                 return false;
             }
@@ -211,17 +168,13 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // For some reason, we were not able to deserialize the message
             if (message is null) {
                 // Let's log this info
-                _logger.LogWarning(
-                    message: "Unable to deserialize the message to expecting type {type}.",
-                    args: [typeof(T)]
-                );
+                _logger.LogWarning(message: "Unable to deserialize the message to expecting type {MessageType}.",
+                                   args: [typeof(T)]);
 
                 // Send NACK (consumer args defined)
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
                 return false;
             }
@@ -236,24 +189,18 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
                 // If everything goes ok, let's ack the message received.
                 // Check consumer args for 
-                PositiveAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                PositiveAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
 
             } catch (Exception ex) {
-                _logger.LogError(
-                    exception: ex,
-                    message: "Error when handling the message. Reason: {Message}",
-                    args: [ex.Message]
-                );
+                _logger.LogError(exception: ex,
+                                 message: "Error when handling the message. Reason: {Message}",
+                                 args: [ex.Message]);
 
-                NegativeAck(
-                    channel: _channel,
-                    deliverEventArgs: deliverEventArgs,
-                    consumerArgs: consumerArgs
-                );
+                NegativeAck(channel: _channel,
+                            deliverEventArgs: deliverEventArgs,
+                            consumerArgs: consumerArgs);
             }
         }
 
@@ -262,8 +209,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #region Private Static Methods
 
         private static string GenerateTag<T>(MessageHandler<T> handler) {
-            if (handler is null) { return string.Empty; }
-
             var method = handler.Method;
             var parameters = method
                 .GetParameters()
@@ -281,10 +226,8 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 return;
             }
 
-            channel.BasicAck(
-                deliveryTag: deliverEventArgs.DeliveryTag,
-                multiple: consumerArgs.GetAckMultiple()
-            );
+            channel.BasicAck(deliveryTag: deliverEventArgs.DeliveryTag,
+                             multiple: consumerArgs.GetAckMultiple());
         }
 
         private static void NegativeAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
@@ -292,11 +235,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 return;
             }
 
-            channel.BasicNack(
-                deliveryTag: deliverEventArgs.DeliveryTag,
-                multiple: consumerArgs.GetNAckMultiple(),
-                requeue: consumerArgs.GetRequeueOnFailure()
-            );
+            channel.BasicNack(deliveryTag: deliverEventArgs.DeliveryTag,
+                              multiple: consumerArgs.GetNAckMultiple(),
+                              requeue: consumerArgs.GetRequeueOnFailure());
         }
 
         #endregion
@@ -308,9 +249,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         /// </summary>
         /// <typeparam name="T">Type of the payload</typeparam>
         /// <param name="topic">
-        /// The topic to listen. If queue name is set through
-        /// <c>ConsumerArgs.SetQueueName()</c> method, it will
-        /// take precedence over <paramref name="topic"/>.
+        ///     The topic to listen. If queue name is set through
+        ///     <c>ConsumerArgs.SetQueueName()</c> method, it will
+        ///     take precedence over <paramref name="topic"/>.
         /// </param>
         /// <param name="handler">The handler.</param>
         /// <param name="args">The arguments.</param>
@@ -323,28 +264,26 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             // create callback tag
             var tag = GenerateTag(handler);
 
-            var registration = Cache.GetOrAdd(tag, tag => {
-                _logger.LogInformation("Initialize registration of consumer: {tag}", tag);
+            var registration = _cache.GetOrAdd(tag, key => {
+                _logger.LogInformation("Initialize registration of consumer: {tag}", key);
                 _logger.LogInformation("Consumer arguments: {json}", innerArgs.ToJson());
 
                 // creates registration
-                var registration = new Registration<T>(tag, topic, handler);
+                var registration = new Registration<T>(key, topic, handler);
 
                 // creates the consumer event
                 var consumer = new AsyncEventingBasicConsumer(_channel);
-                consumer.Received += (sender, deliverEventArgs)
+                consumer.Received += (_, deliverEventArgs)
                     => OnMessageAsync(registration, deliverEventArgs, innerArgs);
 
                 // attach the consumer
                 var queue = innerArgs.GetQueueName();
-                _ = _channel.BasicConsume(
-                    queue: string.IsNullOrWhiteSpace(queue)
-                        ? topic
-                        : queue,
-                    autoAck: innerArgs.GetAutoAck(),
-                    consumerTag: tag,
-                    consumer: consumer
-                );
+                _ = _channel.BasicConsume(queue: string.IsNullOrWhiteSpace(queue)
+                                              ? topic
+                                              : queue,
+                                          autoAck: innerArgs.GetAutoAck(),
+                                          consumerTag: key,
+                                          consumer: consumer);
 
                 return registration;
             });
@@ -357,7 +296,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
             Guard.Against.Null(registration, nameof(registration));
 
-            if (Cache.Remove(registration.Tag, out var disposable)) {
+            if (_cache.Remove(registration.Tag, out var disposable)) {
                 _channel.BasicCancel(registration.Tag);
                 disposable.Dispose();
 
@@ -373,7 +312,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
 
         public void Dispose() {
             Dispose(disposing: true);
-            GC.SuppressFinalize(obj: this);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

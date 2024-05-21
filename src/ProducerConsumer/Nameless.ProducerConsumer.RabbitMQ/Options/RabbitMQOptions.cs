@@ -17,12 +17,12 @@
 
         public ServerOptions Server {
             get => _server ??= ServerOptions.Default;
-            set => _server = value ?? ServerOptions.Default;
+            set => _server = value;
         }
 
         public ExchangeOptions[] Exchanges {
             get => _exchanges ??= [];
-            set => _exchanges = value ?? [];
+            set => _exchanges = value;
         }
 
         #endregion

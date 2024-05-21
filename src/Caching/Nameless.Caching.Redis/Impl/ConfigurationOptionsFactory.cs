@@ -19,9 +19,9 @@ namespace Nameless.Caching.Redis.Impl {
         #region Public Constructors
 
         public ConfigurationOptionsFactory()
-            : this(RedisOptions.Default, NullLogger.Instance) { }
+            : this(RedisOptions.Default, NullLogger<ConfigurationOptionsFactory>.Instance) { }
 
-        public ConfigurationOptionsFactory(RedisOptions options, ILogger logger) {
+        public ConfigurationOptionsFactory(RedisOptions options, ILogger<ConfigurationOptionsFactory> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _logger = Guard.Against.Null(logger, nameof(logger));
         }

@@ -23,9 +23,9 @@ namespace Nameless.Web.Infrastructure {
         #region Protected Constructors
 
         protected RecurringTaskHostedService(TimeSpan interval)
-            : this(interval, NullLogger.Instance) { }
+            : this(interval, NullLogger<RecurringTaskHostedService>.Instance) { }
 
-        protected RecurringTaskHostedService(TimeSpan interval, ILogger logger) {
+        protected RecurringTaskHostedService(TimeSpan interval, ILogger<RecurringTaskHostedService> logger) {
             Guard.Against.LowerThanZero(interval, nameof(interval));
             Guard.Against.Null(logger, nameof(logger));
 

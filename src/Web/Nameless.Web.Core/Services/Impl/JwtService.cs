@@ -23,15 +23,15 @@ namespace Nameless.Web.Services.Impl {
         #region Public Constructors
 
         public JwtService()
-            : this(JwtOptions.Default, SystemClock.Instance, NullLogger.Instance) { }
+            : this(JwtOptions.Default, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
 
         public JwtService(JwtOptions options)
-            : this(options, SystemClock.Instance, NullLogger.Instance) { }
+            : this(options, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
 
         public JwtService(JwtOptions options, IClock clock)
-            : this(options, clock, NullLogger.Instance) { }
+            : this(options, clock, NullLogger<JwtService>.Instance) { }
 
-        public JwtService(JwtOptions options, IClock clock, ILogger logger) {
+        public JwtService(JwtOptions options, IClock clock, ILogger<JwtService> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _clock = Guard.Against.Null(clock, nameof(clock));
             _logger = Guard.Against.Null(logger, nameof(logger));
