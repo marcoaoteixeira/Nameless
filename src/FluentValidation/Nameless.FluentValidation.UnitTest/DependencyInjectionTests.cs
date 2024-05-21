@@ -12,12 +12,12 @@ namespace Nameless.FluentValidation {
             using var container = builder.Build();
 
             // act
-            var service = container.Resolve<IValidatorManager>();
+            var service = container.Resolve<IValidationService>();
 
             // assert
             Assert.Multiple(() => {
                 Assert.That(service, Is.Not.Null);
-                Assert.That(service, Is.InstanceOf<ValidatorManager>());
+                Assert.That(service, Is.InstanceOf<ValidationService>());
             });
         }
     }

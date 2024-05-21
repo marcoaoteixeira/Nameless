@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 
 namespace Nameless.FluentValidation {
-    public interface IValidatorManager {
+    public interface IValidationService {
         #region Methods
 
         Task<ValidationResult> ValidateAsync<T>(T instance, CancellationToken cancellationToken = default);

@@ -27,16 +27,10 @@ namespace Nameless.FluentValidation {
 
         #region Private Static Methods
 
-        private static Dictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures) {
-            var result = new Dictionary<string, string[]>();
-            foreach (var failure in failures) {
-                result.Add(
-                    key: failure.PropertyName ?? failure.ErrorCode,
-                    value: [failure.ErrorMessage]
-                );
-            }
-            return result;
-        }
+        private static Dictionary<string, string[]> ToDictionary(IEnumerable<ValidationFailure> failures)
+            => failures.ToDictionary<ValidationFailure?, string, string[]>(
+                keySelector: failure => failure.PropertyName ?? failure.ErrorCode,
+                elementSelector: failure => [failure.ErrorMessage]);
 
         #endregion
     }
