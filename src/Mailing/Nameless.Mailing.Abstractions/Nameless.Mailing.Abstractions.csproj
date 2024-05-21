@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Nameless.Messenger.Email.DependencyInjection</RootNamespace>
+		<RootNamespace>Nameless.Mailing</RootNamespace>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
 
 		<!-- CODE ANALYSIS -->
@@ -19,12 +19,12 @@
 		<!-- NUGET PACKING -->
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
-		<Title>Nameless Messenger E-mail Library (DI)</Title>
+		<Title>Nameless Mailing Abstractions Library</Title>
 		<Company>Nameless</Company>
-		<Description>Messenger E-mail library (DI).</Description>
+		<Description>Mailing abstractions library.</Description>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Messenger/Nameless.Messenger.Email.DependencyInjection</RepositoryUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Mailing/Nameless.Mailing.Abstractions</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -45,8 +45,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
-		<ProjectReference Include="..\Nameless.Messenger.Email\Nameless.Messenger.Email.csproj" />
+		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	</ItemGroup>
 
 </Project>

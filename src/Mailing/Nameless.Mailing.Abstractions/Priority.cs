@@ -1,4 +1,4 @@
-﻿namespace Nameless.Messenger {
+﻿namespace Nameless.Mailing {
     public enum Priority {
         /// <summary>
         /// Low

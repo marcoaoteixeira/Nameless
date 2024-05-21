@@ -4,14 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 
 using MailKit.Security;
 
-namespace Nameless.Messenger.Email {
+namespace Nameless.Mailing.MailKit.Options {
     /// <summary>
     /// The configuration for mailing client.
     /// </summary>
-    public sealed record MessengerOptions {
+    public sealed record ServerOptions {
         #region Public Static Properties
 
-        public static MessengerOptions Default => new();
+        public static ServerOptions Default => new();
 
         #endregion
 
@@ -28,42 +28,20 @@ namespace Nameless.Messenger.Email {
         public int Port { get; set; } = 25;
 
         /// <summary>
-        /// Gets or sets the user name credential.
+        /// Gets or sets the username credential.
         /// </summary>
-        public string? Username { get; }
+        public string? Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_USER);
 
         /// <summary>
         /// Gets or sets the password credential.
         /// </summary>
-        public string? Password { get; }
+        public string? Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_PASS);
 
         /// <summary>
         /// Gets or sets secure socket option to use if connection is SSL.
         /// Default value is <c><see cref="SecureSocketOptions.None"/></c>.
         /// </summary>
         public SecureSocketOptions SecureSocket { get; set; } = SecureSocketOptions.None;
-
-        /// <summary>
-        /// Gets or sets the delivery mode. Default value is
-        /// <see cref="DeliveryMode.PickupDirectory" />.
-        /// </summary>
-        public DeliveryMode DeliveryMode { get; set; } = DeliveryMode.PickupDirectory;
-
-        /// <summary>
-        /// Gets or sets the pickup directory path, relative to the
-        /// application file storage. Default value is
-        /// "Messenger_PickupDirectory".
-        /// </summary>
-        public string PickupDirectoryFolderName { get; set; } = "Messenger_PickupDirectory";
-
-        #endregion
-
-        #region Public Constructors
-
-        public MessengerOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_USER);
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_PASS);
-        }
 
         #endregion
 

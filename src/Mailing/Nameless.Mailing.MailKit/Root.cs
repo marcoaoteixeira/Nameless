@@ -1,4 +1,4 @@
-﻿namespace Nameless.Messenger.Email {
+﻿namespace Nameless.Mailing.MailKit {
     /// <summary>
     /// This class was defined to be an entrypoint for this project assembly.
     /// 
@@ -15,15 +15,6 @@
 
             public const string MESSENGER_SMTP_USER = nameof(MESSENGER_SMTP_USER);
             public const string MESSENGER_SMTP_PASS = nameof(MESSENGER_SMTP_PASS);
-
-            #endregion
-        }
-
-        public static class Defaults {
-            #region Public Static Methods
-
-            public static string FileNameGeneratorFactory()
-                => $"{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.eml";
 
             #endregion
         }
