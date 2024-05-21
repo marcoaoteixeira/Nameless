@@ -32,12 +32,9 @@ namespace Nameless.Web {
 
         public static IApplicationBuilder ResolveCors(this IApplicationBuilder self)
             => self
-                .UseCors(configure
-                    => configure
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                );
+                .UseCors(configure => configure.AllowAnyOrigin()
+                                               .AllowAnyMethod()
+                                               .AllowAnyHeader());
 
         public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self) {
             self.UseExceptionHandler(configure =>
@@ -80,11 +77,8 @@ namespace Nameless.Web {
             => self.UseEndpoints(setup => {
                 var endpointTypes = assemblies
                     .SelectMany(type => type.ExportedTypes)
-                    .Where(type =>
-                        !type.IsInterface &&
-                        !type.IsAbstract &&
-                         typeof(IMinimalEndpoint).IsAssignableFrom(type)
-                    )
+                    .Where(type => type is { IsInterface: false, IsAbstract: false } &&
+                                   typeof(IMinimalEndpoint).IsAssignableFrom(type))
                     .ToArray();
 
                 if (endpointTypes.Length == 0) { return; }
@@ -133,7 +127,7 @@ namespace Nameless.Web {
             endpoint = null;
 
             try { endpoint = Activator.CreateInstance(type) as IMinimalEndpoint; }
-            catch (Exception ex) { logger.LogError(ex, "{Message}", ex.Message); }
+            catch (Exception ex) { logger.LogError(ex, "Error while trying to create minimal endpoint."); }
 
             return endpoint is not null;
         }
@@ -141,25 +135,21 @@ namespace Nameless.Web {
         private static TException? GetExceptionFromHttpContext<TException>(HttpContext httpContext)
             where TException : Exception {
             var feature = httpContext.Features.Get<IExceptionHandlerPathFeature>();
-            return feature is not null
-                ? feature.Error is TException exception
-                    ? exception
-                    : null
-                : null;
+            return feature?.Error as TException;
         }
 
         private static bool TryHandleFluentValidationException(HttpContext ctx, [NotNullWhen(returnValue: true)]out IResult? result) {
             result = null;
 
             var ex = GetExceptionFromHttpContext<FluentValidationException>(ctx);
-            if (ex is not null) {
-                result = Results.ValidationProblem(
-                    errors: ex.ToDictionary(),
-                    detail: ex.Message
-                );
-                return true;
-            }
-            return false;
+            if (ex is null) { return false; }
+
+            result = Results.ValidationProblem(
+                errors: ex.ToDictionary(),
+                detail: ex.Message
+            );
+
+            return true;
         }
 
         #endregion

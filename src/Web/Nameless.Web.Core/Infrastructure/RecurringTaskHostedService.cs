@@ -71,11 +71,9 @@ namespace Nameless.Web.Infrastructure {
             while (await ContinueAsync(_timer, stoppingToken)) {
                 try { await ExecuteAsync(stoppingToken); }
                 catch (Exception ex) {
-                    _logger.LogError(
-                        exception: ex,
-                        message: "Error while executing recurring task: {Message}",
-                        args: ex.Message
-                    );
+                    _logger.LogError(exception: ex,
+                                     message: "Error while executing recurring task: {Message}",
+                                     args: ex.Message);
                 }
             }
         }
@@ -127,10 +125,10 @@ namespace Nameless.Web.Infrastructure {
             try { _stoppingCts?.Cancel(); } finally {
                 // Wait until the task completes or the stop token triggers
                 var taskCompletionSource = new TaskCompletionSource<object>();
-                using var registration = cancellationToken.Register(
+                await using var registration = cancellationToken.Register(
                     callback: state => {
                         if (state is TaskCompletionSource<object> tcs) {
-                            tcs.SetCanceled();
+                            tcs.SetCanceled(cancellationToken);
                         }
                     },
                     state: taskCompletionSource

@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using RootFromCore = Nameless.Root;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Web {
     public static class ServiceCollectionExtension {
@@ -35,7 +35,7 @@ namespace Nameless.Web {
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions> configureAuthorization) {
             var sectionName = nameof(JwtOptions)
-                .RemoveTail(RootFromCore.Defaults.OptionsSettingsTails);
+                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
             var options = config
                .GetSection(sectionName)
                .Get<JwtOptions>() ?? JwtOptions.Default;
@@ -88,16 +88,15 @@ namespace Nameless.Web {
                         securityScheme: openApiSecurityScheme
                     );
 
-                    var openApiSecurityRequirement = new OpenApiSecurityRequirement();
-                    openApiSecurityRequirement.Add(
-                        key: new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = JwtBearerDefaults.AuthenticationScheme
-                            }
-                        },
-                        value: []
-                    );
+                    var openApiSecurityRequirement = new OpenApiSecurityRequirement { {
+                            new OpenApiSecurityScheme {
+                                Reference = new OpenApiReference {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = JwtBearerDefaults.AuthenticationScheme
+                                }
+                            }, []
+                        }
+                    };
                     configure.AddSecurityRequirement(openApiSecurityRequirement);
                 });
 

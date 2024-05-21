@@ -43,14 +43,14 @@ namespace Nameless.Web.Options {
                 Title = hostEnvironment.ApplicationName,
                 Version = description.ApiVersion.ToString(),
                 Description = $"{(description.IsDeprecated ? "[DEPRECATED] " : string.Empty)}{settings.Description}",
-                Contact = new() {
+                Contact = new OpenApiContact {
                     Name = settings.Contact.Name,
                     Email = settings.Contact.Email,
-                    Url = settings.Contact.Url is not null ? new Uri(settings.Contact.Url) : null
+                    Url = new Uri(settings.Contact.Url)
                 },
-                License = new() {
+                License = new OpenApiLicense {
                     Name = settings.License.Name,
-                    Url = settings.License.Url is not null ? new Uri(settings.License.Url) : null
+                    Url = new Uri(settings.License.Url)
                 }
             };
 
@@ -63,14 +63,10 @@ namespace Nameless.Web.Options {
             // add a swagger document for each discovered API version
             // note: you might choose to skip or document deprecated API versions differently
             foreach (var description in _provider.ApiVersionDescriptions) {
-                options.SwaggerDoc(
-                    name: description.GroupName,
-                    info: CreateInfoForApiVersion(
-                        description: description,
-                        hostEnvironment: _hostEnvironment,
-                        settings: _options
-                    )
-                );
+                options.SwaggerDoc(name: description.GroupName,
+                                   info: CreateInfoForApiVersion(description: description,
+                                                                 hostEnvironment: _hostEnvironment,
+                                                                 settings: _options));
             }
         }
 

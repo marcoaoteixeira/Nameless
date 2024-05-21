@@ -24,7 +24,7 @@ namespace Nameless.FluentValidation {
             return validatorMock;
         }
 
-        private static Mock<ILogger> CreateLoggerMock()
+        private static Mock<ILogger<ValidationService>> CreateLoggerMock()
             => new();
 
         [Test]

@@ -59,7 +59,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 }
 
                 batch.Publish();
-            } catch (Exception ex) { _logger.LogError(ex, ex.Message); throw; }
+            } catch (Exception ex) { _logger.LogError(ex, "Error while publishing message."); throw; }
 
             return Task.CompletedTask;
         }
