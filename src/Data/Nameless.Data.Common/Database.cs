@@ -28,16 +28,24 @@ namespace Nameless.Data {
         /// </summary>
         /// <param name="dbConnectionFactory">The database connection factory.</param>
         public Database(IDbConnectionFactory dbConnectionFactory)
-            : this(dbConnectionFactory, NullLogger.Instance) { }
+            : this(dbConnectionFactory, NullLogger<Database>.Instance) { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Database"/>.
         /// </summary>
         /// <param name="dbConnectionFactory">The database connection factory.</param>
         /// <param name="logger">The logger.</param>
-        public Database(IDbConnectionFactory dbConnectionFactory, ILogger logger) {
+        public Database(IDbConnectionFactory dbConnectionFactory, ILogger<Database> logger) {
             _dbConnectionFactory = Guard.Against.Null(dbConnectionFactory, nameof(dbConnectionFactory));
             _logger = Guard.Against.Null(logger, nameof(logger));
+        }
+
+        #endregion
+
+        #region Destructor
+
+        ~Database() {
+            Dispose(disposing: false);
         }
 
         #endregion
@@ -118,11 +126,9 @@ namespace Nameless.Data {
 
             try { return command.ExecuteNonQuery(); }
             catch (Exception ex) {
-                _logger.LogError(
-                    exception: ex,
-                    message: "Error while executing non-query. {Message}",
-                    args: ex.Message
-                );
+                _logger.LogError(exception: ex,
+                                 message: "Error while executing non-query. {Message}",
+                                 args: ex.Message);
                 throw;
             }
         }
@@ -138,11 +144,9 @@ namespace Nameless.Data {
             IDataReader reader;
             try { reader = command.ExecuteReader(); }
             catch (Exception ex) {
-                _logger.LogError(
-                    exception: ex,
-                    message: "Error while executing reader. {Message}",
-                    args: ex.Message
-                );
+                _logger.LogError(exception: ex,
+                                 message: "Error while executing reader. {Message}",
+                                 args: ex.Message);
                 throw;
             }
             using (reader) {
@@ -162,11 +166,9 @@ namespace Nameless.Data {
 
             try { return (TResult?)command.ExecuteScalar(); }
             catch (Exception ex) {
-                _logger.LogError(
-                    exception: ex,
-                    message: "Error while executing scalar. {Message}",
-                    args: ex.Message
-                );
+                _logger.LogError(exception: ex,
+                                 message: "Error while executing scalar. {Message}",
+                                 args: ex.Message);
                 throw;
             }
         }

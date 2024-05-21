@@ -8,15 +8,13 @@ namespace Nameless.Data {
         internal static void DbCommand(this ILogger self, IDbCommand command) {
             if (!self.IsEnabled(LogLevel.Debug)) { return; }
 
-            self.LogDebug("Command text: {command.CommandText}", command.CommandText);
+            self.LogDebug("Command text: {CommandText}", command.CommandText);
             self.LogDebug("Parameter list:");
             foreach (var parameter in command.Parameters.OfType<IDbDataParameter>()) {
-                self.LogDebug(
-                    "\t[{parameter.DbType}] {parameter.ParameterName} => {parameter.Value}",
-                    parameter.DbType,
-                    parameter.ParameterName,
-                    parameter.Value
-                );
+                self.LogDebug("\t[{DbType}] {ParameterName} => {ParameterValue}",
+                              parameter.DbType,
+                              parameter.ParameterName,
+                              parameter.Value);
             }
         }
 

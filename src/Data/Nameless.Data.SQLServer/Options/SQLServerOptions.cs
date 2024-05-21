@@ -14,21 +14,10 @@ namespace Nameless.Data.SQLServer.Options {
 
         public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
         public string Database { get; set; } = "master";
-        public string Username { get; }
-        public string Password { get; }
+        public string Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER) ?? string.Empty;
+        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_PASS) ?? string.Empty;
         public bool UseAttachedDb { get; set; }
         public bool UseIntegratedSecurity { get; set; }
-
-        #endregion
-
-        #region Public Constructors
-
-        public SQLServerOptions() {
-            Username = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER)
-                ?? string.Empty;
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_PASS)
-                ?? string.Empty;
-        }
 
         #endregion
 
@@ -61,13 +50,6 @@ namespace Nameless.Data.SQLServer.Options {
             => !string.IsNullOrWhiteSpace(Username) &&
                !string.IsNullOrWhiteSpace(Password) &&
                !UseIntegratedSecurity;
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override string ToString()
-            => GetConnectionString();
 
         #endregion
     }
