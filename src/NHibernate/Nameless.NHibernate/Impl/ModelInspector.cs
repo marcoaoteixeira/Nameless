@@ -1,6 +1,6 @@
 ﻿using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate {
+namespace Nameless.NHibernate.Impl {
     /// <summary>
     /// Default implementation of <see cref="ExplicitlyDeclaredModel" />.
     /// </summary>
@@ -26,10 +26,10 @@ namespace Nameless.NHibernate {
 
         /// <inheritdoc />
         public override bool IsEntity(Type type)
-            => _entityTypes.Any(_ =>
-                _.IsGenericType
-                    ? _.IsAssignableFromGenericType(type)
-                    : _.IsAssignableFrom(type)
+            => _entityTypes.Any(entityType =>
+                entityType.IsGenericType
+                    ? entityType.IsAssignableFromGenericType(type)
+                    : entityType.IsAssignableFrom(type)
             );
 
         #endregion

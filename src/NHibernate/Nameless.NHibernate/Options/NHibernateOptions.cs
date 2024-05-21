@@ -47,7 +47,7 @@ namespace Nameless.NHibernate.Options {
                 configs.AddRange(config.GetConfigValues());
             }
 
-            return new(configs.ToArray());
+            return new Dictionary<string, string>([.. configs]);
         }
 
         #endregion

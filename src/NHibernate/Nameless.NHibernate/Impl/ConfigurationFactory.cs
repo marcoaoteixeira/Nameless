@@ -57,10 +57,8 @@ namespace Nameless.NHibernate.Impl {
 
             var mappingDocument = modelMapper
                 .CompileMappingForAllExplicitlyAddedEntities();
-            configuration.AddDeserializedMapping(
-                mappingDocument: mappingDocument,
-                documentFileName: null
-            );
+            configuration.AddDeserializedMapping(mappingDocument: mappingDocument,
+                                                 documentFileName: null);
 
             return configuration;
         }
