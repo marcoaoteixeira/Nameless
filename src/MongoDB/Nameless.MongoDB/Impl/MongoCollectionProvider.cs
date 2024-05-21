@@ -27,12 +27,11 @@ namespace Nameless.MongoDB.Impl {
         public string DatabaseName => _database.DatabaseNamespace.DatabaseName;
 
         /// <inheritdoc/>
-        public IMongoCollection<T> GetCollection<T>(string? name, MongoCollectionSettings? settings)
-            => _database.GetCollection<T>(
-                name: string.IsNullOrWhiteSpace(name)
-                    ? _collectionNamingStrategy.GetCollectionName<T>()
-                    : name,
-                settings: settings
+        public IMongoCollection<T> GetCollection<T>(string? name = null, MongoCollectionSettings? settings = null)
+            => _database.GetCollection<T>(name: string.IsNullOrWhiteSpace(name)
+                                            ? _collectionNamingStrategy.GetCollectionName<T>()
+                                            : name,
+                                          settings: settings
             );
 
         #endregion

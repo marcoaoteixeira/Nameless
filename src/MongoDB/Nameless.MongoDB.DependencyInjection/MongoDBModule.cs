@@ -59,7 +59,7 @@ namespace Nameless.MongoDB.DependencyInjection {
         private static IMongoClient MongoClientResolver(IComponentContext ctx) {
             var options = ctx.GetPocoOptions<MongoOptions>();
             var settings = new MongoClientSettings {
-                Server = new(options.Host, options.Port)
+                Server = new MongoServerAddress(options.Host, options.Port)
             };
 
             if (options.Credentials.UseCredentials()) {
@@ -94,10 +94,8 @@ namespace Nameless.MongoDB.DependencyInjection {
 
         private static IMongoCollectionProvider MongoCollectionProviderResolver(IComponentContext ctx) {
             var database = ctx.ResolveNamed<IMongoDatabase>(MONGO_DATABASE_TOKEN);
-            var result = new MongoCollectionProvider(
-                database,
-                CollectionNamingStrategy.Instance
-            );
+            var result = new MongoCollectionProvider(database,
+                                                     CollectionNamingStrategy.Instance);
 
             return result;
         }
@@ -113,38 +111,36 @@ namespace Nameless.MongoDB.DependencyInjection {
                     var classMapping = Activator.CreateInstance(mappingType);
 
                     classMapMethod
-                        .Invoke(
-                            obj: classMapping,
-                            parameters: [bsonClassMap]
-                        );
+                        .Invoke(obj: classMapping,
+                                parameters: [bsonClassMap]);
 
                 } catch (Exception ex) {
-                    logger.LogError(
-                        exception: ex,
-                        message: "Error while running mapping {mappingType}",
-                        args: mappingType.FullName
-                    );
+                    logger.LogError(exception: ex,
+                                    message: "Error while running mapping {MappingType}",
+                                    args: mappingType.FullName);
                 }
             }
         }
 
         private static Type GetArgumentType(Type? mappingType) {
-            if (mappingType is null) {
-                throw new InvalidOperationException("Argument type not found.");
-            }
+            while (true) {
+                if (mappingType is null) {
+                    throw new InvalidOperationException("Argument type not found.");
+                }
 
-            var argumentType = mappingType.GetGenericArguments().FirstOrDefault();
-            if (argumentType is not null) {
-                return argumentType;
-            }
+                var argumentType = mappingType.GetGenericArguments()
+                                              .FirstOrDefault();
 
-            return GetArgumentType(mappingType.BaseType);
+                if (argumentType is not null) {
+                    return argumentType;
+                }
+
+                mappingType = mappingType.BaseType;
+            }
         }
 
         private static MethodInfo GetClassMapMethod(Type mappingType, Type argumentType) {
-            var method = mappingType.GetMethod(
-                    name: nameof(ClassMappingBase<object>.Map)
-                )
+            var method = mappingType.GetMethod(name: nameof(ClassMappingBase<object>.Map))
                 ?? throw new InvalidOperationException($"Method {nameof(ClassMappingBase<object>.Map)}<{argumentType.Name}>() not found.");
 
             return method;
@@ -153,20 +149,14 @@ namespace Nameless.MongoDB.DependencyInjection {
         private static object CreateBsonClassMap(Type argumentType) {
             var method = typeof(BsonClassMap)
                 .GetMethods()
-                .FirstOrDefault(m =>
-                    m.IsGenericMethod &&
-                    m.Name == nameof(BsonClassMap.RegisterClassMap)
-                )
+                .FirstOrDefault(method => method.IsGenericMethod &&
+                                          method.Name == nameof(BsonClassMap.RegisterClassMap))
                 ?? throw new InvalidOperationException($"Method {nameof(BsonClassMap.RegisterClassMap)}<{argumentType.Name}>() not found.");
 
             var result = method
-                .MakeGenericMethod(
-                    typeArguments: [argumentType]
-                )
-                .Invoke(
-                    obj: null,
-                    parameters: null
-                );
+                .MakeGenericMethod(typeArguments: [argumentType])
+                .Invoke(obj: null,
+                        parameters: null);
 
             return result ?? throw new InvalidOperationException($"Impossible to execute {nameof(BsonClassMap)}.{nameof(BsonClassMap.RegisterClassMap)}<{argumentType.Name}>()");
         }

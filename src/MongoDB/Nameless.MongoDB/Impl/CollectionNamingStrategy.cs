@@ -37,10 +37,10 @@ namespace Nameless.MongoDB.Impl {
                 return attr.Name;
             }
 
-            return string.Join(
-                separator: RootFromCore.Separators.UNDERSCORE,
-                type.Name.SplitUpperCase()
-            ).ToLower();
+            return string
+                   .Join(separator: RootFromCore.Separators.UNDERSCORE,
+                         type.Name.SplitUpperCase())
+                   .ToLower();
         }
 
         #endregion

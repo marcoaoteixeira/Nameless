@@ -61,9 +61,7 @@ namespace Nameless.MongoDB {
 
         #region Private Static Methods
 
-        private static string? Crypt(byte[] key, byte[] iv, string value) {
-            if (value is null) { return null; }
-
+        private static string Crypt(byte[] key, byte[] iv, string value) {
             using var algorithm = DES.Create();
             using var transform = algorithm.CreateEncryptor(key, iv);
 
@@ -73,9 +71,7 @@ namespace Nameless.MongoDB {
             return Convert.ToBase64String(output);
         }
 
-        private static string? Decrypt(byte[] key, byte[] iv, string value) {
-            if (value is null) { return null; }
-
+        private static string Decrypt(byte[] key, byte[] iv, string value) {
             using var algorithm = DES.Create();
             using var transform = algorithm.CreateDecryptor(key, iv);
 
