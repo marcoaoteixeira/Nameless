@@ -121,6 +121,7 @@ namespace Nameless.Checklist.Web {
             // Swagger
             services
                 .AddEndpointsApiExplorer();
+
             services
                 .AddSwaggerGen(configure => {
                     configure.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new() {
