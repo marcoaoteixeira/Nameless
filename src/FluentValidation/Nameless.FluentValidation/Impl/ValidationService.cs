@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.Services;
 
 namespace Nameless.FluentValidation.Impl {
     public sealed class ValidationService : IValidationService {
@@ -35,18 +35,21 @@ namespace Nameless.FluentValidation.Impl {
 
         #region IValidationService Members
 
-        public Task<ValidationResult> ValidateAsync<T>(T instance, CancellationToken cancellationToken = default) {
+        public async Task<ValidationResult> ValidateAsync(object instance, CancellationToken cancellationToken = default) {
             Guard.Against.Null(instance, nameof(instance));
 
-            var validator = _cache.GetOrAdd(typeof(T), FetchValidator);
-            if (validator is IValidator<T> instanceValidator) {
-                return instanceValidator.ValidateAsync(instance, cancellationToken);
+            var validator = _cache.GetOrAdd(instance.GetType(), FetchValidator);
+            if (validator is not null) {
+                var context = new ValidationContext<object>(instance);
+                var result = await validator.ValidateAsync(context, cancellationToken);
+
+                return result.Convert();
             }
 
-            _logger.LogInformation(message: "Validator for {Validator} not found",
-                                   args: typeof(T).FullName);
+            _logger.LogInformation(message: "Validator for {InstanceTypeFullName} not found",
+                                   args: instance.GetType().FullName);
 
-            return Task.FromResult(new ValidationResult());
+            return ValidationResult.Empty;
         }
 
         #endregion

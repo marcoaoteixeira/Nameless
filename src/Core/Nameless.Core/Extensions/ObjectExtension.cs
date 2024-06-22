@@ -23,6 +23,11 @@ namespace Nameless {
                    (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"));
         }
 
+        public static bool HasAttribute<TAttribute>(this object? self, bool inherit = false)
+            where TAttribute : Attribute
+            => self?.GetType()
+                   .GetCustomAttribute<TAttribute>(inherit) is not null;
+
         #endregion
     }
 }

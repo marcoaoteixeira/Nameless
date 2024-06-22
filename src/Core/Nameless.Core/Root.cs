@@ -13,12 +13,6 @@ namespace Nameless {
         #region Public Static Inner Classes
 
         public static class Defaults {
-            #region Public Constants
-
-            public const string APP_DATA_FOLDER_NAME = "App_Data";
-
-            #endregion
-
             #region Public Static Read-Only Properties
 
             /// <summary>

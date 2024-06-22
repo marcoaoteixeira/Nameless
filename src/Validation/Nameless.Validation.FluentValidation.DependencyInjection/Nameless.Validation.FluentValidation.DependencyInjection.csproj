@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>Nameless.Validation.FluentValidation.DependencyInjection</RootNamespace>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+
+		<!-- CODE ANALYSIS -->
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+
+		<!-- NUGET PACKING -->
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Title>Nameless Validation FluentValidation Dependency Injection Library</Title>
+		<Company>Nameless</Company>
+		<Description>The validation FluentValidation dependency injection library.</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Validation/Nameless.Validation.FluentValidation.DependencyInjection</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Autofac\Nameless.Autofac\Nameless.Autofac.csproj" />
+	  <ProjectReference Include="..\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
+	</ItemGroup>
+
+</Project>

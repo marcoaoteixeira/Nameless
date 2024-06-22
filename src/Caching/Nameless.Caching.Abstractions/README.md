@@ -1,14 +1,14 @@
 ﻿# Nameless Caching Abstractions
 
-Caching abstractions library.
+This library contains the classes and interfaces used to abstract caching capabilities.
 
 ## Content
 
 ### Interfaces
-- _ICache_
+- _ICacheService_: The main interface of this library.
 
 ### Delegates
-- _EvictionCallback_
+- _EvictionCallback_: Provides a callback object to work in conjunction with cache eviction action.
 
-### Classes
-- _CacheEntryOptions_
+### Objects
+- _CacheEntryOptions_: Options related to the cache entry.

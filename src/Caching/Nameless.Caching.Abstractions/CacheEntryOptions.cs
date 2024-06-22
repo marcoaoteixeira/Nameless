@@ -1,17 +1,18 @@
 ﻿namespace Nameless.Caching {
-    public sealed class CacheEntryOptions {
-        #region Public Static Read-Only Properties
+    public readonly record struct CacheEntryOptions {
+        #region Public Properties
 
-        public static CacheEntryOptions Empty => new();
-        public static EvictionCallback EmptyEvictionCallback { get; } = (_, _, _) => { };
+        public TimeSpan ExpiresIn { get; }
+        public EvictionCallback? EvictionCallback { get; }
 
         #endregion
 
-        #region Public Properties
+        #region Public Constructors
 
-        public TimeSpan ExpiresIn { get; set; }
-
-        public EvictionCallback? EvictionCallback { get; set; }
+        public CacheEntryOptions(TimeSpan? expiresIn = null, EvictionCallback? evictionCallback = null) {
+            ExpiresIn = expiresIn ?? TimeSpan.Zero;
+            EvictionCallback = evictionCallback;
+        }
 
         #endregion
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using CoreRoot = Nameless.Root;
 
 namespace Nameless.Autofac {
     public static class ComponentContextExtension {
@@ -35,7 +36,7 @@ namespace Nameless.Autofac {
             var configuration = self.ResolveOptional<IConfiguration>();
             var sectionName = typeof(TOptions)
                 .Name
-                .RemoveTail(Root.Defaults.OptionsSettingsTails);
+                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
 
             TOptions? result = default;
             if (configuration is not null) {
@@ -44,7 +45,7 @@ namespace Nameless.Autofac {
                     .Get<TOptions>();
             }
 
-            // returns from configuration or build.
+            // returns from configuration or instantiate.
             return result ?? new TOptions();
         }
 

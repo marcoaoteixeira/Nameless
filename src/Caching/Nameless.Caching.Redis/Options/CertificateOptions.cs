@@ -26,22 +26,14 @@ namespace Nameless.Caching.Redis.Options {
         /// Gets the certificate password. This property is provided by the environment
         /// variable <see cref="Root.EnvTokens.REDIS_CERT_PASS"/>.
         /// </summary>
-        public string? Password { get; }
-
-        #endregion
-
-        #region Public Constructors
-
-        public CertificateOptions() {
-            Password = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PASS);
-        }
+        public string? Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_CERT_PASS);
 
         #endregion
 
         #region Public Methods
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Pfx), nameof(Pem), nameof(Password))]
+        [MemberNotNullWhen(returnValue: true, members: [nameof(Pfx), nameof(Pem), nameof(Password)])]
 #endif
         public bool IsAvailable()
             => !string.IsNullOrWhiteSpace(Pfx) &&

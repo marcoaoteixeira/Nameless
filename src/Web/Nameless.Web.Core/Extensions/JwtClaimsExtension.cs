@@ -1,6 +1,6 @@
 ﻿using Nameless.Web.Services;
 
-namespace Nameless.Web.Extensions {
+namespace Nameless.Web {
     public static class JwtClaimsExtension {
         #region Public Static Methods
 

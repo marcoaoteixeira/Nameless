@@ -1,6 +1,6 @@
 ﻿namespace Nameless.MongoDB {
     /// <summary>
-    /// This class was proposed to be an root point for this assembly.
+    /// This class was proposed to be a root point for this assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 

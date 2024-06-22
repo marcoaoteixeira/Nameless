@@ -2,7 +2,6 @@
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Caching.Redis.Options;
 using Nameless.Logging.Microsoft;
 using StackExchange.Redis;
@@ -18,9 +17,6 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Public Constructors
 
-        public ConfigurationOptionsFactory()
-            : this(RedisOptions.Default, NullLogger<ConfigurationOptionsFactory>.Instance) { }
-
         public ConfigurationOptionsFactory(RedisOptions options, ILogger<ConfigurationOptionsFactory> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _logger = Guard.Against.Null(logger, nameof(logger));
@@ -30,11 +26,20 @@ namespace Nameless.Caching.Redis.Impl {
 
         #region Private Methods
 
-        private X509Certificate OnCertificateSelection(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate? remoteCertificate, string[] acceptableIssuers)
+        private X509Certificate OnCertificateSelection(
+            object sender,
+            string targetHost,
+            X509CertificateCollection localCertificates,
+            X509Certificate? remoteCertificate,
+            string[] acceptableIssuers)
             => new(fileName: _options.Certificate.Pfx,
                    password: _options.Certificate.Password);
 
-        private bool OnCertificateValidation(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors) {
+        private bool OnCertificateValidation(
+            object sender,
+            X509Certificate? certificate,
+            X509Chain? chain,
+            SslPolicyErrors sslPolicyErrors) {
             if (certificate is null) { return false; }
 
             var inner = new X509Certificate2(_options.Certificate.Pem);

@@ -31,7 +31,7 @@ namespace Nameless.Caching.Redis.Options {
         #region Public Methods
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Host))]
+        [MemberNotNullWhen(returnValue: true, members: [nameof(Host)])]
 #endif
         public bool IsAvailable()
             => !string.IsNullOrWhiteSpace(Host) &&
