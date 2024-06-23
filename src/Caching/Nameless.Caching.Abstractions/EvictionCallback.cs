@@ -2,5 +2,6 @@
     public delegate void EvictionCallback(
         string key,
         object? value = null,
-        string? reason = null);
+        string? reason = null
+    );
 }

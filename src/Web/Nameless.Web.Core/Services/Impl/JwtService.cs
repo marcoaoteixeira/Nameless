@@ -3,11 +3,8 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 using Nameless.Services;
-using Nameless.Services.Impl;
-using Nameless.Web.Extensions;
 using Nameless.Web.Options;
 using MS_JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -16,23 +13,14 @@ namespace Nameless.Web.Services.Impl {
         #region Private Read-Only Fields
 
         private readonly JwtOptions _options;
-        private readonly IClock _clock;
+        private readonly IClockService _clock;
         private readonly ILogger _logger;
 
         #endregion
 
         #region Public Constructors
 
-        public JwtService()
-            : this(JwtOptions.Default, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
-
-        public JwtService(JwtOptions options)
-            : this(options, SystemClock.Instance, NullLogger<JwtService>.Instance) { }
-
-        public JwtService(JwtOptions options, IClock clock)
-            : this(options, clock, NullLogger<JwtService>.Instance) { }
-
-        public JwtService(JwtOptions options, IClock clock, ILogger<JwtService> logger) {
+        public JwtService(JwtOptions options, IClockService clock, ILogger<JwtService> logger) {
             _options = Guard.Against.Null(options, nameof(options));
             _clock = Guard.Against.Null(clock, nameof(clock));
             _logger = Guard.Against.Null(logger, nameof(logger));

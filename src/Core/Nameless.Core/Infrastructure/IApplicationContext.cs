@@ -11,11 +11,11 @@
         /// </summary>
         string ApplicationName { get; }
         /// <summary>
-        /// Gets the (full) path to the executing application.
+        /// Gets the (full) path to the application folder.
         /// </summary>
-        string BasePath { get; }
+        string ApplicationBasePath { get; }
         /// <summary>
-        /// Gets the (full) path to the application special data folder.
+        /// Gets the (full) path to the application data folder.
         /// </summary>
         string ApplicationDataFolderPath { get; }
         /// <summary>

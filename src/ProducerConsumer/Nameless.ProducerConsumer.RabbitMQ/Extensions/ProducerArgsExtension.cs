@@ -12,7 +12,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetExchangeName(this ProducerArgs self, string value) {
-            self.Set(Root.ProducerArgsTokens.EXCHANGE_NAME, value ?? Root.Defaults.EXCHANGE_NAME);
+            self.Set(Root.ProducerArgsTokens.EXCHANGE_NAME, value.WithFallback(Root.Defaults.EXCHANGE_NAME));
             return self;
         }
 
@@ -24,7 +24,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         }
 
         public static ProducerArgs SetRoutingKeys(this ProducerArgs self, string[] value) {
-            self.Set(Root.ProducerArgsTokens.ROUTING_KEYS, value ?? []);
+            self.Set(Root.ProducerArgsTokens.ROUTING_KEYS, value);
             return self;
         }
 

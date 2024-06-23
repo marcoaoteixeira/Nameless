@@ -22,6 +22,20 @@
             set => _credentials = value;
         }
 
+        public ICollectionNamingStrategy CollectionNamingStrategy { get; private set; } = Impl.CollectionNamingStrategy.Instance;
+
+        public Type[] ClassMappingTypes { get; private set; } = [];
+
+        #endregion
+
+        #region Public Methods
+
+        public void SetCollectionNamingStrategy(ICollectionNamingStrategy collectionNamingStrategy)
+            => CollectionNamingStrategy = collectionNamingStrategy;
+
+        public void SetClassMappingTypes(params Type[] classMappingTypes)
+            => ClassMappingTypes = classMappingTypes;
+
         #endregion
     }
 }

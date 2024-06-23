@@ -12,11 +12,21 @@ namespace Nameless.Data.SQLite.Options {
 
         #region Public Properties
 
-        public bool UseInMemory { get; set; }
+        /// <summary>
+        /// Gets or sets whether database will be set in-memory.
+        /// Default is <c>true</c>.
+        /// </summary>
+        public bool UseInMemory { get; set; } = true;
         
         public string DatabasePath { get; set; } = $".{Path.DirectorySeparatorChar}database.db";
-        
-        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLITE_PASS) ?? string.Empty;
+
+        public string? Password { get; set; }
+
+#if NET6_0_OR_GREATER
+        [MemberNotNullWhen(returnValue: true, nameof(Password))]
+#endif
+        public bool UseCredentials
+            => !string.IsNullOrWhiteSpace(Password);
 
         #endregion
 
@@ -26,25 +36,10 @@ namespace Nameless.Data.SQLite.Options {
             var connStr = string.Empty;
 
             connStr += $"Data Source={(UseInMemory ? ":memory:" : DatabasePath)};";
-            connStr += UseCredentials()
-                ? $"Password={Password};"
-                : string.Empty;
+            connStr += UseCredentials ? $"Password={Password};" : string.Empty;
 
             return connStr;
         }
-
-#if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Password))]
-#endif
-        public bool UseCredentials()
-            => !string.IsNullOrWhiteSpace(Password);
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override string ToString()
-            => GetConnectionString();
 
         #endregion
     }

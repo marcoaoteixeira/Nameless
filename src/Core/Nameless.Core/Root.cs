@@ -2,23 +2,18 @@
 
 namespace Nameless {
     /// <summary>
-    /// This class was defined to be an entrypoint for this project assembly.
+    /// The only purpose of this class is to be an "entrypoint" for this
+    /// assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
-    /// But, it's allow to use this class as a repository for all constants or
-    /// default values that we'll use throughout this project.
+    /// But, it's OK to use it as a repository for all constants or default
+    /// values that you'll use throughout this assembly.
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes
 
         public static class Defaults {
-            #region Public Constants
-
-            public const string APP_DATA_FOLDER_NAME = "App_Data";
-
-            #endregion
-
             #region Public Static Read-Only Properties
 
             /// <summary>

@@ -10,10 +10,7 @@ namespace Nameless.MongoDB.Impl {
         #endregion
 
         #region Public Constructors
-
-        public MongoCollectionProvider(IMongoDatabase database)
-            : this(database, CollectionNamingStrategy.Instance) { }
-
+        
         public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
             _database = Guard.Against.Null(database, nameof(database));
             _collectionNamingStrategy = Guard.Against.Null(collectionNamingStrategy, nameof(collectionNamingStrategy));

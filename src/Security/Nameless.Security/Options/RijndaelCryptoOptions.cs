@@ -25,8 +25,7 @@ namespace Nameless.Security.Options {
         /// Passphrase can be any string. Passphrase value must be kept in
         /// secret.
         /// </summary>
-        public string Passphrase { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RIJNDAEL_PASS_PHRASE)
-                                         ?? Root.Defaults.RIJNDAEL_PASS_PHRASE;
+        public string Passphrase { get; set; } = Root.Defaults.RIJNDAEL_PASS_PHRASE;
 
         /// <summary>
         /// Gets or sets the initialization vector.

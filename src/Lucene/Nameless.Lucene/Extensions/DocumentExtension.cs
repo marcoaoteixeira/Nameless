@@ -109,7 +109,7 @@ namespace Nameless.Lucene {
                 return (result > 0d).ToString();
             }
 
-            // self explanatory.
+            // self-explanatory.
             return string.Equals(a: value,
                                  b: bool.TrueString,
                                  comparisonType: StringComparison.OrdinalIgnoreCase)

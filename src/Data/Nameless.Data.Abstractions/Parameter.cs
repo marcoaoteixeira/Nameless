@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Nameless.Data {
     [DebuggerDisplay("{DebuggerDisplayValue}")]
-    public sealed record Parameter {
+    public readonly record struct Parameter {
         #region Public Properties
 
         public string Name { get; }

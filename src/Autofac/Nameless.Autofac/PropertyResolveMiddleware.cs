@@ -39,12 +39,12 @@ namespace Nameless.Autofac {
 
         public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
             context.ChangeParameters(context.Parameters.Union(
-                new[] {
+                [
                     new ResolvedParameter(
                         predicate: (param, _) => param.ParameterType == _serviceType,
                         valueAccessor: (param, ctx) => _factory(param.Member, ctx)
                     )
-                }
+                ]
             ));
 
             next(context);

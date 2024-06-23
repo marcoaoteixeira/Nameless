@@ -16,7 +16,6 @@
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 
-
 		<!-- DOCKER -->
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..\..</DockerfileContext>
@@ -29,15 +28,14 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\FluentValidation\Nameless.FluentValidation\Nameless.FluentValidation.csproj" />
 		<ProjectReference Include="..\..\..\src\MediatR\Nameless.MediatR.Integration\Nameless.MediatR.Integration.csproj" />
 		<ProjectReference Include="..\..\..\src\Web\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	</ItemGroup>

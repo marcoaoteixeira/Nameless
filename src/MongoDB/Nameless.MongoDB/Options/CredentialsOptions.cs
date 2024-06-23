@@ -16,24 +16,17 @@ namespace Nameless.MongoDB.Options {
 
         public string Mechanism { get; set; } = Root.Defaults.MONGO_CRED_MECHANISM;
 
-        public string Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_USER)
-                                       ?? Root.Defaults.MONGO_CRED_USER;
+        public string Username { get; set; } = Root.Defaults.MONGO_CRED_USER;
 
-        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MONGO_CRED_PASS)
-                                       ?? Root.Defaults.MONGO_CRED_PASS;
-
-        #endregion
-
-        #region Public Methods
+        public string Password { get; set; } = Root.Defaults.MONGO_CRED_PASS;
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Database), nameof(Mechanism), nameof(Username), nameof(Password))]
+        [MemberNotNullWhen(returnValue: true, nameof(Database), nameof(Mechanism), nameof(Username), nameof(Password))]
 #endif
-        public bool UseCredentials()
-                    => !string.IsNullOrWhiteSpace(Database) &&
-                       !string.IsNullOrWhiteSpace(Mechanism) &&
-                       !string.IsNullOrWhiteSpace(Username) &&
-                       !string.IsNullOrWhiteSpace(Password);
+        public bool UseCredentials => !string.IsNullOrWhiteSpace(Database) &&
+                                      !string.IsNullOrWhiteSpace(Mechanism) &&
+                                      !string.IsNullOrWhiteSpace(Username) &&
+                                      !string.IsNullOrWhiteSpace(Password);
 
         #endregion
     }

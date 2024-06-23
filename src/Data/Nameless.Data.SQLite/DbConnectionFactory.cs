@@ -12,9 +12,6 @@ namespace Nameless.Data.SQLite {
 
         #region Public Constructors
 
-        public DbConnectionFactory()
-            : this(SQLiteOptions.Default) { }
-
         public DbConnectionFactory(SQLiteOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
         }

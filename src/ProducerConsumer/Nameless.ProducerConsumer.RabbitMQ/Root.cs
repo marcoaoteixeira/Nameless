@@ -1,6 +1,6 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ {
     /// <summary>
-    /// This class was proposed to be an root point for this assembly.
+    /// This class was proposed to be a root point for this assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
@@ -9,18 +9,6 @@
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes
-
-        public static class EnvTokens {
-            #region Public Constants
-
-            public const string RABBITMQ_USER = nameof(RABBITMQ_USER);
-            public const string RABBITMQ_PASS = nameof(RABBITMQ_PASS);
-
-            public const string RABBITMQ_SSL_SERVERNAME = nameof(RABBITMQ_SSL_SERVERNAME);
-            public const string RABBITMQ_CERT_PASS = nameof(RABBITMQ_CERT_PASS);
-
-            #endregion
-        }
 
         public static class ConsumerArgsTokens {
             #region Public Constants

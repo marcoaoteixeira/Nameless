@@ -12,21 +12,16 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         #region Public Properties
 
-        public string Pfx { get; set; } = string.Empty;
+        public string? Pfx { get; set; }
 
-        public string Pem { get; set; } = string.Empty;
+        public string? Pem { get; set; }
 
-        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_CERT_PASS)
-                                       ?? string.Empty;
-
-        #endregion
-
-        #region Public Methods
+        public string? Password { get; set; }
 
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Pfx), nameof(Pem), nameof(Password))]
 #endif
-        public bool IsAvailable()
+        public bool IsAvailable
             => !string.IsNullOrWhiteSpace(Pfx) &&
                !string.IsNullOrWhiteSpace(Pem) &&
                !string.IsNullOrWhiteSpace(Password);

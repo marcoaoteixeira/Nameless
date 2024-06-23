@@ -1,11 +1,12 @@
 ﻿namespace Nameless.Security {
     /// <summary>
-    /// This class was proposed to be an root point for this assembly.
+    /// The only purpose of this class is to be an "entrypoint" for this
+    /// assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
-    /// But, it's allowed to use it as a repository for all constants or
-    /// default values that you'll use throughout this project.
+    /// But, it's OK to use it as a repository for all constants or default
+    /// values that you'll use throughout this assembly.
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes
@@ -24,17 +25,7 @@
 
             #endregion
         }
-
-        public static class EnvTokens {
-            #region Public Constants
-
-            public const string AES_KEY = nameof(AES_KEY);
-
-            public const string RIJNDAEL_PASS_PHRASE = nameof(RIJNDAEL_PASS_PHRASE);
-
-            #endregion
-        }
-
+        
         #endregion
     }
 }

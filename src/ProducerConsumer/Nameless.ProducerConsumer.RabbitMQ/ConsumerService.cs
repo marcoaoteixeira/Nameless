@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -23,10 +22,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #endregion
 
         #region Public Constructors
-
-        public ConsumerService(IModel channel)
-            : this(channel, NullLogger<ConsumerService>.Instance) { }
-
+        
         public ConsumerService(IModel channel, ILogger<ConsumerService> logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));
             _logger = Guard.Against.Null(logger, nameof(logger));
@@ -70,7 +66,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 return Task.CompletedTask;
             }
 
-            if (!TryDeserializeEnvelope<T>(deliverEventArgs, consumerArgs, out var envelope)) {
+            if (!TryDeserializeEnvelope(deliverEventArgs, consumerArgs, out var envelope)) {
                 return Task.CompletedTask;
             }
 
@@ -78,18 +74,16 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 return Task.CompletedTask;
             }
 
-            return HandleMessageAsync(
-                handler: handler,
-                message: message,
-                deliverEventArgs: deliverEventArgs,
-                consumerArgs: consumerArgs
-            );
+            return HandleMessageAsync(handler: handler,
+                                      message: message,
+                                      deliverEventArgs: deliverEventArgs,
+                                      consumerArgs: consumerArgs);
         }
 
         private bool TryCreateHandler<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out MessageHandler<T>? handler) {
             handler = null;
 
-            // Let's try create the handler delegate
+            // Let's try to create the handler delegate
             try { handler = registration.CreateHandler(); }
             catch (Exception ex) {
                 // Ok, registration was disposed?
@@ -110,7 +104,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 return false;
             }
 
-            // For some reason, registration was ok but we were
+            // For some reason registration was ok, but we were
             // not able to create the delegate.
             if (handler is null) {
                 // Log notification
@@ -127,7 +121,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             return true;
         }
 
-        private bool TryDeserializeEnvelope<T>(BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
+        private bool TryDeserializeEnvelope(BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
             envelope = deliverEventArgs.GetEnvelope();
 
             // We were not able to retrieve the envelope for some reason.
@@ -187,7 +181,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
                 // Let's execute the handler with the received message
                 await handler(message);
 
-                // If everything goes ok, let's ack the message received.
+                // If everything goes ok, let us ack the message received.
                 // Check consumer args for 
                 PositiveAck(channel: _channel,
                             deliverEventArgs: deliverEventArgs,
@@ -212,7 +206,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             var method = handler.Method;
             var parameters = method
                 .GetParameters()
-                .Select(_ => $"{_.ParameterType.Name} {_.Name}")
+                .Select(parameter => $"{parameter.ParameterType.Name} {parameter.Name}")
                 .ToArray();
 
             var signature = $"{method.DeclaringType?.FullName}.{method.Name}({string.Join(", ", parameters)})";

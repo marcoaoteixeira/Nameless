@@ -4,12 +4,13 @@ using Lucene.Net.Util;
 
 namespace Nameless.Lucene {
     /// <summary>
-    /// This class was proposed to be a root point for this assembly.
+    /// The only purpose of this class is to be an "entrypoint" for this
+    /// assembly.
     /// 
     /// *** DO NOT IMPLEMENT ANYTHING HERE ***
     /// 
-    /// But, it's allowed to use it as a repository for all constants or
-    /// default values that you'll use throughout this project.
+    /// But, it's OK to use it as a repository for all constants or default
+    /// values that you'll use throughout this assembly.
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes
@@ -20,13 +21,13 @@ namespace Nameless.Lucene {
             /// <summary>
             /// Gets the Lucene version used.
             /// </summary>
-            public static readonly LuceneVersion LuceneVersion = LuceneVersion.LUCENE_48;
+            public static readonly LuceneVersion Version = LuceneVersion.LUCENE_48;
 
             #endregion
 
             #region Internal Static Read-Only Properties
 
-            internal static Analyzer Analyzer { get; } = new StandardAnalyzer(matchVersion: LuceneVersion);
+            internal static Analyzer Analyzer { get; } = new StandardAnalyzer(matchVersion: Version);
 
             #endregion
         }

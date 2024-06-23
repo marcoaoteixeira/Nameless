@@ -1,20 +1,20 @@
-using Autofac;
-using Nameless.Caching.InMemory.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Nameless.Caching.InMemory {
     public class DependencyInjectionTests {
         [Test]
         public void Register_And_Resolve_Service() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterCachingModule();
-            using var container = builder.Build();
+            var services = new ServiceCollection();
+            services.RegisterCacheService();
+
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var sut = container.Resolve<ICache>();
+            var sut = provider.GetRequiredService<ICacheService>();
 
             // assert
-            Assert.That(sut, Is.InstanceOf<InMemoryCache>());
+            Assert.That(sut, Is.InstanceOf<InMemoryCacheService>());
         }
     }
 }

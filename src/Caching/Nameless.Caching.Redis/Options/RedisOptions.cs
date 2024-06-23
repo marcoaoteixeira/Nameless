@@ -20,16 +20,14 @@
         public int Port { get; set; } = 6379;
 
         /// <summary>
-        /// Gets the username. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.REDIS_USER"/>.
+        /// Gets or sets the username.
         /// </summary>
-        public string? Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_USER);
+        public string? Username { get; set; }
 
         /// <summary>
-        /// Gets the password. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.REDIS_PASS"/>.
+        /// Gets or sets the password.
         /// </summary>
-        public string? Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.REDIS_PASS);
+        public string? Password { get; set; }
 
         public int KeepAlive { get; set; } = -1;
 

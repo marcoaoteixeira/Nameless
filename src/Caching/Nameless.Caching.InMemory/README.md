@@ -1,6 +1,6 @@
 ﻿# Nameless Caching In-Memory Library
 
-In-Memory caching library.
+In-Memory caching library implementation.
 
 ## Content
 
@@ -11,11 +11,8 @@ and provide a common API. So, that said...
 
 e.g.:
 
-```
-// From Microsoft.Extensions.Caching.Memory
-var memoryCacheOptions = new MemoryCacheOptions();
-var memoryCache = new MemoryCache(memoryCacheOptions);
+``` csharp
+var cacheService = new InMemoryCacheService();
 
-// From this library
-var cache = new InMemoryCache(memoryCache);
+// that's it
 ```

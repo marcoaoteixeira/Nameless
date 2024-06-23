@@ -5,19 +5,19 @@ namespace Nameless {
     public static class LoggerExtension {
         private static readonly Func<string, bool> EmptyAssertMessage = _ => true;
 
-        public static Mock<ILogger<T>> VerifyDebug<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
-            => VerifyFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Debug, times);
+        public static Mock<ILogger<T>> VerifyDebugCall<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
+            => VerifyCallFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Debug, times);
 
-        public static Mock<ILogger<T>> VerifyError<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
-            => VerifyFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Error, times);
+        public static Mock<ILogger<T>> VerifyErrorCall<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
+            => VerifyCallFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Error, times);
 
-        public static Mock<ILogger<T>> VerifyInformation<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
-            => VerifyFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Information, times);
+        public static Mock<ILogger<T>> VerifyInformationCall<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
+            => VerifyCallFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Information, times);
 
-        public static Mock<ILogger<T>> VerifyWarning<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
-            => VerifyFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Warning, times);
+        public static Mock<ILogger<T>> VerifyWarningCall<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage = null, Times? times = null)
+            => VerifyCallFor(self, assertMessage ?? EmptyAssertMessage, LogLevel.Warning, times);
 
-        public static Mock<ILogger<T>> VerifyFor<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, Times? times = null) {
+        public static Mock<ILogger<T>> VerifyCallFor<T>(this Mock<ILogger<T>> self, Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, Times? times = null) {
             times ??= Times.Once();
 
             Func<object, Type, bool> state = (value, type)

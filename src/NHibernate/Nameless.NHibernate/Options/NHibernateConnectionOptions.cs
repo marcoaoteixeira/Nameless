@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Data;
+using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options {
     public sealed class NHibernateConnectionOptions : NHibernateOptionsBase {

@@ -1,7 +1,7 @@
 ﻿namespace Nameless.Caching.InMemory {
     public class CacheTests {
-        private static InMemoryCache CreateSut()
-            => new InMemoryCache();
+        private static InMemoryCacheService CreateSut()
+            => new InMemoryCacheService();
 
         [Test]
         public async Task Set_New_Object_To_Cache() {
@@ -14,7 +14,7 @@
             var sut = CreateSut();
 
             // act
-            var result = await sut.SetAsync("Key", value);
+            var result = await sut.SetAsync("Key", value, opts: default);
 
             // assert
             Assert.That(result, Is.True);
@@ -32,7 +32,7 @@
             var sut = CreateSut();
 
             // act
-            var objA = await sut.SetAsync(key, value);
+            var objA = await sut.SetAsync(key, value, opts: default);
             var result = await sut.GetAsync<object?>(key);
 
             // assert

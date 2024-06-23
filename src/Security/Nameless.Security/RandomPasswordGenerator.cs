@@ -36,17 +36,15 @@ namespace Nameless.Security {
 
         #region Static Constructors
 
-        static RandomPasswordGenerator() {
-
-        }
+        // Explicit static constructor to tell the C# compiler
+        // not to mark type as beforefieldinit
+        static RandomPasswordGenerator() { }
 
         #endregion
 
         #region Private Constructors
 
-        private RandomPasswordGenerator() {
-
-        }
+        private RandomPasswordGenerator() { }
 
         #endregion
 

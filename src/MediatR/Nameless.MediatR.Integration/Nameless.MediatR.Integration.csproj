@@ -45,12 +45,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="11.9.1" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\Validation\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

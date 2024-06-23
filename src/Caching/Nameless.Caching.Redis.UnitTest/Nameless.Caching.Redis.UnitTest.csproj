@@ -24,7 +24,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit.Analyzers" Version="4.2.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -34,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Caching.Redis.DependencyInjection\Nameless.Caching.Redis.DependencyInjection.csproj" />
+	  <ProjectReference Include="..\Nameless.Caching.Redis\Nameless.Caching.Redis.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

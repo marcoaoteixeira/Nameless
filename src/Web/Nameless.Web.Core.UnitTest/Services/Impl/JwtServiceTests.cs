@@ -1,4 +1,7 @@
-﻿using Microsoft.IdentityModel.JsonWebTokens;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Nameless.Services.Impl;
+using Nameless.Web.Options;
 
 namespace Nameless.Web.Services.Impl {
     public class JwtServiceTests {
@@ -10,7 +13,9 @@ namespace Nameless.Web.Services.Impl {
                 Name = "Test User",
                 Email = "test_user@test.com"
             };
-            var sut = new JwtService();
+            var sut = new JwtService(options: new JwtOptions(),
+                                     clock: SystemClockService.Instance,
+                                     logger: NullLogger<JwtService>.Instance);
 
             // act
             var actual = sut.Generate(jwtClaims);
@@ -27,7 +32,9 @@ namespace Nameless.Web.Services.Impl {
                 Name = "Test User",
                 Email = "test_user@test.com"
             };
-            var sut = new JwtService();
+            var sut = new JwtService(options: new JwtOptions(),
+                                     clock: SystemClockService.Instance,
+                                     logger: NullLogger<JwtService>.Instance);
 
             // act
             var token = sut.Generate(jwtClaims);

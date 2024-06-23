@@ -51,15 +51,15 @@
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\FluentValidation\Nameless.FluentValidation\Nameless.FluentValidation.csproj" />
+		<ProjectReference Include="..\..\Validation\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

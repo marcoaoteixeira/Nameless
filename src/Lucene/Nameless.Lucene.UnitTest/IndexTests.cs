@@ -1,27 +1,23 @@
-﻿using Autofac;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Nameless.Infrastructure;
-using Nameless.Lucene.DependencyInjection;
 using Nameless.Lucene.Impl;
 
 namespace Nameless.Lucene {
     public class IndexTests {
         private static readonly string IndexDirectoryPath = typeof(IndexTests).Assembly.GetDirectoryPath("Output");
 
-        private static IContainer CreateContainer() {
-            var builder = new ContainerBuilder();
-            builder.RegisterLuceneModule();
+        private static ServiceProvider CreateServiceProvider() {
+            var services = new ServiceCollection();
+            services.RegisterLucene();
 
             var applicationContextMock = new Mock<IApplicationContext>();
             applicationContextMock
                 .Setup(mock => mock.ApplicationDataFolderPath)
                 .Returns(IndexDirectoryPath);
-            builder
-                .RegisterInstance(applicationContextMock.Object)
-                .As<IApplicationContext>()
-                .SingleInstance();
+            services.AddSingleton(applicationContextMock.Object);
 
-            return builder.Build();
+            return services.BuildServiceProvider();
         }
 
         [OneTimeTearDown]
@@ -33,10 +29,10 @@ namespace Nameless.Lucene {
         [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void Should_Create_Instance_Of_Index_Class() {
-            using var container = CreateContainer();
+            using var provider = CreateServiceProvider();
             const string INDEX_NAME = "32b52ab3-7069-4fae-ac15-d9f3442db19b";
 
-            var indexManager = container.Resolve<IIndexManager>();
+            var indexManager = provider.GetRequiredService<IIndexManager>();
             var indexA = indexManager.GetOrCreate(INDEX_NAME);
             var indexB = indexManager.GetOrCreate(INDEX_NAME);
 
@@ -50,10 +46,10 @@ namespace Nameless.Lucene {
         [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void StoreDocument_Should_Create_A_New_Document_In_Index() {
-            using var container = CreateContainer();
+            using var provider = CreateServiceProvider();
             const string INDEX_NAME = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
 
-            var indexManager = container.Resolve<IIndexManager>();
+            var indexManager = provider.GetRequiredService<IIndexManager>();
             var index = indexManager.GetOrCreate(INDEX_NAME);
 
             var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
@@ -76,10 +72,10 @@ namespace Nameless.Lucene {
         [Category(Categories.RUNS_ON_DEV_MACHINE)]
         [Test]
         public void CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
-            using var container = CreateContainer();
+            using var provider = CreateServiceProvider();
             const string INDEX_NAME = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
 
-            var indexManager = container.Resolve<IIndexManager>();
+            var indexManager = provider.GetRequiredService<IIndexManager>();
             var index = indexManager.GetOrCreate(INDEX_NAME);
 
             var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
@@ -129,12 +125,12 @@ namespace Nameless.Lucene {
         [Test]
         public void Multiple_Documents_Store_Different_Moments() {
             // setup
-            using var container = CreateContainer();
+            using var provider = CreateServiceProvider();
             const string INDEX_NAME = "e112b156-ecfc-4fb9-90db-9675bc61b3ba";
             const string FIELD_NAME = "Content";
 
             // arrange
-            var indexManager = container.Resolve<IIndexManager>();
+            var indexManager = provider.GetRequiredService<IIndexManager>();
             var index = indexManager.GetOrCreate(INDEX_NAME);
             
             // act 1

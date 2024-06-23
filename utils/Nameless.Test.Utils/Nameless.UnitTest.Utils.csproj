@@ -6,6 +6,8 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless</RootNamespace>
+
+		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>

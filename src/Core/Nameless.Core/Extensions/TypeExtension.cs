@@ -175,6 +175,11 @@ namespace Nameless {
             return self.GetCustomAttribute(attributeType, inherit) is not null;
         }
 
+        public static bool HasParameterlessConstructor(this Type self)
+            => self.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
+                   .Any(constructor => constructor.GetParameters()
+                                                  .Length == 0);
+
         #endregion
     }
 }

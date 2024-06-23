@@ -20,7 +20,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
 		<PackageReference Include="Moq" Version="4.20.70" />
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
@@ -35,7 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Caching.InMemory.DependencyInjection\Nameless.Caching.InMemory.DependencyInjection.csproj" />
+	  <ProjectReference Include="..\Nameless.Caching.InMemory\Nameless.Caching.InMemory.csproj" />
 	</ItemGroup>
 
 </Project>

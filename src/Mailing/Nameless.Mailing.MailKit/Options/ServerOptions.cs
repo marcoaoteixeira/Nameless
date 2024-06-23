@@ -30,12 +30,12 @@ namespace Nameless.Mailing.MailKit.Options {
         /// <summary>
         /// Gets or sets the username credential.
         /// </summary>
-        public string? Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_USER);
+        public string? Username { get; set; }
 
         /// <summary>
         /// Gets or sets the password credential.
         /// </summary>
-        public string? Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.MESSENGER_SMTP_PASS);
+        public string? Password { get; set; }
 
         /// <summary>
         /// Gets or sets secure socket option to use if connection is SSL.
@@ -43,14 +43,10 @@ namespace Nameless.Mailing.MailKit.Options {
         /// </summary>
         public SecureSocketOptions SecureSocket { get; set; } = SecureSocketOptions.None;
 
-        #endregion
-
-        #region Public Methods
-
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
 #endif
-        public bool UseCredentials()
+        public bool UseCredentials
             => Username is not null &&
                Password is not null;
 
