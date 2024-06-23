@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ {
@@ -12,9 +11,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
         #endregion
 
         #region Public Constructors
-
-        public ProducerService(IModel channel)
-            : this(channel, NullLogger<ProducerService>.Instance) { }
 
         public ProducerService(IModel channel, ILogger<ProducerService> logger) {
             _channel = Guard.Against.Null(channel, nameof(channel));

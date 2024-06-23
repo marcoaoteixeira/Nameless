@@ -22,20 +22,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
         public string Protocol { get; set; } = "amqp";
 
         /// <summary>
-        /// Gets the user name. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.RABBITMQ_USER"/>. The default
-        /// value is <c>guest</c>.
+        /// Gets or sets the username. Default value is <c>guest</c>.
         /// </summary>
-        public string Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_USER)
-                                       ?? Root.Defaults.RABBITMQ_USER;
+        public string Username { get; set; } = Root.Defaults.RABBITMQ_USER;
 
         /// <summary>
-        /// Gets the user password. This property is provided by the environment
-        /// variable <see cref="Root.EnvTokens.RABBITMQ_PASS"/>. The default
-        /// value is <c>guest</c>.
+        /// Gets or sets the user password. Default value is <c>guest</c>.
         /// </summary>
-        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_PASS)
-                                       ?? Root.Defaults.RABBITMQ_PASS;
+        public string Password { get; set; } = Root.Defaults.RABBITMQ_PASS;
 
         public string Hostname { get; set; } = "localhost";
 
@@ -53,23 +47,19 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
             set => _certificate = value;
         }
 
-        #endregion
-
-        #region Public Methods
-
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+        [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
 #endif
-        public bool UseCredentials()
+        public bool UseCredentials
             => !string.IsNullOrWhiteSpace(Username) &&
                !string.IsNullOrWhiteSpace(Password);
 
         #endregion
 
-        #region Public Override Methods
+        #region Public Methods
 
-        public override string ToString()
-            => UseCredentials()
+        public string GetConnectionString()
+            => UseCredentials
                 ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
                 : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
 

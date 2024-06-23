@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Validation.Abstractions;
 using ValidationException = Nameless.Validation.Abstractions.ValidationException;
 
@@ -17,12 +16,11 @@ namespace Nameless.Validation.FluentValidation.Impl {
 
         #region Public Constructors
 
-        public ValidationService(IValidator[] validators)
-            : this(validators, NullLogger<ValidationService>.Instance) { }
-
-        public ValidationService(IValidator[] validators, ILogger<ValidationService> logger) {
-            _validators = validators ?? throw new ArgumentNullException(nameof(validators));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        public ValidationService(IEnumerable<IValidator> validators, ILogger<ValidationService> logger) {
+            _validators = Guard.Against
+                               .Null(validators, nameof(validators))
+                               .ToArray();
+            _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
         #endregion
@@ -38,9 +36,7 @@ namespace Nameless.Validation.FluentValidation.Impl {
 
         public async Task<ValidationResult> ValidateAsync<TValue>(TValue value, bool throwOnFailure = false, CancellationToken cancellationToken = default)
             where TValue : class {
-            if (value is null) {
-                throw new ArgumentNullException(nameof(value));
-            }
+            Guard.Against.Null(value, nameof(value));
 
             var cacheEntry = _cache.GetOrAdd(typeof(TValue), FetchValidator);
             if (cacheEntry is IValidator<TValue> validator) {

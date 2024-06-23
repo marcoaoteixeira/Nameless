@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Infrastructure;
 using Nameless.Infrastructure.Impl;
+using Nameless.Services.Impl;
 
 namespace Nameless {
     public static class ServiceCollectionExtension {
@@ -21,14 +22,13 @@ namespace Nameless {
         /// The <paramref name="self"/> instance.
         /// </returns>
         public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, bool useAppDataSpecialFolder = false, Version? appVersion = null)
-            => self
-                .AddSingleton<IApplicationContext>(provider => {
-                    var hostEnvironment = provider.GetRequiredService<IHostEnvironment>();
+            => self.AddSingleton<IApplicationContext>(provider => {
+                var hostEnvironment = provider.GetRequiredService<IHostEnvironment>();
 
-                    return new ApplicationContext(hostEnvironment,
-                                                  useAppDataSpecialFolder,
-                                                  appVersion ?? new Version(major: 0, minor: 0, build: 0));
-                });
+                return new ApplicationContext(hostEnvironment,
+                                              useAppDataSpecialFolder,
+                                              appVersion ?? new Version(major: 0, minor: 0, build: 0));
+            });
 
         /// <summary>
         /// Registers an object to act like an option that will get its values
@@ -63,6 +63,15 @@ namespace Nameless {
 
             return self;
         }
+
+        public static IServiceCollection RegisterClockService(this IServiceCollection self)
+            => self.AddSingleton(SystemClockService.Instance);
+
+        public static IServiceCollection RegisterPluralizationRuleProvider(this IServiceCollection self)
+            => self.AddSingleton(PluralizationRuleProvider.Instance);
+
+        public static IServiceCollection RegisterXmlSchemaValidator(this IServiceCollection self)
+            => self.AddSingleton(XmlSchemaValidator.Instance);
 
         #endregion
     }

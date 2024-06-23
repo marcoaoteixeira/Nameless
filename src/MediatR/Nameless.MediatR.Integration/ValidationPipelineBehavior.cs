@@ -1,19 +1,19 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
+using Nameless.Validation.Abstractions;
 
 namespace Nameless.MediatR.Integration {
     public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
         #region Private Read-Only Fields
 
-        private readonly IValidator<TRequest>? _validator;
+        private readonly IValidationService _validationService;
 
         #endregion
 
         #region Public Constructors
 
-        public ValidationPipelineBehavior(IValidator<TRequest>? validator = null) {
-            _validator = validator;
+        public ValidationPipelineBehavior(IValidationService validationService) {
+            _validationService = validationService;
         }
 
         #endregion
@@ -28,14 +28,14 @@ namespace Nameless.MediatR.Integration {
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The final handler result.</returns>
         /// <exception cref="ValidationException">
-        /// If <see cref="IValidator{T}"/> is available and the validation fails.
+        /// If validation fails.
         /// </exception>
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-            if (_validator is not null) {
-                await _validator.ValidateAsync(instance: request,
-                                               options: opts => opts.ThrowOnFailures(),
-                                               cancellation: cancellationToken)
-                                .ConfigureAwait(continueOnCapturedContext: false);
+            if (request.GetType().IsValueType) {
+                await _validationService.ValidateAsync(value: (object)request,
+                                                       throwOnFailure: true,
+                                                       cancellationToken: cancellationToken)
+                                        .ConfigureAwait(continueOnCapturedContext: false);
             }
 
             return await next();

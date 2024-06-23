@@ -6,7 +6,7 @@ namespace Nameless.Caching.Redis {
         public void Register_And_Resolve_Service() {
             // arrange
             var services = new ServiceCollection();
-            services.RegisterCaching();
+            services.RegisterCacheService();
             using var provider = services.BuildServiceProvider();
 
             // act

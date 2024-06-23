@@ -1,6 +1,5 @@
-﻿using Autofac;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation.Abstractions;
-using Nameless.Validation.FluentValidation.DependencyInjection;
 using Nameless.Validation.FluentValidation.Impl;
 
 namespace Nameless.Validation.FluentValidation.UnitTest {
@@ -8,18 +7,15 @@ namespace Nameless.Validation.FluentValidation.UnitTest {
         [Test]
         public void Register_Resolve_Service() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterValidationModule();
-            using var container = builder.Build();
+            var services = new ServiceCollection();
+            services.RegisterValidationService();
+            using var container = services.BuildServiceProvider();
 
             // act
-            var sut = container.Resolve<IValidationService>();
+            var sut = container.GetService<IValidationService>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(sut, Is.Not.Null);
-                Assert.That(sut, Is.InstanceOf<ValidationService>());
-            });
+            Assert.That(sut, Is.InstanceOf<ValidationService>());
         }
     }
 }

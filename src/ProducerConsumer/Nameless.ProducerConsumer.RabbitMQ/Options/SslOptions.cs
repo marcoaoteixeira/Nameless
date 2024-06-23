@@ -16,20 +16,16 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options {
 
         public bool Enabled { get; set; }
 
-        public string? ServerName { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.RABBITMQ_SSL_SERVERNAME);
+        public string? ServerName { get; set; }
 
         public SslProtocols Protocol { get; set; }
 
         public SslPolicyErrors PolicyError { get; set; }
 
-        #endregion
-
-        #region Public Methods
-
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(returnValue: true, nameof(ServerName))]
+        [MemberNotNullWhen(returnValue: true, members: [nameof(ServerName)])]
 #endif
-        public bool IsAvailable()
+        public bool IsAvailable
             => Enabled &&
                !string.IsNullOrWhiteSpace(ServerName) &&
                Protocol != SslProtocols.None;

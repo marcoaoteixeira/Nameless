@@ -6,10 +6,14 @@ namespace Nameless.Caching.Redis {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection RegisterCaching(this IServiceCollection self)
+        public static IServiceCollection RegisterCacheService(this IServiceCollection self, Action<RedisOptions>? configure = null)
             => self.AddSingleton<ICacheService>(provider => {
+                var options = provider.GetPocoOptions<RedisOptions>();
+
+                configure?.Invoke(options);
+
                 var configurationOptionsFactory = new ConfigurationOptionsFactory(
-                    options: provider.GetPocoOptions<RedisOptions>(),
+                    options: options,
                     logger: provider.GetLogger<ConfigurationOptionsFactory>()
                 );
 

@@ -205,7 +205,7 @@ namespace Nameless.Checklist.Web {
 
             // Minimal Endpoints
             app
-                .ResolveEndpoints(SupportAssemblies);
+                .ResolveMinimalEndpoints();
 
             // Swagger
             app
@@ -243,7 +243,7 @@ namespace Nameless.Checklist.Web {
         // Don't build the container; that gets done for you by the factory.
         public void ConfigureContainer(ContainerBuilder builder) {
             builder
-                .RegisterInstance(SystemClock.Instance);
+                .RegisterInstance(SystemClockService.Instance);
 
             // Example
             var path = typeof(StartUp).Assembly.GetDirectoryPath("App_Data/database.json");

@@ -36,8 +36,8 @@ namespace Nameless.Web.Identity.Api.Endpoints {
             IMediator mediator,
             CancellationToken cancellationToken) {
             var request = new AuthenticateUserRequest {
-                UserName = input.Username,
-                Password = input.Password
+                UserName = input.Username ?? string.Empty,
+                Password = input.Username ?? string.Empty
             };
 
             var response = await mediator.Send(request, cancellationToken);

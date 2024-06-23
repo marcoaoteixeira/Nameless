@@ -22,7 +22,7 @@ namespace Nameless.Mailing.MailKit.Impl {
 
         #region Private Static Methods
 
-        private static async Task<ISmtpClient> AuthenticateSmtpClient(ISmtpClient client, ServerOptions serverOptions, CancellationToken cancellationToken) {
+        private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, ServerOptions serverOptions, CancellationToken cancellationToken) {
             client.AuthenticationMechanisms.Remove("XOAUTH2");
 
             await client.AuthenticateAsync(serverOptions.Username,
@@ -44,7 +44,7 @@ namespace Nameless.Mailing.MailKit.Impl {
                                       _options.SecureSocket,
                                       cancellationToken);
 
-            return client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && _options.UseCredentials()
+            return client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && _options.UseCredentials
                 ? await AuthenticateSmtpClient(client, _options, cancellationToken)
                 : client;
         }

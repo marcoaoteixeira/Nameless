@@ -50,6 +50,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
+		<ProjectReference Include="..\Nameless.Data.Common\Nameless.Data.Common.csproj" />
 	</ItemGroup>
 
 </Project>

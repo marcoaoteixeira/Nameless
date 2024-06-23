@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Nameless.Security.Options;
 
 namespace Nameless.Security.Crypto {
@@ -13,32 +14,32 @@ namespace Nameless.Security.Crypto {
     /// </summary>
     /// <remarks>
     /// Be careful when performing encryption and decryption. There is a bug
-    /// ("feature"?) in .NET Framework, which causes corruption of encryptor/
-    /// decryptor if a cryptographic exception occurs during encryption/
-    /// decryption operation. To correct the problem, re-initialize the class
-    /// instance when a cryptographic exception occurs.
+    /// ("feature"?) in .NET, which causes corruption of encryptor/decryptor
+    /// if a cryptographic exception occurs during encryption/decryption
+    /// operation. To correct the problem, re-initialize the class instance
+    /// when a cryptographic exception occurs.
     /// </remarks>
     public sealed class RijndaelCryptographicService : ICryptographicService, IDisposable {
+
+        #region Private Read-Only Fields
+
+        private readonly object _lock = new();
+        private readonly RijndaelCryptoOptions _options;
+        private readonly ILogger _logger;
+        private readonly byte[] _ivBuffer;
+        private readonly byte[] _keyBuffer;
+
+        #endregion
+
         #region Private Fields
 
-        // These members will be used to perform encryption and decryption.
         private ICryptoTransform? _encryptor;
         private ICryptoTransform? _decryptor;
         private bool _disposed;
 
         #endregion
 
-        #region Private Read-Only Fields
-
-        private readonly RijndaelCryptoOptions _options;
-        private readonly object _syncLock = new();
-
-        #endregion
-
         #region Public Constructors
-
-        public RijndaelCryptographicService()
-            : this(RijndaelCryptoOptions.Default) { }
 
         /// <summary>
         /// Use this constructor if you are planning to perform encryption/
@@ -46,34 +47,15 @@ namespace Nameless.Security.Crypto {
         /// parameters.
         /// </summary>
         /// <param name="options">The options.</param>
-        public RijndaelCryptographicService(RijndaelCryptoOptions options) {
+        /// <param name="logger">The logger.</param>
+        public RijndaelCryptographicService(RijndaelCryptoOptions options, ILogger<RijndaelCryptographicService> logger) {
             _options = Guard.Against.Null(options, nameof(options));
+            _logger = Guard.Against.Null(logger, nameof(logger));
 
-            // Initialization vector converted to a byte array.
-            // Get bytes of initialization vector.
-            var ivBytes = Encoding.ASCII.GetBytes(_options.IV);
+            _ivBuffer = CreateIvBuffer(options);
+            _keyBuffer = CreateKeyBuffer(options);
 
-            // Salt used for password hashing (to generate the key, not during
-            // encryption) converted to a byte array.
-            // Get bytes of salt (used in hashing).
-            var saltValueBytes = Encoding.ASCII.GetBytes(_options.Salt);
-
-            byte[]? keyBytes;
-            // Generate password, which will be used to derive the key.
-            using (var password = new Rfc2898DeriveBytes(_options.Passphrase, saltValueBytes, _options.PasswordIterations, HashAlgorithmName.SHA256)) {
-                // Convert key to a byte array adjusting the size from bits to bytes.
-                var keySize = _options.KeySize == KeySize.None ? KeySize.Large : _options.KeySize;
-                keyBytes = password.GetBytes((int)keySize / 8);
-            }
-
-            // Initialize Rijndael key object.
-            using var symmetricKey = Aes.Create();
-            // If we do not have initialization vector, we cannot use the CBC mode.
-            // The only alternative is the ECB mode (which is not as good).
-            symmetricKey.Mode = ivBytes.Length == 0 ? CipherMode.ECB : CipherMode.CBC;
-
-            _encryptor = symmetricKey.CreateEncryptor(keyBytes, ivBytes);
-            _decryptor = symmetricKey.CreateDecryptor(keyBytes, ivBytes);
+            InitializeCryptoTransform();
         }
 
         #endregion
@@ -86,7 +68,90 @@ namespace Nameless.Security.Crypto {
 
         #endregion
 
+        #region Private Static Methods
+
+        private static byte[] CreateIvBuffer(RijndaelCryptoOptions options)
+            // Initialization vector converted to a byte array.
+            // Get bytes of initialization vector.
+            => Encoding.ASCII.GetBytes(options.IV);
+
+        private static byte[] CreateKeyBuffer(RijndaelCryptoOptions options) {
+            // Salt used for password hashing (to generate the key, not during
+            // encryption) converted to a byte array.
+            // Get bytes of salt (used in hashing).
+            var saltValueBytes = Encoding.ASCII.GetBytes(options.Salt);
+
+            // Generate password, which will be used to derive the key.
+            using var password = new Rfc2898DeriveBytes(password: options.Passphrase,
+                                                        salt: saltValueBytes,
+                                                        iterations: options.PasswordIterations,
+                                                        hashAlgorithm: HashAlgorithmName.SHA256);
+            // Convert key to a byte array adjusting the size from bits to bytes.
+            var keySize = options.KeySize == KeySize.None ? KeySize.Large : options.KeySize;
+
+            return password.GetBytes((int)keySize / 8);
+        }
+
+        /// <summary>
+        /// Generates random integer.
+        /// </summary>
+        /// <param name="minimumValue">
+        /// Min value (inclusive).
+        /// </param>
+        /// <param name="maximumValue">
+        /// Max value (inclusive).
+        /// </param>
+        /// <returns>
+        /// Random integer value between the min and max values (inclusive).
+        /// </returns>
+        /// <remarks>
+        /// These methods overcome the limitations of .NET Framework's Random
+        /// class, which - when initialized multiple times within a very short
+        /// period of time - can generate the same "random" number.
+        /// </remarks>
+        private static int GenerateRandomNumber(int minimumValue, int maximumValue) {
+            // We will make up an integer seed from 4 bytes of this array.
+            var randomBytes = new byte[4];
+
+            // Generate 4 random bytes.
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+
+            // Convert four random bytes into a positive integer value.
+            var seed = ((randomBytes[0] & 0x7f) << 24) |
+                       (randomBytes[1] << 16) |
+                       (randomBytes[2] << 8) |
+                       (randomBytes[3]);
+
+            // Now, this looks more like real randomization.
+            // And, calculate a random number.
+            return new Random(seed).Next(minimumValue, maximumValue + 1);
+        }
+
+        #endregion
+
         #region Private Methods
+
+        private void InitializeCryptoTransform() {
+            _encryptor?.Dispose();
+            _decryptor?.Dispose();
+
+            // Initialize Rijndael key object.
+            using var symmetricKey = Aes.Create();
+
+            // If we do not have initialization vector, we cannot use the CBC mode.
+            // The only alternative is the ECB mode (which is not as good).
+            symmetricKey.Mode = _ivBuffer.Length == 0 ? CipherMode.ECB : CipherMode.CBC;
+
+            _encryptor = symmetricKey.CreateEncryptor(_keyBuffer, _ivBuffer);
+            _decryptor = symmetricKey.CreateDecryptor(_keyBuffer, _ivBuffer);
+        }
+
+        private ICryptoTransform GetEncryptor()
+            => _encryptor ?? throw new InvalidOperationException("Encryptor not available.");
+
+        private ICryptoTransform GetDecryptor()
+            => _decryptor ?? throw new InvalidOperationException("Decryptor not available.");
 
         /// <summary>
         /// Adds an array of randomly generated bytes at the beginning of the
@@ -153,65 +218,25 @@ namespace Nameless.Security.Crypto {
             return salt;
         }
 
-        private void Dispose(bool disposing) {
-            if (_disposed) {
-                return;
-            }
-
-            if (disposing) {
-                _encryptor?.Dispose();
-                _decryptor?.Dispose();
-            }
-
-            _encryptor = null;
-            _decryptor = null;
-            _disposed = true;
-        }
-
         private void BlockAccessAfterDispose() {
             if (_disposed) {
                 throw new ObjectDisposedException(nameof(RijndaelCryptographicService));
             }
         }
+        
+        private void Dispose(bool disposing) {
+            if (_disposed) { return; }
+            if (disposing) {
+                lock (_lock) {
+                    _encryptor?.Dispose();
+                    _decryptor?.Dispose();
 
-        #endregion
+                    _encryptor = null;
+                    _decryptor = null;
+                }
+            }
 
-        #region Private Static Methods
-
-        /// <summary>
-        /// Generates random integer.
-        /// </summary>
-        /// <param name="minimumValue">
-        /// Min value (inclusive).
-        /// </param>
-        /// <param name="maximumValue">
-        /// Max value (inclusive).
-        /// </param>
-        /// <returns>
-        /// Random integer value between the min and max values (inclusive).
-        /// </returns>
-        /// <remarks>
-        /// This methods overcomes the limitations of .NET Framework's Random
-        /// class, which - when initialized multiple times within a very short
-        /// period of time - can generate the same "random" number.
-        /// </remarks>
-        private static int GenerateRandomNumber(int minimumValue, int maximumValue) {
-            // We will make up an integer seed from 4 bytes of this array.
-            var randomBytes = new byte[4];
-
-            // Generate 4 random bytes.
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomBytes);
-
-            // Convert four random bytes into a positive integer value.
-            var seed = ((randomBytes[0] & 0x7f) << 24) |
-                (randomBytes[1] << 16) |
-                (randomBytes[2] << 8) |
-                (randomBytes[3]);
-
-            // Now, this looks more like real randomization.
-            // And, calculate a random number.
-            return new Random(seed).Next(minimumValue, maximumValue + 1);
+            _disposed = true;
         }
 
         #endregion
@@ -228,21 +253,33 @@ namespace Nameless.Security.Crypto {
             if (stream.Length == 0) { return []; }
 
             // Let's make cryptographic operations thread-safe.
-            lock (_syncLock) {
+            lock (_lock) {
                 try {
                     // To perform encryption, we must use the Write mode.
                     using var memoryStream = new MemoryStream();
-                    using var cryptoStream = new CryptoStream(memoryStream, _encryptor!, CryptoStreamMode.Write);
+                    using var cryptoStream = new CryptoStream(stream: memoryStream,
+                                                              transform: GetEncryptor(),
+                                                              mode: CryptoStreamMode.Write);
                     var value = stream.ToByteArray();
                     var valueWithSalt = AddSalt(value);
 
                     // Start encrypting data.
-                    cryptoStream.Write(valueWithSalt, 0, valueWithSalt.Length);
+                    cryptoStream.Write(buffer: valueWithSalt,
+                                       offset: 0,
+                                       count: valueWithSalt.Length);
                     // Finish the encryption operation.
                     cryptoStream.FlushFinalBlock();
                     // Return encrypted data.
                     return memoryStream.ToArray();
-                } catch (Exception) { Dispose(); throw; }
+                } catch (Exception ex) {
+                    // Re-initialize crypto transformers if was a CryptographicException.
+                    if (ex is CryptographicException) { InitializeCryptoTransform(); }
+
+                    _logger.LogError(exception: ex,
+                                     message: "Error while encryption phase.");
+
+                    throw;
+                }
             }
         }
 
@@ -260,7 +297,7 @@ namespace Nameless.Security.Crypto {
             var saltLength = 0;
 
             // Let's make cryptographic operations thread-safe.
-            lock (_syncLock) {
+            lock (_lock) {
                 try {
                     var value = stream.ToByteArray();
 
@@ -272,10 +309,23 @@ namespace Nameless.Security.Crypto {
 
                     // To perform decryption, we must use the Read mode.
                     using var memoryStream = new MemoryStream(value);
-                    using var cryptoStream = new CryptoStream(memoryStream, _decryptor!, CryptoStreamMode.Read);
+                    using var cryptoStream = new CryptoStream(stream: memoryStream,
+                                                              transform: GetDecryptor(),
+                                                              mode: CryptoStreamMode.Read);
+
                     // Decrypting data and get the count of plain text bytes.
-                    decryptedByteCount = cryptoStream.Read(decryptedBytes, 0, decryptedBytes.Length);
-                } catch (Exception) { Dispose(); throw; }
+                    decryptedByteCount = cryptoStream.Read(buffer: decryptedBytes,
+                                                           offset: 0,
+                                                           count: decryptedBytes.Length);
+                } catch (Exception ex) {
+                    // Re-initialize crypto transformers if was a CryptographicException.
+                    if (ex is CryptographicException) { InitializeCryptoTransform(); }
+
+                    _logger.LogError(exception: ex,
+                                     message: "Error while decryption phase.");
+
+                    throw;
+                }
             }
 
             // If we are using salt, get its length from the first 4 bytes of plain

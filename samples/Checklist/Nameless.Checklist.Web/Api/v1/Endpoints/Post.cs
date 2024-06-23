@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
-using Nameless.FluentValidation;
+using Nameless.Validation.Abstractions;
 using Nameless.Web.Infrastructure;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints {
@@ -25,7 +24,7 @@ namespace Nameless.Checklist.Web.Api.v1.Endpoints {
 
                 return Results.Ok(output);
             } catch (ValidationException ex) {
-                return Results.ValidationProblem(ex.ToDictionary(), statusCode: StatusCodes.Status400BadRequest);
+                return Results.ValidationProblem(ex.Result.ToDictionary(), statusCode: StatusCodes.Status400BadRequest);
             }
         }
 
@@ -49,7 +48,7 @@ namespace Nameless.Checklist.Web.Api.v1.Endpoints {
 
                 .Produces(StatusCodes.Status200OK, typeof(ChecklistItemOutput))
 
-                .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+                .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         #endregion

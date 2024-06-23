@@ -115,7 +115,7 @@ namespace Nameless.Lucene.Impl {
         /// Dispose on error.
         /// </summary>
         private IndexWriter GetIndexWriter()
-            => _indexWriter ??= new IndexWriter(_directory, new IndexWriterConfig(Root.Defaults.LuceneVersion, _analyzer));
+            => _indexWriter ??= new IndexWriter(_directory, new IndexWriterConfig(Root.Defaults.Version, _analyzer));
 
         private IndexReader GetIndexReader()
             => _indexReader ??= DirectoryReader.Open(_directory);

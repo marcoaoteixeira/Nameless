@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -6,6 +7,18 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace Nameless {
     public static class ServiceProviderExtension {
         #region Public Static Methods
+
+        public static bool TryGetService<TService>(this IServiceProvider self, [NotNullWhen(returnValue: true)] out TService? service) {
+            service = self.GetService<TService>();
+
+            return service is not null;
+        }
+
+        public static bool TryGetKeyedService<TService>(this IServiceProvider self, string key, [NotNullWhen(returnValue: true)] out TService? service) {
+            service = self.GetKeyedService<TService>(key);
+
+            return service is not null;
+        }
 
         public static ILogger<T> GetLogger<T>(this IServiceProvider self) {
             var loggerFactory = self.GetService<ILoggerFactory>();
@@ -32,12 +45,10 @@ namespace Nameless {
             }
 
             // ok, no good. let's try get from the configuration
-            var configuration = self.GetService<IConfiguration>();
-            var sectionName = typeof(TOptions).Name
-                                              .RemoveTail(Root.Defaults.OptionsSettingsTails);
-
             TOptions? result = default;
-            if (configuration is not null) {
+            if (self.TryGetService<IConfiguration>(out var configuration)) {
+                var sectionName = typeof(TOptions).Name
+                                                  .RemoveTail(Root.Defaults.OptionsSettingsTails);
                 result = configuration.GetSection(sectionName)
                                       .Get<TOptions>();
             }

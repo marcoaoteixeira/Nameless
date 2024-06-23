@@ -49,8 +49,8 @@ namespace Nameless.Data {
             return dbConnectionMock;
         }
 
-        private static Mock<ILogger<Database>> CreateLoggerMock(LogLevel enabledLevel = LogLevel.Error) {
-            var loggerMock = new Mock<ILogger<Database>>();
+        private static Mock<ILogger<DatabaseService>> CreateLoggerMock(LogLevel enabledLevel = LogLevel.Error) {
+            var loggerMock = new Mock<ILogger<DatabaseService>>();
 
             loggerMock
                 .Setup(mock => mock.IsEnabled(enabledLevel))
@@ -75,9 +75,9 @@ namespace Nameless.Data {
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
-                logger: Mock.Of<ILogger<Database>>()
+                logger: Mock.Of<ILogger<DatabaseService>>()
             );
 
             // act
@@ -106,7 +106,7 @@ namespace Nameless.Data {
 
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
@@ -144,9 +144,9 @@ namespace Nameless.Data {
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
-                logger: Mock.Of<ILogger<Database>>()
+                logger: Mock.Of<ILogger<DatabaseService>>()
             );
 
             // act
@@ -174,7 +174,7 @@ namespace Nameless.Data {
             var loggerMock = CreateLoggerMock();
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
@@ -218,9 +218,9 @@ namespace Nameless.Data {
             var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
-                logger: Mock.Of<ILogger<Database>>()
+                logger: Mock.Of<ILogger<DatabaseService>>()
             );
             var expected = new Animal { Name = "Dog" };
             static Animal mapper(IDataRecord reader) {
@@ -254,7 +254,7 @@ namespace Nameless.Data {
             var loggerMock = CreateLoggerMock();
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
                 logger: loggerMock.Object
             );
@@ -289,9 +289,9 @@ namespace Nameless.Data {
 
             var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
 
-            var sut = new Database(
+            var sut = new DatabaseService(
                 dbConnectionFactory: dbConnectionFactoryMock.Object,
-                logger: Mock.Of<ILogger<Database>>()
+                logger: Mock.Of<ILogger<DatabaseService>>()
             );
 
             // act

@@ -14,10 +14,18 @@ namespace Nameless.Data.SQLServer.Options {
 
         public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
         public string Database { get; set; } = "master";
-        public string Username { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_USER) ?? string.Empty;
-        public string Password { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.SQLSERVER_PASS) ?? string.Empty;
+        public string? Username { get; set; }
+        public string? Password { get; set; }
         public bool UseAttachedDb { get; set; }
         public bool UseIntegratedSecurity { get; set; }
+
+#if NET6_0_OR_GREATER
+        [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
+#endif
+        public bool UseCredentials
+            => !string.IsNullOrWhiteSpace(Username) &&
+               !string.IsNullOrWhiteSpace(Password) &&
+               !UseIntegratedSecurity;
 
         #endregion
 
@@ -32,7 +40,7 @@ namespace Nameless.Data.SQLServer.Options {
                 ? $"AttachDbFilename={Database};"
                 : $"Database={Database};";
 
-            connStr += UseCredentials()
+            connStr += UseCredentials
                 ? $"User Id={Username};Password={Password};"
                 : string.Empty;
 
@@ -42,14 +50,6 @@ namespace Nameless.Data.SQLServer.Options {
 
             return connStr;
         }
-
-#if NET6_0_OR_GREATER
-        [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
-#endif
-        public bool UseCredentials()
-            => !string.IsNullOrWhiteSpace(Username) &&
-               !string.IsNullOrWhiteSpace(Password) &&
-               !UseIntegratedSecurity;
 
         #endregion
     }

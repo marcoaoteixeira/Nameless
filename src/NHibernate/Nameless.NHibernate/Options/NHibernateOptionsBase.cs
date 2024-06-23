@@ -1,16 +1,12 @@
-﻿using System.Data;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Nameless.NHibernate.Options {
     public abstract class NHibernateOptionsBase {
         #region Public Methods
 
         public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
-            var properties = GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(property => !typeof(NHibernateOptionsBase)
-                    .IsAssignableFrom(property.PropertyType)
-                );
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                      .Where(property => !typeof(NHibernateOptionsBase)                                                 .IsAssignableFrom(property.PropertyType));
 
             foreach (var property in properties) {
                 var key = property.GetDescription() ?? property.Name;
@@ -23,7 +19,7 @@ namespace Nameless.NHibernate.Options {
 
                 if (value is null) { continue; }
 
-                yield return new(key, value);
+                yield return new KeyValuePair<string, string>(key, value);
             }
         }
 

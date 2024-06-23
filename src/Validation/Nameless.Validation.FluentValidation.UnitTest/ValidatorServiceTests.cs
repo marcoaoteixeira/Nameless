@@ -1,5 +1,5 @@
-using Autofac;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Nameless.Validation.FluentValidation.Impl;
@@ -30,15 +30,14 @@ namespace Nameless.Validation.FluentValidation.UnitTest {
             // arrange
             var animalValidatorMock = CreateValidatorMock<Animal>();
 
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterInstance(animalValidatorMock.Object)
-                .As<IValidator<Animal>>()
-                .As<IValidator>();
+            var services = new ServiceCollection();
+            services
+                .AddSingleton<IValidator>(animalValidatorMock.Object)
+                .AddSingleton(animalValidatorMock.Object);
 
-            var container = builder.Build();
+            var provider = services.BuildServiceProvider();
             var sut = new ValidationService(
-                validators: container.Resolve<IValidator[]>(),
+                validators: provider.GetServices<IValidator>().ToArray(),
                 logger: CreateLoggerMock().Object
             );
             var dog = new Animal { Name = "Dog" };
@@ -77,15 +76,14 @@ namespace Nameless.Validation.FluentValidation.UnitTest {
             // arrange
             var animalValidatorMock = CreateValidatorMock<Animal>();
 
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterInstance(animalValidatorMock.Object)
-                .As<IValidator<Animal>>()
-                .As<IValidator>();
+            var services = new ServiceCollection();
+            services
+                .AddSingleton<IValidator>(animalValidatorMock.Object)
+                .AddSingleton(animalValidatorMock.Object);
 
-            var container = builder.Build();
+            var provider = services.BuildServiceProvider();
             var sut = new ValidationService(
-                validators: container.Resolve<IValidator[]>(),
+                validators: provider.GetServices<IValidator>().ToArray(),
                 logger: CreateLoggerMock().Object
             );
             var dog = new Animal { Name = "Dog" };

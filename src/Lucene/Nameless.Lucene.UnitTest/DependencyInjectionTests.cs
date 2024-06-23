@@ -1,7 +1,6 @@
-﻿using Autofac;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Nameless.Infrastructure;
-using Nameless.Lucene.DependencyInjection;
 using Nameless.Lucene.Impl;
 
 namespace Nameless.Lucene {
@@ -9,25 +8,21 @@ namespace Nameless.Lucene {
         [Test]
         public void Register_Resolve_Service() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterLuceneModule();
+            var services = new ServiceCollection();
+            services.RegisterLucene();
 
             // We need an IApplicationContext
             var applicationContextMock = new Mock<IApplicationContext>();
-            builder
-                .RegisterInstance(applicationContextMock.Object)
-                .As<IApplicationContext>();
+            services
+                .AddSingleton(applicationContextMock.Object);
 
-            using var container = builder.Build();
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var service = container.Resolve<IIndexManager>();
+            var service = provider.GetService<IIndexManager>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(service, Is.Not.Null);
-                Assert.That(service, Is.InstanceOf<IndexManager>());
-            });
+            Assert.That(service, Is.InstanceOf<IndexManager>());
         }
     }
 }

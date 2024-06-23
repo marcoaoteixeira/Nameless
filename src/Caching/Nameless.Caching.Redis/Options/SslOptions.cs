@@ -26,14 +26,10 @@ namespace Nameless.Caching.Redis.Options {
         /// </summary>
         public SslProtocols Protocol { get; set; }
 
-        #endregion
-
-        #region Public Methods
-
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(returnValue: true, members: [nameof(Host)])]
+        [MemberNotNullWhen(returnValue: true, nameof(Host))]
 #endif
-        public bool IsAvailable()
+        public bool IsAvailable
             => !string.IsNullOrWhiteSpace(Host) &&
                Port > 0 &&
                Protocol != SslProtocols.None;

@@ -10,8 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Nameless.Services;
+using Nameless.Services.Impl;
 using Nameless.Web.Infrastructure;
 using Nameless.Web.Options;
+using Nameless.Web.Services;
+using Nameless.Web.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CoreRoot = Nameless.Root;
 
@@ -55,6 +59,17 @@ namespace Nameless.Web {
 
             return self;
         }
+
+        public static IServiceCollection RegisterJwtService(this IServiceCollection self, Action<JwtOptions>? configure = null)
+            => self.AddSingleton<IJwtService>(provider => {
+                var options = provider.GetPocoOptions<JwtOptions>();
+
+                configure?.Invoke(options);
+
+                return new JwtService(options: options,
+                                      clock: provider.GetService<IClockService>() ?? SystemClockService.Instance,
+                                      logger: provider.GetLogger<JwtService>());
+            });
 
         public static IServiceCollection RegisterMinimalEndpoints(this IServiceCollection self, IEnumerable<Assembly> supportAssemblies) {
             var types = MinimalEndpointHelpers.ScanAssemblies(supportAssemblies);

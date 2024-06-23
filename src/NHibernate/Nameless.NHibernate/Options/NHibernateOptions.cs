@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Nameless.NHibernate.Options {
     public sealed class NHibernateOptions {
@@ -23,28 +22,32 @@ namespace Nameless.NHibernate.Options {
         public NHibernateCollectionTypeOptions CollectionType { get; set; } = new();
         public NHibernateTransactionOptions Transaction { get; set; } = new();
         public NHibernateSpecificOptions Specific { get; set; } = new();
-        public string[] EntityRootTypes { get; set; } = [];
-        public string[] MappingTypes { get; set; } = [];
+        
+        public Type[] RootEntityTypes { get; private set; } = [];
+        public Type[] ClassMappingTypes { get; private set; } = [];
 
         #endregion
 
         #region Public Methods
 
+        public void SetRootEntityTypes(params Type[] rootEntityTypes)
+            => RootEntityTypes = rootEntityTypes;
+
+        public void SetClassMappingTypes(params Type[] classMappingTypes)
+            => ClassMappingTypes = classMappingTypes;
+
         public Dictionary<string, string> ToDictionary() {
             var configs = new List<KeyValuePair<string, string>>();
 
-            var properties = GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(property => typeof(NHibernateOptionsBase)
-                    .IsAssignableFrom(property.PropertyType)
-                );
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                      .Where(property => typeof(NHibernateOptionsBase).IsAssignableFrom(property.PropertyType));
 
             foreach (var property in properties) {
-                if (property.GetValue(this) is not NHibernateOptionsBase config) {
+                if (property.GetValue(this) is not NHibernateOptionsBase options) {
                     continue;
                 }
 
-                configs.AddRange(config.GetConfigValues());
+                configs.AddRange(options.GetConfigValues());
             }
 
             return new Dictionary<string, string>([.. configs]);

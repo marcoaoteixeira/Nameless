@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Nameless.Web.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
 
@@ -8,18 +7,15 @@ namespace Nameless.Web {
         [Test]
         public void Register_Resolve_Web_Module() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterWebModule();
-            using var container = builder.Build();
+            var services = new ServiceCollection();
+            services.RegisterJwtService();
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var service = container.Resolve<IJwtService>();
+            var service = provider.GetService<IJwtService>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(service, Is.Not.Null);
-                Assert.That(service, Is.InstanceOf<JwtService>());
-            });
+            Assert.That(service, Is.InstanceOf<JwtService>());
         }
     }
 }

@@ -204,7 +204,7 @@ namespace Nameless.Lucene.Impl {
 
             foreach (var defaultField in defaultFields) {
                 CreatePendingClause();
-                _query = new QueryParser(matchVersion: Root.Defaults.LuceneVersion,
+                _query = new QueryParser(matchVersion: Root.Defaults.Version,
                                          f: defaultField,
                                          a: _analyzer).Parse(query);
             }

@@ -8,9 +8,7 @@
 
         #region Public Properties
 
-        public string Secret { get; } = Environment.GetEnvironmentVariable(Root.EnvTokens.JWT_SECRET)
-                                     ?? Root.Defaults.JWT_SECRET;
-
+        public string Secret { get; set; } = Root.Defaults.JWT_SECRET;
         public string? Issuer { get; set; }
         public bool ValidateIssuer { get; set; }
         public string? Audience { get; set; }

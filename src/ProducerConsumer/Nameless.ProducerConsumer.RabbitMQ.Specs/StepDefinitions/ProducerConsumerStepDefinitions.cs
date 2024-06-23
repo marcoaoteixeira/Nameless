@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using NUnit.Framework;
@@ -19,8 +21,10 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
 
         [Given(@"that I have the correct infrastructure for sending messages")]
         public void GivenThatIHaveTheCorrectInfrastructureForSendingMessages() {
-            _channelFactory = new ChannelFactory();
-            _channel = _channelFactory!.CreateChannel();
+            _channelFactory = new ChannelFactory(
+                options: new RabbitMQOptions(),
+                logger: NullLogger<ChannelFactory>.Instance);
+            _channel = _channelFactory.CreateChannel();
 
             // assert exchange/queue
             _channel.ExchangeDeclare(
@@ -44,14 +48,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions {
                 arguments: new Dictionary<string, object>()
             );
 
-            _producerService = new ProducerService(_channel!);
-            _consumerService = new ConsumerService(_channel!);
+            _producerService = new ProducerService(_channel, NullLogger<ProducerService>.Instance);
+            _consumerService = new ConsumerService(_channel, NullLogger<ConsumerService>.Instance);
 
             var args = ConsumerArgs.Empty;
 
             args.SetAutoAck(true);
 
-            _ = _consumerService!.Register<string>(
+            _ = _consumerService.Register<string>(
                 topic: string.Empty,
                 handler: Handler,
                 args: args

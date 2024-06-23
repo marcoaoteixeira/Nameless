@@ -58,7 +58,7 @@ namespace Nameless.Caching.Redis.Impl {
         #region IConfigurationOptionsFactory Members
 
         public ConfigurationOptions CreateConfigurationOptions() {
-            var (host, port, protocol) = _options.Ssl.IsAvailable()
+            var (host, port, protocol) = _options.Ssl.IsAvailable
                 ? (_options.Ssl.Host, _options.Ssl.Port, _options.Ssl.Protocol)
                 : (_options.Host, _options.Port, SslProtocols.None);
 
@@ -67,11 +67,11 @@ namespace Nameless.Caching.Redis.Impl {
                 User = _options.Username,
                 Password = _options.Password,
                 KeepAlive = _options.KeepAlive,
-                Ssl = _options.Ssl.IsAvailable(),
+                Ssl = _options.Ssl.IsAvailable,
                 SslProtocols = protocol
             };
 
-            if (_options.Certificate.IsAvailable()) {
+            if (_options.Certificate.IsAvailable) {
                 result.CertificateSelection += OnCertificateSelection;
                 result.CertificateValidation += OnCertificateValidation;
             }

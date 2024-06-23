@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Nameless.Data.SQLite.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
 namespace Nameless.Data.SQLite {
@@ -7,18 +6,15 @@ namespace Nameless.Data.SQLite {
         [Test]
         public void Register_Resolve_Dependency_Injection() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterDataModule();
-            using var container = builder.Build();
+            var services = new ServiceCollection();
+            services.RegisterDatabaseService();
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var database = container.Resolve<IDatabase>();
+            var database = provider.GetService<IDatabaseService>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(database, Is.Not.Null);
-                Assert.That(database, Is.InstanceOf<Database>());
-            });
+            Assert.That(database, Is.InstanceOf<DatabaseService>());
         }
     }
 }

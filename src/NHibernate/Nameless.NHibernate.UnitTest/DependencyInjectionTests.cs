@@ -1,7 +1,6 @@
-using Autofac;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Nameless.Infrastructure;
-using Nameless.NHibernate.DependencyInjection;
 using NHibernate;
 using NHibernate.Impl;
 
@@ -10,29 +9,23 @@ namespace Nameless.NHibernate {
         [Test]
         public void Register_Resolve_NHibernate_Module() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterNHibernateModule();
+            var services = new ServiceCollection();
+            services.RegisterNHibernate();
 
             var applicationContextMock = new Mock<IApplicationContext>();
             applicationContextMock
                 .Setup(mock => mock.ApplicationDataFolderPath)
                 .Returns(Path.GetTempPath());
 
-            builder
-                .RegisterInstance(applicationContextMock.Object)
-                .As<IApplicationContext>()
-                .SingleInstance();
+            services.AddSingleton(applicationContextMock.Object);
 
-            using var container = builder.Build();
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var session = container.Resolve<ISession>();
+            var session = provider.GetRequiredService<ISession>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(session, Is.Not.Null);
-                Assert.That(session, Is.InstanceOf<SessionImpl>());
-            });
+            Assert.That(session, Is.InstanceOf<SessionImpl>());
         }
     }
 }

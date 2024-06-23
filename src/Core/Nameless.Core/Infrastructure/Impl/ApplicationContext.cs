@@ -8,7 +8,7 @@ namespace Nameless.Infrastructure.Impl {
         /// Initializes a new instance of <see cref="ApplicationContext"/>
         /// </summary>
         /// <param name="hostEnvironment">The host environment.</param>
-        /// <param name="useAppDataSpecialFolder">
+        /// <param name="useSpecialFolder">
         /// If <c>true</c>, <see cref="ApplicationDataFolderPath"/> will point to:
         /// <list type="bullet">
         ///     <item>
@@ -20,18 +20,18 @@ namespace Nameless.Infrastructure.Impl {
         ///         <description>/CURRENT_USER/.local/share/APPLICATION_NAME</description>
         ///     </item>
         /// </list>
-        /// Otherwise, will point to <see cref="BasePath"/> + "App_Data"
+        /// Otherwise, will point to <see cref="ApplicationBasePath"/> + "App_Data"
         /// </param>
-        /// <param name="appVersion">The application version.</param>
-        public ApplicationContext(IHostEnvironment hostEnvironment, bool useAppDataSpecialFolder = true, Version? appVersion = null) {
+        /// <param name="applicationVersion">The application version.</param>
+        public ApplicationContext(IHostEnvironment hostEnvironment, bool useSpecialFolder = true, Version? applicationVersion = null) {
             Guard.Against.Null(hostEnvironment, nameof(hostEnvironment));
 
             EnvironmentName = hostEnvironment.EnvironmentName;
             ApplicationName = hostEnvironment.ApplicationName;
 
-            ApplicationDataFolderPath = GetApplicationDataFolder(ApplicationName, BasePath, useAppDataSpecialFolder);
+            ApplicationDataFolderPath = BuildApplicationDataFolderPath(ApplicationName, ApplicationBasePath, useSpecialFolder);
 
-            var version = appVersion ?? new Version(major: 0, minor: 0, build: 0);
+            var version = applicationVersion ?? new Version(major: 0, minor: 0, build: 0);
             SemVer = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
@@ -39,22 +39,18 @@ namespace Nameless.Infrastructure.Impl {
 
         #region Private Static Methods
 
-        private static string GetApplicationDataFolder(string applicationName, string basePath, bool useAppDataSpecialFolder) {
-            string result;
+        private static string BuildApplicationDataFolderPath(string applicationName, string basePath, bool useSpecialFolder) {
+            var specialFolder = Environment.GetFolderPath(
+                folder: Environment.SpecialFolder.LocalApplicationData
+            );
 
-            if (useAppDataSpecialFolder) {
-                var specialFolder = Environment.GetFolderPath(
-                    folder: Environment.SpecialFolder.LocalApplicationData,
-                    option: Environment.SpecialFolderOption.Create
-                );
-                
-                result = Path.Combine(specialFolder, applicationName);
-            } else {
-                result = Path.Combine(basePath, "App_Data");
-            }
+            var result = useSpecialFolder
+                ? Path.Combine(specialFolder, applicationName)
+                : Path.Combine(basePath, "App_Data");
 
             // Ensure directory exists
-            Directory.CreateDirectory(result);
+            try { Directory.CreateDirectory(result); }
+            catch (Exception ex) { Console.WriteLine(ex); }
 
             return result;
         }
@@ -79,7 +75,7 @@ namespace Nameless.Infrastructure.Impl {
         /// Gets the base path of the application. This will always be
         /// the current location of the application assembly.
         /// </summary>
-        public string BasePath => AppDomain.CurrentDomain.BaseDirectory;
+        public string ApplicationBasePath => AppDomain.CurrentDomain.BaseDirectory;
 
         /// <summary>
         /// Gets the application data folder.

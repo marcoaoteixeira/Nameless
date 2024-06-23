@@ -1,5 +1,4 @@
-using Autofac;
-using Nameless.Mailing.MailKit.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Nameless.Mailing.MailKit.Impl;
 
 namespace Nameless.Mailing.MailKit {
@@ -7,19 +6,16 @@ namespace Nameless.Mailing.MailKit {
         [Test]
         public void Register_Resolve_Service() {
             // arrange
-            var builder = new ContainerBuilder();
-            builder.RegisterMailingModule();
+            var services = new ServiceCollection();
+            services.RegisterMailingService();
 
-            using var container = builder.Build();
+            using var provider = services.BuildServiceProvider();
 
             // act
-            var service = container.Resolve<IMailingService>();
+            var service = provider.GetService<IMailingService>();
 
             // assert
-            Assert.Multiple(() => {
-                Assert.That(service, Is.Not.Null);
-                Assert.That(service, Is.InstanceOf<MailingService>());
-            });
+            Assert.That(service, Is.InstanceOf<MailingService>());
         }
     }
 }

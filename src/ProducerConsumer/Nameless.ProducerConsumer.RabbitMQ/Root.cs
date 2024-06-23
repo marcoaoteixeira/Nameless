@@ -10,18 +10,6 @@
     public static class Root {
         #region Public Static Inner Classes
 
-        public static class EnvTokens {
-            #region Public Constants
-
-            public const string RABBITMQ_USER = nameof(RABBITMQ_USER);
-            public const string RABBITMQ_PASS = nameof(RABBITMQ_PASS);
-
-            public const string RABBITMQ_SSL_SERVERNAME = nameof(RABBITMQ_SSL_SERVERNAME);
-            public const string RABBITMQ_CERT_PASS = nameof(RABBITMQ_CERT_PASS);
-
-            #endregion
-        }
-
         public static class ConsumerArgsTokens {
             #region Public Constants
 

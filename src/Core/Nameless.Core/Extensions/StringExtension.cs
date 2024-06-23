@@ -532,6 +532,9 @@ namespace Nameless {
             return self;
         }
 
+        public static string WithFallback(this string? self, string fallback)
+            => string.IsNullOrWhiteSpace(self) ? fallback : self;
+
         #endregion
     }
 }

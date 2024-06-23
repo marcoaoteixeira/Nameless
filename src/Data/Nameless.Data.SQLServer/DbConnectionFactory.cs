@@ -12,9 +12,6 @@ namespace Nameless.Data.SQLServer {
 
         #region Public Constructors
 
-        public DbConnectionFactory()
-            : this(SQLServerOptions.Default) { }
-
         public DbConnectionFactory(SQLServerOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
         }

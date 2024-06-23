@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options {
     public sealed class NHibernateCommonOptions : NHibernateOptionsBase {
