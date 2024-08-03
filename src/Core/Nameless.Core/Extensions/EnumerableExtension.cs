@@ -125,6 +125,21 @@ namespace Nameless {
             }
         }
 
+        /// <summary>
+        /// Transforms an <see cref="IEnumerable{T}"/> into an <see cref="IEnumerable"/> of <see cref="Tuple"/> that
+        /// will consist of an index (<see cref="int"/>) and the current element <c>T</c>.
+        /// Note: This action will trigger the enumerator, recommendation is to use it at the end of your query.
+        /// </summary>
+        /// <typeparam name="T">The type of the enumerable element.</typeparam>
+        /// <param name="self">The enumerable himself.</param>
+        /// <returns>An <see cref="IEnumerable"/> of <see cref="Tuple"/>.</returns>
+        public static IEnumerable<(int Index, T Item)> WithIndex<T>(this IEnumerable<T> self) {
+            var counter = 0;
+            foreach (var element in self) {
+                yield return (counter++, element);
+            }
+        }
+
         #endregion
     }
 }

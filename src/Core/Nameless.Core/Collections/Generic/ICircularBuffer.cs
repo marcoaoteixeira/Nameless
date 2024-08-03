@@ -1,4 +1,8 @@
 ﻿namespace Nameless.Collections.Generic {
+    /// <summary>
+    /// Provides a contract to implement a circular buffer. See: https://en.wikipedia.org/wiki/Circular_buffer
+    /// </summary>
+    /// <typeparam name="T">Type of the circular buffer.</typeparam>
     public interface ICircularBuffer<T> : IEnumerable<T> {
         #region Properties
 

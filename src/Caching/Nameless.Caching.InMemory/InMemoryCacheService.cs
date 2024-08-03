@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Caching.InMemory {
+    /// <summary>
+    /// <see cref="ICacheService"/> for <see cref="MemoryCache"/>.
+    /// </summary>
     public sealed class InMemoryCacheService : ICacheService, IDisposable {
         #region Private Fields
 
@@ -66,11 +69,11 @@ namespace Nameless.Caching.InMemory {
             if (opts.EvictionCallback is not null) {
                 result.RegisterPostEvictionCallback(
                     (key, value, reason, _)
-                        => OnEviction(opts.EvictionCallback,
-                                      (string)key,
-                                      value,
-                                      reason.ToString(),
-                                      cts));
+                        => OnEviction(evictionCallback: opts.EvictionCallback,
+                                      key: (string)key,
+                                      value: value,
+                                      reason: reason.ToString(),
+                                      cts: cts));
             }
 
             return result;
@@ -80,6 +83,7 @@ namespace Nameless.Caching.InMemory {
 
         #region ICache Members
 
+        /// <inheritdoc />
         public Task<bool> SetAsync(string key, object value, CacheEntryOptions opts = default, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
@@ -94,6 +98,7 @@ namespace Nameless.Caching.InMemory {
             return Task.FromResult(true);
         }
 
+        /// <inheritdoc />
         public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
@@ -106,6 +111,7 @@ namespace Nameless.Caching.InMemory {
             return Task.FromResult(value is T result ? result : default);
         }
 
+        /// <inheritdoc />
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
@@ -122,6 +128,7 @@ namespace Nameless.Caching.InMemory {
 
         #region IDisposable Members
 
+        /// <inheritdoc />
         public void Dispose() {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);

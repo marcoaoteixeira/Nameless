@@ -14,7 +14,7 @@ namespace Nameless {
         /// </summary>
         /// <param name="self">The service collection.</param>
         /// <param name="useAppDataSpecialFolder">
-        /// <c>true</c> if should use environment special folder or otherwise;
+        /// <c>true</c> if it should use environment special folder or otherwise;
         /// <c>false</c> will use <see cref="AppDomain.CurrentDomain.BaseDirectory"/> + "App_Data"
         /// </param>
         /// <param name="appVersion">The application version.</param>
@@ -65,7 +65,7 @@ namespace Nameless {
         }
 
         public static IServiceCollection RegisterClockService(this IServiceCollection self)
-            => self.AddSingleton(SystemClockService.Instance);
+            => self.AddSingleton(SystemClock.Instance);
 
         public static IServiceCollection RegisterPluralizationRuleProvider(this IServiceCollection self)
             => self.AddSingleton(PluralizationRuleProvider.Instance);

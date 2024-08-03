@@ -11,15 +11,15 @@ namespace Nameless.Localization.Microsoft.Json {
         public static IServiceCollection RegisterLocalization(this IServiceCollection self, Action<LocalizationOptions>? configure = null)
             => self
                .AddSingleton<IStringLocalizerFactory>(provider => {
-                   var options = provider.GetPocoOptions<LocalizationOptions>();
+                   var options = provider.GetOptions<LocalizationOptions>();
 
-                   configure?.Invoke(options);
+                   configure?.Invoke(options.Value);
 
                    return new StringLocalizerFactory(
                        cultureContext: CultureContext.Instance,
                        translationManager: new TranslationManager(
                            fileProvider: provider.GetRequiredService<IFileProvider>(),
-                           options
+                           options: options.Value
                        )
                    );
                })

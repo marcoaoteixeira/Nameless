@@ -472,6 +472,11 @@ namespace Nameless {
         }
 
         public static bool ToBoolean(this string? self) {
+            const string TrueAsYes = nameof(TrueAsYes);
+            const string FalseAsNo = nameof(FalseAsNo);
+            const string TrueAsY = nameof(TrueAsY);
+            const string FalseAsN = nameof(FalseAsN);
+
             // we'll consider null as false.
             if (self is null) { return false; }
 
@@ -480,7 +485,19 @@ namespace Nameless {
                 return result > 0d;
             }
 
-            // self explanatory.
+            // check if is YES or Y
+            if (string.Equals(self, TrueAsYes, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(self, TrueAsY, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+
+            // check if is NO or N
+            if (string.Equals(self, FalseAsNo, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(self, FalseAsN, StringComparison.OrdinalIgnoreCase)) {
+                return false;
+            }
+
+            // self-explanatory.
             return string.Equals(self, bool.TrueString, StringComparison.OrdinalIgnoreCase);
         }
 

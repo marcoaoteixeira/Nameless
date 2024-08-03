@@ -8,7 +8,7 @@ namespace Nameless.Mailing.MailKit {
         [Test]
         public async Task Create_New_Smtp_Client() {
             // arrange
-            var smtpClientFactory = new SmtpClientFactory(new ServerOptions {
+            var smtpClientFactory = new SmtpClientFactory(new MailServerOptions {
                 Host = "localhost",
                 Port = 5025,
             });

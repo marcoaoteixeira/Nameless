@@ -2,7 +2,7 @@
     /// <summary>
     /// Lucene Search Settings.
     /// </summary>
-    public sealed class LuceneOptions {
+    public sealed record LuceneOptions {
         #region Public Static Read-Only Properties
 
         public static LuceneOptions Default => new();

@@ -5,16 +5,16 @@ namespace Nameless.Mailing.MailKit.Impl {
     public sealed class SmtpClientFactory : ISmtpClientFactory {
         #region Private Read-Only Fields
 
-        private readonly ServerOptions _options;
+        private readonly MailServerOptions _options;
 
         #endregion
 
         #region Public Constructors
 
         public SmtpClientFactory()
-            : this(ServerOptions.Default) { }
+            : this(MailServerOptions.Default) { }
 
-        public SmtpClientFactory(ServerOptions options) {
+        public SmtpClientFactory(MailServerOptions options) {
             _options = Guard.Against.Null(options, nameof(options));
         }
 
@@ -22,11 +22,11 @@ namespace Nameless.Mailing.MailKit.Impl {
 
         #region Private Static Methods
 
-        private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, ServerOptions serverOptions, CancellationToken cancellationToken) {
+        private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, MailServerOptions mailServerOptions, CancellationToken cancellationToken) {
             client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-            await client.AuthenticateAsync(serverOptions.Username,
-                                           serverOptions.Password,
+            await client.AuthenticateAsync(mailServerOptions.Username,
+                                           mailServerOptions.Password,
                                            cancellationToken);
 
             return client;

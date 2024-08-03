@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Microsoft.Extensions.Primitives;
 
 namespace Nameless.Data {
     /// <summary>
@@ -341,28 +342,28 @@ namespace Nameless.Data {
 
             if (type == typeof(Guid)) {
                 return value switch {
-                    string => Guid.Parse((string)value),
+                    string stringValue => Guid.Parse(stringValue),
                     _ => (Guid)value
                 };
             }
 
             if (type == typeof(DateTimeOffset)) {
                 return value switch {
-                    string => DateTimeOffset.Parse((string)value, formatProvider),
+                    string stringValue => DateTimeOffset.Parse(stringValue, formatProvider),
                     _ => (DateTimeOffset)value
                 };
             }
 
             if (type == typeof(TimeSpan)) {
                 return value switch {
-                    string => TimeSpan.Parse((string)value, formatProvider),
+                    string stringValue => TimeSpan.Parse(stringValue, formatProvider),
                     _ => (TimeSpan)value
                 };
             }
 
             if (type.IsEnum) {
                 return value switch {
-                    string => Enum.Parse(type, (string)value, ignoreCase: false),
+                    string stringValue => Enum.Parse(type, stringValue, ignoreCase: false),
                     int or Enum => (int)value,
                     _ => default,
                 };

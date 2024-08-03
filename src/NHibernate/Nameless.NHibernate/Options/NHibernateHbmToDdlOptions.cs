@@ -2,7 +2,7 @@
 using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateHbmToDdlOptions : NHibernateOptionsBase {
+    public sealed record NHibernateHbmToDdlOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("hbm2ddl.auto")]

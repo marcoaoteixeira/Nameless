@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace Nameless.Data.SQLServer.Options {
-    public sealed class SQLServerOptions {
+    public sealed record SQLServerOptions {
         #region Public Static Read-Only Properties
 
         public static SQLServerOptions Default => new();
@@ -13,10 +13,15 @@ namespace Nameless.Data.SQLServer.Options {
         #region Public Properties
 
         public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
+        
         public string Database { get; set; } = "master";
+        
         public string? Username { get; set; }
+        
         public string? Password { get; set; }
+        
         public bool UseAttachedDb { get; set; }
+        
         public bool UseIntegratedSecurity { get; set; }
 
 #if NET6_0_OR_GREATER

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Nameless.Extensions {
+namespace Nameless {
     public class CultureInfoExtensionTests {
         [Test]
         public void Get_All_Children_Cultures_From_A_Specific_Culture() {

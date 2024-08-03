@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateCollectionTypeOptions : NHibernateOptionsBase {
+    public sealed record NHibernateCollectionTypeOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("collectiontype.factory_class")]

@@ -1,8 +1,19 @@
-﻿namespace Nameless.Infrastructure {
+﻿using System.Diagnostics;
+
+namespace Nameless.Infrastructure {
+    [DebuggerDisplay("{DebuggerDisplay}")]
     public sealed record Arg {
+        #region Private Properties
+
+        private string DebuggerDisplay
+            => $"[{Name}] {Value} ({Value.GetType().Name})";
+
+        #endregion
+
         #region Public Properties
 
         public string Name { get; }
+
         public object Value { get; }
 
         #endregion
@@ -13,13 +24,6 @@
             Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Value = Guard.Against.Null(value, nameof(value));
         }
-
-        #endregion
-
-        #region Public Override Methods
-
-        public override string ToString()
-            => $"[{Name}] {Value} ({Value.GetType().Name})";
 
         #endregion
     }

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Nameless {
+﻿namespace Nameless {
     /// <summary>
     /// <see cref="Array"/> extension methods
     /// </summary>
@@ -8,7 +6,7 @@ namespace Nameless {
         #region Public Static Methods
 
         /// <summary>
-        /// Tries get an array item by its index.
+        /// Tries to get an array item by its index.
         /// </summary>
         /// <typeparam name="T">Type of the array</typeparam>
         /// <param name="self">The array</param>

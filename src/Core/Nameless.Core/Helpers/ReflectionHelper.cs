@@ -8,7 +8,7 @@ namespace Nameless.Helpers {
         #region Public Static Methods
 
         /// <summary>
-        /// Searchs, recursively, and retrieves the value of a private read-only field.
+        /// Searches, recursively, and retrieves the value of a private read-only field.
         /// </summary>
         /// <param name="instance">The <see cref="object"/> instance where the field belongs.</param>
         /// <param name="name">The name of the field.</param>
@@ -25,7 +25,7 @@ namespace Nameless.Helpers {
         }
 
         /// <summary>
-        /// Searchs, recursively, and sets the value of a private read-only field.
+        /// Searches, recursively, and sets the value of a private read-only field.
         /// </summary>
         /// <param name="instance">The <see cref="object"/> instance where the field belongs.</param>
         /// <param name="name">The name of the field.</param>
@@ -46,7 +46,7 @@ namespace Nameless.Helpers {
         /// <param name="type">The type that will be looked up.</param>
         /// <param name="returnType">The method return type.</param>
         /// <param name="methodAttributeType">The method attribute type, if exists.</param>
-        /// <param name="matchParameterInheritance">If will match parameter inheritance.</param>
+        /// <param name="matchParameterInheritance">If it matches parameter inheritance.</param>
         /// <param name="parameterTypes">The method parameters type.</param>
         /// <returns>An <see cref="IEnumerable{MethodInfo}"/> with all found methods.</returns>
         public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {

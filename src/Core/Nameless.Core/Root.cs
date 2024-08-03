@@ -5,10 +5,10 @@ namespace Nameless {
     /// The only purpose of this class is to be an "entrypoint" for this
     /// assembly.
     /// 
-    /// *** DO NOT IMPLEMENT ANYTHING HERE ***
+    /// *** DO NOT IMPLEMENT IMPORTANT THINGS HERE ***
     /// 
     /// But, it's OK to use it as a repository for all constants or default
-    /// values that you'll use throughout this assembly.
+    /// values that you'll use throughout this assembly or shared assemblies.
     /// </summary>
     public static class Root {
         #region Public Static Inner Classes

@@ -18,11 +18,6 @@ namespace Nameless.Web {
     public static class ApplicationBuilderExtension {
         #region Public Static Methods
 
-        public static IApplicationBuilder ResolveJwtAuth(this IApplicationBuilder self)
-            => self.UseMiddleware<JwtAuthorizationMiddleware>()
-                   .UseAuthorization()
-                   .UseAuthentication();
-
         public static IApplicationBuilder ResolveAutofac(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
             // Tear down the composition root and free all resources
             // when the application stops.
@@ -32,14 +27,10 @@ namespace Nameless.Web {
             return self;
         }
 
-        public static IApplicationBuilder ResolveCors(this IApplicationBuilder self, Action<CorsPolicyBuilder>? configure = null) {
-            return self.UseCors(configure ?? DefaultPolicy);
-
-            static void DefaultPolicy(CorsPolicyBuilder builder)
-                => builder.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-        }
+        public static IApplicationBuilder ResolveCors(this IApplicationBuilder self, Action<CorsPolicyBuilder>? configure = null)
+            => self.UseCors(configure ?? (opts => opts.AllowAnyOrigin()
+                                                      .AllowAnyMethod()
+                                                      .AllowAnyHeader()));
 
         /// <summary>
         /// Resolves the endpoint service.
@@ -60,45 +51,58 @@ namespace Nameless.Web {
                                    : Results.Problem().ExecuteAsync(ctx));
         }
 
-        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self, string path = "/healthz", int port = 80, HealthCheckOptions? options = null)
-            => self.UseHealthChecks(path, port, options ?? new HealthCheckOptions());
+        public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self, PathString path = default, int? port = null, HealthCheckOptions? options = null) {
+            var currentPath = path.HasValue ? path : new PathString("/healthz");
+            var currentOptions = options ?? new HealthCheckOptions();
 
-        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, IHostEnvironment env) {
-            if (!env.IsDevelopment()) {
-                // The default HSTS value is 30 days. You may want to change
-                // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                self.UseHsts();
-            }
+            return port is not null
+                ? self.UseHealthChecks(currentPath, port.Value, currentOptions)
+                : self.UseHealthChecks(currentPath, currentOptions);
+        }
+
+        public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, bool useHsts = false) {
+            // The default HSTS value is 30 days.
+            // You may want to change this for production scenarios
+            //      See https://aka.ms/aspnetcore-hsts.
+            if (useHsts) { self.UseHsts(); }
 
             return self.UseHttpsRedirection();
         }
+
+        public static IApplicationBuilder ResolveJwtAuth(this IApplicationBuilder self)
+            => self.UseMiddleware<JwtAuthorizationMiddleware>()
+                   .UseAuthorization()
+                   .UseAuthentication();
 
         /// <summary>
         /// Resolves the endpoint service.
         /// This call must be preceded by a call to <see cref="ResolveRouting"/>.
         /// </summary>
         /// <param name="self">The <see cref="IApplicationBuilder"/> instance.</param>
+        /// <param name="useEndpointValidation">Whether it or not should use validation for minimal API parameters.</param>
         /// <returns>The <see cref="IApplicationBuilder"/> instance.</returns>
-        public static IApplicationBuilder ResolveMinimalEndpoints(this IApplicationBuilder self)
+        public static IApplicationBuilder ResolveMinimalEndpoints(this IApplicationBuilder self, bool useEndpointValidation = true)
             => self.UseEndpoints(builder => {
                 var endpoints = builder.ServiceProvider
                                        .GetRequiredService<IEnumerable<IMinimalEndpoint>>();
 
                 foreach (var endpoint in endpoints) {
-                    endpoint
-                        .Map(builder)
-                        .WithOpenApi()
+                    var conventionBuilder = endpoint
+                                            .Map(builder)
+                                            .WithOpenApi()
 
-                        .WithName(endpoint.Name)
-                        .WithSummary(endpoint.Summary)
-                        .WithDescription(endpoint.Description)
+                                            .WithName(endpoint.Name)
+                                            .WithSummary(endpoint.Summary)
+                                            .WithDescription(endpoint.Description)
 
-                        .WithApiVersionSet(builder.NewApiVersionSet(endpoint.Group)
-                                                  .Build())
+                                            .WithApiVersionSet(builder.NewApiVersionSet(endpoint.Group)
+                                                                      .Build())
 
-                        .HasApiVersion(endpoint.Version)
+                                            .HasApiVersion(endpoint.Version);
 
-                        .AddEndpointFilter(new ValidateEndpointFilter());
+                    if (useEndpointValidation) {
+                        conventionBuilder.AddEndpointFilter(new ValidateEndpointFilter());
+                    }
                 }
             });
 

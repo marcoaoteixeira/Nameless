@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateTransactionOptions : NHibernateOptionsBase {
+    public sealed record NHibernateTransactionOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("transaction.factory_class")]

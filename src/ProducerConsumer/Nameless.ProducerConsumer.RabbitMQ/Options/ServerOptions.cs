@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class ServerOptions {
+    public sealed record ServerOptions {
         #region Public Static Read-Only Properties
 
         public static ServerOptions Default => new();

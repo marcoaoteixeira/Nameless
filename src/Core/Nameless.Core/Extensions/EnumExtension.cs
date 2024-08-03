@@ -23,11 +23,16 @@ namespace Nameless {
         /// Gets the enumerator description, if exists.
         /// </summary>
         /// <param name="self">The self enumerator.</param>
+        /// <param name="fallbackToName">Whether it should return the name of the enum if there is no description for it.</param>
         /// <returns>The enumerator description.</returns>
-        public static string GetDescription(this Enum self) {
+        public static string GetDescription(this Enum self, bool fallbackToName = true) {
             var attr = GetAttribute<DescriptionAttribute>(self);
 
-            return attr is not null ? attr.Description : self.ToString();
+            return attr is not null
+                ? attr.Description
+                : fallbackToName
+                    ? self.ToString()
+                    : string.Empty;
         }
 
         #endregion

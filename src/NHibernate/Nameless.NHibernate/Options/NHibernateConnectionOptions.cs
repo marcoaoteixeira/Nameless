@@ -3,7 +3,7 @@ using System.Data;
 using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateConnectionOptions : NHibernateOptionsBase {
+    public sealed record NHibernateConnectionOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("connection.provider")]

@@ -43,7 +43,7 @@ namespace Nameless {
                 throw new InvalidOperationException("Can't read stream.");
             }
 
-            // Return faster...
+            // Return, but faster...
             if (self is MemoryStream ms) { return ms.ToArray(); }
 
             var allocationSize = (int)bufferSize;

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace Nameless.MongoDB.Options {
-    public sealed class CredentialsOptions {
+    public sealed record CredentialsOptions {
         #region Public Static Read-Only Properties
 
         public static CredentialsOptions Default => new();

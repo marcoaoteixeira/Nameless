@@ -9,9 +9,9 @@ namespace Nameless.Lucene {
 
         public static IServiceCollection RegisterLucene(this IServiceCollection self, Action<LuceneOptions>? configure = null)
             => self.AddSingleton<IIndexManager>(provider => {
-                var options = provider.GetPocoOptions<LuceneOptions>();
+                var options = provider.GetOptions<LuceneOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
                 return new IndexManager(
                     applicationContext: provider.GetRequiredService<IApplicationContext>(),
@@ -19,7 +19,7 @@ namespace Nameless.Lucene {
                         selectors: provider.GetService<IAnalyzerSelector[]>() ?? []
                     ),
                     logger: provider.GetLogger<Impl.Index>(),
-                    options: options
+                    options: options.Value
                 );
             });
 

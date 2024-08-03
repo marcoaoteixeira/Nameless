@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateAdoNetOptions : NHibernateOptionsBase {
+    public sealed record NHibernateAdoNetOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("adonet.batch_size")]

@@ -16,28 +16,36 @@ namespace Nameless.NHibernate {
 
         #region Public Static Methods
 
-        public static IServiceCollection RegisterNHibernate(this IServiceCollection self, Action<NHibernateOptions>? configure = null)
+        public static IServiceCollection RegisterNHibernate(
+            this IServiceCollection self,
+            Action<NHibernateOptions>? configure = null,
+            Type[]? entityTypes = null,
+            Type[]? classMappingTypes = null)
             => self
                .AddKeyedSingleton(serviceKey: SESSION_FACTORY_TOKEN,
-                                  implementationFactory: (provider, _) => {
-                                      var options = provider.GetPocoOptions<NHibernateOptions>();
-
-                                      configure?.Invoke(options);
-
-                                      var configurationFactory = new ConfigurationFactory(options);
-
-                                      var sessionFactory = configurationFactory.CreateConfiguration()
-                                                                               .BuildSessionFactory();
-
-                                      StartUp(provider, configurationFactory, sessionFactory, options);
-
-                                      return sessionFactory;
-                                  })
+                                  implementationFactory: (provider, _) => GetSessionFactoryImpl(configure, entityTypes, classMappingTypes, provider))
                .AddScoped(provider => provider.GetRequiredKeyedService<ISessionFactory>(SESSION_FACTORY_TOKEN).OpenSession());
 
         #endregion
 
         #region Private Static Methods
+
+        private static ISessionFactory GetSessionFactoryImpl(Action<NHibernateOptions>? configure, Type[]? entityTypes, Type[]? classMappingTypes, IServiceProvider provider) {
+            var options = provider.GetOptions<NHibernateOptions>();
+
+            configure?.Invoke(options.Value);
+
+            var configurationFactory = new ConfigurationFactory(options.Value,
+                                                                entityTypes ?? [],
+                                                                classMappingTypes ?? []);
+
+            var sessionFactory = configurationFactory.CreateConfiguration()
+                                                     .BuildSessionFactory();
+
+            StartUp(provider, configurationFactory, sessionFactory, options.Value);
+
+            return sessionFactory;
+        }
 
         private static void StartUp(
             IServiceProvider provider,

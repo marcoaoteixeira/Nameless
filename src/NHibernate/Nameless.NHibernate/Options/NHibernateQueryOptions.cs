@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateQueryOptions : NHibernateOptionsBase {
+    public sealed record NHibernateQueryOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("query.substitutions")]

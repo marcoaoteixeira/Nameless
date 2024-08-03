@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Nameless {
     public static class ServiceProviderExtension {
@@ -36,25 +37,35 @@ namespace Nameless {
                 : NullLogger.Instance;
         }
 
-        public static TOptions GetPocoOptions<TOptions>(this IServiceProvider self)
-            where TOptions : class, new() {
-            // let's first check if we have it on our container
-            var options = self.GetService<TOptions>();
+        public static IOptions<TOptions> GetOptions<TOptions>(this IServiceProvider self, Func<TOptions>? factory = null)
+            where TOptions : class {
+            // let's first check if our provider can resolve this option
+            var options = self.GetService<IOptions<TOptions>>();
             if (options is not null) {
                 return options;
             }
 
-            // ok, no good. let's try get from the configuration
-            TOptions? result = default;
+            // shoot, no good. let's try get from the configuration
             if (self.TryGetService<IConfiguration>(out var configuration)) {
                 var sectionName = typeof(TOptions).Name
                                                   .RemoveTail(Root.Defaults.OptionsSettingsTails);
-                result = configuration.GetSection(sectionName)
-                                      .Get<TOptions>();
+                var configOptions = configuration.GetSection(sectionName)
+                                                 .Get<TOptions>();
+
+                if (configOptions is not null) {
+                    return Options.Create(configOptions);
+                }
             }
 
-            // returns from configuration or build.
-            return result ?? new TOptions();
+            // whoops...if we reach this far, seems like we don't have
+            // the configuration set or missing this particular option.
+            // If we have the factory let's construct it. Otherwise,
+            // exception it is.
+            var factoryOptions = Guard.Against
+                                      .Null(factory, nameof(factory))
+                                      .Invoke();
+
+            return Options.Create(factoryOptions);
         }
 
         #endregion

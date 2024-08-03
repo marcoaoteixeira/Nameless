@@ -1,5 +1,5 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class QueueOptions {
+    public sealed record QueueOptions {
         #region Public Static Read-Only Fields
 
         public static QueueOptions Default => new();

@@ -11,17 +11,30 @@ namespace Nameless.MongoDB {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection RegisterMongoCollectionProvider(this IServiceCollection self, Action<MongoOptions>? configure = null)
+        /// <summary>
+        /// Registers MongoDb configuration.
+        /// </summary>
+        /// <param name="self">The service collection instance.</param>
+        /// <param name="configure">An action to configure MongoDb options.</param>
+        /// <param name="collectionNamingStrategy">The collection naming strategy, if <c>null</c> will use <see cref="CollectionNamingStrategy.Instance"/>.</param>
+        /// <param name="supportAssemblies">Support assemblies to look for implementations of <see cref="ClassMappingBase{TDocument}"/></param>
+        /// <returns>The current instance of <see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection RegisterMongoCollectionProvider(
+            this IServiceCollection self,
+            Action<MongoOptions>? configure = null,
+            ICollectionNamingStrategy? collectionNamingStrategy = null,
+            params Assembly[] supportAssemblies)
             => self.AddSingleton<IMongoCollectionProvider>(provider => {
-                var options = provider.GetPocoOptions<MongoOptions>();
+                var options = provider.GetOptions<MongoOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
-                StartUp(provider, options.ClassMappingTypes);
+                var classMappingTypes = FetchClassMappingTypes(supportAssemblies);
+                StartUp(provider, classMappingTypes);
 
                 return new MongoCollectionProvider(
-                    database: GetMongoDatabase(options),
-                    collectionNamingStrategy: options.CollectionNamingStrategy
+                    database: GetMongoDatabase(options.Value),
+                    collectionNamingStrategy: collectionNamingStrategy ?? CollectionNamingStrategy.Instance
                 );
             });
 
@@ -130,6 +143,9 @@ namespace Nameless.MongoDB {
 
             return result ?? throw new InvalidOperationException($"Impossible to execute {nameof(BsonClassMap)}.{nameof(BsonClassMap.RegisterClassMap)}<{documentType.Name}>()");
         }
+
+        private static IEnumerable<Type> FetchClassMappingTypes(IEnumerable<Assembly> supportAssemblies)
+            => supportAssemblies.SelectMany(assembly => assembly.ScanAssembly(typeof(ClassMappingBase<>)));
 
         #endregion
     }

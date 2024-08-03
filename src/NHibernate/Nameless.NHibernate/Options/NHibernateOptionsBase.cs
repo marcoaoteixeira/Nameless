@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 namespace Nameless.NHibernate.Options {
-    public abstract class NHibernateOptionsBase {
+    public abstract record NHibernateOptionsBase {
         #region Public Methods
 
         public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
@@ -9,7 +9,7 @@ namespace Nameless.NHibernate.Options {
                                       .Where(property => !typeof(NHibernateOptionsBase)                                                 .IsAssignableFrom(property.PropertyType));
 
             foreach (var property in properties) {
-                var key = property.GetDescription() ?? property.Name;
+                var key = property.GetDescription();
                 var obj = property.GetValue(this);
                 if (obj is null) { continue; }
 

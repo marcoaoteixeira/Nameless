@@ -1,5 +1,5 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class ExchangeOptions {
+    public sealed record ExchangeOptions {
         #region Public Static Read-Only Fields
 
         public static ExchangeOptions Default => new();

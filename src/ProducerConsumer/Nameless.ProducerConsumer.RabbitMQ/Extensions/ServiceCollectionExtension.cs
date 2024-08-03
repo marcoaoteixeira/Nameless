@@ -17,18 +17,18 @@ namespace Nameless.ProducerConsumer.RabbitMQ {
             => self
                .AddKeyedSingleton(serviceKey: CHANNEL_TOKEN,
                                   implementationFactory: (provider, _) => {
-                                      var options = provider.GetPocoOptions<RabbitMQOptions>();
+                                      var options = provider.GetOptions<RabbitMQOptions>();
 
-                                      configure?.Invoke(options);
+                                      configure?.Invoke(options.Value);
 
                                       var channelFactory = new ChannelFactory(
-                                          options: options,
+                                          options: options.Value,
                                           logger: provider.GetLogger<ChannelFactory>()
                                       );
 
                                       var channel = channelFactory.CreateChannel();
 
-                                      StartUp(channel, options);
+                                      StartUp(channel, options.Value);
 
                                       return channel;
                                   })

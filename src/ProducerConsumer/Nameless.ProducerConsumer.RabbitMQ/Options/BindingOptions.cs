@@ -1,5 +1,5 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class BindingOptions {
+    public sealed record BindingOptions {
         #region Public Static Read-Only Fields
 
         public static BindingOptions Default => new();

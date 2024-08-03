@@ -17,7 +17,6 @@ using Nameless.Web.Options;
 using Nameless.Web.Services;
 using Nameless.Web.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Web {
     public static class ServiceCollectionExtension {
@@ -33,7 +32,7 @@ namespace Nameless.Web {
             => self.AddHttpContextAccessor();
 
         public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions>? configure = null) {
-            var sectionName = nameof(JwtOptions).RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
+            var sectionName = nameof(JwtOptions).RemoveTail(Nameless.Root.Defaults.OptionsSettingsTails);
             var jwtOptions = config.GetSection(sectionName)
                                    .Get<JwtOptions>() ?? JwtOptions.Default;
 
@@ -62,17 +61,17 @@ namespace Nameless.Web {
 
         public static IServiceCollection RegisterJwtService(this IServiceCollection self, Action<JwtOptions>? configure = null)
             => self.AddSingleton<IJwtService>(provider => {
-                var options = provider.GetPocoOptions<JwtOptions>();
+                var options = provider.GetOptions<JwtOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
-                return new JwtService(options: options,
-                                      clock: provider.GetService<IClockService>() ?? SystemClockService.Instance,
+                return new JwtService(options: options.Value,
+                                      systemClock: provider.GetService<ISystemClock>() ?? SystemClock.Instance,
                                       logger: provider.GetLogger<JwtService>());
             });
 
         public static IServiceCollection RegisterMinimalEndpoints(this IServiceCollection self, IEnumerable<Assembly> supportAssemblies) {
-            var types = MinimalEndpointHelpers.ScanAssemblies(supportAssemblies);
+            var types = MinimalEndpointHelper.ScanAssemblies(supportAssemblies);
             // In the future, check if it'll be necessary to "keyed"
             // this services.
             foreach (var type in types) {
@@ -82,8 +81,8 @@ namespace Nameless.Web {
             return self;
         }
 
-        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self, Action<ProblemDetailsOptions>? opts = null)
-            => self.AddProblemDetails(opts);
+        public static IServiceCollection RegisterProblemDetails(this IServiceCollection self, Action<ProblemDetailsOptions>? configure = null)
+            => self.AddProblemDetails(configure);
 
         public static IServiceCollection RegisterRouting(this IServiceCollection self, Action<RouteOptions>? configure = null)
             => self.AddRouting(configure ?? (_ => { }));

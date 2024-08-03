@@ -29,7 +29,7 @@ namespace Nameless {
             // expression.
             //
             // After the corrections below the first loop, length is usually exactly the size
-            // of the returned string. However when containsIndexers is true, the calculation
+            // of the returned string. However, when containsIndexers is true, the calculation
             // is approximate because either evaluating indexer expressions multiple times or
             // saving indexer strings can get expensive. Optimizing for the common case of a
             // collection (not a dictionary) with less than 100 elements. If that assumption

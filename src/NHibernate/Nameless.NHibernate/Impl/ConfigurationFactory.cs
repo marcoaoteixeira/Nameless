@@ -7,12 +7,16 @@ namespace Nameless.NHibernate.Impl {
         #region Private Read-Only Fields
 
         private readonly NHibernateOptions _options;
+        private readonly Type[] _entityTypes;
+        private readonly Type[] _classMappingTypes;
 
         #endregion
 
         #region Public Constructors
 
-        public ConfigurationFactory(NHibernateOptions options) {
+        public ConfigurationFactory(NHibernateOptions options, Type[] entityTypes, Type[] classMappingTypes) {
+            _entityTypes = Guard.Against.Null(entityTypes, nameof(entityTypes));
+            _classMappingTypes = Guard.Against.Null(classMappingTypes, nameof(classMappingTypes));
             _options = Guard.Against.Null(options, nameof(options));
         }
 
@@ -24,10 +28,10 @@ namespace Nameless.NHibernate.Impl {
             var configuration = new Configuration();
             configuration.SetProperties(_options.ToDictionary());
 
-            var modelInspector = new ModelInspector(_options.RootEntityTypes);
+            var modelInspector = new ModelInspector(_entityTypes);
             var modelMapper = new ModelMapper(modelInspector);
 
-            modelMapper.AddMappings(_options.ClassMappingTypes);
+            modelMapper.AddMappings(_classMappingTypes);
 
             var mappingDocument = modelMapper
                 .CompileMappingForAllExplicitlyAddedEntities();

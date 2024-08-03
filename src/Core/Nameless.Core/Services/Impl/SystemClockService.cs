@@ -1,15 +1,15 @@
 ﻿namespace Nameless.Services.Impl {
     /// <summary>
-    /// Singleton Pattern implementation for <see cref="SystemClockService" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
+    /// Singleton Pattern implementation for <see cref="SystemClock" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
     /// </summary>
     [Singleton]
-    public sealed class SystemClockService : IClockService {
+    public sealed class SystemClock : ISystemClock {
         #region Public Static Properties
 
         /// <summary>
-        /// Gets the unique instance of <see cref="SystemClockService" />.
+        /// Gets the unique instance of <see cref="SystemClock" />.
         /// </summary>
-        public static IClockService Instance { get; } = new SystemClockService();
+        public static ISystemClock Instance { get; } = new SystemClock();
 
         #endregion
 
@@ -17,20 +17,21 @@
 
         // Explicit static constructor to tell the C# compiler
         // not to mark type as beforefieldinit
-        static SystemClockService() { }
+        static SystemClock() { }
 
         #endregion
 
         #region Private Constructors
 
-        private SystemClockService() { }
+        private SystemClock() { }
 
         #endregion
 
-        #region IClockService Members
+        #region ISystemClock Members
 
         public DateTime GetUtcNow()
             => DateTime.UtcNow;
+
         public DateTimeOffset GetUtcNowOffset()
             => new(new DateTime(ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
                                 kind: DateTimeKind.Utc));

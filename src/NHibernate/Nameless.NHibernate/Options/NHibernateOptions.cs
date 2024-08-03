@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateOptions {
+    public sealed record NHibernateOptions {
         #region Public Static Read-Only Properties
 
         public static NHibernateOptions Default => new();
@@ -23,18 +23,9 @@ namespace Nameless.NHibernate.Options {
         public NHibernateTransactionOptions Transaction { get; set; } = new();
         public NHibernateSpecificOptions Specific { get; set; } = new();
         
-        public Type[] RootEntityTypes { get; private set; } = [];
-        public Type[] ClassMappingTypes { get; private set; } = [];
-
         #endregion
 
         #region Public Methods
-
-        public void SetRootEntityTypes(params Type[] rootEntityTypes)
-            => RootEntityTypes = rootEntityTypes;
-
-        public void SetClassMappingTypes(params Type[] classMappingTypes)
-            => ClassMappingTypes = classMappingTypes;
 
         public Dictionary<string, string> ToDictionary() {
             var configs = new List<KeyValuePair<string, string>>();

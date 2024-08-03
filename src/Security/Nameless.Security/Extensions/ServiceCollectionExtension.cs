@@ -11,12 +11,12 @@ namespace Nameless.Security {
 
         public static IServiceCollection RegisterCryptographicService(this IServiceCollection self, Action<RijndaelCryptoOptions>? configure = null)
             => self.AddSingleton<ICryptographicService>(provider => {
-                var options = provider.GetPocoOptions<RijndaelCryptoOptions>();
+                var options = provider.GetOptions<RijndaelCryptoOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
                 return new RijndaelCryptographicService(
-                    options: options,
+                    options: options.Value,
                     logger: provider.GetLogger<RijndaelCryptographicService>()
                 );
             });

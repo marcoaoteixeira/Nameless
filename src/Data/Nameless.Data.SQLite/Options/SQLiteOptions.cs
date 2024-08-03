@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace Nameless.Data.SQLite.Options {
-    public sealed class SQLiteOptions {
+    public sealed record SQLiteOptions {
         #region Public Static Read-Only Properties
 
         public static SQLiteOptions Default => new();

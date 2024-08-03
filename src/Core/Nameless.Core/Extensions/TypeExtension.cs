@@ -15,7 +15,7 @@ namespace Nameless {
             typeof (Guid)
         };
 
-        #endregion Private Static Read-Only Fields
+        #endregion
 
         #region Public Static Methods
 
@@ -32,7 +32,7 @@ namespace Nameless {
         /// Can convert to <see cref="Nullable"/> type.
         /// </summary>
         /// <param name="self">The self type.</param>
-        /// <returns><c>true</c>, if can convert, otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c>, if it can convert, otherwise, <c>false</c>.</returns>
         /// <exception cref="NullReferenceException">if <paramref name="self"/> is <c>null</c>.</exception>
         public static bool AllowNull(this Type self)
             => !self.IsValueType || self.IsNullable();
@@ -161,8 +161,9 @@ namespace Nameless {
         public static bool HasInterface(this Type self, Type interfaceType) {
             Guard.Against.Null(interfaceType, nameof(interfaceType));
 
-            return self.GetInterfaces().Any(type => interfaceType.IsAssignableFrom(type) ||
-                                                    interfaceType.IsAssignableFromGenericType(type));
+            return self.GetInterfaces()
+                       .Any(type => interfaceType.IsAssignableFrom(type) ||
+                                    interfaceType.IsAssignableFromGenericType(type));
         }
 
         public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)

@@ -23,7 +23,7 @@ namespace Nameless.Web.Options {
         #region Public Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigureSwaggerOptions"/> class.
+        /// Initializes a new instance of the <see cref="SwaggerGenConfigureOptions"/> class.
         /// </summary>
         /// <param name="provider">The <see cref="IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
         /// <param name="hostEnvironment">The <see cref="IHostEnvironment"/>hostEnvironment.</param>

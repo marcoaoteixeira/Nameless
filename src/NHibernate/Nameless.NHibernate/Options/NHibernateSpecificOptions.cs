@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateSpecificOptions : NHibernateOptionsBase {
+    public sealed record NHibernateSpecificOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("firebird.disable_parameter_casting")]

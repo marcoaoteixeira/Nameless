@@ -59,6 +59,7 @@ namespace Nameless.Collections.Generic {
         public int Number => Index + 1;
 
         public int Size { get; }
+
         public int Length => Items.Length;
 
         public int PageCount => (int)Math.Ceiling(Total / (decimal)Size);

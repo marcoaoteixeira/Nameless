@@ -1,5 +1,5 @@
 ﻿namespace Nameless.Services {
-    public interface IClockService {
+    public interface ISystemClock {
         #region Properties
 
         DateTime GetUtcNow();

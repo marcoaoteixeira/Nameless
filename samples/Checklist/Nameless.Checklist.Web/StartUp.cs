@@ -243,7 +243,7 @@ namespace Nameless.Checklist.Web {
         // Don't build the container; that gets done for you by the factory.
         public void ConfigureContainer(ContainerBuilder builder) {
             builder
-                .RegisterInstance(SystemClockService.Instance);
+                .RegisterInstance(SystemClock.Instance);
 
             // Example
             var path = typeof(StartUp).Assembly.GetDirectoryPath("App_Data/database.json");

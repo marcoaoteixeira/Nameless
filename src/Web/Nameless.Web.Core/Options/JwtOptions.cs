@@ -1,5 +1,5 @@
 ﻿namespace Nameless.Web.Options {
-    public sealed class JwtOptions {
+    public sealed record JwtOptions {
         #region Public Static Read-Only Properties
 
         public static JwtOptions Default => new();
@@ -9,9 +9,13 @@
         #region Public Properties
 
         public string Secret { get; set; } = Root.Defaults.JWT_SECRET;
+        
         public string? Issuer { get; set; }
+        
         public bool ValidateIssuer { get; set; }
+        
         public string? Audience { get; set; }
+        
         public bool ValidateAudience { get; set; }
 
         private int _accessTokenTtl = 60;
@@ -42,18 +46,22 @@
                                                                max: 24 * 60,
                                                                name: nameof(value));
         }
+        
         public bool RequireHttpsMetadata { get; set; }
+        
         /// <summary>
         /// Gets or sets whether to validate issuer signing key.
         /// Default is <c>true</c>.
         /// </summary>
         public bool ValidateIssuerSigningKey { get; set; } = true;
+        
         /// <summary>
-        /// Gets or sets the maximum allowable time difference between client and server clock
+        /// Gets or sets the maximum allowable time difference between client and server systemClock
         /// settings in seconds.
         /// Default is <c>0</c>.
         /// </summary>
         public int MaxClockSkew { get; set; }
+        
         public bool SaveTokens { get; set; } = true;
 
         #endregion

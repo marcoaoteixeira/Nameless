@@ -1,5 +1,5 @@
 ﻿namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateSchemaExportOptions {
+    public sealed record NHibernateSchemaExportOptions {
         #region Public Static Read-Only Properties
 
         public static NHibernateSchemaExportOptions Default => new();

@@ -13,16 +13,16 @@ namespace Nameless.Web.Services.Impl {
         #region Private Read-Only Fields
 
         private readonly JwtOptions _options;
-        private readonly IClockService _clock;
+        private readonly ISystemClock _systemClock;
         private readonly ILogger _logger;
 
         #endregion
 
         #region Public Constructors
 
-        public JwtService(JwtOptions options, IClockService clock, ILogger<JwtService> logger) {
+        public JwtService(JwtOptions options, ISystemClock systemClock, ILogger<JwtService> logger) {
             _options = Guard.Against.Null(options, nameof(options));
-            _clock = Guard.Against.Null(clock, nameof(clock));
+            _systemClock = Guard.Against.Null(systemClock, nameof(systemClock));
             _logger = Guard.Against.Null(logger, nameof(logger));
         }
 
@@ -31,7 +31,7 @@ namespace Nameless.Web.Services.Impl {
         #region IJwtService Members
 
         public string Generate(JwtClaims claims) {
-            var now = _clock.GetUtcNow();
+            var now = _systemClock.GetUtcNow();
             var expires = now.AddHours(_options.AccessTokenTtl);
 
             var tokenDescriptor = new SecurityTokenDescriptor {

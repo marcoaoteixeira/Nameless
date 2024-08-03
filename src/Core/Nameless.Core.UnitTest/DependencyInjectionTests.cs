@@ -15,13 +15,13 @@ namespace Nameless {
             using var provider = services.BuildServiceProvider();
 
             // act
-            var clockService = provider.GetService<IClockService>();
+            var clockService = provider.GetService<ISystemClock>();
             var xmlSchemaValidator = provider.GetService<IXmlSchemaValidator>();
             var pluralizationRuleProvider = provider.GetService<IPluralizationRuleProvider>();
 
             // assert
             Assert.Multiple(() => {
-                Assert.That(clockService, Is.InstanceOf<SystemClockService>());
+                Assert.That(clockService, Is.InstanceOf<SystemClock>());
                 Assert.That(xmlSchemaValidator, Is.InstanceOf<XmlSchemaValidator>());
                 Assert.That(pluralizationRuleProvider, Is.InstanceOf<PluralizationRuleProvider>());
             });

@@ -8,10 +8,10 @@ namespace Nameless.Mailing.MailKit.Options {
     /// <summary>
     /// The configuration for mailing client.
     /// </summary>
-    public sealed record ServerOptions {
+    public sealed record MailServerOptions {
         #region Public Static Properties
 
-        public static ServerOptions Default => new();
+        public static MailServerOptions Default => new();
 
         #endregion
 

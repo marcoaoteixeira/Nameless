@@ -1,9 +1,11 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis {
+    /// <summary>
+    /// Implementation of <see cref="ICacheService"/> for Redis.
+    /// </summary>
     public sealed class RedisCacheService : ICacheService, IDisposable {
         #region Private Read-Only Fields
 
@@ -22,9 +24,11 @@ namespace Nameless.Caching.Redis {
 
         #region Public Constructors
 
-        public RedisCacheService(ConfigurationOptions configurationOptions)
-            : this(configurationOptions, NullLogger<RedisCacheService>.Instance) { }
-
+        /// <summary>
+        /// Initializes a new instance of <see cref="RedisCacheService"/>.
+        /// </summary>
+        /// <param name="configurationOptions">Redis configuration options.</param>
+        /// <param name="logger">The logger.</param>
         public RedisCacheService(ConfigurationOptions configurationOptions, ILogger<RedisCacheService> logger) {
             _configurationOptions = Guard.Against.Null(configurationOptions, nameof(configurationOptions));
             _logger = Guard.Against.Null(logger, nameof(logger));
@@ -71,10 +75,9 @@ namespace Nameless.Caching.Redis {
 
         #region ICache Members
 
+        /// <inheritdoc />
         public Task<bool> SetAsync(string key, object value, CacheEntryOptions opts = default, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
-
-            cancellationToken.ThrowIfCancellationRequested();
 
             var json = JsonSerializer.Serialize(value);
             var expiry = opts.ExpiresIn != default
@@ -85,6 +88,8 @@ namespace Nameless.Caching.Redis {
                 _logger.LogInformation($"It's not possible to configure eviction callbacks for {nameof(RedisCacheService)}.");
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             return GetDatabase().StringSetAsync(key: key,
                                                 value: json,
                                                 expiry: expiry,
@@ -93,6 +98,7 @@ namespace Nameless.Caching.Redis {
                                                 flags: CommandFlags.None);
         }
 
+        /// <inheritdoc />
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
@@ -107,6 +113,7 @@ namespace Nameless.Caching.Redis {
                 : default;
         }
 
+        /// <inheritdoc />
         public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
             BlockAccessAfterDispose();
 
@@ -123,6 +130,7 @@ namespace Nameless.Caching.Redis {
 
         #region IDisposable Members
 
+        /// <inheritdoc />
         public void Dispose() {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);

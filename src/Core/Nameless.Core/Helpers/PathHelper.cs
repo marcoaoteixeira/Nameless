@@ -15,11 +15,11 @@ namespace Nameless.Helpers {
         /// </summary>
         /// <remarks>
         /// <para>
-        /// On Windows: Foward slash is converted to backslash and any leading
+        /// On Windows: Forward slash is converted to backslash and any leading
         /// or trailing slashes are removed.
         /// </para>
         /// <para>
-        /// On Linux and OSX: Backslash is converted to foward slash and any
+        /// On Linux and OSX: Backslash is converted to forward slash and any
         /// leading or trailing slashes are removed.
         /// </para>
         /// </remarks>

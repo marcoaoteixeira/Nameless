@@ -1,4 +1,6 @@
-﻿namespace Nameless {
+﻿using System.Text;
+
+namespace Nameless {
     public class StringExtensionTests {
 
         // Diacritics, often loosely called 'accents', are the various little dots and
@@ -87,6 +89,64 @@
             var actual = StringExtension.Ellipsize(value, count, ellipsis, wordBoundary: false);
 
             // arrange
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void FromHexToByteArray_Should_Return_Array_Of_Bytes() {
+            // arrange
+            const string expected = "Test Is A Test";
+            var array = expected.ToCharArray()
+                                .Select(item => ((int)item).ToString("X2"));
+            var value = string.Join(string.Empty, array);
+
+            // act
+            var actual = StringExtension.FromHexToByteArray(value);
+
+            // assert
+            Assert.That(expected, Is.EqualTo(Encoding.UTF8.GetString(actual)));
+        }
+
+        [Test]
+        public void ReplaceAll_Use_Dictionary_To_Replace_Values_Inside_Text() {
+            // arrange
+            var replacements = new Dictionary<string, string> {
+                { "cat", "dog" },
+                { "meow", "bark" }
+            };
+            const string phrase = "The cat goes meow";
+            const string expected = "The dog goes bark";
+
+            // act
+            var actual = StringExtension.ReplaceAll(phrase, replacements);
+
+            // assert
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ToBase64_Is_Just_A_Syntax_Sugar_For_Convert_ToBase64String() {
+            // arrange
+            const string expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
+            const string phrase = "This is a test";
+
+            // act
+            var actual = StringExtension.ToBase64(phrase);
+
+            // assert
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ToBase64_Using_Different_Encoding() {
+            // arrange
+            const string expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
+            const string phrase = "This is a test";
+
+            // act
+            var actual = StringExtension.ToBase64(phrase, Encoding.ASCII);
+
+            // assert
             Assert.That(actual, Is.EqualTo(expected));
         }
     }

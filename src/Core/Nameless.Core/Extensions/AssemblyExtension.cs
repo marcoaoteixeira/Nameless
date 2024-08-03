@@ -37,6 +37,26 @@ namespace Nameless {
                 : "v0.0.0";
         }
 
+        /// <summary>
+        /// Retrieves all types that implements <see cref="TBase"/>.
+        /// </summary>
+        /// <typeparam name="TBase">The base implementation type.</typeparam>
+        /// <param name="self">The current assembly object.</param>
+        /// <returns>A collection of types.</returns>
+        public static IEnumerable<Type> ScanAssembly<TBase>(this Assembly self)
+            => ScanAssembly(self, typeof(TBase));
+
+        /// <summary>
+        /// Retrieves all types that implements <paramref name="baseType"/>.
+        /// </summary>
+        /// <param name="self">The current assembly object.</param>
+        /// <param name="baseType">The base type.</param>
+        /// <returns>A collection of types.</returns>
+        public static IEnumerable<Type> ScanAssembly(this Assembly self, Type baseType)
+            => self.GetExportedTypes()
+                   .Where(type => type is { IsInterface: false, IsAbstract: false } &&
+                                  (baseType.IsAssignableFrom(type) || baseType.IsAssignableFromGenericType(type)));
+
         #endregion
     }
 }

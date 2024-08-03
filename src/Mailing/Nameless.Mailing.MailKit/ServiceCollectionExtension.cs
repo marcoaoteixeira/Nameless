@@ -6,14 +6,14 @@ namespace Nameless.Mailing.MailKit {
     public static class ServiceCollectionExtension {
         #region Public Static Methods
 
-        public static IServiceCollection RegisterMailingService(this IServiceCollection self, Action<ServerOptions>? configure = null)
+        public static IServiceCollection RegisterMailingService(this IServiceCollection self, Action<MailServerOptions>? configure = null)
             => self.AddSingleton<IMailingService>(provider => {
-                var options = provider.GetPocoOptions<ServerOptions>();
+                var options = provider.GetOptions<MailServerOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
                 return new MailingService(
-                    smtpClientFactory: new SmtpClientFactory(options),
+                    smtpClientFactory: new SmtpClientFactory(options.Value),
                     logger: provider.GetLogger<MailingService>()
                 );
             });

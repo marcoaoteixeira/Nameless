@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateCacheOptions : NHibernateOptionsBase {
+    public sealed record NHibernateCacheOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("cache.use_second_level_cache")]

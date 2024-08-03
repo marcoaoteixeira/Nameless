@@ -2,7 +2,7 @@
 using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateCommonOptions : NHibernateOptionsBase {
+    public sealed record NHibernateCommonOptions : NHibernateOptionsBase {
         #region Public Properties
 
         [Description("dialect")]

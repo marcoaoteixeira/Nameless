@@ -4,7 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication;
 
 namespace Nameless.Caching.Redis.Options {
-    public sealed class SslOptions {
+    /// <summary>
+    /// Provides properties to configure Redis SSL.
+    /// </summary>
+    public sealed record SslOptions {
         #region Public Static Read-Only Properties
 
         public static SslOptions Default => new();
@@ -17,15 +20,20 @@ namespace Nameless.Caching.Redis.Options {
         /// Gets or sets the SSL host.
         /// </summary>
         public string Host { get; set; } = "localhost";
+        
         /// <summary>
         /// Gets or sets the SSL port.
         /// </summary>
         public int Port { get; set; }
+        
         /// <summary>
         /// Gets or sets the SSL protocol.
         /// </summary>
         public SslProtocols Protocol { get; set; }
 
+        /// <summary>
+        /// Gets whether SSL configuration is available.
+        /// </summary>
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Host))]
 #endif

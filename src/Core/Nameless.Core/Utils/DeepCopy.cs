@@ -24,7 +24,7 @@ namespace Nameless.Utils {
 
             var json = JsonSerializer.Serialize(value);
             var result = JsonSerializer.Deserialize(json, type);
-
+            
             return result!;
         }
 

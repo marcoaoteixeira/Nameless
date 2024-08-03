@@ -1,5 +1,5 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class RabbitMQOptions {
+    public sealed record RabbitMQOptions {
         #region Public Static Read-Only Properties
 
         public static RabbitMQOptions Default => new();

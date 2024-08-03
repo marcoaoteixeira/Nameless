@@ -1,7 +1,7 @@
 ﻿using Nameless.Security.Crypto;
 
 namespace Nameless.Security.Options {
-    public sealed class RijndaelCryptoOptions {
+    public sealed record RijndaelCryptoOptions {
         #region Public Constants
 
         public const int MAXIMUM_ALLOWED_SALT_SIZE = 255;

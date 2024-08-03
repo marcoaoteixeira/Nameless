@@ -7,12 +7,12 @@ namespace Nameless.Data.SQLServer {
 
         public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLServerOptions>? configure = null)
             => self.AddSingleton<IDatabaseService>(provider => {
-                var options = provider.GetPocoOptions<SQLServerOptions>();
+                var options = provider.GetOptions<SQLServerOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
                 return new DatabaseService(
-                    dbConnectionFactory: new DbConnectionFactory(options),
+                    dbConnectionFactory: new DbConnectionFactory(options.Value),
                     logger: provider.GetLogger<DatabaseService>()
                 );
             });

@@ -7,12 +7,12 @@ namespace Nameless.Data.SQLite {
 
         public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLiteOptions>? configure = null)
             => self.AddSingleton<IDatabaseService>(provider => {
-                var options = provider.GetPocoOptions<SQLiteOptions>();
+                var options = provider.GetOptions<SQLiteOptions>();
 
-                configure?.Invoke(options);
+                configure?.Invoke(options.Value);
 
                 return new DatabaseService(
-                    dbConnectionFactory: new DbConnectionFactory(options),
+                    dbConnectionFactory: new DbConnectionFactory(options.Value),
                     logger: provider.GetLogger<DatabaseService>()
                 );
             });

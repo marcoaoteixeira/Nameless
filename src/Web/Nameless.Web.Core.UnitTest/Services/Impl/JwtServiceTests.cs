@@ -14,7 +14,7 @@ namespace Nameless.Web.Services.Impl {
                 Email = "test_user@test.com"
             };
             var sut = new JwtService(options: new JwtOptions(),
-                                     clock: SystemClockService.Instance,
+                                     systemClock: SystemClock.Instance,
                                      logger: NullLogger<JwtService>.Instance);
 
             // act
@@ -33,7 +33,7 @@ namespace Nameless.Web.Services.Impl {
                 Email = "test_user@test.com"
             };
             var sut = new JwtService(options: new JwtOptions(),
-                                     clock: SystemClockService.Instance,
+                                     systemClock: SystemClock.Instance,
                                      logger: NullLogger<JwtService>.Instance);
 
             // act

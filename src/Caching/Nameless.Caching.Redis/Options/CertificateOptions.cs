@@ -3,7 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace Nameless.Caching.Redis.Options {
-    public sealed class CertificateOptions {
+    /// <summary>
+    /// Provides properties to configure Redis certificates.
+    /// </summary>
+    public sealed record CertificateOptions {
         #region Public Static Read-Only Properties
 
         public static CertificateOptions Default => new();
@@ -27,6 +30,9 @@ namespace Nameless.Caching.Redis.Options {
         /// </summary>
         public string? Password { get; set; }
 
+        /// <summary>
+        /// Gets whether certificate options is available.
+        /// </summary>
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Pfx), nameof(Pem), nameof(Password))]
 #endif

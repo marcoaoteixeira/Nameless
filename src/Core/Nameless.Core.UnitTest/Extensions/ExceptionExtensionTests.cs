@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Nameless.Extensions {
+namespace Nameless {
     public class ExceptionExtensionTests {
         // This test should also test for ThreadAbortException, but
         // since is not possible to instantiate a new ThreadAbortException
