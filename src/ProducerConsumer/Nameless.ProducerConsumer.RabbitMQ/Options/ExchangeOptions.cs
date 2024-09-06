@@ -1,42 +1,42 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed record ExchangeOptions {
-        #region Public Static Read-Only Fields
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static ExchangeOptions Default => new();
+public sealed record ExchangeOptions {
+    #region Public Static Read-Only Fields
 
-        #endregion
+    public static ExchangeOptions Default => new();
 
-        #region Private Fields
+    #endregion
 
-        private Dictionary<string, object>? _arguments;
-        private QueueOptions[]? _queues;
-        private string? _name;
+    #region Private Fields
 
-        #endregion
+    private Dictionary<string, object>? _arguments;
+    private QueueOptions[]? _queues;
+    private string? _name;
 
-        #region Public Properties
+    #endregion
 
-        public string Name {
-            get => _name ??= Root.Defaults.EXCHANGE_NAME;
-            set => _name = value;
-        }
+    #region Public Properties
 
-        public ExchangeType Type { get; set; }
-
-        public bool Durable { get; set; } = true;
-
-        public bool AutoDelete { get; set; }
-
-        public Dictionary<string, object> Arguments {
-            get => _arguments ??= [];
-            set => _arguments = value;
-        }
-
-        public QueueOptions[] Queues {
-            get => _queues ??= [];
-            set => _queues = value;
-        }
-
-        #endregion
+    public string Name {
+        get => _name ??= Root.Defaults.EXCHANGE_NAME;
+        set => _name = value;
     }
+
+    public ExchangeType Type { get; set; }
+
+    public bool Durable { get; set; } = true;
+
+    public bool AutoDelete { get; set; }
+
+    public Dictionary<string, object> Arguments {
+        get => _arguments ??= [];
+        set => _arguments = value;
+    }
+
+    public QueueOptions[] Queues {
+        get => _queues ??= [];
+        set => _queues = value;
+    }
+
+    #endregion
 }

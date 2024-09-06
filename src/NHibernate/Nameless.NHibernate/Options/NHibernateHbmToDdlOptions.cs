@@ -1,16 +1,16 @@
 ﻿using System.ComponentModel;
 using Nameless.NHibernate.Objects;
 
-namespace Nameless.NHibernate.Options {
-    public sealed record NHibernateHbmToDdlOptions : NHibernateOptionsBase {
-        #region Public Properties
+namespace Nameless.NHibernate.Options;
 
-        [Description("hbm2ddl.auto")]
-        public HbmToDdlAuto? Auto { get; set; }
+public sealed record NHibernateHbmToDdlOptions : NHibernateOptionsBase {
+    #region Public Properties
 
-        [Description("hbm2ddl.keywords")]
-        public HbmToDdlKeyword? Keywords { get; set; }
+    [Description("hbm2ddl.auto")]
+    public HbmToDdlAuto? Auto { get; set; }
 
-        #endregion
-    }
+    [Description("hbm2ddl.keywords")]
+    public HbmToDdlKeyword? Keywords { get; set; }
+
+    #endregion
 }

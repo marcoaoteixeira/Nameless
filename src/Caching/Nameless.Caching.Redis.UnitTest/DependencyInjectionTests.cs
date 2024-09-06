@@ -1,19 +1,19 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nameless.Caching.Redis {
-    public class DependencyInjectionTests {
-        [Test]
-        public void Register_And_Resolve_Service() {
-            // arrange
-            var services = new ServiceCollection();
-            services.RegisterCacheService();
-            using var provider = services.BuildServiceProvider();
+namespace Nameless.Caching.Redis;
 
-            // act
-            var sut = provider.GetRequiredService<ICacheService>();
+public class DependencyInjectionTests {
+    [Test]
+    public void Register_And_Resolve_Service() {
+        // arrange
+        var services = new ServiceCollection();
+        services.RegisterCacheService();
+        using var provider = services.BuildServiceProvider();
 
-            // assert
-            Assert.That(sut, Is.InstanceOf<RedisCacheService>());
-        }
+        // act
+        var sut = provider.GetRequiredService<ICache>();
+
+        // assert
+        Assert.That(sut, Is.InstanceOf<RedisCache>());
     }
 }

@@ -1,10 +1,7 @@
-﻿namespace Nameless.Services {
-    public interface ISystemClock {
-        #region Properties
+﻿namespace Nameless.Services;
 
-        DateTime GetUtcNow();
-        DateTimeOffset GetUtcNowOffset();
+public interface ISystemClock {
+    DateTime GetUtcNow();
 
-        #endregion
-    }
+    DateTimeOffset GetUtcNowOffset();
 }

@@ -1,48 +1,34 @@
 ﻿using System.Collections;
 
-namespace Nameless.Infrastructure {
-    public class ArgCollection : IEnumerable<Arg> {
-        #region Private Read-Only Fields
+namespace Nameless.Infrastructure;
 
-        private readonly Dictionary<string, object> _dictionary = [];
+public class ArgCollection : IEnumerable<Arg> {
+    private readonly Dictionary<string, object> _dictionary = [];
 
-        #endregion
+    public void Set(Arg arg) {
+        Prevent.Argument.Null(arg, nameof(arg));
 
-        #region Public Methods
-
-        public void Set(Arg arg) {
-            Guard.Against.Null(arg, nameof(arg));
-
-            Set(arg.Name, arg.Value);
-        }
-
-        public void Set(string name, object value) {
-            Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Guard.Against.Null(value, nameof(value));
-
-            _dictionary[name] = value;
-        }
-
-        public object? Get(string name)
-            => _dictionary.GetValueOrDefault(name);
-
-        #endregion
-
-        #region Private Methods
-
-        private IEnumerable<Arg> GetArgs()
-            => _dictionary.Select(item => new Arg(item.Key, item.Value));
-
-        #endregion
-
-        #region IEnumerable<Arg> Members
-
-        public IEnumerator<Arg> GetEnumerator()
-            => GetArgs().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => GetArgs().GetEnumerator();
-
-        #endregion
+        Set(arg.Name, arg.Value);
     }
+
+    public void Set(string name, object value) {
+        Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
+        Prevent.Argument.Null(value, nameof(value));
+
+        _dictionary[name] = value;
+    }
+
+    public object? Get(string name)
+        => _dictionary.GetValueOrDefault(name);
+
+    public IEnumerator<Arg> GetEnumerator()
+        => GetArgs()
+            .GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetArgs()
+            .GetEnumerator();
+
+    private IEnumerable<Arg> GetArgs()
+        => _dictionary.Select(item => new Arg(item.Key, item.Value));
 }

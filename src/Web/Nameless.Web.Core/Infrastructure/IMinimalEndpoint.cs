@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace Nameless.Web.Infrastructure {
-    public interface IMinimalEndpoint {
-        #region Properties
+namespace Nameless.Web.Infrastructure;
 
-        string Name { get; }
-        string Summary { get; }
-        string Description { get; }
-        string Group { get; }
-        int Version { get; }
+public interface IMinimalEndpoint {
+    #region Properties
 
-        #endregion
+    string Name { get; }
+    string Summary { get; }
+    string Description { get; }
+    string Group { get; }
+    int Version { get; }
 
-        #region Methods
+    #endregion
 
-        IEndpointConventionBuilder Map(IEndpointRouteBuilder builder);
+    #region Methods
 
-        #endregion
-    }
+    IEndpointConventionBuilder Map(IEndpointRouteBuilder builder);
+
+    #endregion
 }

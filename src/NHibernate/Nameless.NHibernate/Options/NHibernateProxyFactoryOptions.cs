@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Options {
-    public sealed record NHibernateProxyFactoryOptions : NHibernateOptionsBase {
-        #region Public Properties
+namespace Nameless.NHibernate.Options;
 
-        [Description("proxyfactory.factory_class")]
-        public string? FactoryClass { get; set; }
+public sealed record NHibernateProxyFactoryOptions : NHibernateOptionsBase {
+    #region Public Properties
 
-        #endregion
-    }
+    [Description("proxyfactory.factory_class")]
+    public string? FactoryClass { get; set; }
+
+    #endregion
 }

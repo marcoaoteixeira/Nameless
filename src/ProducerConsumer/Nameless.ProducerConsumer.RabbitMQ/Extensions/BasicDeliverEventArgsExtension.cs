@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
 using RabbitMQ.Client.Events;
 
-namespace Nameless.ProducerConsumer.RabbitMQ {
-    internal static class BasicDeliverEventArgsExtension {
-        #region Internal Static Methods
+namespace Nameless.ProducerConsumer.RabbitMQ;
 
-        internal static Envelope? GetEnvelope(this BasicDeliverEventArgs self)
-            => JsonSerializer.Deserialize<Envelope>(self.Body.ToArray());
+internal static class BasicDeliverEventArgsExtension {
+    #region Internal Static Methods
 
-        #endregion
-    }
+    internal static Envelope? GetEnvelope(this BasicDeliverEventArgs self)
+        => JsonSerializer.Deserialize<Envelope>(self.Body.ToArray());
+
+    #endregion
 }

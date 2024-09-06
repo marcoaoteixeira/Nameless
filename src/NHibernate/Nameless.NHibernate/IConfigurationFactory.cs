@@ -1,11 +1,11 @@
 ﻿using NHibernate.Cfg;
 
-namespace Nameless.NHibernate {
-    public interface IConfigurationFactory {
-        #region Methods
+namespace Nameless.NHibernate;
 
-        Configuration CreateConfiguration();
+public interface IConfigurationFactory {
+    #region Methods
 
-        #endregion
-    }
+    Configuration CreateConfiguration();
+
+    #endregion
 }

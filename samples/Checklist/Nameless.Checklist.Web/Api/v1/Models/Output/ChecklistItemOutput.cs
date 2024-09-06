@@ -1,21 +1,21 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nameless.Checklist.Web.Api.v1.Models.Output {
-    public sealed record ChecklistItemOutput {
-        #region Public Properties
+namespace Nameless.Checklist.Web.Api.v1.Models.Output;
 
-        [JsonPropertyName("id")]
-        public Guid Id { get; init; }
+public sealed record ChecklistItemOutput {
+    #region Public Properties
 
-        [JsonPropertyName("description")]
-        public string Description { get; init; } = null!;
+    [JsonPropertyName("id")]
+    public Guid Id { get; init; }
 
-        [JsonPropertyName("checked_at")]
-        public DateTime? CheckedAt { get; init; }
+    [JsonPropertyName("description")]
+    public string Description { get; init; } = null!;
 
-        [JsonPropertyName("checked")]
-        public bool Checked { get; init; }
+    [JsonPropertyName("checked_at")]
+    public DateTime? CheckedAt { get; init; }
 
-        #endregion
-    }
+    [JsonPropertyName("checked")]
+    public bool Checked { get; init; }
+
+    #endregion
 }

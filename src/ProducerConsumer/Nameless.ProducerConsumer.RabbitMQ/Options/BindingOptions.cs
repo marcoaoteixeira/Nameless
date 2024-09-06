@@ -1,30 +1,30 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed record BindingOptions {
-        #region Public Static Read-Only Fields
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static BindingOptions Default => new();
+public sealed record BindingOptions {
+    #region Public Static Read-Only Fields
 
-        #endregion
+    public static BindingOptions Default => new();
 
-        #region Private Fields
+    #endregion
 
-        private string? _routingKey;
-        private Dictionary<string, object>? _arguments;
+    #region Private Fields
 
-        #endregion
+    private string? _routingKey;
+    private Dictionary<string, object>? _arguments;
 
-        #region Public Properties
+    #endregion
 
-        public string RoutingKey {
-            get => _routingKey ??= string.Empty;
-            set => _routingKey = value;
-        }
+    #region Public Properties
 
-        public Dictionary<string, object> Arguments {
-            get => _arguments ??= [];
-            set => _arguments = value;
-        }
-
-        #endregion
+    public string RoutingKey {
+        get => _routingKey ??= string.Empty;
+        set => _routingKey = value;
     }
+
+    public Dictionary<string, object> Arguments {
+        get => _arguments ??= [];
+        set => _arguments = value;
+    }
+
+    #endregion
 }

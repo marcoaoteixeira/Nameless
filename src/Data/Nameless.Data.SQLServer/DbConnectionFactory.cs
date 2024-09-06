@@ -2,33 +2,21 @@
 using Microsoft.Data.SqlClient;
 using Nameless.Data.SQLServer.Options;
 
-namespace Nameless.Data.SQLServer {
-    public sealed class DbConnectionFactory : IDbConnectionFactory {
-        #region Private Read-Only Fields
+namespace Nameless.Data.SQLServer;
 
-        private readonly SQLServerOptions _options;
+public sealed class DbConnectionFactory : IDbConnectionFactory {
+    private readonly SQLServerOptions _options;
+    
+    public string ProviderName => "Microsoft SQL Server";
 
-        #endregion
+    public DbConnectionFactory(SQLServerOptions options) {
+        _options = Prevent.Argument.Null(options, nameof(options));
+    }
 
-        #region Public Constructors
+    public IDbConnection CreateDbConnection() {
+        var connectionString = _options.GetConnectionString();
+        var result = new SqlConnection(connectionString);
 
-        public DbConnectionFactory(SQLServerOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
-
-        #endregion
-
-        #region IDbConnectionFactory Members
-
-        public string ProviderName => "Microsoft SQL Server";
-
-        public IDbConnection CreateDbConnection() {
-            var connectionString = _options.GetConnectionString();
-            var result = new SqlConnection(connectionString);
-
-            return result;
-        }
-
-        #endregion
+        return result;
     }
 }

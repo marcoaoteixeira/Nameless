@@ -2,60 +2,48 @@
 using System.Diagnostics.CodeAnalysis;
 #endif
 
-namespace Nameless.Data.SQLServer.Options {
-    public sealed record SQLServerOptions {
-        #region Public Static Read-Only Properties
+namespace Nameless.Data.SQLServer.Options;
 
-        public static SQLServerOptions Default => new();
+public sealed record SQLServerOptions {
+    public static SQLServerOptions Default => new();
 
-        #endregion
-
-        #region Public Properties
-
-        public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
+    public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
         
-        public string Database { get; set; } = "master";
+    public string Database { get; set; } = "master";
         
-        public string? Username { get; set; }
+    public string? Username { get; set; }
         
-        public string? Password { get; set; }
+    public string? Password { get; set; }
         
-        public bool UseAttachedDb { get; set; }
+    public bool UseAttachedDb { get; set; }
         
-        public bool UseIntegratedSecurity { get; set; }
+    public bool UseIntegratedSecurity { get; set; }
 
 #if NET6_0_OR_GREATER
-        [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
+    [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
 #endif
-        public bool UseCredentials
-            => !string.IsNullOrWhiteSpace(Username) &&
-               !string.IsNullOrWhiteSpace(Password) &&
-               !UseIntegratedSecurity;
+    public bool UseCredentials
+        => !string.IsNullOrWhiteSpace(Username) &&
+           !string.IsNullOrWhiteSpace(Password) &&
+           !UseIntegratedSecurity;
 
-        #endregion
+    public string GetConnectionString() {
+        var connStr = string.Empty;
 
-        #region Public Methods
+        connStr += $"Server={Server};";
 
-        public string GetConnectionString() {
-            var connStr = string.Empty;
+        connStr += UseAttachedDb
+            ? $"AttachDbFilename={Database};"
+            : $"Database={Database};";
 
-            connStr += $"Server={Server};";
+        connStr += UseCredentials
+            ? $"User Id={Username};Password={Password};"
+            : string.Empty;
 
-            connStr += UseAttachedDb
-                ? $"AttachDbFilename={Database};"
-                : $"Database={Database};";
+        connStr += UseIntegratedSecurity
+            ? "Integrated Security=true;"
+            : string.Empty;
 
-            connStr += UseCredentials
-                ? $"User Id={Username};Password={Password};"
-                : string.Empty;
-
-            connStr += UseIntegratedSecurity
-                ? "Integrated Security=true;"
-                : string.Empty;
-
-            return connStr;
-        }
-
-        #endregion
+        return connStr;
     }
 }

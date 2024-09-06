@@ -1,11 +1,11 @@
 ﻿using Nameless.Infrastructure;
 
-namespace Nameless.ProducerConsumer {
-    public sealed class ProducerArgs : ArgCollection {
-        #region Public Static Read-Only Properties
+namespace Nameless.ProducerConsumer;
 
-        public static ProducerArgs Empty => new();
+public sealed class ProducerArgs : ArgCollection {
+    #region Public Static Read-Only Properties
 
-        #endregion
-    }
+    public static ProducerArgs Empty => new();
+
+    #endregion
 }

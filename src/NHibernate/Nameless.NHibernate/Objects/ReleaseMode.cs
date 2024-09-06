@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Objects {
-    public enum ReleaseMode {
-        [Description("auto")]
-        Auto,
+namespace Nameless.NHibernate.Objects;
 
-        [Description("on_close")]
-        OnClose,
+public enum ReleaseMode {
+    [Description("auto")]
+    Auto,
 
-        [Description("after_transaction")]
-        AfterTransaction
-    }
+    [Description("on_close")]
+    OnClose,
+
+    [Description("after_transaction")]
+    AfterTransaction
 }

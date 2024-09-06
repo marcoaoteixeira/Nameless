@@ -1,19 +1,23 @@
-﻿namespace Nameless.ErrorHandling {
-    public sealed record Error {
-        #region Public Properties
+﻿namespace Nameless.ErrorHandling;
 
-        public string Code { get; }
-        public string[] Problems { get; }
+public sealed record Error {
+    /// <summary>
+    /// Gets the error code.
+    /// </summary>
+    public string Code { get; }
+    
+    /// <summary>
+    /// Gets the error problems.
+    /// </summary>
+    public string[] Problems { get; }
 
-        #endregion
-
-        #region Public Constructors
-
-        public Error(string code, string[] problems) {
-            Code = Guard.Against.Null(code, nameof(code));
-            Problems = Guard.Against.Null(problems, nameof(problems));
-        }
-
-        #endregion
+    /// <summary>
+    /// Initializes a new instance of <see cref="Error"/>.
+    /// </summary>
+    /// <param name="code">The error code.</param>
+    /// <param name="problems">The error problems.</param>
+    public Error(string code, string[] problems) {
+        Code = code;
+        Problems = problems;
     }
 }

@@ -2,33 +2,21 @@
 using System.Data.SQLite;
 using Nameless.Data.SQLite.Options;
 
-namespace Nameless.Data.SQLite {
-    public sealed class DbConnectionFactory : IDbConnectionFactory {
-        #region Private Read-Only Fields
+namespace Nameless.Data.SQLite;
 
-        private readonly SQLiteOptions _options;
+public sealed class DbConnectionFactory : IDbConnectionFactory {
+    private readonly SQLiteOptions _options;
 
-        #endregion
+    public string ProviderName => "SQLite";
 
-        #region Public Constructors
+    public DbConnectionFactory(SQLiteOptions options) {
+        _options = Prevent.Argument.Null(options, nameof(options));
+    }
 
-        public DbConnectionFactory(SQLiteOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
+    public IDbConnection CreateDbConnection() {
+        var connectionString = _options.GetConnectionString();
+        var result = new SQLiteConnection(connectionString);
 
-        #endregion
-
-        #region IDbConnectionFactory Members
-
-        public string ProviderName => "SQLite";
-
-        public IDbConnection CreateDbConnection() {
-            var connectionString = _options.GetConnectionString();
-            var result = new SQLiteConnection(connectionString);
-
-            return result;
-        }
-
-        #endregion
+        return result;
     }
 }

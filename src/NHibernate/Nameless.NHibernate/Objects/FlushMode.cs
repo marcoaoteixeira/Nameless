@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Objects {
-    public enum FlushMode {
-        [Description("Auto")]
-        Auto,
+namespace Nameless.NHibernate.Objects;
 
-        [Description("Manual")]
-        Manual,
+public enum FlushMode {
+    [Description("Auto")]
+    Auto,
 
-        [Description("Commit")]
-        Commit,
+    [Description("Manual")]
+    Manual,
 
-        [Description("Always")]
-        Always
-    }
+    [Description("Commit")]
+    Commit,
+
+    [Description("Always")]
+    Always
 }

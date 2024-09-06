@@ -1,46 +1,51 @@
 ﻿using MediatR;
 using Nameless.Validation.Abstractions;
 
-namespace Nameless.MediatR.Integration {
-    public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest<TResponse> {
-        #region Private Read-Only Fields
+namespace Nameless.MediatR.Integration;
 
-        private readonly IValidationService _validationService;
+/// <summary>
+/// Validation pipeline for <see cref="IRequest{TResponse}"/>.
+/// </summary>
+/// <typeparam name="TRequest">Type of the request.</typeparam>
+/// <typeparam name="TResponse">Type of the response.</typeparam>
+public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : class, IRequest<TResponse> {
+    private readonly IValidationService _validationService;
 
-        #endregion
+    /// <summary>
+    /// Initializes a new instance of <see cref="ValidationPipelineBehavior{TRequest,TResponse}"/>.
+    /// </summary>
+    /// <param name="validationService">The validation service instance.</param>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="validationService"/> is <c>null</c>.
+    /// </exception>
+    public ValidationPipelineBehavior(IValidationService validationService) {
+        _validationService = Prevent.Argument.Null(validationService, nameof(validationService));
+    }
 
-        #region Public Constructors
+    /// <summary>
+    /// Handles the request object validation, if a suitable validator is found.
+    /// </summary>
+    /// <param name="request">The request.</param>
+    /// <param name="next">The next handler.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An awaitable task representing the validation process.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="request"/> or
+    /// <paramref name="next"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ValidationException">
+    /// If a suitable validator was found and if it fails the validation rules.
+    /// </exception>
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
+        Prevent.Argument.Null(request, nameof(request));
+        Prevent.Argument.Null(next, nameof(next));
 
-        public ValidationPipelineBehavior(IValidationService validationService) {
-            _validationService = validationService;
-        }
+        await _validationService.ValidateAsync(value: request,
+                                               throwOnFailure: true,
+                                               cancellationToken: cancellationToken)
+                                .ConfigureAwait(continueOnCapturedContext: false);
 
-        #endregion
-
-        #region IPipelineBehavior<TRequest, TResponse> Members
-
-        /// <summary>
-        /// Handles the request validation, if available.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="next">The next handler.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The final handler result.</returns>
-        /// <exception cref="ValidationException">
-        /// If validation fails.
-        /// </exception>
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-            if (request.GetType().IsValueType) {
-                await _validationService.ValidateAsync(value: (object)request,
-                                                       throwOnFailure: true,
-                                                       cancellationToken: cancellationToken)
-                                        .ConfigureAwait(continueOnCapturedContext: false);
-            }
-
-            return await next();
-        }
-
-        #endregion
+        return await next();
     }
 }

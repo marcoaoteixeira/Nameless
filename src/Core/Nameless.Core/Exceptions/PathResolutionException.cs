@@ -1,12 +1,8 @@
-﻿namespace Nameless {
-    [Serializable]
-    public class PathResolutionException : Exception {
-        #region Public Constructors
+﻿namespace Nameless;
 
-        public PathResolutionException() { }
-        public PathResolutionException(string message) : base(message) { }
-        public PathResolutionException(string message, Exception inner) : base(message, inner) { }
-
-        #endregion
-    }
+[Serializable]
+public class PathResolutionException : Exception {
+    public PathResolutionException() { }
+    public PathResolutionException(string message) : base(message) { }
+    public PathResolutionException(string message, Exception inner) : base(message, inner) { }
 }

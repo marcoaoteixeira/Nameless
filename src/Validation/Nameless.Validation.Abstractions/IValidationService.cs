@@ -1,9 +1,6 @@
-﻿namespace Nameless.Validation.Abstractions {
-    public interface IValidationService {
-        #region Methods
+﻿namespace Nameless.Validation.Abstractions;
 
-        Task<ValidationResult> ValidateAsync<TValue>(TValue value, bool throwOnFailure, CancellationToken cancellationToken) where TValue : class;
-
-        #endregion
-    }
+public interface IValidationService {
+    Task<ValidationResult> ValidateAsync<TValue>(TValue value, bool throwOnFailure, CancellationToken cancellationToken)
+        where TValue : class;
 }

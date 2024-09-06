@@ -1,28 +1,28 @@
 ﻿using System.Reflection;
 
-namespace Nameless.NHibernate.Options {
-    public abstract record NHibernateOptionsBase {
-        #region Public Methods
+namespace Nameless.NHibernate.Options;
 
-        public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
-            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                      .Where(property => !typeof(NHibernateOptionsBase)                                                 .IsAssignableFrom(property.PropertyType));
+public abstract record NHibernateOptionsBase {
+    #region Public Methods
 
-            foreach (var property in properties) {
-                var key = property.GetDescription();
-                var obj = property.GetValue(this);
-                if (obj is null) { continue; }
+    public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
+        var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                  .Where(property => !typeof(NHibernateOptionsBase)                                                 .IsAssignableFrom(property.PropertyType));
 
-                var value = obj is Enum @enum
-                    ? @enum.GetDescription()
-                    : obj.ToString();
+        foreach (var property in properties) {
+            var key = property.GetDescription();
+            var obj = property.GetValue(this);
+            if (obj is null) { continue; }
 
-                if (value is null) { continue; }
+            var value = obj is Enum @enum
+                ? @enum.GetDescription()
+                : obj.ToString();
 
-                yield return new KeyValuePair<string, string>(key, value);
-            }
+            if (value is null) { continue; }
+
+            yield return new KeyValuePair<string, string>(key, value);
         }
-
-        #endregion
     }
+
+    #endregion
 }

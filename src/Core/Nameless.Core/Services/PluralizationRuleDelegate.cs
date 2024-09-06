@@ -1,3 +1,3 @@
-﻿namespace Nameless.Services {
-    public delegate int PluralizationRuleDelegate(int count);
-}
+﻿namespace Nameless.Services;
+
+public delegate int PluralizationRuleDelegate(int count);

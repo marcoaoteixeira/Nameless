@@ -5,21 +5,21 @@ using Nameless.Checklist.Web.Domain.Dtos;
 using Nameless.Checklist.Web.Domain.Entities;
 using Nameless.Checklist.Web.Domain.Requests;
 
-namespace Nameless.Checklist.Web.Domain.Mappings {
-    public sealed class ChecklistItemMapping : Profile {
-        #region Public Constructors
+namespace Nameless.Checklist.Web.Domain.Mappings;
 
-        public ChecklistItemMapping() {
-            CreateMap<CreateChecklistItemInput, CreateChecklistItemRequest>();
-            CreateMap<CreateChecklistItemRequest, ChecklistItem>();
-            CreateMap<ChecklistItem, ChecklistItemDto>();
-            CreateMap<ChecklistItemDto, ChecklistItemOutput>();
+public sealed class ChecklistItemMapping : Profile {
+    #region Public Constructors
 
-            CreateMap<ListChecklistItemsInput, ListChecklistItemsRequest>();
+    public ChecklistItemMapping() {
+        CreateMap<CreateChecklistItemInput, CreateChecklistItemRequest>();
+        CreateMap<CreateChecklistItemRequest, ChecklistItem>();
+        CreateMap<ChecklistItem, ChecklistItemDto>();
+        CreateMap<ChecklistItemDto, ChecklistItemOutput>();
 
-            CreateMap<UpdateChecklistItemInput, UpdateChecklistItemRequest>();
-        }
+        CreateMap<ListChecklistItemsInput, ListChecklistItemsRequest>();
 
-        #endregion
+        CreateMap<UpdateChecklistItemInput, UpdateChecklistItemRequest>();
     }
+
+    #endregion
 }

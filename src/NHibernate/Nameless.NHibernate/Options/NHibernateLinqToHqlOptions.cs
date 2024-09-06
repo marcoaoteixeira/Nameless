@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Options {
-    public sealed record NHibernateLinqToHqlOptions : NHibernateOptionsBase {
-        #region Public Properties
+namespace Nameless.NHibernate.Options;
 
-        [Description("linqtohql.generatorsregistry")]
-        public string? GeneratorsRegistry { get; set; }
+public sealed record NHibernateLinqToHqlOptions : NHibernateOptionsBase {
+    #region Public Properties
 
-        #endregion
-    }
+    [Description("linqtohql.generatorsregistry")]
+    public string? GeneratorsRegistry { get; set; }
+
+    #endregion
 }

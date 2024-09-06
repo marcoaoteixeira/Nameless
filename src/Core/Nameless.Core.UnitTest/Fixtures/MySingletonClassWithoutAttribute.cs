@@ -1,10 +1,9 @@
-﻿namespace Nameless.Fixtures {
+﻿namespace Nameless.Fixtures;
 
-    public sealed class MySingletonClassWithoutAttribute {
-        public static MySingletonClassWithoutAttribute Instance { get; } = new();
+public sealed class MySingletonClassWithoutAttribute {
+    public static MySingletonClassWithoutAttribute Instance { get; } = new();
 
-        private MySingletonClassWithoutAttribute() { }
+    private MySingletonClassWithoutAttribute() { }
 
-        static MySingletonClassWithoutAttribute() { }
-    }
+    static MySingletonClassWithoutAttribute() { }
 }

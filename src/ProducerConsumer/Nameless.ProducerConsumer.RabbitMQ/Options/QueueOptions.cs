@@ -1,44 +1,44 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed record QueueOptions {
-        #region Public Static Read-Only Fields
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static QueueOptions Default => new();
+public sealed record QueueOptions {
+    #region Public Static Read-Only Fields
 
-        #endregion
+    public static QueueOptions Default => new();
 
-        #region Private Fields
+    #endregion
 
-        private Dictionary<string, object>? _arguments;
-        private BindingOptions[]? _bindings;
-        private string? _name;
+    #region Private Fields
 
-        #endregion
+    private Dictionary<string, object>? _arguments;
+    private BindingOptions[]? _bindings;
+    private string? _name;
 
-        #region Public Properties
+    #endregion
 
-        public string Name {
-            get => _name ??= Root.Defaults.QUEUE_NAME;
-            set => _name = Guard.Against.NullOrWhiteSpace(value, nameof(value));
-        }
+    #region Public Properties
 
-        public bool Durable { get; set; } = true;
-
-        public bool Exclusive { get; set; }
-
-        public bool AutoDelete { get; set; }
-
-        public Dictionary<string, object> Arguments {
-            get => _arguments ??= [];
-            set => _arguments = value;
-        }
-
-        public BindingOptions[] Bindings {
-            get => _bindings ??= [BindingOptions.Default];
-            set => _bindings = value.IsNullOrEmpty()
-                ? [BindingOptions.Default]
-                : value;
-        }
-
-        #endregion
+    public string Name {
+        get => _name ??= Root.Defaults.QUEUE_NAME;
+        set => _name = Prevent.Argument.NullOrWhiteSpace(value, nameof(value));
     }
+
+    public bool Durable { get; set; } = true;
+
+    public bool Exclusive { get; set; }
+
+    public bool AutoDelete { get; set; }
+
+    public Dictionary<string, object> Arguments {
+        get => _arguments ??= [];
+        set => _arguments = value;
+    }
+
+    public BindingOptions[] Bindings {
+        get => _bindings ??= [BindingOptions.Default];
+        set => _bindings = value.IsNullOrEmpty()
+            ? [BindingOptions.Default]
+            : value;
+    }
+
+    #endregion
 }

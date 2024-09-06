@@ -1,35 +1,29 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace Nameless {
+namespace Nameless;
+
+/// <summary>
+/// <see cref="IHostEnvironment"/> extension methods.
+/// </summary>
+public static class HostEnvironmentExtension {
+    public static readonly string DeveloperMachine = nameof(DeveloperMachine);
+
     /// <summary>
-    /// <see cref="IHostEnvironment"/> extension methods.
+    /// Checks if the current host environment name is <see cref="DeveloperMachine"/>.
     /// </summary>
-    public static class HostEnvironmentExtension {
-        #region Public Static Read-Only Fields
+    /// <param name="self">The current instance that implements <see cref="IHostEnvironment"/>.</param>
+    /// <returns><c>true</c> if the environment name is <see cref="DeveloperMachine"/>; otherwise <c>false</c>.</returns>
+    public static bool IsDeveloperMachine(this IHostEnvironment self)
+        => Prevent.Argument.Null(self, nameof(self))
+                  .IsEnvironment(DeveloperMachine);
 
-        public static readonly string DeveloperMachine = nameof(DeveloperMachine);
+    public static bool IsRunningOnContainer(this IHostEnvironment _)
+        => Environment.GetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER)
+                      .ToBoolean();
 
-        #endregion
+    public static string? GetEnvironmentVariable(this IHostEnvironment _, string name)
+        => Environment.GetEnvironmentVariable(name);
 
-        #region Public Static Methods
-
-        /// <summary>
-        /// Checks if the current host environment name is <see cref="DeveloperMachine"/>.
-        /// </summary>
-        /// <param name="self">The current instance that implements <see cref="IHostEnvironment"/>.</param>
-        /// <returns><c>true</c> if the environment name is <see cref="DeveloperMachine"/>; otherwise <c>false</c>.</returns>
-        public static bool IsDeveloperMachine(this IHostEnvironment self)
-            => self.IsEnvironment(DeveloperMachine);
-
-        public static bool IsRunningOnContainer(this IHostEnvironment _)
-            => Environment.GetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER).ToBoolean();
-
-        public static string? GetEnvironmentVariable(this IHostEnvironment _, string name)
-            => Environment.GetEnvironmentVariable(name);
-
-        public static void SetEnvironmentVariable(this IHostEnvironment _, string name, string? value)
-            => Environment.SetEnvironmentVariable(name, value);
-
-        #endregion
-    }
+    public static void SetEnvironmentVariable(this IHostEnvironment _, string name, string? value)
+        => Environment.SetEnvironmentVariable(name, value);
 }

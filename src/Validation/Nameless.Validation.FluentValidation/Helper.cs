@@ -1,21 +1,21 @@
 ﻿using Nameless.Validation.Abstractions;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace Nameless.Validation.FluentValidation {
-    internal static class Helper {
-        #region Internal Static Methods
+namespace Nameless.Validation.FluentValidation;
 
-        internal static ValidationResult Map(FluentValidationResult result) {
-            if (result.IsValid) { return ValidationResult.Empty; }
+internal static class Helper {
+    #region Internal Static Methods
 
-            var entries = result.Errors
-                                .Select(error => new ValidationEntry(error.PropertyName ?? error.ErrorCode,
-                                                                     error.ErrorMessage))
-                                .ToArray();
+    internal static ValidationResult Map(FluentValidationResult result) {
+        if (result.IsValid) { return ValidationResult.Empty; }
 
-            return new ValidationResult(entries);
-        }
+        var entries = result.Errors
+                            .Select(error => new ValidationEntry(error.PropertyName ?? error.ErrorCode,
+                                                                 error.ErrorMessage))
+                            .ToArray();
 
-        #endregion
+        return new ValidationResult(entries);
     }
+
+    #endregion
 }

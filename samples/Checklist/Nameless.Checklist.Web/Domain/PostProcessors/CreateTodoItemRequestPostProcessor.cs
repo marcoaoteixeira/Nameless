@@ -3,31 +3,31 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Checklist.Web.Domain.Dtos;
 using Nameless.Checklist.Web.Domain.Requests;
 
-namespace Nameless.Checklist.Web.Domain.PostProcessors {
-    public sealed class CreateTodoItemRequestPostProcessor : IRequestPostProcessor<CreateChecklistItemRequest, ChecklistItemDto> {
-        #region Private Read-Only Fields
+namespace Nameless.Checklist.Web.Domain.PostProcessors;
 
-        private readonly ILogger<CreateTodoItemRequestPostProcessor> _logger;
+public sealed class CreateTodoItemRequestPostProcessor : IRequestPostProcessor<CreateChecklistItemRequest, ChecklistItemDto> {
+    #region Private Read-Only Fields
 
-        #endregion
+    private readonly ILogger<CreateTodoItemRequestPostProcessor> _logger;
 
-        #region Public Constructors
+    #endregion
 
-        public CreateTodoItemRequestPostProcessor(ILogger<CreateTodoItemRequestPostProcessor> logger) {
-            _logger = logger ?? NullLogger<CreateTodoItemRequestPostProcessor>.Instance;
-        }
+    #region Public Constructors
 
-        #endregion
-
-        #region IRequestPostProcessor<CreateTodoItemRequest, TodoItemDto> Members
-
-        public Task Process(CreateChecklistItemRequest request, ChecklistItemDto response, CancellationToken cancellationToken) {
-            _logger.LogInformation("Post Processor Activated");
-
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
+    public CreateTodoItemRequestPostProcessor(ILogger<CreateTodoItemRequestPostProcessor> logger) {
+        _logger = logger ?? NullLogger<CreateTodoItemRequestPostProcessor>.Instance;
     }
+
+    #endregion
+
+    #region IRequestPostProcessor<CreateTodoItemRequest, TodoItemDto> Members
+
+    public Task Process(CreateChecklistItemRequest request, ChecklistItemDto response, CancellationToken cancellationToken) {
+        _logger.LogInformation("Post Processor Activated");
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
 }

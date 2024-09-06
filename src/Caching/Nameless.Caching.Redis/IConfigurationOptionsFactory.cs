@@ -1,18 +1,14 @@
 ﻿using StackExchange.Redis;
 
-namespace Nameless.Caching.Redis {
+namespace Nameless.Caching.Redis;
+
+/// <summary>
+/// Provides a contract for <see cref="ConfigurationOptions"/> creation.
+/// </summary>
+public interface IConfigurationOptionsFactory {
     /// <summary>
-    /// Provides a contract for <see cref="ConfigurationOptions"/> creation.
+    /// Creates Redis configuration object.
     /// </summary>
-    public interface IConfigurationOptionsFactory {
-        #region Methods
-
-        /// <summary>
-        /// Creates Redis configuration object.
-        /// </summary>
-        /// <returns>A <see cref="ConfigurationOptions"/> for Redis.</returns>
-        ConfigurationOptions CreateConfigurationOptions();
-
-        #endregion
-    }
+    /// <returns>A <see cref="ConfigurationOptions"/> for Redis.</returns>
+    ConfigurationOptions CreateConfigurationOptions();
 }

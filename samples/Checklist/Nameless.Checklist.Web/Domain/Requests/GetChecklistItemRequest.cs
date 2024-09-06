@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Nameless.Checklist.Web.Domain.Dtos;
 
-namespace Nameless.Checklist.Web.Domain.Requests {
-    public sealed class GetChecklistItemRequest : IRequest<ChecklistItemDto?> {
-        #region Public Properties
+namespace Nameless.Checklist.Web.Domain.Requests;
 
-        public Guid Id { get; init; }
+public sealed class GetChecklistItemRequest : IRequest<ChecklistItemDto?> {
+    #region Public Properties
 
-        #endregion
-    }
+    public Guid Id { get; init; }
+
+    #endregion
 }

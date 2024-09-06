@@ -1,11 +1,11 @@
 ﻿using RabbitMQ.Client;
 
-namespace Nameless.ProducerConsumer.RabbitMQ.Services {
-    public interface IChannelFactory {
-        #region Members
+namespace Nameless.ProducerConsumer.RabbitMQ.Services;
 
-        IModel CreateChannel();
+public interface IChannelFactory {
+    #region Members
 
-        #endregion
-    }
+    IModel CreateChannel();
+
+    #endregion
 }

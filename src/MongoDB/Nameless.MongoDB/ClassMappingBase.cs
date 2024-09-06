@@ -1,11 +1,7 @@
 ﻿using MongoDB.Bson.Serialization;
 
-namespace Nameless.MongoDB {
-    public abstract class ClassMappingBase<TDocument> {
-        #region Public Abstract Methods
+namespace Nameless.MongoDB;
 
-        public abstract void Map(BsonClassMap<TDocument> mapper);
-
-        #endregion
-    }
+public abstract class ClassMappingBase<TDocument> {
+    public abstract void Map(BsonClassMap<TDocument> mapper);
 }

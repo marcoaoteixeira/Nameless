@@ -1,30 +1,18 @@
-﻿namespace Nameless.MongoDB.Options {
-    public sealed record MongoOptions {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.MongoDB.Options;
 
-        public static MongoOptions Default => new();
+public sealed record MongoOptions {
+    public static MongoOptions Default => new();
 
-        #endregion
+    private CredentialsOptions? _credentials;
 
-        #region Private Fields
+    public string Host { get; set; } = Root.Defaults.MONGO_HOST;
 
-        private CredentialsOptions? _credentials;
+    public int Port { get; set; } = Root.Defaults.MONGO_PORT;
 
-        #endregion
+    public string? Database { get; set; }
 
-        #region Public Properties
-
-        public string Host { get; set; } = Root.Defaults.MONGO_HOST;
-
-        public int Port { get; set; } = Root.Defaults.MONGO_PORT;
-
-        public string? Database { get; set; }
-
-        public CredentialsOptions Credentials {
-            get => _credentials ??= CredentialsOptions.Default;
-            set => _credentials = value;
-        }
-
-        #endregion
+    public CredentialsOptions Credentials {
+        get => _credentials ??= CredentialsOptions.Default;
+        set => _credentials = value;
     }
 }

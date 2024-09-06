@@ -1,0 +1,20 @@
+﻿using System.Diagnostics;
+
+namespace Nameless.Localization.Json.Objects;
+
+[DebuggerDisplay("{DebuggerDisplayValue}")]
+public sealed record Message {
+    public static Message Empty => new(string.Empty, string.Empty);
+
+    public string ID { get; }
+    
+    public string Text { get; }
+
+    private string DebuggerDisplayValue
+        => $"{ID} => {Text}";
+
+    public Message(string id, string text) {
+        ID = Prevent.Argument.Null(id, nameof(id));
+        Text = Prevent.Argument.Null(text, nameof(text));
+    }
+}

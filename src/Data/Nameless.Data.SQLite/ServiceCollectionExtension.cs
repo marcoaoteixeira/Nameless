@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Data.SQLite.Options;
 
-namespace Nameless.Data.SQLite {
-    public static class ServiceCollectionExtension {
-        #region Public Static Methods
+namespace Nameless.Data.SQLite;
 
-        public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLiteOptions>? configure = null)
-            => self.AddSingleton<IDatabaseService>(provider => {
-                var options = provider.GetOptions<SQLiteOptions>();
+public static class ServiceCollectionExtension {
+    #region Public Static Methods
 
-                configure?.Invoke(options.Value);
+    public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLiteOptions>? configure = null)
+        => self.AddSingleton<IDatabaseService>(provider => {
+            var options = provider.GetOptions<SQLiteOptions>();
 
-                return new DatabaseService(
-                    dbConnectionFactory: new DbConnectionFactory(options.Value),
-                    logger: provider.GetLogger<DatabaseService>()
-                );
-            });
+            configure?.Invoke(options.Value);
 
-        #endregion
-    }
+            return new DatabaseService(
+                dbConnectionFactory: new DbConnectionFactory(options.Value),
+                logger: provider.GetLogger<DatabaseService>()
+            );
+        });
+
+    #endregion
 }

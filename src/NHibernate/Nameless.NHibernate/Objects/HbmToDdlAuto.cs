@@ -1,20 +1,20 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Objects {
-    public enum HbmToDdlAuto {
-        [Description("none")]
-        None,
+namespace Nameless.NHibernate.Objects;
 
-        [Description("create")]
-        Create,
+public enum HbmToDdlAuto {
+    [Description("none")]
+    None,
 
-        [Description("create-drop")]
-        CreateDrop,
+    [Description("create")]
+    Create,
 
-        [Description("validate")]
-        Validate,
+    [Description("create-drop")]
+    CreateDrop,
 
-        [Description("update")]
-        Update
-    }
+    [Description("validate")]
+    Validate,
+
+    [Description("update")]
+    Update
 }

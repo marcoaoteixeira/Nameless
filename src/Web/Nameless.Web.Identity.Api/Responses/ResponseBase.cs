@@ -1,19 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Nameless.Web.Identity.Api.Responses {
-    public abstract record ResponseBase {
-        #region Public Properties
+namespace Nameless.Web.Identity.Api.Responses;
 
-        public string? Error { get; init; }
+public abstract record ResponseBase {
+    #region Public Properties
 
-        #endregion
+    public string? Error { get; init; }
 
-        #region Public Methods
+    #endregion
 
-        [MemberNotNullWhen(returnValue: false, nameof(Error))]
-        public bool Succeeded()
-            => string.IsNullOrWhiteSpace(Error);
+    #region Public Methods
 
-        #endregion
-    }
+    [MemberNotNullWhen(returnValue: false, nameof(Error))]
+    public bool Succeeded()
+        => string.IsNullOrWhiteSpace(Error);
+
+    #endregion
 }

@@ -1,28 +1,28 @@
-﻿namespace Nameless.Validation.Abstractions {
-    public sealed record ValidationEntry {
-        #region Public Properties
+﻿namespace Nameless.Validation.Abstractions;
 
-        public string Code { get; }
+public sealed record ValidationEntry {
+    #region Public Properties
 
-        public string Message { get; }
+    public string Code { get; }
 
-        #endregion
+    public string Message { get; }
 
-        #region Public Constructors
+    #endregion
 
-        public ValidationEntry(string code, string message) {
-            if (string.IsNullOrWhiteSpace(code)) {
-                throw new ArgumentException(Constants.Exceptions.StringNullOrWhiteSpace, nameof(code));
-            }
+    #region Public Constructors
 
-            if (string.IsNullOrWhiteSpace(message)) {
-                throw new ArgumentException(Constants.Exceptions.StringNullOrWhiteSpace, nameof(message));
-            }
-
-            Code = code;
-            Message = message;
+    public ValidationEntry(string code, string message) {
+        if (string.IsNullOrWhiteSpace(code)) {
+            throw new ArgumentException(Constants.Exceptions.StringNullOrWhiteSpace, nameof(code));
         }
 
-        #endregion
+        if (string.IsNullOrWhiteSpace(message)) {
+            throw new ArgumentException(Constants.Exceptions.StringNullOrWhiteSpace, nameof(message));
+        }
+
+        Code = code;
+        Message = message;
     }
+
+    #endregion
 }

@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
-namespace Nameless.Web.Services {
-    public interface IJwtService {
-        #region Methods
+namespace Nameless.Web.Services;
 
-        string Generate(JwtClaims claims);
+public interface IJwtService {
+    #region Methods
 
-        bool TryValidate(string token, [NotNullWhen(returnValue: true)] out ClaimsPrincipal? principal);
+    string Generate(JwtClaims claims);
 
-        #endregion
-    }
+    bool TryValidate(string token, [NotNullWhen(returnValue: true)] out ClaimsPrincipal? principal);
+
+    #endregion
 }

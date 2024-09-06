@@ -1,9 +1,5 @@
-﻿namespace Nameless.MongoDB {
-    public interface ICollectionNamingStrategy {
-        #region Methods
+﻿namespace Nameless.MongoDB;
 
-        string GetCollectionName(Type type);
-
-        #endregion
-    }
+public interface ICollectionNamingStrategy {
+    string GetCollectionName(Type type);
 }

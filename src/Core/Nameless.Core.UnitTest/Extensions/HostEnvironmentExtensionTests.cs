@@ -1,100 +1,100 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Moq;
 
-namespace Nameless {
-    public class HostEnvironmentExtensionTests {
-        [Test]
-        public void IsDeveloperMachine_Should_Returns_True_If_Developer_Env() {
-            // arrange
-            var hostEnvironmentMock = new Mock<IHostEnvironment>();
-            hostEnvironmentMock
-                .Setup(_ => _.EnvironmentName)
-                .Returns(HostEnvironmentExtension.DeveloperMachine);
+namespace Nameless;
 
-            // act
-            var actual = HostEnvironmentExtension.IsDeveloperMachine(hostEnvironmentMock.Object);
+public class HostEnvironmentExtensionTests {
+    [Test]
+    public void IsDeveloperMachine_Should_Returns_True_If_Developer_Env() {
+        // arrange
+        var hostEnvironmentMock = new Mock<IHostEnvironment>();
+        hostEnvironmentMock
+            .Setup(_ => _.EnvironmentName)
+            .Returns(HostEnvironmentExtension.DeveloperMachine);
 
-            // assert
-            Assert.That(actual, Is.True);
-        }
+        // act
+        var actual = HostEnvironmentExtension.IsDeveloperMachine(hostEnvironmentMock.Object);
 
-        [Test]
-        public void IsDeveloperMachine_Should_Returns_False_If_Not_Developer_Env() {
-            // arrange
-            var hostEnvironmentMock = new Mock<IHostEnvironment>();
-            hostEnvironmentMock
-                .Setup(_ => _.EnvironmentName)
-                .Returns("Production");
+        // assert
+        Assert.That(actual, Is.True);
+    }
 
-            // act
-            var actual = HostEnvironmentExtension.IsDeveloperMachine(hostEnvironmentMock.Object);
+    [Test]
+    public void IsDeveloperMachine_Should_Returns_False_If_Not_Developer_Env() {
+        // arrange
+        var hostEnvironmentMock = new Mock<IHostEnvironment>();
+        hostEnvironmentMock
+            .Setup(_ => _.EnvironmentName)
+            .Returns("Production");
 
-            // assert
-            Assert.That(actual, Is.False);
-        }
+        // act
+        var actual = HostEnvironmentExtension.IsDeveloperMachine(hostEnvironmentMock.Object);
 
-        [Test]
-        public void IsRunningOnContainer_Should_Returns_True_If_Containerized() {
-            // arrange
-            Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, "true");
+        // assert
+        Assert.That(actual, Is.False);
+    }
 
-            // act
-            var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());
+    [Test]
+    public void IsRunningOnContainer_Should_Returns_True_If_Containerized() {
+        // arrange
+        Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, "true");
 
-            // assert
-            Assert.That(actual, Is.True);
-        }
+        // act
+        var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());
 
-        [Test]
-        public void IsRunningOnContainer_Should_Returns_False_If_Containerized() {
-            // arrange
-            Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, null);
+        // assert
+        Assert.That(actual, Is.True);
+    }
 
-            // act
-            var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());
+    [Test]
+    public void IsRunningOnContainer_Should_Returns_False_If_Containerized() {
+        // arrange
+        Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, null);
 
-            // assert
-            Assert.That(actual, Is.False);
-        }
+        // act
+        var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());
 
-        [Test]
-        public void GetEnvironmentVariable_Should_Returns_Environment_Values() {
-            // arrange
-            var id = Guid.NewGuid().ToString();
-            var expected = "123";
-            Environment.SetEnvironmentVariable(id, expected);
+        // assert
+        Assert.That(actual, Is.False);
+    }
 
-            // act
-            var actual = HostEnvironmentExtension.GetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id);
+    [Test]
+    public void GetEnvironmentVariable_Should_Returns_Environment_Values() {
+        // arrange
+        var id = Guid.NewGuid().ToString();
+        var expected = "123";
+        Environment.SetEnvironmentVariable(id, expected);
 
-            // assert
-            Assert.That(actual, Is.EqualTo(expected));
-        }
+        // act
+        var actual = HostEnvironmentExtension.GetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id);
 
-        [Test]
-        public void GetEnvironmentVariable_Should_Returns_Null_If_Environment_Variable_Does_Not_Exists() {
-            // arrange
-            var id = Guid.NewGuid().ToString();
+        // assert
+        Assert.That(actual, Is.EqualTo(expected));
+    }
 
-            // act
-            var actual = HostEnvironmentExtension.GetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id);
+    [Test]
+    public void GetEnvironmentVariable_Should_Returns_Null_If_Environment_Variable_Does_Not_Exists() {
+        // arrange
+        var id = Guid.NewGuid().ToString();
 
-            // assert
-            Assert.That(actual, Is.Null);
-        }
+        // act
+        var actual = HostEnvironmentExtension.GetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id);
 
-        [Test]
-        public void SetEnvironmentVariable_Should_Define_Environment_Variable() {
-            // arrange
-            var id = Guid.NewGuid().ToString();
-            var value = "123";
+        // assert
+        Assert.That(actual, Is.Null);
+    }
 
-            // act
-            HostEnvironmentExtension.SetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id, value);
-            var actual = Environment.GetEnvironmentVariable(id);
+    [Test]
+    public void SetEnvironmentVariable_Should_Define_Environment_Variable() {
+        // arrange
+        var id = Guid.NewGuid().ToString();
+        var value = "123";
 
-            // assert
-            Assert.That(actual, Is.EqualTo(value));
-        }
+        // act
+        HostEnvironmentExtension.SetEnvironmentVariable(Mock.Of<IHostEnvironment>(), id, value);
+        var actual = Environment.GetEnvironmentVariable(id);
+
+        // assert
+        Assert.That(actual, Is.EqualTo(value));
     }
 }

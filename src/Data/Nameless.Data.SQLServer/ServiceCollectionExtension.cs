@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Data.SQLServer.Options;
 
-namespace Nameless.Data.SQLServer {
-    public static class ServiceCollectionExtension {
-        #region Public Static Methods
+namespace Nameless.Data.SQLServer;
 
-        public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLServerOptions>? configure = null)
-            => self.AddSingleton<IDatabaseService>(provider => {
-                var options = provider.GetOptions<SQLServerOptions>();
+public static class ServiceCollectionExtension {
+    #region Public Static Methods
 
-                configure?.Invoke(options.Value);
+    public static IServiceCollection RegisterDatabaseService(this IServiceCollection self, Action<SQLServerOptions>? configure = null)
+        => self.AddSingleton<IDatabaseService>(provider => {
+            var options = provider.GetOptions<SQLServerOptions>();
 
-                return new DatabaseService(
-                    dbConnectionFactory: new DbConnectionFactory(options.Value),
-                    logger: provider.GetLogger<DatabaseService>()
-                );
-            });
+            configure?.Invoke(options.Value);
 
-        #endregion
-    }
+            return new DatabaseService(
+                dbConnectionFactory: new DbConnectionFactory(options.Value),
+                logger: provider.GetLogger<DatabaseService>()
+            );
+        });
+
+    #endregion
 }

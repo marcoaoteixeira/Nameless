@@ -1,4 +1,4 @@
-﻿namespace Nameless.Fixtures {
-    internal class MyClass {
-    }
+﻿namespace Nameless.Fixtures;
+
+internal class MyClass {
 }

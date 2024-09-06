@@ -1,48 +1,32 @@
 ﻿using System.Reflection;
 using RootFromCore = Nameless.Root;
 
-namespace Nameless.MongoDB.Impl {
-    public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
-        #region Public Static Properties
+namespace Nameless.MongoDB.Impl;
 
-        /// <summary>
-        /// Gets the unique instance of <see cref="CollectionNamingStrategy"/>.
-        /// </summary>
-        public static ICollectionNamingStrategy Instance { get; } = new CollectionNamingStrategy();
+[Singleton]
+public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
+    /// <summary>
+    /// Gets the unique instance of <see cref="CollectionNamingStrategy"/>.
+    /// </summary>
+    public static ICollectionNamingStrategy Instance { get; } = new CollectionNamingStrategy();
 
-        #endregion
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
+    static CollectionNamingStrategy() { }
 
-        #region Static Constructors
+    // Prevents the class from being constructed.
+    private CollectionNamingStrategy() { }
 
-        // Explicit static constructor to tell the C# compiler
-        // not to mark type as beforefieldinit
-        static CollectionNamingStrategy() { }
+    public string GetCollectionName(Type type) {
+        Prevent.Argument.Null(type, nameof(type));
 
-        #endregion
-
-        #region Private Constructors
-
-        // Prevents the class from being constructed.
-        private CollectionNamingStrategy() { }
-
-        #endregion
-
-        #region ICollectionNamingStrategy Members
-
-        public string GetCollectionName(Type type) {
-            Guard.Against.Null(type, nameof(type));
-
-            var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
-            if (attr is not null) {
-                return attr.Name;
-            }
-
-            return string
-                   .Join(separator: RootFromCore.Separators.UNDERSCORE,
-                         type.Name.SplitUpperCase())
-                   .ToLower();
+        var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
+        if (attr is not null) {
+            return attr.Name;
         }
 
-        #endregion
+        return string.Join(separator: RootFromCore.Separators.UNDERSCORE,
+                           type.Name.SplitUpperCase())
+                     .ToLower();
     }
 }

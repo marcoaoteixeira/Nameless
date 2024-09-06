@@ -1,18 +1,18 @@
-﻿namespace Nameless.Mailing {
-    public enum Priority {
-        /// <summary>
-        /// Low
-        /// </summary>
-        Low = 0,
+﻿namespace Nameless.Mailing;
 
-        /// <summary>
-        /// Normal
-        /// </summary>
-        Normal = 1,
+public enum Priority {
+    /// <summary>
+    /// Low
+    /// </summary>
+    Low = 0,
 
-        /// <summary>
-        /// High
-        /// </summary>
-        High = 2
-    }
+    /// <summary>
+    /// Normal
+    /// </summary>
+    Normal = 1,
+
+    /// <summary>
+    /// High
+    /// </summary>
+    High = 2
 }

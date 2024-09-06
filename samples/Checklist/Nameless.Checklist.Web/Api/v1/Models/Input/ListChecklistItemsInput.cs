@@ -1,15 +1,15 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nameless.Checklist.Web.Api.v1.Models.Input {
-    public sealed record ListChecklistItemsInput {
-        #region Public Properties
+namespace Nameless.Checklist.Web.Api.v1.Models.Input;
 
-        [JsonPropertyName("description_like")]
-        public string? DescriptionLike { get; init; }
+public sealed record ListChecklistItemsInput {
+    #region Public Properties
 
-        [JsonPropertyName("checked_before")]
-        public DateTime? CheckedBefore { get; init; }
+    [JsonPropertyName("description_like")]
+    public string? DescriptionLike { get; init; }
 
-        #endregion
-    }
+    [JsonPropertyName("checked_before")]
+    public DateTime? CheckedBefore { get; init; }
+
+    #endregion
 }

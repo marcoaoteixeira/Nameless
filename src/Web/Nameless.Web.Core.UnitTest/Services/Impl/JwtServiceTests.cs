@@ -3,62 +3,62 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Nameless.Services.Impl;
 using Nameless.Web.Options;
 
-namespace Nameless.Web.Services.Impl {
-    public class JwtServiceTests {
-        [Test]
-        public void Generate_Should_Return_Token() {
-            // arrange
-            var jwtClaims = new JwtClaims {
-                Sub = "123456",
-                Name = "Test User",
-                Email = "test_user@test.com"
-            };
-            var sut = new JwtService(options: new JwtOptions(),
-                                     systemClock: SystemClock.Instance,
-                                     logger: NullLogger<JwtService>.Instance);
+namespace Nameless.Web.Services.Impl;
 
-            // act
-            var actual = sut.Generate(jwtClaims);
+public class JwtServiceTests {
+    [Test]
+    public void Generate_Should_Return_Token() {
+        // arrange
+        var jwtClaims = new JwtClaims {
+            Sub = "123456",
+            Name = "Test User",
+            Email = "test_user@test.com"
+        };
+        var sut = new JwtService(options: new JwtOptions(),
+                                 systemClock: SystemClock.Instance,
+                                 logger: NullLogger<JwtService>.Instance);
 
-            // assert
-            Assert.That(actual, Is.Not.Null);
-        }
+        // act
+        var actual = sut.Generate(jwtClaims);
 
-        [Test]
-        public void Validate_Should_Return_True_And_ClaimsPrincipal_When_Valid_Token() {
-            // arrange
-            var jwtClaims = new JwtClaims {
-                Sub = "123456",
-                Name = "Test User",
-                Email = "test_user@test.com"
-            };
-            var sut = new JwtService(options: new JwtOptions(),
-                                     systemClock: SystemClock.Instance,
-                                     logger: NullLogger<JwtService>.Instance);
+        // assert
+        Assert.That(actual, Is.Not.Null);
+    }
 
-            // act
-            var token = sut.Generate(jwtClaims);
+    [Test]
+    public void Validate_Should_Return_True_And_ClaimsPrincipal_When_Valid_Token() {
+        // arrange
+        var jwtClaims = new JwtClaims {
+            Sub = "123456",
+            Name = "Test User",
+            Email = "test_user@test.com"
+        };
+        var sut = new JwtService(options: new JwtOptions(),
+                                 systemClock: SystemClock.Instance,
+                                 logger: NullLogger<JwtService>.Instance);
 
-            var valid = sut.TryValidate(token, out var principal);
+        // act
+        var token = sut.Generate(jwtClaims);
 
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(token, Is.Not.Null);
-                Assert.That(valid, Is.True);
-                Assert.That(principal, Is.Not.Null);
+        var valid = sut.TryValidate(token, out var principal);
 
-                var sub = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub);
-                Assert.That(sub, Is.Not.Null);
-                Assert.That(sub.Value, Is.EqualTo(jwtClaims.Sub));
+        // assert
+        Assert.Multiple(() => {
+            Assert.That(token, Is.Not.Null);
+            Assert.That(valid, Is.True);
+            Assert.That(principal, Is.Not.Null);
 
-                var name = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Name);
-                Assert.That(name, Is.Not.Null);
-                Assert.That(name.Value, Is.EqualTo(jwtClaims.Name));
+            var sub = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub);
+            Assert.That(sub, Is.Not.Null);
+            Assert.That(sub.Value, Is.EqualTo(jwtClaims.Sub));
 
-                var email = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email);
-                Assert.That(email, Is.Not.Null);
-                Assert.That(email.Value, Is.EqualTo(jwtClaims.Email));
-            });
-        }
+            var name = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Name);
+            Assert.That(name, Is.Not.Null);
+            Assert.That(name.Value, Is.EqualTo(jwtClaims.Name));
+
+            var email = principal.Claims.SingleOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email);
+            Assert.That(email, Is.Not.Null);
+            Assert.That(email.Value, Is.EqualTo(jwtClaims.Email));
+        });
     }
 }

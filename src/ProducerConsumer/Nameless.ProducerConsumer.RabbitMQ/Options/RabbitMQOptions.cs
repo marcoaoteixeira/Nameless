@@ -1,30 +1,30 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed record RabbitMQOptions {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static RabbitMQOptions Default => new();
+public sealed record RabbitMQOptions {
+    #region Public Static Read-Only Properties
 
-        #endregion
+    public static RabbitMQOptions Default => new();
 
-        #region Private Fields
+    #endregion
 
-        private ServerOptions? _server;
-        private ExchangeOptions[]? _exchanges;
+    #region Private Fields
 
-        #endregion
+    private ServerOptions? _server;
+    private ExchangeOptions[]? _exchanges;
 
-        #region Public Properties
+    #endregion
 
-        public ServerOptions Server {
-            get => _server ??= ServerOptions.Default;
-            set => _server = value;
-        }
+    #region Public Properties
 
-        public ExchangeOptions[] Exchanges {
-            get => _exchanges ??= [];
-            set => _exchanges = value;
-        }
-
-        #endregion
+    public ServerOptions Server {
+        get => _server ??= ServerOptions.Default;
+        set => _server = value;
     }
+
+    public ExchangeOptions[] Exchanges {
+        get => _exchanges ??= [];
+        set => _exchanges = value;
+    }
+
+    #endregion
 }

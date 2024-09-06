@@ -13,71 +13,71 @@ using Nameless.Web.Identity.Api.Outputs;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Infrastructure;
 
-namespace Nameless.Web.Identity.Api.Endpoints {
-    public sealed class GetUser : IMinimalEndpoint {
-        #region Private Read-Only Fields
+namespace Nameless.Web.Identity.Api.Endpoints;
 
-        private readonly IdentityApiOptions _options;
+public sealed class GetUser : IMinimalEndpoint {
+    #region Private Read-Only Fields
 
-        #endregion
+    private readonly IdentityApiOptions _options;
 
-        #region Public Constructors
+    #endregion
 
-        public GetUser(IdentityApiOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
+    #region Public Constructors
 
-        #endregion
+    public GetUser(IdentityApiOptions options) {
+        _options = Prevent.Argument.Null(options, nameof(options));
+    }
 
-        #region Private Static Methods
+    #endregion
 
-        private static async Task<IResult> HandleAsync(
-            [AsParameters] GetUserInput input,
-            IMediator mediator,
-            CancellationToken cancellationToken) {
-            var request = new AuthenticateUserRequest {
-                UserName = input.Username ?? string.Empty,
-                Password = input.Username ?? string.Empty
-            };
+    #region Private Static Methods
 
-            var response = await mediator.Send(request, cancellationToken);
+    private static async Task<IResult> HandleAsync(
+        [AsParameters] GetUserInput input,
+        IMediator mediator,
+        CancellationToken cancellationToken) {
+        var request = new AuthenticateUserRequest {
+            UserName = input.Username ?? string.Empty,
+            Password = input.Username ?? string.Empty
+        };
 
-            var output = new AuthenticateUserOutput {
-                Token = response.Token,
-                Error = response.Error,
-                Succeeded = response.Succeeded()
-            };
+        var response = await mediator.Send(request, cancellationToken);
 
-            return Results.Ok(output);
-        }
+        var output = new AuthenticateUserOutput {
+            Token = response.Token,
+            Error = response.Error,
+            Succeeded = response.Succeeded()
+        };
 
-        #endregion
+        return Results.Ok(output);
+    }
 
-        #region IMinimalEndpoint Members
+    #endregion
 
-        public string Name => "users";
+    #region IMinimalEndpoint Members
 
-        public string Summary => Constants.Endpoints
-                                          .Summaries
+    public string Name => "users";
+
+    public string Summary => Constants.Endpoints
+                                      .Summaries
+                                      .GET_USER;
+
+    public string Description => Constants.Endpoints
+                                          .Descriptions
                                           .GET_USER;
 
-        public string Description => Constants.Endpoints
-                                              .Descriptions
-                                              .GET_USER;
+    public string Group => Constants.Endpoints
+                                    .Groups
+                                    .USERS;
 
-        public string Group => Constants.Endpoints
-                                        .Groups
-                                        .USERS;
+    public int Version => 1;
 
-        public int Version => 1;
+    public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
+        => builder.MapGet($"{_options.BaseUrl}/{Name}", HandleAsync)
+                  .RequireAuthorization()
+                  .Produces<GetUserOutput>()
+                  .ProducesProblem(StatusCodes.Status401Unauthorized)
+                  .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-        public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
-            => builder.MapGet($"{_options.BaseUrl}/{Name}", HandleAsync)
-                      .RequireAuthorization()
-                      .Produces<GetUserOutput>()
-                      .ProducesProblem(StatusCodes.Status401Unauthorized)
-                      .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-        #endregion
-    }
+    #endregion
 }

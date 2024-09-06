@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.MongoDB.Impl;
 
-namespace Nameless.MongoDB.UnitTest {
-    public class DependencyInjectionTests {
-        [Category(Categories.RUNS_ON_DEV_MACHINE)]
-        [Test(Description = "You'll need a local mongo instance or configure it to access a remote instance. See README file.")]
-        public void Register_Resolve_MongoDB_Services() {
-            // arrange
-            var services = new ServiceCollection();
-            services.RegisterMongoCollectionProvider(opts => opts.Database = "local");
+namespace Nameless.MongoDB.UnitTest;
 
-            using var provider = services.BuildServiceProvider();
+public class DependencyInjectionTests {
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
+    [Test(Description = "You'll need a local mongo instance or configure it to access a remote instance. See README file.")]
+    public void Register_Resolve_MongoDB_Services() {
+        // arrange
+        var services = new ServiceCollection();
+        services.RegisterMongoCollectionProvider(opts => opts.Database = "local");
 
-            // act
-            var service = provider.GetService<IMongoCollectionProvider>();
+        using var provider = services.BuildServiceProvider();
 
-            // assert
-            Assert.That(service, Is.InstanceOf<MongoCollectionProvider>());
-        }
+        // act
+        var service = provider.GetService<IMongoCollectionProvider>();
+
+        // assert
+        Assert.That(service, Is.InstanceOf<MongoCollectionProvider>());
     }
 }

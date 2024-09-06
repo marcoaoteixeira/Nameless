@@ -2,33 +2,33 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation.Abstractions;
 
-namespace Nameless.Web.Filters {
-    public sealed class ValidateEndpointFilter : IEndpointFilter {
-        #region IEndpointFilter Members
+namespace Nameless.Web.Filters;
 
-        public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {
-            var validationService = context.HttpContext.RequestServices.GetService<IValidationService>();
+public sealed class ValidateEndpointFilter : IEndpointFilter {
+    #region IEndpointFilter Members
 
-            if (validationService is null) { return await next(context); }
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {
+        var validationService = context.HttpContext.RequestServices.GetService<IValidationService>();
 
-            var args = context.Arguments
-                              .Where(ValidateAttribute.Present);
+        if (validationService is null) { return await next(context); }
 
-            var cancellationToken = context.HttpContext.RequestAborted;
+        var args = context.Arguments
+                          .Where(ValidateAttribute.Present);
 
-            foreach (var arg in args) {
-                if (arg is null) { continue; }
+        var cancellationToken = context.HttpContext.RequestAborted;
 
-                var result = await validationService.ValidateAsync(arg, throwOnFailure: false, cancellationToken);
+        foreach (var arg in args) {
+            if (arg is null) { continue; }
 
-                if (!result.Succeeded) {
-                    return Results.ValidationProblem(result.ToDictionary());
-                }
+            var result = await validationService.ValidateAsync(arg, throwOnFailure: false, cancellationToken);
+
+            if (!result.Succeeded) {
+                return Results.ValidationProblem(result.ToDictionary());
             }
-
-            return await next(context);
         }
 
-        #endregion
+        return await next(context);
     }
+
+    #endregion
 }

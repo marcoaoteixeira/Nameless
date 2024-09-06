@@ -1,21 +1,23 @@
-﻿namespace Nameless.Lucene.Options {
+﻿namespace Nameless.Lucene.Options;
+
+/// <summary>
+/// Lucene Search Settings.
+/// </summary>
+public sealed record LuceneOptions {
+    public const string DEFAULT_INDEXES_FOLDER_NAME = "Lucene";
+
+    private string? _indexesFolderName;
+
+    public static LuceneOptions Default => new();
+
     /// <summary>
-    /// Lucene Search Settings.
+    /// Gets or sets the indexes folder name.
     /// </summary>
-    public sealed record LuceneOptions {
-        #region Public Static Read-Only Properties
-
-        public static LuceneOptions Default => new();
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the indexes root folder name.
-        /// </summary>
-        public string IndexesRootFolderName { get; set; } = "Lucene";
-
-        #endregion
+    /// <remarks>
+    /// if no folder name is provided, it will use the <see cref="DEFAULT_INDEXES_FOLDER_NAME"/>.
+    /// </remarks>
+    public string IndexesFolderName {
+        get => _indexesFolderName.WithFallback(DEFAULT_INDEXES_FOLDER_NAME);
+        set => _indexesFolderName = value;
     }
 }

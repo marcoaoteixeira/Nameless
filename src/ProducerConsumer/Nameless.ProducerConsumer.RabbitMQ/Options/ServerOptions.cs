@@ -2,67 +2,67 @@
 using System.Diagnostics.CodeAnalysis;
 #endif
 
-namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed record ServerOptions {
-        #region Public Static Read-Only Properties
+namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static ServerOptions Default => new();
+public sealed record ServerOptions {
+    #region Public Static Read-Only Properties
 
-        #endregion
+    public static ServerOptions Default => new();
 
-        #region Private Fields
+    #endregion
 
-        private SslOptions? _ssl;
-        private CertificateOptions? _certificate;
+    #region Private Fields
 
-        #endregion
+    private SslOptions? _ssl;
+    private CertificateOptions? _certificate;
 
-        #region Public Properties
+    #endregion
 
-        public string Protocol { get; set; } = "amqp";
+    #region Public Properties
 
-        /// <summary>
-        /// Gets or sets the username. Default value is <c>guest</c>.
-        /// </summary>
-        public string Username { get; set; } = Root.Defaults.RABBITMQ_USER;
+    public string Protocol { get; set; } = "amqp";
 
-        /// <summary>
-        /// Gets or sets the user password. Default value is <c>guest</c>.
-        /// </summary>
-        public string Password { get; set; } = Root.Defaults.RABBITMQ_PASS;
+    /// <summary>
+    /// Gets or sets the username. Default value is <c>guest</c>.
+    /// </summary>
+    public string Username { get; set; } = Root.Defaults.RABBITMQ_USER;
 
-        public string Hostname { get; set; } = "localhost";
+    /// <summary>
+    /// Gets or sets the user password. Default value is <c>guest</c>.
+    /// </summary>
+    public string Password { get; set; } = Root.Defaults.RABBITMQ_PASS;
 
-        public int Port { get; set; } = 5672;
+    public string Hostname { get; set; } = "localhost";
 
-        public string VirtualHost { get; set; } = "/";
+    public int Port { get; set; } = 5672;
 
-        public SslOptions Ssl {
-            get => _ssl ??= SslOptions.Default;
-            set => _ssl = value;
-        }
+    public string VirtualHost { get; set; } = "/";
 
-        public CertificateOptions Certificate {
-            get => _certificate ??= CertificateOptions.Default;
-            set => _certificate = value;
-        }
+    public SslOptions Ssl {
+        get => _ssl ??= SslOptions.Default;
+        set => _ssl = value;
+    }
+
+    public CertificateOptions Certificate {
+        get => _certificate ??= CertificateOptions.Default;
+        set => _certificate = value;
+    }
 
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
 #endif
-        public bool UseCredentials
-            => !string.IsNullOrWhiteSpace(Username) &&
-               !string.IsNullOrWhiteSpace(Password);
+    public bool UseCredentials
+        => !string.IsNullOrWhiteSpace(Username) &&
+           !string.IsNullOrWhiteSpace(Password);
 
-        #endregion
+    #endregion
 
-        #region Public Methods
+    #region Public Methods
 
-        public string GetConnectionString()
-            => UseCredentials
-                ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
-                : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
+    public string GetConnectionString()
+        => UseCredentials
+            ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
+            : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
 
-        #endregion
-    }
+    #endregion
 }

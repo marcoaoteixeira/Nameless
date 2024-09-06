@@ -2,25 +2,25 @@
 using Nameless.Security.Crypto;
 using Nameless.Security.Options;
 
-namespace Nameless.Security {
-    public static class ServiceCollectionExtension {
-        #region Public Static Methods
+namespace Nameless.Security;
 
-        public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection self)
-            => self.AddSingleton(RandomPasswordGenerator.Instance);
+public static class ServiceCollectionExtension {
+    #region Public Static Methods
 
-        public static IServiceCollection RegisterCryptographicService(this IServiceCollection self, Action<RijndaelCryptoOptions>? configure = null)
-            => self.AddSingleton<ICryptographicService>(provider => {
-                var options = provider.GetOptions<RijndaelCryptoOptions>();
+    public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection self)
+        => self.AddSingleton(RandomPasswordGenerator.Instance);
 
-                configure?.Invoke(options.Value);
+    public static IServiceCollection RegisterCryptographicService(this IServiceCollection self, Action<RijndaelCryptoOptions>? configure = null)
+        => self.AddSingleton<ICryptographicService>(provider => {
+            var options = provider.GetOptions<RijndaelCryptoOptions>();
 
-                return new RijndaelCryptographicService(
-                    options: options.Value,
-                    logger: provider.GetLogger<RijndaelCryptographicService>()
-                );
-            });
+            configure?.Invoke(options.Value);
 
-        #endregion
-    }
+            return new RijndaelCryptographicService(
+                options: options.Value,
+                logger: provider.GetLogger<RijndaelCryptographicService>()
+            );
+        });
+
+    #endregion
 }
