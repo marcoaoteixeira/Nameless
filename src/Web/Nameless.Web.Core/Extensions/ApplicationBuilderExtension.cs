@@ -2,24 +2,20 @@
 using Asp.Versioning.ApiExplorer;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Validation.Abstractions;
+using Nameless.Web.Api;
+using Nameless.Web.Auth;
 using Nameless.Web.Filters;
-using Nameless.Web.Infrastructure;
-using Nameless.Web.Middlewares;
 
 namespace Nameless.Web;
-
 public static class ApplicationBuilderExtension {
-    #region Public Static Methods
+    public static IApplicationBuilder UseAutofacDestroyRoutine(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
+        Prevent.Argument.Null(self);
 
-    public static IApplicationBuilder ResolveAutofac(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
         // Tear down the composition root and free all resources
         // when the application stops.
         var container = self.ApplicationServices.GetAutofacRoot();
@@ -28,107 +24,63 @@ public static class ApplicationBuilderExtension {
         return self;
     }
 
-    public static IApplicationBuilder ResolveCors(this IApplicationBuilder self, Action<CorsPolicyBuilder>? configure = null)
-        => self.UseCors(configure ?? (opts => opts.AllowAnyOrigin()
-                                                  .AllowAnyMethod()
-                                                  .AllowAnyHeader()));
+    public static IApplicationBuilder UseValidationExceptionTreatment(this IApplicationBuilder self)
+        => self.UseExceptionHandler(builder => builder.Run(ctx => TryHandleValidationException(ctx, out var result)
+                                                           ? result.ExecuteAsync(ctx)
+                                                           : Results.Problem().ExecuteAsync(ctx)));
 
-    /// <summary>
-    /// Resolves the endpoint service.
-    /// This call must be preceded by a call to <see cref="ResolveRouting"/>.
-    /// </summary>
-    /// <param name="self">The <see cref="IApplicationBuilder"/> instance.</param>
-    /// <param name="configure">The configure action for endpoints. If not provided, will try to resolve all registered minimal endpoints (<see cref="IMinimalEndpoint"/>) implementations.</param>
-    /// <returns>The <see cref="IApplicationBuilder"/> instance.</returns>
-    public static IApplicationBuilder ResolveEndpoints(this IApplicationBuilder self, Action<IEndpointRouteBuilder>? configure = null)
-        => self.UseEndpoints(configure ?? (_ => { }));
-
-    public static IApplicationBuilder ResolveErrorHandling(this IApplicationBuilder self, bool enableValidationExceptionTreatment = true) {
-        return self.UseExceptionHandler(enableValidationExceptionTreatment ? ValidationExceptionTreatment : _ => { });
-
-        static void ValidationExceptionTreatment(IApplicationBuilder builder)
-            => builder.Run(ctx => TryHandleValidationException(ctx, out var result)
-                               ? result.ExecuteAsync(ctx)
-                               : Results.Problem().ExecuteAsync(ctx));
-    }
-
-    public static IApplicationBuilder ResolveHealthChecks(this IApplicationBuilder self, PathString path = default, int? port = null, HealthCheckOptions? options = null) {
-        var currentPath = path.HasValue ? path : new PathString("/healthz");
-        var currentOptions = options ?? new HealthCheckOptions();
-
-        return port is not null
-            ? self.UseHealthChecks(currentPath, port.Value, currentOptions)
-            : self.UseHealthChecks(currentPath, currentOptions);
-    }
-
-    public static IApplicationBuilder ResolveHttpSecurity(this IApplicationBuilder self, bool useHsts = false) {
-        // The default HSTS value is 30 days.
-        // You may want to change this for production scenarios
-        //      See https://aka.ms/aspnetcore-hsts.
-        if (useHsts) { self.UseHsts(); }
-
-        return self.UseHttpsRedirection();
-    }
-
-    public static IApplicationBuilder ResolveJwtAuth(this IApplicationBuilder self)
+    public static IApplicationBuilder UseJwtAuth(this IApplicationBuilder self)
         => self.UseMiddleware<JwtAuthorizationMiddleware>()
                .UseAuthorization()
                .UseAuthentication();
 
     /// <summary>
-    /// Resolves the endpoint service.
-    /// This call must be preceded by a call to <see cref="ResolveRouting"/>.
+    /// Configures endpoints that are defined by <see cref="IEndpoint"/> interface.
+    /// A call to <see cref="UseApiEndpoints"/> must be preceded by a call to <see cref="EndpointRoutingApplicationBuilderExtensions.UseRouting"/>.
     /// </summary>
-    /// <param name="self">The <see cref="IApplicationBuilder"/> instance.</param>
-    /// <param name="useEndpointValidation">Whether it or not should use validation for minimal API parameters.</param>
-    /// <returns>The <see cref="IApplicationBuilder"/> instance.</returns>
-    public static IApplicationBuilder ResolveMinimalEndpoints(this IApplicationBuilder self, bool useEndpointValidation = true)
-        => self.UseEndpoints(builder => {
-            var endpoints = builder.ServiceProvider
-                                   .GetRequiredService<IEnumerable<IMinimalEndpoint>>();
+    /// <param name="self">The current <see cref="IApplicationBuilder"/> instance.</param>
+    /// <param name="useRequestValidation">
+    /// Whether it should use <see cref="IValidationService"/> to validate request objects.
+    /// This should be combined with the use of <see cref="ValidateAttribute"/> on the request
+    /// parameters that might need be validated.
+    /// </param>
+    /// <returns>
+    /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
+    /// </returns>
+    public static IApplicationBuilder UseApiEndpoints(this IApplicationBuilder self, bool useRequestValidation = true) {
+        Prevent.Argument.Null(self);
 
+        self.UseEndpoints(builder => {
+            var endpoints = builder.ServiceProvider.GetServices<IEndpoint>();
             foreach (var endpoint in endpoints) {
-                var conventionBuilder = endpoint
-                                        .Map(builder)
-                                        .WithOpenApi()
+                var convention = endpoint.Map(builder)
+                                         .WithOpenApi()
+                                         .WithName(endpoint.Name)
+                                         .WithSummary(endpoint.Summary)
+                                         .WithDescription(endpoint.Description)
+                                         .WithApiVersionSet(builder.NewApiVersionSet(endpoint.Group)
+                                                                   .Build())
+                                         .HasApiVersion(endpoint.Version);
 
-                                        .WithName(endpoint.Name)
-                                        .WithSummary(endpoint.Summary)
-                                        .WithDescription(endpoint.Description)
-
-                                        .WithApiVersionSet(builder.NewApiVersionSet(endpoint.Group)
-                                                                  .Build())
-
-                                        .HasApiVersion(endpoint.Version);
-
-                if (useEndpointValidation) {
-                    conventionBuilder.AddEndpointFilter(new ValidateEndpointFilter());
+                if (useRequestValidation) {
+                    convention.AddEndpointFilter(new ValidateEndpointFilter());
                 }
             }
         });
 
-    /// <summary>
-    /// Resolves the routing service. This call must be followed by a call to <see cref="ResolveEndpoints"/>.
-    /// </summary>
-    /// <param name="self">The application builder instance.</param>
-    /// <returns>The application builder instance.</returns>
-    public static IApplicationBuilder ResolveRouting(this IApplicationBuilder self)
-        => self.UseRouting();
+        return self;
+    }
 
-    public static IApplicationBuilder ResolveSwagger(this IApplicationBuilder self, IApiVersionDescriptionProvider versioning)
+    public static IApplicationBuilder UseSwagger(this IApplicationBuilder self, IApiVersionDescriptionProvider versioning)
         => self.UseSwagger()
-               .UseSwaggerUI(setup => {
+               .UseSwaggerUI(swaggerUiOptions => {
                    foreach (var description in versioning.ApiVersionDescriptions) {
-                       setup.SwaggerEndpoint(
+                       swaggerUiOptions.SwaggerEndpoint(
                            url: $"/swagger/{description.GroupName}/swagger.json",
                            name: description.GroupName.ToUpperInvariant()
                        );
                    }
                });
-
-    #endregion
-
-    #region Private Static Methods
 
     private static TException? GetExceptionFromHttpContext<TException>(HttpContext httpContext)
         where TException : Exception {
@@ -147,6 +99,4 @@ public static class ApplicationBuilderExtension {
 
         return true;
     }
-
-    #endregion
 }

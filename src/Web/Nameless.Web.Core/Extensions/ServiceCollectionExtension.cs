@@ -2,9 +2,6 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,39 +9,38 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nameless.Services;
 using Nameless.Services.Impl;
-using Nameless.Web.Infrastructure;
+using Nameless.Web.Api;
+using Nameless.Web.Auth;
+using Nameless.Web.Auth.Impl;
 using Nameless.Web.Options;
-using Nameless.Web.Services;
-using Nameless.Web.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Nameless.Web;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterCors(this IServiceCollection self, Action<CorsOptions>? configure = null)
-        => self.AddCors(configure ?? (_ => { }));
+    public static IServiceCollection AddJwtAuth(this IServiceCollection self,
+                                                IConfiguration config,
+                                                Action<AuthorizationOptions>? configureAuthorization = null,
+                                                Action<JwtOptions>? configureJwt = null) {
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(config);
 
-    public static IHealthChecksBuilder RegisterHealthChecks(this IServiceCollection self)
-        => self.AddHealthChecks();
-
-    public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection self)
-        => self.AddHttpContextAccessor();
-
-    public static IServiceCollection RegisterJwtAuth(this IServiceCollection self, IConfiguration config, Action<AuthorizationOptions>? configure = null) {
         var jwtOptions = config.GetSection(nameof(JwtOptions))
                                .Get<JwtOptions>() ?? JwtOptions.Default;
 
-        self.AddAuthorization(configure ?? (_ => { }))
-            .AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        configureJwt?.Invoke(jwtOptions);
+
+        self.AddAuthorization(configureAuthorization ?? (_ => { }))
+            .AddAuthentication(authenticationOptions => {
+                authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options => {
-                options.RequireHttpsMetadata = options.RequireHttpsMetadata;
-                options.SaveToken = jwtOptions.SaveTokens;
-                options.TokenValidationParameters = jwtOptions.GetTokenValidationParameters();
-                options.Events = new JwtBearerEvents {
+            .AddJwtBearer(jwtBearerOptions => {
+                jwtBearerOptions.RequireHttpsMetadata = jwtBearerOptions.RequireHttpsMetadata;
+                jwtBearerOptions.SaveToken = jwtOptions.SaveTokens;
+                jwtBearerOptions.TokenValidationParameters = jwtOptions.GetTokenValidationParameters();
+                jwtBearerOptions.Events = new JwtBearerEvents {
                     OnAuthenticationFailed = ctx => {
                         if (ctx.Exception is SecurityTokenExpiredException) {
                             ctx.Response.Headers[Root.HttpResponseHeaders.X_JWT_EXPIRED] = bool.TrueString;
@@ -54,41 +50,16 @@ public static class ServiceCollectionExtension {
                 };
             });
 
+        self.AddSingleton<IJwtService>(provider => new JwtService(systemClock: provider.GetService<ISystemClock>() ?? SystemClock.Instance,
+                                                                  options: Microsoft.Extensions.Options.Options.Create(jwtOptions),
+                                                                  logger: provider.GetLogger<JwtService>()));
+
         return self;
     }
 
-    public static IServiceCollection RegisterJwtService(this IServiceCollection self, Action<JwtOptions>? configure = null)
-        => self.AddSingleton<IJwtService>(provider => {
-            var options = provider.GetOptions<JwtOptions>();
+    public static IServiceCollection AddSwagger(this IServiceCollection self, bool enableSecurity = false) {
+        Prevent.Argument.Null(self);
 
-            configure?.Invoke(options.Value);
-
-            return new JwtService(options: options.Value,
-                                  systemClock: provider.GetService<ISystemClock>() ?? SystemClock.Instance,
-                                  logger: provider.GetLogger<JwtService>());
-        });
-
-    public static IServiceCollection RegisterMinimalEndpoints(this IServiceCollection self, IEnumerable<Assembly> supportAssemblies) {
-        var types = MinimalEndpointHelper.ScanAssemblies(supportAssemblies);
-        // In the future, check if it'll be necessary to "keyed"
-        // this services.
-        foreach (var type in types) {
-            self.AddTransient(serviceType: typeof(IMinimalEndpoint),
-                              implementationType: type);
-        }
-        return self;
-    }
-
-    public static IServiceCollection RegisterOptions(this IServiceCollection self)
-        => self.AddOptions();
-
-    public static IServiceCollection RegisterProblemDetails(this IServiceCollection self, Action<ProblemDetailsOptions>? configure = null)
-        => self.AddProblemDetails(configure);
-
-    public static IServiceCollection RegisterRouting(this IServiceCollection self, Action<RouteOptions>? configure = null)
-        => self.AddRouting(configure ?? (_ => { }));
-
-    public static IServiceCollection RegisterSwagger(this IServiceCollection self, bool enableSecurity = false) {
         self.AddEndpointsApiExplorer()
             .AddSwaggerGen(enableSecurity ? ConfigureSecurity : _ => { });
 
@@ -123,7 +94,20 @@ public static class ServiceCollectionExtension {
         }
     }
 
-    public static IServiceCollection RegisterVersioning(this IServiceCollection self) {
+    /// <summary>
+    /// Adds API versioning services.
+    /// </summary>
+    /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
+    /// <remarks>
+    /// API version can be set using HTTP header, through key "api-version". Or URL segment
+    /// like "api/v[NUMBER]/something"
+    /// </remarks>
+    /// <returns>
+    /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
+    /// </returns>
+    public static IServiceCollection AddApiVersion(this IServiceCollection self) {
+        Prevent.Argument.Null(self);
+        
         self.AddApiVersioning(options => {
                 // Add the headers "api-supported-versions" and "api-deprecated-versions"
                 // This is better for discoverability
@@ -152,6 +136,27 @@ public static class ServiceCollectionExtension {
                 opts.SubstituteApiVersionInUrl = true;
             });
 
+        return self;
+    }
+
+    /// <summary>
+    /// Registers all implementations of <see cref="IEndpoint"/>.
+    /// </summary>
+    /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="assemblies">The assemblies that will be mapped.</param>
+    /// <returns>
+    /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
+    /// </returns>
+    public static IServiceCollection AddApiEndpoints(this IServiceCollection self, Assembly[] assemblies) {
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(assemblies);
+
+        var endpointType = typeof(IEndpoint);
+        var endpointImplementations = assemblies.SelectMany(assembly => assembly.SearchForImplementations<IEndpoint>());
+        foreach (var endpointImplementation in endpointImplementations) {
+            self.AddTransient(serviceType: endpointType,
+                              implementationType: endpointImplementation);
+        }
         return self;
     }
 }

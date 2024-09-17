@@ -18,7 +18,7 @@ public sealed class Document : IDocument {
     /// </summary>
     /// <param name="id">The document ID.</param>
     public Document(string id) {
-        ID = Prevent.Argument.NullOrWhiteSpace(id, nameof(id));
+        ID = Prevent.Argument.NullOrWhiteSpace(id);
 
         _fields[nameof(ISearchHit.DocumentID)] = new Field(name: nameof(ISearchHit.DocumentID),
                                                            value: ID,

@@ -13,8 +13,8 @@ public static class ReflectionHelper {
     /// <param name="name">The name of the field.</param>
     /// <returns>The value of the field.</returns>
     public static object? GetPrivateFieldValue(object instance, string name) {
-        Prevent.Argument.Null(instance, nameof(instance));
-        Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
+        Prevent.Argument.Null(instance);
+        Prevent.Argument.NullOrWhiteSpace(name);
 
         var field = GetPrivateField(instance.GetType(), name);
 
@@ -30,8 +30,8 @@ public static class ReflectionHelper {
     /// <param name="name">The name of the field.</param>
     /// <param name="value">The new value.</param>
     public static void SetPrivateFieldValue(object instance, string name, object value) {
-        Prevent.Argument.Null(instance, nameof(instance));
-        Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
+        Prevent.Argument.Null(instance);
+        Prevent.Argument.NullOrWhiteSpace(name);
 
         var field = GetPrivateField(instance.GetType(), name)
                  ?? throw new FieldAccessException($"Field \"{name}\" not found.");
@@ -49,7 +49,7 @@ public static class ReflectionHelper {
     /// <param name="parameterTypes">The method parameters type.</param>
     /// <returns>An <see cref="IEnumerable{MethodInfo}"/> with all found methods.</returns>
     public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {
-        Prevent.Argument.Null(type, nameof(type));
+        Prevent.Argument.Null(type);
 
         return type
                .GetRuntimeMethods()

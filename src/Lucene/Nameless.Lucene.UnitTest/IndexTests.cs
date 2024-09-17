@@ -34,8 +34,8 @@ public class IndexTests {
         const string INDEX_NAME = "32b52ab3-7069-4fae-ac15-d9f3442db19b";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var indexA = indexManager.GetOrCreateIndex(INDEX_NAME);
-        var indexB = indexManager.GetOrCreateIndex(INDEX_NAME);
+        var indexA = indexManager.CreateIndex(INDEX_NAME);
+        var indexB = indexManager.CreateIndex(INDEX_NAME);
 
         Assert.Multiple(() => {
             Assert.That(indexA, Is.Not.Null);
@@ -51,7 +51,7 @@ public class IndexTests {
         const string INDEX_NAME = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.GetOrCreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(INDEX_NAME);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = File.ReadAllText(loremIpsumFilePath);
@@ -65,9 +65,13 @@ public class IndexTests {
                        .Set("Age", 50, FieldOptions.Store)
                        .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
-        index.StoreDocuments([document]);
+        var result = index.StoreDocuments([document]);
 
-        Assert.That(index, Is.Not.Null);
+        Assert.Multiple(() => {
+            Assert.That(index, Is.Not.Null);
+            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.Count, Is.EqualTo(1));
+        });
     }
 
     [Category(Categories.RUNS_ON_DEV_MACHINE)]
@@ -77,7 +81,7 @@ public class IndexTests {
         const string INDEX_NAME = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.GetOrCreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(INDEX_NAME);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = File.ReadAllText(loremIpsumFilePath);
@@ -132,7 +136,7 @@ public class IndexTests {
 
         // arrange
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.GetOrCreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(INDEX_NAME);
             
         // act 1
         var filePathForText001 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_001.txt");
@@ -142,7 +146,7 @@ public class IndexTests {
                               .NewDocument(Guid.NewGuid()
                                                .ToString("N"))
                               .Set(FIELD_NAME, contentText001, FieldOptions.Analyze | FieldOptions.Store);
-        index.StoreDocuments([documentText001]);
+        var resultDocumentText001 = index.StoreDocuments([documentText001]);
 
         var searchBuilderText001 = index.CreateSearchBuilder();
 
@@ -161,7 +165,7 @@ public class IndexTests {
                               .NewDocument(Guid.NewGuid()
                                                .ToString("N"))
                               .Set(FIELD_NAME, contentText002, FieldOptions.Analyze | FieldOptions.Store);
-        index.StoreDocuments([documentText002]);
+        var resultDocumentText002 = index.StoreDocuments([documentText002]);
 
         var searchBuilderText002 = index.CreateSearchBuilder();
 
@@ -174,7 +178,10 @@ public class IndexTests {
 
         Assert.Multiple(() => {
             Assert.That(resultText001, Is.Not.Empty);
+            Assert.That(resultDocumentText001.Succeeded, Is.True);
+
             Assert.That(resultText002, Is.Not.Empty);
+            Assert.That(resultDocumentText002.Succeeded, Is.True);
         });
     }
 }

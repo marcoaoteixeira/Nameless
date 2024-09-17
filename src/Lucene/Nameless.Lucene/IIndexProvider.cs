@@ -1,28 +1,36 @@
 ﻿namespace Nameless.Lucene;
 
 /// <summary>
-/// Defines methods for an index provider.
+/// Contract for an <see cref="IIndex"/> provider.
 /// </summary>
 public interface IIndexProvider {
     /// <summary>
-    /// Deletes an existing index
+    /// Deletes an index, if it exists.
     /// </summary>
-    void DeleteIndex(string indexName);
+    /// <param name="name">Name of the index.</param>
+    void DeleteIndex(string name);
 
     /// <summary>
-    /// Checks whether an index is already existing or not
+    /// Checks whether an index exists or not.
     /// </summary>
-    bool IndexExists(string indexName);
+    /// <param name="name">Name of the index.</param>
+    /// <returns>
+    /// <c>true</c> if it exists, otherwise; <c>false</c>.
+    /// </returns>
+    bool IndexExists(string name);
 
     /// <summary>
-    /// Retrieves an index.
+    /// Creates an index.
     /// </summary>
-    /// <param name="indexName">The name of the index.</param>
+    /// <param name="name">Name of the index.</param>
     /// <returns>The index.</returns>
-    IIndex GetOrCreateIndex(string indexName);
+    IIndex CreateIndex(string name);
 
     /// <summary>
-    /// Lists all existing indexes
+    /// Lists all indexes.
     /// </summary>
+    /// <returns>
+    /// A collection of index names.
+    /// </returns>
     IEnumerable<string> ListIndexes();
 }

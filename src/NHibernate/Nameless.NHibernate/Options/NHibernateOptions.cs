@@ -3,13 +3,7 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateOptions {
-    #region Public Static Read-Only Properties
-
     public static NHibernateOptions Default => new();
-
-    #endregion
-
-    #region Public Properties
 
     public NHibernateSchemaExportOptions SchemaExport { get; set; } = new();
     public NHibernateCommonOptions Common { get; set; } = new();
@@ -23,10 +17,6 @@ public sealed record NHibernateOptions {
     public NHibernateCollectionTypeOptions CollectionType { get; set; } = new();
     public NHibernateTransactionOptions Transaction { get; set; } = new();
     public NHibernateSpecificOptions Specific { get; set; } = new();
-        
-    #endregion
-
-    #region Public Methods
 
     public Dictionary<string, string> ToDictionary() {
         var configs = new List<KeyValuePair<string, string>>();
@@ -44,6 +34,4 @@ public sealed record NHibernateOptions {
 
         return new Dictionary<string, string>([.. configs]);
     }
-
-    #endregion
 }

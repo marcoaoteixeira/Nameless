@@ -20,7 +20,7 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
     /// if <paramref name="validationService"/> is <c>null</c>.
     /// </exception>
     public ValidationPipelineBehavior(IValidationService validationService) {
-        _validationService = Prevent.Argument.Null(validationService, nameof(validationService));
+        _validationService = Prevent.Argument.Null(validationService);
     }
 
     /// <summary>
@@ -38,8 +38,8 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
     /// If a suitable validator was found and if it fails the validation rules.
     /// </exception>
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(request, nameof(request));
-        Prevent.Argument.Null(next, nameof(next));
+        Prevent.Argument.Null(request);
+        Prevent.Argument.Null(next);
 
         await _validationService.ValidateAsync(value: request,
                                                throwOnFailure: true,

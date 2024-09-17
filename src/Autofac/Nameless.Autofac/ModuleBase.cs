@@ -22,7 +22,7 @@ public abstract class ModuleBase : global::Autofac.Module {
     /// </summary>
     /// <param name="supportAssemblies">The support assemblies.</param>
     protected ModuleBase(Assembly[] supportAssemblies) {
-        SupportAssemblies = Prevent.Argument.Null(supportAssemblies, nameof(supportAssemblies));
+        SupportAssemblies = Prevent.Argument.Null(supportAssemblies);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public abstract class ModuleBase : global::Autofac.Module {
     /// If <paramref name="serviceType"/> is <c>null</c>.
     /// </exception>
     protected IEnumerable<Type> SearchForImplementations(Type serviceType) {
-        Prevent.Argument.Null(serviceType, nameof(serviceType));
+        Prevent.Argument.Null(serviceType);
 
         foreach (var assembly in SupportAssemblies) {
             foreach (var service in assembly.SearchForImplementations(serviceType)) {

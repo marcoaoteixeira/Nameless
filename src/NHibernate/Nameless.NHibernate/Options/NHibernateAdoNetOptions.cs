@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateAdoNetOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("adonet.batch_size")]
     public int? BatchSize { get; set; }
 
@@ -16,6 +14,4 @@ public sealed record NHibernateAdoNetOptions : NHibernateOptionsBase {
 
     [Description("adonet.wrap_result_sets")]
     public bool? WrapResultSets { get; set; }
-
-    #endregion
 }

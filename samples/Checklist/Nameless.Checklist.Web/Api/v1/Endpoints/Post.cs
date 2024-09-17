@@ -5,11 +5,11 @@ using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
 using Nameless.Validation.Abstractions;
-using Nameless.Web.Infrastructure;
+using Nameless.Web.Api;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class Post : IMinimalEndpoint {
+public sealed class Post : IEndpoint {
     #region Public Static Methods
 
     public static async Task<IResult> Handle(
@@ -43,7 +43,7 @@ public sealed class Post : IMinimalEndpoint {
 
     public int Version => 1;
 
-    IEndpointConventionBuilder IMinimalEndpoint.Map(IEndpointRouteBuilder builder)
+    IEndpointConventionBuilder IEndpoint.Map(IEndpointRouteBuilder builder)
         => builder
            .MapPost($"{Root.Endpoints.BASE_API_PATH}/checklist", Handle)
 

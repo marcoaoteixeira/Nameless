@@ -18,7 +18,7 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
     /// if <paramref name="options"/> is <c>null</c>.
     /// </exception>
     public SmtpClientFactory(IOptions<MailServerOptions> options) {
-        _options = Prevent.Argument.Null(options, nameof(options)).Value;
+        _options = Prevent.Argument.Null(options).Value;
     }
 
     /// <inhertidoc />

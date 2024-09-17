@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Nameless.Security.Internals;
 using Nameless.Security.Options;
 
 namespace Nameless.Security.Crypto;
@@ -21,26 +23,15 @@ namespace Nameless.Security.Crypto;
 /// when a cryptographic exception occurs.
 /// </remarks>
 public sealed class RijndaelCryptographicService : ICryptographicService, IDisposable {
-
-    #region Private Read-Only Fields
-
     private readonly object _lock = new();
     private readonly RijndaelCryptoOptions _options;
     private readonly ILogger _logger;
     private readonly byte[] _ivBuffer;
     private readonly byte[] _keyBuffer;
 
-    #endregion
-
-    #region Private Fields
-
     private ICryptoTransform? _encryptor;
     private ICryptoTransform? _decryptor;
     private bool _disposed;
-
-    #endregion
-
-    #region Public Constructors
 
     /// <summary>
     /// Use this constructor if you are planning to perform encryption/
@@ -49,27 +40,134 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
     /// </summary>
     /// <param name="options">The options.</param>
     /// <param name="logger">The logger.</param>
-    public RijndaelCryptographicService(RijndaelCryptoOptions options, ILogger<RijndaelCryptographicService> logger) {
-        _options = Prevent.Argument.Null(options, nameof(options));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+    public RijndaelCryptographicService(IOptions<RijndaelCryptoOptions> options, ILogger<RijndaelCryptographicService> logger) {
+        _options = Prevent.Argument.Null(options).Value;
+        _logger = Prevent.Argument.Null(logger);
 
-        _ivBuffer = CreateIvBuffer(options);
-        _keyBuffer = CreateKeyBuffer(options);
+        _ivBuffer = CreateIvBuffer(_options);
+        _keyBuffer = CreateKeyBuffer(_options);
 
         InitializeCryptoTransform();
     }
-
-    #endregion
-
-    #region Destructor
 
     ~RijndaelCryptographicService() {
         Dispose(disposing: false);
     }
 
-    #endregion
+    /// <inheritdoc />
+    public byte[] Encrypt(Stream stream) {
+        Prevent.Argument.Null(stream);
 
-    #region Private Static Methods
+        BlockAccessAfterDispose();
+
+        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
+        if (stream.Length == 0) { return []; }
+
+        // Let's make cryptographic operations thread-safe.
+        lock (_lock) {
+            try {
+                // To perform encryption, we must use the Write mode.
+                using var memoryStream = new MemoryStream();
+                using var cryptoStream = new CryptoStream(stream: memoryStream,
+                                                          transform: GetEncryptor(),
+                                                          mode: CryptoStreamMode.Write);
+                var value = stream.ToByteArray();
+                var valueWithSalt = AddSalt(value);
+
+                // Start encrypting data.
+                cryptoStream.Write(buffer: valueWithSalt,
+                                   offset: 0,
+                                   count: valueWithSalt.Length);
+                // Finish the encryption operation.
+                cryptoStream.FlushFinalBlock();
+                // Return encrypted data.
+                return memoryStream.ToArray();
+            } catch (Exception ex) {
+                // Re-initialize crypto transformers if was a CryptographicException.
+                if (ex is CryptographicException) {
+                    InitializeCryptoTransform();
+                }
+
+                LoggerHandlers.EncryptionException(_logger, ex);
+
+                throw;
+            }
+        }
+    }
+
+    public byte[] Decrypt(Stream stream) {
+        Prevent.Argument.Null(stream);
+
+        BlockAccessAfterDispose();
+
+        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
+        if (stream.Length == 0) { return []; }
+
+        byte[] decryptedBytes;
+        int decryptedByteCount;
+        var saltLength = 0;
+
+        // Let's make cryptographic operations thread-safe.
+        lock (_lock) {
+            try {
+                var value = stream.ToByteArray();
+
+                // Since we do not know how big decrypted value will be, use the same
+                // size as cipher text. Cipher text is always longer than plain text
+                // (in block cipher encryption), so we will just use the number of
+                // decrypted data byte after we know how big it is.
+                decryptedBytes = new byte[value.Length];
+
+                // To perform decryption, we must use the Read mode.
+                using var memoryStream = new MemoryStream(value);
+                using var cryptoStream = new CryptoStream(stream: memoryStream,
+                                                          transform: GetDecryptor(),
+                                                          mode: CryptoStreamMode.Read);
+
+                // Decrypting data and get the count of plain text bytes.
+                decryptedByteCount = cryptoStream.Read(buffer: decryptedBytes,
+                                                       offset: 0,
+                                                       count: decryptedBytes.Length);
+            } catch (Exception ex) {
+                // Re-initialize crypto transformers if was a CryptographicException.
+                if (ex is CryptographicException) {
+                    InitializeCryptoTransform();
+                }
+
+                LoggerHandlers.DecryptionException(_logger, ex);
+
+                throw;
+            }
+        }
+
+        // If we are using salt, get its length from the first 4 bytes of plain
+        // text data.
+        if (_options.MaximumSaltSize > 0 && _options.MaximumSaltSize >= _options.MinimumSaltSize) {
+            saltLength = (decryptedBytes[0] & 0x03) |
+                         (decryptedBytes[1] & 0x0c) |
+                         (decryptedBytes[2] & 0x30) |
+                         (decryptedBytes[3] & 0xc0);
+        }
+
+        // Allocate the byte array to hold the original plain text (without salt).
+        var plainTextBytes = new byte[decryptedByteCount - saltLength];
+
+        // Copy original plain text discarding the salt value if needed.
+        Array.Copy(sourceArray: decryptedBytes,
+                   sourceIndex: saltLength,
+                   destinationArray: plainTextBytes,
+                   destinationIndex: 0,
+                   length: decryptedByteCount - saltLength);
+
+        // Return original plain text value.
+        return plainTextBytes;
+    }
+
+    /// <inheritdoc />
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     private static byte[] CreateIvBuffer(RijndaelCryptoOptions options)
         // Initialization vector converted to a byte array.
@@ -88,7 +186,9 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
                                                     iterations: options.PasswordIterations,
                                                     hashAlgorithm: HashAlgorithmName.SHA256);
         // Convert key to a byte array adjusting the size from bits to bytes.
-        var keySize = options.KeySize == KeySize.None ? KeySize.Large : options.KeySize;
+        var keySize = options.KeySize == KeySize.None
+            ? KeySize.Large
+            : options.KeySize;
 
         return password.GetBytes((int)keySize / 8);
     }
@@ -122,16 +222,12 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
         var seed = ((randomBytes[0] & 0x7f) << 24) |
                    (randomBytes[1] << 16) |
                    (randomBytes[2] << 8) |
-                   (randomBytes[3]);
+                   randomBytes[3];
 
         // Now, this looks more like real randomization.
         // And, calculate a random number.
         return new Random(seed).Next(minimumValue, maximumValue + 1);
     }
-
-    #endregion
-
-    #region Private Methods
 
     private void InitializeCryptoTransform() {
         _encryptor?.Dispose();
@@ -174,10 +270,15 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
         var plainTextBytesWithSalt = new byte[plainTextBytes.Length + saltBytes.Length];
 
         // First, copy salt bytes.
-        Array.Copy(saltBytes, plainTextBytesWithSalt, saltBytes.Length);
+        Array.Copy(sourceArray: saltBytes,
+                   destinationArray: plainTextBytesWithSalt,
+                   length: saltBytes.Length);
 
         // Append plain text bytes to the salt value.
-        Array.Copy(plainTextBytes, 0, plainTextBytesWithSalt, saltBytes.Length, plainTextBytes.Length);
+        Array.Copy(sourceArray: plainTextBytes,
+                   sourceIndex: 0,
+                   destinationArray: plainTextBytesWithSalt,
+                   destinationIndex: saltBytes.Length, length: plainTextBytes.Length);
 
         return plainTextBytesWithSalt;
     }
@@ -239,128 +340,4 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
 
         _disposed = true;
     }
-
-    #endregion
-
-    #region ICryptographicService Members
-
-    /// <inheritdoc />
-    public byte[] Encrypt(Stream stream) {
-        Prevent.Argument.Null(stream, nameof(stream));
-
-        BlockAccessAfterDispose();
-
-        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-        if (stream.Length == 0) { return []; }
-
-        // Let's make cryptographic operations thread-safe.
-        lock (_lock) {
-            try {
-                // To perform encryption, we must use the Write mode.
-                using var memoryStream = new MemoryStream();
-                using var cryptoStream = new CryptoStream(stream: memoryStream,
-                                                          transform: GetEncryptor(),
-                                                          mode: CryptoStreamMode.Write);
-                var value = stream.ToByteArray();
-                var valueWithSalt = AddSalt(value);
-
-                // Start encrypting data.
-                cryptoStream.Write(buffer: valueWithSalt,
-                                   offset: 0,
-                                   count: valueWithSalt.Length);
-                // Finish the encryption operation.
-                cryptoStream.FlushFinalBlock();
-                // Return encrypted data.
-                return memoryStream.ToArray();
-            } catch (Exception ex) {
-                // Re-initialize crypto transformers if was a CryptographicException.
-                if (ex is CryptographicException) { InitializeCryptoTransform(); }
-
-                _logger.LogError(exception: ex,
-                                 message: "Error while encryption phase.");
-
-                throw;
-            }
-        }
-    }
-
-    /// <inheritdoc />
-    public byte[] Decrypt(Stream stream) {
-        Prevent.Argument.Null(stream, nameof(stream));
-
-        BlockAccessAfterDispose();
-
-        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
-        if (stream.Length == 0) { return []; }
-
-        byte[] decryptedBytes;
-        int decryptedByteCount;
-        var saltLength = 0;
-
-        // Let's make cryptographic operations thread-safe.
-        lock (_lock) {
-            try {
-                var value = stream.ToByteArray();
-
-                // Since we do not know how big decrypted value will be, use the same
-                // size as cipher text. Cipher text is always longer than plain text
-                // (in block cipher encryption), so we will just use the number of
-                // decrypted data byte after we know how big it is.
-                decryptedBytes = new byte[value.Length];
-
-                // To perform decryption, we must use the Read mode.
-                using var memoryStream = new MemoryStream(value);
-                using var cryptoStream = new CryptoStream(stream: memoryStream,
-                                                          transform: GetDecryptor(),
-                                                          mode: CryptoStreamMode.Read);
-
-                // Decrypting data and get the count of plain text bytes.
-                decryptedByteCount = cryptoStream.Read(buffer: decryptedBytes,
-                                                       offset: 0,
-                                                       count: decryptedBytes.Length);
-            } catch (Exception ex) {
-                // Re-initialize crypto transformers if was a CryptographicException.
-                if (ex is CryptographicException) { InitializeCryptoTransform(); }
-
-                _logger.LogError(exception: ex,
-                                 message: "Error while decryption phase.");
-
-                throw;
-            }
-        }
-
-        // If we are using salt, get its length from the first 4 bytes of plain
-        // text data.
-        if (_options.MaximumSaltSize > 0 && _options.MaximumSaltSize >= _options.MinimumSaltSize) {
-            saltLength = (decryptedBytes[0] & 0x03) |
-                         (decryptedBytes[1] & 0x0c) |
-                         (decryptedBytes[2] & 0x30) |
-                         (decryptedBytes[3] & 0xc0);
-        }
-
-        // Allocate the byte array to hold the original plain text (without salt).
-        var plainTextBytes = new byte[decryptedByteCount - saltLength];
-
-        // Copy original plain text discarding the salt value if needed.
-        Array.Copy(sourceArray: decryptedBytes,
-                   sourceIndex: saltLength,
-                   destinationArray: plainTextBytes,
-                   destinationIndex: 0,
-                   length: decryptedByteCount - saltLength);
-
-        // Return original plain text value.
-        return plainTextBytes;
-    }
-
-    #endregion
-
-    #region IDisposable Members
-
-    /// <inheritdoc />
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    #endregion
 }

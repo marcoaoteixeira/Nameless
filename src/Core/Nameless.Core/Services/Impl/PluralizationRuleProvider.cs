@@ -52,7 +52,7 @@ public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
 
     /// <inheritdoc />
     public bool TryGet(CultureInfo culture, [NotNullWhen(returnValue: true)] out PluralizationRuleDelegate? rule) {
-        Prevent.Argument.Null(culture, nameof(culture));
+        Prevent.Argument.Null(culture);
 
         rule = null;
 

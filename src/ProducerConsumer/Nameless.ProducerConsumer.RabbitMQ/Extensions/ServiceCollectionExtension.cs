@@ -6,41 +6,30 @@ using RabbitMQ.Client;
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public static class ServiceCollectionExtension {
-    #region Private Constants
-
     private const string CHANNEL_TOKEN = $"{nameof(IModel)}::f26120de-83b1-4ffb-aab9-78a6dfda160b";
 
-    #endregion
-
-    #region Public Static Methods
-
     public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self, Action<RabbitMQOptions>? configure = null)
-        => self
-           .AddKeyedSingleton(serviceKey: CHANNEL_TOKEN,
-                              implementationFactory: (provider, _) => {
-                                  var options = provider.GetOptions<RabbitMQOptions>();
+        => self.AddKeyedSingleton(serviceKey: CHANNEL_TOKEN,
+                                  implementationFactory: (provider, _) => CreateChannel(provider, configure))
+               .AddSingleton<IProducerService>(provider => new ProducerService(channel: provider.GetRequiredKeyedService<IModel>(CHANNEL_TOKEN),
+                                                                               logger: provider.GetLogger<ProducerService>()))
+               .AddSingleton<IConsumerService>(provider => new ConsumerService(channel: provider.GetRequiredKeyedService<IModel>(CHANNEL_TOKEN),
+                                                                               logger: provider.GetLogger<ConsumerService>()));
 
-                                  configure?.Invoke(options.Value);
+    private static IModel CreateChannel(IServiceProvider provider, Action<RabbitMQOptions>? configure = null) {
+        var options = provider.GetOptions<RabbitMQOptions>();
 
-                                  var channelFactory = new ChannelFactory(
-                                      options: options.Value,
-                                      logger: provider.GetLogger<ChannelFactory>()
-                                  );
+        configure?.Invoke(options.Value);
 
-                                  var channel = channelFactory.CreateChannel();
+        var channelFactory = new ChannelFactory(options: options.Value,
+                                                logger: provider.GetLogger<ChannelFactory>());
 
-                                  StartUp(channel, options.Value);
+        var channel = channelFactory.CreateChannel();
 
-                                  return channel;
-                              })
-           .AddSingleton<IProducerService>(provider => new ProducerService(channel: provider.GetRequiredKeyedService<IModel>(CHANNEL_TOKEN),
-                                                                           logger: provider.GetLogger<ProducerService>()))
-           .AddSingleton<IConsumerService>(provider => new ConsumerService(channel: provider.GetRequiredKeyedService<IModel>(CHANNEL_TOKEN),
-                                                                           logger: provider.GetLogger<ConsumerService>()));
+        StartUp(channel, options.Value);
 
-    #endregion
-
-    #region Private Static Methods
+        return channel;
+    }
 
     private static void StartUp(IModel channel, RabbitMQOptions options) {
         // when we declare an exchange/queue, if the exchange/queue
@@ -82,6 +71,4 @@ public static class ServiceCollectionExtension {
                                    durable: exchange.Durable,
                                    autoDelete: exchange.AutoDelete,
                                    arguments: exchange.Arguments);
-
-    #endregion
 }

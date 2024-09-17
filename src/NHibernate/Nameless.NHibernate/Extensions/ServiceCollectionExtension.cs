@@ -9,13 +9,7 @@ using NHibernate.Tool.hbm2ddl;
 namespace Nameless.NHibernate;
 
 public static class ServiceCollectionExtension {
-    #region Private Constants
-
     private const string SESSION_FACTORY_TOKEN = $"{nameof(ISessionFactory)}::9f122dcc-7d5b-4218-a3da-c8978ed439d9";
-
-    #endregion
-
-    #region Public Static Methods
 
     public static IServiceCollection RegisterNHibernate(
         this IServiceCollection self,
@@ -27,16 +21,12 @@ public static class ServiceCollectionExtension {
                               implementationFactory: (provider, _) => GetSessionFactoryImpl(configure, entityTypes, classMappingTypes, provider))
            .AddScoped(provider => provider.GetRequiredKeyedService<ISessionFactory>(SESSION_FACTORY_TOKEN).OpenSession());
 
-    #endregion
-
-    #region Private Static Methods
-
     private static ISessionFactory GetSessionFactoryImpl(Action<NHibernateOptions>? configure, Type[]? entityTypes, Type[]? classMappingTypes, IServiceProvider provider) {
         var options = provider.GetOptions<NHibernateOptions>();
 
         configure?.Invoke(options.Value);
 
-        var configurationFactory = new ConfigurationFactory(options.Value,
+        var configurationFactory = new ConfigurationFactory(options,
                                                             entityTypes ?? [],
                                                             classMappingTypes ?? []);
 
@@ -50,7 +40,7 @@ public static class ServiceCollectionExtension {
 
     private static void StartUp(
         IServiceProvider provider,
-        IConfigurationFactory configurationFactory,
+        ConfigurationFactory configurationFactory,
         ISessionFactory sessionFactory,
         NHibernateOptions options) {
         if (!options.SchemaExport.ExecuteSchemaExport) {
@@ -77,6 +67,4 @@ public static class ServiceCollectionExtension {
                                                     exportOutput: writer);
         } catch (Exception ex) { logger.LogError(exception: ex, message: "Error while initializing NHibernate."); }
     }
-
-    #endregion
 }

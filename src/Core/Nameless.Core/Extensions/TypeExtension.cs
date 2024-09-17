@@ -23,7 +23,7 @@ public static class TypeExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool IsNullable(this Type self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
     }
@@ -37,7 +37,7 @@ public static class TypeExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool AllowNull(this Type self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return !self.IsValueType || self.IsNullable();
     }
@@ -59,10 +59,10 @@ public static class TypeExtension {
     /// <exception cref="ArgumentException">
     /// if <paramref name="name"/> is empty or white spaces.
     /// </exception>
-    public static MethodInfo? GetGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = null, Type? returnType = null) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
-        Prevent.Argument.Null(genericArgumentTypes, nameof(genericArgumentTypes));
+    public static MethodInfo? CreateGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = null, Type? returnType = null) {
+        Prevent.Argument.Null(self);
+        Prevent.Argument.NullOrWhiteSpace(name);
+        Prevent.Argument.Null(genericArgumentTypes);
 
         var innerArgumentTypes = argumentTypes ?? [];
         var innerReturnType = returnType ?? typeof(void);
@@ -88,30 +88,32 @@ public static class TypeExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool IsSimple(this Type self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return self.IsPrimitive || WriteTypes.Contains(self);
     }
 
     /// <summary>
-    /// Checks if the current type is assignable from the <paramref name="type"/>.
+    /// Checks if the current open generic type is assignable from the <paramref name="type"/>.
     /// </summary>
-    /// <param name="self">The current type.</param>
+    /// <param name="self">The current open generic type.</param>
     /// <param name="type">The assignable from type.</param>
     /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static bool IsAssignableFromGenericType(this Type self, Type? type) {
-        Prevent.Argument.Null(self, nameof(self));
+    public static bool IsAssignableFromOpenGenericType(this Type self, Type? type) {
+        Prevent.Argument.Null(self);
 
         while (true) {
             if (type is null) { return false; }
 
+            // Check if any interface has the same open generic definition.
             var assignable = type.GetInterfaces()
                                  .Any(Assignable);
             if (assignable) { return true; }
 
+            // Check if any class has the same open generic definition.
             if (Assignable(type)) { return true; }
 
             type = type.BaseType;
@@ -147,12 +149,12 @@ public static class TypeExtension {
     /// <paramref name="interfaceType"/> is <c>null</c>.
     /// </exception>
     public static bool HasInterface(this Type self, Type interfaceType) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(interfaceType, nameof(interfaceType));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(interfaceType);
 
         return self.GetInterfaces()
                    .Any(type => interfaceType.IsAssignableFrom(type) ||
-                                interfaceType.IsAssignableFromGenericType(type));
+                                interfaceType.IsAssignableFromOpenGenericType(type));
     }
 
     public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)
@@ -160,8 +162,8 @@ public static class TypeExtension {
         => HasAttribute(self, typeof(TAttribute), inherit);
 
     public static bool HasAttribute(this Type self, Type attributeType, bool inherit = false) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(attributeType, nameof(attributeType));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(attributeType);
 
         return self.GetCustomAttribute(attributeType, inherit) is not null;
     }

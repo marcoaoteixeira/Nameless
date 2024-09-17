@@ -7,8 +7,8 @@ public sealed class MongoCollectionProvider : IMongoCollectionProvider {
     private readonly ICollectionNamingStrategy _collectionNamingStrategy;
 
     public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
-        _database = Prevent.Argument.Null(database, nameof(database));
-        _collectionNamingStrategy = Prevent.Argument.Null(collectionNamingStrategy, nameof(collectionNamingStrategy));
+        _database = Prevent.Argument.Null(database);
+        _collectionNamingStrategy = Prevent.Argument.Null(collectionNamingStrategy);
     }
 
     /// <inheritdoc/>

@@ -43,10 +43,10 @@ public static class XContainerExtension {
     /// <paramref name="attributeValue"/> is empty or white spaces.
     /// </exception>
     public static bool HasElement(this XContainer self, string elementName, string attributeName, string attributeValue) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.NullOrWhiteSpace(elementName, nameof(elementName));
-        Prevent.Argument.NullOrWhiteSpace(attributeName, nameof(attributeName));
-        Prevent.Argument.NullOrWhiteSpace(attributeValue, nameof(attributeValue));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.NullOrWhiteSpace(elementName);
+        Prevent.Argument.NullOrWhiteSpace(attributeName);
+        Prevent.Argument.NullOrWhiteSpace(attributeValue);
 
         var expression = string.Format(ELEMENT_PATH_PATTERN, elementName, attributeName, attributeValue);
 

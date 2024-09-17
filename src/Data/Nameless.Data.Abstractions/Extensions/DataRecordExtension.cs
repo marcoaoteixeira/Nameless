@@ -18,8 +18,8 @@ public static class DataRecordExtension {
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture"/></param>
     /// <returns><c>true</c> if was able to retrieve the data; otherwise <c>false</c>.</returns>
     public static bool TryGet<T>(this IDataRecord self, string columnName, [NotNullWhen(returnValue: true)] out T? output, IFormatProvider? formatProvider = null) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.NullOrWhiteSpace(columnName, nameof(columnName));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.NullOrWhiteSpace(columnName);
 
         output = default;
 
@@ -290,7 +290,7 @@ public static class DataRecordExtension {
     /// <returns>An Enum value.</returns>
     public static TEnum GetEnum<TEnum>(this IDataRecord self, string columnName, TEnum fallback = default)
         where TEnum : struct {
-        Prevent.Argument.NullOrWhiteSpace(columnName, nameof(columnName));
+        Prevent.Argument.NullOrWhiteSpace(columnName);
 
         if (!typeof(TEnum).IsEnum) {
             throw new InvalidOperationException($"{typeof(TEnum).Name} must be an Enum.");

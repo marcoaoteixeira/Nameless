@@ -11,7 +11,7 @@ public static class ByteArrayExtension {
     /// <returns>A hexadecimal <see cref="string"/> representation of the <see cref="byte"/> array.</returns>
     /// <exception cref="ArgumentNullException">if <paramref name="self"/> is <c>null</c>.</exception>
     public static string ToHexString(this byte[] self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return BitConverter.ToString(self)
                            .Replace("-", string.Empty);
@@ -26,7 +26,7 @@ public static class ByteArrayExtension {
     /// A base64 string representation for the current array.
     /// </returns>
     public static string ToBase64String(this byte[] self, Base64FormattingOptions options = Base64FormattingOptions.None) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return Convert.ToBase64String(self, options);
     }

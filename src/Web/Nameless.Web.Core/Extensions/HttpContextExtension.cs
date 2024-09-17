@@ -7,8 +7,6 @@ namespace Nameless.Web;
 /// <see cref="HttpContext"/> extension methods.
 /// </summary>
 public static class HttpContextExtension {
-    #region Public Static Methods
-
     /// <summary>
     /// Retrieves the IP address (v4) from the <see cref="HttpContext"/>.
     /// </summary>
@@ -45,19 +43,17 @@ public static class HttpContextExtension {
     public static string GetIPv6(this IHttpContextAccessor self)
         => GetIPAddress(self).MapToIPv6().ToString();
 
-    #endregion
-
-    #region Private Static Methods
-
     private static IPAddress GetIPAddress(IHttpContextAccessor httpContextAccessor)
-        => httpContextAccessor.HttpContext is not null
+        => httpContextAccessor?.HttpContext is not null
             ? GetIPAddress(httpContextAccessor.HttpContext)
             : IPAddress.None;
 
     private static IPAddress GetIPAddress(HttpContext httpContext)
-        => httpContext.Request.Headers.TryGetValue(Root.HttpRequestHeaders.X_FORWARDED_FOR, out var xForwardedFor)
+        => Prevent.Argument
+                  .Null(httpContext)
+                  .Request
+                  .Headers
+                  .TryGetValue(Root.HttpRequestHeaders.X_FORWARDED_FOR, out var xForwardedFor)
             ? IPAddress.Parse(xForwardedFor.ToString())
             : httpContext.Connection.RemoteIpAddress ?? IPAddress.None;
-
-    #endregion
 }

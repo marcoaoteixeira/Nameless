@@ -15,7 +15,7 @@ public static class CultureInfoExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static IEnumerable<CultureInfo> GetParents(this CultureInfo self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var culture = new CultureInfo(self.Name);
         while (!string.IsNullOrWhiteSpace(culture.Name)) {

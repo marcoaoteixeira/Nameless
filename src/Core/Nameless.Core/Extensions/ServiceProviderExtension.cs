@@ -21,7 +21,7 @@ public static class ServiceProviderExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool TryGetService<TService>(this IServiceProvider self, [NotNullWhen(returnValue: true)] out TService? service) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         service = self.GetService<TService>();
 
@@ -42,7 +42,7 @@ public static class ServiceProviderExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool TryGetKeyedService<TService>(this IServiceProvider self, string key, [NotNullWhen(returnValue: true)] out TService? service) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         service = self.GetKeyedService<TService>(key);
 
@@ -63,7 +63,7 @@ public static class ServiceProviderExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IServiceProvider self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var loggerFactory = self.GetService<ILoggerFactory>();
 
@@ -86,7 +86,7 @@ public static class ServiceProviderExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static ILogger GetLogger(this IServiceProvider self, Type categoryType) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var loggerFactory = self.GetService<ILoggerFactory>();
 
@@ -125,8 +125,8 @@ public static class ServiceProviderExtension {
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IServiceProvider self, Func<TOptions> optionsFactory)
         where TOptions : class {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(optionsFactory, nameof(optionsFactory));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(optionsFactory);
 
         // let's first check if our provider can resolve this option
         var options = self.GetService<IOptions<TOptions>>();

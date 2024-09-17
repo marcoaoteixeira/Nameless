@@ -1,15 +1,9 @@
 ﻿namespace Nameless.Validation.Abstractions;
 
 public sealed record ValidationEntry {
-    #region Public Properties
-
     public string Code { get; }
 
     public string Message { get; }
-
-    #endregion
-
-    #region Public Constructors
 
     public ValidationEntry(string code, string message) {
         if (string.IsNullOrWhiteSpace(code)) {
@@ -23,6 +17,4 @@ public sealed record ValidationEntry {
         Code = code;
         Message = message;
     }
-
-    #endregion
 }

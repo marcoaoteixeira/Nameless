@@ -3,12 +3,12 @@
 namespace Nameless.ErrorHandling;
 
 public sealed class ErrorCollection : ICollection<Error> {
-    private Dictionary<string, ISet<string>> Cache { get; } = new(StringComparer.OrdinalIgnoreCase);
+    private Dictionary<string, HashSet<string>> Cache { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Gets a new empty instance of <see cref="ErrorCollection"/>.
-    /// </summary>
-    public static ErrorCollection Empty => [];
+    public string[] this[string code] {
+        get => Get(code);
+        set => Set(code, value);
+    }
 
     /// <inheritdoc />
     public int Count => Cache.Count;
@@ -30,11 +30,18 @@ public sealed class ErrorCollection : ICollection<Error> {
     /// if <paramref name="errors"/> is <c>null</c>.
     /// </exception>
     public ErrorCollection(IDictionary<string, string[]> errors) {
-        Prevent.Argument.Null(errors, nameof(errors));
+        Prevent.Argument.Null(errors);
 
         foreach (var error in errors) {
-            Push(error.Key, error.Value);
+            Add(error.Key, error.Value);
         }
+    }
+
+    /// <inheritdoc />
+    public void Add(Error item) {
+        Prevent.Argument.Null(item);
+
+        Add(item.Code, item.Problems);
     }
 
     /// <summary>
@@ -46,65 +53,92 @@ public sealed class ErrorCollection : ICollection<Error> {
     /// if <paramref name="code"/> or
     /// <paramref name="problems"/> is <c>null</c>.
     /// </exception>
-    public void Push(string code, params string[] problems) {
-        Prevent.Argument.Null(code, nameof(code));
-        Prevent.Argument.Null(problems, nameof(problems));
+    public void Add(string code, string[] problems) {
+        Prevent.Argument.Null(code);
+        Prevent.Argument.Null(problems);
 
-        var error = AssertError(code);
-
-        PushProblems(error, problems);
-    }
-
-    /// <inheritdoc />
-    void ICollection<Error>.Add(Error item)
-        => Cache[item.Code] = item.Problems.ToHashSet();
-
-    /// <inheritdoc />
-    void ICollection<Error>.Clear()
-        => Cache.Clear();
-
-    /// <inheritdoc />
-    bool ICollection<Error>.Contains(Error item)
-        => Cache.ContainsKey(item.Code);
-
-    /// <inheritdoc />
-    void ICollection<Error>.CopyTo(Error[] array, int arrayIndex)
-        => this.ToArray()
-               .CopyTo(array, arrayIndex);
-
-    /// <inheritdoc />
-    bool ICollection<Error>.Remove(Error item)
-        => Cache.Remove(item.Code);
-
-    /// <inheritdoc />
-    public IEnumerator<Error> GetEnumerator()
-        => GetEnumerable()
-            .GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerable()
-            .GetEnumerator();
-
-    private static void PushProblems(ISet<string> entry, IEnumerable<string> problems) {
+        var problemSet = GetOrCreateProblemSet(code);
         foreach (var problem in problems) {
             if (string.IsNullOrWhiteSpace(problem)) {
                 continue;
             }
-
-            entry.Add(problem);
+            problemSet.Add(problem);
         }
     }
 
-    private ISet<string> AssertError(string code) {
+    /// <inheritdoc />
+    public void Clear() => Cache.Clear();
+
+    /// <inheritdoc />
+    public bool Contains(Error item) {
+        Prevent.Argument.Null(item);
+
+        return Contains(item.Code);
+    }
+
+    public bool Contains(string code) {
+        Prevent.Argument.Null(code);
+
+        return Cache.ContainsKey(code);
+    }
+
+    /// <inheritdoc />
+    public void CopyTo(Error[] array, int arrayIndex) {
+        Prevent.Argument.Null(array);
+        Prevent.Argument.LowerThan(arrayIndex, minValue: 0);
+
+        var sourceArray = GetErrors().ToArray();
+        
+        Array.Copy(sourceArray: sourceArray,
+                   sourceIndex: 0,
+                   destinationArray: array,
+                   destinationIndex: arrayIndex,
+                   length: sourceArray.Length);
+    }
+
+    /// <inheritdoc />
+    public bool Remove(Error item) {
+        Prevent.Argument.Null(item);
+
+        return Remove(item.Code);
+    }
+
+    public bool Remove(string code) {
+        Prevent.Argument.Null(code);
+
+        return Cache.Remove(code);
+    }
+
+    /// <inheritdoc />
+    public IEnumerator<Error> GetEnumerator()
+        => GetErrors().GetEnumerator();
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetErrors().GetEnumerator();
+
+    private IEnumerable<Error> GetErrors()
+        => Cache.Select(item => new Error(item.Key, [.. item.Value]));
+
+    private HashSet<string> GetOrCreateProblemSet(string code) {
         if (!Cache.TryGetValue(code, out var value)) {
-            value = new HashSet<string>();
+            value = [];
             Cache.Add(code, value);
         }
 
         return value;
     }
 
-    private IEnumerable<Error> GetEnumerable()
-        => Cache.Select(item => new Error(item.Key, [.. item.Value]));
+    private string[] Get(string code) {
+        Prevent.Argument.Null(code);
+
+        if (!Contains(code)) {
+            throw new KeyNotFoundException($"Could not found error with code {code}");
+        }
+
+        return Cache[code].ToArray();
+    }
+
+    private void Set(string code, string[] problems)
+        => Add(code, problems);
 }

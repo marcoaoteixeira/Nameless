@@ -17,7 +17,7 @@ public sealed record Error {
     /// <param name="code">The error code.</param>
     /// <param name="problems">The error problems.</param>
     public Error(string code, string[] problems) {
-        Code = code;
-        Problems = problems;
+        Code = Prevent.Argument.Null(code);
+        Problems = Prevent.Argument.Null(problems);
     }
 }

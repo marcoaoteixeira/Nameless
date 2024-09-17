@@ -3,11 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
-using Nameless.Web.Infrastructure;
+using Nameless.Web.Api;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class Get : IMinimalEndpoint {
+public sealed class Get : IEndpoint {
     #region Public Static Methods
 
     public static async Task<IResult> HandleAsync(
@@ -41,7 +41,7 @@ public sealed class Get : IMinimalEndpoint {
 
     public int Version => 1;
 
-    IEndpointConventionBuilder IMinimalEndpoint.Map(IEndpointRouteBuilder builder)
+    IEndpointConventionBuilder IEndpoint.Map(IEndpointRouteBuilder builder)
         => builder
            .MapGet($"{Root.Endpoints.BASE_API_PATH}/checklist/{{id}}", HandleAsync)
 

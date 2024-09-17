@@ -21,7 +21,7 @@ public static class StreamExtension {
     /// if the current stream can not be read.
     /// </exception>
     public static string ToText(this Stream self, Encoding? encoding = null, BufferSize bufferSize = BufferSize.Tiny) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         if (!self.CanRead) {
             throw new InvalidOperationException("Can't read stream.");
@@ -48,7 +48,7 @@ public static class StreamExtension {
     /// if the current stream can not be read.
     /// </exception>
     public static byte[] ToByteArray(this Stream self, BufferSize bufferSize = BufferSize.Tiny) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         if (!self.CanRead) {
             throw new InvalidOperationException("Can't read stream.");

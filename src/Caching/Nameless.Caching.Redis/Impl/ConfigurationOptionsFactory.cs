@@ -3,8 +3,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.Caching.Redis.Internals;
 using Nameless.Caching.Redis.Options;
-using Nameless.Logging.Microsoft;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis.Impl;
@@ -26,8 +26,8 @@ public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
     /// <paramref name="logger"/> is <c>null</c>.
     /// </exception>
     public ConfigurationOptionsFactory(IOptions<RedisOptions> options, ILogger<ConfigurationOptionsFactory> logger) {
-        _options = Prevent.Argument.Null(options, nameof(options)).Value;
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _options = Prevent.Argument.Null(options).Value;
+        _logger = Prevent.Argument.Null(logger);
     }
     
     /// <inheritdoc />
@@ -73,7 +73,7 @@ public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
         var verdict = certificate.Issuer == inner.Subject;
 
         if (verdict) {
-            LoggerHelper.OnCertificateValidationFailure(_logger,
+            LoggerHandlers.OnCertificateValidationFailure(_logger,
                                                         sslPolicyErrors,
                                                         null /* exception */);
         }

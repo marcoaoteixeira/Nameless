@@ -4,9 +4,9 @@ using Nameless.ErrorHandling;
 namespace Nameless.Web;
 
 public static class ModelStateDictionaryExtension {
-    #region Public Static Methods
-
     public static ErrorCollection ToErrorCollection(this ModelStateDictionary self) {
+        Prevent.Argument.Null(self);
+
         var result = new ErrorCollection();
         foreach (var (key, value) in self) {
             var messageProblems = value.Errors
@@ -16,14 +16,10 @@ public static class ModelStateDictionaryExtension {
             var exceptionProblems = value.Errors
                                          .SelectMany(error => GetProblemsFromException(error.Exception).ToArray());
 
-            result.Push(key, messageProblems.Concat(exceptionProblems).ToArray());
+            result.Add(key, messageProblems.Concat(exceptionProblems).ToArray());
         }
         return result;
     }
-
-    #endregion
-
-    #region Private Static Methods
 
     private static IEnumerable<string> GetProblemsFromException(Exception? ex) {
         if (ex is null) { yield break; }
@@ -35,6 +31,4 @@ public static class ModelStateDictionaryExtension {
             yield return item;
         }
     }
-
-    #endregion
 }

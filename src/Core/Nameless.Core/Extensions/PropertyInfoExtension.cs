@@ -23,7 +23,7 @@ public static class PropertyInfoExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string GetDescription(this PropertyInfo self, bool fallbackToName = true) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var attr = self.GetCustomAttribute<DescriptionAttribute>(inherit: false);
 

@@ -19,8 +19,8 @@ public sealed class XmlSchemaValidator : IXmlSchemaValidator {
 
     /// <inheritdoc />
     public bool Validate(Stream xml, Stream schema) {
-        Prevent.Argument.Null(xml, nameof(xml));
-        Prevent.Argument.Null(schema, nameof(schema));
+        Prevent.Argument.Null(xml);
+        Prevent.Argument.Null(schema);
 
         var success = false;
         var settings = new XmlReaderSettings();

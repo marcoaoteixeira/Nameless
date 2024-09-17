@@ -1,25 +1,15 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 public sealed record QueueOptions {
-    #region Public Static Read-Only Fields
-
     public static QueueOptions Default => new();
-
-    #endregion
-
-    #region Private Fields
 
     private Dictionary<string, object>? _arguments;
     private BindingOptions[]? _bindings;
     private string? _name;
 
-    #endregion
-
-    #region Public Properties
-
     public string Name {
-        get => _name ??= Root.Defaults.QUEUE_NAME;
-        set => _name = Prevent.Argument.NullOrWhiteSpace(value, nameof(value));
+        get => _name.WithFallback(Root.Defaults.QUEUE_NAME);
+        set => _name = value;
     }
 
     public bool Durable { get; set; } = true;
@@ -39,6 +29,4 @@ public sealed record QueueOptions {
             ? [BindingOptions.Default]
             : value;
     }
-
-    #endregion
 }

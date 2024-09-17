@@ -10,6 +10,8 @@ public static class DocumentExtension {
     private static DateTime MinDate => new(1980, 1, 1);
 
     public static Document ToLuceneDocument(this IDocument self) {
+        Prevent.Argument.Null(self);
+
         var result = new Document();
         foreach (var item in self) {
             var descriptor = Descriptor.Create(item);

@@ -4,10 +4,10 @@ using Nameless.Web.Options;
 namespace Nameless.Web;
 
 public static class JwtOptionsExtension {
-    #region Public Static Methods
+    public static TokenValidationParameters GetTokenValidationParameters(this JwtOptions self) {
+        Prevent.Argument.Null(self);
 
-    public static TokenValidationParameters GetTokenValidationParameters(this JwtOptions self)
-        => new() {
+        return new TokenValidationParameters {
             ValidateIssuer = self.ValidateIssuer,
             ValidateAudience = self.ValidateAudience,
             ValidateLifetime = self.ValidateLifetime,
@@ -17,6 +17,5 @@ public static class JwtOptionsExtension {
             IssuerSigningKey = new SymmetricSecurityKey(self.Secret.GetBytes()),
             ClockSkew = TimeSpan.FromSeconds(self.MaxClockSkew)
         };
-
-    #endregion
+    }
 }

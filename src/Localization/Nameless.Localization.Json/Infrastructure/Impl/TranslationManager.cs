@@ -28,14 +28,14 @@ public sealed class TranslationManager : ITranslationManager {
     /// <paramref name="logger"/> is <c>null</c>.
     /// </exception>
     public TranslationManager(IFileProvider fileProvider, IOptions<LocalizationOptions> options, ILogger<TranslationManager> logger) {
-        _fileProvider = Prevent.Argument.Null(fileProvider, nameof(fileProvider));
-        _options = Prevent.Argument.Null(options, nameof(options)).Value;
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _fileProvider = Prevent.Argument.Null(fileProvider);
+        _options = Prevent.Argument.Null(options).Value;
+        _logger = Prevent.Argument.Null(logger);
     }
 
     /// <inheritdoc />
     public Translation GetTranslation(string culture) {
-        Prevent.Argument.NullOrWhiteSpace(culture, nameof(culture));
+        Prevent.Argument.NullOrWhiteSpace(culture);
 
         var entry = _cache.GetOrAdd(culture, CreateCacheEntry);
 
@@ -57,7 +57,7 @@ public sealed class TranslationManager : ITranslationManager {
             return CacheEntry.Empty;
         }
 
-        var fileChangeCallback = CreateFileChangeCallback(culture, path);
+        var fileChangeCallback = CreateFileChangeCallback(path, culture);
 
         return new CacheEntry(translation, fileChangeCallback);
     }
@@ -66,7 +66,7 @@ public sealed class TranslationManager : ITranslationManager {
         file = _fileProvider.GetFileInfo(path);
 
         if (!file.Exists) {
-            LoggerHelper.TranslationFileNotFound(_logger,
+            LoggerHandlers.TranslationFileNotFound(_logger,
                                                  file.Name,
                                                  null /* exception */);
             file = null;
@@ -83,14 +83,14 @@ public sealed class TranslationManager : ITranslationManager {
             content = fileStream.ToText();
 
             if (string.IsNullOrWhiteSpace(content)) {
-                LoggerHelper.TranslationFileEmpty(_logger,
+                LoggerHandlers.TranslationFileEmpty(_logger,
                                                   file.Name,
                                                   null /* exception */);
                 content = null;
                 return false;
             }
         } catch (Exception ex) {
-            LoggerHelper.ReadTranslationFileContentFailure(_logger,
+            LoggerHandlers.ReadTranslationFileContentFailure(_logger,
                                                            file.Name,
                                                            ex);
         }
@@ -103,14 +103,14 @@ public sealed class TranslationManager : ITranslationManager {
         
         try { translation = JsonSerializer.Deserialize<Translation>(fileContent); }
         catch (Exception ex) {
-            LoggerHelper.TranslationObjectDeserializationFailure(_logger,
+            LoggerHandlers.TranslationObjectDeserializationFailure(_logger,
                                                                  fileName,
                                                                  ex);
             return false;
         }
 
         if (translation is null) {
-            LoggerHelper.JsonSerializerReturnNullTranslationObject(_logger,
+            LoggerHandlers.JsonSerializerReturnNullTranslationObject(_logger,
                                                                    fileName,
                                                                    null /* exception */);
         }
@@ -125,13 +125,13 @@ public sealed class TranslationManager : ITranslationManager {
 
         var changeToken = _fileProvider.Watch(path);
         var handler = changeToken
-            .RegisterChangeCallback(callback: FileChangedHandler,
+            .RegisterChangeCallback(callback: HandleFileChange,
                                     state: culture);
 
         return handler;
     }
 
-    private void FileChangedHandler(object? state) {
+    private void HandleFileChange(object? state) {
         if (state is null) { return; }
 
         var culture = (string)state;

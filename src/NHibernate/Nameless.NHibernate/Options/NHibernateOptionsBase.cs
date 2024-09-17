@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public abstract record NHibernateOptionsBase {
-    #region Public Methods
-
     public IEnumerable<KeyValuePair<string, string>> GetConfigValues() {
         var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                   .Where(property => !typeof(NHibernateOptionsBase)                                                 .IsAssignableFrom(property.PropertyType));
@@ -23,6 +21,4 @@ public abstract record NHibernateOptionsBase {
             yield return new KeyValuePair<string, string>(key, value);
         }
     }
-
-    #endregion
 }

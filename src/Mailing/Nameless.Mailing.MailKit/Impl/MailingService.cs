@@ -9,12 +9,12 @@ public sealed class MailingService : IMailingService {
     private readonly ILogger _logger;
 
     public MailingService(ISmtpClientFactory smtpClientFactory, ILogger<MailingService> logger) {
-        _smtpClientFactory = Prevent.Argument.Null(smtpClientFactory, nameof(smtpClientFactory));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _smtpClientFactory = Prevent.Argument.Null(smtpClientFactory);
+        _logger = Prevent.Argument.Null(logger);
     }
 
     public async Task<string> DispatchAsync(Message message, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(message, nameof(message));
+        Prevent.Argument.Null(message);
 
         if (message.From.IsNullOrEmpty()) {
             throw new InvalidOperationException("Missing sender address.");
@@ -31,7 +31,7 @@ public sealed class MailingService : IMailingService {
         string result;
         try { result = await client.SendAsync(mail, cancellationToken: cancellationToken); }
         catch (Exception ex) {
-            LoggerHelper.SendMessageFailure(_logger, ex);
+            LoggerHandlers.SendMessageFailure(_logger, ex);
             result = ex.Message;
         }
         return result;

@@ -22,7 +22,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string RemoveDiacritics(this string self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var normalized = self.Normalize(NormalizationForm.FormD);
         var stringBuilder = new StringBuilder();
@@ -46,7 +46,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string Repeat(this string self, int times) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         if (times <= 0) { return self; }
 
@@ -68,7 +68,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static MemoryStream ToMemoryStream(this string self, Encoding? encoding = default) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return new MemoryStream((encoding ?? Root.Defaults.Encoding).GetBytes(self));
     }
@@ -82,7 +82,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string CamelFriendly(this string self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var result = new StringBuilder(self);
 
@@ -110,8 +110,8 @@ public static class StringExtension {
     /// <paramref name="ellipsis"/> is <c>null</c>.
     /// </exception>
     public static string Ellipsize(this string self, int characterCount, string ellipsis = "&#160;&#8230;", bool wordBoundary = false) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(ellipsis, nameof(ellipsis));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(ellipsis);
 
         if (characterCount < 0 || self.Length <= characterCount) {
             return self;
@@ -149,7 +149,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static byte[] FromHexToByteArray(this string self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return Enumerable.Range(0, self.Length)
                          .Where(index => index % 2 == 0)
@@ -169,8 +169,8 @@ public static class StringExtension {
     /// <paramref name="replacements"/> is <c>null</c>.
     /// </exception>
     public static string ReplaceAll(this string self, IDictionary<string, string> replacements) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(replacements, nameof(replacements));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(replacements);
 
         var pattern = $"{string.Join("|", replacements.Keys)}";
 
@@ -187,7 +187,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string ToBase64(this string self, Encoding? encoding = default) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return Convert.ToBase64String((encoding ?? Root.Defaults.Encoding).GetBytes(self));
     }
@@ -202,7 +202,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string FromBase64(this string self, Encoding? encoding = default) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return (encoding ?? Root.Defaults.Encoding).GetString(Convert.FromBase64String(self));
     }
@@ -217,7 +217,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string Strip(this string self, params char[] chars) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var result = new char[self.Length];
         var cursor = 0;
@@ -242,8 +242,8 @@ public static class StringExtension {
     /// <paramref name="predicate"/> is <c>null</c>.
     /// </exception>
     public static string Strip(this string self, Func<char, bool> predicate) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(predicate, nameof(predicate));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(predicate);
 
         var result = new char[self.Length];
         var cursor = 0;
@@ -268,8 +268,8 @@ public static class StringExtension {
     /// <paramref name="chars"/> is <c>null</c>.
     /// </exception>
     public static bool Any(this string self, params char[] chars) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(chars, nameof(chars));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(chars);
 
         if (chars.Length == 0) { return false; }
 
@@ -293,8 +293,8 @@ public static class StringExtension {
     /// <paramref name="chars"/> is <c>null</c>.
     /// </exception>
     public static bool All(this string self, params char[] chars) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(chars, nameof(chars));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(chars);
 
         foreach (var current in self) {
             if (Array.IndexOf(chars, current) < 0) {
@@ -318,9 +318,9 @@ public static class StringExtension {
     /// <paramref name="from"/> or
     /// <paramref name="to"/> is <c>null</c>.</exception>
     public static string Translate(this string self, char[] from, char[] to) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(from, nameof(from));
-        Prevent.Argument.Null(to, nameof(to));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(from);
+        Prevent.Argument.Null(to);
 
         if (string.IsNullOrEmpty(self)) { return string.Empty; }
 
@@ -357,8 +357,8 @@ public static class StringExtension {
     /// if <paramref name="maxSize"/> is less than 1.
     /// </exception>
     public static string ToSafeName(this string self, int maxSize = 128) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.OutOfRange(maxSize, min: 1, max: int.MaxValue, nameof(maxSize));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.OutOfRange(maxSize, min: 1, max: int.MaxValue);
 
         var result = self.RemoveDiacritics();
 
@@ -392,7 +392,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string RemoveHtmlTags(this string self, bool htmlDecode = false) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var content = new char[self.Length];
 
@@ -430,8 +430,8 @@ public static class StringExtension {
     /// <paramref name="contains"/> is <c>null</c>.
     /// </exception>
     public static bool Contains(this string self, string contains, StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(contains, nameof(contains));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(contains);
 
         return self.IndexOf(contains, stringComparison) > 0;
     }
@@ -448,8 +448,8 @@ public static class StringExtension {
     /// <paramref name="regExp"/> is <c>null</c>.
     /// </exception>
     public static bool IsMatch(this string self, string regExp, RegexOptions regexOptions = RegexOptions.None) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(regExp, nameof(regExp));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(regExp);
 
         return Regex.IsMatch(self, regExp, regexOptions);
     }
@@ -468,9 +468,9 @@ public static class StringExtension {
     /// <paramref name="replacement"/> is <c>null</c>.
     /// </exception>
     public static string Replace(this string self, string regExp, string replacement, RegexOptions regexOptions = RegexOptions.None) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(regExp, nameof(regExp));
-        Prevent.Argument.Null(replacement, nameof(replacement));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(regExp);
+        Prevent.Argument.Null(replacement);
 
         return Regex.Replace(self, regExp, replacement, regexOptions);
     }
@@ -487,8 +487,8 @@ public static class StringExtension {
     /// <paramref name="regExp"/> is <c>null</c>.
     /// </exception>
     public static string[] Split(this string self, string regExp, RegexOptions regexOptions = RegexOptions.None) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(regExp, nameof(regExp));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(regExp);
 
         return Regex.Split(self, regExp, regexOptions);
     }
@@ -503,7 +503,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static byte[] GetBytes(this string self, Encoding? encoding = default) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return (encoding ?? Root.Defaults.Encoding).GetBytes(self);
     }
@@ -518,7 +518,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string[] SplitUpperCase(this string self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var words = new StringCollection();
         var wordStartIndex = 0;
@@ -554,7 +554,7 @@ public static class StringExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string GetMD5(this string self, Encoding? encoding = default) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var buffer = (encoding ?? Root.Defaults.Encoding).GetBytes(self);
 
@@ -634,8 +634,8 @@ public static class StringExtension {
     /// <paramref name="values"/> is <c>null</c>.
     /// </exception>
     public static string RemoveHead(this string self, string[] values, StringComparison comparison = StringComparison.OrdinalIgnoreCase) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(values, nameof(values));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(values);
 
         foreach (var value in values) {
             if (string.IsNullOrWhiteSpace(value)) {
@@ -663,8 +663,8 @@ public static class StringExtension {
     /// <paramref name="values"/> is <c>null</c>.
     /// </exception>
     public static string RemoveTail(this string self, string[] values, StringComparison comparison = StringComparison.Ordinal) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(values, nameof(values));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(values);
 
         foreach (var value in values) {
             if (string.IsNullOrWhiteSpace(value)) {
@@ -698,6 +698,6 @@ public static class StringExtension {
     /// </exception>
     public static string WithFallback(this string? self, string fallback)
         => string.IsNullOrWhiteSpace(self)
-            ? Prevent.Argument.NullOrWhiteSpace(fallback, nameof(fallback))
+            ? Prevent.Argument.NullOrWhiteSpace(fallback)
             : self;
 }

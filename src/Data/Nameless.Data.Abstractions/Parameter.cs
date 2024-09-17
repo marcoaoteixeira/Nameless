@@ -13,7 +13,7 @@ public readonly record struct Parameter {
     public DbType Type { get; }
 
     public Parameter(string name, object? value, DbType type = DbType.String) {
-        Name = Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
+        Name = Prevent.Argument.NullOrWhiteSpace(name);
         Value = value;
         Type = type;
     }

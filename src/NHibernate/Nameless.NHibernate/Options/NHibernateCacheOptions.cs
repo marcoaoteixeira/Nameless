@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateCacheOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("cache.use_second_level_cache")]
     public bool? UseSecondLevelCache { get; set; }
 
@@ -22,6 +20,4 @@ public sealed record NHibernateCacheOptions : NHibernateOptionsBase {
 
     [Description("cache.default_expiration")]
     public int? DefaultExpiration { get; set; }
-
-    #endregion
 }

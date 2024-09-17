@@ -13,7 +13,7 @@ public static class TaskExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool CanContinue(this Task self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         return self.Exception is null && self is { IsCanceled: false, IsFaulted: false, IsCompleted: true };
     }

@@ -18,8 +18,8 @@ public sealed class GetChecklistItemRequestHandler : IRequestHandler<GetChecklis
     #region Public Constructors
 
     public GetChecklistItemRequestHandler(IRepository<ChecklistItem> repository, IMapper mapper) {
-        _repository = Prevent.Argument.Null(repository, nameof(repository));
-        _mapper = Prevent.Argument.Null(mapper, nameof(mapper));
+        _repository = Prevent.Argument.Null(repository);
+        _mapper = Prevent.Argument.Null(mapper);
     }
 
     #endregion

@@ -17,7 +17,7 @@ public sealed record AnalyzerSelectorResult {
     public Analyzer Analyzer { get; }
 
     public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
-        Analyzer = Prevent.Argument.Null(analyzer, nameof(analyzer));
+        Analyzer = Prevent.Argument.Null(analyzer);
         Priority = priority;
     }
 }

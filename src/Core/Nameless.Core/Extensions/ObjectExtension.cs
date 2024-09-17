@@ -16,7 +16,7 @@ public static class ObjectExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static bool IsAnonymous(this object self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var type = self as Type ?? self.GetType();
 
@@ -40,7 +40,7 @@ public static class ObjectExtension {
     /// </exception>
     public static bool HasAttribute<TAttribute>(this object self, bool inherit = false)
         where TAttribute : Attribute
-        => Prevent.Argument.Null(self, nameof(self))
+        => Prevent.Argument.Null(self)
                   .GetType()
                   .GetCustomAttribute<TAttribute>(inherit) is not null;
 }

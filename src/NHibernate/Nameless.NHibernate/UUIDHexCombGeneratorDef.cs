@@ -3,34 +3,15 @@
 namespace Nameless.NHibernate;
 
 /// <summary>
-/// Singleton Pattern implementation for <see cref="UUIDHexCombGeneratorDef" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
+/// UUID hex comb implementation for <see cref="IGeneratorDef"/>.
+/// It uses singleton pattern. See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
 /// </summary>
 [Singleton]
 public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
-    #region Public Static Properties
-
     /// <summary>
     /// Gets the unique instance of <see cref="UUIDHexCombGeneratorDef" />.
     /// </summary>
     public static IGeneratorDef Instance { get; } = new UUIDHexCombGeneratorDef();
-
-    #endregion
-
-    #region Static Constructors
-
-    // Explicit static constructor to tell the C# compiler
-    // not to mark type as beforefieldinit
-    static UUIDHexCombGeneratorDef() { }
-
-    #endregion
-
-    #region Private Constructors
-
-    private UUIDHexCombGeneratorDef() { }
-
-    #endregion
-
-    #region IGeneratorDef Members
 
     /// <inheritdoc />
     public string Class => "uuid.hex";
@@ -44,5 +25,9 @@ public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
     /// <inheritdoc />
     public bool SupportedAsCollectionElementId => false;
 
-    #endregion
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
+    static UUIDHexCombGeneratorDef() { }
+
+    private UUIDHexCombGeneratorDef() { }
 }

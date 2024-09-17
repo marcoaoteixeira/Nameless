@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
-using Nameless.Web.Services;
+using Nameless.Web.Auth;
 
 namespace Nameless.Web;
 
 public static class JwtClaimsExtension {
-    #region Public Static Methods
-
     public static Dictionary<string, object> ToDictionary(this JwtClaims self) {
+        Prevent.Argument.Null(self);
+
         var properties = typeof(JwtClaims).GetProperties(BindingFlags.Instance | BindingFlags.Public);
         var result = new Dictionary<string, object>();
         foreach (var property in properties) {
@@ -18,6 +18,4 @@ public static class JwtClaimsExtension {
         }
         return result;
     }
-
-    #endregion
 }

@@ -13,15 +13,9 @@ namespace Nameless.Web.Options;
 /// <remarks>This allows API versioning to define a Swagger document per API version after the
 /// <see cref="IApiVersionDescriptionProvider"/> service has been resolved from the service container.</remarks>
 public sealed class SwaggerGenConfigureOptions : IConfigureOptions<SwaggerGenOptions> {
-    #region Private Read-Only Fields
-
     private readonly IApiVersionDescriptionProvider _provider;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly SwaggerPageOptions _options;
-
-    #endregion
-
-    #region Public Constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SwaggerGenConfigureOptions"/> class.
@@ -30,14 +24,10 @@ public sealed class SwaggerGenConfigureOptions : IConfigureOptions<SwaggerGenOpt
     /// <param name="hostEnvironment">The <see cref="IHostEnvironment"/>hostEnvironment.</param>
     /// <param name="options">The <see cref="SwaggerPageOptions"/>applicationOptions.</param>
     public SwaggerGenConfigureOptions(IApiVersionDescriptionProvider provider, IHostEnvironment hostEnvironment, SwaggerPageOptions? options = null) {
-        _provider = Prevent.Argument.Null(provider, nameof(provider));
-        _hostEnvironment = Prevent.Argument.Null(hostEnvironment, nameof(hostEnvironment));
+        _provider = Prevent.Argument.Null(provider);
+        _hostEnvironment = Prevent.Argument.Null(hostEnvironment);
         _options = options ?? SwaggerPageOptions.Default;
     }
-
-    #endregion
-
-    #region Private Static Methods
 
     private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description, IHostEnvironment hostEnvironment, SwaggerPageOptions settings)
         => new() {
@@ -55,10 +45,6 @@ public sealed class SwaggerGenConfigureOptions : IConfigureOptions<SwaggerGenOpt
             }
         };
 
-    #endregion
-
-    #region IConfigureOptions<SwaggerGenOptions>
-
     /// <inheritdoc />
     public void Configure(SwaggerGenOptions options) {
         // add a swagger document for each discovered API version
@@ -70,6 +56,4 @@ public sealed class SwaggerGenConfigureOptions : IConfigureOptions<SwaggerGenOpt
                                                              settings: _options));
         }
     }
-
-    #endregion
 }

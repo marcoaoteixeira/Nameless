@@ -8,29 +8,29 @@ public sealed class MessageArgs : ArgCollection {
     private const string BLIND_CARBON_COPY = nameof(BLIND_CARBON_COPY);
 
     public bool GetUseHtmlBody() {
-        var arg = Get(USE_HTML_BODY) ?? false;
+        var arg = this[USE_HTML_BODY] ?? false;
 
         return (bool)arg;
     }
 
     public void SetUseHtmlBody(bool value)
-        => Set(USE_HTML_BODY, value);
+        => this[USE_HTML_BODY] = value;
 
     public string GetCarbonCopy() {
-        var arg = Get(CARBON_COPY) ?? string.Empty;
+        var arg = this[CARBON_COPY] ?? string.Empty;
 
         return (string)arg;
     }
 
     public void SetCarbonCopy(string value)
-        => Set(CARBON_COPY, value);
+        => this[CARBON_COPY] = value;
 
     public string GetBlindCarbonCopy() {
-        var arg = Get(BLIND_CARBON_COPY) ?? string.Empty;
+        var arg = this[BLIND_CARBON_COPY] ?? string.Empty;
 
         return (string)arg;
     }
 
     public void SetBlindCarbonCopy(string value)
-        => Set(BLIND_CARBON_COPY, value);
+        => this[BLIND_CARBON_COPY] = value;
 }

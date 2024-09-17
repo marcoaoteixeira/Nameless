@@ -14,7 +14,7 @@ public sealed record Message {
         => $"{ID} => {Text}";
 
     public Message(string id, string text) {
-        ID = Prevent.Argument.Null(id, nameof(id));
-        Text = Prevent.Argument.Null(text, nameof(text));
+        ID = Prevent.Argument.Null(id);
+        Text = Prevent.Argument.Null(text);
     }
 }

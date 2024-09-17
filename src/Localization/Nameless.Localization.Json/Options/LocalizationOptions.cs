@@ -3,9 +3,9 @@
 public sealed class LocalizationOptions {
     public const string DEFAULT_TRANSLATION_FOLDER_NAME = "Localization";
 
-    private string? _translationFolderName;
-
     public static LocalizationOptions Default => new();
+
+    private string? _translationFolderName;
 
     /// <summary>
     /// Gets or sets the name of the folder where the translation files

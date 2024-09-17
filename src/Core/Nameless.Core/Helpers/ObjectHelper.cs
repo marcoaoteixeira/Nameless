@@ -15,7 +15,7 @@ public static class ObjectHelper {
     /// <param name="obj">The source <see cref="object" />.</param>
     /// <returns>A XML <see cref="string"/>.</returns>
     public static string ToXml(object obj) {
-        Prevent.Argument.Null(obj, nameof(obj));
+        Prevent.Argument.Null(obj);
 
         return !obj.IsAnonymous()
             ? ConvertComplexObjectToXml(obj)

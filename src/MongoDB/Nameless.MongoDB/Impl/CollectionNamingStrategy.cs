@@ -18,7 +18,7 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
     private CollectionNamingStrategy() { }
 
     public string GetCollectionName(Type type) {
-        Prevent.Argument.Null(type, nameof(type));
+        Prevent.Argument.Null(type);
 
         var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
         if (attr is not null) {

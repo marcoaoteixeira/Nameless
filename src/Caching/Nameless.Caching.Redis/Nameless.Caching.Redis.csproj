@@ -50,7 +50,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\Logging\Nameless.Logging.Microsoft\Nameless.Logging.Microsoft.csproj" />
 		<ProjectReference Include="..\Nameless.Caching.Abstractions\Nameless.Caching.Abstractions.csproj" />
 	</ItemGroup>
 

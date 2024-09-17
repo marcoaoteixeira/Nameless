@@ -28,12 +28,20 @@ public interface IIndex {
     /// <summary>
     /// Stores all documents into the index.
     /// </summary>
-    void StoreDocuments(IDocument[] documents);
+    /// <param name="documents">List of documents to store.</param>
+    /// <returns>
+    /// An <see cref="IndexActionResult"/> with information regards to this action.
+    /// </returns>
+    IndexActionResult StoreDocuments(IDocument[] documents);
 
     /// <summary>
     /// Removes all documents from the index.
     /// </summary>
-    void DeleteDocuments(IDocument[] documents);
+    /// <param name="documents">List of documents to delete.</param>
+    /// <returns>
+    /// An <see cref="IndexActionResult"/> with information regards to this action.
+    /// </returns>
+    IndexActionResult DeleteDocuments(IDocument[] documents);
 
     /// <summary>
     /// Creates a search builder for this provider

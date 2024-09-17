@@ -5,8 +5,6 @@ using Nameless.NHibernate.Objects;
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateConnectionOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("connection.provider")]
     public string? Provider { get; set; }
 
@@ -24,6 +22,4 @@ public sealed record NHibernateConnectionOptions : NHibernateOptionsBase {
 
     [Description("connection.release_mode")]
     public ReleaseMode? ReleaseMode { get; set; }
-
-    #endregion
 }

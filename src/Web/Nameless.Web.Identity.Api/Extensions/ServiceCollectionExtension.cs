@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Web.Api;
 using Nameless.Web.Identity.Api.Handlers;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Identity.Api.Responses;
@@ -21,7 +22,7 @@ public static class ServiceCollectionExtension {
             
         RegisterRequestHandlers<TUser, TKey>(self);
 
-        return self.RegisterMinimalEndpoints([typeof(ServiceCollectionExtension).Assembly]);
+        return self.AddApiEndpoints([typeof(ServiceCollectionExtension).Assembly]);
     }
 
     #endregion

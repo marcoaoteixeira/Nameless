@@ -15,8 +15,8 @@ public sealed record Region {
         => $"Region: {Name}";
 
     public Region(string name, Message[] messages) {
-        Name = Prevent.Argument.Null(name, nameof(name));
-        Messages = Prevent.Argument.Null(messages, nameof(messages));
+        Name = Prevent.Argument.Null(name);
+        Messages = Prevent.Argument.Null(messages);
     }
 
     public bool TryGetMessage(string id, [NotNullWhen(true)] out Message? output) {

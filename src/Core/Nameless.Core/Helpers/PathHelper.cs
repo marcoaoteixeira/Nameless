@@ -58,8 +58,8 @@ public static class PathHelper {
     /// </param>
     /// <returns>The physical path to the content.</returns>
     public static string GetPhysicalPath(string root, string relativePath) {
-        Prevent.Argument.NullOrWhiteSpace(root, nameof(root));
-        Prevent.Argument.NullOrWhiteSpace(relativePath, nameof(relativePath));
+        Prevent.Argument.NullOrWhiteSpace(root);
+        Prevent.Argument.NullOrWhiteSpace(relativePath);
 
         root = Normalize(root);
         relativePath = Normalize(relativePath);

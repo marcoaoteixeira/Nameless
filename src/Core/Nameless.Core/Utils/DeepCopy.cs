@@ -14,7 +14,7 @@ public static class DeepCopy {
     /// <exception cref="ArgumentNullException">if <paramref name="value"/> is <c>null</c>.</exception>
     /// <exception cref="InvalidOperationException">Can't clone abstract, interface or pointer.</exception>
     public static object Clone(object value) {
-        Prevent.Argument.Null(value, nameof(value));
+        Prevent.Argument.Null(value);
 
         var type = value.GetType();
         if (type.IsAbstract || type.IsInterface || type.IsPointer) {

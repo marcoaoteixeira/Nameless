@@ -5,20 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 public sealed record ServerOptions {
-    #region Public Static Read-Only Properties
-
     public static ServerOptions Default => new();
-
-    #endregion
-
-    #region Private Fields
 
     private SslOptions? _ssl;
     private CertificateOptions? _certificate;
-
-    #endregion
-
-    #region Public Properties
 
     public string Protocol { get; set; } = "amqp";
 
@@ -51,18 +41,12 @@ public sealed record ServerOptions {
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
 #endif
-    public bool UseCredentials
+    internal bool UseCredentials
         => !string.IsNullOrWhiteSpace(Username) &&
            !string.IsNullOrWhiteSpace(Password);
 
-    #endregion
-
-    #region Public Methods
-
-    public string GetConnectionString()
+    internal string GetConnectionString()
         => UseCredentials
             ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
             : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
-
-    #endregion
 }

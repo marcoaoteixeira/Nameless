@@ -26,8 +26,8 @@ public sealed record Field {
     /// <param name="type">The indexable type.</param>
     /// <param name="options">The field options.</param>
     public Field(string name, object value, IndexableType type = IndexableType.Text, FieldOptions options = FieldOptions.None) {
-        Name = Prevent.Argument.NullOrWhiteSpace(name, nameof(name));
-        Value = Prevent.Argument.Null(value, nameof(value));
+        Name = Prevent.Argument.NullOrWhiteSpace(name);
+        Value = Prevent.Argument.Null(value);
         Type = type;
         Options = options;
     }

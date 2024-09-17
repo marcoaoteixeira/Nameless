@@ -15,7 +15,7 @@ public sealed class SearchHit : ISearchHit {
     /// <param name="document">The document.</param>
     /// <param name="score">The score.</param>
     public SearchHit(Lucene_Document document, float score) {
-        _document = Prevent.Argument.Null(document, nameof(document));
+        _document = Prevent.Argument.Null(document);
         Score = score;
     }
 

@@ -4,7 +4,7 @@ namespace Nameless.Data;
 
 internal static class DbCommandExtension {
     internal static string GetParameterList(this IDbCommand self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var list = self.Parameters
                        .OfType<IDbDataParameter>()

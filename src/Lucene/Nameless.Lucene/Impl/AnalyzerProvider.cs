@@ -14,7 +14,7 @@ public sealed class AnalyzerProvider : IAnalyzerProvider {
     /// <param name="selectors">A collection of <see cref="IAnalyzerSelector"/>.</param>
     /// <exception cref="ArgumentNullException">if <paramref name="selectors"/> is <c>null</c>.</exception>
     public AnalyzerProvider(IAnalyzerSelector[] selectors) {
-        _selectors = Prevent.Argument.Null(selectors, nameof(selectors));
+        _selectors = Prevent.Argument.Null(selectors);
     }
 
     /// <inheritdoc />

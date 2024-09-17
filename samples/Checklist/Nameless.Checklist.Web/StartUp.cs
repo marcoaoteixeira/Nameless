@@ -15,10 +15,9 @@ using Nameless.Checklist.Web.Domain.Repositories.Impl;
 using Nameless.MediatR.Integration;
 using Nameless.Services.Impl;
 using Nameless.Web;
-using Nameless.Web.Middlewares;
+using Nameless.Web.Auth;
+using Nameless.Web.Auth.Impl;
 using Nameless.Web.Options;
-using Nameless.Web.Services;
-using Nameless.Web.Services.Impl;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using RootFromWeb = Nameless.Web.Root;
 
@@ -42,7 +41,7 @@ public sealed class StartUp {
     #region Public Constructors
 
     public StartUp(IConfiguration configuration) {
-        Configuration = Prevent.Argument.Null(configuration, nameof(configuration));
+        Configuration = Prevent.Argument.Null(configuration);
     }
 
     #endregion
@@ -206,7 +205,7 @@ public sealed class StartUp {
 
         // Minimal Endpoints
         app
-            .ResolveMinimalEndpoints();
+            .UseApiEndpoints();
 
         // Swagger
         app

@@ -1,8 +1,6 @@
 ﻿namespace Nameless.Security.Crypto;
 
 public interface ICryptographicService {
-    #region Methods
-
     /// <summary>
     /// Encrypts a <see cref="Stream"/>.
     /// </summary>
@@ -16,6 +14,4 @@ public interface ICryptographicService {
     /// <param name="stream">The <see cref="Stream"/>.</param>
     /// <returns>Returns an array of <see cref="byte"/>, that is the decrypted version of the <paramref name="stream"/>.</returns>
     byte[] Decrypt(Stream stream);
-
-    #endregion
 }

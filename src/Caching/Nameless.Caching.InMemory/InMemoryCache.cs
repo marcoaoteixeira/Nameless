@@ -25,8 +25,8 @@ public sealed class InMemoryCache : ICache, IDisposable {
     public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
-        Prevent.Argument.Null(value, nameof(value));
+        Prevent.Argument.NullOrWhiteSpace(key);
+        Prevent.Argument.Null(value);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -46,7 +46,7 @@ public sealed class InMemoryCache : ICache, IDisposable {
     public Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
+        Prevent.Argument.NullOrWhiteSpace(key);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -57,7 +57,7 @@ public sealed class InMemoryCache : ICache, IDisposable {
         }
 
         if (value is not T result) {
-            throw new InvalidOperationException($"Current cached value is not of type {typeof(T)}.");
+            throw new InvalidOperationException($"Current cached paramValue is not of type {typeof(T)}.");
         }
 
         return Task.FromResult<T?>(result);
@@ -73,7 +73,7 @@ public sealed class InMemoryCache : ICache, IDisposable {
     public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
+        Prevent.Argument.NullOrWhiteSpace(key);
 
         cancellationToken.ThrowIfCancellationRequested();
 

@@ -18,7 +18,7 @@ public static class ArrayExtension {
     public static bool TryGetElementAt<T>(this T?[] self, int index, out T? output) {
         output = default;
 
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         if (!IsInRange(self, index)) {
             return false;
@@ -43,5 +43,5 @@ public static class ArrayExtension {
     /// if <paramref name="self"/> is <c>null</c>. It doesn't mean its items can't be null, it means the array object.
     /// </exception>
     public static bool IsInRange<T>(this T?[] self, long index)
-        => index > 0 && index < Prevent.Argument.Null(self, nameof(self)).Length;
+        => index > 0 && index < Prevent.Argument.Null(self).Length;
 }

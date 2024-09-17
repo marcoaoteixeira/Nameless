@@ -10,7 +10,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
     public string ProviderName => "SQLite";
 
     public DbConnectionFactory(SQLiteOptions options) {
-        _options = Prevent.Argument.Null(options, nameof(options));
+        _options = Prevent.Argument.Null(options);
     }
 
     public IDbConnection CreateDbConnection() {

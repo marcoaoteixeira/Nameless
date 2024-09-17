@@ -12,7 +12,7 @@ public static class IntegerExtension {
     /// <param name="action">The action of the interaction.</param>
     /// <exception cref="ArgumentNullException">if <paramref name="action"/> is <c>null</c>.</exception>
     public static void Times(this int self, Action action) {
-        Prevent.Argument.Null(action, nameof(action));
+        Prevent.Argument.Null(action);
 
         self.Times(_ => action());
     }
@@ -26,7 +26,7 @@ public static class IntegerExtension {
     /// <param name="action">The action of the interaction.</param>
     /// <exception cref="ArgumentNullException">if <paramref name="action"/> is <c>null</c>.</exception>
     public static void Times(this int self, Action<int> action) {
-        Prevent.Argument.Null(action, nameof(action));
+        Prevent.Argument.Null(action);
 
         for (var number = 0; number < self; number++) {
             action(number);

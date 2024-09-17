@@ -2,47 +2,31 @@
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Nameless.Validation.Abstractions;
+using Nameless.Validation.FluentValidation.Internals;
 using ValidationException = Nameless.Validation.Abstractions.ValidationException;
 
 namespace Nameless.Validation.FluentValidation.Impl;
 
 public sealed class ValidationService : IValidationService {
-    #region Private Read-Only Fields
-
     private readonly ConcurrentDictionary<Type, IValidator?> _cache = [];
     private readonly IValidator[] _validators;
     private readonly ILogger _logger;
-        
-    #endregion
-
-    #region Public Constructors
 
     public ValidationService(IEnumerable<IValidator> validators, ILogger<ValidationService> logger) {
         _validators = Prevent.Argument
                            .Null(validators, nameof(validators))
                            .ToArray();
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _logger = Prevent.Argument.Null(logger);
     }
-
-    #endregion
-
-    #region Private Methods
-
-    private IValidator? FetchValidator(Type instanceType)
-        => _validators.SingleOrDefault(item => item.CanValidateInstancesOfType(instanceType));
-
-    #endregion
-
-    #region IValidationService Members
 
     public async Task<ValidationResult> ValidateAsync<TValue>(TValue value, bool throwOnFailure = false, CancellationToken cancellationToken = default)
         where TValue : class {
-        Prevent.Argument.Null(value, nameof(value));
+        Prevent.Argument.Null(value);
 
         var cacheEntry = _cache.GetOrAdd(typeof(TValue), FetchValidator);
         if (cacheEntry is IValidator<TValue> validator) {
             var response = await validator.ValidateAsync(value, cancellationToken);
-            var result = Helper.Map(response);
+            var result = Mapper.Map(response);
 
             if (!result.Succeeded && throwOnFailure) {
                 throw new ValidationException(result);
@@ -51,11 +35,12 @@ public sealed class ValidationService : IValidationService {
             return result;
         }
 
-        _logger.LogInformation(message: "Validator for {Value} not found",
+        _logger.LogInformation(message: "Validator not found for {Value}",
                                args: typeof(TValue).FullName);
 
         return ValidationResult.Empty;
     }
-
-    #endregion
+    
+    private IValidator? FetchValidator(Type instanceType)
+        => _validators.SingleOrDefault(item => item.CanValidateInstancesOfType(instanceType));
 }

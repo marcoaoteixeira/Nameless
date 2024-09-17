@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateQueryOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("query.substitutions")]
     public string? Substitutions { get; set; } = "true=1;false=0";
 
@@ -28,6 +26,4 @@ public sealed record NHibernateQueryOptions : NHibernateOptionsBase {
 
     [Description("query.query_model_rewriter_factory")]
     public string? QueryModelRewriterFactory { get; set; }
-
-    #endregion
 }

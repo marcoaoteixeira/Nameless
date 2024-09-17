@@ -1,13 +1,7 @@
 ﻿namespace Nameless.Web.Options;
 
 public sealed record JwtOptions {
-    #region Public Static Read-Only Properties
-
     public static JwtOptions Default => new();
-
-    #endregion
-
-    #region Public Properties
 
     public string Secret { get; set; } = Root.Defaults.JWT_SECRET;
         
@@ -27,10 +21,9 @@ public sealed record JwtOptions {
     /// </summary>
     public int AccessTokenTtl {
         get => _accessTokenTtl;
-        set => _accessTokenTtl = Prevent.Argument.OutOfRange(value: value,
-                                                          min: 1,
-                                                          max: 24 * 60,
-                                                          name: nameof(value));
+        set => _accessTokenTtl = Prevent.Argument.OutOfRange(paramValue: value,
+                                                             min: 1,
+                                                             max: 24 * 60);
     }
     public bool ValidateLifetime { get; set; }
 
@@ -42,10 +35,9 @@ public sealed record JwtOptions {
     /// </summary>
     public int RefreshTokenTtl {
         get => _refreshTokenTtl;
-        set => _refreshTokenTtl = Prevent.Argument.OutOfRange(value: value,
-                                                           min: 1,
-                                                           max: 24 * 60,
-                                                           name: nameof(value));
+        set => _refreshTokenTtl = Prevent.Argument.OutOfRange(paramValue: value,
+                                                              min: 1,
+                                                              max: 24 * 60);
     }
         
     public bool RequireHttpsMetadata { get; set; }
@@ -64,6 +56,4 @@ public sealed record JwtOptions {
     public int MaxClockSkew { get; set; }
         
     public bool SaveTokens { get; set; } = true;
-
-    #endregion
 }

@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Nameless.Web.Api;
 using Nameless.Web.Identity.Api.Inputs;
 using Nameless.Web.Identity.Api.Outputs;
 using Nameless.Web.Identity.Api.Requests;
-using Nameless.Web.Infrastructure;
 
 namespace Nameless.Web.Identity.Api.Endpoints;
 
-public sealed class AuthenticateUser : IMinimalEndpoint {
+public sealed class AuthenticateUser : IEndpoint {
     #region Private Read-Only Fields
 
     private readonly IdentityApiOptions _options;
@@ -20,7 +20,7 @@ public sealed class AuthenticateUser : IMinimalEndpoint {
     #region Public Constructors
 
     public AuthenticateUser(IdentityApiOptions options) {
-        _options = Prevent.Argument.Null(options, nameof(options));
+        _options = Prevent.Argument.Null(options);
     }
 
     #endregion

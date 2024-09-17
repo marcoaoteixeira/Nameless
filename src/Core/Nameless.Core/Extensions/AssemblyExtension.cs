@@ -18,8 +18,8 @@ public static class AssemblyExtension {
     /// <paramref name="combineWith"/> is <c>null</c>.
     /// </exception>
     public static string GetDirectoryPath(this Assembly self, params string[] combineWith) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(combineWith, nameof(combineWith));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(combineWith);
 
         var location = $"file://{self.Location}";
         var uri = new UriBuilder(location);
@@ -44,7 +44,7 @@ public static class AssemblyExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string GetSemanticVersion(this Assembly self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var version = self.GetName()
                           .Version ?? new Version(0, 0, 0);
@@ -77,12 +77,12 @@ public static class AssemblyExtension {
     /// <paramref name="serviceType"/> is <c>null</c>.
     /// </exception>
     public static IEnumerable<Type> SearchForImplementations(this Assembly self, Type serviceType) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(serviceType, nameof(serviceType));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(serviceType);
 
         return self.GetExportedTypes()
                    .Where(type => type is { IsInterface: false, IsAbstract: false } &&
                                   type.GetCustomAttribute<SingletonAttribute>(inherit: true) is null &&
-                                  (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromGenericType(type)));
+                                  (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromOpenGenericType(type)));
     }
 }

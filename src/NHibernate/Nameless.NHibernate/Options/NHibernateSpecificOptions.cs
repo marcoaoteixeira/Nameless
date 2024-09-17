@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateSpecificOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("firebird.disable_parameter_casting")]
     public bool? FirebirdDisableParameterCasting { get; set; }
 
@@ -13,6 +11,4 @@ public sealed record NHibernateSpecificOptions : NHibernateOptionsBase {
 
     [Description("odbc.explicit_datetime_scale")]
     public int? OdbcExplicitDateTimeScale { get; set; }
-
-    #endregion
 }

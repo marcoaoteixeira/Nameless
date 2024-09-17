@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Nameless.Caching.Redis.Internals;
 using StackExchange.Redis;
 
 namespace Nameless.Caching.Redis;
@@ -25,8 +26,8 @@ public sealed class RedisCache : ICache, IDisposable {
     /// <paramref name="logger"/> is <c>null</c>.
     /// </exception>
     public RedisCache(ConfigurationOptions configurationOptions, ILogger<RedisCache> logger) {
-        _configurationOptions = Prevent.Argument.Null(configurationOptions, nameof(configurationOptions));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _configurationOptions = Prevent.Argument.Null(configurationOptions);
+        _logger = Prevent.Argument.Null(logger);
     }
 
     ~RedisCache() {
@@ -44,8 +45,8 @@ public sealed class RedisCache : ICache, IDisposable {
     public Task<bool> SetAsync(string key, object value, CacheEntryOptions? opts = null, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
-        Prevent.Argument.Null(value, nameof(value));
+        Prevent.Argument.NullOrWhiteSpace(key);
+        Prevent.Argument.Null(value);
 
         var innerOptions = opts ?? CacheEntryOptions.Default;
 
@@ -55,7 +56,7 @@ public sealed class RedisCache : ICache, IDisposable {
             : null;
 
         if (innerOptions.EvictionCallback is not null) {
-            LoggerHelper.CantUseEvictionCallback(_logger, null /* exception */);
+            LoggerHandlers.CantUseEvictionCallback(_logger, null /* exception */);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -78,7 +79,7 @@ public sealed class RedisCache : ICache, IDisposable {
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
+        Prevent.Argument.NullOrWhiteSpace(key);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -101,7 +102,7 @@ public sealed class RedisCache : ICache, IDisposable {
     public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(key, nameof(key));
+        Prevent.Argument.NullOrWhiteSpace(key);
 
         cancellationToken.ThrowIfCancellationRequested();
 

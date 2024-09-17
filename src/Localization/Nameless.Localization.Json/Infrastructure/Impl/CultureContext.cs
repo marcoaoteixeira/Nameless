@@ -16,20 +16,14 @@ public sealed class CultureContext : ICultureContext {
     private CultureContext() { }
 
     public CultureInfo GetCurrentCulture() {
-        CultureInfo culture;
-
-        culture = Thread.CurrentThread.CurrentUICulture;
+        var culture = Thread.CurrentThread.CurrentUICulture;
         if (!string.IsNullOrWhiteSpace(culture.Name)) {
             return culture;
         }
 
         culture = Thread.CurrentThread.CurrentCulture;
-        if (!string.IsNullOrWhiteSpace(culture.Name)) {
-            return culture;
-        }
-
-        culture = new CultureInfo("en-US");
-
-        return culture;
+        return !string.IsNullOrWhiteSpace(culture.Name)
+            ? culture
+            : new CultureInfo("en-US");
     }
 }

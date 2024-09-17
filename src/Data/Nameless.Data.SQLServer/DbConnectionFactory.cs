@@ -10,7 +10,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
     public string ProviderName => "Microsoft SQL Server";
 
     public DbConnectionFactory(SQLServerOptions options) {
-        _options = Prevent.Argument.Null(options, nameof(options));
+        _options = Prevent.Argument.Null(options);
     }
 
     public IDbConnection CreateDbConnection() {

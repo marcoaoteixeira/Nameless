@@ -5,14 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 public sealed class CertificateOptions {
-    #region Public Static Read-Only Properties
-
     public static CertificateOptions Default => new();
-
-    #endregion
-
-    #region Public Properties
-
+    
     public string? Pfx { get; set; }
 
     public string? Pem { get; set; }
@@ -22,10 +16,8 @@ public sealed class CertificateOptions {
 #if NET6_0_OR_GREATER
     [MemberNotNullWhen(returnValue: true, nameof(Pfx), nameof(Pem), nameof(Password))]
 #endif
-    public bool IsAvailable
+    internal bool IsAvailable
         => !string.IsNullOrWhiteSpace(Pfx) &&
            !string.IsNullOrWhiteSpace(Pem) &&
            !string.IsNullOrWhiteSpace(Password);
-
-    #endregion
 }

@@ -3,8 +3,6 @@
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 internal static class BasicPropertiesExtension {
-    #region Internal Static Methods
-
     internal static IBasicProperties FillWith(this IBasicProperties self, ProducerArgs args) {
         self.AppId = args.GetAppId();
         self.ClusterId = args.GetClusterId();
@@ -27,6 +25,4 @@ internal static class BasicPropertiesExtension {
 
         return self;
     }
-
-    #endregion
 }

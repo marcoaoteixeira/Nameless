@@ -15,7 +15,7 @@ public sealed class DeleteChecklistItemRequestHandler : IRequestHandler<DeleteCh
     #region Public Constructors
 
     public DeleteChecklistItemRequestHandler(IRepository<ChecklistItem> repository) {
-        _repository = Prevent.Argument.Null(repository, nameof(repository));
+        _repository = Prevent.Argument.Null(repository);
     }
 
     #endregion

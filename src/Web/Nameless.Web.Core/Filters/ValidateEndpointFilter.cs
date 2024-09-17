@@ -5,17 +5,20 @@ using Nameless.Validation.Abstractions;
 namespace Nameless.Web.Filters;
 
 public sealed class ValidateEndpointFilter : IEndpointFilter {
-    #region IEndpointFilter Members
-
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {
-        var validationService = context.HttpContext.RequestServices.GetService<IValidationService>();
+        var validationService = context.HttpContext
+                                       .RequestServices
+                                       .GetService<IValidationService>();
 
-        if (validationService is null) { return await next(context); }
+        if (validationService is null) {
+            return await next(context);
+        }
 
         var args = context.Arguments
-                          .Where(ValidateAttribute.Present);
+                          .Where(ValidateAttribute.IsPresent);
 
-        var cancellationToken = context.HttpContext.RequestAborted;
+        var cancellationToken = context.HttpContext
+                                       .RequestAborted;
 
         foreach (var arg in args) {
             if (arg is null) { continue; }
@@ -29,6 +32,4 @@ public sealed class ValidateEndpointFilter : IEndpointFilter {
 
         return await next(context);
     }
-
-    #endregion
 }

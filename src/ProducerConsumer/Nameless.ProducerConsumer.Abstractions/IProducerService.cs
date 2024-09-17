@@ -4,8 +4,6 @@
 /// Defines what a producer should do.
 /// </summary>
 public interface IProducerService {
-    #region Methods
-
     /// <summary>
     /// Produces a payload for a specific topic.
     /// </summary>
@@ -14,6 +12,4 @@ public interface IProducerService {
     /// <param name="args">The arguments.</param>
     /// <param name="cancellationToken"></param>
     Task ProduceAsync(string topic, object payload, ProducerArgs args, CancellationToken cancellationToken);
-
-    #endregion Methods
 }

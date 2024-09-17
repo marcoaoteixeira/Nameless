@@ -69,12 +69,12 @@ public sealed record Message {
     /// <paramref name="to"/> is empty array.
     /// </exception>
     public Message(string subject, string content, string[] from, string[] to, string? language = null, Encoding? encoding = null, MessageArgs? parameters = null, Priority priority = Priority.Normal) {
-        Subject = Prevent.Argument.NullOrWhiteSpace(subject, nameof(subject));
-        Content = Prevent.Argument.NullOrWhiteSpace(content, nameof(content));
+        Subject = Prevent.Argument.NullOrWhiteSpace(subject);
+        Content = Prevent.Argument.NullOrWhiteSpace(content);
         Language = language;
         Encoding = encoding ?? Root.Defaults.Encoding;
-        From = Prevent.Argument.NullOrEmpty(from, nameof(from));
-        To = Prevent.Argument.NullOrEmpty(to, nameof(to));
+        From = Prevent.Argument.NullOrEmpty(from);
+        To = Prevent.Argument.NullOrEmpty(to);
         Parameters = parameters ?? new MessageArgs();
         Priority = priority;
     }

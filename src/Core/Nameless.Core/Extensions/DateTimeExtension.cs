@@ -34,7 +34,7 @@ public static class DateTimeExtension {
     /// if <paramref name="holidays"/> is <c>null</c>.
     /// </exception>
     public static int GetFirstWorkingDay(int year, int month, int ordinal, params int[] holidays) {
-        Prevent.Argument.Null(holidays, nameof(holidays));
+        Prevent.Argument.Null(holidays);
 
         var day = 1;
         var workingDay = ordinal;

@@ -1,41 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public sealed class ProducerService : IProducerService {
-    #region Private Read-Only Fields
-
     private readonly IModel _channel;
     private readonly ILogger _logger;
 
-    #endregion
-
-    #region Public Constructors
-
     public ProducerService(IModel channel, ILogger<ProducerService> logger) {
-        _channel = Prevent.Argument.Null(channel, nameof(channel));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _channel = Prevent.Argument.Null(channel);
+        _logger = Prevent.Argument.Null(logger);
     }
-
-    #endregion
-
-    #region Private Static Methods
-
-    private static Envelope CreateEnvelope(object message, IBasicProperties properties)
-        => new(Message: message,
-               MessageId: properties.MessageId,
-               CorrelationId: properties.CorrelationId,
-               PublishedAt: DateTime.UtcNow);
-
-    private static IBasicProperties CreateProperties(IModel channel, ProducerArgs innerArgs)
-        => channel
-           .CreateBasicProperties()
-           .FillWith(innerArgs);
-
-    #endregion
-
-    #region IProducerService Members
 
     public Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default) {
         var innerArgs = args ?? ProducerArgs.Empty;
@@ -43,7 +19,8 @@ public sealed class ProducerService : IProducerService {
         var envelope = CreateEnvelope(message, properties);
 
         try {
-            var routingKeys = innerArgs.GetRoutingKeys().Append(topic);
+            var routingKeys = innerArgs.GetRoutingKeys()
+                                       .Append(topic);
             var batch = _channel.CreateBasicPublishBatch();
             var buffer = envelope.CreateBuffer();
 
@@ -56,10 +33,20 @@ public sealed class ProducerService : IProducerService {
             }
 
             batch.Publish();
-        } catch (Exception ex) { _logger.LogError(ex, "Error while publishing message."); throw; }
+        } catch (Exception ex) { LoggerHandlers.MessagePublishError(_logger, ex); throw; }
 
         return Task.CompletedTask;
     }
 
-    #endregion
+    private static Envelope CreateEnvelope(object message, IBasicProperties properties)
+        => new() {
+            Message = message,
+            MessageId = properties.MessageId,
+            CorrelationId = properties.CorrelationId,
+            PublishedAt = DateTime.UtcNow
+        };
+
+    private static IBasicProperties CreateProperties(IModel channel, ProducerArgs innerArgs)
+        => channel.CreateBasicProperties()
+                  .FillWith(innerArgs);
 }

@@ -4,8 +4,6 @@ namespace Nameless.ProducerConsumer;
 /// Defines what a consumer should do.
 /// </summary>
 public interface IConsumerService {
-    #region Methods
-
     /// <summary>
     /// Registers a handler to process a message for a specific topic.
     /// </summary>
@@ -21,6 +19,4 @@ public interface IConsumerService {
     /// <param name="registration">The registration.</param>
     /// <returns><c>true</c> if unregistered; otherwise, <c>false</c>.</returns>
     bool Unregister<T>(Registration<T> registration);
-
-    #endregion
 }

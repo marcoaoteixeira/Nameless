@@ -5,8 +5,6 @@ using Nameless.Security.Options;
 namespace Nameless.Security;
 
 public static class ServiceCollectionExtension {
-    #region Public Static Methods
-
     public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection self)
         => self.AddSingleton(RandomPasswordGenerator.Instance);
 
@@ -17,10 +15,8 @@ public static class ServiceCollectionExtension {
             configure?.Invoke(options.Value);
 
             return new RijndaelCryptographicService(
-                options: options.Value,
+                options: options,
                 logger: provider.GetLogger<RijndaelCryptographicService>()
             );
         });
-
-    #endregion
 }

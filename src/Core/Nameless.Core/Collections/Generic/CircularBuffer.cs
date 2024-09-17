@@ -51,7 +51,7 @@ public sealed class CircularBuffer<T> : ICircularBuffer<T> {
     /// <paramref name="capacity"/>.
     /// </exception>
     public CircularBuffer(int capacity, T[] items) {
-        Prevent.Argument.Null(items, nameof(items));
+        Prevent.Argument.Null(items);
 
         if (capacity < 1) {
             throw new ArgumentException("Cannot be lower than 1.", nameof(capacity));
@@ -95,16 +95,20 @@ public sealed class CircularBuffer<T> : ICircularBuffer<T> {
 
     /// <inheritdoc />
     public bool Contains(T element)
-        => IndexOf(element) != -1;
+        => IndexOf(element) > -1;
 
     /// <inheritdoc />
+    /// <remarks>
+    /// <see cref="IndexOf"/> will compare if there is an element
+    /// inside the buffer that is equal to the element specified using
+    /// <see cref="object.Equals(object?, object?)"/>.
+    /// </remarks>
     public int IndexOf(T element) {
         for (var index = 0; index < Count; index++) {
             if (Equals(this[index], element)) {
                 return index;
             }
         }
-
         return -1;
     }
 
@@ -113,13 +117,11 @@ public sealed class CircularBuffer<T> : ICircularBuffer<T> {
     /// if <paramref name="array"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// if the difference between <paramref name="array"/> length
-    /// and <paramref name="startIndex"/> were less than <see cref="Count"/>.
-    /// Meaning that the <paramref name="array"/> does not have enough
-    /// space for the current circular buffer items.
+    /// if <paramref name="array"/> does not have enough positions
+    /// to copy all elements from circular buffer.
     /// </exception>
     public void CopyTo(T[] array, int startIndex) {
-        Prevent.Argument.Null(array, nameof(array));
+        Prevent.Argument.Null(array);
 
         if (array.Length - startIndex < Count) {
             throw new InvalidOperationException("Array does not contain enough space for items");

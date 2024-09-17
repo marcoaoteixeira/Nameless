@@ -7,13 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 public sealed class SslOptions {
-    #region Public Static Read-Only Properties
-
     public static SslOptions Default => new();
-
-    #endregion
-
-    #region Public Properties
 
     public bool Enabled { get; set; }
 
@@ -26,10 +20,8 @@ public sealed class SslOptions {
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, members: [nameof(ServerName)])]
 #endif
-    public bool IsAvailable
+    internal bool IsAvailable
         => Enabled &&
            !string.IsNullOrWhiteSpace(ServerName) &&
            Protocol != SslProtocols.None;
-
-    #endregion
 }

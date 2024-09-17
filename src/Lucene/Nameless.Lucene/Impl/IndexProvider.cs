@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using Nameless.Helpers;
 using Nameless.Infrastructure;
-using Nameless.Lucene.Internals;
 using Nameless.Lucene.Options;
 using Polly;
 using Polly.Retry;
@@ -13,18 +13,16 @@ namespace Nameless.Lucene.Impl;
 /// </summary>
 public sealed class IndexProvider : IIndexProvider, IDisposable {
     private const int MAX_DELETE_INDEX_RETRY_ATTEMPTS = 3;
-    
-    private static readonly object SyncLock = new();
+    private const int THRESHOLD_TIME = 2000; // 2 seconds
 
     private readonly IApplicationContext _applicationContext;
     private readonly IAnalyzerProvider _analyzerProvider;
     private readonly ILogger<Index> _logger;
     private readonly LuceneOptions _options;
-
     private readonly RetryPolicy _deleteIndexRetryPolicy;
 
     private ConcurrentDictionary<string, IIndex> Cache { get; } = new(StringComparer.InvariantCultureIgnoreCase);
-    
+
     private bool _disposed;
 
     /// <summary>
@@ -35,17 +33,16 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     /// <param name="logger">The <see cref="ILogger{Index}"/> that will be passed to the Index when created.</param>
     /// <param name="options">The settings.</param>
     public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, ILogger<Index> logger, LuceneOptions options) {
-        _applicationContext = Prevent.Argument.Null(applicationContext, nameof(applicationContext));
-        _analyzerProvider = Prevent.Argument.Null(analyzerProvider, nameof(analyzerProvider));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
-        _options = Prevent.Argument.Null(options, nameof(options));
+        _applicationContext = Prevent.Argument.Null(applicationContext);
+        _analyzerProvider = Prevent.Argument.Null(analyzerProvider);
+        _logger = Prevent.Argument.Null(logger);
+        _options = Prevent.Argument.Null(options);
 
-        _deleteIndexRetryPolicy = Policy.Handle<Exception>(exception => {
-                                            LoggerHelper.DeleteIndexDirectory(_logger, exception);
-                                            return false;
-                                        })
+        // In case of IOException, wait and try again.
+        // Time will increase over attempts.
+        _deleteIndexRetryPolicy = Policy.Handle<IOException>()
                                         .WaitAndRetry(retryCount: MAX_DELETE_INDEX_RETRY_ATTEMPTS,
-                                                      sleepDurationProvider: retry => TimeSpan.FromSeconds(retry));
+                                                      sleepDurationProvider: retry => TimeSpan.FromMilliseconds(retry * THRESHOLD_TIME));
     }
 
     ~IndexProvider() {
@@ -53,55 +50,79 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     }
 
     /// <inheritdoc />
-    public void DeleteIndex(string indexName) {
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="name"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="name"/> is empty or white spaces.
+    /// </exception>
+    public void DeleteIndex(string name) {
         BlockAccessAfterDispose();
 
-        lock (SyncLock) {
-            // ReSharper disable once InconsistentNaming
-            const int MaxAttempts = 3;
+        Prevent.Argument.NullOrWhiteSpace(name);
 
-            // Get index directory path
-            var indexDirectoryPath = GetIndexDirectoryPath(indexName);
+        _deleteIndexRetryPolicy.Execute(() => {
+            var indexDirectoryPath = GetIndexDirectoryPath(name);
 
-            // Check if directory still exists.
-            if (!Directory.Exists(indexDirectoryPath)) { return; }
+            if (!Directory.Exists(indexDirectoryPath)) {
+                return;
+            }
 
-            _deleteIndexRetryPolicy.Execute(() => {
-                Directory.Delete(path: indexDirectoryPath, recursive: true);
-            });
+            Directory.Delete(path: indexDirectoryPath, recursive: true);
 
-            // Retry policy in case of failure
-            var count = 0;
-            do {
-                try {
-                    Directory.Delete(path: indexDirectoryPath, recursive: true);
-                    break;
-                } catch (Exception ex) {
-                    LoggerHelper.DeleteIndexDirectory(_logger, ex);
-                }
-            } while (++count < MaxAttempts);    
-        }
+            if (Cache.TryRemove(name, out var index) &&
+                index is IDisposable disposable) {
+                disposable.Dispose();
+            }
+        });
     }
 
     /// <inheritdoc />
-    public bool IndexExists(string indexName) {
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="name"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="name"/> is empty or white spaces.
+    /// </exception>
+    public bool IndexExists(string name) {
         BlockAccessAfterDispose();
 
-        return Cache.ContainsKey(indexName);
+        Prevent.Argument.NullOrWhiteSpace(name);
+
+        var indexDirectoryPath = GetIndexDirectoryPath(name);
+
+        return Directory.Exists(indexDirectoryPath);
     }
 
     /// <inheritdoc />
-    public IIndex GetOrCreateIndex(string indexName) {
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="name"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="name"/> is empty or white spaces.
+    /// </exception>
+    public IIndex CreateIndex(string name) {
         BlockAccessAfterDispose();
 
-        return Cache.GetOrAdd(indexName, Create);
+        Prevent.Argument.NullOrWhiteSpace(name);
+
+        return Cache.GetOrAdd(name, Create);
     }
 
     /// <inheritdoc />
     public IEnumerable<string> ListIndexes() {
         BlockAccessAfterDispose();
 
-        return Cache.Keys;
+        var rootPath = Path.Combine(_applicationContext.ApplicationDataFolderPath,
+                                    _options.IndexesFolderName);
+        var directories = Directory.GetDirectories(rootPath);
+
+        foreach (var directory in directories) {
+            var indexName = Path.GetFileName(directory);
+            if (indexName is not null) {
+                yield return indexName;
+            }
+        }
     }
 
     public void Dispose() {
@@ -135,12 +156,15 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
                                 _options.IndexesFolderName,
                                 indexName);
 
-        return Directory.CreateDirectory(path).FullName;
+        return PathHelper.Normalize(path);
     }
 
-    private Index Create(string indexName)
-        => new(analyzer: _analyzerProvider.GetAnalyzer(indexName),
-               indexDirectoryPath: GetIndexDirectoryPath(indexName),
-               logger: _logger,
-               name: indexName);
+    private Index Create(string indexName) {
+        var indexDirectoryPath = GetIndexDirectoryPath(indexName);
+        var directory = Directory.CreateDirectory(indexDirectoryPath);
+
+        return new Index(analyzer: _analyzerProvider.GetAnalyzer(indexName),
+                         indexDirectoryPath: directory.FullName,
+                         logger: _logger);
+    }
 }

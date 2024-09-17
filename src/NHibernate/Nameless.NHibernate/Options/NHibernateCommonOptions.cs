@@ -4,8 +4,6 @@ using Nameless.NHibernate.Objects;
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateCommonOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("dialect")]
     public string? Dialect { get; set; } = "NHibernate.Dialect.SQLiteDialect";
 
@@ -68,6 +66,4 @@ public sealed record NHibernateCommonOptions : NHibernateOptionsBase {
 
     [Description("sql_types.keep_datetime")]
     public bool? SqlTypesKeepDateTime { get; set; }
-
-    #endregion
 }

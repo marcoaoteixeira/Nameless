@@ -3,8 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record NHibernateTransactionOptions : NHibernateOptionsBase {
-    #region Public Properties
-
     [Description("transaction.factory_class")]
     public string? FactoryClass { get; set; }
 
@@ -13,6 +11,4 @@ public sealed record NHibernateTransactionOptions : NHibernateOptionsBase {
 
     [Description("transaction.system_completion_lock_timeout")]
     public int? SystemCompletionLockTimeout { get; set; }
-
-    #endregion
 }

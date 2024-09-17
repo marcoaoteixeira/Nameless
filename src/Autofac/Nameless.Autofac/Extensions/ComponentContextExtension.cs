@@ -24,7 +24,7 @@ public static class ComponentContextExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IComponentContext self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         var loggerFactory = self.ResolveOptional<ILoggerFactory>();
 
@@ -47,8 +47,8 @@ public static class ComponentContextExtension {
     /// if <paramref name="self"/> or <paramref name="categoryType"/> is <c>null</c>.
     /// </exception>
     public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(categoryType, nameof(categoryType));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(categoryType);
 
         var loggerFactory = self.ResolveOptional<ILoggerFactory>();
 
@@ -87,7 +87,7 @@ public static class ComponentContextExtension {
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> optionsFactory)
         where TOptions : class {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         // let's first check if our provider can resolve this option
         if (self.TryResolve<IOptions<TOptions>>(out var options)) {

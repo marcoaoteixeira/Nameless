@@ -29,27 +29,13 @@ namespace Nameless.Security;
 /// </summary>
 [Singleton]
 public sealed class RandomPasswordGenerator : IPasswordGenerator {
-    #region Public Static Read-Only Properties
-
     public static IPasswordGenerator Instance { get; } = new RandomPasswordGenerator();
-
-    #endregion
-
-    #region Static Constructors
 
     // Explicit static constructor to tell the C# compiler
     // not to mark type as beforefieldinit
     static RandomPasswordGenerator() { }
 
-    #endregion
-
-    #region Private Constructors
-
     private RandomPasswordGenerator() { }
-
-    #endregion
-
-    #region IPasswordGenerator Members
 
     public string Generate(PasswordOptions? options = null) {
         var opts = options ?? PasswordOptions.Default;
@@ -190,6 +176,4 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
         // Convert password characters into a string and return the result.
         return new string(password);
     }
-
-    #endregion
 }

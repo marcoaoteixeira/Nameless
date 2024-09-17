@@ -8,8 +8,6 @@ namespace Nameless.Web.Filters;
 /// if the incoming model is valid.
 /// </summary>
 public sealed class ValidateModelStateActionFilter : ActionFilterAttribute {
-    #region Public Override Methods
-
     /// <inheritdoc />
     public override void OnActionExecuting(ActionExecutingContext context) {
         if (context.ModelState.IsValid) { return; }
@@ -17,6 +15,4 @@ public sealed class ValidateModelStateActionFilter : ActionFilterAttribute {
         var errorCollection = context.ModelState.ToErrorCollection();
         context.Result = new BadRequestObjectResult(errorCollection);
     }
-
-    #endregion
 }

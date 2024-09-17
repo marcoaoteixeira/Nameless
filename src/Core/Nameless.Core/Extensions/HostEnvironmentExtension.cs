@@ -14,7 +14,8 @@ public static class HostEnvironmentExtension {
     /// <param name="self">The current instance that implements <see cref="IHostEnvironment"/>.</param>
     /// <returns><c>true</c> if the environment name is <see cref="DeveloperMachine"/>; otherwise <c>false</c>.</returns>
     public static bool IsDeveloperMachine(this IHostEnvironment self)
-        => Prevent.Argument.Null(self, nameof(self))
+        => Prevent.Argument
+                  .Null(self)
                   .IsEnvironment(DeveloperMachine);
 
     public static bool IsRunningOnContainer(this IHostEnvironment _)

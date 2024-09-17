@@ -22,8 +22,8 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     /// <paramref name="factory"/> is <c>null</c>.
     /// </exception>
     public PropertyResolveMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
-        _serviceType = Prevent.Argument.Null(serviceType, nameof(serviceType));
-        _factory = Prevent.Argument.Null(factory, nameof(factory));
+        _serviceType = Prevent.Argument.Null(serviceType);
+        _factory = Prevent.Argument.Null(factory);
     }
 
     /// <inheritdoc />
@@ -35,8 +35,8 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     /// <paramref name="next"/> is <c>null</c>.
     /// </exception>
     public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
-        Prevent.Argument.Null(context, nameof(context));
-        Prevent.Argument.Null(next, nameof(next));
+        Prevent.Argument.Null(context);
+        Prevent.Argument.Null(next);
 
         context.ChangeParameters(context.Parameters.Union(
                                      [

@@ -8,27 +8,13 @@ namespace Nameless.ProducerConsumer;
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public sealed class Registration<T> : IDisposable {
-    #region Private Read-Only Fields
-
     private readonly bool _isStatic;
-
-    #endregion
-
-    #region Private Fields
 
     private MethodInfo? _method;
     private WeakReference? _ref;
     private bool _disposed;
 
-    #endregion
-
-    #region Private Properties
-
     private string DebuggerDisplay => $"{{ \"Topic\": \"{Topic}\", \"Tag\": \"{Tag}\" }}";
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// Gets the registration's tag.
@@ -40,10 +26,6 @@ public sealed class Registration<T> : IDisposable {
     /// </summary>
     public string Topic { get; }
 
-    #endregion
-
-    #region Public Constructors
-
     /// <summary>
     /// Initializes a new instance of <see cref="Registration{T}"/>.
     /// </summary>
@@ -51,27 +33,19 @@ public sealed class Registration<T> : IDisposable {
     /// <param name="topic">The topic.</param>
     /// <param name="handler">The message handler.</param>
     public Registration(string tag, string topic, MessageHandler<T> handler) {
-        Prevent.Argument.Null(handler, nameof(handler));
+        Prevent.Argument.Null(handler);
 
-        Tag = Prevent.Argument.NullOrWhiteSpace(tag, nameof(tag));
-        Topic = Prevent.Argument.Null(topic, nameof(topic));
+        Tag = Prevent.Argument.NullOrWhiteSpace(tag);
+        Topic = Prevent.Argument.Null(topic);
 
         _method = handler.Method;
         _ref = new WeakReference(handler.Target);
         _isStatic = handler.Target is null;
     }
 
-    #endregion
-
-    #region Destructor
-
     ~Registration() {
         Dispose(disposing: false);
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// Creates a handler for the subscription.
@@ -92,12 +66,15 @@ public sealed class Registration<T> : IDisposable {
         return null;
     }
 
-    #endregion
-
-    #region Private Methods
+    /// <inheritdoc />
+    void IDisposable.Dispose() {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
     private MethodInfo GetMethod()
         => _method ?? throw new ArgumentNullException(nameof(_method));
+
     private WeakReference GetRef()
         => _ref ?? throw new ArgumentNullException(nameof(_ref));
 
@@ -116,16 +93,4 @@ public sealed class Registration<T> : IDisposable {
 
         _disposed = true;
     }
-
-    #endregion
-
-    #region IDisposable Members
-
-    /// <inheritdoc />
-    void IDisposable.Dispose() {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
-    #endregion
 }

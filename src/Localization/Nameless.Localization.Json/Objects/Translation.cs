@@ -18,8 +18,8 @@ public sealed record Translation {
         => $"Culture: {Culture}";
 
     public Translation(string culture, Region[] regions) {
-        Culture = Prevent.Argument.Null(culture, nameof(culture));
-        Regions = Prevent.Argument.Null(regions, nameof(regions));
+        Culture = Prevent.Argument.Null(culture);
+        Regions = Prevent.Argument.Null(regions);
     }
 
     public bool TryGetRegion(string name, [NotNullWhen(returnValue: true)] out Region? output) {

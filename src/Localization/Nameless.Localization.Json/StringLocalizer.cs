@@ -14,11 +14,11 @@ public sealed class StringLocalizer : IStringLocalizer {
     public string Location => $"{_culture}::{_resourceName}::{_resourcePath}";
 
     public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, Region region, Func<CultureInfo, string, string, IStringLocalizer> factory) {
-        _culture = Prevent.Argument.Null(culture, nameof(culture));
-        _resourceName = Prevent.Argument.NullOrWhiteSpace(resourceName, nameof(resourceName));
-        _resourcePath = Prevent.Argument.NullOrWhiteSpace(resourcePath, nameof(resourcePath));
-        _region = Prevent.Argument.Null(region, nameof(region));
-        _factory = Prevent.Argument.Null(factory, nameof(factory));
+        _culture = Prevent.Argument.Null(culture);
+        _resourceName = Prevent.Argument.NullOrWhiteSpace(resourceName);
+        _resourcePath = Prevent.Argument.NullOrWhiteSpace(resourcePath);
+        _region = Prevent.Argument.Null(region);
+        _factory = Prevent.Argument.Null(factory);
     }
 
     public LocalizedString this[string name]

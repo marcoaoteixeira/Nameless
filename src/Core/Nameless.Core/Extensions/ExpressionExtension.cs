@@ -21,7 +21,7 @@ public static class ExpressionExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static string GetExpressionPath(this LambdaExpression self) {
-        Prevent.Argument.Null(self, nameof(self));
+        Prevent.Argument.Null(self);
 
         // Determine size of string needed (length) and number of segments it contains
         // (segmentCount). Put another way, segmentCount tracks the number of times the
@@ -198,8 +198,8 @@ public static class ExpressionExtension {
     /// <paramref name="expression"/> is <c>null</c>.
     /// </exception>
     public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> expression) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(expression, nameof(expression));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(expression);
 
         var param = Expression.Parameter(typeof(T), Root.Separators.UNDERSCORE);
         var body = Expression.And(
@@ -221,8 +221,8 @@ public static class ExpressionExtension {
     /// or <paramref name="expression"/> is <c>null</c>.
     /// </exception>
     public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> expression) {
-        Prevent.Argument.Null(self, nameof(self));
-        Prevent.Argument.Null(expression, nameof(expression));
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(expression);
 
         var param = Expression.Parameter(typeof(T), Root.Separators.UNDERSCORE);
         var body = Expression.Or(

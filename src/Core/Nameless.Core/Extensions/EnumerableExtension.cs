@@ -33,7 +33,7 @@ public static class EnumerableExtension {
     /// <paramref name="action"/> is <c>null</c>.
     /// </exception>
     public static void Each<T>(this IEnumerable<T> self, Action<T, int> action) {
-        Prevent.Argument.Null(action, nameof(action));
+        Prevent.Argument.Null(action);
 
         var counter = 0;
         using var enumerator = self.GetEnumerator();
@@ -65,7 +65,7 @@ public static class EnumerableExtension {
     /// <paramref name="action"/> is <c>null</c>.
     /// </exception>
     public static void Each(this IEnumerable self, Action<object?, int> action) {
-        Prevent.Argument.Null(action, nameof(action));
+        Prevent.Argument.Null(action);
 
         var counter = 0;
         var enumerator = self.GetEnumerator();
@@ -115,7 +115,7 @@ public static class EnumerableExtension {
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
     public static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> self)
-        => new(Prevent.Argument.Null(self, nameof(self)).ToList());
+        => new(Prevent.Argument.Null(self).ToList());
 
     /// <summary>
     /// Selects distinct the self <see cref="IEnumerable{T}"/> by an expression.
@@ -130,10 +130,10 @@ public static class EnumerableExtension {
     /// <paramref name="keySelector"/> is <c>null</c>.
     /// </exception>
     public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> self, Func<TSource, TKey> keySelector) {
-        Prevent.Argument.Null(keySelector, nameof(keySelector));
+        Prevent.Argument.Null(keySelector);
 
         var seenKeys = new HashSet<TKey>();
-        foreach (var element in Prevent.Argument.Null(self, nameof(self))) {
+        foreach (var element in Prevent.Argument.Null(self)) {
             if (seenKeys.Add(keySelector(element))) {
                 yield return element;
             }
@@ -153,7 +153,7 @@ public static class EnumerableExtension {
     /// </exception>
     public static IEnumerable<(int Index, T Item)> WithIndex<T>(this IEnumerable<T> self) {
         var counter = 0;
-        foreach (var element in Prevent.Argument.Null(self, nameof(self))) {
+        foreach (var element in Prevent.Argument.Null(self)) {
             yield return (counter++, element);
         }
     }

@@ -3,21 +3,11 @@
 namespace Nameless.Security.Options;
 
 public sealed record RijndaelCryptoOptions {
-    #region Public Constants
-
     public const int MAXIMUM_ALLOWED_SALT_SIZE = 255;
     public const int MINIMUM_ALLOWED_SALT_SIZE = 4;
     public const int MINIMUM_PASSWORD_ITERATIONS = 1;
 
-    #endregion
-
-    #region Public Static Read-Only Properties
-
     public static RijndaelCryptoOptions Default => new();
-
-    #endregion
-
-    #region Public Properties
 
     /// <summary>
     /// Gets the pass phrase.
@@ -37,7 +27,7 @@ public sealed record RijndaelCryptoOptions {
     /// </summary>
     private string? _iv;
     public string IV {
-        get => _iv ??= Root.Defaults.RIJNDAEL_IV;
+        get => _iv.WithFallback(Root.Defaults.RIJNDAEL_IV);
         set => _iv = value;
     }
     /// <summary>
@@ -48,7 +38,7 @@ public sealed record RijndaelCryptoOptions {
     /// </summary>
     private string? _salt;
     public string Salt {
-        get => _salt ??= Root.Defaults.RIJNDAEL_SALT;
+        get => _salt.WithFallback(Root.Defaults.RIJNDAEL_SALT);
         set => _salt = value;
     }
     /// <summary>
@@ -92,6 +82,4 @@ public sealed record RijndaelCryptoOptions {
             ? value
             : MINIMUM_PASSWORD_ITERATIONS;
     }
-
-    #endregion
 }

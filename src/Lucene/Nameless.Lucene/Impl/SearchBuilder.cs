@@ -22,7 +22,7 @@ public sealed class SearchBuilder : ISearchBuilder {
 
     private bool _asFilter;
     private bool _sortDescending;
-    private long _count;
+    private int _count;
     private int _skip;
     private SortFieldType _comparer;
     private string _sort;
@@ -41,8 +41,8 @@ public sealed class SearchBuilder : ISearchBuilder {
     /// <param name="indexReader">An instance of <see cref="IndexReader"/>.</param>
     /// <param name="analyzer">The analyzer provider.</param>
     public SearchBuilder(Analyzer analyzer, IndexReader indexReader) {
-        _analyzer = Prevent.Argument.Null(analyzer, nameof(analyzer));
-        Prevent.Argument.Null(indexReader, nameof(indexReader));
+        _analyzer = Prevent.Argument.Null(analyzer);
+        Prevent.Argument.Null(indexReader);
 
         _indexSearcher = new IndexSearcher(indexReader);
         _count = MAX_RESULTS;
@@ -56,8 +56,8 @@ public sealed class SearchBuilder : ISearchBuilder {
 
     /// <inheritdoc />
     public ISearchBuilder Parse(string query, bool escape = true, params string[] defaultFields) {
-        Prevent.Argument.NullOrWhiteSpace(query, nameof(query));
-        Prevent.Argument.NullOrEmpty(defaultFields, nameof(defaultFields));
+        Prevent.Argument.NullOrWhiteSpace(query);
+        Prevent.Argument.NullOrEmpty(defaultFields);
 
         if (escape) { query = QueryParserBase.Escape(query); }
 
@@ -362,10 +362,10 @@ public sealed class SearchBuilder : ISearchBuilder {
         var filter = new QueryWrapperFilter(query);
         var context = (AtomicReaderContext)_indexSearcher.IndexReader.Context;
         var bits = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-        var documentSetIDInterator = new OpenBitSetDISI(disi: bits.GetIterator(),
-                                                        maxSize: _indexSearcher.IndexReader.MaxDoc);
+        var documentSetIDIterator = new OpenBitSetDISI(disi: bits.GetIterator(),
+                                                       maxSize: _indexSearcher.IndexReader.MaxDoc);
 
-        return new SearchBit(documentSetIDInterator);
+        return new SearchBit(documentSetIDIterator);
     }
 
     /// <inheritdoc />

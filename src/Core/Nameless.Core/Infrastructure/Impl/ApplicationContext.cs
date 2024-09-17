@@ -51,7 +51,7 @@ public sealed class ApplicationContext : IApplicationContext {
     /// </param>
     /// <param name="applicationVersion">The application version.</param>
     public ApplicationContext(IHostEnvironment hostEnvironment, bool useSpecialFolder = true, Version? applicationVersion = null) {
-        Prevent.Argument.Null(hostEnvironment, nameof(hostEnvironment));
+        Prevent.Argument.Null(hostEnvironment);
 
         EnvironmentName = hostEnvironment.EnvironmentName;
         ApplicationName = hostEnvironment.ApplicationName;

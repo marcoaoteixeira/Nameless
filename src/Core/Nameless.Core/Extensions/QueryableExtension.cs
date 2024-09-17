@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Nameless.Collections.Generic;
 
 namespace Nameless;
 
@@ -6,6 +7,28 @@ namespace Nameless;
 /// <see cref="IQueryable{T}"/> extension methods.
 /// </summary>
 public static class QueryableExtension {
+    /// <summary>
+    /// Returns the current <see cref="IQueryable{T}"/> as a <see cref="IPaginable{T}"/> object.
+    /// </summary>
+    /// <typeparam name="T">Type of the query items.</typeparam>
+    /// <param name="self">The current <see cref="IQueryable{T}"/></param>
+    /// <param name="pageSize">The page size.</param>
+    /// <returns>
+    /// A <see cref="IPaginable{T}"/> object
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// if <paramref name="pageSize"/> is lower or equal to 0 (zero).
+    /// </exception>
+    public static IPaginable<T> AsPaginable<T>(this IQueryable<T> self, int pageSize) {
+        Prevent.Argument.Null(self);
+        Prevent.Argument.LowerOrEqual(pageSize, to: 0);
+        
+        return new Paginable<T>(self, pageSize);
+    }
+
     /// <summary>
     /// Orders the queryable result, ascending, by the specified property name that
     /// is present in the queryable type.
@@ -27,7 +50,7 @@ public static class QueryableExtension {
     /// </exception>
     public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> self, string propertyName)
         where T : class
-        => InnerOrderBy(queryable: Prevent.Argument.Null(self, nameof(self)),
+        => InnerOrderBy(queryable: Prevent.Argument.Null(self),
                         propertyName: propertyName,
                         ascending: true);
 
@@ -51,7 +74,7 @@ public static class QueryableExtension {
     /// </exception>
     public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> self, string propertyName)
         where T : class
-        => InnerOrderBy(queryable: Prevent.Argument.Null(self, nameof(self)),
+        => InnerOrderBy(queryable: Prevent.Argument.Null(self),
                         propertyName: propertyName,
                         ascending: false);
 
@@ -60,7 +83,7 @@ public static class QueryableExtension {
         var type = typeof(T);
         var property = type.GetProperty(propertyName)
                     ?? throw new MissingMemberException($"Property \"{propertyName}\" not found in type {typeof(T).FullName}.");
-        var parameter = Expression.Parameter(type, "_");
+        var parameter = Expression.Parameter(type, Root.Separators.UNDERSCORE);
         var propertyAccess = Expression.MakeMemberAccess(parameter, property);
         var propertyExpression = Expression.Lambda(propertyAccess, parameter);
         var queryableMethodName = ascending

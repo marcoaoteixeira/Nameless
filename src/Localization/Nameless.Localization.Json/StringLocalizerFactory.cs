@@ -10,8 +10,8 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     private readonly ITranslationManager _translationManager;
 
     public StringLocalizerFactory(ICultureContext cultureContext, ITranslationManager translationManager) {
-        _cultureContext = Prevent.Argument.Null(cultureContext, nameof(cultureContext));
-        _translationManager = Prevent.Argument.Null(translationManager, nameof(translationManager));
+        _cultureContext = Prevent.Argument.Null(cultureContext);
+        _translationManager = Prevent.Argument.Null(translationManager);
     }
 
     public IStringLocalizer Create(Type resourceSource)

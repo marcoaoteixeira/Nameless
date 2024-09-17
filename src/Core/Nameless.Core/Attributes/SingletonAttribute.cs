@@ -5,29 +5,32 @@ namespace Nameless;
 
 /// <summary>
 /// Classes marked with <see cref="SingletonAttribute"/> were expected to
-/// have a static property that will provide the current instance of the
-/// class. See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
+/// be implemented as Singleton Object Pattern.
+/// Must have a static property that will provide the current instance of
+/// the class.
+/// For more information, see <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Object Pattern on Wikipedia</a>
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class SingletonAttribute : Attribute {
     /// <summary>
-    /// Gets the default accessor name for the singleton class.
+    /// The default accessor name for the singleton class.
     /// </summary>
-    public static readonly string DefaultAccessorName = "Instance";
+    public const string DEFAULT_ACCESSOR_NAME = "Instance";
 
-    private string _accessorName = DefaultAccessorName;
+    private string _accessorName = DEFAULT_ACCESSOR_NAME;
 
     /// <summary>
     /// Gets or sets the name of the property that will be used to get
-    /// the singleton instance of the annotated class.
+    /// the singleton instance of the annotated class. This property
+    /// must have public accessibility and be static.
     /// <br /><br />
-    /// <strong>Note:</strong> if no accessor name is provided, that it will use
-    /// the <see cref="DefaultAccessorName"/>.
-    /// This rule applies to <c>null</c> or <see cref="string.Empty"/>.
+    /// <strong>Note:</strong> if no accessor name is provided, it will use
+    /// the <see cref="DEFAULT_ACCESSOR_NAME"/>.
+    /// This rule applies to <c>null</c>, <see cref="string.Empty"/> or white spaces.
     /// </summary>
     public string AccessorName {
-        get => _accessorName;
-        set => _accessorName = value.WithFallback(DefaultAccessorName);
+        get => _accessorName.WithFallback(DEFAULT_ACCESSOR_NAME);
+        set => _accessorName = value;
     }
 
     /// <summary>
@@ -52,7 +55,7 @@ public sealed class SingletonAttribute : Attribute {
     /// if <paramref name="type"/> is <c>null</c>.
     /// </exception>
     public static object? GetInstance(Type type) {
-        Prevent.Argument.Null(type, nameof(type));
+        Prevent.Argument.Null(type);
 
         if (!TryGetAttribute(type, out var attr)) { return null; }
 
@@ -68,7 +71,7 @@ public sealed class SingletonAttribute : Attribute {
 
     private static bool TryGetAccessorProperty(Type type, string accessorName, [NotNullWhen(true)] out PropertyInfo? accessor) {
         var currentAccessor = string.IsNullOrWhiteSpace(accessorName)
-            ? DefaultAccessorName
+            ? DEFAULT_ACCESSOR_NAME
             : accessorName;
         accessor = type.GetProperty(name: currentAccessor,
                                     bindingAttr: BindingFlags.Public | BindingFlags.Static);

@@ -28,8 +28,8 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
     /// <param name="dbConnectionFactory">The database connection factory.</param>
     /// <param name="logger">The logger.</param>
     public DatabaseService(IDbConnectionFactory dbConnectionFactory, ILogger<DatabaseService> logger) {
-        _dbConnectionFactory = Prevent.Argument.Null(dbConnectionFactory, nameof(dbConnectionFactory));
-        _logger = Prevent.Argument.Null(logger, nameof(logger));
+        _dbConnectionFactory = Prevent.Argument.Null(dbConnectionFactory);
+        _logger = Prevent.Argument.Null(logger);
     }
 
     ~DatabaseService() {
@@ -47,13 +47,13 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
     public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text, nameof(text));
+        Prevent.Argument.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
-            LoggerHelper.ErrorOnNonQueryExecution(_logger, ex.Message, ex);
+            LoggerHandlers.ErrorOnNonQueryExecution(_logger, ex.Message, ex);
             throw;
         }
     }
@@ -62,14 +62,14 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
     public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text, nameof(text));
+        Prevent.Argument.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
         IDataReader reader;
         try { reader = command.ExecuteReader(); }
         catch (Exception ex) {
-            LoggerHelper.ErrorOnReaderExecution(_logger, ex.Message, ex);
+            LoggerHandlers.ErrorOnReaderExecution(_logger, ex.Message, ex);
             throw;
         }
         using (reader) {
@@ -83,13 +83,13 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
     public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text, nameof(text));
+        Prevent.Argument.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
         try { return (TResult?)command.ExecuteScalar(); }
         catch (Exception ex) {
-            LoggerHelper.ErrorOnScalarExecution(_logger, ex.Message, ex);
+            LoggerHandlers.ErrorOnScalarExecution(_logger, ex.Message, ex);
             throw;
         }
     }
@@ -144,7 +144,7 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
             );
         }
 
-        LoggerHelper.DebugDbCommand(_logger,
+        LoggerHandlers.DebugDbCommand(_logger,
                                     command.CommandText,
                                     command.GetParameterList(),
                                     null /* exception */);

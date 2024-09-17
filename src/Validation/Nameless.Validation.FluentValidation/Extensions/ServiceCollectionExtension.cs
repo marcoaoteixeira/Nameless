@@ -7,8 +7,6 @@ using Nameless.Validation.FluentValidation.Impl;
 namespace Nameless.Validation.FluentValidation;
 
 public static class ServiceCollectionExtension {
-    #region Public Static Methods
-
     public static IServiceCollection RegisterValidationService(this IServiceCollection self, params Assembly[] supportAssemblies) {
         // Scan and register validators.
         AssemblyScanner.FindValidatorsInAssemblies(supportAssemblies)
@@ -18,6 +16,4 @@ public static class ServiceCollectionExtension {
         return self.AddSingleton<IValidationService>(provider => new ValidationService(validators: provider.GetServices<IValidator>(),
                                                                                        logger: provider.GetLogger<ValidationService>()));
     }
-
-    #endregion
 }

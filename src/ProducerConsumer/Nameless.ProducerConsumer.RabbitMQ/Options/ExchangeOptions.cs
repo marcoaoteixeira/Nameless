@@ -1,21 +1,11 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 public sealed record ExchangeOptions {
-    #region Public Static Read-Only Fields
-
     public static ExchangeOptions Default => new();
-
-    #endregion
-
-    #region Private Fields
 
     private Dictionary<string, object>? _arguments;
     private QueueOptions[]? _queues;
     private string? _name;
-
-    #endregion
-
-    #region Public Properties
 
     public string Name {
         get => _name ??= Root.Defaults.EXCHANGE_NAME;
@@ -37,6 +27,4 @@ public sealed record ExchangeOptions {
         get => _queues ??= [];
         set => _queues = value;
     }
-
-    #endregion
 }
