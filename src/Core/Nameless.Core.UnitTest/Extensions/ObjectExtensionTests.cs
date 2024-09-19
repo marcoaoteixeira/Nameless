@@ -1,35 +1,35 @@
 ﻿using Nameless.Fixtures;
 
-namespace Nameless {
-    public class ObjectExtensionTests {
-        [Test]
-        public void IsAnonymous_Should_Returns_True_If_Anonymous_Object_Instance() {
-            // arrange
-            var obj = new {
-                Id = 1,
-                Name = "John Wick"
-            };
+namespace Nameless;
 
-            // act
-            var actual = ObjectExtension.IsAnonymous(obj);
+public class ObjectExtensionTests {
+    [Test]
+    public void IsAnonymous_Should_Returns_True_If_Anonymous_Object_Instance() {
+        // arrange
+        var obj = new {
+            Id = 1,
+            Name = "John Wick"
+        };
 
-            // assert
-            Assert.That(actual, Is.True);
-        }
+        // act
+        var actual = ObjectExtension.IsAnonymous(obj);
 
-        [Test]
-        public void IsAnonymous_Should_Returns_False_If_Class_Instance() {
-            // arrange
-            var obj = new Student {
-                Age = 50,
-                Name = "John Wick"
-            };
+        // assert
+        Assert.That(actual, Is.True);
+    }
 
-            // act
-            var actual = ObjectExtension.IsAnonymous(obj);
+    [Test]
+    public void IsAnonymous_Should_Returns_False_If_Class_Instance() {
+        // arrange
+        var obj = new Student {
+            Age = 50,
+            Name = "John Wick"
+        };
 
-            // assert
-            Assert.That(actual, Is.False);
-        }
+        // act
+        var actual = ObjectExtension.IsAnonymous(obj);
+
+        // assert
+        Assert.That(actual, Is.False);
     }
 }

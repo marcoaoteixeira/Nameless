@@ -1,92 +1,80 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace Nameless.Infrastructure.Impl {
-    public sealed class ApplicationContext : IApplicationContext {
-        #region Public Constructors
+namespace Nameless.Infrastructure.Impl;
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="ApplicationContext"/>
-        /// </summary>
-        /// <param name="hostEnvironment">The host environment.</param>
-        /// <param name="useSpecialFolder">
-        /// If <c>true</c>, <see cref="ApplicationDataFolderPath"/> will point to:
-        /// <list type="bullet">
-        ///     <item>
-        ///         <term>Windows</term>
-        ///         <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
-        ///     </item>
-        ///     <item>
-        ///         <term>Linux</term>
-        ///         <description>/CURRENT_USER/.local/share/APPLICATION_NAME</description>
-        ///     </item>
-        /// </list>
-        /// Otherwise, will point to <see cref="ApplicationBasePath"/> + "App_Data"
-        /// </param>
-        /// <param name="applicationVersion">The application version.</param>
-        public ApplicationContext(IHostEnvironment hostEnvironment, bool useSpecialFolder = true, Version? applicationVersion = null) {
-            Guard.Against.Null(hostEnvironment, nameof(hostEnvironment));
+public sealed class ApplicationContext : IApplicationContext {
+    /// <summary>
+    /// Gets the environment name. (e.g. Development, Production etc)
+    /// See <see cref="IHostEnvironment.EnvironmentName"/>
+    /// </summary>
+    public string EnvironmentName { get; }
 
-            EnvironmentName = hostEnvironment.EnvironmentName;
-            ApplicationName = hostEnvironment.ApplicationName;
+    /// <summary>
+    /// Gets the application name.
+    /// See <see cref="IHostEnvironment.ApplicationName"/>.
+    /// </summary>
+    public string ApplicationName { get; }
 
-            ApplicationDataFolderPath = BuildApplicationDataFolderPath(ApplicationName, ApplicationBasePath, useSpecialFolder);
+    /// <summary>
+    /// Gets the base path of the application. This will always be
+    /// the current location of the application assembly.
+    /// </summary>
+    public string ApplicationBasePath { get; }
 
-            var version = applicationVersion ?? new Version(major: 0, minor: 0, build: 0);
-            SemVer = $"v{version.Major}.{version.Minor}.{version.Build}";
-        }
+    /// <summary>
+    /// Gets the application data folder.
+    /// </summary>
+    public string ApplicationDataFolderPath { get; }
 
-        #endregion
+    /// <summary>
+    /// Gets the semantic version of the application.
+    /// </summary>
+    public string SemVer { get; }
 
-        #region Private Static Methods
+    /// <summary>
+    /// Initializes a new instance of <see cref="ApplicationContext"/>
+    /// </summary>
+    /// <param name="hostEnvironment">The host environment.</param>
+    /// <param name="useSpecialFolder">
+    /// If <c>true</c>, <see cref="ApplicationDataFolderPath"/> will point to:
+    /// <list type="bullet">
+    ///     <item>
+    ///         <term>Windows</term>
+    ///         <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
+    ///     </item>
+    ///     <item>
+    ///         <term>Linux</term>
+    ///         <description>/CURRENT_USER/.local/share/APPLICATION_NAME</description>
+    ///     </item>
+    /// </list>
+    /// Otherwise, will point to <see cref="ApplicationBasePath"/> + "App_Data"
+    /// </param>
+    /// <param name="applicationVersion">The application version.</param>
+    public ApplicationContext(IHostEnvironment hostEnvironment, bool useSpecialFolder = true, Version? applicationVersion = null) {
+        Prevent.Argument.Null(hostEnvironment);
 
-        private static string BuildApplicationDataFolderPath(string applicationName, string basePath, bool useSpecialFolder) {
-            var specialFolder = Environment.GetFolderPath(
-                folder: Environment.SpecialFolder.LocalApplicationData
-            );
+        EnvironmentName = hostEnvironment.EnvironmentName;
+        ApplicationName = hostEnvironment.ApplicationName;
+        ApplicationBasePath = AppDomain.CurrentDomain.BaseDirectory;
 
-            var result = useSpecialFolder
-                ? Path.Combine(specialFolder, applicationName)
-                : Path.Combine(basePath, "App_Data");
+        ApplicationDataFolderPath = BuildApplicationDataFolderPath(ApplicationName, ApplicationBasePath, useSpecialFolder);
 
-            // Ensure directory exists
-            try { Directory.CreateDirectory(result); }
-            catch (Exception ex) { Console.WriteLine(ex); }
+        var version = applicationVersion ?? new Version(major: 0, minor: 0, build: 0);
+        SemVer = $"v{version.Major}.{version.Minor}.{version.Build}";
+    }
 
-            return result;
-        }
+    private static string BuildApplicationDataFolderPath(string applicationName, string basePath, bool useSpecialFolder) {
+        var specialFolder = Environment.GetFolderPath(
+            folder: Environment.SpecialFolder.LocalApplicationData
+        );
 
-        #endregion
+        var result = useSpecialFolder
+            ? Path.Combine(specialFolder, applicationName)
+            : Path.Combine(basePath, "App_Data");
 
-        #region IApplicationContext Members
+        // Ensure directory exists
+        try { Directory.CreateDirectory(result); } catch (Exception ex) { Console.WriteLine(ex); }
 
-        /// <summary>
-        /// Gets the environment name. (e.g. Development, Production etc)
-        /// See <see cref="IHostEnvironment.EnvironmentName"/>
-        /// </summary>
-        public string EnvironmentName { get; }
-
-        /// <summary>
-        /// Gets the application name.
-        /// See <see cref="IHostEnvironment.ApplicationName"/>.
-        /// </summary>
-        public string ApplicationName { get; }
-
-        /// <summary>
-        /// Gets the base path of the application. This will always be
-        /// the current location of the application assembly.
-        /// </summary>
-        public string ApplicationBasePath => AppDomain.CurrentDomain.BaseDirectory;
-
-        /// <summary>
-        /// Gets the application data folder.
-        /// </summary>
-        public string ApplicationDataFolderPath { get; }
-
-        /// <summary>
-        /// Gets the semantic version of the application.
-        /// </summary>
-        public string SemVer { get; }
-
-        #endregion
+        return result;
     }
 }

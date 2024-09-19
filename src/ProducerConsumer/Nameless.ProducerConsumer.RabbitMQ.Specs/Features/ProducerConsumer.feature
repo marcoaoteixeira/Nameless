@@ -6,7 +6,6 @@ Link to a feature: [ProducerConsumer](Nameless.ProducerConsumer.RabbitMQ.Specs/F
 
 @RunsOnDevMachine
 Scenario: Produce And Consume Message
-	Given that I have the correct infrastructure for sending messages
-	And the message value will be "This is a test message"
-	When I call ProducerService ProduceAsync with that said message
-	Then the handler created by ConsumerService Register should capture the message
+	Given there is a RabbitMQ instance configured
+	When we produce a OrderStartedEvent message with and ID and Date
+	Then the ConsumerService should receive the message and call its handler

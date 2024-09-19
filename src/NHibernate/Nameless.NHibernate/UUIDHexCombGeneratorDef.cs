@@ -1,48 +1,33 @@
 ﻿using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate {
+namespace Nameless.NHibernate;
+
+/// <summary>
+/// UUID hex comb implementation for <see cref="IGeneratorDef"/>.
+/// It uses singleton pattern. See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
+/// </summary>
+[Singleton]
+public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
     /// <summary>
-    /// Singleton Pattern implementation for <see cref="UUIDHexCombGeneratorDef" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
+    /// Gets the unique instance of <see cref="UUIDHexCombGeneratorDef" />.
     /// </summary>
-    [Singleton]
-    public sealed class UUIDHexCombGeneratorDef : IGeneratorDef {
-        #region Public Static Properties
+    public static IGeneratorDef Instance { get; } = new UUIDHexCombGeneratorDef();
 
-        /// <summary>
-        /// Gets the unique instance of <see cref="UUIDHexCombGeneratorDef" />.
-        /// </summary>
-        public static IGeneratorDef Instance { get; } = new UUIDHexCombGeneratorDef();
+    /// <inheritdoc />
+    public string Class => "uuid.hex";
 
-        #endregion
+    /// <inheritdoc />
+    public object Params => new { format = "D" };
 
-        #region Static Constructors
+    /// <inheritdoc />
+    public Type DefaultReturnType => typeof(string);
 
-        // Explicit static constructor to tell the C# compiler
-        // not to mark type as beforefieldinit
-        static UUIDHexCombGeneratorDef() { }
+    /// <inheritdoc />
+    public bool SupportedAsCollectionElementId => false;
 
-        #endregion
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
+    static UUIDHexCombGeneratorDef() { }
 
-        #region Private Constructors
-
-        private UUIDHexCombGeneratorDef() { }
-
-        #endregion
-
-        #region IGeneratorDef Members
-
-        /// <inheritdoc />
-        public string Class => "uuid.hex";
-
-        /// <inheritdoc />
-        public object Params => new { format = "D" };
-
-        /// <inheritdoc />
-        public Type DefaultReturnType => typeof(string);
-
-        /// <inheritdoc />
-        public bool SupportedAsCollectionElementId => false;
-
-        #endregion
-    }
+    private UUIDHexCombGeneratorDef() { }
 }

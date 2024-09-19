@@ -1,26 +1,21 @@
-﻿using Nameless.Web.Services;
+﻿using System.Reflection;
+using Nameless.Web.Auth;
 
-namespace Nameless.Web {
-    public static class JwtClaimsExtension {
-        #region Public Static Methods
+namespace Nameless.Web;
 
-        public static Dictionary<string, object> ToDictionary(this JwtClaims self) {
-            var properties = typeof(JwtClaims).GetProperties();
-            var result = new Dictionary<string, object>();
-            foreach (var property in properties) {
-                var value = property.GetValue(self);
-                if (value is null) {
-                    continue;
-                }
+public static class JwtClaimsExtension {
+    public static Dictionary<string, object> ToDictionary(this JwtClaims self) {
+        Prevent.Argument.Null(self);
 
-                var description = property.GetDescription()
-                    ?? property.Name;
-
-                result[description] = value;
+        var properties = typeof(JwtClaims).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        var result = new Dictionary<string, object>();
+        foreach (var property in properties) {
+            var value = property.GetValue(self);
+            if (value is null) {
+                continue;
             }
-            return result;
+            result[property.GetDescription()] = value;
         }
-
-        #endregion
+        return result;
     }
 }

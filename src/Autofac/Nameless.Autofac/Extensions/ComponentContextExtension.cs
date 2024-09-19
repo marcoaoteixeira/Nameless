@@ -2,53 +2,114 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using CoreRoot = Nameless.Root;
+using Microsoft.Extensions.Options;
 
-namespace Nameless.Autofac {
-    public static class ComponentContextExtension {
-        #region Public Static Methods
+namespace Nameless.Autofac;
 
-        public static ILogger<T> GetLogger<T>(this IComponentContext self) {
-            var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+/// <summary>
+/// <see cref="IComponentContext"/> extension methods.
+/// </summary>
+public static class ComponentContextExtension {
+    /// <summary>
+    /// Retrieves an instance of <see cref="ILogger{TCategoryName}"/>
+    /// from the current <see cref="IComponentContext"/>.
+    /// </summary>
+    /// <typeparam name="TCategoryName">Type of the logger category.</typeparam>
+    /// <param name="self">The current <see cref="IComponentContext"/></param>
+    /// <returns>
+    /// An instance of <see cref="ILogger{TCategoryName}"/>, if <see cref="ILoggerFactory"/>
+    /// is available, otherwise; <see cref="NullLogger{T}"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> is <c>null</c>.
+    /// </exception>
+    public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IComponentContext self) {
+        Prevent.Argument.Null(self);
 
-            return loggerFactory is not null
-                ? loggerFactory.CreateLogger<T>()
-                : NullLogger<T>.Instance;
+        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+
+        return loggerFactory is not null
+            ? loggerFactory.CreateLogger<TCategoryName>()
+            : NullLogger<TCategoryName>.Instance;
+    }
+
+    /// <summary>
+    /// Retrieves an instance of <see cref="ILogger"/>
+    /// from the current <see cref="IComponentContext"/>.
+    /// </summary>
+    /// <param name="self">The current <see cref="IComponentContext"/></param>
+    /// <param name="categoryType">Type of the logger category.</param>
+    /// <returns>
+    /// An instance of <see cref="ILogger"/>, if <see cref="ILoggerFactory"/>
+    /// is available, otherwise; <see cref="NullLogger"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> or <paramref name="categoryType"/> is <c>null</c>.
+    /// </exception>
+    public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
+        Prevent.Argument.Null(self);
+        Prevent.Argument.Null(categoryType);
+
+        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+
+        return loggerFactory is not null
+            ? loggerFactory.CreateLogger(categoryType)
+            : NullLogger.Instance;
+    }
+
+    /// <summary>
+    /// Retrieves an <see cref="IOptions{TOptions}"/> from the current <see cref="IComponentContext"/>.
+    /// </summary>
+    /// <typeparam name="TOptions">Type of the options.</typeparam>
+    /// <param name="self">The current <see cref="IComponentContext"/></param>
+    /// <returns>
+    /// An instance of <see cref="IOptions{TOptions}"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> is <c>null</c>.
+    /// </exception>
+    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self)
+        where TOptions : class, new()
+        => GetOptions(self, () => new TOptions());
+
+    /// <summary>
+    /// Retrieves an <see cref="IOptions{TOptions}"/> from the current <see cref="IComponentContext"/>.
+    /// </summary>
+    /// <typeparam name="TOptions">Type of the options.</typeparam>
+    /// <param name="self">The current <see cref="IComponentContext"/></param>
+    /// <param name="optionsFactory">An options optionsFactory, if the options were not to be found.</param>
+    /// <returns>
+    /// An instance of <see cref="IOptions{TOptions}"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> or
+    /// <paramref name="optionsFactory"/> is <c>null</c>.
+    /// </exception>
+    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> optionsFactory)
+        where TOptions : class {
+        Prevent.Argument.Null(self);
+
+        // let's first check if our provider can resolve this option
+        if (self.TryResolve<IOptions<TOptions>>(out var options)) {
+            return options;
         }
 
-        public static ILogger GetLogger(this IComponentContext self, Type serviceType) {
-            var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+        // shoot, no good. let's try get from the configuration
+        if (self.TryResolve<IConfiguration>(out var configuration)) {
+            var sectionName = typeof(TOptions).Name;
+            var optionsFromConfiguration = configuration.GetSection(sectionName)
+                                                        .Get<TOptions>();
 
-            return loggerFactory is not null
-                ? loggerFactory.CreateLogger(serviceType)
-                : NullLogger.Instance;
-        }
-
-        public static TOptions GetPocoOptions<TOptions>(this IComponentContext self)
-            where TOptions : class, new() {
-            // let's first check if we have it on our container
-            var options = self.ResolveOptional<TOptions>();
-            if (options is not null) {
-                return options;
+            if (optionsFromConfiguration is not null) {
+                return Options.Create(optionsFromConfiguration);
             }
-
-            // ok, no good. let's try get from the configuration
-            var configuration = self.ResolveOptional<IConfiguration>();
-            var sectionName = typeof(TOptions)
-                .Name
-                .RemoveTail(CoreRoot.Defaults.OptionsSettingsTails);
-
-            TOptions? result = default;
-            if (configuration is not null) {
-                result = configuration
-                    .GetSection(sectionName)
-                    .Get<TOptions>();
-            }
-
-            // returns from configuration or instantiate.
-            return result ?? new TOptions();
         }
 
-        #endregion
+        // whoops...if we reach this far, seems like we don't have
+        // the configuration set or missing this particular option.
+        // If we have the optionsFactory let's construct it.
+        var optionsFromFactory = optionsFactory();
+
+        return Options.Create(optionsFromFactory);
     }
 }

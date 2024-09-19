@@ -1,58 +1,37 @@
 ﻿using System.Reflection;
 
-namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateOptions {
-        #region Public Static Read-Only Properties
+namespace Nameless.NHibernate.Options;
 
-        public static NHibernateOptions Default => new();
+public sealed record NHibernateOptions {
+    public static NHibernateOptions Default => new();
 
-        #endregion
+    public NHibernateSchemaExportOptions SchemaExport { get; set; } = new();
+    public NHibernateCommonOptions Common { get; set; } = new();
+    public NHibernateConnectionOptions Connection { get; set; } = new();
+    public NHibernateAdoNetOptions AdoNet { get; set; } = new();
+    public NHibernateCacheOptions Cache { get; set; } = new();
+    public NHibernateQueryOptions Query { get; set; } = new();
+    public NHibernateLinqToHqlOptions LinqToHql { get; set; } = new();
+    public NHibernateHbmToDdlOptions HbmToDdl { get; set; } = new();
+    public NHibernateProxyFactoryOptions ProxyFactory { get; set; } = new();
+    public NHibernateCollectionTypeOptions CollectionType { get; set; } = new();
+    public NHibernateTransactionOptions Transaction { get; set; } = new();
+    public NHibernateSpecificOptions Specific { get; set; } = new();
 
-        #region Public Properties
+    public Dictionary<string, string> ToDictionary() {
+        var configs = new List<KeyValuePair<string, string>>();
 
-        public NHibernateSchemaExportOptions SchemaExport { get; set; } = new();
-        public NHibernateCommonOptions Common { get; set; } = new();
-        public NHibernateConnectionOptions Connection { get; set; } = new();
-        public NHibernateAdoNetOptions AdoNet { get; set; } = new();
-        public NHibernateCacheOptions Cache { get; set; } = new();
-        public NHibernateQueryOptions Query { get; set; } = new();
-        public NHibernateLinqToHqlOptions LinqToHql { get; set; } = new();
-        public NHibernateHbmToDdlOptions HbmToDdl { get; set; } = new();
-        public NHibernateProxyFactoryOptions ProxyFactory { get; set; } = new();
-        public NHibernateCollectionTypeOptions CollectionType { get; set; } = new();
-        public NHibernateTransactionOptions Transaction { get; set; } = new();
-        public NHibernateSpecificOptions Specific { get; set; } = new();
-        
-        public Type[] RootEntityTypes { get; private set; } = [];
-        public Type[] ClassMappingTypes { get; private set; } = [];
+        var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                  .Where(property => typeof(NHibernateOptionsBase).IsAssignableFrom(property.PropertyType));
 
-        #endregion
-
-        #region Public Methods
-
-        public void SetRootEntityTypes(params Type[] rootEntityTypes)
-            => RootEntityTypes = rootEntityTypes;
-
-        public void SetClassMappingTypes(params Type[] classMappingTypes)
-            => ClassMappingTypes = classMappingTypes;
-
-        public Dictionary<string, string> ToDictionary() {
-            var configs = new List<KeyValuePair<string, string>>();
-
-            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                      .Where(property => typeof(NHibernateOptionsBase).IsAssignableFrom(property.PropertyType));
-
-            foreach (var property in properties) {
-                if (property.GetValue(this) is not NHibernateOptionsBase options) {
-                    continue;
-                }
-
-                configs.AddRange(options.GetConfigValues());
+        foreach (var property in properties) {
+            if (property.GetValue(this) is not NHibernateOptionsBase options) {
+                continue;
             }
 
-            return new Dictionary<string, string>([.. configs]);
+            configs.AddRange(options.GetConfigValues());
         }
 
-        #endregion
+        return new Dictionary<string, string>([.. configs]);
     }
 }

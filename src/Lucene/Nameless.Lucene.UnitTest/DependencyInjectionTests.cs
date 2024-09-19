@@ -3,26 +3,26 @@ using Moq;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Impl;
 
-namespace Nameless.Lucene {
-    public class DependencyInjectionTests {
-        [Test]
-        public void Register_Resolve_Service() {
-            // arrange
-            var services = new ServiceCollection();
-            services.RegisterLucene();
+namespace Nameless.Lucene;
 
-            // We need an IApplicationContext
-            var applicationContextMock = new Mock<IApplicationContext>();
-            services
-                .AddSingleton(applicationContextMock.Object);
+public class DependencyInjectionTests {
+    [Test]
+    public void Register_Resolve_Service() {
+        // arrange
+        var services = new ServiceCollection();
+        services.AddLucene();
 
-            using var provider = services.BuildServiceProvider();
+        // We need an IApplicationContext
+        var applicationContextMock = new Mock<IApplicationContext>();
+        services
+            .AddSingleton(applicationContextMock.Object);
 
-            // act
-            var service = provider.GetService<IIndexManager>();
+        using var provider = services.BuildServiceProvider();
 
-            // assert
-            Assert.That(service, Is.InstanceOf<IndexManager>());
-        }
+        // act
+        var service = provider.GetService<IIndexProvider>();
+
+        // assert
+        Assert.That(service, Is.InstanceOf<IndexProvider>());
     }
 }

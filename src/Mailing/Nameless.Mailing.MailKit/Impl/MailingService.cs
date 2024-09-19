@@ -1,66 +1,50 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MimeKit;
+using Nameless.Mailing.MailKit.Internals;
 
-namespace Nameless.Mailing.MailKit.Impl {
-    public sealed class MailingService : IMailingService {
-        #region Private Read-Only Fields
+namespace Nameless.Mailing.MailKit.Impl;
 
-        private readonly ISmtpClientFactory _smtpClientFactory;
-        private readonly ILogger _logger;
+public sealed class MailingService : IMailingService {
+    private readonly ISmtpClientFactory _smtpClientFactory;
+    private readonly ILogger _logger;
 
-        #endregion
+    public MailingService(ISmtpClientFactory smtpClientFactory, ILogger<MailingService> logger) {
+        _smtpClientFactory = Prevent.Argument.Null(smtpClientFactory);
+        _logger = Prevent.Argument.Null(logger);
+    }
 
-        #region Public Constructors
+    public async Task<string> DispatchAsync(Message message, CancellationToken cancellationToken) {
+        Prevent.Argument.Null(message);
 
-        public MailingService(ISmtpClientFactory smtpClientFactory, ILogger<MailingService> logger) {
-            _smtpClientFactory = Guard.Against.Null(smtpClientFactory, nameof(smtpClientFactory));
-            _logger = Guard.Against.Null(logger, nameof(logger));
+        if (message.From.IsNullOrEmpty()) {
+            throw new InvalidOperationException("Missing sender address.");
         }
 
-        #endregion
-
-        #region Private Static Methods
-
-        private static MimeMessage CreateMimeMessage(Message message) {
-            var mail = message.ToMimeMessage();
-
-            Internals.SetRecipients(mail.From, message.From);
-            Internals.SetRecipients(mail.To, message.To);
-            Internals.SetRecipients(mail.Cc, Internals.SplitAddresses(message.Parameters.GetCarbonCopy()));
-            Internals.SetRecipients(mail.Bcc, Internals.SplitAddresses(message.Parameters.GetBlindCarbonCopy()));
-
-            return mail;
+        if (message.To.IsNullOrEmpty()) {
+            throw new InvalidOperationException("Missing recipient address.");
         }
 
-        #endregion
+        var mail = CreateMimeMessage(message);
 
-        #region IMailingService Members
+        using var client = await _smtpClientFactory.CreateAsync(cancellationToken);
 
-        public async Task<string> DispatchAsync(Message message, CancellationToken cancellationToken) {
-            Guard.Against.Null(message, nameof(message));
-
-            if (message.From.IsNullOrEmpty()) {
-                throw new InvalidOperationException("Missing sender address.");
-            }
-
-            if (message.To.IsNullOrEmpty()) {
-                throw new InvalidOperationException("Missing recipient address.");
-            }
-
-            var mail = CreateMimeMessage(message);
-
-            using var client = await _smtpClientFactory.CreateAsync(cancellationToken);
-
-            string result;
-            try { result = await client.SendAsync(mail, cancellationToken: cancellationToken); }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Error while sending mail. Message: {Message}", ex.Message);
-                result = ex.Message;
-            }
-            return result;
+        string result;
+        try { result = await client.SendAsync(mail, cancellationToken: cancellationToken); }
+        catch (Exception ex) {
+            LoggerHandlers.SendMessageFailure(_logger, ex);
+            result = ex.Message;
         }
+        return result;
+    }
 
-        #endregion
+    private static MimeMessage CreateMimeMessage(Message message) {
+        var mail = message.ToMimeMessage();
+
+        AddressHelper.SetRecipients(mail.From, message.From);
+        AddressHelper.SetRecipients(mail.To, message.To);
+        AddressHelper.SetRecipients(mail.Cc, AddressHelper.SplitAddresses(message.Parameters.GetCarbonCopy()));
+        AddressHelper.SetRecipients(mail.Bcc, AddressHelper.SplitAddresses(message.Parameters.GetBlindCarbonCopy()));
+
+        return mail;
     }
 }

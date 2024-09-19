@@ -1,37 +1,25 @@
 ﻿using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate.Impl {
+namespace Nameless.NHibernate.Impl;
+
+/// <summary>
+/// Default implementation of <see cref="ExplicitlyDeclaredModel" />.
+/// </summary>
+public sealed class ModelInspector : ExplicitlyDeclaredModel {
+    private readonly Type[] _entityTypes;
+
     /// <summary>
-    /// Default implementation of <see cref="ExplicitlyDeclaredModel" />.
+    /// Initializes a new instance of <see cref="ModelInspector" />
     /// </summary>
-    public sealed class ModelInspector : ExplicitlyDeclaredModel {
-        #region Private Read-Only Fields
-
-        private readonly Type[] _entityTypes;
-
-        #endregion
-
-        #region Public Constructors
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="ModelInspector" />
-        /// </summary>
-        public ModelInspector(Type[] entityTypes) {
-            _entityTypes = Guard.Against.Null(entityTypes, nameof(entityTypes));
-        }
-
-        #endregion
-
-        #region Public Override Methods
-
-        /// <inheritdoc />
-        public override bool IsEntity(Type type)
-            => _entityTypes.Any(entityType =>
-                entityType.IsGenericType
-                    ? entityType.IsAssignableFromGenericType(type)
-                    : entityType.IsAssignableFrom(type)
-            );
-
-        #endregion
+    public ModelInspector(Type[] entityTypes) {
+        _entityTypes = Prevent.Argument.Null(entityTypes);
     }
+
+    /// <inheritdoc />
+    public override bool IsEntity(Type type)
+        => _entityTypes.Any(entityType =>
+                                entityType.IsGenericType
+                                    ? entityType.IsAssignableFromOpenGenericType(type)
+                                    : entityType.IsAssignableFrom(type)
+        );
 }

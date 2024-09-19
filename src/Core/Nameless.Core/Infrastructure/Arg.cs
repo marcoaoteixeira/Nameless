@@ -1,26 +1,18 @@
-﻿namespace Nameless.Infrastructure {
-    public sealed record Arg {
-        #region Public Properties
+﻿using System.Diagnostics;
 
-        public string Name { get; }
-        public object Value { get; }
+namespace Nameless.Infrastructure;
 
-        #endregion
+[DebuggerDisplay("{DebuggerDisplay}")]
+public sealed record Arg {
+    private string DebuggerDisplay
+        => $"[{Name}] {Value} ({Value?.GetType().Name})";
 
-        #region Public Constructors
+    public string Name { get; }
 
-        public Arg(string name, object value) {
-            Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Value = Guard.Against.Null(value, nameof(value));
-        }
+    public object? Value { get; }
 
-        #endregion
-
-        #region Public Override Methods
-
-        public override string ToString()
-            => $"[{Name}] {Value} ({Value.GetType().Name})";
-
-        #endregion
+    public Arg(string name, object? value) {
+        Name = Prevent.Argument.NullOrWhiteSpace(name);
+        Value = value;
     }
 }

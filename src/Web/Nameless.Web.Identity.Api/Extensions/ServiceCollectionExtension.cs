@@ -5,41 +5,33 @@ using Nameless.Web.Identity.Api.Handlers;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Identity.Api.Responses;
 
-namespace Nameless.Web.Identity.Api {
-    public static class ServiceCollectionExtension {
-        #region Public Static Methods
+namespace Nameless.Web.Identity.Api;
 
-        public static IServiceCollection RegisterIdentityApi(this IServiceCollection self, Action<IdentityApiOptions>? configure = null)
-            => RegisterIdentityApi<IdentityUser, string>(self, configure);
+public static class ServiceCollectionExtension {
+    public static IServiceCollection RegisterIdentityApi(this IServiceCollection self, Action<IdentityApiOptions>? configure = null)
+        => RegisterIdentityApi<IdentityUser, string>(self, configure);
 
-        public static IServiceCollection RegisterIdentityApi<TUser, TKey>(this IServiceCollection self, Action<IdentityApiOptions>? configure = null)
-            where TUser : IdentityUser<TKey>
-            where TKey : IEquatable<TKey> {
+    public static IServiceCollection RegisterIdentityApi<TUser, TKey>(this IServiceCollection self, Action<IdentityApiOptions>? configure = null)
+        where TUser : IdentityUser<TKey>
+        where TKey : IEquatable<TKey> {
 
-            ConfigureOptions(self, configure);
+        ConfigureOptions(self, configure);
             
-            RegisterRequestHandlers<TUser, TKey>(self);
+        RegisterRequestHandlers<TUser, TKey>(self);
 
-            return self.RegisterMinimalEndpoints([typeof(ServiceCollectionExtension).Assembly]);
-        }
+        return self.AddApiEndpoints([typeof(ServiceCollectionExtension).Assembly]);
+    }
 
-        #endregion
+    private static void ConfigureOptions(IServiceCollection services, Action<IdentityApiOptions>? configure) {
+        var options = new IdentityApiOptions();
 
-        #region Private Static Methods
+        (configure ?? (_ => { })).Invoke(options);
+        services.AddSingleton(options);
+    }
 
-        private static void ConfigureOptions(IServiceCollection services, Action<IdentityApiOptions>? configure) {
-            var options = new IdentityApiOptions();
-
-            (configure ?? (_ => { })).Invoke(options);
-            services.AddSingleton(options);
-        }
-
-        private static void RegisterRequestHandlers<TUser, TKey>(IServiceCollection services)
-            where TUser : IdentityUser<TKey>
-            where TKey : IEquatable<TKey> {
-            services.AddTransient<IRequestHandler<AuthenticateUserRequest, AuthenticateUserResponse>, AuthenticateUserRequestHandler<TUser, TKey>>();
-        }
-
-        #endregion
+    private static void RegisterRequestHandlers<TUser, TKey>(IServiceCollection services)
+        where TUser : IdentityUser<TKey>
+        where TKey : IEquatable<TKey> {
+        services.AddTransient<IRequestHandler<AuthenticateUserRequest, AuthenticateUserResponse>, AuthenticateUserRequestHandler<TUser, TKey>>();
     }
 }

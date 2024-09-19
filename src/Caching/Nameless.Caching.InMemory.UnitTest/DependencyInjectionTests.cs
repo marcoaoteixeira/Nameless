@@ -1,20 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nameless.Caching.InMemory {
-    public class DependencyInjectionTests {
-        [Test]
-        public void Register_And_Resolve_Service() {
-            // arrange
-            var services = new ServiceCollection();
-            services.RegisterCacheService();
+namespace Nameless.Caching.InMemory;
 
-            using var provider = services.BuildServiceProvider();
+public class DependencyInjectionTests {
+    [Test]
+    public void Register_And_Resolve_Service() {
+        // arrange
+        var services = new ServiceCollection();
+        services.AddInMemoryCache();
 
-            // act
-            var sut = provider.GetRequiredService<ICacheService>();
+        using var provider = services.BuildServiceProvider();
 
-            // assert
-            Assert.That(sut, Is.InstanceOf<InMemoryCacheService>());
-        }
+        // act
+        var sut = provider.GetRequiredService<ICache>();
+
+        // assert
+        Assert.That(sut, Is.InstanceOf<InMemoryCache>());
     }
 }

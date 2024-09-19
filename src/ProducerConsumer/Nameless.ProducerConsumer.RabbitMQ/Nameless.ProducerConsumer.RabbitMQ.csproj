@@ -49,7 +49,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Logging\Nameless.Logging.Microsoft\Nameless.Logging.Microsoft.csproj" />
 		<ProjectReference Include="..\Nameless.ProducerConsumer.Abstractions\Nameless.ProducerConsumer.Abstractions.csproj" />
 	</ItemGroup>
 

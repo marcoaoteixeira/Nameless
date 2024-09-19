@@ -1,12 +1,12 @@
-﻿namespace Nameless.Checklist.Web.Domain.Dtos {
-    public sealed record ChecklistItemDto {
-        #region Public Properties
+﻿namespace Nameless.Checklist.Web.Domain.Dtos;
 
-        public Guid Id { get; init; }
-        public string Description { get; init; } = null!;
-        public DateTime? CheckedAt { get; init; }
-        public bool Checked => CheckedAt.GetValueOrDefault() != DateTime.MinValue;
+public sealed record ChecklistItemDto {
+    #region Public Properties
 
-        #endregion
-    }
+    public Guid Id { get; init; }
+    public string Description { get; init; } = null!;
+    public DateTime? CheckedAt { get; init; }
+    public bool Checked => CheckedAt.GetValueOrDefault() != DateTime.MinValue;
+
+    #endregion
 }

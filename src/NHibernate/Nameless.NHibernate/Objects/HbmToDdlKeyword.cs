@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 
-namespace Nameless.NHibernate.Objects {
-    public enum HbmToDdlKeyword {
-        [Description("none")]
-        None,
+namespace Nameless.NHibernate.Objects;
 
-        [Description("keywords")]
-        Keywords,
+public enum HbmToDdlKeyword {
+    [Description("none")]
+    None,
 
-        [Description("auto-quote")]
-        AutoQuote
-    }
+    [Description("keywords")]
+    Keywords,
+
+    [Description("auto-quote")]
+    AutoQuote
 }

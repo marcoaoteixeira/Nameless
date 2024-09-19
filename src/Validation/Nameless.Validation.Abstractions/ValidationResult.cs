@@ -1,25 +1,13 @@
-﻿namespace Nameless.Validation.Abstractions {
-    public sealed record ValidationResult {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.Validation.Abstractions;
 
-        public static ValidationResult Empty => new();
+public sealed record ValidationResult {
+    public static ValidationResult Empty => new();
 
-        #endregion
+    public ValidationEntry[] Errors { get; } = [];
 
-        #region Public Properties
+    public bool Succeeded => Errors.Length == 0;
 
-        public ValidationEntry[] Errors { get; } = [];
-
-        public bool Succeeded => Errors.Length == 0;
-
-        #endregion
-
-        #region Public Constructors
-
-        public ValidationResult(params ValidationEntry[] errors) {
-            Errors = errors;
-        }
-
-        #endregion
+    public ValidationResult(params ValidationEntry[] errors) {
+        Errors = errors ?? throw new ArgumentNullException(nameof(errors));
     }
 }

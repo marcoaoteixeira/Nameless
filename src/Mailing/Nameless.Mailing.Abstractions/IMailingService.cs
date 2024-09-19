@@ -1,9 +1,5 @@
-﻿namespace Nameless.Mailing {
-    public interface IMailingService {
-        #region Methods
+﻿namespace Nameless.Mailing;
 
-        Task<string> DispatchAsync(Message message, CancellationToken cancellationToken);
-
-        #endregion
-    }
+public interface IMailingService {
+    Task<string> DispatchAsync(Message message, CancellationToken cancellationToken);
 }

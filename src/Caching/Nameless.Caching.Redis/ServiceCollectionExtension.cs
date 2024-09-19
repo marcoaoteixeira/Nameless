@@ -2,27 +2,38 @@
 using Nameless.Caching.Redis.Impl;
 using Nameless.Caching.Redis.Options;
 
-namespace Nameless.Caching.Redis {
-    public static class ServiceCollectionExtension {
-        #region Public Static Methods
+namespace Nameless.Caching.Redis;
 
-        public static IServiceCollection RegisterCacheService(this IServiceCollection self, Action<RedisOptions>? configure = null)
-            => self.AddSingleton<ICacheService>(provider => {
-                var options = provider.GetPocoOptions<RedisOptions>();
+/// <summary>
+/// Extension methods to register <see cref="ICache"/> for Redis.
+/// </summary>
+public static class ServiceCollectionExtension {
+    /// <summary>
+    /// Registers Redis as the current <see cref="ICache"/>.
+    /// </summary>
+    /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="configure">Configuration action.</param>
+    /// <returns>Returns the current <see cref="IServiceCollection"/> so other configuration actions can be chained.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="self"/> is <c>null</c>.
+    /// </exception>
+    public static IServiceCollection AddRedisCache(this IServiceCollection self, Action<RedisOptions>? configure = null)
+        => Prevent.Argument
+                .Null(self, nameof(self))
+                .AddSingleton<ICache>(provider => {
+                    var options = provider.GetOptions<RedisOptions>();
 
-                configure?.Invoke(options);
+                    configure?.Invoke(options.Value);
 
-                var configurationOptionsFactory = new ConfigurationOptionsFactory(
-                    options: options,
-                    logger: provider.GetLogger<ConfigurationOptionsFactory>()
-                );
+                    var configurationOptionsFactory = new ConfigurationOptionsFactory(
+                        options: options,
+                        logger: provider.GetLogger<ConfigurationOptionsFactory>()
+                    );
 
-                return new RedisCacheService(
-                    configurationOptions: configurationOptionsFactory.CreateConfigurationOptions(),
-                    logger: provider.GetLogger<RedisCacheService>()
-                );
-            });
+                    return CreateRedisCache(provider, configurationOptionsFactory);
+                });
 
-        #endregion
-    }
+    private static RedisCache CreateRedisCache(IServiceProvider provider, ConfigurationOptionsFactory configurationOptionsFactory)
+        => new(configurationOptions: configurationOptionsFactory.CreateConfigurationOptions(),
+               logger: provider.GetLogger<RedisCache>());
 }

@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
 using Nameless.Checklist.Web.Domain.Requests;
 
-namespace Nameless.Checklist.Web.Domain.Validators {
-    public sealed class CreateTodoItemRequestValidator : AbstractValidator<CreateChecklistItemRequest> {
-        #region Public Constructors
+namespace Nameless.Checklist.Web.Domain.Validators;
 
-        public CreateTodoItemRequestValidator() {
-            RuleFor(_ => _.Description)
-                .NotEmpty();
-        }
+public sealed class CreateTodoItemRequestValidator : AbstractValidator<CreateChecklistItemRequest> {
+    #region Public Constructors
 
-        #endregion
+    public CreateTodoItemRequestValidator() {
+        RuleFor(_ => _.Description)
+            .NotEmpty();
     }
+
+    #endregion
 }

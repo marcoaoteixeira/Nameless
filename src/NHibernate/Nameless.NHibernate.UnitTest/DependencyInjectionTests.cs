@@ -4,28 +4,28 @@ using Nameless.Infrastructure;
 using NHibernate;
 using NHibernate.Impl;
 
-namespace Nameless.NHibernate {
-    public class DependencyInjectionTests {
-        [Test]
-        public void Register_Resolve_NHibernate_Module() {
-            // arrange
-            var services = new ServiceCollection();
-            services.RegisterNHibernate();
+namespace Nameless.NHibernate;
 
-            var applicationContextMock = new Mock<IApplicationContext>();
-            applicationContextMock
-                .Setup(mock => mock.ApplicationDataFolderPath)
-                .Returns(Path.GetTempPath());
+public class DependencyInjectionTests {
+    [Test]
+    public void Register_Resolve_NHibernate_Module() {
+        // arrange
+        var services = new ServiceCollection();
+        services.AddNHibernate();
 
-            services.AddSingleton(applicationContextMock.Object);
+        var applicationContextMock = new Mock<IApplicationContext>();
+        applicationContextMock
+            .Setup(mock => mock.ApplicationDataFolderPath)
+            .Returns(Path.GetTempPath());
 
-            using var provider = services.BuildServiceProvider();
+        services.AddSingleton(applicationContextMock.Object);
 
-            // act
-            var session = provider.GetRequiredService<ISession>();
+        using var provider = services.BuildServiceProvider();
 
-            // assert
-            Assert.That(session, Is.InstanceOf<SessionImpl>());
-        }
+        // act
+        var session = provider.GetRequiredService<ISession>();
+
+        // assert
+        Assert.That(session, Is.InstanceOf<SessionImpl>());
     }
 }

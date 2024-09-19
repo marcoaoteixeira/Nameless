@@ -1,18 +1,18 @@
 ﻿using Nameless.Web.Infrastructure;
 
-namespace Nameless.RepeatIt.Web {
-    public class PrintRecurringTask : RecurringTaskHostedService {
-        private readonly ILogger<PrintRecurringTask> _logger;
+namespace Nameless.RepeatIt.Web;
 
-        public PrintRecurringTask(TimeSpan interval, ILogger<PrintRecurringTask> logger)
-            : base(interval, logger) {
-            _logger = logger;
-        }
+public class PrintRecurringTask : RecurringTaskHostedService {
+    private readonly ILogger<PrintRecurringTask> _logger;
 
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
-            _logger.LogInformation("Print recurring task...");
+    public PrintRecurringTask(TimeSpan interval, ILogger<PrintRecurringTask> logger)
+        : base(interval, logger) {
+        _logger = logger;
+    }
 
-            return Task.CompletedTask;
-        }
+    public override Task ExecuteAsync(CancellationToken cancellationToken) {
+        _logger.LogInformation("Print recurring task...");
+
+        return Task.CompletedTask;
     }
 }

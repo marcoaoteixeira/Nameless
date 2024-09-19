@@ -1,19 +1,22 @@
-﻿namespace Nameless.NHibernate.Options {
-    public sealed class NHibernateSchemaExportOptions {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.NHibernate.Options;
 
-        public static NHibernateSchemaExportOptions Default => new();
+public sealed record NHibernateSchemaExportOptions {
+    public const string DEFAULT_OUTPUT_FOLDER_NAME = "NHibernate";
 
-        #endregion
+    private string? _outputFolderName;
 
-        #region Public Properties
+    public static NHibernateSchemaExportOptions Default => new();
 
-        public bool ExecuteSchemaExport { get; set; } = true;
-        public bool ConsoleOutput { get; set; }
-        public bool FileOutput { get; set; }
-        public bool DropBeforeExecution { get; set; }
-        public string OutputFolderName { get; set; } = "NHibernate";
+    public bool ExecuteSchemaExport { get; set; } = true;
+    
+    public bool ConsoleOutput { get; set; }
+    
+    public bool FileOutput { get; set; }
 
-        #endregion
+    public bool DropBeforeExecution { get; set; }
+
+    public string OutputFolderName {
+        get => _outputFolderName.WithFallback(DEFAULT_OUTPUT_FOLDER_NAME);
+        set => _outputFolderName = value;
     }
 }

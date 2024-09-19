@@ -1,54 +1,47 @@
 ﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using Nameless.Mailing.MailKit.Options;
 
-namespace Nameless.Mailing.MailKit.Impl {
-    public sealed class SmtpClientFactory : ISmtpClientFactory {
-        #region Private Read-Only Fields
+namespace Nameless.Mailing.MailKit.Impl;
 
-        private readonly ServerOptions _options;
+/// <summary>
+/// Implementation of <see cref="ISmtpClientFactory"/>
+/// </summary>
+public sealed class SmtpClientFactory : ISmtpClientFactory {
+    private readonly MailServerOptions _options;
 
-        #endregion
+    /// <summary>
+    /// Initializes a new instance of <see cref="SmtpClientFactory"/>
+    /// </summary>
+    /// <param name="options">The SMTP options.</param>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="options"/> is <c>null</c>.
+    /// </exception>
+    public SmtpClientFactory(IOptions<MailServerOptions> options) {
+        _options = Prevent.Argument.Null(options).Value;
+    }
 
-        #region Public Constructors
+    /// <inhertidoc />
+    public async Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken = default) {
+        var client = new SmtpClient();
 
-        public SmtpClientFactory()
-            : this(ServerOptions.Default) { }
+        await client.ConnectAsync(_options.Host,
+                                  _options.Port,
+                                  _options.SecureSocket,
+                                  cancellationToken);
 
-        public SmtpClientFactory(ServerOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
+        return client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && _options.UseCredentials
+            ? await AuthenticateSmtpClient(client, _options, cancellationToken)
+            : client;
+    }
 
-        #endregion
+    private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, MailServerOptions mailServerOptions, CancellationToken cancellationToken) {
+        client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-        #region Private Static Methods
+        await client.AuthenticateAsync(mailServerOptions.Username,
+                                       mailServerOptions.Password,
+                                       cancellationToken);
 
-        private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, ServerOptions serverOptions, CancellationToken cancellationToken) {
-            client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-            await client.AuthenticateAsync(serverOptions.Username,
-                                           serverOptions.Password,
-                                           cancellationToken);
-
-            return client;
-        }
-
-        #endregion
-
-        #region SmtpClientFactory Members
-
-        public async Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken = default) {
-            var client = new SmtpClient();
-
-            await client.ConnectAsync(_options.Host,
-                                      _options.Port,
-                                      _options.SecureSocket,
-                                      cancellationToken);
-
-            return client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && _options.UseCredentials
-                ? await AuthenticateSmtpClient(client, _options, cancellationToken)
-                : client;
-        }
-
-        #endregion
+        return client;
     }
 }

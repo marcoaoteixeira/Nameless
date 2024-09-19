@@ -1,15 +1,16 @@
 ﻿using System.Text.Json;
 using Nameless.Infrastructure;
 
-namespace Nameless {
-    public static class ArgCollectionExtension {
-        #region Public Static Methods
+namespace Nameless;
 
-        public static string ToJson(this ArgCollection? self)
-            => self is not null
-                ? JsonSerializer.Serialize(self.ToArray())
-                : string.Empty;
-
-        #endregion
-    }
+public static class ArgCollectionExtension {
+    /// <summary>
+    /// Serializes the current <see cref="ArgCollection"/> to JSON.
+    /// </summary>
+    /// <param name="self">The current <see cref="ArgCollection"/>.</param>
+    /// <returns>
+    /// A JSON string representation of the current <see cref="ArgCollection"/>.
+    /// </returns>
+    public static string ToJson(this ArgCollection self)
+        => JsonSerializer.Serialize(self);
 }

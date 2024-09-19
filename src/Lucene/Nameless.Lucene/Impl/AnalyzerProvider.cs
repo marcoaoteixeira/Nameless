@@ -1,47 +1,35 @@
 ﻿using Lucene.Net.Analysis;
 
-namespace Nameless.Lucene.Impl {
+namespace Nameless.Lucene.Impl;
+
+/// <summary>
+/// Default implementation of <see cref="IAnalyzerProvider"/>.
+/// </summary>
+public sealed class AnalyzerProvider : IAnalyzerProvider {
+    private readonly IAnalyzerSelector[] _selectors;
+
     /// <summary>
-    /// Default implementation of <see cref="IAnalyzerProvider"/>.
+    /// Initializes a new instance of <see cref="AnalyzerProvider"/>.
     /// </summary>
-    public sealed class AnalyzerProvider : IAnalyzerProvider {
-        #region Private Read-Only Fields
+    /// <param name="selectors">A collection of <see cref="IAnalyzerSelector"/>.</param>
+    /// <exception cref="ArgumentNullException">if <paramref name="selectors"/> is <c>null</c>.</exception>
+    public AnalyzerProvider(IAnalyzerSelector[] selectors) {
+        _selectors = Prevent.Argument.Null(selectors);
+    }
 
-        private readonly IAnalyzerSelector[] _selectors;
+    /// <inheritdoc />
+    public Analyzer GetAnalyzer(string indexName) {
+        var selectors = _selectors
+            .Select(selector => selector.GetAnalyzer(indexName));
 
-        #endregion
-
-        #region Public Constructors
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="AnalyzerProvider"/>.
-        /// </summary>
-        /// <param name="selectors">A collection of <see cref="IAnalyzerSelector"/>.</param>
-        /// <exception cref="ArgumentNullException">if <paramref name="selectors"/> is <c>null</c>.</exception>
-        public AnalyzerProvider(IAnalyzerSelector[] selectors) {
-            _selectors = Guard.Against.Null(selectors, nameof(selectors));
-        }
-
-        #endregion
-
-        #region IAnalyzerProvider
-
-        /// <inheritdoc />
-        public Analyzer GetAnalyzer(string indexName) {
-            var selectors = _selectors
-                           .Select(selector => selector.GetAnalyzer(indexName));
-
-            var selector = selectors
+        var selector = selectors
 #if NET6_0_OR_GREATER
-                .MaxBy(selector => selector.Priority);
+            .MaxBy(selector => selector.Priority);
 #else
-                .OrderByDescending(selector => selector.Priority)
-                .FirstOrDefault();
+            .OrderByDescending(selector => selector.Priority)
+            .FirstOrDefault();
 #endif
 
-            return selector?.Analyzer ?? Root.Defaults.Analyzer;
-        }
-
-        #endregion
+        return selector?.Analyzer ?? Root.Defaults.Analyzer;
     }
 }

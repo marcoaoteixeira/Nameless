@@ -1,41 +1,26 @@
-﻿namespace Nameless.Lucene {
-    public sealed class EmptySearchHit : ISearchHit {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.Lucene;
 
-        public static ISearchHit Instance { get; } = new EmptySearchHit();
+[Singleton]
+public sealed class EmptySearchHit : ISearchHit {
+    public static ISearchHit Instance { get; } = new EmptySearchHit();
 
-        #endregion
+    public string DocumentID => string.Empty;
 
-        #region Static Constructors
+    public float Score => 0F;
 
-        // Explicit static constructor to tell the C# compiler
-        // not to mark type as beforefieldinit
-        static EmptySearchHit() { }
+    public bool GetBoolean(string fieldName) => false;
 
-        #endregion
+    public DateTimeOffset GetDateTimeOffset(string fieldName) => DateTimeOffset.MinValue;
 
-        #region Private Constructors
+    public double GetDouble(string fieldName) => double.NaN;
 
-        private EmptySearchHit() { }
+    public int GetInt(string fieldName) => -1;
 
-        #endregion
+    public string GetString(string fieldName) => string.Empty;
 
-        #region ISearchHit Members
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
+    static EmptySearchHit() { }
 
-        public string DocumentID => string.Empty;
-
-        public float Score => 0F;
-
-        public bool GetBoolean(string fieldName) => false;
-
-        public DateTimeOffset GetDateTimeOffset(string fieldName) => DateTimeOffset.MinValue;
-
-        public double GetDouble(string fieldName) => double.NaN;
-
-        public int GetInt(string fieldName) => -1;
-
-        public string GetString(string fieldName) => string.Empty;
-
-        #endregion
-    }
+    private EmptySearchHit() { }
 }

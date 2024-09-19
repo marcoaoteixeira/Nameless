@@ -1,32 +1,29 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Nameless.Helpers {
+namespace Nameless.Helpers;
+
+/// <summary>
+/// <see cref="CultureInfo"/> helpers.
+/// </summary>
+public static class CultureInfoHelper {
     /// <summary>
-    /// <see cref="CultureInfo"/> helpers.
+    /// Tries to create a <see cref="CultureInfo"/> instance by its name.
     /// </summary>
-    public static class CultureInfoHelper {
-        #region Public Static Methods
+    /// <param name="cultureName">The culture name</param>
+    /// <param name="culture">The output</param>
+    /// <returns><c>true</c> if created; otherwise <c>false</c>.</returns>
+    public static bool TryCreateCultureInfo(string cultureName, [NotNullWhen(returnValue: true)] out CultureInfo? culture) {
+        culture = null;
 
-        /// <summary>
-        /// Tries create a <see cref="CultureInfo"/> instance by its name.
-        /// </summary>
-        /// <param name="cultureName">The culture name</param>
-        /// <param name="culture">The output</param>
-        /// <param name="defaultCultureName"></param>
-        /// <returns><c>true</c> if could retrieve; otherwise <c>false</c>.</returns>
-        public static bool TryCreateCultureInfo(string cultureName, [NotNullWhen(returnValue: true)] out CultureInfo? culture) {
-            culture = null;
-
-            var result = false;
-            try {
-                culture = CultureInfo.GetCultureInfo(cultureName);
-                result = true;
-            } catch { /* ignore */ }
-
-            return result;
+        var result = false;
+        try {
+            culture = CultureInfo.GetCultureInfo(cultureName);
+            result = true;
+        } catch {
+            /* ignore */
         }
 
-        #endregion
+        return result;
     }
 }

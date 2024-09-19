@@ -1,40 +1,26 @@
-﻿namespace Nameless.Services.Impl {
+﻿namespace Nameless.Services.Impl;
+
+/// <summary>
+/// Singleton Pattern implementation for <see cref="ISystemClock" />.
+/// See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
+/// </summary>
+[Singleton]
+public sealed class SystemClock : ISystemClock {
     /// <summary>
-    /// Singleton Pattern implementation for <see cref="SystemClockService" />. (see: https://en.wikipedia.org/wiki/Singleton_pattern)
+    /// Gets the unique instance of <see cref="SystemClock" />.
     /// </summary>
-    [Singleton]
-    public sealed class SystemClockService : IClockService {
-        #region Public Static Properties
+    public static ISystemClock Instance { get; } = new SystemClock();
 
-        /// <summary>
-        /// Gets the unique instance of <see cref="SystemClockService" />.
-        /// </summary>
-        public static IClockService Instance { get; } = new SystemClockService();
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
+    static SystemClock() { }
 
-        #endregion
+    private SystemClock() { }
 
-        #region Static Constructors
+    public DateTime GetUtcNow()
+        => DateTime.UtcNow;
 
-        // Explicit static constructor to tell the C# compiler
-        // not to mark type as beforefieldinit
-        static SystemClockService() { }
-
-        #endregion
-
-        #region Private Constructors
-
-        private SystemClockService() { }
-
-        #endregion
-
-        #region IClockService Members
-
-        public DateTime GetUtcNow()
-            => DateTime.UtcNow;
-        public DateTimeOffset GetUtcNowOffset()
-            => new(new DateTime(ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
-                                kind: DateTimeKind.Utc));
-
-        #endregion
-    }
+    public DateTimeOffset GetUtcNowOffset()
+        => new(new DateTime(ticks: DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond,
+                            kind: DateTimeKind.Utc));
 }

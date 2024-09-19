@@ -1,44 +1,32 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options {
-    public sealed class QueueOptions {
-        #region Public Static Read-Only Fields
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-        public static QueueOptions Default => new();
+public sealed record QueueOptions {
+    public static QueueOptions Default => new();
 
-        #endregion
+    private Dictionary<string, object>? _arguments;
+    private BindingOptions[]? _bindings;
+    private string? _name;
 
-        #region Private Fields
+    public string Name {
+        get => _name.WithFallback(Root.Defaults.QUEUE_NAME);
+        set => _name = value;
+    }
 
-        private Dictionary<string, object>? _arguments;
-        private BindingOptions[]? _bindings;
-        private string? _name;
+    public bool Durable { get; set; } = true;
 
-        #endregion
+    public bool Exclusive { get; set; }
 
-        #region Public Properties
+    public bool AutoDelete { get; set; }
 
-        public string Name {
-            get => _name ??= Root.Defaults.QUEUE_NAME;
-            set => _name = Guard.Against.NullOrWhiteSpace(value, nameof(value));
-        }
+    public Dictionary<string, object> Arguments {
+        get => _arguments ??= [];
+        set => _arguments = value;
+    }
 
-        public bool Durable { get; set; } = true;
-
-        public bool Exclusive { get; set; }
-
-        public bool AutoDelete { get; set; }
-
-        public Dictionary<string, object> Arguments {
-            get => _arguments ??= [];
-            set => _arguments = value;
-        }
-
-        public BindingOptions[] Bindings {
-            get => _bindings ??= [BindingOptions.Default];
-            set => _bindings = value.IsNullOrEmpty()
-                ? [BindingOptions.Default]
-                : value;
-        }
-
-        #endregion
+    public BindingOptions[] Bindings {
+        get => _bindings ??= [BindingOptions.Default];
+        set => _bindings = value.IsNullOrEmpty()
+            ? [BindingOptions.Default]
+            : value;
     }
 }

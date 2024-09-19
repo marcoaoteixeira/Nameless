@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Nameless.Checklist.Web.Domain.Dtos;
 
-namespace Nameless.Checklist.Web.Domain.Requests {
-    public sealed class ListChecklistItemsRequest : IRequest<ChecklistItemDto[]> {
-        #region Public Properties
+namespace Nameless.Checklist.Web.Domain.Requests;
 
-        public string? DescriptionLike { get; init; }
-        public DateTime? CheckedBefore { get; set; }
+public sealed class ListChecklistItemsRequest : IRequest<ChecklistItemDto[]> {
+    #region Public Properties
 
-        #endregion
-    }
+    public string? DescriptionLike { get; init; }
+    public DateTime? CheckedBefore { get; set; }
+
+    #endregion
 }

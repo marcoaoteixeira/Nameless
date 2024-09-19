@@ -1,11 +1,11 @@
 ﻿using MediatR;
 
-namespace Nameless.Checklist.Web.Domain.Requests {
-    public sealed class DeleteChecklistItemRequest : IRequest<bool> {
-        #region Public Properties
+namespace Nameless.Checklist.Web.Domain.Requests;
 
-        public Guid Id { get; init; }
+public sealed class DeleteChecklistItemRequest : IRequest<bool> {
+    #region Public Properties
 
-        #endregion
-    }
+    public Guid Id { get; init; }
+
+    #endregion
 }

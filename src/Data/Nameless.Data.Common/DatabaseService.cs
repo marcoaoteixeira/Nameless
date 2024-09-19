@@ -1,188 +1,154 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.Data.Internals;
 
-namespace Nameless.Data {
+namespace Nameless.Data;
+
+/// <summary>
+/// Default implementation of <see cref="IDatabaseService"/>.
+/// </summary>
+public sealed class DatabaseService : IDatabaseService, IDisposable {
+    private readonly IDbConnectionFactory _dbConnectionFactory;
+    private readonly ILogger _logger;
+
+    private IDbConnection? _dbConnection;
+    private bool _disposed;
+
     /// <summary>
-    /// Default implementation of <see cref="IDatabaseService"/>.
+    /// Initializes a new instance of <see cref="DatabaseService"/>.
     /// </summary>
-    public sealed class DatabaseService : IDatabaseService, IDisposable {
-        #region Private Read-Only Fields
+    /// <param name="dbConnectionFactory">The database connection factory.</param>
+    public DatabaseService(IDbConnectionFactory dbConnectionFactory)
+        : this(dbConnectionFactory, NullLogger<DatabaseService>.Instance) { }
 
-        private readonly IDbConnectionFactory _dbConnectionFactory;
-        private readonly ILogger _logger;
+    /// <summary>
+    /// Initializes a new instance of <see cref="DatabaseService"/>.
+    /// </summary>
+    /// <param name="dbConnectionFactory">The database connection factory.</param>
+    /// <param name="logger">The logger.</param>
+    public DatabaseService(IDbConnectionFactory dbConnectionFactory, ILogger<DatabaseService> logger) {
+        _dbConnectionFactory = Prevent.Argument.Null(dbConnectionFactory);
+        _logger = Prevent.Argument.Null(logger);
+    }
 
-        #endregion
+    ~DatabaseService() {
+        Dispose(disposing: false);
+    }
 
-        #region Private Fields
+    /// <inheritdoc/>
+    public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) {
+        BlockAccessAfterDispose();
 
-        private IDbConnection? _dbConnection;
-        private bool _disposed;
+        return GetDbConnection().BeginTransaction(isolationLevel);
+    }
 
-        #endregion
+    /// <inheritdoc/>
+    public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
+        BlockAccessAfterDispose();
 
-        #region Public Constructors
+        Prevent.Argument.NullOrWhiteSpace(text);
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="DatabaseService"/>.
-        /// </summary>
-        /// <param name="dbConnectionFactory">The database connection factory.</param>
-        public DatabaseService(IDbConnectionFactory dbConnectionFactory)
-            : this(dbConnectionFactory, NullLogger<DatabaseService>.Instance) { }
+        using var command = CreateCommand(text, type, parameters);
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="DatabaseService"/>.
-        /// </summary>
-        /// <param name="dbConnectionFactory">The database connection factory.</param>
-        /// <param name="logger">The logger.</param>
-        public DatabaseService(IDbConnectionFactory dbConnectionFactory, ILogger<DatabaseService> logger) {
-            _dbConnectionFactory = Guard.Against.Null(dbConnectionFactory, nameof(dbConnectionFactory));
-            _logger = Guard.Against.Null(logger, nameof(logger));
+        try { return command.ExecuteNonQuery(); }
+        catch (Exception ex) {
+            LoggerHandlers.ErrorOnNonQueryExecution(_logger, ex.Message, ex);
+            throw;
         }
+    }
 
-        #endregion
+    /// <inheritdoc/>
+    public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type, params Parameter[] parameters) {
+        BlockAccessAfterDispose();
 
-        #region Destructor
+        Prevent.Argument.NullOrWhiteSpace(text);
 
-        ~DatabaseService() {
-            Dispose(disposing: false);
+        using var command = CreateCommand(text, type, parameters);
+
+        IDataReader reader;
+        try { reader = command.ExecuteReader(); }
+        catch (Exception ex) {
+            LoggerHandlers.ErrorOnReaderExecution(_logger, ex.Message, ex);
+            throw;
         }
-
-        #endregion
-
-        #region Private Static Methods
-
-        private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {
-            var result = command.CreateParameter();
-            result.ParameterName = parameter.Name;
-            result.DbType = parameter.Type;
-            result.Value = parameter.Value ?? DBNull.Value;
-            return result;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private IDbConnection GetDbConnection() {
-            if (_dbConnection is null) {
-                _dbConnection = _dbConnectionFactory.CreateDbConnection();
-                _dbConnection.EnsureOpen();
-            }
-
-            return _dbConnection;
-        }
-
-        private void BlockAccessAfterDispose() {
-            if (_disposed) {
-                throw new ObjectDisposedException(nameof(DatabaseService));
+        using (reader) {
+            while (reader.Read()) {
+                yield return mapper(reader);
             }
         }
+    }
 
-        private void Dispose(bool disposing) {
-            if (_disposed) { return; }
-            if (disposing) {
-                _dbConnection?.Dispose();
-            }
+    /// <inheritdoc/>
+    public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
+        BlockAccessAfterDispose();
 
-            _dbConnection = null;
-            _disposed = true;
+        Prevent.Argument.NullOrWhiteSpace(text);
+
+        using var command = CreateCommand(text, type, parameters);
+
+        try { return (TResult?)command.ExecuteScalar(); }
+        catch (Exception ex) {
+            LoggerHandlers.ErrorOnScalarExecution(_logger, ex.Message, ex);
+            throw;
+        }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose() {
+        GC.SuppressFinalize(this);
+        Dispose(true);
+    }
+
+    private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {
+        var result = command.CreateParameter();
+        result.ParameterName = parameter.Name;
+        result.DbType = parameter.Type;
+        result.Value = parameter.Value ?? DBNull.Value;
+        return result;
+    }
+
+    private IDbConnection GetDbConnection() {
+        if (_dbConnection is null) {
+            _dbConnection = _dbConnectionFactory.CreateDbConnection();
+            _dbConnection.EnsureOpen();
         }
 
-        private IDbCommand CreateCommand(string text, CommandType type, IEnumerable<Parameter> parameters) {
-            var command = GetDbConnection().CreateCommand();
-            command.CommandText = text;
-            command.CommandType = type;
+        return _dbConnection;
+    }
 
-            foreach (var parameter in parameters) {
-                command.Parameters.Add(
-                    value: ConvertParameter(command, parameter)
-                );
-            }
+    private void BlockAccessAfterDispose() {
+        if (_disposed) {
+            throw new ObjectDisposedException(nameof(DatabaseService));
+        }
+    }
 
-            _logger.DbCommand(command);
-
-            return command;
+    private void Dispose(bool disposing) {
+        if (_disposed) { return; }
+        if (disposing) {
+            _dbConnection?.Dispose();
         }
 
-        #endregion
+        _dbConnection = null;
+        _disposed = true;
+    }
 
-        #region IDatabaseService Members
+    private IDbCommand CreateCommand(string text, CommandType type, IEnumerable<Parameter> parameters) {
+        var command = GetDbConnection().CreateCommand();
+        command.CommandText = text;
+        command.CommandType = type;
 
-        /// <inheritdoc/>
-        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) {
-            BlockAccessAfterDispose();
-
-            return GetDbConnection().BeginTransaction(isolationLevel);
+        foreach (var parameter in parameters) {
+            command.Parameters.Add(
+                value: ConvertParameter(command, parameter)
+            );
         }
 
-        /// <inheritdoc/>
-        public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
-            BlockAccessAfterDispose();
+        LoggerHandlers.DebugDbCommand(_logger,
+                                    command.CommandText,
+                                    command.GetParameterList(),
+                                    null /* exception */);
 
-            Guard.Against.NullOrWhiteSpace(text, nameof(text));
-
-            using var command = CreateCommand(text, type, parameters);
-
-            try { return command.ExecuteNonQuery(); }
-            catch (Exception ex) {
-                _logger.LogError(exception: ex,
-                                 message: "Error while executing non-query. {Message}",
-                                 args: ex.Message);
-                throw;
-            }
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<TResult> ExecuteReader<TResult>(string text, Func<IDataRecord, TResult> mapper, CommandType type, params Parameter[] parameters) {
-            BlockAccessAfterDispose();
-
-            Guard.Against.NullOrWhiteSpace(text, nameof(text));
-
-            using var command = CreateCommand(text, type, parameters);
-
-            IDataReader reader;
-            try { reader = command.ExecuteReader(); }
-            catch (Exception ex) {
-                _logger.LogError(exception: ex,
-                                 message: "Error while executing reader. {Message}",
-                                 args: ex.Message);
-                throw;
-            }
-            using (reader) {
-                while (reader.Read()) {
-                    yield return mapper(reader);
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
-            BlockAccessAfterDispose();
-
-            Guard.Against.NullOrWhiteSpace(text, nameof(text));
-
-            using var command = CreateCommand(text, type, parameters);
-
-            try { return (TResult?)command.ExecuteScalar(); }
-            catch (Exception ex) {
-                _logger.LogError(exception: ex,
-                                 message: "Error while executing scalar. {Message}",
-                                 args: ex.Message);
-                throw;
-            }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        /// <inheritdoc/>
-        public void Dispose() {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
-        #endregion
+        return command;
     }
 }

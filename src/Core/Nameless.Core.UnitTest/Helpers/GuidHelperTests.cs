@@ -1,31 +1,31 @@
-﻿namespace Nameless.Helpers {
-    public class GuidHelperTests {
-        private readonly Guid GuidValue = Guid.Parse("126d40ca-d449-4f18-8fc3-43ec8646a36a");
-        private const string StringValue = "ykBtEknUGE_Pw0Pshkajag";
+﻿namespace Nameless.Helpers;
 
-        [Test]
-        public void Encode_WhenPassGuidValue_ThenReturnStringEncoded() {
-            // arrange
+public class GuidHelperTests {
+    private readonly Guid GuidValue = Guid.Parse("126d40ca-d449-4f18-8fc3-43ec8646a36a");
+    private const string StringValue = "ykBtEknUGE_Pw0Pshkajag";
 
-            // act
-            var actual = GuidHelper.Encode(GuidValue);
+    [Test]
+    public void Encode_WhenPassGuidValue_ThenReturnStringEncoded() {
+        // arrange
 
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(actual, Is.Not.Null);
-                Assert.That(actual, Is.EqualTo(StringValue));
-            });
-        }
+        // act
+        var actual = GuidHelper.Encode(GuidValue);
 
-        [Test]
-        public void Decode_WhenPassStringValue_ThenReturnGuidDecoded() {
-            // arrange
+        // assert
+        Assert.Multiple(() => {
+            Assert.That(actual, Is.Not.Null);
+            Assert.That(actual, Is.EqualTo(StringValue));
+        });
+    }
 
-            // act
-            var actual = GuidHelper.Decode(StringValue);
+    [Test]
+    public void Decode_WhenPassStringValue_ThenReturnGuidDecoded() {
+        // arrange
 
-            // assert
-            Assert.That(actual, Is.EqualTo(GuidValue));
-        }
+        // act
+        var actual = GuidHelper.Decode(StringValue);
+
+        // assert
+        Assert.That(actual, Is.EqualTo(GuidValue));
     }
 }

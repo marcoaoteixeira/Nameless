@@ -1,62 +1,46 @@
 ﻿using Lucene.Net.Util;
 
-namespace Nameless.Lucene.Impl {
+namespace Nameless.Lucene.Impl;
+
+/// <summary>
+/// Default implementation of <see cref="ISearchBit"/>.
+/// </summary>
+public sealed class SearchBit : ISearchBit {
+    private readonly OpenBitSet _openBitSet;
+
     /// <summary>
-    /// Default implementation of <see cref="ISearchBit"/>.
+    /// Initializes a new instance of <see cref="SearchBit"/>.
     /// </summary>
-    public sealed class SearchBit : ISearchBit {
-        #region Private Read-Only Fields
+    /// <param name="openBitSet">The open bit set.</param>
+    public SearchBit(OpenBitSet openBitSet) {
+        _openBitSet = Prevent.Argument.Null(openBitSet);
+    }
 
-        private readonly OpenBitSet _openBitSet;
+    /// <inheritdoc />
+    public ISearchBit And(ISearchBit other)
+        => Apply(other, (left, right) => left.And(right));
 
-        #endregion
+    /// <inheritdoc />
+    public ISearchBit Or(ISearchBit other)
+        => Apply(other, (left, right) => left.Or(right));
 
-        #region Public Constructors
+    /// <inheritdoc />
+    public ISearchBit Xor(ISearchBit other)
+        => Apply(other, (left, right) => left.Xor(right));
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="SearchBit"/>.
-        /// </summary>
-        /// <param name="openBitSet">The open bit set.</param>
-        public SearchBit(OpenBitSet openBitSet) {
-            _openBitSet = Guard.Against.Null(openBitSet, nameof(openBitSet));
+    /// <inheritdoc />
+    public long Count()
+        => _openBitSet.Cardinality;
+
+    private SearchBit Apply(ISearchBit other, Action<OpenBitSet, OpenBitSet> operation) {
+        var bitset = (OpenBitSet)_openBitSet.Clone();
+
+        if (other is not SearchBit otherBitSet) {
+            throw new InvalidOperationException("The other bitset must be of type OpenBitSet");
         }
 
-        #endregion
+        operation(bitset, otherBitSet._openBitSet);
 
-        #region Private Methods
-
-        private SearchBit Apply(ISearchBit other, Action<OpenBitSet, OpenBitSet> operation) {
-            var bitset = (OpenBitSet)_openBitSet.Clone();
-
-            if (other is not SearchBit otherBitSet) {
-                throw new InvalidOperationException("The other bitset must be of type OpenBitSet");
-            }
-
-            operation(bitset, otherBitSet._openBitSet);
-
-            return new SearchBit(bitset);
-        }
-
-        #endregion
-
-        #region ISearchBits Members
-
-        /// <inheritdoc />
-        public ISearchBit And(ISearchBit other)
-            => Apply(other, (left, right) => left.And(right));
-
-        /// <inheritdoc />
-        public ISearchBit Or(ISearchBit other)
-            => Apply(other, (left, right) => left.Or(right));
-
-        /// <inheritdoc />
-        public ISearchBit Xor(ISearchBit other)
-            => Apply(other, (left, right) => left.Xor(right));
-
-        /// <inheritdoc />
-        public long Count()
-            => _openBitSet.Cardinality;
-
-        #endregion
+        return new SearchBit(bitset);
     }
 }

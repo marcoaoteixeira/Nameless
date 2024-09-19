@@ -1,30 +1,68 @@
 ﻿using Nameless.Fixtures;
 
-namespace Nameless {
-    public class PropertyInfoExtensionTests {
-        [Test]
-        public void GetDescription_Should_Return_Property_DescriptionAttribute_Value() {
-            // arrange
-            var instance = new PropertyAnnotatedClass();
-            var expected = "Name of something";
+namespace Nameless;
 
-            // act
-            var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithDescription());
+public class PropertyInfoExtensionTests {
+    [Test]
+    public void When_Property_Has_Valid_DescriptionAttribute_Then_Return_Description() {
+        // arrange
+        var instance = new PropertyAnnotatedClass();
+        const string expected = "Name of something";
 
-            // assert
-            Assert.That(actual, Is.EqualTo(expected));
-        }
+        // act
+        var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithDescriptionAttribute());
 
-        [Test]
-        public void GetDescription_Should_Return_Null_If_Property_Not_Annotated_With_DescriptionAttribute() {
-            // arrange
-            var instance = new PropertyAnnotatedClass();
+        // assert
+        Assert.That(actual, Is.EqualTo(expected));
+    }
 
-            // act
-            var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithoutDescription());
+    [Test]
+    public void When_Property_Does_Not_Have_DescriptionAttribute_And_FallbackToName_Is_True_Then_Return_PropertyName() {
+        // arrange
+        var instance = new PropertyAnnotatedClass();
+        const string expected = nameof(PropertyAnnotatedClass.LastName);
 
-            // assert
-            Assert.That(actual, Is.Null);
-        }
+        // act
+        var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithoutDescriptionAttribute());
+
+        // assert
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void When_Property_Has_DescriptionAttribute_But_Is_Empty_And_FallbackToName_Is_True_Then_Return_PropertyName() {
+        // arrange
+        var instance = new PropertyAnnotatedClass();
+        const string expected = nameof(PropertyAnnotatedClass.Age);
+
+        // act
+        var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithEmptyDescriptionAttribute());
+
+        // assert
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void When_Property_Has_DescriptionAttribute_But_Is_Empty_And_FallbackToName_Is_False_Then_Return_String_Empty() {
+        // arrange
+        var instance = new PropertyAnnotatedClass();
+        
+        // act
+        var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithEmptyDescriptionAttribute(), fallbackToName: false);
+
+        // assert
+        Assert.That(actual, Is.EqualTo(string.Empty));
+    }
+
+    [Test]
+    public void When_Property_Does_Not_Have_DescriptionAttribute_And_FallbackToName_Is_False_Then_Return_String_Empty() {
+        // arrange
+        var instance = new PropertyAnnotatedClass();
+        
+        // act
+        var actual = PropertyInfoExtension.GetDescription(instance.GetPropertyWithoutDescriptionAttribute(), fallbackToName: false);
+
+        // assert
+        Assert.That(actual, Is.EqualTo(string.Empty));
     }
 }

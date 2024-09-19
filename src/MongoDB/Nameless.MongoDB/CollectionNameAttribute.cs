@@ -1,18 +1,10 @@
-﻿namespace Nameless.MongoDB {
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class CollectionNameAttribute : Attribute {
-        #region Public Read-Only Properties
+﻿namespace Nameless.MongoDB;
 
-        public string Name { get; }
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public sealed class CollectionNameAttribute : Attribute {
+    public string Name { get; }
 
-        #endregion
-
-        #region Public Constructors
-
-        public CollectionNameAttribute(string name) {
-            Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
-        }
-
-        #endregion
+    public CollectionNameAttribute(string name) {
+        Name = Prevent.Argument.NullOrWhiteSpace(name);
     }
 }

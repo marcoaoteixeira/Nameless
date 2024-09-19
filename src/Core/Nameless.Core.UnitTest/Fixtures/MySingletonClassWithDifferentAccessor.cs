@@ -1,12 +1,11 @@
-﻿namespace Nameless.Fixtures {
+﻿namespace Nameless.Fixtures;
 
-    [Singleton(AccessorName = "Default")]
-    public sealed class MySingletonClassWithDifferentAccessor {
+[Singleton(AccessorName = "Default")]
+public sealed class MySingletonClassWithDifferentAccessor {
 
-        public static MySingletonClassWithDifferentAccessor Default { get; } = new();
+    public static MySingletonClassWithDifferentAccessor Default { get; } = new();
 
-        private MySingletonClassWithDifferentAccessor() { }
+    private MySingletonClassWithDifferentAccessor() { }
 
-        static MySingletonClassWithDifferentAccessor() { }
-    }
+    static MySingletonClassWithDifferentAccessor() { }
 }

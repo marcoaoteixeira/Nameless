@@ -1,43 +1,36 @@
-﻿using Nameless.NHibernate.Options;
+﻿using Microsoft.Extensions.Options;
+using Nameless.NHibernate.Options;
 using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate.Impl {
-    public sealed class ConfigurationFactory : IConfigurationFactory {
-        #region Private Read-Only Fields
+namespace Nameless.NHibernate.Impl;
 
-        private readonly NHibernateOptions _options;
+public sealed class ConfigurationFactory : IConfigurationFactory {
+    private readonly NHibernateOptions _options;
+    private readonly Type[] _entityTypes;
+    private readonly Type[] _classMappingTypes;
 
-        #endregion
+    public ConfigurationFactory(IOptions<NHibernateOptions> options, Type[] entityTypes, Type[] classMappingTypes) {
+        _entityTypes = Prevent.Argument.Null(entityTypes);
+        _classMappingTypes = Prevent.Argument.Null(classMappingTypes);
+        _options = Prevent.Argument.Null(options).Value;
+    }
 
-        #region Public Constructors
+    public Configuration CreateConfiguration() {
+        var configuration = new Configuration();
+        configuration.SetProperties(_options.ToDictionary());
 
-        public ConfigurationFactory(NHibernateOptions options) {
-            _options = Guard.Against.Null(options, nameof(options));
-        }
+        var modelInspector = new ModelInspector(_entityTypes);
+        var modelMapper = new ModelMapper(modelInspector);
 
-        #endregion
+        modelMapper.AddMappings(_classMappingTypes);
 
-        #region IConfigurationFactory Members
+        var mappingDocument = modelMapper
+            .CompileMappingForAllExplicitlyAddedEntities();
 
-        public Configuration CreateConfiguration() {
-            var configuration = new Configuration();
-            configuration.SetProperties(_options.ToDictionary());
+        configuration.AddDeserializedMapping(mappingDocument: mappingDocument,
+                                             documentFileName: null);
 
-            var modelInspector = new ModelInspector(_options.RootEntityTypes);
-            var modelMapper = new ModelMapper(modelInspector);
-
-            modelMapper.AddMappings(_options.ClassMappingTypes);
-
-            var mappingDocument = modelMapper
-                .CompileMappingForAllExplicitlyAddedEntities();
-
-            configuration.AddDeserializedMapping(mappingDocument: mappingDocument,
-                                                 documentFileName: null);
-
-            return configuration;
-        }
-
-        #endregion
+        return configuration;
     }
 }

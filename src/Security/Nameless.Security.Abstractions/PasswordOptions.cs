@@ -1,44 +1,59 @@
-﻿namespace Nameless.Security {
-    public sealed record PasswordOptions {
-        #region Public Static Read-Only Properties
+﻿namespace Nameless.Security;
 
-        public static PasswordOptions Default => new();
+public sealed record PasswordOptions {
+    private const string DEFAULT_SYMBOLS = "*$-+?_&=!%{}/";
+    private const string DEFAULT_NUMERICS = "0123456789";
+    private const string DEFAULT_LOWER_CASE = "abcdefgijkmnopqrstwxyz";
+    private const string DEFAULT_UPPER_CASE = "ABCDEFGIJKMNOPQRSTWXYZ";
 
-        #endregion
+    public static PasswordOptions Default => new();
 
-        #region Public Properties
+    private string? _symbols;
+    private string? _numerics;
+    private string? _lowerCase;
+    private string? _upperCase;
 
-        /// <summary>
-        /// Gets or sets the minimum length for the password.
-        /// </summary>
-        /// <remarks>Default is 6</remarks>
-        public int MinLength { get; set; } = 6;
-        /// <summary>
-        /// Gets or sets the maximum length for the password.
-        /// </summary>
-        /// <remarks>Default is 12</remarks>
-        public int MaxLength { get; set; } = 12;
-        /// <summary>
-        /// Gets or sets if whether will use special chars.
-        /// </summary>
-        /// <remarks>Default are <c>*$-+?_&=!%{}/</c></remarks>
-        public string Symbols { get; set; } = "*$-+?_&=!%{}/";
-        /// <summary>
-        /// Gets or sets if whether will use numbers.
-        /// </summary>
-        /// <remarks>Default are <c>0123456789</c></remarks>
-        public string Numerics { get; set; } = "0123456789";
-        /// <summary>
-        /// Gets or sets if whether will use lower case chars.
-        /// </summary>
-        /// <remarks>Default are <c>abcdefgijkmnopqrstwxyz</c></remarks>
-        public string LowerCases { get; set; } = "abcdefgijkmnopqrstwxyz";
-        /// <summary>
-        /// Gets or sets if whether will use upper case chars.
-        /// </summary>
-        /// <remarks>Default are <c>ABCDEFGIJKMNOPQRSTWXYZ</c></remarks>
-        public string UpperCases { get; set; } = "ABCDEFGIJKMNOPQRSTWXYZ";
+    /// <summary>
+    /// Gets or sets the minimum length for the password.
+    /// </summary>
+    /// <remarks>Default is 6</remarks>
+    public int MinLength { get; set; } = 6;
+    /// <summary>
+    /// Gets or sets the maximum length for the password.
+    /// </summary>
+    /// <remarks>Default is 12</remarks>
+    public int MaxLength { get; set; } = 12;
 
-        #endregion
+    /// <summary>
+    /// Gets or sets if whether will use special chars.
+    /// </summary>
+    /// <remarks>Default are <c>*$-+?_&=!%{}/</c></remarks>
+    public string Symbols {
+        get => _symbols.WithFallback(DEFAULT_SYMBOLS);
+        set => _symbols = value;
+    }
+    /// <summary>
+    /// Gets or sets if whether will use numbers.
+    /// </summary>
+    /// <remarks>Default are <c>0123456789</c></remarks>
+    public string Numerics {
+        get => _numerics.WithFallback(DEFAULT_NUMERICS);
+        set => _numerics = value;
+    }
+    /// <summary>
+    /// Gets or sets if whether will use lower case chars.
+    /// </summary>
+    /// <remarks>Default are <c>abcdefgijkmnopqrstwxyz</c></remarks>
+    public string LowerCases {
+        get => _lowerCase.WithFallback(DEFAULT_LOWER_CASE);
+        set => _lowerCase = value;
+    }
+    /// <summary>
+    /// Gets or sets if whether will use upper case chars.
+    /// </summary>
+    /// <remarks>Default are <c>ABCDEFGIJKMNOPQRSTWXYZ</c></remarks>
+    public string UpperCases {
+        get => _upperCase.WithFallback(DEFAULT_UPPER_CASE);
+        set => _upperCase = value;
     }
 }

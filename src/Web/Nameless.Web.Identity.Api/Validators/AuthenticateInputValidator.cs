@@ -1,19 +1,19 @@
 ﻿using FluentValidation;
 using Nameless.Web.Identity.Api.Inputs;
 
-namespace Nameless.Web.Identity.Api.Validators {
-    public sealed class AuthenticateInputValidator : AbstractValidator<AuthenticateUserInput> {
-        #region Public Constructors
+namespace Nameless.Web.Identity.Api.Validators;
 
-        public AuthenticateInputValidator() {
-            RuleFor(prop => prop.Username)
-                .NotEmpty()
-                .EmailAddress();
+public sealed class AuthenticateInputValidator : AbstractValidator<AuthenticateUserInput> {
+    #region Public Constructors
 
-            RuleFor(prop => prop.Password)
-                .NotEmpty();
-        }
+    public AuthenticateInputValidator() {
+        RuleFor(prop => prop.Username)
+            .NotEmpty()
+            .EmailAddress();
 
-        #endregion
+        RuleFor(prop => prop.Password)
+            .NotEmpty();
     }
+
+    #endregion
 }

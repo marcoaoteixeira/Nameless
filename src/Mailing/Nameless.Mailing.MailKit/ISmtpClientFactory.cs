@@ -1,11 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 
-namespace Nameless.Mailing.MailKit {
-    public interface ISmtpClientFactory {
-        #region Methods
+namespace Nameless.Mailing.MailKit;
 
-        Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken);
-
-        #endregion
-    }
+public interface ISmtpClientFactory {
+    Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken);
 }

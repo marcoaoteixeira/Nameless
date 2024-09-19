@@ -1,32 +1,20 @@
 ﻿using System.Data;
 using System.Diagnostics;
 
-namespace Nameless.Data {
-    [DebuggerDisplay("{DebuggerDisplayValue}")]
-    public readonly record struct Parameter {
-        #region Public Properties
+namespace Nameless.Data;
 
-        public string Name { get; }
-        public object? Value { get; }
-        public DbType Type { get; }
+[DebuggerDisplay("{DebuggerDisplayValue}")]
+public readonly record struct Parameter {
+    private string DebuggerDisplayValue
+        => $"[{Type}] {Name} => {Value ?? "NULL"}";
 
-        #endregion
+    public string Name { get; }
+    public object? Value { get; }
+    public DbType Type { get; }
 
-        #region Private Properties
-
-        private string DebuggerDisplayValue
-            => $"[{Type}] {Name} => {Value ?? "NULL"}";
-
-        #endregion
-
-        #region Public Constructors
-
-        public Parameter(string name, object? value, DbType type = DbType.String) {
-            Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Value = value;
-            Type = type;
-        }
-
-        #endregion
+    public Parameter(string name, object? value, DbType type = DbType.String) {
+        Name = Prevent.Argument.NullOrWhiteSpace(name);
+        Value = value;
+        Type = type;
     }
 }

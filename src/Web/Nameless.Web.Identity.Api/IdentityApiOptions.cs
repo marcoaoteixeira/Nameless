@@ -1,12 +1,12 @@
-﻿namespace Nameless.Web.Identity.Api {
-    public sealed class IdentityApiOptions {
-        #region Public Properties
+﻿namespace Nameless.Web.Identity.Api;
 
-        /// <summary>
-        /// Gets or sets the Identity API base URL. Default value is: api/identity/v{version:apiVersion}
-        /// </summary>
-        public string BaseUrl { get; set; } = "api/identity/v{version:apiVersion}";
+public sealed class IdentityApiOptions {
+    #region Public Properties
 
-        #endregion
-    }
+    /// <summary>
+    /// Gets or sets the Identity API base URL. Default value is: api/identity/v{version:apiVersion}
+    /// </summary>
+    public string BaseUrl { get; set; } = "api/identity/v{version:apiVersion}";
+
+    #endregion
 }

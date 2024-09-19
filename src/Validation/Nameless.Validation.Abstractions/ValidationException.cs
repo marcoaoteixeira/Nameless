@@ -1,27 +1,19 @@
-﻿namespace Nameless.Validation.Abstractions {
-    public class ValidationException : Exception {
-        #region Public Properties
+﻿namespace Nameless.Validation.Abstractions;
 
-        public ValidationResult Result { get; }
+public class ValidationException : Exception {
+    public ValidationResult Result { get; }
 
-        #endregion
+    public ValidationException(ValidationResult result) {
+        Result = result ?? throw new ArgumentNullException(nameof(result));
+    }
 
-        #region Public Constructors
+    public ValidationException(ValidationResult result, string message)
+        : base(message) {
+        Result = result ?? throw new ArgumentNullException(nameof(result));
+    }
 
-        public ValidationException(ValidationResult result) {
-            Result = result ?? throw new ArgumentNullException(nameof(result));
-        }
-
-        public ValidationException(ValidationResult result, string message)
-            : base(message) {
-            Result = result ?? throw new ArgumentNullException(nameof(result));
-        }
-
-        public ValidationException(ValidationResult result, string message, Exception inner)
-            : base(message, inner) {
-            Result = result ?? throw new ArgumentNullException(nameof(result));
-        }
-
-        #endregion
+    public ValidationException(ValidationResult result, string message, Exception inner)
+        : base(message, inner) {
+        Result = result ?? throw new ArgumentNullException(nameof(result));
     }
 }

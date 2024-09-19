@@ -1,74 +1,74 @@
 ﻿using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
-namespace Nameless {
-    public class EnumExtensionTests {
-        public enum Status {
-            [Description("Okey-Dokey")]
-            OK,
-            [Description("Oh No")]
-            Error,
-            Fatal
-        }
+namespace Nameless;
 
-        [Test]
-        public void GetAttribute_Returns_Attribute_If_Exists() {
-            // arrange
-            var status = Status.OK;
+public class EnumExtensionTests {
+    public enum Status {
+        [Description("Okey-Dokey")]
+        OK,
+        [Description("Oh No")]
+        Error,
+        Fatal
+    }
 
-            // act
-            var attr = EnumExtension.GetAttribute<DescriptionAttribute>(status);
+    [Test]
+    public void GetAttribute_Returns_Attribute_If_Exists() {
+        // arrange
+        var status = Status.OK;
 
-            // assert
-            Assert.That(attr, Is.InstanceOf<DescriptionAttribute>());
-        }
+        // act
+        var attr = EnumExtension.GetAttribute<DescriptionAttribute>(status);
 
-        [Test]
-        public void GetAttribute_Returns_Null_If_Enum_Field_Does_Not_Exists() {
-            // arrange
-            var status = (Status)16;
+        // assert
+        Assert.That(attr, Is.InstanceOf<DescriptionAttribute>());
+    }
 
-            // act
-            var attr = EnumExtension.GetAttribute<DescriptionAttribute>(status);
+    [Test]
+    public void GetAttribute_Returns_Null_If_Enum_Field_Does_Not_Exists() {
+        // arrange
+        var status = (Status)16;
 
-            // assert
-            Assert.That(attr, Is.Null);
-        }
+        // act
+        var attr = EnumExtension.GetAttribute<DescriptionAttribute>(status);
 
-        [Test]
-        public void GetAttribute_Returns_Null_If_Attributes_Does_Not_Exists() {
-            // arrange
-            var status = Status.OK;
+        // assert
+        Assert.That(attr, Is.Null);
+    }
 
-            // act
-            var attr = EnumExtension.GetAttribute<AttributeUsageAttribute>(status);
+    [Test]
+    public void GetAttribute_Returns_Null_If_Attributes_Does_Not_Exists() {
+        // arrange
+        var status = Status.OK;
 
-            // assert
-            Assert.That(attr, Is.Null);
-        }
+        // act
+        var attr = EnumExtension.GetAttribute<AttributeUsageAttribute>(status);
 
-        [Test]
-        public void GetDescription_Returns_Value_From_DescriptionAttribute() {
-            // arrange
-            var status = Status.OK;
-            var expected = "Okey-Dokey";
+        // assert
+        Assert.That(attr, Is.Null);
+    }
 
-            // act
-            var actual = EnumExtension.GetDescription(status);
+    [Test]
+    public void GetDescription_Returns_Value_From_DescriptionAttribute() {
+        // arrange
+        var status = Status.OK;
+        var expected = "Okey-Dokey";
 
-            // assert
-            Assert.That(actual, Is.EqualTo(expected));
-        }
+        // act
+        var actual = EnumExtension.GetDescription(status);
 
-        [Test]
-        public void GetDescription_Returns_Enum_Name_If_Attribute_Does_Not_Exists() {
-            // arrange
-            var status = Status.Fatal;
+        // assert
+        Assert.That(actual, Is.EqualTo(expected));
+    }
 
-            // act
-            var actual = EnumExtension.GetDescription(status);
+    [Test]
+    public void GetDescription_Returns_Enum_Name_If_Attribute_Does_Not_Exists() {
+        // arrange
+        var status = Status.Fatal;
 
-            // assert
-            Assert.That(actual, Is.EqualTo(nameof(Status.Fatal)));
-        }
+        // act
+        var actual = EnumExtension.GetDescription(status);
+
+        // assert
+        Assert.That(actual, Is.EqualTo(nameof(Status.Fatal)));
     }
 }

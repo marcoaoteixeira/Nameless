@@ -1,59 +1,59 @@
-﻿namespace Nameless.Caching.InMemory {
-    public class CacheTests {
-        private static InMemoryCacheService CreateSut()
-            => new InMemoryCacheService();
+﻿namespace Nameless.Caching.InMemory;
 
-        [Test]
-        public async Task Set_New_Object_To_Cache() {
-            // arrange
-            var value = new {
-                Id = 1,
-                Name = "Test"
-            };
+public class CacheTests {
+    private static InMemoryCache CreateSut()
+        => new InMemoryCache();
 
-            var sut = CreateSut();
+    [Test]
+    public async Task Set_New_Object_To_Cache() {
+        // arrange
+        var value = new {
+            Id = 1,
+            Name = "Test"
+        };
 
-            // act
-            var result = await sut.SetAsync("Key", value, opts: default);
+        var sut = CreateSut();
 
-            // assert
-            Assert.That(result, Is.True);
-        }
+        // act
+        var result = await sut.SetAsync("Key", value, opts: default);
 
-        [Test]
-        public async Task Set_And_Get_Object_From_Cache() {
-            // arrange
-            const string key = "Key";
-            object? value = new {
-                Id = 1,
-                Name = "Test"
-            };
+        // assert
+        Assert.That(result, Is.True);
+    }
 
-            var sut = CreateSut();
+    [Test]
+    public async Task Set_And_Get_Object_From_Cache() {
+        // arrange
+        const string key = "Key";
+        object? value = new {
+            Id = 1,
+            Name = "Test"
+        };
 
-            // act
-            var objA = await sut.SetAsync(key, value, opts: default);
-            var result = await sut.GetAsync<object?>(key);
+        var sut = CreateSut();
 
-            // assert
-            Assert.Multiple(() => {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.SameAs(value));
-                Assert.That(result, Has.Property("Id").EqualTo(1));
-                Assert.That(result, Has.Property("Name").EqualTo("Test"));
-            });
-        }
+        // act
+        var objA = await sut.SetAsync(key, value, opts: default);
+        var result = await sut.GetAsync<object?>(key);
 
-        [Test]
-        public async Task Remove_Object_From_Cache() {
-            // arrange
-            var sut = CreateSut();
+        // assert
+        Assert.Multiple(() => {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.SameAs(value));
+            Assert.That(result, Has.Property("Id").EqualTo(1));
+            Assert.That(result, Has.Property("Name").EqualTo("Test"));
+        });
+    }
 
-            // act
-            var result = await sut.RemoveAsync("Key");
+    [Test]
+    public async Task Remove_Object_From_Cache() {
+        // arrange
+        var sut = CreateSut();
 
-            // assert
-            Assert.That(result, Is.True);
-        }
+        // act
+        var result = await sut.RemoveAsync("Key");
+
+        // assert
+        Assert.That(result, Is.True);
     }
 }
