@@ -53,8 +53,8 @@ public sealed class StartUp {
         // Configure options
         services
             .AddOptions()
-            .AddOptions<SwaggerPageOptions>(Configuration)
-            .AddOptions<JwtOptions>(Configuration);
+            .Configure<SwaggerPageOptions>(Configuration.GetSection(nameof(SwaggerPageOptions)))
+            .Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
 
         // AutoMapper
         services
