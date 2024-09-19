@@ -35,8 +35,9 @@ public sealed class ValidationService : IValidationService {
             return result;
         }
 
-        _logger.LogInformation(message: "Validator not found for {Value}",
-                               args: typeof(TValue).FullName);
+        LoggerHandlers.ValidatorNotFound(_logger,
+                                         typeof(TValue).FullName,
+                                         null /* exception */);
 
         return ValidationResult.Empty;
     }

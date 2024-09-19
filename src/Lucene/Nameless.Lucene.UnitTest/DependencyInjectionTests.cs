@@ -10,7 +10,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterLucene();
+        services.AddLucene();
 
         // We need an IApplicationContext
         var applicationContextMock = new Mock<IApplicationContext>();

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Web.Api;
 using Nameless.Web.Identity.Api.Handlers;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Identity.Api.Responses;
@@ -9,8 +8,6 @@ using Nameless.Web.Identity.Api.Responses;
 namespace Nameless.Web.Identity.Api;
 
 public static class ServiceCollectionExtension {
-    #region Public Static Methods
-
     public static IServiceCollection RegisterIdentityApi(this IServiceCollection self, Action<IdentityApiOptions>? configure = null)
         => RegisterIdentityApi<IdentityUser, string>(self, configure);
 
@@ -25,10 +22,6 @@ public static class ServiceCollectionExtension {
         return self.AddApiEndpoints([typeof(ServiceCollectionExtension).Assembly]);
     }
 
-    #endregion
-
-    #region Private Static Methods
-
     private static void ConfigureOptions(IServiceCollection services, Action<IdentityApiOptions>? configure) {
         var options = new IdentityApiOptions();
 
@@ -41,6 +34,4 @@ public static class ServiceCollectionExtension {
         where TKey : IEquatable<TKey> {
         services.AddTransient<IRequestHandler<AuthenticateUserRequest, AuthenticateUserResponse>, AuthenticateUserRequestHandler<TUser, TKey>>();
     }
-
-    #endregion
 }

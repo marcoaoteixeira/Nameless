@@ -5,7 +5,7 @@ using Nameless.Mailing.MailKit.Options;
 namespace Nameless.Mailing.MailKit;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterMailingService(this IServiceCollection self, Action<MailServerOptions>? configure = null)
+    public static IServiceCollection AddMailing(this IServiceCollection self, Action<MailServerOptions>? configure = null)
         => self.AddSingleton<IMailingService>(provider => {
             var options = provider.GetOptions<MailServerOptions>();
 

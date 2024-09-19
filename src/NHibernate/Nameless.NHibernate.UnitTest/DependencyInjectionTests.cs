@@ -11,7 +11,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_NHibernate_Module() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterNHibernate();
+        services.AddNHibernate();
 
         var applicationContextMock = new Mock<IApplicationContext>();
         applicationContextMock

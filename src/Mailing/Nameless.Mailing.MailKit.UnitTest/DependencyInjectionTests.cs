@@ -8,7 +8,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMailingService();
+        services.AddMailing();
 
         using var provider = services.BuildServiceProvider();
 

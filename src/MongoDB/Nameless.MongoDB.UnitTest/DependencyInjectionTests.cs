@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_MongoDB_Services() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMongoCollectionProvider(opts => opts.Database = "local");
+        services.AddMongoDB(opts => opts.Database = "local");
 
         using var provider = services.BuildServiceProvider();
 

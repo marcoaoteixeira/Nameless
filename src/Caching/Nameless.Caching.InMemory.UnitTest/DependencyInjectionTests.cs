@@ -7,7 +7,7 @@ public class DependencyInjectionTests {
     public void Register_And_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterCache();
+        services.AddInMemoryCache();
 
         using var provider = services.BuildServiceProvider();
 

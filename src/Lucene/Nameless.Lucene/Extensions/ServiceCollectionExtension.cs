@@ -6,7 +6,7 @@ using Nameless.Lucene.Options;
 namespace Nameless.Lucene;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterLucene(this IServiceCollection self, Action<LuceneOptions>? configure = null)
+    public static IServiceCollection AddLucene(this IServiceCollection self, Action<LuceneOptions>? configure = null)
         => Prevent.Argument
                   .Null(self, nameof(self))
                   .AddSingleton<IIndexProvider>(provider => {
@@ -14,10 +14,8 @@ public static class ServiceCollectionExtension {
                       
                       configure?.Invoke(options.Value);
                       return new IndexProvider(applicationContext: provider.GetRequiredService<IApplicationContext>(),
-                                              analyzerProvider: new AnalyzerProvider(
-                                                  selectors: provider.GetService<IAnalyzerSelector[]>() ?? []
-                                              ),
+                                              analyzerProvider: new AnalyzerProvider(selectors: provider.GetService<IAnalyzerSelector[]>() ?? []),
                                               logger: provider.GetLogger<Impl.Index>(),
-                                              options: options.Value);
+                                              options: options);
                   });
 }

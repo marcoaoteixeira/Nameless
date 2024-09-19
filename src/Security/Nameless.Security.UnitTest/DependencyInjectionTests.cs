@@ -8,8 +8,8 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Security_Module_Services() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterPasswordGenerator();
-        services.RegisterCryptographicService();
+        services.AddPasswordGenerator();
+        services.AddCryptographicService();
         using var provider = services.BuildServiceProvider();
 
         // act

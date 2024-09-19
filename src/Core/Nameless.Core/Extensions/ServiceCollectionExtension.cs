@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Infrastructure;
 using Nameless.Infrastructure.Impl;
@@ -24,7 +23,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, bool useAppDataSpecialFolder = false, Version? appVersion = null)
+    public static IServiceCollection AddApplicationContext(this IServiceCollection self, bool useAppDataSpecialFolder = false, Version? appVersion = null)
         => Prevent.Argument
                   .Null(self, nameof(self))
                   .AddSingleton<IApplicationContext>(provider => {
@@ -33,28 +32,6 @@ public static class ServiceCollectionExtension {
                                                     useAppDataSpecialFolder,
                                                     appVersion);
                   });
-
-    /// <summary>
-    /// Registers an object to act like an option that will get its values
-    /// from <see cref="IConfiguration"/> (using the Bind method).
-    /// </summary>
-    /// <typeparam name="TOptions">The type of the object.</typeparam>
-    /// <param name="self">The service collection.</param>
-    /// <param name="configuration">The configuration.</param>
-    /// <returns>
-    /// The current <see cref="IServiceCollection"/>, so other actions can be chained.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> or
-    /// <paramref name="configuration"/> is <c>null</c>.
-    /// </exception>
-    public static IServiceCollection RegisterOptions<TOptions>(this IServiceCollection self, IConfiguration configuration)
-        where TOptions : class
-        => Prevent.Argument
-                  .Null(self, nameof(self))
-                  .Configure<TOptions>(Prevent.Argument
-                                              .Null(configuration, nameof(configuration))
-                                              .GetSection(typeof(TOptions).Name));
 
     /// <summary>
     /// Registers service <see cref="ISystemClock"/>
@@ -66,7 +43,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterClockService(this IServiceCollection self)
+    public static IServiceCollection AddSystemClock(this IServiceCollection self)
         => Prevent.Argument
                   .Null(self, nameof(self))
                   .AddSingleton(SystemClock.Instance);
@@ -81,7 +58,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterPluralizationRuleProvider(this IServiceCollection self)
+    public static IServiceCollection AddPluralizationRuleProvider(this IServiceCollection self)
         => self.AddSingleton(PluralizationRuleProvider.Instance);
 
     /// <summary>
@@ -94,6 +71,6 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterXmlSchemaValidator(this IServiceCollection self)
+    public static IServiceCollection AddXmlSchemaValidator(this IServiceCollection self)
         => self.AddSingleton(XmlSchemaValidator.Instance);
 }

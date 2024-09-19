@@ -11,7 +11,7 @@ namespace Nameless.NHibernate;
 public static class ServiceCollectionExtension {
     private const string SESSION_FACTORY_TOKEN = $"{nameof(ISessionFactory)}::9f122dcc-7d5b-4218-a3da-c8978ed439d9";
 
-    public static IServiceCollection RegisterNHibernate(
+    public static IServiceCollection AddNHibernate(
         this IServiceCollection self,
         Action<NHibernateOptions>? configure = null,
         Type[]? entityTypes = null,

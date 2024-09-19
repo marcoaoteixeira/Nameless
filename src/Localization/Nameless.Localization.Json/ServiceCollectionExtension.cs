@@ -18,7 +18,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterLocalization(this IServiceCollection self, Action<LocalizationOptions>? configure = null)
+    public static IServiceCollection AddJsonLocalization(this IServiceCollection self, Action<LocalizationOptions>? configure = null)
         => Prevent.Argument
                   .Null(self, nameof(self))
                   .AddSingleton<IStringLocalizerFactory>(provider => {

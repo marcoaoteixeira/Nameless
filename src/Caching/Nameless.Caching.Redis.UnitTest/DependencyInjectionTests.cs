@@ -7,7 +7,7 @@ public class DependencyInjectionTests {
     public void Register_And_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterCacheService();
+        services.AddRedisCache();
         using var provider = services.BuildServiceProvider();
 
         // act

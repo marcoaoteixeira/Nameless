@@ -5,18 +5,20 @@ using Nameless.Security.Options;
 namespace Nameless.Security;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection self)
-        => self.AddSingleton(RandomPasswordGenerator.Instance);
+    public static IServiceCollection AddPasswordGenerator(this IServiceCollection self)
+        => Prevent.Argument
+                  .Null(self)
+                  .AddSingleton(RandomPasswordGenerator.Instance);
 
-    public static IServiceCollection RegisterCryptographicService(this IServiceCollection self, Action<RijndaelCryptoOptions>? configure = null)
-        => self.AddSingleton<ICryptographicService>(provider => {
-            var options = provider.GetOptions<RijndaelCryptoOptions>();
+    public static IServiceCollection AddCryptographicService(this IServiceCollection self, Action<RijndaelCryptoOptions>? configure = null)
+        => Prevent.Argument
+                  .Null(self)
+                  .AddSingleton<ICryptographicService>(provider => {
+                      var options = provider.GetOptions<RijndaelCryptoOptions>();
 
-            configure?.Invoke(options.Value);
+                      configure?.Invoke(options.Value);
 
-            return new RijndaelCryptographicService(
-                options: options,
-                logger: provider.GetLogger<RijndaelCryptographicService>()
-            );
-        });
+                      return new RijndaelCryptographicService(options: options,
+                                                              logger: provider.GetLogger<RijndaelCryptographicService>());
+                  });
 }

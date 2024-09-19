@@ -11,7 +11,7 @@ public static class ServiceCollectionExtension {
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
     /// <returns>The current <see cref="IServiceCollection"/> so other actions can be chained.</returns>
-    public static IServiceCollection RegisterCache(this IServiceCollection self)
+    public static IServiceCollection AddInMemoryCache(this IServiceCollection self)
         => Prevent.Argument
                 .Null(self, nameof(self))
                 .AddSingleton<ICache, InMemoryCache>();

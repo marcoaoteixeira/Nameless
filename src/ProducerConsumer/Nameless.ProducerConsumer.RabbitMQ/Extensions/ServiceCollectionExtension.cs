@@ -8,7 +8,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 public static class ServiceCollectionExtension {
     private const string CHANNEL_TOKEN = $"{nameof(IModel)}::f26120de-83b1-4ffb-aab9-78a6dfda160b";
 
-    public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self, Action<RabbitMQOptions>? configure = null)
+    public static IServiceCollection AddRabbitMQ(this IServiceCollection self, Action<RabbitMQOptions>? configure = null)
         => self.AddKeyedSingleton(serviceKey: CHANNEL_TOKEN,
                                   implementationFactory: (provider, _) => CreateChannel(provider, configure))
                .AddSingleton<IProducerService>(provider => new ProducerService(channel: provider.GetRequiredKeyedService<IModel>(CHANNEL_TOKEN),

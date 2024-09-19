@@ -6,6 +6,7 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
+  SOLUTION: "./Nameless.sln"
   OUTPUT_PATH: './nupkgs'
 
 jobs:
@@ -40,13 +41,13 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
 
-      - name: Set GitHub Package Registry as NuGet Source
+      - name: Build Solution
+        if: success()
         run: |
-          dotnet nuget add source \
-            --username ${{ github.repository_owner }} \
-            --password ${{ secrets.GITHUB_TOKEN }} \
-            --store-password-in-clear-text \
-            --name github ${{ vars.NUGET_SOURCE_URL }}
+          dotnet build ${{ env.SOLUTION }} \
+            --configuration Release \
+            --nologo \
+            --verbosity normal
 
       - name: Pack NuGet Packages
         run: |

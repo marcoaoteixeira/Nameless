@@ -8,7 +8,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Dependency_Injection() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterDatabaseService();
+        services.AddSQLite();
         using var provider = services.BuildServiceProvider();
 
         // act

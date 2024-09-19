@@ -18,7 +18,7 @@ public static class ServiceCollectionExtension {
     /// <param name="collectionNamingStrategy">The collection naming strategy, if <c>null</c> will use <see cref="CollectionNamingStrategy.Instance"/>.</param>
     /// <param name="supportAssemblies">Support assemblies to look for implementations of <see cref="ClassMappingBase{TDocument}"/></param>
     /// <returns>The current instance of <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection RegisterMongoCollectionProvider(
+    public static IServiceCollection AddMongoDB(
         this IServiceCollection self,
         Action<MongoOptions>? configure = null,
         ICollectionNamingStrategy? collectionNamingStrategy = null,

@@ -10,9 +10,9 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services
-            .RegisterClockService()
-            .RegisterPluralizationRuleProvider()
-            .RegisterXmlSchemaValidator();
+            .AddSystemClock()
+            .AddPluralizationRuleProvider()
+            .AddXmlSchemaValidator();
         using var provider = services.BuildServiceProvider();
 
         // act

@@ -10,7 +10,7 @@ public class IndexTests {
 
     private static ServiceProvider CreateServiceProvider() {
         var services = new ServiceCollection();
-        services.RegisterLucene();
+        services.AddLucene();
 
         var applicationContextMock = new Mock<IApplicationContext>();
         applicationContextMock

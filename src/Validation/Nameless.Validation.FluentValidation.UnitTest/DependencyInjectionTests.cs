@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterValidationService();
+        services.AddValidationService();
         using var container = services.BuildServiceProvider();
 
         // act

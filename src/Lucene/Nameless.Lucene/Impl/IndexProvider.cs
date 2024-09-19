@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using Nameless.Infrastructure;
 using Nameless.Lucene.Options;
@@ -32,11 +33,11 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     /// <param name="analyzerProvider">The analyzer provider.</param>
     /// <param name="logger">The <see cref="ILogger{Index}"/> that will be passed to the Index when created.</param>
     /// <param name="options">The settings.</param>
-    public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, ILogger<Index> logger, LuceneOptions options) {
+    public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, ILogger<Index> logger, IOptions<LuceneOptions> options) {
         _applicationContext = Prevent.Argument.Null(applicationContext);
         _analyzerProvider = Prevent.Argument.Null(analyzerProvider);
         _logger = Prevent.Argument.Null(logger);
-        _options = Prevent.Argument.Null(options);
+        _options = Prevent.Argument.Null(options).Value;
 
         // In case of IOException, wait and try again.
         // Time will increase over attempts.

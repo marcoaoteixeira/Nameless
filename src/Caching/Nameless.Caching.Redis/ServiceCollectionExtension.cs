@@ -17,7 +17,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterCacheService(this IServiceCollection self, Action<RedisOptions>? configure = null)
+    public static IServiceCollection AddRedisCache(this IServiceCollection self, Action<RedisOptions>? configure = null)
         => Prevent.Argument
                 .Null(self, nameof(self))
                 .AddSingleton<ICache>(provider => {
