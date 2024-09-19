@@ -36,8 +36,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\MediatR\Nameless.MediatR.Integration\Nameless.MediatR.Integration.csproj" />
-		<ProjectReference Include="..\..\..\src\Web\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	  <ProjectReference Include="..\..\..\src\Nameless.MediatR.Integration\Nameless.MediatR.Integration.csproj" />
+	  <ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
