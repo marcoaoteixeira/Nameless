@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.MongoDB.Impl;
 
-namespace Nameless.MongoDB.UnitTest;
+namespace Nameless.MongoDB;
 
 public class DependencyInjectionTests {
     [Category(Categories.RUNS_ON_DEV_MACHINE)]

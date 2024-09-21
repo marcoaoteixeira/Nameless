@@ -21,7 +21,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Nameless.Data.Common\Nameless.Data.Common.csproj" />
-	  <ProjectReference Include="..\Nameless.UnitTest.Utils\Nameless.UnitTest.Utils.csproj" />
+	  <ProjectReference Include="..\..\utils\Nameless.Utils\Nameless.Utils.csproj" />
 	</ItemGroup>
 
 </Project>

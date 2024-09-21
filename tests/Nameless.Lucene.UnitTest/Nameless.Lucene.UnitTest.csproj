@@ -66,7 +66,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Lucene\Nameless.Lucene.csproj" />
-		<ProjectReference Include="..\Nameless.UnitTest.Utils\Nameless.UnitTest.Utils.csproj" />
+		<ProjectReference Include="..\..\utils\Nameless.Utils\Nameless.Utils.csproj" />
 	</ItemGroup>
 
 </Project>
