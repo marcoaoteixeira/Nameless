@@ -7,6 +7,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless.Checklist.Web</RootNamespace>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<IsPackable>false</IsPackable>
 
 		<!-- CODE ANALYSIS -->
 		<AnalysisLevel>latest</AnalysisLevel>

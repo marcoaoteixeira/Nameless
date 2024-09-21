@@ -5,18 +5,8 @@
 		<RootNamespace>Nameless.Web</RootNamespace>
 
 		<!-- NUGET PACKING -->
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>Marco Antonio Orestes Teixeira</Authors>
-		<Title>Nameless Web (Core) Library</Title>
-		<Company>Nameless</Company>
-		<Description>Web (core) library.</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Web/Nameless.Web.Core</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0</Version>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>False</IncludeSymbols>
+		<Title>Nameless Web Core Library</Title>
+		<Description>This library contains classes and interfaces that provides tooling for Web applications.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 

@@ -2,18 +2,8 @@
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Title>Nameless Validation FluentValidation Library</Title>
-		<Company>Nameless</Company>
-		<Description>The validation FluentValidation library.</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Validation/Nameless.Validation.FluentValidation</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0</Version>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>False</IncludeSymbols>
+		<Description>This library contains classes and interfaces that provides validation capabilities with FluentValidation.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 

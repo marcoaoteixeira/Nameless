@@ -2,18 +2,8 @@
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>Marco Antonio Orestes Teixeira</Authors>
-		<Title>Nameless Security (Common) Library</Title>
-		<Company>Nameless</Company>
-		<Description>The security (common) library.</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Security/Nameless.Security</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0</Version>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>False</IncludeSymbols>
+		<Title>Nameless Security Library</Title>
+		<Description>This library contains classes and interfaces that provides default implementations for Nameless.Security.Abstractions library.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
