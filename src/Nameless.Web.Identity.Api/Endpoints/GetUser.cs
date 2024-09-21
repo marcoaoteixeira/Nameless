@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Nameless.Web.Api;
 using Nameless.Web.Identity.Api.Inputs;
@@ -16,21 +10,34 @@ using Nameless.Web.Identity.Api.Requests;
 namespace Nameless.Web.Identity.Api.Endpoints;
 
 public sealed class GetUser : IEndpoint {
-    #region Private Read-Only Fields
-
     private readonly IdentityApiOptions _options;
 
-    #endregion
+    public string Name => "users";
 
-    #region Public Constructors
+    public string Summary => Constants.Endpoints
+                                      .Summaries
+                                      .GET_USER;
+
+    public string Description => Constants.Endpoints
+                                          .Descriptions
+                                          .GET_USER;
+
+    public string Group => Constants.Endpoints
+                                    .Groups
+                                    .USERS;
+
+    public int Version => 1;
 
     public GetUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    #endregion
-
-    #region Private Static Methods
+    public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
+        => builder.MapGet($"{_options.BaseUrl}/{Name}", HandleAsync)
+                  .RequireAuthorization()
+                  .Produces<GetUserOutput>()
+                  .ProducesProblem(StatusCodes.Status401Unauthorized)
+                  .ProducesProblem(StatusCodes.Status500InternalServerError);
 
     private static async Task<IResult> HandleAsync(
         [AsParameters] GetUserInput input,
@@ -51,33 +58,4 @@ public sealed class GetUser : IEndpoint {
 
         return Results.Ok(output);
     }
-
-    #endregion
-
-    #region IMinimalEndpoint Members
-
-    public string Name => "users";
-
-    public string Summary => Constants.Endpoints
-                                      .Summaries
-                                      .GET_USER;
-
-    public string Description => Constants.Endpoints
-                                          .Descriptions
-                                          .GET_USER;
-
-    public string Group => Constants.Endpoints
-                                    .Groups
-                                    .USERS;
-
-    public int Version => 1;
-
-    public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
-        => builder.MapGet($"{_options.BaseUrl}/{Name}", HandleAsync)
-                  .RequireAuthorization()
-                  .Produces<GetUserOutput>()
-                  .ProducesProblem(StatusCodes.Status401Unauthorized)
-                  .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    #endregion
 }

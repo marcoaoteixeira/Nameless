@@ -11,21 +11,34 @@ using Nameless.Web.Identity.Api.Requests;
 namespace Nameless.Web.Identity.Api.Endpoints;
 
 public sealed class AuthenticateUser : IEndpoint {
-    #region Private Read-Only Fields
-
     private readonly IdentityApiOptions _options;
 
-    #endregion
+    public string Name => "auth";
 
-    #region Public Constructors
+    public string Summary => Constants.Endpoints
+                                      .Summaries
+                                      .AUTHENTICATE_USER;
+
+    public string Description => Constants.Endpoints
+                                          .Descriptions
+                                          .AUTHENTICATE_USER;
+
+    public string Group => Constants.Endpoints
+                                    .Groups
+                                    .AUTH;
+
+    public int Version => 1;
 
     public AuthenticateUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    #endregion
-
-    #region Private Static Methods
+    public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
+        => builder.MapPost($"{_options.BaseUrl}/{Name}", HandleAsync)
+                  .Produces<AuthenticateUserOutput>()
+                  .ProducesValidationProblem()
+                  .ProducesProblem(StatusCodes.Status401Unauthorized)
+                  .ProducesProblem(StatusCodes.Status500InternalServerError);
 
     private static async Task<IResult> HandleAsync(
         [FromBody] AuthenticateUserInput input,
@@ -46,33 +59,4 @@ public sealed class AuthenticateUser : IEndpoint {
 
         return Results.Ok(output);
     }
-
-    #endregion
-
-    #region IMinimalEndpoint Members
-
-    public string Name => "auth";
-        
-    public string Summary => Constants.Endpoints
-                                      .Summaries
-                                      .AUTHENTICATE_USER;
-        
-    public string Description => Constants.Endpoints
-                                          .Descriptions
-                                          .AUTHENTICATE_USER;
-        
-    public string Group => Constants.Endpoints
-                                    .Groups
-                                    .AUTH;
-        
-    public int Version => 1;
-
-    public IEndpointConventionBuilder Map(IEndpointRouteBuilder builder)
-        => builder.MapPost($"{_options.BaseUrl}/{Name}", HandleAsync)
-                  .Produces<AuthenticateUserOutput>()
-                  .ProducesValidationProblem()
-                  .ProducesProblem(StatusCodes.Status401Unauthorized)
-                  .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    #endregion
 }
