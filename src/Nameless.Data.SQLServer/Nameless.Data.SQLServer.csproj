@@ -2,18 +2,8 @@
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>Marco Antonio Orestes Teixeira</Authors>
-		<Title>Nameless MS SQL Server Data Library</Title>
-		<Company>Nameless</Company>
-		<Description>The MS SQL Server data library.</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/Data/Nameless.Data.SQLServer</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0</Version>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>False</IncludeSymbols>
+		<Title>Nameless Data MS SQL Server Library</Title>
+		<Description>This library contains classes and interfaces to deal with data in MS SQL Server.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 

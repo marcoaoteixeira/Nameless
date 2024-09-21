@@ -2,18 +2,8 @@
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Title>Nameless MediatR Integration Library</Title>
-		<Company>Nameless</Company>
-		<Description>MediatR integration library.</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless/tree/main/src/MediatR/Nameless.MediatR.Integration</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Version>1.0.0</Version>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>False</IncludeSymbols>
+		<Description>This library contains classes and interfaces that provides integratio for MediatR.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
@@ -30,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 	</ItemGroup>
 
 	<ItemGroup>

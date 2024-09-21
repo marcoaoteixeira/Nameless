@@ -7,6 +7,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Nameless.Checklist.Web</RootNamespace>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<IsPackable>false</IsPackable>
 
 		<!-- CODE ANALYSIS -->
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -23,14 +24,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.7.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.7.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
 	</ItemGroup>

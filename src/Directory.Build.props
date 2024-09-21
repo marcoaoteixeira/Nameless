@@ -13,5 +13,17 @@
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+		
+		<!-- NUGET PACKING -->
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Company>Nameless</Company>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>True</IncludeSymbols>
 	</PropertyGroup>
 </Project>

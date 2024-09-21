@@ -21,8 +21,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.UnitTest.Utils\Nameless.UnitTest.Utils.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Mailing.MailKit\Nameless.Mailing.MailKit.csproj" />
+		<ProjectReference Include="..\..\utils\Nameless.Utils\Nameless.Utils.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

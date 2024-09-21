@@ -3,10 +3,10 @@ using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Services;
 using Nameless.ProducerConsumer.RabbitMQ.Services.Impl;
 using Nameless.ProducerConsumer.RabbitMQ.Specs.Fixtures;
-using NUnit.Framework;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 
-namespace Nameless.ProducerConsumer.RabbitMQ.Specs.StepDefinitions;
+namespace Nameless.ProducerConsumer.RabbitMQ.StepDefinitions;
 
 [Binding]
 public class ProducerConsumerStepDefinitions {
@@ -26,7 +26,12 @@ public class ProducerConsumerStepDefinitions {
     public void GivenThereIsARabbitMQInstanceConfigured() {
         _channelFactory = new ChannelFactory(options: new RabbitMQOptions(),
                                              logger: NullLogger<ChannelFactory>.Instance);
-        _channel = _channelFactory.CreateChannel();
+        try {
+            _channel = _channelFactory.CreateChannel();
+        } catch (BrokerUnreachableException) {
+            Assert.Inconclusive("Broker not available");
+            return;
+        }
 
         // assert exchange/queue
         _channel.ExchangeDeclare(exchange: EXCHANGE_NAME,

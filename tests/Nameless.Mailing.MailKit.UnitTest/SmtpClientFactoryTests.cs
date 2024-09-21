@@ -27,7 +27,7 @@ public class SmtpClientFactoryTests {
                 Assert.That(client, Is.InstanceOf<SmtpClient>());
             });
 
-        } catch (SocketException) { Assert.Pass("SMTP server unavailable."); }
+        } catch (SocketException) { Assert.Inconclusive("SMTP server unavailable."); }
         finally { client?.Dispose(); }
     }
 }
