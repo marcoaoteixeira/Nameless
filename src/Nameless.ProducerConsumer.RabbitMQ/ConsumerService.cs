@@ -45,8 +45,8 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
         var tag = GenerateTag(handler);
 
         var registration = _cache.GetOrAdd(tag, key => {
-            LoggerHandlers.ConsumerRegistration(_logger, tag, null /* exception */);
-            LoggerHandlers.ConsumerArguments(_logger, innerArgs.ToJson(), null /* exception */);
+            _logger.ConsumerRegistration(tag);
+            _logger.ConsumerArguments(innerArgs.ToJson());
 
             // creates registration
             var registration = new Registration<T>(key, topic, handler);
@@ -138,14 +138,14 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
         // the serialized (JSON) version of the Envelope instance.
         try { envelope = deliverEventArgs.GetEnvelope(); }
         catch (Exception ex) {
-            LoggerHandlers.EnvelopeDeserializationException(_logger, ex);
+            _logger.EnvelopeDeserializationException(ex);
             return false;
         }
 
         // Deserialization didn't throw exception, but failed.
         // We were not able to retrieve the envelope for some reason.
         if (envelope is null) {
-            LoggerHandlers.EnvelopeDeserializationFailure(_logger, null /* exception */);
+            _logger.EnvelopeDeserializationFailure();
 
             // Send NACK (consumer args defined)
             NegativeAck(channel: _channel,
@@ -166,7 +166,7 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
         // Here, if the envelope.Message is not a JsonElement.
         // We'll log the info and return nothing.
         if (envelope.Message is not JsonElement json) {
-            LoggerHandlers.EnvelopeMessageNotValidJsonElement(_logger, null /* exception */);
+            _logger.EnvelopeMessageNotValidJsonElement();
 
             // Send NACK (consumer args defined)
             NegativeAck(channel: _channel,
@@ -179,14 +179,14 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
         // If it is a JsonElement, we'll deserialize it to the type
         // that the handler is expecting.
         try { message = json.Deserialize<T>(); } catch (Exception ex) {
-            LoggerHandlers.MessageDeserializationException(_logger, ex);
+            _logger.MessageDeserializationException(ex);
             return false;
         }
 
         // For some reason, we were not able to deserialize the message
         if (message is null) {
             // Let's log this info
-            LoggerHandlers.MessageDeserializationFailure(_logger, typeof(T).FullName ?? string.Empty, null /* exception */);
+            _logger.MessageDeserializationFailure<T>();
 
             // Send NACK (consumer args defined)
             NegativeAck(channel: _channel,
@@ -211,7 +211,7 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
             }
 
             // Log the error
-            LoggerHandlers.ConsumerHandlerCreationFailure(_logger, ex);
+            _logger.ConsumerHandlerCreationFailure(ex);
 
             // Send NACK (consumer args defined)
             NegativeAck(channel: _channel,
@@ -225,7 +225,7 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
         // not able to create the delegate.
         if (handler is null) {
             // Log notification
-            LoggerHandlers.MessageHandlerNotFound(_logger, null /* exception */);
+            _logger.MessageHandlerNotFound();
 
             // Send NACK (consumer args defined)
             NegativeAck(channel: _channel,
@@ -250,7 +250,7 @@ public sealed class ConsumerService : IConsumerService, IDisposable {
                         consumerArgs: consumerArgs);
 
         } catch (Exception ex) {
-            LoggerHandlers.MessageHandlerException(_logger, ex);
+            _logger.MessageHandlerException(ex);
 
             NegativeAck(channel: _channel,
                         deliverEventArgs: deliverEventArgs,

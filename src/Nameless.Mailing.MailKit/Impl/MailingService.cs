@@ -31,7 +31,7 @@ public sealed class MailingService : IMailingService {
         string result;
         try { result = await client.SendAsync(mail, cancellationToken: cancellationToken); }
         catch (Exception ex) {
-            LoggerHandlers.SendMessageFailure(_logger, ex);
+            _logger.SendMessageError(ex);
             result = ex.Message;
         }
         return result;

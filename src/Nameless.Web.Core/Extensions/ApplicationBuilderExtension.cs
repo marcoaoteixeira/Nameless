@@ -35,8 +35,8 @@ public static class ApplicationBuilderExtension {
                .UseAuthentication();
 
     /// <summary>
-    /// Configures endpoints that are defined by <see cref="IEndpoint"/> interface.
-    /// A call to <see cref="UseApiEndpoints"/> must be preceded by a call to <see cref="EndpointRoutingApplicationBuilderExtensions.UseRouting"/>.
+    /// Configures API endpoints when implementing <see cref="IEndpoint"/> interface.
+    /// A call to <see cref="UseMinimalEndpoints"/> must be preceded by a call to <see cref="EndpointRoutingApplicationBuilderExtensions.UseRouting"/>.
     /// </summary>
     /// <param name="self">The current <see cref="IApplicationBuilder"/> instance.</param>
     /// <param name="useRequestValidation">
@@ -47,7 +47,7 @@ public static class ApplicationBuilderExtension {
     /// <returns>
     /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
-    public static IApplicationBuilder UseApiEndpoints(this IApplicationBuilder self, bool useRequestValidation = true) {
+    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self, bool useRequestValidation = true) {
         Prevent.Argument.Null(self);
 
         self.UseEndpoints(builder => {
@@ -71,16 +71,22 @@ public static class ApplicationBuilderExtension {
         return self;
     }
 
-    public static IApplicationBuilder UseSwagger(this IApplicationBuilder self, IApiVersionDescriptionProvider versioning)
-        => self.UseSwagger()
-               .UseSwaggerUI(swaggerUiOptions => {
-                   foreach (var description in versioning.ApiVersionDescriptions) {
-                       swaggerUiOptions.SwaggerEndpoint(
-                           url: $"/swagger/{description.GroupName}/swagger.json",
-                           name: description.GroupName.ToUpperInvariant()
-                       );
-                   }
-               });
+    public static IApplicationBuilder UseSwaggerWithVersioning(this IApplicationBuilder self) {
+        var apiVersionDescriptionProvider = self.ApplicationServices
+                                                .GetService<IApiVersionDescriptionProvider>();
+        
+        if (apiVersionDescriptionProvider is null) {
+            throw new InvalidOperationException("Dependency injection missing service {nameof(IApiVersionDescriptionProvider)}");
+        }
+
+        return self.UseSwagger()
+                   .UseSwaggerUI(opts => {
+                       foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions) {
+                           opts.SwaggerEndpoint(url: $"/swagger/{description.GroupName}/swagger.json",
+                                                name: description.GroupName.ToUpperInvariant());
+                       }
+                   });
+    }
 
     private static TException? GetExceptionFromHttpContext<TException>(HttpContext httpContext)
         where TException : Exception {

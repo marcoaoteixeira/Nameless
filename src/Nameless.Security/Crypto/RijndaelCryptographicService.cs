@@ -88,7 +88,7 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
                     InitializeCryptoTransform();
                 }
 
-                LoggerHandlers.EncryptionException(_logger, ex);
+                _logger.EncryptionException(ex);
 
                 throw;
             }
@@ -134,7 +134,7 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
                     InitializeCryptoTransform();
                 }
 
-                LoggerHandlers.DecryptionException(_logger, ex);
+                _logger.DecryptionException(ex);
 
                 throw;
             }
@@ -169,10 +169,15 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
         GC.SuppressFinalize(this);
     }
 
-    private static byte[] CreateIvBuffer(RijndaelCryptoOptions options)
-        // Initialization vector converted to a byte array.
-        // Get bytes of initialization vector.
-        => Encoding.ASCII.GetBytes(options.IV);
+    // Initialization vector converted to a byte array.
+    // Get bytes of initialization vector.
+    private static byte[] CreateIvBuffer(RijndaelCryptoOptions options) {
+        if (string.IsNullOrWhiteSpace(options.IV)) {
+            throw new InvalidOperationException("Must provide initialization vector.");
+        }
+
+        return Encoding.ASCII.GetBytes(options.IV);
+    }
 
     private static byte[] CreateKeyBuffer(RijndaelCryptoOptions options) {
         // Salt used for password hashing (to generate the key, not during
@@ -236,9 +241,8 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
         // Initialize Rijndael key object.
         using var symmetricKey = Aes.Create();
 
-        // If we do not have initialization vector, we cannot use the CBC mode.
-        // The only alternative is the ECB mode (which is not as good).
-        symmetricKey.Mode = _ivBuffer.Length == 0 ? CipherMode.ECB : CipherMode.CBC;
+        // Initialization vector will never be empty with recent changes.
+        symmetricKey.Mode = CipherMode.CBC;
 
         _encryptor = symmetricKey.CreateEncryptor(_keyBuffer, _ivBuffer);
         _decryptor = symmetricKey.CreateDecryptor(_keyBuffer, _ivBuffer);
@@ -325,7 +329,7 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
             throw new ObjectDisposedException(nameof(RijndaelCryptographicService));
         }
     }
-        
+
     private void Dispose(bool disposing) {
         if (_disposed) { return; }
         if (disposing) {

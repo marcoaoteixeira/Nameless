@@ -66,9 +66,7 @@ public sealed class TranslationManager : ITranslationManager {
         file = _fileProvider.GetFileInfo(path);
 
         if (!file.Exists) {
-            LoggerHandlers.TranslationFileNotFound(_logger,
-                                                 file.Name,
-                                                 null /* exception */);
+            _logger.TranslationFileNotFound(file.Name);
             file = null;
         }
 
@@ -83,16 +81,12 @@ public sealed class TranslationManager : ITranslationManager {
             content = fileStream.ToText();
 
             if (string.IsNullOrWhiteSpace(content)) {
-                LoggerHandlers.TranslationFileEmpty(_logger,
-                                                  file.Name,
-                                                  null /* exception */);
+                _logger.TranslationFileEmpty(file.Name);
                 content = null;
                 return false;
             }
         } catch (Exception ex) {
-            LoggerHandlers.ReadTranslationFileContentFailure(_logger,
-                                                           file.Name,
-                                                           ex);
+            _logger.ReadTranslationFileContentError(file.Name, ex);
         }
 
         return content is not null;
@@ -103,16 +97,12 @@ public sealed class TranslationManager : ITranslationManager {
         
         try { translation = JsonSerializer.Deserialize<Translation>(fileContent); }
         catch (Exception ex) {
-            LoggerHandlers.TranslationObjectDeserializationFailure(_logger,
-                                                                 fileName,
-                                                                 ex);
+            _logger.TranslationObjectDeserializationError(fileName, ex);
             return false;
         }
 
         if (translation is null) {
-            LoggerHandlers.JsonSerializerReturnNullTranslationObject(_logger,
-                                                                   fileName,
-                                                                   null /* exception */);
+            _logger.JsonSerializerReturnNullTranslationObject(fileName);
         }
 
         return translation is not null;

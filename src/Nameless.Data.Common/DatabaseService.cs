@@ -52,10 +52,7 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
         using var command = CreateCommand(text, type, parameters);
 
         try { return command.ExecuteNonQuery(); }
-        catch (Exception ex) {
-            LoggerHandlers.ErrorOnNonQueryExecution(_logger, ex.Message, ex);
-            throw;
-        }
+        catch (Exception ex) { _logger.ExecuteNonQueryError(ex); throw; }
     }
 
     /// <inheritdoc/>
@@ -68,10 +65,7 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
 
         IDataReader reader;
         try { reader = command.ExecuteReader(); }
-        catch (Exception ex) {
-            LoggerHandlers.ErrorOnReaderExecution(_logger, ex.Message, ex);
-            throw;
-        }
+        catch (Exception ex) { _logger.ExecuteReaderError(ex); throw; }
         using (reader) {
             while (reader.Read()) {
                 yield return mapper(reader);
@@ -88,10 +82,7 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
         using var command = CreateCommand(text, type, parameters);
 
         try { return (TResult?)command.ExecuteScalar(); }
-        catch (Exception ex) {
-            LoggerHandlers.ErrorOnScalarExecution(_logger, ex.Message, ex);
-            throw;
-        }
+        catch (Exception ex) { _logger.ExecuteScalarError(ex); throw; }
     }
 
     /// <inheritdoc/>
@@ -144,10 +135,8 @@ public sealed class DatabaseService : IDatabaseService, IDisposable {
             );
         }
 
-        LoggerHandlers.DebugDbCommand(_logger,
-                                    command.CommandText,
-                                    command.GetParameterList(),
-                                    null /* exception */);
+        _logger.OutputDbCommand(command.CommandText,
+                                command.GetParameterList());
 
         return command;
     }
