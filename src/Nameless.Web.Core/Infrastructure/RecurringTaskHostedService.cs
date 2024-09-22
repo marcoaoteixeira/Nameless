@@ -91,7 +91,7 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
 
         while (await ContinueAsync(_timer, stoppingToken)) {
             try { await ExecuteAsync(stoppingToken); }
-            catch (Exception ex) { LoggerHandlers.RecurringTaskException(_logger, ex); }
+            catch (Exception ex) { _logger.RecurringTaskError(ex); }
         }
     }
 

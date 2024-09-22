@@ -205,7 +205,7 @@ public sealed class StartUp {
 
         // Minimal Endpoints
         app
-            .UseApiEndpoints();
+            .UseMinimalEndpoints();
 
         // Swagger
         app

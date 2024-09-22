@@ -98,6 +98,7 @@ public static class ServiceCollectionExtension {
     /// Adds API versioning services.
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="useApiExplorer">Adds the API versioning extensions to the API explorer.</param>
     /// <remarks>
     /// API version can be set using HTTP header, through key "api-version". Or URL segment
     /// like "api/v[NUMBER]/something"
@@ -105,10 +106,10 @@ public static class ServiceCollectionExtension {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
     /// </returns>
-    public static IServiceCollection AddApiVersion(this IServiceCollection self) {
+    public static IServiceCollection AddApiVersioning(this IServiceCollection self, bool useApiExplorer) {
         Prevent.Argument.Null(self);
         
-        self.AddApiVersioning(options => {
+        var versioning = self.AddApiVersioning(options => {
                 // Add the headers "api-supported-versions" and "api-deprecated-versions"
                 // This is better for discoverability
                 options.ReportApiVersions = true;
@@ -125,8 +126,10 @@ public static class ServiceCollectionExtension {
                     new HeaderApiVersionReader("api-version"),
                     new UrlSegmentApiVersionReader()
                 );
-            })
-            .AddApiExplorer(opts => {
+            });
+
+        if (useApiExplorer) {
+            versioning.AddApiExplorer(opts => {
                 // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
                 // note: the specified format code will format the version as "'v'major[.minor][-status]"
                 opts.GroupNameFormat = "'v'VVV";
@@ -135,6 +138,7 @@ public static class ServiceCollectionExtension {
                 // can also be used to control the format of the API version in route templates
                 opts.SubstituteApiVersionInUrl = true;
             });
+        }   
 
         return self;
     }
@@ -147,7 +151,7 @@ public static class ServiceCollectionExtension {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
     /// </returns>
-    public static IServiceCollection AddApiEndpoints(this IServiceCollection self, Assembly[] assemblies) {
+    public static IServiceCollection AddMinimalEndpoints(this IServiceCollection self, Assembly[] assemblies) {
         Prevent.Argument.Null(self);
         Prevent.Argument.Null(assemblies);
 

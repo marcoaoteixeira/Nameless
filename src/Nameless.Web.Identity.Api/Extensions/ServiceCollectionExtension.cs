@@ -19,7 +19,7 @@ public static class ServiceCollectionExtension {
             
         RegisterRequestHandlers<TUser, TKey>(self);
 
-        return self.AddApiEndpoints([typeof(ServiceCollectionExtension).Assembly]);
+        return self.AddMinimalEndpoints([typeof(ServiceCollectionExtension).Assembly]);
     }
 
     private static void ConfigureOptions(IServiceCollection services, Action<IdentityApiOptions>? configure) {

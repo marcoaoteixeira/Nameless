@@ -46,7 +46,7 @@ public sealed class JwtService : IJwtService {
         var dictionary = claims.ToDictionary();
         foreach (var kvp in dictionary) {
             if (!tokenDescriptor.Claims.TryAdd(kvp.Key, kvp.Value)) {
-                LoggerHandlers.ClaimDescriptorSkipClaim(_logger, kvp.Key, kvp.Value, null /* exception */);
+                _logger.CantAddClaim(kvp.Key, kvp.Value);
             }
         }
 
@@ -83,7 +83,7 @@ public sealed class JwtService : IJwtService {
             if (!validate) { principal = null; }
 
             return validate;
-        } catch (Exception ex) { LoggerHandlers.JwtValidationError(_logger, ex); }
+        } catch (Exception ex) { _logger.JwtValidationError(ex); }
 
         return false;
     }
