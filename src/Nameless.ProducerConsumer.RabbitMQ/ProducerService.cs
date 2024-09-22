@@ -33,7 +33,7 @@ public sealed class ProducerService : IProducerService {
             }
 
             batch.Publish();
-        } catch (Exception ex) { LoggerHandlers.MessagePublishError(_logger, ex); throw; }
+        } catch (Exception ex) { _logger.MessagePublishError(ex); throw; }
 
         return Task.CompletedTask;
     }

@@ -129,9 +129,9 @@ public sealed class Index : IIndex, IDisposable {
             indexWriter.Commit();
         } catch (OutOfMemoryException ex) {
             DestroyIndexWriter();
-            LoggerHandlers.IndexWriterOutOfMemory(_logger, ex);
+            _logger.IndexWriterOutOfMemory(ex);
         } catch (Exception ex) {
-            LoggerHandlers.CommitChangesError(_logger, ex);
+            _logger.CommitChangesError(ex);
         }
     }
 
@@ -160,10 +160,10 @@ public sealed class Index : IIndex, IDisposable {
             result = IndexActionResult.Success(counter);
         } catch (OutOfMemoryException ex) {
             DestroyIndexWriter();
-            LoggerHandlers.IndexWriterOutOfMemory(_logger, ex);
+            _logger.IndexWriterOutOfMemory(ex);
             result = IndexActionResult.Failure(counter, ex.Message);
         } catch (Exception ex) {
-            LoggerHandlers.StoreDocumentError(_logger, ex);
+            _logger.StoreDocumentError(ex);
             result = IndexActionResult.Failure(counter, ex.Message);
         }
 
@@ -201,10 +201,10 @@ public sealed class Index : IIndex, IDisposable {
                 indexWriter.DeleteDocuments(query);
             } catch (OutOfMemoryException ex) {
                 DestroyIndexWriter();
-                LoggerHandlers.IndexWriterOutOfMemory(_logger, ex);
+                _logger.IndexWriterOutOfMemory(ex);
                 return IndexActionResult.Failure(counter, ex.Message);
             } catch (Exception ex) {
-                LoggerHandlers.DeleteDocumentError(_logger, ex);
+                _logger.DeleteDocumentError(ex);
                 return IndexActionResult.Failure(counter, ex.Message);
             }
         }

@@ -73,7 +73,7 @@ public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
         var verdict = certificate.Issuer == inner.Subject;
 
         if (verdict) {
-            _logger.CertificateValidationFailure(sslPolicyErrors);
+            _logger.CertificateValidationError(sslPolicyErrors);
         }
 
         return verdict;

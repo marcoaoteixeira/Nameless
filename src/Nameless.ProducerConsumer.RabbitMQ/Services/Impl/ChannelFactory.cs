@@ -93,7 +93,7 @@ public sealed class ChannelFactory : IChannelFactory, IDisposable {
                 var verdict = certificate.Issuer == inner.Subject;
 
                 if (verdict) {
-                    LoggerHandlers.CertificateValidationFailure(_logger, sslPolicyErrors, null /* exception */);
+                    _logger.CertificateValidationFailure(sslPolicyErrors);
                 }
 
                 return verdict;
