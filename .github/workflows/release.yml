@@ -41,13 +41,13 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.6
 
-      - name: Set GitHub Package Registry As NuGet Source
+      - name: Add GitHub Package Registry As NuGet Source
         run: |
           dotnet nuget add source \
           --username ${{ github.repository_owner }} \
           --password ${{ secrets.GITHUB_TOKEN }} \
           --store-password-in-clear-text \
-          --name github ${{ vars.NUGET_SOURCE_URL }}
+          --name github ${{ vars.API_URL_GITHUB_PACKAGES }}
 
       - name: Build Solution
         if: success()
@@ -74,6 +74,6 @@ jobs:
         if: success()
         run: |
           dotnet nuget push ${{ env.OUTPUT_PATH }}/*.nupkg \
-            --source ${{ vars.NUGET_SOURCE_URL }} \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source ${{ vars.API_URL_NUGET_ORG }} \
+            --api-key ${{ secrets.API_KEY_NUGET_ORG }} \
             --skip-duplicate
