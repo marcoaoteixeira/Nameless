@@ -3,8 +3,6 @@
 namespace Nameless.Checklist.Web.Api.v1.Models.Input;
 
 public sealed record UpdateChecklistItemInput {
-    #region Public Properties
-
     [JsonPropertyName("id")]
     public Guid Id { get; init; }
 
@@ -13,6 +11,4 @@ public sealed record UpdateChecklistItemInput {
 
     [JsonPropertyName("checked_at")]
     public DateTime? CheckedAt { get; init; }
-
-    #endregion
 }

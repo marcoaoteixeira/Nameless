@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nameless.Checklist.Web.Api.v1.Models.Input;
+namespace Nameless.Checklist.Web.Api.v2.Models.Input;
 
 public sealed record ListChecklistItemsInput {
-    [JsonPropertyName("description_like")]
+    [JsonPropertyName("item_description_like")]
     public string? DescriptionLike { get; init; }
 
     [JsonPropertyName("checked_before")]

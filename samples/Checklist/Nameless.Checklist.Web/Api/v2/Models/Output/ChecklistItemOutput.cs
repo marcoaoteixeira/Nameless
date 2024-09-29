@@ -1,12 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nameless.Checklist.Web.Api.v1.Models.Output;
+namespace Nameless.Checklist.Web.Api.v2.Models.Output;
 
 public sealed record ChecklistItemOutput {
     [JsonPropertyName("id")]
     public Guid Id { get; init; }
 
-    [JsonPropertyName("description")]
+    [JsonPropertyName("item_description")]
     public string Description { get; init; } = string.Empty;
 
     [JsonPropertyName("checked_at")]

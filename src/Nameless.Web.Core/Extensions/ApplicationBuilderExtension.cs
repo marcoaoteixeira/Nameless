@@ -1,29 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Asp.Versioning.ApiExplorer;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Nameless.Validation.Abstractions;
-using Nameless.Web.Api;
 using Nameless.Web.Auth;
-using Nameless.Web.Filters;
+using Nameless.Web.Endpoints;
 
 namespace Nameless.Web;
 public static class ApplicationBuilderExtension {
-    public static IApplicationBuilder UseAutofacDestroyRoutine(this IApplicationBuilder self, IHostApplicationLifetime lifetime) {
-        Prevent.Argument.Null(self);
-
-        // Tear down the composition root and free all resources
-        // when the application stops.
-        var container = self.ApplicationServices.GetAutofacRoot();
-        lifetime.ApplicationStopped.Register(container.Dispose);
-
-        return self;
-    }
-
     public static IApplicationBuilder UseValidationExceptionTreatment(this IApplicationBuilder self)
         => self.UseExceptionHandler(builder => builder.Run(ctx => TryHandleValidationException(ctx, out var result)
                                                            ? result.ExecuteAsync(ctx)
@@ -39,32 +25,20 @@ public static class ApplicationBuilderExtension {
     /// A call to <see cref="UseMinimalEndpoints"/> must be preceded by a call to <see cref="EndpointRoutingApplicationBuilderExtensions.UseRouting"/>.
     /// </summary>
     /// <param name="self">The current <see cref="IApplicationBuilder"/> instance.</param>
-    /// <param name="useRequestValidation">
-    /// Whether it should use <see cref="IValidationService"/> to validate request objects.
-    /// This should be combined with the use of <see cref="ValidateAttribute"/> on the request
-    /// parameters that might need be validated.
-    /// </param>
     /// <returns>
     /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
-    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self, bool useRequestValidation = true) {
+    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self) {
         Prevent.Argument.Null(self);
 
         self.UseEndpoints(builder => {
-            var endpoints = builder.ServiceProvider.GetServices<IEndpoint>();
-            foreach (var endpoint in endpoints) {
-                var convention = endpoint.Map(builder)
-                                         .WithOpenApi()
-                                         .WithName(endpoint.Name)
-                                         .WithSummary(endpoint.Summary)
-                                         .WithDescription(endpoint.Description)
-                                         .WithApiVersionSet(builder.NewApiVersionSet(endpoint.Group)
-                                                                   .Build())
-                                         .HasApiVersion(endpoint.Version);
+            var logger = self.ApplicationServices
+                             .GetLogger(typeof(ApplicationBuilderExtension));
+            var endpoints = builder.ServiceProvider
+                                   .GetServices<IEndpoint>();
 
-                if (useRequestValidation) {
-                    convention.AddEndpointFilter(new ValidateEndpointFilter());
-                }
+            foreach (var endpoint in endpoints) {
+                builder.Map(endpoint, logger);
             }
         });
 
@@ -74,9 +48,9 @@ public static class ApplicationBuilderExtension {
     public static IApplicationBuilder UseSwaggerWithVersioning(this IApplicationBuilder self) {
         var apiVersionDescriptionProvider = self.ApplicationServices
                                                 .GetService<IApiVersionDescriptionProvider>();
-        
+
         if (apiVersionDescriptionProvider is null) {
-            throw new InvalidOperationException("Dependency injection missing service {nameof(IApiVersionDescriptionProvider)}");
+            throw new InvalidOperationException($"Dependency injection missing service {nameof(IApiVersionDescriptionProvider)}");
         }
 
         return self.UseSwagger()

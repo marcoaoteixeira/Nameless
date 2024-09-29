@@ -1,15 +1,9 @@
 ﻿namespace Nameless.Checklist.Web.Domain.Entities;
 
 public sealed record ChecklistItem {
-    #region Public Properties
-
     public Guid Id { get; init; }
-    public string Description { get; init; } = null!;
+    public string Description { get; init; } = string.Empty;
     public DateTime? CheckedAt { get; init; }
-
-    #endregion
-
-    #region Public Constructors
 
     public ChecklistItem() {
         Id = Guid.NewGuid();
@@ -18,6 +12,4 @@ public sealed record ChecklistItem {
     public ChecklistItem(Guid id) {
         Id = id;
     }
-
-    #endregion
 }

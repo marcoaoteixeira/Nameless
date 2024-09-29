@@ -9,23 +9,13 @@ using Nameless.Checklist.Web.Domain.Requests;
 namespace Nameless.Checklist.Web.Domain.Handlers;
 
 public sealed class ListChecklistItemsRequestHandler : IRequestHandler<ListChecklistItemsRequest, ChecklistItemDto[]> {
-    #region Private Read-Only Fields
-
     private readonly IRepository<ChecklistItem> _repository;
     private readonly IMapper _mapper;
-
-    #endregion
-
-    #region Public Constructors
 
     public ListChecklistItemsRequestHandler(IRepository<ChecklistItem> repository, IMapper mapper) {
         _repository = Prevent.Argument.Null(repository);
         _mapper = Prevent.Argument.Null(mapper);
     }
-
-    #endregion
-
-    #region IRequestHandler<GetTodoItemRequest, ChecklistItemDto[]> Members
 
     public async Task<ChecklistItemDto[]> Handle(ListChecklistItemsRequest request, CancellationToken cancellationToken) {
         Expression<Func<ChecklistItem, bool>> where = entity
@@ -37,6 +27,4 @@ public sealed class ListChecklistItemsRequestHandler : IRequestHandler<ListCheck
 
         return dtos;
     }
-
-    #endregion
 }

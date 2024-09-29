@@ -38,6 +38,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\src\Nameless.MediatR.Integration\Nameless.MediatR.Integration.csproj" />
+	  <ProjectReference Include="..\..\..\src\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	</ItemGroup>
 

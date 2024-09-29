@@ -7,11 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Nameless.Services;
-using Nameless.Services.Impl;
-using Nameless.Web.Api;
 using Nameless.Web.Auth;
 using Nameless.Web.Auth.Impl;
+using Nameless.Web.Endpoints;
+using Nameless.Web.Infrastructure;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -28,7 +27,9 @@ public static class ServiceCollectionExtension {
         var jwtOptions = config.GetSection(nameof(JwtOptions))
                                .Get<JwtOptions>() ?? JwtOptions.Default;
 
-        configureJwt?.Invoke(jwtOptions);
+        if (configureJwt is not null) {
+            self.Configure(configureJwt);
+        }
 
         self.AddAuthorization(configureAuthorization ?? (_ => { }))
             .AddAuthentication(authenticationOptions => {
@@ -50,24 +51,34 @@ public static class ServiceCollectionExtension {
                 };
             });
 
-        self.AddSingleton<IJwtService>(provider => new JwtService(systemClock: provider.GetService<ISystemClock>() ?? SystemClock.Instance,
-                                                                  options: Microsoft.Extensions.Options.Options.Create(jwtOptions),
-                                                                  logger: provider.GetLogger<JwtService>()));
+        self.AddSingleton<IJwtService, JwtService>();
 
         return self;
     }
 
-    public static IServiceCollection AddSwagger(this IServiceCollection self, bool enableSecurity = false) {
+    /// <summary>
+    /// Adds Swashbuckle Swagger API discovery services. Also add endpoints API explorer.
+    /// </summary>
+    /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="enableJwt">Whether it should enable JWT security.</param>
+    /// <returns>
+    /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
+    /// </returns>
+    public static IServiceCollection AddSwagger(this IServiceCollection self, bool enableJwt = false) {
         Prevent.Argument.Null(self);
 
         self.AddEndpointsApiExplorer()
-            .AddSwaggerGen(enableSecurity ? ConfigureSecurity : _ => { });
+            .AddSwaggerGen(opts => {
+                if (enableJwt) { ConfigureSwaggerJwt(opts); }
+
+                opts.OperationFilter<SwaggerDefaultValuesOperationFilter>();
+            });
 
         self.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerGenConfigureOptions>();
 
         return self;
 
-        static void ConfigureSecurity(SwaggerGenOptions options) {
+        static void ConfigureSwaggerJwt(SwaggerGenOptions options) {
             var openApiSecurityScheme = new OpenApiSecurityScheme {
                 In = ParameterLocation.Header,
                 Description = "Enter JSON Web Token",
@@ -98,7 +109,6 @@ public static class ServiceCollectionExtension {
     /// Adds API versioning services.
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
-    /// <param name="useApiExplorer">Adds the API versioning extensions to the API explorer.</param>
     /// <remarks>
     /// API version can be set using HTTP header, through key "api-version". Or URL segment
     /// like "api/v[NUMBER]/something"
@@ -106,10 +116,10 @@ public static class ServiceCollectionExtension {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
     /// </returns>
-    public static IServiceCollection AddApiVersioning(this IServiceCollection self, bool useApiExplorer) {
+    public static IServiceCollection AddApiVersioningDefault(this IServiceCollection self) {
         Prevent.Argument.Null(self);
-        
-        var versioning = self.AddApiVersioning(options => {
+
+        self.AddApiVersioning(options => {
                 // Add the headers "api-supported-versions" and "api-deprecated-versions"
                 // This is better for discoverability
                 options.ReportApiVersions = true;
@@ -126,10 +136,8 @@ public static class ServiceCollectionExtension {
                     new HeaderApiVersionReader("api-version"),
                     new UrlSegmentApiVersionReader()
                 );
-            });
-
-        if (useApiExplorer) {
-            versioning.AddApiExplorer(opts => {
+            })
+            .AddApiExplorer(opts => {
                 // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
                 // note: the specified format code will format the version as "'v'major[.minor][-status]"
                 opts.GroupNameFormat = "'v'VVV";
@@ -137,8 +145,7 @@ public static class ServiceCollectionExtension {
                 // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
                 // can also be used to control the format of the API version in route templates
                 opts.SubstituteApiVersionInUrl = true;
-            });
-        }   
+            }); 
 
         return self;
     }
