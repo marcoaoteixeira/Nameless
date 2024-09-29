@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Nameless.Web.Api;
+using Nameless.Web.Endpoints;
 
 namespace Nameless.Web.Internals;
 internal static class LoggerExtension {

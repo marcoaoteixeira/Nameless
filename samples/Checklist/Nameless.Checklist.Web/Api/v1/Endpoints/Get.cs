@@ -1,29 +1,47 @@
-﻿using Asp.Versioning;
+﻿using System.Net;
+using Asp.Versioning.Builder;
+using Asp.Versioning;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
-using Nameless.Web.Api;
-using HttpMethod = Nameless.Web.Api.HttpMethod;
+using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
 public sealed class Get : IEndpoint {
-    public HttpMethod Method => HttpMethod.Get;
+    public string HttpMethod => System.Net.Http.HttpMethod.Get.Method;
 
     public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist/{{id}}";
 
-    [EndpointName(nameof(Get))]
-    [EndpointSummary("Get a checklist item")]
-    [EndpointDescription("Get a checklist item")]
-    [EndpointGroupName("Checklist")]
-    [ApiVersion(1)]
-    public Delegate GetHandler() => async (
-        [FromRoute] Guid id,
-        IMediator mediator,
-        IMapper mapper,
-        CancellationToken cancellationToken) => {
+    public string Name => "Get";
+
+    public string Description => "Get a checklist item";
+
+    public string Summary => "Get a checklist item";
+
+    public string GroupName => "Checklist";
+
+    public string[] Tags => [];
+
+    public AcceptMetadata[] Accepts => [];
+
+    public int Version => 1;
+
+    public bool Deprecated => false;
+
+    public int MapToVersion => 0;
+
+    public ProducesMetadata[] Produces => [
+        new() { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
+        new() { StatusCode = HttpStatusCode.NotFound }
+    ];
+
+    public Delegate CreateDelegate() => async ([FromRoute] Guid id,
+                                               [FromServices] IMediator mediator,
+                                               [FromServices] IMapper mapper,
+                                               CancellationToken cancellationToken) => {
         var request = new GetChecklistItemRequest { Id = id };
         var dto = await mediator.Send(request, cancellationToken);
         var output = mapper.Map<ChecklistItemOutput?>(dto);

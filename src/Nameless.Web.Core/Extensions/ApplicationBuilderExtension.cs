@@ -1,16 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation.Abstractions;
-using Nameless.Web.Api;
 using Nameless.Web.Auth;
-using Nameless.Web.Filters;
-using Nameless.Web.Internals;
+using Nameless.Web.Endpoints;
 
 namespace Nameless.Web;
 public static class ApplicationBuilderExtension {
@@ -38,72 +34,11 @@ public static class ApplicationBuilderExtension {
         self.UseEndpoints(builder => {
             var logger = self.ApplicationServices
                              .GetLogger(typeof(ApplicationBuilderExtension));
-
             var endpoints = builder.ServiceProvider
                                    .GetServices<IEndpoint>();
 
             foreach (var endpoint in endpoints) {
-                if (string.IsNullOrWhiteSpace(endpoint.RoutePattern)) {
-                    logger.EndpointMissingRoutePattern(endpoint);
-
-                    continue;
-                }
-
-                // let's try map our endpoint.
-                var routeHandlerBuilder = endpoint.HttpMethod switch {
-                    Root.HttpMethods.DELETE => builder.MapDelete(endpoint.RoutePattern, endpoint.GetHandler()),
-                    Root.HttpMethods.GET => builder.MapGet(endpoint.RoutePattern, endpoint.GetHandler()),
-                    Root.HttpMethods.PATCH => builder.MapPatch(endpoint.RoutePattern, endpoint.GetHandler()),
-                    Root.HttpMethods.POST => builder.MapPost(endpoint.RoutePattern, endpoint.GetHandler()),
-                    Root.HttpMethods.PUT => builder.MapPut(endpoint.RoutePattern, endpoint.GetHandler()),
-                    _ => null
-                };
-
-                if (routeHandlerBuilder is null) {
-                    logger.EndpointNotMapped(endpoint);
-
-                    continue;
-                }
-
-                // add metadata for Open API
-                routeHandlerBuilder.WithOpenApi();
-
-                var attributes = GetEndpointHandlerAttributes(endpoint);
-
-                foreach (var attribute in attributes) {
-                    switch (attribute) {
-                        case EndpointNameAttribute attr:
-                            routeHandlerBuilder.WithName(attr.EndpointName);
-                            break;
-                        case EndpointSummaryAttribute attr:
-                            routeHandlerBuilder.WithSummary(attr.Summary);
-                            break;
-                        case EndpointDescriptionAttribute attr:
-                            routeHandlerBuilder.WithDescription(attr.Description);
-                            break;
-                        case EndpointGroupNameAttribute attr:
-                            routeHandlerBuilder.WithGroupName(attr.EndpointGroupName)
-                                               .WithApiVersionSet(builder.NewApiVersionSet(attr.EndpointGroupName)
-                                                                         .Build());
-                            break;
-                        case MapToApiVersionAttribute attr:
-                            foreach (var apiVersion in attr.Versions) {
-                                routeHandlerBuilder.MapToApiVersion(apiVersion);
-                            }
-                            break;
-                        case ApiVersionAttribute attr:
-                            foreach (var apiVersion in attr.Versions) {
-                                routeHandlerBuilder.HasApiVersion(apiVersion);
-                                if (attr.Deprecated) {
-                                    routeHandlerBuilder.HasDeprecatedApiVersion(apiVersion);
-                                }
-                            }
-                            break;
-                        case UseEndpointValidationAttribute:
-                            routeHandlerBuilder.AddEndpointFilter(new ValidateEndpointFilter());
-                            break;
-                    }
-                }
+                builder.Map(endpoint, logger);
             }
         });
 
@@ -143,15 +78,5 @@ public static class ApplicationBuilderExtension {
                                            detail: ex.Message);
 
         return true;
-    }
-    
-    private static IEnumerable<Attribute> GetEndpointHandlerAttributes(IEndpoint endpoint) {
-        var handler = endpoint.GetType()
-                              .GetMethod(nameof(IEndpoint.GetHandler));
-
-        if (handler is null) { return []; }
-
-        return handler.GetCustomAttributes(inherit: false)
-                      .OfType<Attribute>();
     }
 }

@@ -1,4 +1,6 @@
-﻿using Asp.Versioning;
+﻿using System.Net;
+using Asp.Versioning.Builder;
+using Asp.Versioning;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -6,27 +8,42 @@ using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
 using Nameless.Validation.Abstractions;
-using Nameless.Web.Api;
-using HttpMethod = Nameless.Web.Api.HttpMethod;
+using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
 public sealed class Post : IEndpoint {
-    public HttpMethod Method => HttpMethod.Post;
-    
+    public string HttpMethod => System.Net.Http.HttpMethod.Post.Method;
+
     public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
-    [EndpointName(nameof(Post))]
-    [EndpointSummary("Create a new checklist item")]
-    [EndpointDescription("Create a new checklist item")]
-    [EndpointGroupName("Checklist")]
-    [ApiVersion(1)]
-    public Delegate GetHandler() => async (
-        [FromBody] CreateChecklistItemInput input,
-        IMediator mediator,
-        IMapper mapper,
-        CancellationToken cancellationToken
-    ) => {
+    public string Name => "Post";
+
+    public string Description => "Create a new checklist item";
+
+    public string Summary => "Create a new checklist item";
+
+    public string GroupName => "Checklist";
+
+    public string[] Tags => [];
+
+    public AcceptMetadata[] Accepts => [];
+
+    public int Version => 1;
+
+    public bool Deprecated => false;
+
+    public int MapToVersion => 0;
+
+    public ProducesMetadata[] Produces => [
+        new() { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
+        new() { Type = ProducesResultType.ValidationProblems }
+    ];
+
+    public Delegate CreateDelegate() => async ([FromBody] CreateChecklistItemInput input,
+                                               IMediator mediator,
+                                               IMapper mapper,
+                                               CancellationToken cancellationToken) => {
         try {
             var request = mapper.Map<CreateChecklistItemRequest>(input);
             var dto = await mediator.Send(request, cancellationToken);
@@ -34,7 +51,7 @@ public sealed class Post : IEndpoint {
 
             return Results.Ok(output);
         } catch (ValidationException ex) {
-            return Results.ValidationProblem(ex.Result.ToDictionary(), statusCode: StatusCodes.Status400BadRequest);
+            return Results.ValidationProblem(ex.Result.ToDictionary());
         }
     };
 }

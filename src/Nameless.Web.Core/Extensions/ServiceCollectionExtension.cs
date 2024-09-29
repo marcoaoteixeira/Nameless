@@ -7,11 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Nameless.Services;
-using Nameless.Services.Impl;
-using Nameless.Web.Api;
 using Nameless.Web.Auth;
 using Nameless.Web.Auth.Impl;
+using Nameless.Web.Endpoints;
 using Nameless.Web.Infrastructure;
 using Nameless.Web.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -111,7 +109,6 @@ public static class ServiceCollectionExtension {
     /// Adds API versioning services.
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
-    /// <param name="useApiExplorer">Adds the API versioning extensions to the API explorer.</param>
     /// <remarks>
     /// API version can be set using HTTP header, through key "api-version". Or URL segment
     /// like "api/v[NUMBER]/something"
