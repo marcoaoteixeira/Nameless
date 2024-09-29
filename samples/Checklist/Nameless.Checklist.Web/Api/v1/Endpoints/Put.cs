@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Input;
@@ -6,18 +7,26 @@ using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
 using Nameless.Validation.Abstractions;
 using Nameless.Web.Api;
+using HttpMethod = Nameless.Web.Api.HttpMethod;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
 public sealed class Put : IEndpoint {
-    #region Public Static Methods
+    public HttpMethod Method => HttpMethod.Put;
+    
+    public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
-    public static async Task<IResult> HandleAsync(
+    [EndpointName(nameof(Put))]
+    [EndpointSummary("Update a checklist item")]
+    [EndpointDescription("Update a checklist item")]
+    [EndpointGroupName("Checklist")]
+    [ApiVersion(1)]
+    public Delegate GetHandler() => async (
         [FromBody] UpdateChecklistItemInput input,
         IMediator mediator,
         IMapper mapper,
         CancellationToken cancellationToken
-    ) {
+    ) => {
         try {
             var request = mapper.Map<UpdateChecklistItemRequest>(input);
             var dto = await mediator.Send(request, cancellationToken);
@@ -27,30 +36,5 @@ public sealed class Put : IEndpoint {
         } catch (ValidationException ex) {
             return Results.ValidationProblem(ex.Result.ToDictionary(), statusCode: StatusCodes.Status400BadRequest);
         }
-    }
-
-    #endregion
-
-    #region IMinimalEndpoint Members
-
-    public string Name => nameof(Put);
-
-    public string Summary => "Update a checklist item";
-
-    public string Description => "Update a checklist item";
-
-    public string Group => "Checklist";
-
-    public int Version => 1;
-
-    IEndpointConventionBuilder IEndpoint.Map(IEndpointRouteBuilder builder)
-        => builder
-           .MapPut($"{Root.Endpoints.BASE_API_PATH}/checklist", HandleAsync)
-
-           .Produces(StatusCodes.Status204NoContent)
-
-           .ProducesProblem(StatusCodes.Status400BadRequest)
-           .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    #endregion
+    };
 }

@@ -8,8 +8,6 @@ using Nameless.Checklist.Web.Domain.Requests;
 namespace Nameless.Checklist.Web.Domain.Mappings;
 
 public sealed class ChecklistItemMapping : Profile {
-    #region Public Constructors
-
     public ChecklistItemMapping() {
         CreateMap<CreateChecklistItemInput, CreateChecklistItemRequest>();
         CreateMap<CreateChecklistItemRequest, ChecklistItem>();
@@ -20,6 +18,4 @@ public sealed class ChecklistItemMapping : Profile {
 
         CreateMap<UpdateChecklistItemInput, UpdateChecklistItemRequest>();
     }
-
-    #endregion
 }

@@ -8,23 +8,13 @@ using Nameless.Checklist.Web.Domain.Requests;
 namespace Nameless.Checklist.Web.Domain.Handlers;
 
 public sealed class UpdateChecklistItemRequestHandler : IRequestHandler<UpdateChecklistItemRequest, ChecklistItemDto?> {
-    #region Private Read-Only Fields
-
     private readonly IRepository<ChecklistItem> _repository;
     private readonly IMapper _mapper;
-
-    #endregion
-
-    #region Public Constructors
 
     public UpdateChecklistItemRequestHandler(IRepository<ChecklistItem> repository, IMapper mapper) {
         _repository = Prevent.Argument.Null(repository);
         _mapper = Prevent.Argument.Null(mapper);
     }
-
-    #endregion
-
-    #region IRequestHandler<UpdateChecklistItemRequest, ChecklistItemDto?> Members
 
     public async Task<ChecklistItemDto?> Handle(UpdateChecklistItemRequest request, CancellationToken cancellationToken) {
         var current = await _repository.GetAsync(request.Id, cancellationToken);
@@ -44,6 +34,4 @@ public sealed class UpdateChecklistItemRequestHandler : IRequestHandler<UpdateCh
             ? _mapper.Map<ChecklistItemDto>(update)
             : null;
     }
-
-    #endregion
 }

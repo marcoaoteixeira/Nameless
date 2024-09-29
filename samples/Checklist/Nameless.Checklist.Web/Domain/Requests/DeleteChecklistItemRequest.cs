@@ -2,10 +2,6 @@
 
 namespace Nameless.Checklist.Web.Domain.Requests;
 
-public sealed class DeleteChecklistItemRequest : IRequest<bool> {
-    #region Public Properties
-
+public sealed record DeleteChecklistItemRequest : IRequest<bool> {
     public Guid Id { get; init; }
-
-    #endregion
 }

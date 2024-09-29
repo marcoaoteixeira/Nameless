@@ -1,20 +1,31 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
 using Nameless.Web.Api;
+using HttpMethod = Nameless.Web.Api.HttpMethod;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
 public sealed class List : IEndpoint {
-    #region Public Static Methods
+    public HttpMethod Method => HttpMethod.Get;
 
-    public static async Task<IResult> HandleAsync(
-        [AsParameters] ListChecklistItemsInput input,
-        IMediator mediator,
-        IMapper mapper,
-        CancellationToken cancellationToken
+    public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
+
+    [EndpointName(nameof(List))]
+    [EndpointSummary("Get checklist items")]
+    [EndpointDescription("Get checklist items")]
+    [EndpointGroupName("Checklist")]
+    [ApiVersion(1)]
+    public Delegate GetHandler() => Handle;
+
+    public async Task<IResult> Handle([AsParameters] ListChecklistItemsInput input,
+                                      [FromServices] IMediator mediator,
+                                      [FromServices] IMapper mapper,
+                                      CancellationToken cancellationToken
     ) {
         var request = mapper.Map<ListChecklistItemsRequest>(input);
         var dtos = await mediator.Send(request, cancellationToken);
@@ -22,28 +33,4 @@ public sealed class List : IEndpoint {
 
         return Results.Ok(output);
     }
-
-    #endregion
-
-    #region IMinimalEndpoint Members
-
-    public string Name => nameof(List);
-
-    public string Summary => "Get checklist items";
-
-    public string Description => "Get checklist items";
-
-    public string Group => "Checklist";
-
-    public int Version => 1;
-
-    IEndpointConventionBuilder IEndpoint.Map(IEndpointRouteBuilder builder)
-        => builder
-           .MapGet($"{Root.Endpoints.BASE_API_PATH}/checklist", HandleAsync)
-
-           .Produces(StatusCodes.Status200OK, typeof(ChecklistItemOutput[]))
-
-           .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    #endregion
 }

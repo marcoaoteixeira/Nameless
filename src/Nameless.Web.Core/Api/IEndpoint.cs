@@ -1,40 +1,21 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
-
-namespace Nameless.Web.Api;
+﻿namespace Nameless.Web.Api;
 
 public interface IEndpoint {
     /// <summary>
-    /// Gets the endpoint name.
+    /// Gets the endpoint HTTP method.
     /// </summary>
-    string Name { get; }
+    string HttpMethod { get; }
 
     /// <summary>
-    /// Gets the endpoint summary.
+    /// Gets the endpoint route pattern.
     /// </summary>
-    string Summary { get; }
+    string RoutePattern { get; }
 
     /// <summary>
-    /// Gets the endpoint description.
+    /// Retrieves the endpoint request delegate handler.
     /// </summary>
-    string Description { get; }
-
-    /// <summary>
-    /// Gets the endpoint group.
-    /// </summary>
-    string Group { get; }
-
-    /// <summary>
-    /// Gets the endpoint version.
-    /// </summary>
-    int Version { get; }
-
-    /// <summary>
-    /// Maps the endpoint.
-    /// </summary>
-    /// <param name="builder">The endpoint route builder instance.</param>
     /// <returns>
-    /// The current <see cref="IEndpointConventionBuilder"/> instance so other mapping actions can be chained.
+    /// Endpoint's <see cref="Delegate"/> handler.
     /// </returns>
-    IEndpointConventionBuilder Map(IEndpointRouteBuilder builder);
+    Delegate GetHandler();
 }

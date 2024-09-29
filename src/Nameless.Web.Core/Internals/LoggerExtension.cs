@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.Web.Api;
 
 namespace Nameless.Web.Internals;
 internal static class LoggerExtension {
@@ -34,4 +35,27 @@ internal static class LoggerExtension {
 
     internal static void RecurringTaskError(this ILogger self, Exception exception)
         => RecurringTaskErrorHandler(self, exception);
+
+    private static readonly Action<ILogger,
+        string,
+        Exception?> EndpointMissingRoutePatternHandler
+        = LoggerMessage.Define<string>(logLevel: LogLevel.Warning,
+                                       eventId: default,
+                                       formatString: "Endpoint {Endpoint} missing route pattern.",
+                                       options: null);
+
+    internal static void EndpointMissingRoutePattern(this ILogger self, IEndpoint endpoint)
+        => EndpointMissingRoutePatternHandler(self, endpoint.GetType().Name, null /* exception */);
+
+    private static readonly Action<ILogger,
+        string,
+        string,
+        Exception?> EndpointNotMappedHandler
+        = LoggerMessage.Define<string, string>(logLevel: LogLevel.Warning,
+                                               eventId: default,
+                                               formatString: "Could not map endpoint {Endpoint} with HTTP method {HttpMethod}.",
+                                               options: null);
+
+    internal static void EndpointNotMapped(this ILogger self, IEndpoint endpoint)
+        => EndpointNotMappedHandler(self, endpoint.GetType().Name, endpoint.HttpMethod, null /* exception */);
 }

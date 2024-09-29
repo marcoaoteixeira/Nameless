@@ -6,13 +6,7 @@ using Nameless.Checklist.Web.Domain.Repositories.Impl;
 namespace Nameless.Checklist.Web.Domain.Repositories;
 
 public sealed class TodoItemRepository : IRepository<ChecklistItem> {
-    #region Private Read-Only Fields
-
     private readonly Dictionary<Guid, ChecklistItem> _todoItems;
-
-    #endregion
-
-    #region Public Constructors
 
     public TodoItemRepository(string connectionString) {
         var json = File.ReadAllText(connectionString);
@@ -24,10 +18,6 @@ public sealed class TodoItemRepository : IRepository<ChecklistItem> {
             _ => _
         );
     }
-
-    #endregion
-
-    #region IRepository<TodoItem> Members
 
     public Task<ChecklistItem> CreateAsync(ChecklistItem entity, CancellationToken cancellationToken = default) {
         _todoItems.TryAdd(entity.Id, entity);
@@ -78,6 +68,4 @@ public sealed class TodoItemRepository : IRepository<ChecklistItem> {
 
         return Task.FromResult(false);
     }
-
-    #endregion
 }
