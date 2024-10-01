@@ -20,31 +20,6 @@ public static class ApplicationBuilderExtension {
                .UseAuthorization()
                .UseAuthentication();
 
-    /// <summary>
-    /// Configures API endpoints when implementing <see cref="IEndpoint"/> interface.
-    /// A call to <see cref="UseMinimalEndpoints"/> must be preceded by a call to <see cref="EndpointRoutingApplicationBuilderExtensions.UseRouting"/>.
-    /// </summary>
-    /// <param name="self">The current <see cref="IApplicationBuilder"/> instance.</param>
-    /// <returns>
-    /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
-    /// </returns>
-    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self) {
-        Prevent.Argument.Null(self);
-
-        self.UseEndpoints(builder => {
-            var logger = self.ApplicationServices
-                             .GetLogger(typeof(ApplicationBuilderExtension));
-            var endpoints = builder.ServiceProvider
-                                   .GetServices<IEndpoint>();
-
-            foreach (var endpoint in endpoints) {
-                builder.Map(endpoint, logger);
-            }
-        });
-
-        return self;
-    }
-
     public static IApplicationBuilder UseSwaggerWithVersioning(this IApplicationBuilder self) {
         var apiVersionDescriptionProvider = self.ApplicationServices
                                                 .GetService<IApiVersionDescriptionProvider>();

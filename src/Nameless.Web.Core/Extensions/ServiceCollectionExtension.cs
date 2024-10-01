@@ -149,25 +149,4 @@ public static class ServiceCollectionExtension {
 
         return self;
     }
-
-    /// <summary>
-    /// Registers all implementations of <see cref="IEndpoint"/>.
-    /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection"/> instance.</param>
-    /// <param name="assemblies">The assemblies that will be mapped.</param>
-    /// <returns>
-    /// The current <see cref="IServiceCollection"/> instance so other actions can be chained.
-    /// </returns>
-    public static IServiceCollection AddMinimalEndpoints(this IServiceCollection self, Assembly[] assemblies) {
-        Prevent.Argument.Null(self);
-        Prevent.Argument.Null(assemblies);
-
-        var endpointType = typeof(IEndpoint);
-        var endpointImplementations = assemblies.SelectMany(assembly => assembly.SearchForImplementations<IEndpoint>());
-        foreach (var endpointImplementation in endpointImplementations) {
-            self.AddTransient(serviceType: endpointType,
-                              implementationType: endpointImplementation);
-        }
-        return self;
-    }
 }

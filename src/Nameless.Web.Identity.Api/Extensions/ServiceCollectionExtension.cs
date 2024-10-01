@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Web.Endpoints;
 using Nameless.Web.Identity.Api.Handlers;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Identity.Api.Responses;

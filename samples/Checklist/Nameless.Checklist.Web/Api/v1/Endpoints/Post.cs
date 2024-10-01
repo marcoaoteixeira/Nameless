@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using Asp.Versioning.Builder;
-using Asp.Versioning;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,38 +10,29 @@ using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class Post : IEndpoint {
-    public string HttpMethod => System.Net.Http.HttpMethod.Post.Method;
+public sealed class Post : EndpointBase {
+    public override string HttpMethod => Nameless.Web.Root.HttpMethods.POST;
 
-    public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
+    public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
-    public string Name => "Post";
+    public override OpenApiMetadata GetOpenApiMetadata()
+        => new() {
+            Name = "Post",
+            Description = "Create a new checklist item",
+            Summary = "Create a new checklist item",
+            GroupName = "Checklist",
+            Produces = [
+                new Produces { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
+                new Produces { Type = ProducesType.ValidationProblems }
+            ]
+        };
 
-    public string Description => "Create a new checklist item";
+    public override Delegate CreateDelegate() => HandleAsync;
 
-    public string Summary => "Create a new checklist item";
-
-    public string GroupName => "Checklist";
-
-    public string[] Tags => [];
-
-    public AcceptMetadata[] Accepts => [];
-
-    public int Version => 1;
-
-    public bool Deprecated => false;
-
-    public int MapToVersion => 0;
-
-    public ProducesMetadata[] Produces => [
-        new() { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
-        new() { Type = ProducesResultType.ValidationProblems }
-    ];
-
-    public Delegate CreateDelegate() => async ([FromBody] CreateChecklistItemInput input,
-                                               IMediator mediator,
-                                               IMapper mapper,
-                                               CancellationToken cancellationToken) => {
+    private static async Task<IResult> HandleAsync([FromBody] CreateChecklistItemInput input,
+                                                   IMediator mediator,
+                                                   IMapper mapper,
+                                                   CancellationToken cancellationToken) {
         try {
             var request = mapper.Map<CreateChecklistItemRequest>(input);
             var dto = await mediator.Send(request, cancellationToken);
@@ -53,5 +42,5 @@ public sealed class Post : IEndpoint {
         } catch (ValidationException ex) {
             return Results.ValidationProblem(ex.Result.ToDictionary());
         }
-    };
+    }
 }
