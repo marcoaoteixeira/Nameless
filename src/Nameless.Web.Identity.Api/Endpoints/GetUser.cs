@@ -15,6 +15,8 @@ public sealed class GetUser : EndpointBase {
 
     public override string RoutePattern => $"{_options.BaseUrl}/account/user";
 
+    public override bool UseValidationFilter => false;
+
     public GetUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }

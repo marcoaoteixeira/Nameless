@@ -15,13 +15,11 @@ public static class ApplicationBuilderExtension {
         Prevent.Argument.Null(self);
 
         self.UseEndpoints(builder => {
-            var logger = self.ApplicationServices
-                             .GetLogger(typeof(ApplicationBuilderExtension));
             var endpoints = builder.ServiceProvider
                                    .GetServices<EndpointBase>();
 
             foreach (var endpoint in endpoints) {
-                builder.Map(endpoint, logger);
+                builder.Map(endpoint);
             }
         });
 

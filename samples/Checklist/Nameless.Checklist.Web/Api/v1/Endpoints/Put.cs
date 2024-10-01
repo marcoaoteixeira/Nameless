@@ -15,6 +15,8 @@ public sealed class Put : EndpointBase {
 
     public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
+    public override bool UseValidationFilter => false;
+
     public override OpenApiMetadata GetOpenApiMetadata()
         => new() {
             Name = "Put",

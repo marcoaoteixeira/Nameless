@@ -34,6 +34,6 @@ internal static class LoggerExtension {
                                                formatString: "Could not add accept header request for request type of {RequestType} with content-type {ContentType}.",
                                                options: null);
 
-    internal static void AcceptHeaderItemError(this ILogger self, Accept accept, Exception exception)
+    internal static void AcceptHeaderItemError(this ILogger self, Accepts accept, Exception exception)
         => AcceptHeaderItemErrorHandler(self, accept.RequestType?.Name ?? string.Empty, accept.ContentType, exception);
 }
