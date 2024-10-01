@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using Asp.Versioning.Builder;
-using Asp.Versioning;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,38 +10,29 @@ using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class Put : IEndpoint {
-    public string HttpMethod => System.Net.Http.HttpMethod.Put.Method;
+public sealed class Put : EndpointBase {
+    public override string HttpMethod => System.Net.Http.HttpMethod.Put.Method;
 
-    public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
+    public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
-    public string Name => "Put";
+    public override OpenApiMetadata GetOpenApiMetadata()
+        => new() {
+            Name = "Put",
+            Description = "Update a checklist item",
+            Summary = "Update a checklist item",
+            GroupName = "Checklist",
+            Produces = [
+                new Produces { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
+                new Produces { Type = ProducesType.ValidationProblems }
+            ]
+        };
 
-    public string Description => "Update a checklist item";
+    public override Delegate CreateDelegate() => HandleAsync;
 
-    public string Summary => "Update a checklist item";
-
-    public string GroupName => "Checklist";
-
-    public string[] Tags => [];
-
-    public AcceptMetadata[] Accepts => [];
-
-    public int Version => 1;
-
-    public bool Deprecated => false;
-
-    public int MapToVersion => 0;
-
-    public ProducesMetadata[] Produces => [
-        new() { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
-        new() { Type = ProducesResultType.ValidationProblems }
-    ];
-
-    public Delegate CreateDelegate() => async ([FromBody] CreateChecklistItemInput input,
-                                               IMediator mediator,
-                                               IMapper mapper,
-                                               CancellationToken cancellationToken) => {
+    private static async Task<IResult> HandleAsync([FromBody] CreateChecklistItemInput input,
+                                                   IMediator mediator,
+                                                   IMapper mapper,
+                                                   CancellationToken cancellationToken) {
         try {
             var request = mapper.Map<UpdateChecklistItemRequest>(input);
             var dto = await mediator.Send(request, cancellationToken);
@@ -53,5 +42,5 @@ public sealed class Put : IEndpoint {
         } catch (ValidationException ex) {
             return Results.ValidationProblem(ex.Result.ToDictionary());
         }
-    };
+    }
 }

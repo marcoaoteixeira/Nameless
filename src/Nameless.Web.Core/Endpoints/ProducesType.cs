@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Web.Endpoints;
 
-public enum ProducesResultType {
+public enum ProducesType {
     Default,
 
     Problems,

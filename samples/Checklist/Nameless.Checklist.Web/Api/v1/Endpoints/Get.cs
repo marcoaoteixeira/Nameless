@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using Asp.Versioning.Builder;
-using Asp.Versioning;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,38 +8,29 @@ using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class Get : IEndpoint {
-    public string HttpMethod => System.Net.Http.HttpMethod.Get.Method;
+public sealed class Get : EndpointBase {
+    public override string HttpMethod => Nameless.Web.Root.HttpMethods.GET;
 
-    public string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist/{{id}}";
+    public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist/{{id}}";
 
-    public string Name => "Get";
+    public override OpenApiMetadata GetOpenApiMetadata()
+        => new() {
+            Name = "Get",
+            Description = "Get a checklist item",
+            Summary = "Get a checklist item",
+            GroupName = "Checklist",
+            Produces = [
+                new Produces { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
+                new Produces { StatusCode = HttpStatusCode.NotFound }
+            ]
+        };
 
-    public string Description => "Get a checklist item";
+    public override Delegate CreateDelegate() => HandleAsync;
 
-    public string Summary => "Get a checklist item";
-
-    public string GroupName => "Checklist";
-
-    public string[] Tags => [];
-
-    public AcceptMetadata[] Accepts => [];
-
-    public int Version => 1;
-
-    public bool Deprecated => false;
-
-    public int MapToVersion => 0;
-
-    public ProducesMetadata[] Produces => [
-        new() { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput) },
-        new() { StatusCode = HttpStatusCode.NotFound }
-    ];
-
-    public Delegate CreateDelegate() => async ([FromRoute] Guid id,
-                                               [FromServices] IMediator mediator,
-                                               [FromServices] IMapper mapper,
-                                               CancellationToken cancellationToken) => {
+    private static async Task<IResult> HandleAsync([FromRoute] Guid id,
+                                                   [FromServices] IMediator mediator,
+                                                   [FromServices] IMapper mapper,
+                                                   CancellationToken cancellationToken) {
         var request = new GetChecklistItemRequest { Id = id };
         var dto = await mediator.Send(request, cancellationToken);
         var output = mapper.Map<ChecklistItemOutput?>(dto);
@@ -49,5 +38,5 @@ public sealed class Get : IEndpoint {
         return output is not null
             ? Results.Ok(output)
             : Results.NotFound();
-    };
+    }
 }

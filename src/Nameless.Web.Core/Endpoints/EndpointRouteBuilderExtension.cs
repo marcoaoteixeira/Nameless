@@ -1,97 +1,132 @@
-﻿using Asp.Versioning;
+﻿using System.Diagnostics.CodeAnalysis;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Nameless.Web.Internals;
 
 namespace Nameless.Web.Endpoints;
 internal static class EndpointRouteBuilderExtension {
-    internal static void Map(this IEndpointRouteBuilder self, IEndpoint endpoint, ILogger logger) {
+    internal static void Map(this IEndpointRouteBuilder self, EndpointBase endpoint, ILogger logger) {
         if (string.IsNullOrWhiteSpace(endpoint.RoutePattern)) {
             logger.EndpointMissingRoutePattern(endpoint);
             return;
         }
 
-        var routeHandlerBuilder = endpoint.HttpMethod.ToUpperInvariant() switch {
-            Root.HttpMethods.DELETE => self.MapDelete(endpoint.RoutePattern, endpoint.CreateDelegate()),
-            Root.HttpMethods.GET => self.MapGet(endpoint.RoutePattern, endpoint.CreateDelegate()),
-            Root.HttpMethods.PATCH => self.MapPatch(endpoint.RoutePattern, endpoint.CreateDelegate()),
-            Root.HttpMethods.POST => self.MapPost(endpoint.RoutePattern, endpoint.CreateDelegate()),
-            Root.HttpMethods.PUT => self.MapPut(endpoint.RoutePattern, endpoint.CreateDelegate()),
-            _ => null
-        };
-
-        if (routeHandlerBuilder is null) {
+        if (!TryCreateRouteHandlerBuilder(self, endpoint, out var routeHandlerBuilder)) {
             logger.EndpointNotMapped(endpoint);
             return;
         }
 
-        routeHandlerBuilder.WithOpenApi();
+        SetAcceptHeader(endpoint, routeHandlerBuilder, logger);
+        SetOpenApiMetadata(endpoint, routeHandlerBuilder);
+        SetVersioningInfo(endpoint, routeHandlerBuilder, endpointRouteBuilder: self);
+        SetAuthorize(endpoint, routeHandlerBuilder);
+    }
 
-        if (!string.IsNullOrWhiteSpace(endpoint.Name)) {
-            routeHandlerBuilder.WithName(endpoint.Name);
+    private static void SetAuthorize(EndpointBase endpoint, RouteHandlerBuilder routeHandlerBuilder) {
+        var authorizeData = endpoint.GetAuthorize()
+                                    .ToArray();
+
+        if (authorizeData.Length == 0) { return; }
+
+        routeHandlerBuilder.RequireAuthorization(authorizeData);
+    }
+
+    private static void SetVersioningInfo(EndpointBase endpoint,
+                                          RouteHandlerBuilder routeHandlerBuilder,
+                                          IEndpointRouteBuilder endpointRouteBuilder) {
+        var openApiMetadata = endpoint.GetOpenApiMetadata();
+        var versioning = endpoint.GetVersioningInfo();
+
+        if (string.IsNullOrWhiteSpace(openApiMetadata.GroupName) ||
+            versioning is { Version: <= 0 }) { return; }
+
+        var apiVersion = new ApiVersion(versioning.Version);
+        var apiVersionSetBuilder = endpointRouteBuilder.NewApiVersionSet(openApiMetadata.GroupName)
+                                                       .HasApiVersion(apiVersion);
+
+        if (versioning.IsDeprecated) {
+            apiVersionSetBuilder.HasDeprecatedApiVersion(apiVersion);
         }
 
-        if (!string.IsNullOrWhiteSpace(endpoint.Description)) {
-            routeHandlerBuilder.WithDescription(endpoint.Description);
+        if (versioning.MapToVersion > 0) {
+            routeHandlerBuilder.MapToApiVersion(versioning.MapToVersion);
         }
 
-        if (!string.IsNullOrWhiteSpace(endpoint.Summary)) {
-            routeHandlerBuilder.WithSummary(endpoint.Summary);
+        routeHandlerBuilder.WithApiVersionSet(apiVersionSetBuilder.Build());
+    }
+
+    private static void SetOpenApiMetadata(EndpointBase endpoint, RouteHandlerBuilder routeHandlerBuilder) {
+        var openApiMetadata = endpoint.GetOpenApiMetadata();
+        if (string.IsNullOrWhiteSpace(openApiMetadata.Name)) {
+            return;
         }
 
-        if (!endpoint.Tags.IsNullOrEmpty()) {
-            routeHandlerBuilder.WithTags(endpoint.Tags);
+        routeHandlerBuilder.WithOpenApi()
+                           .WithName(openApiMetadata.Name);
+
+        if (!string.IsNullOrWhiteSpace(openApiMetadata.Description)) {
+            routeHandlerBuilder.WithDescription(openApiMetadata.Description);
         }
 
-        if (!endpoint.Accepts.IsNullOrEmpty()) {
-            foreach (var acceptMetadata in endpoint.Accepts) {
-                if (acceptMetadata.RequestType is null) {
-                    continue;
-                }
+        if (!string.IsNullOrWhiteSpace(openApiMetadata.Summary)) {
+            routeHandlerBuilder.WithSummary(openApiMetadata.Summary);
+        }
 
-                routeHandlerBuilder.Accepts(acceptMetadata.RequestType,
-                                            acceptMetadata.ContentType,
-                                            acceptMetadata.AdditionalContentTypes);
+        if (!openApiMetadata.Tags.IsNullOrEmpty()) {
+            routeHandlerBuilder.WithTags(openApiMetadata.Tags);
+        }
+
+        if (openApiMetadata.Produces.IsNullOrEmpty()) {
+            return;
+        }
+
+        foreach (var producesMetadata in openApiMetadata.Produces) {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (producesMetadata.Type) {
+                case ProducesType.Default:
+                    routeHandlerBuilder.Produces((int)producesMetadata.StatusCode,
+                                                 producesMetadata.ResponseType,
+                                                 producesMetadata.ContentType,
+                                                 producesMetadata.AdditionalContentTypes);
+                    break;
+                case ProducesType.Problems:
+                    routeHandlerBuilder.ProducesProblem((int)producesMetadata.StatusCode,
+                                                        producesMetadata.ContentType);
+                    break;
+                case ProducesType.ValidationProblems:
+                    routeHandlerBuilder.ProducesValidationProblem(contentType: producesMetadata.ContentType);
+                    break;
             }
         }
+    }
 
-        if (endpoint.Version > 0) {
-            var apiVersion = new ApiVersion(endpoint.Version);
-            var apiVersionSetBuilder = self.NewApiVersionSet(endpoint.GroupName)
-                                           .HasApiVersion(apiVersion);
-
-            if (endpoint.Deprecated) {
-                apiVersionSetBuilder.HasDeprecatedApiVersion(apiVersion);
-            }
-
-            routeHandlerBuilder.WithApiVersionSet(apiVersionSetBuilder.Build());
+    private static void SetAcceptHeader(EndpointBase endpoint, RouteHandlerBuilder routeHandlerBuilder, ILogger logger) {
+        foreach (var accept in endpoint.GetAccepts()) {
+            try {
+                routeHandlerBuilder.Accepts(requestType: accept.RequestType,
+                                            isOptional: accept.IsOptional,
+                                            contentType: accept.ContentType,
+                                            additionalContentTypes: accept.AdditionalContentTypes);
+            } catch (Exception ex) { logger.AcceptHeaderItemError(accept, ex); }
         }
-        
-        if (endpoint.MapToVersion > 0) {
-            routeHandlerBuilder.MapToApiVersion(endpoint.MapToVersion);
-        }
+    }
 
-        if (!endpoint.Produces.IsNullOrEmpty()) {
-            foreach (var producesMetadata in endpoint.Produces) {
-                // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-                switch (producesMetadata.Type) {
-                    case ProducesResultType.Default:
-                        routeHandlerBuilder.Produces((int)producesMetadata.StatusCode,
-                                                     producesMetadata.ResponseType,
-                                                     producesMetadata.ContentType,
-                                                     producesMetadata.AdditionalContentTypes);
-                        break;
-                    case ProducesResultType.Problems:
-                        routeHandlerBuilder.ProducesProblem((int)producesMetadata.StatusCode,
-                                                            producesMetadata.ContentType);
-                        break;
-                    case ProducesResultType.ValidationProblems:
-                        routeHandlerBuilder.ProducesValidationProblem(contentType: producesMetadata.ContentType);
-                        break;
-                }
-            }
-        }
+    private static bool TryCreateRouteHandlerBuilder(IEndpointRouteBuilder self, EndpointBase endpoint, [NotNullWhen(returnValue: true)] out RouteHandlerBuilder? routeHandlerBuilder) {
+        routeHandlerBuilder = null;
+
+        try {
+            routeHandlerBuilder = endpoint.HttpMethod.ToUpperInvariant() switch {
+                Root.HttpMethods.DELETE => self.MapDelete(endpoint.RoutePattern, endpoint.CreateDelegate()),
+                Root.HttpMethods.GET => self.MapGet(endpoint.RoutePattern, endpoint.CreateDelegate()),
+                Root.HttpMethods.PATCH => self.MapPatch(endpoint.RoutePattern, endpoint.CreateDelegate()),
+                Root.HttpMethods.POST => self.MapPost(endpoint.RoutePattern, endpoint.CreateDelegate()),
+                Root.HttpMethods.PUT => self.MapPut(endpoint.RoutePattern, endpoint.CreateDelegate()),
+                _ => null
+            };
+        } catch { /* swallow */ }
+
+        return routeHandlerBuilder is not null;
     }
 }

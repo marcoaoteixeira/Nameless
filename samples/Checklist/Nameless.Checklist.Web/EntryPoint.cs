@@ -6,6 +6,7 @@ using Nameless.Checklist.Web.Domain.Repositories.Impl;
 using Nameless.MediatR.Integration;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web;
+using Nameless.Web.Endpoints;
 using Nameless.Web.Options;
 
 namespace Nameless.Checklist.Web;
@@ -44,7 +45,7 @@ public static class EntryPoint {
                });
 
         builder.Services
-               .AddSingleton<IRepository<ChecklistItem>>(provider => {
+               .AddSingleton<IRepository<ChecklistItem>>(_ => {
                    var path = typeof(EntryPoint).Assembly.GetDirectoryPath("App_Data/database.json");
                    return new TodoItemRepository(path);
                });

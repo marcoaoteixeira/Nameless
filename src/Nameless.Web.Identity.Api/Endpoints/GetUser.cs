@@ -8,49 +8,40 @@ using Nameless.Web.Identity.Api.Requests;
 
 namespace Nameless.Web.Identity.Api.Endpoints;
 
-public sealed class GetUser : IEndpoint {
+public sealed class GetUser : EndpointBase {
     private readonly IdentityApiOptions _options;
 
-    public string HttpMethod => Root.HttpMethods.GET;
+    public override string HttpMethod => Root.HttpMethods.GET;
 
-    public string RoutePattern => $"{_options.BaseUrl}/{Name}";
-
-    public string Name => "users";
-
-    public string Description => Constants.Endpoints
-                                          .Descriptions
-                                          .GET_USER;
-
-    public string Summary => Constants.Endpoints
-                                      .Summaries
-                                      .GET_USER;
-
-    public string GroupName => Constants.Endpoints
-                                        .Groups
-                                        .USERS;
-
-    public string[] Tags => [];
-
-    public AcceptMetadata[] Accepts => [];
-
-    public int Version => 1;
-
-    public bool Deprecated => false;
-
-    public int MapToVersion => 0;
-
-    public ProducesMetadata[] Produces => [
-        new() { ResponseType = typeof(AuthenticateUserOutput) },
-        new() { Type = ProducesResultType.ValidationProblems }
-    ];
+    public override string RoutePattern => $"{_options.BaseUrl}/account/user";
 
     public GetUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    public Delegate CreateDelegate() => async ([FromBody] AuthenticateUserInput input,
-                                               [FromServices] IMediator mediator,
-                                               CancellationToken cancellationToken) => {
+    public override OpenApiMetadata GetOpenApiMetadata()
+        => new() {
+            Name = "Get user",
+            Description = Constants.Endpoints
+                                   .Descriptions
+                                   .GET_USER,
+            Summary = Constants.Endpoints
+                               .Summaries
+                               .GET_USER,
+            GroupName = Constants.Endpoints
+                                 .Groups
+                                 .USERS,
+            Produces = [
+                Produces.Result<AuthenticateUserOutput>(),
+                Produces.ValidationProblem()
+            ]
+        };
+
+    public override Delegate CreateDelegate() => HandleAsync;
+
+    private static async Task<IResult> HandleAsync([FromBody] AuthenticateUserInput input,
+                                                   [FromServices] IMediator mediator,
+                                                   CancellationToken cancellationToken) {
         var request = new AuthenticateUserRequest {
             UserName = input.Username,
             Password = input.Password
@@ -62,5 +53,5 @@ public sealed class GetUser : IEndpoint {
             Succeeded = response.Succeeded()
         };
         return Results.Ok(output);
-    };
+    }
 }

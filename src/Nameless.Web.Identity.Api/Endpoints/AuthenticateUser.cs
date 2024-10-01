@@ -1,5 +1,4 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Web.Endpoints;
@@ -9,49 +8,40 @@ using Nameless.Web.Identity.Api.Requests;
 
 namespace Nameless.Web.Identity.Api.Endpoints;
 
-public sealed class AuthenticateUser : IEndpoint {
+public sealed class AuthenticateUser : EndpointBase {
     private readonly IdentityApiOptions _options;
 
-    public string HttpMethod => Root.HttpMethods.GET;
+    public override string HttpMethod => Root.HttpMethods.POST;
 
-    public string RoutePattern => $"{_options.BaseUrl}/{Name}";
-
-    public string Name => "auth";
-
-    public string Description => Constants.Endpoints
-                                          .Descriptions
-                                          .AUTHENTICATE_USER;
-
-    public string Summary => Constants.Endpoints
-                                      .Summaries
-                                      .AUTHENTICATE_USER;
-
-    public string GroupName => Constants.Endpoints
-                                        .Groups
-                                        .AUTH;
-
-    public string[] Tags => [];
-
-    public AcceptMetadata[] Accepts => [];
-
-    public int Version => 1;
-
-    public bool Deprecated => false;
-
-    public int MapToVersion => 0;
-
-    public ProducesMetadata[] Produces => [
-        new() { ResponseType = typeof(AuthenticateUserOutput) },
-        new() { Type = ProducesResultType.ValidationProblems }
-    ];
+    public override string RoutePattern => $"{_options.BaseUrl}/auth";
 
     public AuthenticateUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    public Delegate CreateDelegate() => async([FromBody] AuthenticateUserInput input,
-                                              [FromServices] IMediator mediator,
-                                              CancellationToken cancellationToken) => {
+    public override OpenApiMetadata GetOpenApiMetadata()
+        => new () {
+            Name = "Authentication",
+            Description = Constants.Endpoints
+                                   .Descriptions
+                                   .AUTHENTICATE_USER,
+            Summary = Constants.Endpoints
+                               .Summaries
+                               .AUTHENTICATE_USER,
+            GroupName = Constants.Endpoints
+                                 .Groups
+                                 .AUTH,
+            Produces = [
+                Produces.Result<AuthenticateUserOutput>(),
+                Produces.ValidationProblem()
+            ]
+        };
+
+    public override Delegate CreateDelegate() => HandleAsync;
+
+    private static async Task<IResult> HandleAsync([FromBody] AuthenticateUserInput input,
+                                                   [FromServices] IMediator mediator,
+                                                   CancellationToken cancellationToken) {
         var request = new AuthenticateUserRequest {
             UserName = input.Username,
             Password = input.Password
@@ -63,5 +53,5 @@ public sealed class AuthenticateUser : IEndpoint {
             Succeeded = response.Succeeded()
         };
         return Results.Ok(output);
-    };
+    }
 }
