@@ -4,10 +4,22 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Nameless.Web.Filters;
 
 namespace Nameless.Web.Endpoints;
+
+/// <summary>
+/// <see cref="IEndpointRouteBuilder"/> extension methods.
+/// </summary>
 internal static class EndpointRouteBuilderExtension {
-    internal static void Map(this IEndpointRouteBuilder self, EndpointBase endpoint, ILogger logger) {
+    /// <summary>
+    /// Maps the endpoint.
+    /// </summary>
+    /// <param name="self">The <see cref="IEndpointRouteBuilder"/> current instance.</param>
+    /// <param name="endpoint">The endpoint.</param>
+    internal static void Map(this IEndpointRouteBuilder self, EndpointBase endpoint) {
+        var logger = self.ServiceProvider.GetLogger(typeof(EndpointRouteBuilderExtension));
+
         if (string.IsNullOrWhiteSpace(endpoint.RoutePattern)) {
             logger.EndpointMissingRoutePattern(endpoint);
             return;
@@ -22,6 +34,13 @@ internal static class EndpointRouteBuilderExtension {
         SetOpenApiMetadata(endpoint, routeHandlerBuilder);
         SetVersioningInfo(endpoint, routeHandlerBuilder, endpointRouteBuilder: self);
         SetAuthorize(endpoint, routeHandlerBuilder);
+        SetValidationFilter(endpoint, routeHandlerBuilder);
+    }
+
+    private static void SetValidationFilter(EndpointBase endpoint, RouteHandlerBuilder routeHandlerBuilder) {
+        if (endpoint.UseValidationFilter) {
+            routeHandlerBuilder.AddEndpointFilter<ValidateEndpointFilter>();
+        }
     }
 
     private static void SetAuthorize(EndpointBase endpoint, RouteHandlerBuilder routeHandlerBuilder) {

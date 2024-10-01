@@ -10,7 +10,9 @@ public sealed class Delete : EndpointBase {
     public override string HttpMethod => Nameless.Web.Root.HttpMethods.DELETE;
     
     public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist/{{id}}";
-    
+
+    public override bool UseValidationFilter => false;
+
     public override OpenApiMetadata GetOpenApiMetadata()
         => new() {
             Name = "Delete",

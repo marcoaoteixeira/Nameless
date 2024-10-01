@@ -15,6 +15,8 @@ public sealed class AuthenticateUser : EndpointBase {
 
     public override string RoutePattern => $"{_options.BaseUrl}/auth";
 
+    public override bool UseValidationFilter => false;
+
     public AuthenticateUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
