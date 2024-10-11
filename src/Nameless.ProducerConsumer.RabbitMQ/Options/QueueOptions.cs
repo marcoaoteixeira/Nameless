@@ -8,7 +8,7 @@ public sealed record QueueOptions {
     private string? _name;
 
     public string Name {
-        get => _name.WithFallback(Root.Defaults.QUEUE_NAME);
+        get => _name.WithFallback(Internals.Defaults.QUEUE_NAME);
         set => _name = value;
     }
 

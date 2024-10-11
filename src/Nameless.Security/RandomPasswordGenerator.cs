@@ -58,8 +58,8 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
             opts.Symbols.ToCharArray()
         };
         if (chars.Count == 0) {
-            chars.Add(Root.Defaults.UPPER_CASE_CHARS.ToCharArray());
-            chars.Add(Root.Defaults.NUMERIC_CHARS.ToCharArray());
+            chars.Add(Internals.Defaults.UPPER_CASE_CHARS.ToCharArray());
+            chars.Add(Internals.Defaults.NUMERIC_CHARS.ToCharArray());
         }
         var charArray = chars.ToArray();
 

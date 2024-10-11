@@ -1,34 +1,27 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
+using Nameless.Web;
 using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;
 
-public sealed class List : EndpointBase {
-    public override string HttpMethod => Nameless.Web.Root.HttpMethods.GET;
-
+public sealed class List : MinimalEndpointBase {
     public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
 
-    public override bool UseValidationFilter => false;
-
-    public override OpenApiMetadata GetOpenApiMetadata()
-        => new() {
-            Name = "List",
-            Description = "List checklist items",
-            Summary = "List checklist items",
-            GroupName = "Checklist",
-            Produces = [
-                new Produces { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput[]) }
-            ]
-        };
-
-    public override Versioning GetVersioningInfo()
-        => new() { Version = 1, IsDeprecated = true };
+    public override void Configure(IMinimalEndpointBuilder builder)
+        => builder.WithOpenApi()
+                  .WithName("List")
+                  .WithDescription("List checklist items")
+                  .WithSummary("List checklist items")
+                  .WithGroupName("Checklist v1")
+                  .Produces<ChecklistItemOutput[]>()
+                  .WithApiVersionSet()
+                  .HasApiVersion(1)
+                  .HasDeprecatedApiVersion(1);
 
     public override Delegate CreateDelegate() => HandleAsync;
 

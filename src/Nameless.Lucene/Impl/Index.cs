@@ -39,7 +39,7 @@ public sealed class Index : IIndex, IDisposable {
         _logger = Prevent.Argument.Null(logger);
 
         _fsDirectory = FSDirectory.Open(path: new DirectoryInfo(_indexDirectoryPath));
-        _indexWriterConfig = new IndexWriterConfig(Root.Defaults.Version, _analyzer);
+        _indexWriterConfig = new IndexWriterConfig(Internals.Defaults.Version, _analyzer);
 
         // The name of the index will be the directory name.
         Name = Path.GetFileName(_indexDirectoryPath);
@@ -129,7 +129,7 @@ public sealed class Index : IIndex, IDisposable {
             indexWriter.Commit();
         } catch (OutOfMemoryException ex) {
             DestroyIndexWriter();
-            _logger.IndexWriterOutOfMemory(ex);
+            _logger.IndexWriterOutOfMemoryError(ex);
         } catch (Exception ex) {
             _logger.CommitChangesError(ex);
         }
@@ -160,7 +160,7 @@ public sealed class Index : IIndex, IDisposable {
             result = IndexActionResult.Success(counter);
         } catch (OutOfMemoryException ex) {
             DestroyIndexWriter();
-            _logger.IndexWriterOutOfMemory(ex);
+            _logger.IndexWriterOutOfMemoryError(ex);
             result = IndexActionResult.Failure(counter, ex.Message);
         } catch (Exception ex) {
             _logger.StoreDocumentError(ex);
@@ -201,7 +201,7 @@ public sealed class Index : IIndex, IDisposable {
                 indexWriter.DeleteDocuments(query);
             } catch (OutOfMemoryException ex) {
                 DestroyIndexWriter();
-                _logger.IndexWriterOutOfMemory(ex);
+                _logger.IndexWriterOutOfMemoryError(ex);
                 return IndexActionResult.Failure(counter, ex.Message);
             } catch (Exception ex) {
                 _logger.DeleteDocumentError(ex);

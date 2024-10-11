@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using RootFromCore = Nameless.Root;
 
 namespace Nameless.MongoDB.Impl;
 
@@ -25,7 +24,7 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
             return attr.Name;
         }
 
-        return string.Join(separator: RootFromCore.Separators.UNDERSCORE,
+        return string.Join(separator: Constants.Separators.UNDERSCORE,
                            type.Name.SplitUpperCase())
                      .ToLower();
     }

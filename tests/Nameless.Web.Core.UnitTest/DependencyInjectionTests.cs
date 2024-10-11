@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Nameless.Web.Auth;
-using Nameless.Web.Auth.Impl;
 using Nameless.Web.Options;
+using Nameless.Web.Services;
+using Nameless.Web.Services.Impl;
 
 namespace Nameless.Web;
 

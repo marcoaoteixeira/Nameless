@@ -1,9 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Nameless.Validation.Abstractions;
 using Nameless.Validation.FluentValidation.Internals;
-using ValidationException = Nameless.Validation.Abstractions.ValidationException;
+using ValidationException = Nameless.Validation.ValidationException;
 
 namespace Nameless.Validation.FluentValidation.Impl;
 

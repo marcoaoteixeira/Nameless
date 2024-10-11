@@ -14,6 +14,20 @@ public static class PreventExtension {
     private const string ARG_LOWER_OR_EQUAL_EX_MESSAGE = "Parameter cannot be lower or equal to compare value.";
     private const string ARG_OUT_OF_RANGE_EX_MESSAGE = "Parameter must be between min and max values.";
 
+    /// <summary>
+    /// Throws <see cref="ArgumentNullException"/> if parameter <paramref name="paramValue"/> is <c>null</c>.
+    /// </summary>
+    /// <typeparam name="TValue">Type of the parameter value.</typeparam>
+    /// <param name="_">The <see cref="Prevent"/> current instance. (ignored)</param>
+    /// <param name="paramValue">The parameter value.</param>
+    /// <param name="paramName">The parameter name (optional).</param>
+    /// <param name="message">The exception message (optional).</param>
+    /// <returns>
+    /// The current <paramref name="paramName"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="paramValue"/> is <c>null</c>.
+    /// </exception>
     [DebuggerStepThrough]
     public static TValue Null<TValue>(this Prevent _, [NotNull] TValue? paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null)
         where TValue : class

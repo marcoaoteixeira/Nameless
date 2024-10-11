@@ -28,7 +28,7 @@ public static class StreamExtension {
         }
 
         using var reader = new StreamReader(stream: self,
-                                            encoding: encoding ?? Root.Defaults.Encoding,
+                                            encoding: encoding ?? Defaults.Encoding,
                                             detectEncodingFromByteOrderMarks: true,
                                             bufferSize: (int)bufferSize);
 

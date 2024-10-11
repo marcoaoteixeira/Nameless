@@ -1,5 +1,4 @@
-﻿using Nameless.Validation.Abstractions;
-using FluentValidationResult = FluentValidation.Results.ValidationResult;
+﻿using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Nameless.Validation.FluentValidation.Internals;
 

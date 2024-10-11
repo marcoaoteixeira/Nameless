@@ -5,9 +5,9 @@ public sealed record MongoOptions {
 
     private CredentialsOptions? _credentials;
 
-    public string Host { get; set; } = Root.Defaults.MONGO_HOST;
+    public string Host { get; set; } = Internals.Constants.MONGO_HOST;
 
-    public int Port { get; set; } = Root.Defaults.MONGO_PORT;
+    public int Port { get; set; } = Internals.Constants.MONGO_PORT;
 
     public string? Database { get; set; }
 

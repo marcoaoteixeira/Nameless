@@ -1,34 +1,30 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v2.Models.Input;
 using Nameless.Checklist.Web.Api.v2.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
+using Nameless.Web;
 using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Impl;
+using HttpMethods = Nameless.Web.HttpMethods;
 
 namespace Nameless.Checklist.Web.Api.v2.Endpoints;
 
-public sealed class List : EndpointBase {
-    public override string HttpMethod => Nameless.Web.Root.HttpMethods.GET;
+public sealed class List : MinimalEndpointBase {
+    public override string HttpMethod => HttpMethods.GET;
 
     public override string RoutePattern => $"{Root.Endpoints.BASE_API_PATH}/checklist";
-
-    public override bool UseValidationFilter => false;
-
-    public override OpenApiMetadata GetOpenApiMetadata()
-        => new() {
-            Name = "List v2",
-            Description = "Get checklist items",
-            Summary = "Get checklist items",
-            GroupName = "Checklist",
-            Produces = [
-                new Produces { StatusCode = HttpStatusCode.OK, ResponseType = typeof(ChecklistItemOutput[]) }
-            ]
-        };
-
-    public override Versioning GetVersioningInfo()
-        => new() { Version = 2 };
+    
+    public override void Configure(IMinimalEndpointBuilder builder)
+        => builder.WithOpenApi()
+                  .WithName("List v2")
+                  .WithDescription("Get checklist items")
+                  .WithSummary("Get checklist items")
+                  .WithGroupName("Checklist v2")
+                  .Produces<ChecklistItemOutput>()
+                  .WithApiVersionSet()
+                  .HasApiVersion(2);
 
     public override Delegate CreateDelegate() => HandleAsync;
 

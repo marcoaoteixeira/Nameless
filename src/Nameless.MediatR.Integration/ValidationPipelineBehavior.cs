@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Nameless.Validation.Abstractions;
+using Nameless.Validation;
 
 namespace Nameless.MediatR.Integration;
 

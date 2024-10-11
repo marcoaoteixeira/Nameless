@@ -70,7 +70,7 @@ public static class StringExtension {
     public static MemoryStream ToMemoryStream(this string self, Encoding? encoding = default) {
         Prevent.Argument.Null(self);
 
-        return new MemoryStream((encoding ?? Root.Defaults.Encoding).GetBytes(self));
+        return new MemoryStream((encoding ?? Defaults.Encoding).GetBytes(self));
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ public static class StringExtension {
     public static string ToBase64(this string self, Encoding? encoding = default) {
         Prevent.Argument.Null(self);
 
-        return Convert.ToBase64String((encoding ?? Root.Defaults.Encoding).GetBytes(self));
+        return Convert.ToBase64String((encoding ?? Defaults.Encoding).GetBytes(self));
     }
 
     /// <summary>
@@ -204,7 +204,7 @@ public static class StringExtension {
     public static string FromBase64(this string self, Encoding? encoding = default) {
         Prevent.Argument.Null(self);
 
-        return (encoding ?? Root.Defaults.Encoding).GetString(Convert.FromBase64String(self));
+        return (encoding ?? Defaults.Encoding).GetString(Convert.FromBase64String(self));
     }
 
     /// <summary>
@@ -505,7 +505,7 @@ public static class StringExtension {
     public static byte[] GetBytes(this string self, Encoding? encoding = default) {
         Prevent.Argument.Null(self);
 
-        return (encoding ?? Root.Defaults.Encoding).GetBytes(self);
+        return (encoding ?? Defaults.Encoding).GetBytes(self);
     }
 
     /// <summary>
@@ -556,7 +556,7 @@ public static class StringExtension {
     public static string GetMD5(this string self, Encoding? encoding = default) {
         Prevent.Argument.Null(self);
 
-        var buffer = (encoding ?? Root.Defaults.Encoding).GetBytes(self);
+        var buffer = (encoding ?? Defaults.Encoding).GetBytes(self);
 
 #if NETSTANDARD2_1_OR_GREATER
         using var md5 = MD5.Create();

@@ -4,7 +4,14 @@ using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Autofac;
 
+/// <summary>
+/// <see cref="IServiceProvider"/> extensions methods.
+/// </summary>
 public static class ServiceProviderExtension {
+    /// <summary>
+    /// Adds Autofac dispose action to the application lifecycle stop event.
+    /// </summary>
+    /// <param name="self">The current <see cref="IServiceProvider"/> instance.</param>
     public static void UseAutofacDestroyRoutine(this IServiceProvider self) {
         Prevent.Argument.Null(self);
 
