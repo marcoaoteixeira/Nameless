@@ -30,6 +30,6 @@ public sealed class AnalyzerProvider : IAnalyzerProvider {
             .FirstOrDefault();
 #endif
 
-        return selector?.Analyzer ?? Root.Defaults.Analyzer;
+        return selector?.Analyzer ?? Internals.Defaults.Analyzer;
     }
 }

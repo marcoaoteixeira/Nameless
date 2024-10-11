@@ -53,7 +53,7 @@ public static class EntryPoint {
         builder.Services.AddJwtAuth(builder.Configuration);
         builder.Services.AddMinimalEndpoints(SupportAssemblies);
         builder.Services.AddApiVersioningDefault();
-        builder.Services.AddSwagger(enableJwt: true);
+        builder.Services.AddSwaggerWithVersioning(enableJwt: true);
         builder.Services.AddValidationService(SupportAssemblies);
         builder.Services.AddSystemClock();
         

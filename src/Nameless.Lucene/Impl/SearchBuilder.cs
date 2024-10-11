@@ -63,7 +63,7 @@ public sealed class SearchBuilder : ISearchBuilder {
 
         foreach (var defaultField in defaultFields) {
             CreatePendingClause();
-            _query = new QueryParser(matchVersion: Root.Defaults.Version,
+            _query = new QueryParser(matchVersion: Internals.Defaults.Version,
                                      f: defaultField,
                                      a: _analyzer).Parse(query);
         }

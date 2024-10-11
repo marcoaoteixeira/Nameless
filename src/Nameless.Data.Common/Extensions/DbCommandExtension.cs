@@ -11,6 +11,6 @@ internal static class DbCommandExtension {
                        .Select(parameter => $"[{parameter.DbType}] {parameter.ParameterName} => {parameter.Value}")
                        .ToArray();
 
-        return string.Join(Root.Separators.COMMA, list);
+        return string.Join(Constants.Separators.COMMA, list);
     }
 }

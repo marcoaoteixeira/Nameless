@@ -7,13 +7,13 @@ namespace Nameless.MongoDB.Options;
 public sealed record CredentialsOptions {
     public static CredentialsOptions Default => new();
 
-    public string Database { get; set; } = Root.Defaults.MONGO_CRED_DATABASE;
+    public string Database { get; set; } = Internals.Constants.MONGO_CRED_DATABASE;
 
-    public string Mechanism { get; set; } = Root.Defaults.MONGO_CRED_MECHANISM;
+    public string Mechanism { get; set; } = Internals.Constants.MONGO_CRED_MECHANISM;
 
-    public string Username { get; set; } = Root.Defaults.MONGO_CRED_USER;
+    public string Username { get; set; } = Internals.Constants.MONGO_CRED_USER;
 
-    public string Password { get; set; } = Root.Defaults.MONGO_CRED_PASS;
+    public string Password { get; set; } = Internals.Constants.MONGO_CRED_PASS;
 
 #if NET6_0_OR_GREATER
         [MemberNotNullWhen(returnValue: true, nameof(Database), nameof(Mechanism), nameof(Username), nameof(Password))]

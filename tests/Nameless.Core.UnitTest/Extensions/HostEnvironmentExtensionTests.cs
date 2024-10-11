@@ -37,7 +37,7 @@ public class HostEnvironmentExtensionTests {
     [Test]
     public void IsRunningOnContainer_Should_Returns_True_If_Containerized() {
         // arrange
-        Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, "true");
+        Environment.SetEnvironmentVariable(Constants.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, "true");
 
         // act
         var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());
@@ -49,7 +49,7 @@ public class HostEnvironmentExtensionTests {
     [Test]
     public void IsRunningOnContainer_Should_Returns_False_If_Containerized() {
         // arrange
-        Environment.SetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, null);
+        Environment.SetEnvironmentVariable(Constants.EnvTokens.DOTNET_RUNNING_IN_CONTAINER, null);
 
         // act
         var actual = HostEnvironmentExtension.IsRunningOnContainer(Mock.Of<IHostEnvironment>());

@@ -4,37 +4,37 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public static class ProducerArgsExtension {
     public static string GetExchangeName(this ProducerArgs self) {
-        var arg = self[Root.ProducerArgsTokens.EXCHANGE_NAME] ?? Root.Defaults.EXCHANGE_NAME;
+        var arg = self[Internals.Constants.ProducerArgsTokens.EXCHANGE_NAME] ?? Internals.Defaults.EXCHANGE_NAME;
 
         return (string)arg;
     }
 
     public static ProducerArgs SetExchangeName(this ProducerArgs self, string value) {
-        self[Root.ProducerArgsTokens.EXCHANGE_NAME] = value.WithFallback(Root.Defaults.EXCHANGE_NAME);
+        self[Internals.Constants.ProducerArgsTokens.EXCHANGE_NAME] = value.WithFallback(Internals.Defaults.EXCHANGE_NAME);
         
         return self;
     }
 
     public static string[] GetRoutingKeys(this ProducerArgs self) {
-        var arg = self[Root.ProducerArgsTokens.ROUTING_KEYS] ?? Array.Empty<string>();
+        var arg = self[Internals.Constants.ProducerArgsTokens.ROUTING_KEYS] ?? Array.Empty<string>();
 
         return (string[])arg;
     }
 
     public static ProducerArgs SetRoutingKeys(this ProducerArgs self, string[] value) {
-        self[Root.ProducerArgsTokens.ROUTING_KEYS] = value;
+        self[Internals.Constants.ProducerArgsTokens.ROUTING_KEYS] = value;
 
         return self;
     }
 
     public static bool GetMandatory(this ProducerArgs self) {
-        var arg = self[Root.ProducerArgsTokens.MANDATORY] ?? false;
+        var arg = self[Internals.Constants.ProducerArgsTokens.MANDATORY] ?? false;
 
         return (bool)arg;
     }
 
     public static ProducerArgs SetMandatory(this ProducerArgs self, bool value) {
-        self[Root.ProducerArgsTokens.MANDATORY] = value;
+        self[Internals.Constants.ProducerArgsTokens.MANDATORY] = value;
 
         return self;
     }

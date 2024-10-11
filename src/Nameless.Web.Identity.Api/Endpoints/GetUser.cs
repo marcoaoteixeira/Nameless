@@ -8,36 +8,27 @@ using Nameless.Web.Identity.Api.Requests;
 
 namespace Nameless.Web.Identity.Api.Endpoints;
 
-public sealed class GetUser : EndpointBase {
+public sealed class GetUser : MinimalEndpointBase {
     private readonly IdentityApiOptions _options;
 
-    public override string HttpMethod => Root.HttpMethods.GET;
+    public override string HttpMethod => HttpMethods.GET;
 
     public override string RoutePattern => $"{_options.BaseUrl}/account/user";
-
-    public override bool UseValidationFilter => false;
 
     public GetUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    public override OpenApiMetadata GetOpenApiMetadata()
-        => new() {
-            Name = "Get user",
-            Description = Constants.Endpoints
-                                   .Descriptions
-                                   .GET_USER,
-            Summary = Constants.Endpoints
-                               .Summaries
-                               .GET_USER,
-            GroupName = Constants.Endpoints
-                                 .Groups
-                                 .USERS,
-            Produces = [
-                Produces.Result<AuthenticateUserOutput>(),
-                Produces.ValidationProblem()
-            ]
-        };
+    public override void Configure(IMinimalEndpointBuilder builder)
+        => builder.WithOpenApi()
+                  .WithName("Get user")
+                  .WithDescription(Constants.Endpoints.Descriptions.GET_USER)
+                  .WithSummary(Constants.Endpoints.Summaries.GET_USER)
+                  .WithGroupName(Constants.Endpoints.Groups.USERS)
+                  .WithApiVersionSet()
+                  .HasApiVersion(1)
+                  .Produces<AuthenticateUserOutput>()
+                  .ProducesValidationProblem();
 
     public override Delegate CreateDelegate() => HandleAsync;
 

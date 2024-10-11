@@ -19,7 +19,7 @@ public static class HostEnvironmentExtension {
                   .IsEnvironment(DeveloperMachine);
 
     public static bool IsRunningOnContainer(this IHostEnvironment _)
-        => Environment.GetEnvironmentVariable(Root.EnvTokens.DOTNET_RUNNING_IN_CONTAINER)
+        => Environment.GetEnvironmentVariable(Constants.EnvTokens.DOTNET_RUNNING_IN_CONTAINER)
                       .ToBoolean();
 
     public static string? GetEnvironmentVariable(this IHostEnvironment _, string name)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.Validation.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Validation.FluentValidation.Impl;
 
 namespace Nameless.Validation.FluentValidation;
@@ -9,6 +10,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
+        services.AddTransient<ILogger<ValidationService>>(_ => NullLogger<ValidationService>.Instance);
         services.AddValidationService();
         using var container = services.BuildServiceProvider();
 

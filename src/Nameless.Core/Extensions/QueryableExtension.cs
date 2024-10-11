@@ -83,7 +83,7 @@ public static class QueryableExtension {
         var type = typeof(T);
         var property = type.GetProperty(propertyName)
                     ?? throw new MissingMemberException($"Property \"{propertyName}\" not found in type {typeof(T).FullName}.");
-        var parameter = Expression.Parameter(type, Root.Separators.UNDERSCORE);
+        var parameter = Expression.Parameter(type, Constants.Separators.UNDERSCORE);
         var propertyAccess = Expression.MakeMemberAccess(parameter, property);
         var propertyExpression = Expression.Lambda(propertyAccess, parameter);
         var queryableMethodName = ascending

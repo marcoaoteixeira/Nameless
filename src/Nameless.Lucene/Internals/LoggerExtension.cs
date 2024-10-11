@@ -34,12 +34,12 @@ internal static class LoggerExtension {
         => CommitChangesErrorHandler(self, exception);
 
     private static readonly Action<ILogger,
-        Exception> IndexWriterOutOfMemoryHandler
+        Exception> IndexWriterOutOfMemoryErrorHandler
         = LoggerMessage.Define(logLevel: LogLevel.Error,
                                eventId: default,
                                formatString: "Index writer out of memory. Unfortunately all work will be lost and current instance will be disposed.",
                                options: null);
 
-    internal static void IndexWriterOutOfMemory(this ILogger self, Exception exception)
-        => IndexWriterOutOfMemoryHandler(self, exception);
+    internal static void IndexWriterOutOfMemoryError(this ILogger self, Exception exception)
+        => IndexWriterOutOfMemoryErrorHandler(self, exception);
 }

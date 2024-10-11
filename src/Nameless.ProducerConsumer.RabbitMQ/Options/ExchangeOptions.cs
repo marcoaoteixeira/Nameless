@@ -8,7 +8,7 @@ public sealed record ExchangeOptions {
     private string? _name;
 
     public string Name {
-        get => _name ??= Root.Defaults.EXCHANGE_NAME;
+        get => _name ??= Internals.Defaults.EXCHANGE_NAME;
         set => _name = value;
     }
 

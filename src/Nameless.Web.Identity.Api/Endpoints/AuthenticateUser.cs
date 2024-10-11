@@ -8,36 +8,27 @@ using Nameless.Web.Identity.Api.Requests;
 
 namespace Nameless.Web.Identity.Api.Endpoints;
 
-public sealed class AuthenticateUser : EndpointBase {
+public sealed class AuthenticateUser : MinimalEndpointBase {
     private readonly IdentityApiOptions _options;
 
-    public override string HttpMethod => Root.HttpMethods.POST;
+    public override string HttpMethod => HttpMethods.POST;
 
     public override string RoutePattern => $"{_options.BaseUrl}/auth";
-
-    public override bool UseValidationFilter => false;
-
+    
     public AuthenticateUser(IdentityApiOptions options) {
         _options = Prevent.Argument.Null(options);
     }
 
-    public override OpenApiMetadata GetOpenApiMetadata()
-        => new () {
-            Name = "Authentication",
-            Description = Constants.Endpoints
-                                   .Descriptions
-                                   .AUTHENTICATE_USER,
-            Summary = Constants.Endpoints
-                               .Summaries
-                               .AUTHENTICATE_USER,
-            GroupName = Constants.Endpoints
-                                 .Groups
-                                 .AUTH,
-            Produces = [
-                Produces.Result<AuthenticateUserOutput>(),
-                Produces.ValidationProblem()
-            ]
-        };
+    public override void Configure(IMinimalEndpointBuilder builder)
+        => builder.WithOpenApi()
+                  .WithName("Authentication")
+                  .WithDescription(Constants.Endpoints.Descriptions.AUTHENTICATE_USER)
+                  .WithSummary(Constants.Endpoints.Summaries.AUTHENTICATE_USER)
+                  .WithGroupName(Constants.Endpoints.Groups.AUTH)
+                  .WithApiVersionSet()
+                  .HasApiVersion(1)
+                  .Produces<AuthenticateUserOutput>()
+                  .ProducesValidationProblem();
 
     public override Delegate CreateDelegate() => HandleAsync;
 

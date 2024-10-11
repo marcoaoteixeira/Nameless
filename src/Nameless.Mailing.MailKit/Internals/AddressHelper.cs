@@ -1,5 +1,4 @@
 ﻿using MimeKit;
-using CoreRoot = Nameless.Root;
 
 namespace Nameless.Mailing.MailKit.Internals;
 
@@ -16,7 +15,7 @@ internal static class AddressHelper {
 
     internal static string[] SplitAddresses(string csv)
         => csv
-            .Split(separator: CoreRoot.Separators.COMMA,
+            .Split(separator: Constants.Separators.COMMA,
                    options: StringSplitOptions.RemoveEmptyEntries);
 
     #endregion

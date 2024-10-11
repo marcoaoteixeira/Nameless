@@ -72,10 +72,10 @@ public sealed record Message {
         Subject = Prevent.Argument.NullOrWhiteSpace(subject);
         Content = Prevent.Argument.NullOrWhiteSpace(content);
         Language = language;
-        Encoding = encoding ?? Root.Defaults.Encoding;
+        Encoding = encoding ?? Defaults.Encoding;
         From = Prevent.Argument.NullOrEmpty(from);
         To = Prevent.Argument.NullOrEmpty(to);
-        Parameters = parameters ?? new MessageArgs();
+        Parameters = parameters ?? [];
         Priority = priority;
     }
 }

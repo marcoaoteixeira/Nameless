@@ -8,11 +8,11 @@ public static class CryptographicServiceExtension {
         => ExecuteAction(self, value, encrypt: false);
 
     private static string ExecuteAction(ICryptographicService cryptographicService, string value, bool encrypt = true) {
-        using var stream = new MemoryStream(Root.Defaults.Encoding.GetBytes(value));
+        using var stream = new MemoryStream(Defaults.Encoding.GetBytes(value));
         var result = encrypt
             ? cryptographicService.Encrypt(stream)
             : cryptographicService.Decrypt(stream);
 
-        return Root.Defaults.Encoding.GetString(result);
+        return Defaults.Encoding.GetString(result);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 
 namespace Nameless.Data.SQLite;
 

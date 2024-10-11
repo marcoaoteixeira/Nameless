@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Nameless.Services.Impl;
-using Nameless.Web.Auth;
-using Nameless.Web.Auth.Impl;
 using Nameless.Web.Options;
 
 namespace Nameless.Web.Services.Impl;
@@ -11,7 +9,7 @@ public class JwtServiceTests {
     [Test]
     public void Generate_Should_Return_Token() {
         // arrange
-        var jwtClaims = new JwtClaims {
+        var jwtClaims = new JwtParameters {
             Sub = "123456",
             Name = "Test User",
             Email = "test_user@test.com"
@@ -30,7 +28,7 @@ public class JwtServiceTests {
     [Test]
     public void Validate_Should_Return_True_And_ClaimsPrincipal_When_Valid_Token() {
         // arrange
-        var jwtClaims = new JwtClaims {
+        var jwtClaims = new JwtParameters {
             Sub = "123456",
             Name = "Test User",
             Email = "test_user@test.com"

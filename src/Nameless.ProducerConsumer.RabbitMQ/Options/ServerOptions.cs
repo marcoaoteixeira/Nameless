@@ -15,12 +15,12 @@ public sealed record ServerOptions {
     /// <summary>
     /// Gets or sets the username. Default value is <c>guest</c>.
     /// </summary>
-    public string Username { get; set; } = Root.Defaults.RABBITMQ_USER;
+    public string Username { get; set; } = Internals.Defaults.RABBITMQ_USER;
 
     /// <summary>
     /// Gets or sets the user password. Default value is <c>guest</c>.
     /// </summary>
-    public string Password { get; set; } = Root.Defaults.RABBITMQ_PASS;
+    public string Password { get; set; } = Internals.Defaults.RABBITMQ_PASS;
 
     public string Hostname { get; set; } = "localhost";
 

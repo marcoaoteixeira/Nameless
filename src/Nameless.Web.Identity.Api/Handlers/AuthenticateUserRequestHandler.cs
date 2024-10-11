@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Nameless.Web.Auth;
 using Nameless.Web.Identity.Api.Requests;
 using Nameless.Web.Identity.Api.Responses;
+using Nameless.Web.Services;
 
 namespace Nameless.Web.Identity.Api.Handlers;
 
@@ -22,7 +22,7 @@ public sealed class AuthenticateUserRequestHandler<TUser, TKey> : IRequestHandle
                                                               request.Password,
                                                               isPersistent: false,
                                                               lockoutOnFailure: false);
-            
+
         if (!result.Succeeded) {
             return AuthenticateUserResponse.InvalidCredentials;
         }
@@ -46,7 +46,7 @@ public sealed class AuthenticateUserRequestHandler<TUser, TKey> : IRequestHandle
             return AuthenticateUserResponse.UserNotFound;
         }
 
-        var token = _jwtService.Generate(new JwtClaims {
+        var token = _jwtService.Generate(new JwtParameters {
             Sub = user.Id.ToString(),
             Name = user.UserName,
             Email = user.Email,

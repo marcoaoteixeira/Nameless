@@ -16,7 +16,7 @@ public sealed record RijndaelCryptoOptions {
     /// Passphrase can be any string. Passphrase value must be kept in
     /// secret.
     /// </summary>
-    public string Passphrase { get; set; } = Root.Defaults.RIJNDAEL_PASS_PHRASE;
+    public string Passphrase { get; set; } = Internals.Defaults.RIJNDAEL_PASS_PHRASE;
 
     /// <summary>
     /// Gets or sets the initialization vector.
@@ -27,7 +27,7 @@ public sealed record RijndaelCryptoOptions {
     /// </summary>
     private string? _iv;
     public string IV {
-        get => _iv.WithFallback(Root.Defaults.RIJNDAEL_IV);
+        get => _iv.WithFallback(Internals.Defaults.RIJNDAEL_IV);
         set => _iv = value;
     }
     /// <summary>
@@ -38,7 +38,7 @@ public sealed record RijndaelCryptoOptions {
     /// </summary>
     private string? _salt;
     public string Salt {
-        get => _salt.WithFallback(Root.Defaults.RIJNDAEL_SALT);
+        get => _salt.WithFallback(Internals.Defaults.RIJNDAEL_SALT);
         set => _salt = value;
     }
     /// <summary>

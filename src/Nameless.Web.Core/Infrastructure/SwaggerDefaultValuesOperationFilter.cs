@@ -4,12 +4,13 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Nameless.Web.Infrastructure;
+
 public sealed class SwaggerDefaultValuesOperationFilter : IOperationFilter {
     public void Apply(OpenApiOperation operation, OperationFilterContext context) {
         const string defaultResponseKey = "default";
 
         var apiDescription = context.ApiDescription;
-        
+
         operation.Deprecated |= apiDescription.IsDeprecated();
 
         foreach (var responseType in context.ApiDescription.SupportedResponseTypes) {
@@ -20,7 +21,8 @@ public sealed class SwaggerDefaultValuesOperationFilter : IOperationFilter {
             var response = operation.Responses[responseKey];
 
             foreach (var contentType in response.Content.Keys) {
-                if (responseType.ApiResponseFormats.All(apiResponseFormat => apiResponseFormat.MediaType != contentType)) {
+                if (responseType.ApiResponseFormats.All(apiResponseFormat =>
+                                                            apiResponseFormat.MediaType != contentType)) {
                     response.Content.Remove(contentType);
                 }
             }

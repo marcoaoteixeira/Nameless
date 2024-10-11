@@ -32,4 +32,23 @@ public static class IntegerExtension {
             action(number);
         }
     }
+
+    /// <summary>
+    /// Checks if the current <see cref="int"/> parameter falls between
+    /// the minimum and maximum defined values.
+    /// </summary>
+    /// <param name="self">The current <see cref="int"/> value.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <param name="includeLimit">
+    /// Whether it should check if the value is <paramref name="min"/> and
+    /// <paramref name="max"/> limits.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if it falls between; otherwise <c>false</c>.
+    /// </returns>
+    public static bool IsBetween(this int self, int min, int max, bool includeLimit = true)
+        => includeLimit
+            ? self >=min && self <=max
+            : self > min && self < max;
 }
