@@ -1,14 +1,17 @@
 ﻿using System.Globalization;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Localization.Json.Infrastructure.Impl;
 
 public class CultureContextTests {
+    private static CultureContext CreateSut() => new(NullLogger<CultureContext>.Instance);
+
     [Test]
     public void GetCurrentCulture_Returns_CultureInfro_From_CurrentUICulture() {
         // arrange
         Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-ES");
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-        var sut = CultureContext.Instance;
+        var sut = CreateSut();
 
         // act
         // First, tries get culture from Thread.CurrentThread.CurrentUICulture.
@@ -24,7 +27,7 @@ public class CultureContextTests {
         // arrange
         Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-        var sut = CultureContext.Instance;
+        var sut = CreateSut();
 
         // act
         // First, tries get culture from Thread.CurrentThread.CurrentUICulture.
@@ -40,7 +43,7 @@ public class CultureContextTests {
         // arrange
         Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-        var sut = CultureContext.Instance;
+        var sut = CreateSut();
 
         // act
         // If both culture object return empty, get the default that is en-US

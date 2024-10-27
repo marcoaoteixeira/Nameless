@@ -178,7 +178,6 @@ public sealed class Index : IIndex, IDisposable {
             ++batches;
         }
 
-        var indexWriter = GetIndexWriter();
         for (var batch = 0; batch < batches; batch++) {
             var query = new BooleanQuery();
             try {
@@ -198,7 +197,7 @@ public sealed class Index : IIndex, IDisposable {
                     counter++;
                 }
 
-                indexWriter.DeleteDocuments(query);
+                GetIndexWriter().DeleteDocuments(query);
             } catch (OutOfMemoryException ex) {
                 DestroyIndexWriter();
                 _logger.IndexWriterOutOfMemoryError(ex);
@@ -247,6 +246,7 @@ public sealed class Index : IIndex, IDisposable {
 
     private void Dispose(bool disposing) {
         if (_disposed) { return; }
+
         if (disposing) {
             _indexWriter?.Dispose();
             _indexReader?.Dispose();

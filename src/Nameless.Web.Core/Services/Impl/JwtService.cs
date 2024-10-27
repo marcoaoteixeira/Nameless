@@ -12,7 +12,7 @@ using MS_JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegi
 namespace Nameless.Web.Services.Impl;
 
 public sealed class JwtService : IJwtService {
-    private readonly ILogger _logger;
+    private readonly ILogger<JwtService> _logger;
     private readonly JwtOptions _options;
     private readonly ISystemClock _systemClock;
 

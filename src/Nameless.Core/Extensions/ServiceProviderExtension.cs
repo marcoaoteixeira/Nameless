@@ -134,7 +134,7 @@ public static class ServiceProviderExtension {
             return options;
         }
 
-        // shoot, no good. let's try get from the configuration
+        // shoot, no good. let's try get it from configuration service
         if (self.TryGetService<IConfiguration>(out var configuration)) {
             var sectionName = typeof(TOptions).Name;
             var configOptions = configuration.GetSection(sectionName)

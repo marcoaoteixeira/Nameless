@@ -1,10 +1,19 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Localization.Json.Objects;
 
 namespace Nameless.Localization.Json;
 
 public class StringLocalizerTests {
+    private static StringLocalizer CreateSut(CultureInfo culture, string resourceName, string resourcePath, Region region) =>
+        new(culture,
+            resourceName,
+            resourcePath,
+            region,
+            (_, _, _) => NullStringLocalizer.Instance,
+            NullLogger<StringLocalizer>.Instance);
+
     [Test]
     public void Indexer_Should_Return_LocalizedString() {
         // arrange
@@ -15,18 +24,13 @@ public class StringLocalizerTests {
         const string resourcePath = "ClassName";
         var region = new Region($"[{resourceName}] {resourcePath}", [new Message(messageID, expected)]);
 
-        var sut = new StringLocalizer(culture,
-                                      resourceName,
-                                      resourcePath,
-                                      region,
-                                      (c, rn, np) => NullStringLocalizer.Instance
-        );
+        var sut = CreateSut(culture, resourceName, resourcePath, region);
 
         // act
         var actual = sut[messageID];
 
         // assert
-        Assert.That(actual.Value, Is.EqualTo(expected)); ;
+        Assert.That(actual.Value, Is.EqualTo(expected));
     }
 
     [Test]
@@ -39,19 +43,13 @@ public class StringLocalizerTests {
         const string resourcePath = "ClassName";
         var args = new object[] { 1, 2, 3, 4 };
         var region = new Region($"[{resourceName}] {resourcePath}", [new Message(messageID, expected)]);
-        var sut = new StringLocalizer(
-            culture,
-            resourceName,
-            resourcePath,
-            region,
-            (c, rn, np) => NullStringLocalizer.Instance
-        );
+        var sut = CreateSut(culture, resourceName, resourcePath, region);
 
         // act
         var actual = sut[messageID, args];
 
         // assert
-        Assert.That(actual.Value, Is.EqualTo(expected)); ;
+        Assert.That(actual.Value, Is.EqualTo(expected));
     }
 
     [Test]
@@ -65,13 +63,7 @@ public class StringLocalizerTests {
             new Message("Message A", "Message A"),
             new Message("Message A", "Message A")
         ]);
-        var sut = new StringLocalizer(
-            culture,
-            resourceName,
-            resourcePath,
-            region,
-            (c, rn, np) => NullStringLocalizer.Instance
-        );
+        var sut = CreateSut(culture, resourceName, resourcePath, region);
 
         // act
         var actual = sut
@@ -110,14 +102,21 @@ public class StringLocalizerTests {
                 new Message("Message C", $"Mensagem C => {culture.Name}"),
             ]);
 
-            return new StringLocalizer(culture, resourceName, resourcePath, innerRegion, factory);
-        };
+            return new StringLocalizer(culture,
+                                       resourceName,
+                                       resourcePath,
+                                       innerRegion,
+                                       factory,
+                                       NullLogger<StringLocalizer>.Instance);
+        }
+
         var sut = new StringLocalizer(
             culture,
             resourceName,
             resourcePath,
             regionPtBr,
-            factory
+            factory,
+            NullLogger<StringLocalizer>.Instance
         );
 
         // act

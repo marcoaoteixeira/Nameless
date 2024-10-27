@@ -24,7 +24,12 @@ public static class StreamExtension {
         Prevent.Argument.Null(self);
 
         if (!self.CanRead) {
-            throw new InvalidOperationException("Can't read stream.");
+            throw new InvalidOperationException("Stream does not support read operation.");
+        }
+
+        // Set stream cursor to the begging of the stream.
+        if (self.CanSeek) {
+            self.Seek(offset: 0, SeekOrigin.Begin);
         }
 
         using var reader = new StreamReader(stream: self,

@@ -4,7 +4,6 @@ using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.Localization.Json.Internals;
 using Nameless.Localization.Json.Objects;
 using Nameless.Localization.Json.Options;
 
@@ -37,6 +36,8 @@ public sealed class TranslationManager : ITranslationManager {
     public Translation GetTranslation(string culture) {
         Prevent.Argument.NullOrWhiteSpace(culture);
 
+        _logger.GettingTranslationForCulture(culture);
+
         var entry = _cache.GetOrAdd(culture, CreateCacheEntry);
 
         return entry.Translation;
@@ -44,6 +45,8 @@ public sealed class TranslationManager : ITranslationManager {
 
     private CacheEntry CreateCacheEntry(string culture) {
         var path = Path.Combine(_options.TranslationFolderName, $"{culture}.json");
+
+        _logger.CreatingCacheEntryForTranslationFile(path);
 
         if (!TryGetTranslationFile(path, out var file)) {
             return CacheEntry.Empty;
@@ -67,6 +70,7 @@ public sealed class TranslationManager : ITranslationManager {
 
         if (!file.Exists) {
             _logger.TranslationFileNotFound(file.Name);
+            
             file = null;
         }
 
@@ -81,12 +85,14 @@ public sealed class TranslationManager : ITranslationManager {
             content = fileStream.ToText();
 
             if (string.IsNullOrWhiteSpace(content)) {
-                _logger.TranslationFileEmpty(file.Name);
+                _logger.TranslationFileContentIsEmpty(file.Name);
+
                 content = null;
+
                 return false;
             }
         } catch (Exception ex) {
-            _logger.ReadTranslationFileContentError(file.Name, ex);
+            _logger.ErrorReadingTranslationFile(file.Name, ex);
         }
 
         return content is not null;
@@ -97,12 +103,12 @@ public sealed class TranslationManager : ITranslationManager {
         
         try { translation = JsonSerializer.Deserialize<Translation>(fileContent); }
         catch (Exception ex) {
-            _logger.TranslationObjectDeserializationError(fileName, ex);
+            _logger.TranslationObjectDeserializationFailed(fileName, ex);
             return false;
         }
 
         if (translation is null) {
-            _logger.JsonSerializerReturnNullTranslationObject(fileName);
+            _logger.JsonDeserializationReturnedNullTranslationObject(fileName);
         }
 
         return translation is not null;
@@ -113,18 +119,20 @@ public sealed class TranslationManager : ITranslationManager {
             return NullDisposable.Instance;
         }
 
+        _logger.SettingFileWatcherForTranslationFile(path);
+
         var changeToken = _fileProvider.Watch(path);
         var handler = changeToken
-            .RegisterChangeCallback(callback: HandleFileChange,
+            .RegisterChangeCallback(callback: RemoveTranslationObject,
                                     state: culture);
 
         return handler;
     }
 
-    private void HandleFileChange(object? state) {
-        if (state is null) { return; }
-
-        var culture = (string)state;
+    private void RemoveTranslationObject(object? state) {
+        if (state is not string culture) {
+            return;
+        }
 
         if (_cache.TryRemove(culture, out var entry)) {
             entry.FileChangeCallback.Dispose();

@@ -1,6 +1,6 @@
 ﻿using Nameless.Localization.Json.Objects;
 
-namespace Nameless.Localization.Json.Internals;
+namespace Nameless.Localization.Json;
 
 internal sealed record CacheEntry {
     internal static CacheEntry Empty => new(Translation.Empty, NullDisposable.Instance);
