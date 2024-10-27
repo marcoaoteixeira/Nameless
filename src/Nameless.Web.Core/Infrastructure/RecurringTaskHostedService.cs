@@ -1,21 +1,15 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Web.Infrastructure;
 
 public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
-    private readonly ILogger _logger;
-
-    private bool _disposed;
+    private readonly ILogger<RecurringTaskHostedService> _logger;
 
     private Task? _executeTask;
     private CancellationTokenSource? _stoppingCts;
     private PeriodicTimer? _timer;
-
-    protected RecurringTaskHostedService(TimeSpan interval)
-        : this(interval, NullLogger<RecurringTaskHostedService>.Instance) {
-    }
+    private bool _disposed;
 
     protected RecurringTaskHostedService(TimeSpan interval, ILogger<RecurringTaskHostedService> logger) {
         Prevent.Argument.LowerOrEqual(interval, TimeSpan.Zero);
@@ -76,9 +70,16 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
 
     public abstract Task ExecuteAsync(CancellationToken stoppingToken);
 
-    private static async Task<bool> ContinueAsync(PeriodicTimer timer, CancellationToken cancellationToken)
-        => await timer.WaitForNextTickAsync(cancellationToken) &&
-           !cancellationToken.IsCancellationRequested;
+    private static async Task<bool> CanContinueAsync(PeriodicTimer timer, CancellationToken cancellationToken) {
+        try {
+            return !cancellationToken.IsCancellationRequested &&
+                   await timer.WaitForNextTickAsync(cancellationToken);
+        }
+        catch (TaskCanceledException) { /* ignore */ }
+        catch (OperationCanceledException) { /* ignore */ }
+
+        return false;
+    }
 
     private static void HandleStopCancellation(object? state, CancellationToken cancellationToken) {
         if (state is TaskCompletionSource<object> tcs) {
@@ -89,7 +90,7 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
     private async Task InnerExecuteAsync(CancellationToken stoppingToken) {
         if (_timer is null) { return; }
 
-        while (await ContinueAsync(_timer, stoppingToken)) {
+        while (await CanContinueAsync(_timer, stoppingToken)) {
             try { await ExecuteAsync(stoppingToken); }
             catch (Exception ex) { _logger.RecurringTaskError(ex); }
         }

@@ -10,16 +10,17 @@ namespace Nameless.Autofac;
 public static class ServiceProviderExtension {
     /// <summary>
     /// Adds Autofac dispose action to the application lifecycle stop event.
+    /// Tear down the composition root and free all resources
+    /// when the application stops.
     /// </summary>
     /// <param name="self">The current <see cref="IServiceProvider"/> instance.</param>
     public static void UseAutofacDestroyRoutine(this IServiceProvider self) {
         Prevent.Argument.Null(self);
 
-        // Tear down the composition root and free all resources
-        // when the application stops.
-        var container = self.GetAutofacRoot();
-        var lifetime = self.GetRequiredService<IHostApplicationLifetime>();
+        var lifetime = self.GetService<IHostApplicationLifetime>();
+        if (lifetime is null) { return; }
 
+        var container = self.GetAutofacRoot();
         lifetime.ApplicationStopped.Register(container.Dispose);
     }
 }

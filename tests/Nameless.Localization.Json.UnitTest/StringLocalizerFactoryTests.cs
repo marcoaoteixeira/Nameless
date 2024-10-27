@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Nameless.Localization.Json.Infrastructure;
 using Nameless.Localization.Json.Objects;
@@ -7,6 +9,13 @@ namespace Nameless.Localization.Json;
 
 public class StringLocalizerFactoryTests {
     private const string CULTURE_NAME = "pt-BR";
+
+    private static StringLocalizerFactory CreateSut(Mock<ICultureContext>? cultureContextMock = null,
+                                                    Mock<ITranslationManager>? translationManagerMock = null,
+                                                    Mock<ILoggerFactory>? loggerFactoryMock = null)
+        => new (cultureContext: (cultureContextMock ?? CreateCultureContextMock()).Object,
+                translationManager: (translationManagerMock ?? CreateTranslationManagerMock()).Object,
+                loggerFactory: (loggerFactoryMock ?? CreateLoggerFactoryMock()).Object);
 
     private static Mock<ICultureContext> CreateCultureContextMock() {
         var result = new Mock<ICultureContext>();
@@ -33,15 +42,22 @@ public class StringLocalizerFactoryTests {
         return result;
     }
 
+    private static Mock<ILoggerFactory> CreateLoggerFactoryMock() {
+        var result = new Mock<ILoggerFactory>();
+
+        result
+            .Setup(mock => mock.CreateLogger(It.IsAny<string>()))
+            .Returns(NullLogger<StringLocalizer>.Instance);
+
+        return result;
+    }
+
     [Test]
     public void Create_Should_Create_StringLocalizer_Using_Type() {
         // arrange
         var cultureContextMock = CreateCultureContextMock();
         var translationManagerMock = CreateTranslationManagerMock();
-        var sut = new StringLocalizerFactory(
-            cultureContext: cultureContextMock.Object,
-            translationManager: translationManagerMock.Object
-        );
+        var sut = CreateSut(cultureContextMock, translationManagerMock);
 
         // act
         var actual = sut.Create(typeof(StringLocalizerFactoryTests));
@@ -53,12 +69,7 @@ public class StringLocalizerFactoryTests {
     [Test]
     public void Create_Should_Create_StringLocalizer_Using_ResourceName_And_ResourcePath() {
         // arrange
-        var cultureContextMock = CreateCultureContextMock();
-        var translationManagerMock = CreateTranslationManagerMock();
-        var sut = new StringLocalizerFactory(
-            cultureContext: cultureContextMock.Object,
-            translationManager: translationManagerMock.Object
-        );
+        var sut = CreateSut();
         var resourceName = typeof(StringLocalizerFactoryTests)
                            .Assembly
                            .GetName()

@@ -1,29 +1,37 @@
 ﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace Nameless.Localization.Json.Infrastructure.Impl;
 
-[Singleton]
 public sealed class CultureContext : ICultureContext {
-    /// <summary>
-    /// Gets the unique instance of <see cref="CultureContext" />.
-    /// </summary>
-    public static ICultureContext Instance { get; } = new CultureContext();
+    private static readonly CultureInfo DefaultCulture = new("en-US");
 
-    // Explicit static constructor to tell the C# compiler
-    // not to mark type as beforefieldinit
-    static CultureContext() { }
+    private readonly ILogger<CultureContext> _logger;
 
-    private CultureContext() { }
+    public CultureContext(ILogger<CultureContext> logger) {
+        _logger = Prevent.Argument.Null(logger);
+    }
 
     public CultureInfo GetCurrentCulture() {
         var culture = Thread.CurrentThread.CurrentUICulture;
         if (!string.IsNullOrWhiteSpace(culture.Name)) {
+            _logger.GettingCurrentCultureFromContext(context: "Thread.CurrentThread.CurrentUICulture",
+                                                     cultureName: culture.Name);
+
             return culture;
         }
 
         culture = Thread.CurrentThread.CurrentCulture;
-        return !string.IsNullOrWhiteSpace(culture.Name)
-            ? culture
-            : new CultureInfo("en-US");
+        if (!string.IsNullOrWhiteSpace(culture.Name)) {
+            _logger.GettingCurrentCultureFromContext(context: "Thread.CurrentThread.CurrentCulture",
+                                                     cultureName: culture.Name);
+
+            return culture;
+        }
+
+        _logger.GettingCurrentCultureFromContext(context: "Default",
+                                                 cultureName: DefaultCulture.Name);
+
+        return DefaultCulture;
     }
 }

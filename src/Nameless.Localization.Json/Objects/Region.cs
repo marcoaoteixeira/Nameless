@@ -3,10 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Localization.Json.Objects;
 
-[DebuggerDisplay("{DebuggerDisplayValue}")]
+[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 public sealed record Region {
-    public static Region Empty => new(string.Empty, []);
-
     public string Name { get; }
 
     public Message[] Messages { get; }

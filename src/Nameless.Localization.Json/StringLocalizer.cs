@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Nameless.Localization.Json.Objects;
 
 namespace Nameless.Localization.Json;
@@ -10,15 +11,22 @@ public sealed class StringLocalizer : IStringLocalizer {
     private readonly string _resourcePath;
     private readonly Region _region;
     private readonly Func<CultureInfo, string, string, IStringLocalizer> _factory;
+    private readonly ILogger<StringLocalizer> _logger;
 
     public string Location => $"{_culture}::{_resourceName}::{_resourcePath}";
 
-    public StringLocalizer(CultureInfo culture, string resourceName, string resourcePath, Region region, Func<CultureInfo, string, string, IStringLocalizer> factory) {
+    public StringLocalizer(CultureInfo culture,
+                           string resourceName,
+                           string resourcePath,
+                           Region region,
+                           Func<CultureInfo, string, string, IStringLocalizer> factory,
+                           ILogger<StringLocalizer> logger) {
         _culture = Prevent.Argument.Null(culture);
         _resourceName = Prevent.Argument.NullOrWhiteSpace(resourceName);
         _resourcePath = Prevent.Argument.NullOrWhiteSpace(resourcePath);
         _region = Prevent.Argument.Null(region);
         _factory = Prevent.Argument.Null(factory);
+        _logger = Prevent.Argument.Null(logger);
     }
 
     public LocalizedString this[string name]
@@ -46,6 +54,10 @@ public sealed class StringLocalizer : IStringLocalizer {
 
     private LocalizedString GetLocalizedString(string text, params object[] args) {
         var found = _region.TryGetMessage(text, out var message);
+
+        _logger.OnCondition(!found)
+               .TranslationNotFoundForMessageWithID(text);
+
         var (name, value) = message is not null
             ? (message.ID, message.Text)
             : (text, text);

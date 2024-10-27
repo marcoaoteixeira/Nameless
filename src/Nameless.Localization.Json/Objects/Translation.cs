@@ -6,7 +6,7 @@ namespace Nameless.Localization.Json.Objects;
 /// <summary>
 /// This class represents a translation, in other words, a file for a culture.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue}")]
+[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 public sealed record Translation {
     public static Translation Empty => new(string.Empty, []);
 
