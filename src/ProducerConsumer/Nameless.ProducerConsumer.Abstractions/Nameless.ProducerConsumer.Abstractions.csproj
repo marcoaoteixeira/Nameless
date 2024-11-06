@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.ProducerConsumer</RootNamespace>
+
+		<!-- NUGET PACKING -->
+		<Title>Nameless Producer/Consumer Abstractions Library</Title>
+		<Description>This library contains classes and interfaces that provides base to implement a simple Producer/Consumer message system.</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
+
+</Project>

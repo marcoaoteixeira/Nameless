@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Api.v1.Models.Input;
 using Nameless.Checklist.Web.Api.v1.Models.Output;
 using Nameless.Checklist.Web.Domain.Requests;
-using Nameless.Web;
 using Nameless.Web.Endpoints;
 
 namespace Nameless.Checklist.Web.Api.v1.Endpoints;

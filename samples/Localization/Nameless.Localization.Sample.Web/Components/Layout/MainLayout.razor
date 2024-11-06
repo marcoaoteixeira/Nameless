@@ -1,0 +1,41 @@
+﻿@using Microsoft.Extensions.Localization
+@inherits LayoutComponentBase
+
+@code {
+    private void LocalizationChanged(ChangeEventArgs obj)
+    {
+        
+
+        throw new NotImplementedException();
+    }
+
+}
+
+@inject IStringLocalizer<MainLayout> T
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <select @onchange="LocalizationChanged">
+                <option value="pt-BR">pt-BR</option>
+                <option value="en-US">en-US</option>
+                <option value="fr-FR">fr-FR</option>
+            </select>
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">@T["About"]</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    @T["An unhandled error has occurred."]
+    <a href="" class="reload">@T["Reload"]</a>
+    <a class="dismiss">🗙</a>
+</div>

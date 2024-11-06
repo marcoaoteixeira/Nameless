@@ -1,0 +1,88 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Nameless.Services;
+using Nameless.Web.Options;
+using MS_JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+
+namespace Nameless.Web.Services;
+
+public sealed class JwtService : IJwtService {
+    private readonly ILogger<JwtService> _logger;
+    private readonly IOptions<JwtOptions> _options;
+    private readonly ISystemClock _systemClock;
+
+    public JwtService(ISystemClock systemClock, IOptions<JwtOptions> options, ILogger<JwtService> logger) {
+        _systemClock = Prevent.Argument.Null(systemClock);
+        _options = Prevent.Argument.Null(options);
+        _logger = Prevent.Argument.Null(logger);
+    }
+
+    public string Generate(JwtParameters parameters) {
+        var now = _systemClock.GetUtcNow();
+        var expires = now.AddHours(_options.Value.AccessTokenTtl);
+
+        var tokenDescriptor = new SecurityTokenDescriptor {
+            Issuer = _options.Value.Issuer,
+            Audience = _options.Value.Audience,
+            Claims = new Dictionary<string, object> {
+                { MS_JwtRegisteredClaimNames.Exp, expires.ToString(CultureInfo.InvariantCulture) },
+                { MS_JwtRegisteredClaimNames.Iat, now.ToString(CultureInfo.InvariantCulture) },
+                { MS_JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() }
+            },
+            Expires = expires,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_options.Value.Secret.GetBytes()),
+                                                        SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        // Add other claims
+        var dictionary = parameters.ToDictionary();
+        foreach (var kvp in dictionary) {
+            if (!tokenDescriptor.Claims.TryAdd(kvp.Key, kvp.Value)) {
+                _logger.ClaimNotAddedWarning(kvp.Key, kvp.Value);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(_options.Value.Issuer)) {
+            tokenDescriptor.Claims.Add(MS_JwtRegisteredClaimNames.Iss, _options.Value.Issuer);
+        }
+
+        if (!string.IsNullOrEmpty(_options.Value.Audience)) {
+            tokenDescriptor.Claims.Add(MS_JwtRegisteredClaimNames.Aud, _options.Value.Audience);
+        }
+
+        // Force JwtSecurityTokenHandler to use the default claim name
+        // https://stackoverflow.com/questions/57998262/why-is-claimtypes-nameidentifier-not-mapping-to-sub
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
+    }
+
+    public bool TryValidate(string token, [NotNullWhen(true)] out ClaimsPrincipal? principal) {
+        principal = null;
+
+        try {
+            principal = new JwtSecurityTokenHandler()
+                .ValidateToken(token,
+                               _options.Value.GetTokenValidationParameters(),
+                               out var securityToken);
+
+            var validate = securityToken is JwtSecurityToken jwtSecurityToken &&
+                           jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                                                              StringComparison.InvariantCultureIgnoreCase);
+
+            if (!validate) { principal = null; }
+
+            return validate;
+        } catch (Exception ex) { _logger.JwtValidationError(ex); }
+
+        return false;
+    }
+}

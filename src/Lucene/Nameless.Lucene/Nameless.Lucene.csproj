@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- NUGET PACKING -->
+		<Title>Nameless Lucene Library</Title>
+		<Description>This library contains classes and interfaces to enable text search using Lucene.NET</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.1" />
+		<PackageReference Include="Lucene.Net.Queries" Version="4.8.1" />
+		<PackageReference Include="Lucene.Net.QueryParser" Version="4.8.1" />
+		<PackageReference Include="Polly" Version="8.4.2" />
+		<PackageReference Include="Polly.Core" Version="8.4.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
+
+</Project>

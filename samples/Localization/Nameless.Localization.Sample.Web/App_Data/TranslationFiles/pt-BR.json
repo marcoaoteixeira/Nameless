@@ -1,0 +1,22 @@
+{
+  "Culture": "pt-BR",
+  "Regions": [
+    {
+      "Name": "[Nameless.Localization.Sample.Web] Nameless.Localization.Sample.Web.Components.Layout.MainLayout",
+      "Messages": [
+        {
+          "ID": "About",
+          "Text": "Sobre"
+        },
+        {
+          "ID": "An unhandled error has occurred.",
+          "Text": "Ocorreu um erro não tratado."
+        },
+        {
+          "ID": "Reload",
+          "Text": "Atualizar"
+        }
+      ]
+    }
+  ]
+}

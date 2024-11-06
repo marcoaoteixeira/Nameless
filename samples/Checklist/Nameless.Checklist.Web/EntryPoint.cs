@@ -5,8 +5,7 @@ using Nameless.Checklist.Web.Domain.Repositories;
 using Nameless.Checklist.Web.Domain.Repositories.Impl;
 using Nameless.MediatR.Integration;
 using Nameless.Validation.FluentValidation;
-using Nameless.Web;
-using Nameless.Web.Endpoints;
+using Nameless.Web.Extensions;
 using Nameless.Web.Options;
 
 namespace Nameless.Checklist.Web;
@@ -50,7 +49,7 @@ public static class EntryPoint {
                    return new TodoItemRepository(path);
                });
 
-        builder.Services.AddJwtAuth(builder.Configuration);
+        builder.Services.AddJwtAuth(configureAuthorization: _ => { }, configureJwt: _ => { });
         builder.Services.AddMinimalEndpoints(SupportAssemblies);
         builder.Services.AddApiVersioningDefault();
         builder.Services.AddSwaggerWithVersioning(enableJwt: true);
