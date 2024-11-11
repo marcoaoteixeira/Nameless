@@ -19,9 +19,4 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Core\Nameless.Core\Nameless.Core.csproj" />
-	  <ProjectReference Include="..\..\..\src\Web\Nameless.Web.Core\Nameless.Web.Core.csproj" />
-	</ItemGroup>
-
 </Project>
