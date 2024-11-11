@@ -1,20 +1,23 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
+using Nameless.Localization.Json.Infrastructure;
 
 namespace Nameless.Localization.Json.Objects;
 
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[JsonConverter(typeof(MessageJsonConverter))]
 public sealed record Message {
     public static Message Empty => new(string.Empty, string.Empty);
 
-    public string ID { get; }
+    public string Id { get; }
     
     public string Text { get; }
 
     private string DebuggerDisplayValue
-        => $"{ID} => {Text}";
+        => $"{Id} => {Text}";
 
     public Message(string id, string text) {
-        ID = Prevent.Argument.Null(id);
+        Id = Prevent.Argument.Null(id);
         Text = Prevent.Argument.Null(text);
     }
 }

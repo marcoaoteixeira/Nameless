@@ -6,14 +6,14 @@ namespace Nameless.Localization.Json;
 internal static class LoggerHighPerformanceExtension {
     #region Debug
 
-    private static readonly Action<ILogger, string, Exception?> GettingTranslationForCultureDelegate
+    private static readonly Action<ILogger, string, Exception?> GettingResourceForCultureDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Getting translation for culture '{CultureName}'",
+                                       formatString: "Getting resource for culture '{CultureName}'",
                                        options: null);
 
-    internal static void GettingTranslationForCulture(this ILogger<TranslationManager> self, string cultureName)
-        => GettingTranslationForCultureDelegate(self, cultureName, null /* exception */);
+    internal static void GettingResourceForCulture(this ILogger<ResourceManager> self, string cultureName)
+        => GettingResourceForCultureDelegate(self, cultureName, null /* exception */);
 
     private static readonly Action<ILogger, string, string, Exception?> GettingCurrentCultureFromContextDelegate
         = LoggerMessage.Define<string, string>(logLevel: LogLevel.Debug,
@@ -21,110 +21,97 @@ internal static class LoggerHighPerformanceExtension {
                                                formatString: "Getting current culture information from context. Context: '{Context}', Culture retrieved: '{CultureName}'",
                                                options: null);
 
-    internal static void GettingCurrentCultureFromContext(this ILogger<CultureContext> self, string context, string cultureName)
+    internal static void GettingCurrentCultureFromContext(this ILogger<CultureProvider> self, string context, string cultureName)
         => GettingCurrentCultureFromContextDelegate(self, context, cultureName, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> TranslationFileNotFoundDelegate
+    private static readonly Action<ILogger, string, Exception?> ResourceFileNotFoundDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Translation file not found. File name: '{FileName}'",
+                                       formatString: "Resource file not found. Resource path: '{ResourcePath}'",
                                        options: null);
 
-    internal static void TranslationFileNotFound(this ILogger<TranslationManager> self, string fileName)
-        => TranslationFileNotFoundDelegate(self, fileName, null /* exception */);
+    internal static void ResourceFileNotFound(this ILogger<ResourceManager> self, string resourcePath)
+        => ResourceFileNotFoundDelegate(self, resourcePath, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> TranslationFileContentIsEmptyDelegate
+    private static readonly Action<ILogger, string, Exception?> ResourceFileContentIsEmptyDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Translation file seems empty. File name: '{FileName}'",
+                                       formatString: "Resource file seems empty. Resource path: '{ResourcePath}'",
                                        options: null);
 
-    internal static void TranslationFileContentIsEmpty(this ILogger<TranslationManager> self, string fileName)
-        => TranslationFileContentIsEmptyDelegate(self, fileName, null /* exception */);
+    internal static void ResourceFileContentIsEmpty(this ILogger<ResourceManager> self, string resourcePath)
+        => ResourceFileContentIsEmptyDelegate(self, resourcePath, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> CreatingCacheEntryForTranslationFileDelegate
+    private static readonly Action<ILogger, string, Exception?> CreatingCacheEntryForResourceFileDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Creating new cache entry for translation file '{FilePath}'",
+                                       formatString: "Creating new cache entry for resource file '{ResourcePath}'",
                                        options: null);
 
-    internal static void CreatingCacheEntryForTranslationFile(this ILogger<TranslationManager> self, string path)
-        => CreatingCacheEntryForTranslationFileDelegate(self, path, null /* exception */);
+    internal static void CreatingCacheEntryForResourceFile(this ILogger<ResourceManager> self, string resourcePath)
+        => CreatingCacheEntryForResourceFileDelegate(self, resourcePath, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> SettingFileWatcherForTranslationFileDelegate
+    private static readonly Action<ILogger, string, Exception?> SettingFileWatcherForResourceFileDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Setting file watcher for translation file '{FileName}'",
+                                       formatString: "Setting file watcher for resource file '{ResourcePath}'",
                                        options: null);
 
-    internal static void SettingFileWatcherForTranslationFile(this ILogger<TranslationManager> self, string fileName)
-        => SettingFileWatcherForTranslationFileDelegate(self, fileName, null /* exception */);
+    internal static void SettingFileWatcherForResourceFile(this ILogger<ResourceManager> self, string resourcePath)
+        => SettingFileWatcherForResourceFileDelegate(self, resourcePath, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> GettingRegionFromTranslationObjectDelegate
+    private static readonly Action<ILogger, string, Exception?> GettingResourceDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Debug,
                                        eventId: default,
-                                       formatString: "Getting translation region '{Region}'",
+                                       formatString: "Getting resource '{ResourceName}'",
                                        options: null);
 
-    internal static void GettingRegionFromTranslationObject(this ILogger<StringLocalizerFactory> self, string region)
-        => GettingRegionFromTranslationObjectDelegate(self, region, null /* exception */);
+    internal static void GettingResource(this ILogger<StringLocalizerFactory> self, string resourceName)
+        => GettingResourceDelegate(self, resourceName, null /* exception */);
 
     #endregion
 
     #region Information
 
-    private static readonly Action<ILogger, string, Exception?> RegionNotFoundInTranslationObjectDelegate
+    private static readonly Action<ILogger, string, Exception?> ResourceNotAvailableDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Information,
                                        eventId: default,
-                                       formatString: "Region not found in translation object. Region: '{RegionName}'",
+                                       formatString: "Resource not available. Resource name: {ResourceName}",
                                        options: null);
 
-    internal static void RegionNotFoundInTranslationObject(this ILogger<StringLocalizerFactory> self, string regionName)
-        => RegionNotFoundInTranslationObjectDelegate(self, regionName, null /* exception */);
+    internal static void ResourceNotAvailable(this ILogger<StringLocalizerFactory> self, string resourceName)
+        => ResourceNotAvailableDelegate(self, resourceName, null /* exception */);
 
-    private static readonly Action<ILogger, string, Exception?> TranslationNotFoundForMessageWithIDInformationDelegate
+    private static readonly Action<ILogger, string, Exception?> MessageNotFoundDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Information,
                                        eventId: default,
-                                       formatString: "Translation not found for message with ID: '{MessageID}'",
+                                       formatString: "Message with id '{MessageId}' not found.",
                                        options: null);
 
-    internal static void TranslationNotFoundForMessageWithID(this ILogger<StringLocalizer> self, string messageID)
-        => TranslationNotFoundForMessageWithIDInformationDelegate(self, messageID, null /* exception */);
+    internal static void MessageNotFound(this ILogger<StringLocalizer> self, string messageId)
+        => MessageNotFoundDelegate(self, messageId, null /* exception */);
 
     #endregion
 
     #region Error
 
-    private static readonly Action<ILogger, string, Exception?> ErrorReadingTranslationFileDelegate
+    private static readonly Action<ILogger, string, Exception?> ErrorReadingResourceFileDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Error,
                                        eventId: default,
-                                       formatString: "An error occurs while reading translation file. File name: '{FileName}'",
+                                       formatString: "An error occurs while reading resource file. Resource path: '{ResourcePath}'",
                                        options: null);
 
-    internal static void ErrorReadingTranslationFile(this ILogger<TranslationManager> self, string fileName, Exception exception)
-        => ErrorReadingTranslationFileDelegate(self, fileName, exception);
+    internal static void ErrorReadingResourceFile(this ILogger<ResourceManager> self, string resourcePath, Exception exception)
+        => ErrorReadingResourceFileDelegate(self, resourcePath, exception);
 
-    private static readonly Action<ILogger, string, Exception?> TranslationObjectDeserializationFailedDelegate
+    private static readonly Action<ILogger, string, Exception?> ResourceDeserializationFailedDelegate
         = LoggerMessage.Define<string>(logLevel: LogLevel.Error,
                                        eventId: default,
-                                       formatString: "An error occurs while trying to deserialize translation file JSON content to translation object. File name: '{FileName}'",
+                                       formatString: "An error occurs while deserializing resource file JSON content. Resource path: '{ResourcePath}'",
                                        options: null);
 
-    internal static void TranslationObjectDeserializationFailed(this ILogger<TranslationManager> self, string fileName, Exception exception)
-        => TranslationObjectDeserializationFailedDelegate(self, fileName, exception);
-
-    #endregion
-
-    #region Warning
-
-    private static readonly Action<ILogger, string, Exception?> JsonSerializerReturnedNullTranslationObjectDelegate
-        = LoggerMessage.Define<string>(logLevel: LogLevel.Warning,
-                                       eventId: default,
-                                       formatString: "JSON serializer returned null translation object for unknown reason. File name: '{FileName}'",
-                                       options: null);
-
-    internal static void JsonDeserializationReturnedNullTranslationObject(this ILogger<TranslationManager> self, string fileName)
-        => JsonSerializerReturnedNullTranslationObjectDelegate(self, fileName, null /* exception */);
+    internal static void ResourceDeserializationFailed(this ILogger<ResourceManager> self, string resourcePath, Exception exception)
+        => ResourceDeserializationFailedDelegate(self, resourcePath, exception);
 
     #endregion
 }

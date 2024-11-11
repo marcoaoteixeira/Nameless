@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace Nameless.Web.Extensions;
+namespace Nameless.Web;
 
 /// <summary>
 ///     <see cref="HttpContext" /> extension methods.

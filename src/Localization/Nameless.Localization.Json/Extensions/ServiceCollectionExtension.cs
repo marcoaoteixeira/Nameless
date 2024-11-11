@@ -64,8 +64,8 @@ public static class ServiceCollectionExtension {
                   .RegisterLocalizationServices();
 
     private static IServiceCollection RegisterLocalizationServices(this IServiceCollection self)
-        => self.AddSingleton<ICultureContext, CultureContext>()
-               .AddSingleton<ITranslationManager, TranslationManager>()
+        => self.AddSingleton<ICultureProvider, CultureProvider>()
+               .AddSingleton<IResourceManager, ResourceManager>()
                .AddSingleton<IStringLocalizerFactory, StringLocalizerFactory>()
                .AddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
 }

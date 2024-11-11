@@ -18,7 +18,7 @@ public static class CultureInfoExtension {
         Prevent.Argument.Null(self);
 
         var culture = new CultureInfo(self.Name);
-        while (!string.IsNullOrWhiteSpace(culture.Name)) {
+        while (!culture.Equals(culture.Parent)) {
             yield return culture;
             culture = culture.Parent;
         }

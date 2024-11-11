@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Routing;
 using Nameless.Web.Endpoints;
 
-namespace Nameless.Web.Extensions;
+namespace Nameless.Web;
 
 /// <summary>
 ///     <see cref="IEndpointRouteBuilder" /> extension methods.

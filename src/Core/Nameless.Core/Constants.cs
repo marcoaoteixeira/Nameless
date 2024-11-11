@@ -12,6 +12,7 @@ public static class Constants {
         public const string SEMICOLON = ";";
         public const string DOT = ".";
         public const string UNDERSCORE = "_";
+        public const string SHARP = "#";
     }
 
     public static class Milliseconds {

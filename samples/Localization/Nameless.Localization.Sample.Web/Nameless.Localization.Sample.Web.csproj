@@ -14,14 +14,4 @@
     <ProjectReference Include="..\..\..\src\Localization\Nameless.Localization.Json\Nameless.Localization.Json.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="App_Data\TranslationFiles\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="App_Data\TranslationFiles\pt-BR.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

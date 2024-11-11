@@ -9,21 +9,21 @@ public sealed class SwaggerPageOptions {
     /// </summary>
     public string Description { get; set; } = "Swagger Page";
 
-    private SwaggerContactSettings? _swaggerContactSettings;
+    private ContactSettings? _swaggerContactSettings;
     /// <summary>
     ///     Gets or sets the contact information.
     /// </summary>
-    public SwaggerContactSettings Contact {
-        get => _swaggerContactSettings ?? new SwaggerContactSettings();
+    public ContactSettings Contact {
+        get => _swaggerContactSettings ?? new ContactSettings();
         set => _swaggerContactSettings = value;
     }
 
-    private SwaggerLicenseSettings? _swaggerLicenseSettings;
+    private LicenseSettings? _swaggerLicenseSettings;
     /// <summary>
     ///     Gets or sets the license information.
     /// </summary>
-    public SwaggerLicenseSettings License {
-        get => _swaggerLicenseSettings ??= new SwaggerLicenseSettings();
+    public LicenseSettings License {
+        get => _swaggerLicenseSettings ??= new LicenseSettings();
         set => _swaggerLicenseSettings = value;
     }
 }

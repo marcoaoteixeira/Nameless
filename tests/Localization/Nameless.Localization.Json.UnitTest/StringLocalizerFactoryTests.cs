@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Nameless.Localization.Json.Mockers;
 using Nameless.Localization.Json.Objects;
+using Nameless.Localization.Json.Options;
 using Nameless.Mockers;
 
 namespace Nameless.Localization.Json;
@@ -9,26 +10,28 @@ public class StringLocalizerFactoryTests {
     private static StringLocalizerFactory CreateSut() {
         const string cultureName = "pt-BR";
 
-        var cultureContextMocker = new CultureContextMocker()
-            .WithCulture(new CultureInfo(cultureName));
+        var cultureContext = new CultureProviderMocker().WithCulture(new CultureInfo(cultureName))
+                                                              .Build();
 
-        var translation = new Translation(culture: cultureName,
-                                          regions: [
-                                              new Region(name: $"[{typeof(StringLocalizerFactoryTests).Assembly.GetName().Name}] {typeof(StringLocalizerFactoryTests).FullName}",
-                                                         messages: [
-                                                             new Message("This is a test", "Isso é um teste")
-                                                         ])
-                                          ]);
-        var translationManagerMocker = new TranslationManagerMocker()
-            .WithTranslation(translation);
+        var resource = new Resource(culture: cultureName,
+                                    path: "Path_To_The_Resource",
+                                    messages: [
+                                        new Message("This is a test", "Isso é um teste")
+                                    ],
+                                    isAvailable: true);
 
-        var loggerMocker = new LoggerMocker<StringLocalizerFactory>();
-        var loggerForStringLocalizerMocker = new LoggerMocker<StringLocalizer>();
+        var resourceManager = new ResourceManagerMocker().WithResource(resource)
+                                                               .Build();
 
-        return new StringLocalizerFactory(cultureContextMocker.Build(),
-                                          translationManagerMocker.Build(),
-                                          loggerMocker.Build(),
-                                          loggerForStringLocalizerMocker.Build());
+        var logger = new LoggerMocker<StringLocalizerFactory>().Build();
+        var options = Microsoft.Extensions.Options.Options.Create(new LocalizationOptions());
+        var loggerForStringLocalizer = new LoggerMocker<StringLocalizer>().Build();
+
+        return new StringLocalizerFactory(cultureContext,
+                                          resourceManager,
+                                          options,
+                                          logger,
+                                          loggerForStringLocalizer);
     }
 
     [Test]
@@ -47,15 +50,11 @@ public class StringLocalizerFactoryTests {
     public void Create_Should_Create_StringLocalizer_Using_ResourceName_And_ResourcePath() {
         // arrange
         var sut = CreateSut();
-        var resourceName = typeof(StringLocalizerFactoryTests)
-                           .Assembly
-                           .GetName()
-                           .Name;
-        var resourcePath = typeof(StringLocalizerFactoryTests)
-            .FullName;
+        var baseName = typeof(StringLocalizerFactoryTests).Namespace ?? string.Empty;
+        const string location = nameof(StringLocalizerFactoryTests);
 
         // act
-        var actual = sut.Create(resourceName, resourcePath);
+        var actual = sut.Create(baseName, location);
 
         // assert
         Assert.That(actual, Is.Not.Null);

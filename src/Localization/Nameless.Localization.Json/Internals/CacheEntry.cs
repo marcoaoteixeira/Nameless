@@ -3,14 +3,14 @@
 namespace Nameless.Localization.Json;
 
 internal sealed record CacheEntry {
-    internal static CacheEntry Empty => new(Translation.Empty, NullDisposable.Instance);
+    internal static CacheEntry Empty => new(Resource.Empty, NullDisposable.Instance);
 
-    internal Translation Translation { get; }
+    internal Resource Resource { get; }
 
     internal IDisposable FileChangeCallback { get; }
 
-    internal CacheEntry(Translation translation, IDisposable fileChangeCallback) {
-        Translation = translation;
+    internal CacheEntry(Resource resource, IDisposable fileChangeCallback) {
+        Resource = resource;
         FileChangeCallback = fileChangeCallback;
     }
 }

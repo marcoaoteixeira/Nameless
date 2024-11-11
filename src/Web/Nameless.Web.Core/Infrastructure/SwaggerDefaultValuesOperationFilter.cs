@@ -6,6 +6,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace Nameless.Web.Infrastructure;
 
 public sealed class SwaggerDefaultValuesOperationFilter : IOperationFilter {
+    private static readonly string[] ExcludeFromFilter = [Constants.API_VERSION_HEADER_KEY];
+
     public void Apply(OpenApiOperation operation, OperationFilterContext context) {
         const string defaultResponseKey = "default";
 
@@ -21,8 +23,9 @@ public sealed class SwaggerDefaultValuesOperationFilter : IOperationFilter {
             var response = operation.Responses[responseKey];
 
             foreach (var contentType in response.Content.Keys) {
-                if (responseType.ApiResponseFormats.All(apiResponseFormat =>
-                                                            apiResponseFormat.MediaType != contentType)) {
+                if (responseType.ApiResponseFormats
+                                .All(apiResponseFormat
+                                         => apiResponseFormat.MediaType != contentType)) {
                     response.Content.Remove(contentType);
                 }
             }
@@ -30,10 +33,16 @@ public sealed class SwaggerDefaultValuesOperationFilter : IOperationFilter {
 
         if (operation.Parameters is null) { return; }
 
+        // Exclude list of parameters
+        operation.Parameters = operation.Parameters
+                                        .Where(parameter => !ExcludeFromFilter.Contains(parameter.Name))
+                                        .ToList();
+
         foreach (var parameter in operation.Parameters) {
             var description = apiDescription.ParameterDescriptions
-                                            .First(parameterDescription => parameterDescription.Name == parameter.Name);
-
+                                            .First(parameterDescription
+                                                       => parameterDescription.Name == parameter.Name);
+            
             parameter.Description ??= description.ModelMetadata
                                                  .Description;
 

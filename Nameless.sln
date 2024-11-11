@@ -155,6 +155,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{05CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Localization.Sample.Web", "samples\Localization\Nameless.Localization.Sample.Web\Nameless.Localization.Sample.Web.csproj", "{FFFFE712-4FC8-4C50-915E-8A0E580EE832}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.ApiVersioning.Sample.Web", "samples\ApiVersioning\Nameless.ApiVersioning.Sample.Web\Nameless.ApiVersioning.Sample.Web.csproj", "{0F640134-2BF6-4C3C-8466-30D3BA1A7627}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -329,6 +331,10 @@ Global
 		{FFFFE712-4FC8-4C50-915E-8A0E580EE832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFFFE712-4FC8-4C50-915E-8A0E580EE832}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFFFE712-4FC8-4C50-915E-8A0E580EE832}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F640134-2BF6-4C3C-8466-30D3BA1A7627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F640134-2BF6-4C3C-8466-30D3BA1A7627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F640134-2BF6-4C3C-8466-30D3BA1A7627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F640134-2BF6-4C3C-8466-30D3BA1A7627}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,6 +397,7 @@ Global
 		{549CBC07-A9DD-4C4E-AC13-9B077511BFC7} = {95AEB0BF-F5E6-43DB-91B2-F326B230BE7D}
 		{D505639C-52CD-4E5D-B1A8-7BDD19E9B6BB} = {B3C8C833-4E30-4357-892A-81683E611ECA}
 		{FFFFE712-4FC8-4C50-915E-8A0E580EE832} = {05CD5919-C0BF-434F-A70B-2E3E8103AF85}
+		{0F640134-2BF6-4C3C-8466-30D3BA1A7627} = {05CD5919-C0BF-434F-A70B-2E3E8103AF85}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8F75AC2F-FAB2-4638-AFFD-7D8AF0FFC116}

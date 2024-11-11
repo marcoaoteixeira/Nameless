@@ -6,25 +6,25 @@ using Nameless.Localization.Json.Objects;
 namespace Nameless.Localization.Json;
 
 public sealed class StringLocalizer : IStringLocalizer {
+    private readonly string _baseName;
+    private readonly string _location;
     private readonly CultureInfo _culture;
-    private readonly string _resourceName;
-    private readonly string _resourcePath;
-    private readonly Region _region;
-    private readonly Func<CultureInfo, string, string, IStringLocalizer> _factory;
+    private readonly Resource _resource;
+    private readonly Func<string, string, CultureInfo, IStringLocalizer> _factory;
     private readonly ILogger<StringLocalizer> _logger;
 
-    public string Location => $"{_culture}::{_resourceName}::{_resourcePath}";
+    public string Location => $"{_baseName}::{_location}::{_culture}";
 
-    public StringLocalizer(CultureInfo culture,
-                           string resourceName,
-                           string resourcePath,
-                           Region region,
-                           Func<CultureInfo, string, string, IStringLocalizer> factory,
+    public StringLocalizer(string baseName,
+                           string location,
+                           CultureInfo culture,
+                           Resource resource,
+                           Func<string, string, CultureInfo, IStringLocalizer> factory,
                            ILogger<StringLocalizer> logger) {
+        _baseName = Prevent.Argument.NullOrWhiteSpace(baseName);
+        _location = Prevent.Argument.NullOrWhiteSpace(location);
         _culture = Prevent.Argument.Null(culture);
-        _resourceName = Prevent.Argument.NullOrWhiteSpace(resourceName);
-        _resourcePath = Prevent.Argument.NullOrWhiteSpace(resourcePath);
-        _region = Prevent.Argument.Null(region);
+        _resource = Prevent.Argument.Null(resource);
         _factory = Prevent.Argument.Null(factory);
         _logger = Prevent.Argument.Null(logger);
     }
@@ -36,16 +36,19 @@ public sealed class StringLocalizer : IStringLocalizer {
         => GetLocalizedString(name, arguments);
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) {
-        foreach (var entry in _region.Messages) {
-            yield return new LocalizedString(entry.ID, entry.Text, false, Location);
+        foreach (var entry in _resource.Messages) {
+            yield return new LocalizedString(entry.Id, entry.Text, false, Location);
         }
 
         if (!includeParentCultures) {
             yield break;
         }
 
-        foreach (var culture in _culture.GetParents().Skip(1)) {
-            var localizer = _factory(culture, _resourceName, _resourcePath);
+        var cultures = _culture.GetParents()
+                               .Skip(count: 1) // Skips the first one since we get all messages already (above)
+                               .Append(CultureInfo.InvariantCulture); // Appends the invariant culture as last resort.
+        foreach (var culture in cultures) {
+            var localizer = _factory(_baseName, _location, culture);
             foreach (var localeString in localizer.GetAllStrings(includeParentCultures: false)) {
                 yield return localeString;
             }
@@ -53,13 +56,12 @@ public sealed class StringLocalizer : IStringLocalizer {
     }
 
     private LocalizedString GetLocalizedString(string text, params object[] args) {
-        var found = _region.TryGetMessage(text, out var message);
+        var found = _resource.TryGetMessage(text, out var message);
 
-        _logger.OnCondition(!found)
-               .TranslationNotFoundForMessageWithID(text);
+        _logger.OnCondition(!found).MessageNotFound(text);
 
         var (name, value) = message is not null
-            ? (message.ID, message.Text)
+            ? (message.Id, message.Text)
             : (text, text);
 
         return new LocalizedString(name: args.Length > 0 ? string.Format(name, args) : name,
