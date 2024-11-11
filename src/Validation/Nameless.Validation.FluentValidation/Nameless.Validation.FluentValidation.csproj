@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- NUGET PACKING -->
+		<Title>Nameless Validation FluentValidation Library</Title>
+		<Description>This library contains classes and interfaces that provides validation capabilities with FluentValidation.</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

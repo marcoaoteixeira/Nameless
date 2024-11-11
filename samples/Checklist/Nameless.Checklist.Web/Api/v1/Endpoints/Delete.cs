@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Checklist.Web.Domain.Requests;
-using Nameless.Web;
 using Nameless.Web.Endpoints;
 using HttpMethods = Nameless.Web.HttpMethods;
 

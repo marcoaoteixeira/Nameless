@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.Extensions.Localization
+@using Microsoft.Extensions.Options
+
+@inherits LayoutComponentBase
+
+@code {
+    [Inject]
+    private EditContext CurrentEditContext { get; set; } = null!;
+
+    private string SelectedCulture { get; set; } = string.Empty;
+    private string[] AvailableCultures { get; set; } = [];
+
+    private IHttpContextAccessor? _httpContextAccessor;
+    [Inject]
+    public IHttpContextAccessor HttpContextAccessor {
+        get => _httpContextAccessor ?? throw new ArgumentNullException();
+        set => _httpContextAccessor = value ?? throw new ArgumentNullException();
+    }
+
+    private IOptions<RequestLocalizationOptions>? _requestLocalizationOptions;
+    [Inject]
+    public IOptions<RequestLocalizationOptions> RequestLocalizationOptions {
+        get => _requestLocalizationOptions ?? throw new ArgumentNullException();
+        set => _requestLocalizationOptions = value ?? throw new ArgumentNullException();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        AvailableCultures = RequestLocalizationOptions.Value
+                                                      .SupportedUICultures?
+                                                      .Select(culture => culture.Name)
+                                                      .ToArray() ?? [];
+
+        return base.OnInitializedAsync();
+    }
+
+    private Task OnCultureChange(string option) {
+        if (HttpContextAccessor.HttpContext is null) {
+            return Task.CompletedTask;
+        }
+
+        HttpContextAccessor.HttpContext
+                           .Response
+                           .Headers
+                           .AcceptLanguage = option;
+
+        return Task.CompletedTask;
+    }
+}
+
+@inject IStringLocalizer<MainLayout> T
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <EditForm EditContext="CurrentEditContext">
+                <InputSelect
+                    Value="SelectedCulture"
+                    ValueExpression="() => SelectedCulture"
+                    ValueChanged="@((string option) => OnCultureChange(option))">
+                    <option value="">Selecione uma opção</option>
+                    @foreach (var availableCulture in AvailableCultures)
+                    {
+                        <option value="@availableCulture">@availableCulture</option>
+                    }
+                </InputSelect>
+            </EditForm>
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">@T["About"]</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    @T["An unhandled error has occurred."]
+    <a href="" class="reload">@T["Reload"]</a>
+    <a class="dismiss">🗙</a>
+</div>
