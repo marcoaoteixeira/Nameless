@@ -15,6 +15,7 @@
 		<RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
 
 		<IsPackable>false</IsPackable>
+		<IsTestProject>false</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
