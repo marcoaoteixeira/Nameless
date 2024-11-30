@@ -58,14 +58,12 @@ public sealed class StringLocalizer : IStringLocalizer {
     private LocalizedString GetLocalizedString(string text, params object[] args) {
         var found = _resource.TryGetMessage(text, out var message);
 
+        message ??= new Message(text, text);
+
         _logger.OnCondition(!found).MessageNotFound(text);
 
-        var (name, value) = message is not null
-            ? (message.Id, message.Text)
-            : (text, text);
-
-        return new LocalizedString(name: args.Length > 0 ? string.Format(name, args) : name,
-                                   value: args.Length > 0 ? string.Format(value, args) : value,
+        return new LocalizedString(name: message.GetId(args),
+                                   value: message.GetText(args),
                                    resourceNotFound: !found,
                                    searchedLocation: Location);
     }

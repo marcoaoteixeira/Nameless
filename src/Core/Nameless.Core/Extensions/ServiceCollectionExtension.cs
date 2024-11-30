@@ -31,7 +31,7 @@ public static class ServiceCollectionExtension {
                                                                                         appVersion: appVersion));
 
     /// <summary>
-    /// Registers service <see cref="ISystemClock"/>
+    /// Registers service <see cref="IClock"/>
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     /// <returns>
@@ -43,7 +43,7 @@ public static class ServiceCollectionExtension {
     public static IServiceCollection AddSystemClock(this IServiceCollection self)
         => Prevent.Argument
                   .Null(self)
-                  .AddSingleton<ISystemClock, SystemClock>();
+                  .AddSingleton<IClock, SystemClock>();
 
     /// <summary>
     /// Registers service <see cref="IPluralizationRuleProvider"/>

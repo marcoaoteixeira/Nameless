@@ -8,6 +8,7 @@ public interface IPasswordGenerator {
     /// Generates a password.
     /// </summary>
     /// <param name="options">Password generator options</param>
-    /// <returns>The <see cref="string"/> representation of the generated password.</returns>
-    string Generate(PasswordOptions options);
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>A <see cref="Task{TResult}"/> of <see cref="string"/> representing the password generation action.</returns>
+    Task<string> GenerateAsync(PasswordOptions options, CancellationToken cancellationToken);
 }

@@ -7,8 +7,8 @@ public sealed record BindingSettings {
         set => _routingKey = value;
     }
 
-    private Dictionary<string, object>? _arguments;
-    public Dictionary<string, object> Arguments {
+    private Dictionary<string, object?>? _arguments;
+    public Dictionary<string, object?> Arguments {
         get => _arguments ??= [];
         set => _arguments = value;
     }

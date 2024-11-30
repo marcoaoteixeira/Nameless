@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Services;
 
-public interface ISystemClock {
+public interface IClock {
     /// <summary>
     /// Retrieves UTC date time (now)
     /// </summary>

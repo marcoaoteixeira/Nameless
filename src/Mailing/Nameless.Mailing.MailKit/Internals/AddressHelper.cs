@@ -3,8 +3,6 @@
 namespace Nameless.Mailing.MailKit.Internals;
 
 internal static class AddressHelper {
-    #region Internal Static Methods
-
     internal static void SetRecipients(InternetAddressList addressList, IEnumerable<string> addresses) {
         foreach (var address in addresses) {
             if (InternetAddress.TryParse(address, out var recipient)) {
@@ -17,6 +15,4 @@ internal static class AddressHelper {
         => csv
             .Split(separator: Constants.Separators.COMMA,
                    options: StringSplitOptions.RemoveEmptyEntries);
-
-    #endregion
 }

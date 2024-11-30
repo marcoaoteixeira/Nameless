@@ -34,7 +34,7 @@ public abstract class ModuleBase : global::Autofac.Module {
     /// If more than one implementation were found.
     /// </exception>
     protected Type? SearchForImplementation<TService>()
-        => SearchForImplementations(typeof(TService)).SingleOrDefault();
+        => SearchForImplementations<TService>().SingleOrDefault();
 
     /// <summary>
     /// Retrieves, from support assemblies, a single implementation from the given service type.

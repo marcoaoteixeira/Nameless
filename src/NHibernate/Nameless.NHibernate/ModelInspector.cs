@@ -20,6 +20,5 @@ public sealed class ModelInspector : ExplicitlyDeclaredModel {
         => _entityTypes.Any(entityType =>
                                 entityType.IsGenericType
                                     ? entityType.IsAssignableFromOpenGenericType(type)
-                                    : entityType.IsAssignableFrom(type)
-        );
+                                    : entityType.IsAssignableFrom(type));
 }

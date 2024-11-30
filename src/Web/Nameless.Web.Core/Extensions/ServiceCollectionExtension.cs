@@ -41,8 +41,7 @@ public static class ServiceCollectionExtension {
             assemblies.SelectMany(assembly => assembly.SearchForImplementations<MinimalEndpointBase>());
 
         foreach (var endpointImplementation in endpointImplementations) {
-            self.AddTransient(endpointType,
-                              endpointImplementation);
+            self.AddScoped(endpointType, endpointImplementation);
         }
 
         return self;

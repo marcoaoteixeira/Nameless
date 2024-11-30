@@ -1,14 +1,14 @@
 ﻿namespace Nameless.Helpers;
 
 public static class AsyncHelper {
-    private const int INFINITE_TIMEOUT = 0;
+    private const int NO_TIMEOUT = 0;
 
     /// <summary>
     /// Executes an asynchronous method synchronous.
     /// </summary>
     /// <param name="function">The async method.</param>
     /// <param name="millisecondsTimeout">Timeout in milliseconds. Any value below 1 indicates that it should run until completion.</param>
-    public static void RunSync(Func<Task> function, int millisecondsTimeout = INFINITE_TIMEOUT)
+    public static void RunSync(Func<Task> function, int millisecondsTimeout = NO_TIMEOUT)
         => Task.WaitAny(tasks: [function()],
                         cancellationToken: GenerateCancellationToken(millisecondsTimeout));
 
@@ -28,7 +28,7 @@ public static class AsyncHelper {
     }
 
     private static CancellationToken GenerateCancellationToken(int millisecondsTimeout) {
-        if (millisecondsTimeout <= INFINITE_TIMEOUT) {
+        if (millisecondsTimeout <= NO_TIMEOUT) {
             return default;
         }
 

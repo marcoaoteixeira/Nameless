@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ['8.0.x']
+        dotnet-version: ['9.0.x']
 
     steps:
       - name: Fetch Build Version Number
@@ -34,12 +34,12 @@ jobs:
         run: echo ${{ env.BUILD_VERSION }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.0.0
+        uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Checkout Source Code
-        uses: actions/checkout@v4.1.6
+        uses: actions/checkout@v4.2.2
 
       - name: Add GitHub Package Registry As NuGet Source
         run: |

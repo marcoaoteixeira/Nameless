@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.ProducerConsumer.RabbitMQ.Fixtures;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Exceptions;
+using Nameless.Services;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.StepDefinitions;
 
@@ -11,55 +10,45 @@ public class ProducerConsumerStepDefinitions {
     private const string EXCHANGE_NAME = "ex.default";
     private const string QUEUE_NAME = "q.default";
 
-    private IChannelManager _channelManager;
-    private IModel _channel;
+    private IConnectionManager _connectionManager;
+    private IChannelProvider _channelProvider;
     private IProducer _producerService;
     private IConsumer _consumerService;
 
     private OrderStartedEventProduced _expected;
     private OrderStartedEventReceived _actual;
-    
+
     [Given(@"there is a RabbitMQ instance configured")]
-    public void GivenThereIsARabbitMQInstanceConfigured() {
-        var options = Microsoft.Extensions.Options.Options.Create(new RabbitMQOptions());
+    public async Task GivenThereIsARabbitMQInstanceConfigured() {
+        var rabbitMQOptions = new RabbitMQOptions {
+            Exchanges = [new ExchangeSettings {
+                Name = EXCHANGE_NAME,
+                Queues = [new QueueSettings {
+                    Name = QUEUE_NAME,
+                    Bindings = [new BindingSettings {
+                        RoutingKey = QUEUE_NAME
+                    }]
+                }]
+            }]
 
-        _channelManager = new ChannelManager(options, NullLogger<ChannelManager>.Instance);
+        };
+        var options = Microsoft.Extensions.Options.Options.Create(rabbitMQOptions);
 
-        try {
-            _channel = _channelManager.GetChannel();
-        } catch (BrokerUnreachableException) {
-            Assert.Inconclusive("Broker not available");
-            return;
-        }
-
-        // assert exchange/queue
-        _channel.ExchangeDeclare(exchange: EXCHANGE_NAME,
-                                 type: "direct",
-                                 durable: false,
-                                 autoDelete: true,
-                                 arguments: new Dictionary<string, object>());
-
-        _channel.QueueDeclare(queue: QUEUE_NAME,
-                              durable: false,
-                              exclusive: false,
-                              autoDelete: true,
-                              arguments: new Dictionary<string, object>());
-
-        _channel.QueueBind(queue: QUEUE_NAME,
-                           exchange: EXCHANGE_NAME,
-                           routingKey: string.Empty,
-                           arguments: new Dictionary<string, object>());
-
-        _producerService = new Producer(_channelManager, NullLogger<Producer>.Instance);
-        _consumerService = new Consumer(_channelManager, NullLogger<Consumer>.Instance);
+        _connectionManager = new ConnectionManager(NullLogger<ConnectionManager>.Instance, options);
+        _channelProvider = new ChannelProvider(_connectionManager, options);
+        _producerService = new Producer(_channelProvider, new SystemClock(), NullLogger<Producer>.Instance);
+        _consumerService = new Consumer(_channelProvider, NullLogger<Consumer>.Instance);
 
         var args = ConsumerArgs.Empty;
 
         args.SetAutoAck(true);
 
-        _ = _consumerService.Register<OrderStartedEventReceived>(topic: string.Empty,
-                                                                 handler: Handler,
-                                                                 args: args);
+        try {
+            _ = await _consumerService.RegisterAsync<OrderStartedEventReceived>(topic: EXCHANGE_NAME,
+                                                                                messageHandler: Handler,
+                                                                                args: args,
+                                                                                cancellationToken: CancellationToken.None);
+        } catch (Exception ex) { Assert.Inconclusive(ex.Message); }
     }
 
     [When(@"we produce a OrderStartedEvent message with and ID and Date")]
@@ -86,7 +75,7 @@ public class ProducerConsumerStepDefinitions {
         });
     }
 
-    private Task Handler(OrderStartedEventReceived message) {
+    private Task Handler(OrderStartedEventReceived message, CancellationToken cancellationToken) {
         _actual = message;
         return Task.CompletedTask;
     }

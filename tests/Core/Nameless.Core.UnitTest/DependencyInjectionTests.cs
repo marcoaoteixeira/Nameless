@@ -15,7 +15,7 @@ public class DependencyInjectionTests {
         using var provider = services.BuildServiceProvider();
 
         // act
-        var clockService = provider.GetService<ISystemClock>();
+        var clockService = provider.GetService<IClock>();
         var xmlSchemaValidator = provider.GetService<IXmlSchemaValidator>();
         var pluralizationRuleProvider = provider.GetService<IPluralizationRuleProvider>();
 

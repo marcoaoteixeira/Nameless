@@ -19,16 +19,16 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ["8.0.x"]
+        dotnet-version: ["9.0.x"]
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.0.0
+        uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Checkout Source Code
-        uses: actions/checkout@v4.1.6
+        uses: actions/checkout@v4.2.2
 
       - name: Add GitHub Package Registry As NuGet Source
         run: |
@@ -65,7 +65,7 @@ jobs:
         if: success()
         run: |
           dotnet tool install dotnet-reportgenerator-globaltool \
-            --version 5.2.0 \
+            --version 5.4.1 \
             --global
 
       - name: Generate Coverage Report
@@ -77,7 +77,7 @@ jobs:
             -reporttypes:Html
 
       - name: Upload Coverage Report to Artifacts
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.4.3
         if: success()
         with:
           name: coverage-report

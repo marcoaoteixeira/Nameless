@@ -8,7 +8,7 @@ namespace Nameless.Mailing.MailKit;
 /// Implementation of <see cref="ISmtpClientFactory"/>
 /// </summary>
 public sealed class SmtpClientFactory : ISmtpClientFactory {
-    private readonly IOptions<MailServerOptions> _options;
+    private readonly IOptions<MailingOptions> _options;
 
     /// <summary>
     /// Initializes a new instance of <see cref="SmtpClientFactory"/>
@@ -17,7 +17,7 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="options"/> is <c>null</c>.
     /// </exception>
-    public SmtpClientFactory(IOptions<MailServerOptions> options) {
+    public SmtpClientFactory(IOptions<MailingOptions> options) {
         _options = Prevent.Argument.Null(options);
     }
 
@@ -28,19 +28,21 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
         await client.ConnectAsync(_options.Value.Host,
                                   _options.Value.Port,
                                   _options.Value.SecureSocket,
-                                  cancellationToken);
+                                  cancellationToken)
+                    .ConfigureAwait(continueOnCapturedContext: false);
 
         return client.Capabilities.HasFlag(SmtpCapabilities.Authentication) && _options.Value.UseCredentials
-            ? await AuthenticateSmtpClient(client, _options.Value, cancellationToken)
+            ? await AuthenticateSmtpClient(client, _options.Value, cancellationToken).ConfigureAwait(continueOnCapturedContext: false)
             : client;
     }
 
-    private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, MailServerOptions mailServerOptions, CancellationToken cancellationToken) {
+    private static async Task<ISmtpClient> AuthenticateSmtpClient(SmtpClient client, MailingOptions mailServerOptions, CancellationToken cancellationToken) {
         client.AuthenticationMechanisms.Remove("XOAUTH2");
 
         await client.AuthenticateAsync(mailServerOptions.Username,
                                        mailServerOptions.Password,
-                                       cancellationToken);
+                                       cancellationToken)
+                    .ConfigureAwait(continueOnCapturedContext: false);
 
         return client;
     }
