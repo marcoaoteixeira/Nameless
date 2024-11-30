@@ -13,8 +13,8 @@ public sealed record ExchangeSettings {
 
     public bool AutoDelete { get; set; }
 
-    private Dictionary<string, object>? _arguments;
-    public Dictionary<string, object> Arguments {
+    private Dictionary<string, object?>? _arguments;
+    public Dictionary<string, object?> Arguments {
         get => _arguments ??= [];
         set => _arguments = value;
     }

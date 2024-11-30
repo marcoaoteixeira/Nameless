@@ -13,21 +13,21 @@ namespace Nameless.Caching.Redis;
 /// Implementation of <see cref="IConfigurationOptionsFactory"/>.
 /// </summary>
 public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
-    private readonly IOptions<RedisOptions> _options;
     private readonly ILogger<ConfigurationOptionsFactory> _logger;
+    private readonly IOptions<RedisOptions> _options;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ConfigurationOptionsFactory"/>
     /// </summary>
-    /// <param name="options">Redis options.</param>
     /// <param name="logger">The logger instance.</param>
+    /// <param name="options">Redis options.</param>
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="options"/> or
     /// <paramref name="logger"/> is <c>null</c>.
     /// </exception>
-    public ConfigurationOptionsFactory(IOptions<RedisOptions> options, ILogger<ConfigurationOptionsFactory> logger) {
-        _options = Prevent.Argument.Null(options);
+    public ConfigurationOptionsFactory(ILogger<ConfigurationOptionsFactory> logger, IOptions<RedisOptions> options) {
         _logger = Prevent.Argument.Null(logger);
+        _options = Prevent.Argument.Null(options);
     }
 
     /// <inheritdoc />
@@ -55,14 +55,20 @@ public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
         return result;
     }
 
-    private X509Certificate OnCertificateSelection(
+    private X509Certificate2 OnCertificateSelection(
         object sender,
         string targetHost,
         X509CertificateCollection localCertificates,
         X509Certificate? remoteCertificate,
-        string[] acceptableIssuers)
-        => new(fileName: _options.Value.Certificate.Pfx,
-               password: _options.Value.Certificate.Password);
+        string[] acceptableIssuers) {
+#if NET9_0
+        return X509CertificateLoader.LoadPkcs12FromFile(path: _options.Value.Certificate.Pfx,
+                                                        password: _options.Value.Certificate.Password);
+#else
+        return new X509Certificate2(fileName: _options.Value.Certificate.Pfx,
+                                   password: _options.Value.Certificate.Password);
+#endif
+    }
 
     private bool OnCertificateValidation(
         object sender,
@@ -71,7 +77,12 @@ public sealed class ConfigurationOptionsFactory : IConfigurationOptionsFactory {
         SslPolicyErrors sslPolicyErrors) {
         if (certificate is null) { return false; }
 
+#if NET9_0
+        var inner = X509CertificateLoader.LoadCertificateFromFile(_options.Value.Certificate.Pem);
+#else
         var inner = new X509Certificate2(_options.Value.Certificate.Pem);
+#endif
+
         var verdict = certificate.Issuer == inner.Subject;
 
         _logger.OnCondition(verdict)

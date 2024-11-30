@@ -19,6 +19,5 @@ public sealed class MongoCollectionProvider : IMongoCollectionProvider {
         => _database.GetCollection<T>(name: string.IsNullOrWhiteSpace(name)
                                           ? _collectionNamingStrategy.GetCollectionName<T>()
                                           : name,
-                                      settings: settings
-        );
+                                      settings: settings);
 }

@@ -25,13 +25,15 @@ internal class AsyncEnumeratorAdapter<T> : IAsyncEnumerator<T> {
     }
 
     public async ValueTask<bool> MoveNextAsync() {
-        _asyncCursor ??= await _source.ToCursorAsync(_cancellationToken);
+        _asyncCursor ??= await _source.ToCursorAsync(_cancellationToken)
+                                      .ConfigureAwait(continueOnCapturedContext: false);
 
         if (_batchEnumerator is not null && _batchEnumerator.MoveNext()) {
             return true;
         }
 
-        if (_asyncCursor is not null && await _asyncCursor.MoveNextAsync(_cancellationToken)) {
+        if (_asyncCursor is not null && await _asyncCursor.MoveNextAsync(_cancellationToken)
+                                                          .ConfigureAwait(continueOnCapturedContext: false)) {
             _batchEnumerator?.Dispose();
             _batchEnumerator = _asyncCursor.Current.GetEnumerator();
 

@@ -2,8 +2,7 @@
 
 namespace Nameless.Mailing.MailKit.Internals;
 internal static class LoggerExtension {
-    private static readonly Action<ILogger,
-        Exception> SendMessageErrorHandler
+    private static readonly Action<ILogger, Exception> SendMessageErrorHandler
         = LoggerMessage.Define(logLevel: LogLevel.Error,
                                eventId: default,
                                formatString: "Error while sending mail.",

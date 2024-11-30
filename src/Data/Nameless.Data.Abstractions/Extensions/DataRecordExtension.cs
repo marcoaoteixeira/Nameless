@@ -26,11 +26,12 @@ public static class DataRecordExtension {
         var value = SafeGetValue(self, columnName);
         if (value is null) { return false; }
 
-        var current = Transform(
-            value, 
-            typeof(T), 
-            formatProvider ?? CultureInfo.CurrentCulture
-        );
+        object? current = null;
+
+        try { current = Transform(value,
+                                  typeof(T),
+                                  formatProvider ?? CultureInfo.CurrentCulture); }
+        catch { /* ignore */ }
 
         output = (T?)current;
         return current is not null;

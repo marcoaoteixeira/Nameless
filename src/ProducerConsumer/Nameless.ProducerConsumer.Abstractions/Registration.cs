@@ -7,7 +7,7 @@ namespace Nameless.ProducerConsumer;
 /// Represents a consumer registration, also holds the reference to the callback method.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
-public sealed class Registration<T> : IDisposable {
+public sealed class Registration<TMessage> : IDisposable {
     private readonly bool _isStatic;
 
     private MethodInfo? _method;
@@ -15,7 +15,7 @@ public sealed class Registration<T> : IDisposable {
     private bool _disposed;
 
     private string DebuggerDisplayValue
-        => $"{{ \"Topic\": \"{Topic}\", \"Tag\": \"{Tag}\" }}";
+        => $"{nameof(Tag)}: {Tag}, {nameof(Topic)}: {Topic}";
 
     /// <summary>
     /// Gets the registration's tag.
@@ -32,16 +32,26 @@ public sealed class Registration<T> : IDisposable {
     /// </summary>
     /// <param name="tag">The registration tag.</param>
     /// <param name="topic">The topic.</param>
-    /// <param name="handler">The message handler.</param>
-    public Registration(string tag, string topic, MessageHandler<T> handler) {
-        Prevent.Argument.Null(handler);
+    /// <param name="messageHandler">The message handler.</param>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="tag"/> or
+    /// <paramref name="topic"/> or
+    /// <paramref name="messageHandler"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// if <paramref name="tag"/> is empty or white spaces.
+    /// </exception>
+    public Registration(string tag,
+                        string topic,
+                        MessageHandlerAsync<TMessage> messageHandler) {
+        Prevent.Argument.Null(messageHandler);
 
         Tag = Prevent.Argument.NullOrWhiteSpace(tag);
         Topic = Prevent.Argument.Null(topic);
 
-        _method = handler.Method;
-        _ref = new WeakReference(handler.Target);
-        _isStatic = handler.Target is null;
+        _method = messageHandler.Method;
+        _ref = new WeakReference(messageHandler.Target);
+        _isStatic = messageHandler.Target is null;
     }
 
     ~Registration() {
@@ -51,27 +61,39 @@ public sealed class Registration<T> : IDisposable {
     /// <summary>
     /// Creates a handler for the subscription.
     /// </summary>
-    /// <returns>An instance of <see cref="MessageHandler{T}" />.</returns>
-    public MessageHandler<T>? CreateHandler() {
+    /// <returns>An instance of <see cref="MessageHandlerAsync{TMessage}" />.</returns>
+    public MessageHandlerAsync<TMessage>? CreateMessageHandler() {
         BlockAccessAfterDispose();
 
+#if NET8_0_OR_GREATER
         if (GetRef().Target is not null && GetRef().IsAlive) {
-            return (MessageHandler<T>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandler<T>),
-                                                                 target: GetRef().Target);
+            return GetMethod().CreateDelegate<MessageHandlerAsync<TMessage>>(target: GetRef().Target);
+        }
+
+        return _isStatic
+            ? GetMethod().CreateDelegate<MessageHandlerAsync<TMessage>>()
+            : null;
+#else
+        if (GetRef().Target is not null && GetRef().IsAlive) {
+            return (MessageHandlerAsync<TMessage>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandlerAsync<TMessage>),
+                                                                             target: GetRef().Target);
         }
 
         if (_isStatic) {
-            return (MessageHandler<T>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandler<T>));
+            return (MessageHandlerAsync<TMessage>)GetMethod().CreateDelegate(delegateType: typeof(MessageHandlerAsync<TMessage>));
         }
 
         return null;
+#endif
     }
 
     /// <inheritdoc />
-    void IDisposable.Dispose() {
+    public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+
+    public override string ToString() => Tag;
 
     private MethodInfo GetMethod()
         => _method ?? throw new ArgumentNullException(nameof(_method));
@@ -80,9 +102,13 @@ public sealed class Registration<T> : IDisposable {
         => _ref ?? throw new ArgumentNullException(nameof(_ref));
 
     private void BlockAccessAfterDispose() {
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(_disposed, this);
+#else
         if (_disposed) {
-            throw new ObjectDisposedException(typeof(Registration<>).Name);
+            throw new ObjectDisposedException(GetType().Name);
         }
+#endif
     }
 
     private void Dispose(bool disposing) {

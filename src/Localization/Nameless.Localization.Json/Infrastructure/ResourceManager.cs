@@ -67,36 +67,28 @@ public sealed class ResourceManager : IResourceManager {
 
         _logger.CreatingCacheEntryForResourceFile(path);
 
-        if (!TryGetResourceFile(path, out var file)) {
-            return CacheEntry.Empty;
-        }
-
-        if (!TryGetResourceFileContent(file, out var fileContent)) {
-            return CacheEntry.Empty;
-        }
-        
-        if (!TryDeserializeResource(fileContent, cacheKey.Path, cacheKey.Culture, out var resource)) {
+        if (!TryGetResourceFile(path, out var file) ||
+            !TryReadResourceFileContent(file, out var fileContent) ||
+            !TryDeserializeFileResourceContent(fileContent, cacheKey.Path, cacheKey.Culture, out var resource)) {
             return CacheEntry.Empty;
         }
 
         var fileChangeCallback = CreateFileChangeCallback(path, cacheKey);
 
         return new CacheEntry(resource, fileChangeCallback);
+
     }
 
     private bool TryGetResourceFile(string path, [NotNullWhen(returnValue: true)] out IFileInfo? file) {
         file = _fileProvider.GetFileInfo(path);
 
-        if (!file.Exists) {
-            _logger.ResourceFileNotFound(file.Name);
-            
-            file = null;
-        }
+        _logger.OnCondition(!file.Exists)
+               .ResourceFileNotFound(file.Name);
 
-        return file is not null;
+        return file.Exists;
     }
 
-    private bool TryGetResourceFileContent(IFileInfo file, [NotNullWhen(returnValue: true)] out string? content) {
+    private bool TryReadResourceFileContent(IFileInfo file, [NotNullWhen(returnValue: true)] out string? content) {
         content = null;
 
         try {
@@ -117,14 +109,13 @@ public sealed class ResourceManager : IResourceManager {
         return content is not null;
     }
 
-    private bool TryDeserializeResource(string fileContent, string path, string culture, [NotNullWhen(returnValue: true)]out Resource? resource) {
+    private bool TryDeserializeFileResourceContent(string fileContent, string path, string culture, [NotNullWhen(returnValue: true)]out Resource? resource) {
         resource = null;
 
         try {
-            resource = new Resource(path,
-                                    culture,
-                                    JsonSerializer.Deserialize<Message[]>(fileContent) ?? [],
-                                    isAvailable: true);
+            var message = JsonSerializer.Deserialize<Message[]>(fileContent) ?? [];
+
+            resource = new Resource(path, culture, message, isAvailable: true);
         }
         catch (Exception ex) {
             _logger.ResourceDeserializationFailed(path, ex);

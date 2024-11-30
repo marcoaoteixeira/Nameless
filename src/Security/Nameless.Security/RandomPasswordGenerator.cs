@@ -23,12 +23,16 @@ namespace Nameless.Security;
 /// 7-bit ASCII symbols. Every four characters will include one lower case
 /// character, one upper case character, one number, and one special symbol
 /// (such as '%') in a random order. The password will always start with an
-/// alpha-numeric character; it will not start with a special symbol (we do
+/// alphanumeric character; it will not start with a special symbol (we do
 /// this because some back-end systems do not like certain special
 /// characters in the first position).
 /// </summary>
 public sealed class RandomPasswordGenerator : IPasswordGenerator {
-    public string Generate(PasswordOptions options) {
+    /// <inheritdoc />
+    /// <remarks>
+    /// On failure will return a <see cref="string.Empty"/> value.
+    /// </remarks>
+    public Task<string> GenerateAsync(PasswordOptions options, CancellationToken cancellationToken) {
         Prevent.Argument.Null(options);
 
         // Make sure that input parameters are valid.
@@ -36,7 +40,7 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
         var maxLength = options.MaxLength;
 
         if (minLength <= 0 || maxLength <= 0 || minLength > maxLength) {
-            return string.Empty;
+            return Task.FromResult(string.Empty);
         }
 
         // Create a local array containing supported password characters
@@ -69,6 +73,10 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
         // Initially, all character groups are not used.
         for (var idx = 0; idx < leftGroupsOrder.Length; idx++) {
             leftGroupsOrder[idx] = idx;
+        }
+
+        if (cancellationToken.IsCancellationRequested) {
+            return Task.FromResult(string.Empty);
         }
 
         // Because we cannot use the default randomizer, which is based on the
@@ -104,6 +112,10 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
 
         // Generate password characters one at a time.
         for (var idx = 0; idx < password.Length; idx++) {
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromResult(string.Empty);
+            }
+
             // Index which will be used to track not processed character groups.
             // If only one character group remained unprocessed, process it;
             // otherwise, pick a random character group from the unprocessed
@@ -165,6 +177,8 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
         }
 
         // Convert password characters into a string and return the result.
-        return new string(password);
+        var result = new string(password);
+
+        return Task.FromResult(result);
     }
 }

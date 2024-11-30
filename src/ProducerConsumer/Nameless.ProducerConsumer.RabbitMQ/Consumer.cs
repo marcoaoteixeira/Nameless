@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nameless.ProducerConsumer.RabbitMQ.Internals;
@@ -9,17 +8,16 @@ using RabbitMQ.Client.Events;
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public sealed class Consumer : IConsumer, IDisposable {
-    private readonly ConcurrentDictionary<string, IDisposable> _cache = [];
-    private readonly IChannelManager _channelManager;
+    private readonly Dictionary<string, CacheEntry> _cache = [];
+
+    private readonly IChannelProvider _channelProvider;
     private readonly ILogger<Consumer> _logger;
 
-    private IModel Channel
-        => _channelManager.GetChannel();
-
+    private SemaphoreSlim? _semaphoreSlim;
     private bool _disposed;
 
-    public Consumer(IChannelManager channelManager, ILogger<Consumer> logger) {
-        _channelManager = Prevent.Argument.Null(channelManager);
+    public Consumer(IChannelProvider channelProvider, ILogger<Consumer> logger) {
+        _channelProvider = Prevent.Argument.Null(channelProvider);
         _logger = Prevent.Argument.Null(logger);
     }
 
@@ -27,77 +25,50 @@ public sealed class Consumer : IConsumer, IDisposable {
         Dispose(disposing: false);
     }
 
-    /// <summary>
-    /// Registers a message handler.
-    /// </summary>
-    /// <typeparam name="T">Type of the payload</typeparam>
-    /// <param name="topic">
-    ///     The topic to listen. If queue name is set through
-    ///     <c>ConsumerArgs.SetQueueName()</c> method, it will
-    ///     take precedence over <paramref name="topic"/>.
-    /// </param>
-    /// <param name="handler">The handler.</param>
-    /// <param name="args">The arguments.</param>
-    /// <returns></returns>
-    public Registration<T> Register<T>(string topic, MessageHandler<T> handler, ConsumerArgs? args = null) {
+    public async Task<Registration<TMessage>> RegisterAsync<TMessage>(string topic,
+                                                                      MessageHandlerAsync<TMessage> messageHandler,
+                                                                      ConsumerArgs args,
+                                                                      CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        var innerArgs = args ?? ConsumerArgs.Empty;
+        await GetSemaphoreSlim().WaitAsync(cancellationToken);
 
-        // create callback tag
-        var tag = GenerateTag(handler);
+        try {
+            var consumerTag = GenerateConsumerTag(messageHandler);
 
-        var registration = _cache.GetOrAdd(tag, key => {
-            _logger.ConsumerRegistration(tag, innerArgs.ToJson());
+            if (_cache.TryGetValue(consumerTag, out var cacheEntry)) {
+                return (Registration<TMessage>)cacheEntry.Registration;
+            }
 
-            // creates registration
-            var registration = new Registration<T>(key, topic, handler);
+            _cache[consumerTag] = await CreateNewCacheEntry(consumerTag,
+                                                            topic,
+                                                            messageHandler,
+                                                            args,
+                                                            cancellationToken);
 
-            // creates the consumer event
-            var consumer = new AsyncEventingBasicConsumer(Channel);
-            consumer.Received += (_, deliverEventArgs)
-                => OnMessageAsync(registration, deliverEventArgs, innerArgs);
-
-            // attach the consumer
-            var queue = innerArgs.GetQueueName();
-            _ = Channel.BasicConsume(queue: string.IsNullOrWhiteSpace(queue)
-                                              ? topic
-                                              : queue,
-                                          autoAck: innerArgs.GetAutoAck(),
-                                          consumerTag: key,
-                                          consumer: consumer);
-
-            return registration;
-        });
-
-        return (Registration<T>)registration;
+            return (Registration<TMessage>)_cache[consumerTag].Registration;
+        }
+        catch (Exception ex) { _logger.ConsumerRegistrationFailed(ex); throw; }
+        finally { GetSemaphoreSlim().Release(); }
     }
 
-    public bool Unregister<T>(Registration<T> registration) {
+    public async Task<bool> UnregisterAsync<T>(Registration<T> registration, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(registration);
 
-        if (_cache.Remove(registration.Tag, out var disposable)) {
-            Channel.BasicCancel(registration.Tag);
+        await GetSemaphoreSlim().WaitAsync(cancellationToken);
 
-            disposable.Dispose();
+        try { await RemoveRegistrationFromCacheAsync(registration.Tag,
+                                                     cancellationToken); }
+        finally { GetSemaphoreSlim().Release(); }
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
-    }
-
-    private void BlockAccessAfterDispose() {
-        if (_disposed) {
-            throw new ObjectDisposedException(nameof(Consumer));
-        }
     }
 
     private void Dispose(bool disposing) {
@@ -116,33 +87,90 @@ public sealed class Consumer : IConsumer, IDisposable {
         _disposed = true;
     }
 
-    private Task OnMessageAsync<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
-        if (!TryDeserializeEnvelope(deliverEventArgs, consumerArgs, out var envelope)) {
-            return Task.CompletedTask;
+    private void BlockAccessAfterDispose() {
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(_disposed, this);
+#else
+        if (_disposed) {
+            throw new ObjectDisposedException(GetType().Name);
         }
-
-        if (!TryExtractMessage<T>(envelope, deliverEventArgs, consumerArgs, out var message)) {
-            return Task.CompletedTask;
-        }
-
-        if (!TryCreateHandler(registration, deliverEventArgs, consumerArgs, out var handler)) {
-            return Task.CompletedTask;
-        }
-
-        return HandleMessageAsync(handler: handler,
-                                  message: message,
-                                  deliverEventArgs: deliverEventArgs,
-                                  consumerArgs: consumerArgs);
+#endif
     }
 
-    private bool TryDeserializeEnvelope(BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out Envelope? envelope) {
+    private SemaphoreSlim GetSemaphoreSlim()
+        => _semaphoreSlim ??= new SemaphoreSlim(initialCount: 1, maxCount: 1);
+
+    private async Task<CacheEntry> CreateNewCacheEntry<TMessage>(string consumerTag,
+                                                                             string topic,
+                                                                             MessageHandlerAsync<TMessage> handler,
+                                                                             ConsumerArgs args,
+                                                                             CancellationToken cancellationToken) {
+        _logger.RegisteringNewConsumer(consumerTag, args.ToJson());
+
+        // creates a new registration instance
+        var registration = new Registration<TMessage>(consumerTag, topic, handler);
+
+        // creates a new channel for this registration instance.
+        // topic is the exchange name.
+        var channel = await _channelProvider.CreateChannelAsync(topic,
+                                                                cancellationToken)
+                                            .ConfigureAwait(continueOnCapturedContext: false);
+
+        // creates the consumer for the channel
+        var consumer = new AsyncEventingBasicConsumer(channel);
+
+        // set received callback
+        consumer.ReceivedAsync += (consumerChannel, deliverEventArgs)
+            => OnMessageAsync((IChannel)consumerChannel,
+                              registration,
+                              deliverEventArgs,
+                              args);
+
+        // startup the consumer
+        var queue = args.GetQueueName();
+        var startupResult = await channel.BasicConsumeAsync(queue: string.IsNullOrWhiteSpace(queue)
+                                                                ? topic
+                                                                : queue,
+                                                            args.GetAutoAck(),
+                                                            consumerTag,
+                                                            consumer,
+                                                            cancellationToken)
+                                         .ConfigureAwait(continueOnCapturedContext: false);
+
+        _logger.ConsumerStartupResult(startupResult);
+
+        return new CacheEntry(registration, channel);
+    }
+
+    private async Task OnMessageAsync<T>(IChannel channel,
+                                         Registration<T> registration,
+                                         BasicDeliverEventArgs deliverEventArgs,
+                                         ConsumerArgs consumerArgs) {
+        if (TryDeserializeEnvelope(deliverEventArgs, out var envelope) &&
+            TryExtractMessage<T>(envelope, out var message) &&
+            TryCreateHandler(registration, out var handler)) {
+
+            await HandleMessageAsync(channel,
+                                     handler,
+                                     message,
+                                     deliverEventArgs,
+                                     consumerArgs);
+        }
+
+        await NegativeAckAsync(channel: channel,
+                               deliverEventArgs: deliverEventArgs,
+                               consumerArgs: consumerArgs);
+    }
+
+    private bool TryDeserializeEnvelope(BasicDeliverEventArgs deliverEventArgs,
+                                        [NotNullWhen(returnValue: true)] out Envelope? envelope) {
         envelope = null;
 
         // Our "Envelope" is an array of bytes that contains
         // the serialized (JSON) version of the Envelope instance.
-        try { envelope = deliverEventArgs.GetEnvelope(); }
-        catch (Exception ex) {
+        try { envelope = deliverEventArgs.GetEnvelope(); } catch (Exception ex) {
             _logger.ErrorOnEnvelopeDeserialization(ex);
+
             return false;
         }
 
@@ -150,19 +178,13 @@ public sealed class Consumer : IConsumer, IDisposable {
             // Deserialization didn't throw exception, but failed.
             // We were not able to retrieve the envelope for some reason.
             _logger.NullEnvelopeDeserialized();
-
-            // Send NACK (consumer args defined)
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
-
-            return false;
         }
 
-        return true;
+        return envelope is not null;
     }
 
-    private bool TryExtractMessage<T>(Envelope envelope, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out T? message) {
+    private bool TryExtractMessage<T>(Envelope envelope,
+                                      [NotNullWhen(returnValue: true)] out T? message) {
         message = default;
 
         // Let's check if our message type is the same as the 
@@ -172,19 +194,14 @@ public sealed class Consumer : IConsumer, IDisposable {
         if (envelope.Message is not JsonElement json) {
             _logger.EnvelopeMessageNotValidJsonElement();
 
-            // Send NACK (consumer args defined)
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
-
             return false;
         }
 
         // If it is a JsonElement, we'll deserialize it to the type
         // that the handler is expecting.
-        try { message = json.Deserialize<T>(); }
-        catch (Exception ex) {
+        try { message = json.Deserialize<T>(); } catch (Exception ex) {
             _logger.ErrorOnMessageDeserialization(ex);
+
             return false;
         }
 
@@ -192,36 +209,21 @@ public sealed class Consumer : IConsumer, IDisposable {
         if (message is null) {
             // Let's log this info
             _logger.NullMessageDeserialization<T>();
-
-            // Send NACK (consumer args defined)
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
-
-            return false;
         }
 
-        return true;
+        return message is not null;
     }
 
-    private bool TryCreateHandler<T>(Registration<T> registration, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs, [NotNullWhen(returnValue: true)] out MessageHandler<T>? handler) {
+    private bool TryCreateHandler<T>(Registration<T> registration,
+                                     [NotNullWhen(returnValue: true)] out MessageHandlerAsync<T>? handler) {
         handler = null;
 
         // Let's try to create the handler delegate
-        try { handler = registration.CreateHandler(); }
-        catch (Exception ex) {
-            // Ok, registration was disposed?
-            if (ex is ObjectDisposedException) {
-                Unregister(registration);
-            }
+        try { handler = registration.CreateMessageHandler(); } catch (Exception ex) {
+            HandleObjectDisposedException(registration, ex);
 
             // Log the error
             _logger.ErrorOnConsumerHandlerCreation(ex);
-
-            // Send NACK (consumer args defined)
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
 
             return false;
         }
@@ -231,39 +233,63 @@ public sealed class Consumer : IConsumer, IDisposable {
         if (handler is null) {
             // Log notification
             _logger.MessageHandlerNotFound();
-
-            // Send NACK (consumer args defined)
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
-
-            return false;
         }
 
-        return true;
+        return handler is not null;
     }
 
-    private async Task HandleMessageAsync<T>(MessageHandler<T> handler, T message, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+    private void HandleObjectDisposedException<T>(Registration<T> registration, Exception exception) {
+        if (exception is not ObjectDisposedException) { return; }
+
+        // Ok, registration was disposed outside
+        try {
+            RemoveRegistrationFromCacheAsync(registration.Tag, CancellationToken.None)
+                .ConfigureAwait(continueOnCapturedContext: false)
+                .GetAwaiter()
+                .GetResult();
+        } catch (Exception ex) { _logger.RemoveRegistrationFromCacheFailed(ex); }
+    }
+
+    private async Task HandleMessageAsync<TMessage>(IChannel channel,
+                                                    MessageHandlerAsync<TMessage> handler,
+                                                    TMessage message,
+                                                    BasicDeliverEventArgs deliverEventArgs,
+                                                    ConsumerArgs consumerArgs) {
         try {
             // Let's execute the handler with the received message
-            await handler(message);
+            await handler(message, deliverEventArgs.CancellationToken);
 
             // If everything goes ok, let us ack the message received.
             // Check consumer args for 
-            PositiveAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
+            await PositiveAckAsync(channel: channel,
+                                   deliverEventArgs: deliverEventArgs,
+                                   consumerArgs: consumerArgs);
 
         } catch (Exception ex) {
             _logger.ErrorOnHandleMessage(ex);
 
-            NegativeAck(channel: Channel,
-                        deliverEventArgs: deliverEventArgs,
-                        consumerArgs: consumerArgs);
+            await NegativeAckAsync(channel: channel,
+                                   deliverEventArgs: deliverEventArgs,
+                                   consumerArgs: consumerArgs);
         }
     }
 
-    private static string GenerateTag<T>(MessageHandler<T> handler) {
+    private async Task RemoveRegistrationFromCacheAsync(string consumerTag, CancellationToken cancellationToken) {
+        if (_cache.Remove(consumerTag, out var cacheEntry)) {
+            await cacheEntry.Channel
+                            .BasicCancelAsync(consumerTag,
+                                              noWait: true,
+                                              cancellationToken)
+                            .ConfigureAwait(continueOnCapturedContext: false);
+
+            cacheEntry.Registration.Dispose();
+            await cacheEntry.Channel
+                            .DisposeAsync()
+                            .ConfigureAwait(continueOnCapturedContext: false);
+        }
+    }
+
+    private static string GenerateConsumerTag<T>(MessageHandlerAsync<T> handler) {
         var method = handler.Method;
         var parameters = method.GetParameters()
                                .Select(parameter => $"{parameter.ParameterType.Name} {parameter.Name}")
@@ -275,22 +301,30 @@ public sealed class Consumer : IConsumer, IDisposable {
         return buffer.ToBase64String();
     }
 
-    private static void PositiveAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+    private static Task PositiveAckAsync(IChannel channel,
+                                         BasicDeliverEventArgs deliverEventArgs,
+                                         ConsumerArgs consumerArgs) {
         if (!consumerArgs.GetAckOnSuccess() || consumerArgs.GetAutoAck()) {
-            return;
+            return Task.CompletedTask;
         }
 
-        channel.BasicAck(deliveryTag: deliverEventArgs.DeliveryTag,
-                         multiple: consumerArgs.GetAckMultiple());
+        return channel.BasicAckAsync(deliverEventArgs.DeliveryTag,
+                                     consumerArgs.GetAckMultiple(),
+                                     deliverEventArgs.CancellationToken)
+                      .AsTask();
     }
 
-    private static void NegativeAck(IModel channel, BasicDeliverEventArgs deliverEventArgs, ConsumerArgs consumerArgs) {
+    private static Task NegativeAckAsync(IChannel channel,
+                                         BasicDeliverEventArgs deliverEventArgs,
+                                         ConsumerArgs consumerArgs) {
         if (!consumerArgs.GetNAckOnFailure()) {
-            return;
+            return Task.CompletedTask;
         }
 
-        channel.BasicNack(deliveryTag: deliverEventArgs.DeliveryTag,
-                          multiple: consumerArgs.GetNAckMultiple(),
-                          requeue: consumerArgs.GetRequeueOnFailure());
+        return channel.BasicNackAsync(deliverEventArgs.DeliveryTag,
+                                      consumerArgs.GetNAckMultiple(),
+                                      consumerArgs.GetRequeueOnFailure(),
+                                      deliverEventArgs.CancellationToken)
+                      .AsTask();
     }
 }

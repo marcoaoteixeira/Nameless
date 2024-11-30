@@ -1,55 +1,62 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nameless.ProducerConsumer.RabbitMQ.Internals;
+using Nameless.Services;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public sealed class Producer : IProducer {
-    private readonly IChannelManager _channelManager;
+    private readonly IChannelProvider _channelProvider;
+    private readonly IClock _clock;
     private readonly ILogger<Producer> _logger;
 
-    private IModel Channel
-        => _channelManager.GetChannel();
-
-    public Producer(IChannelManager channelManager, ILogger<Producer> logger) {
-        _channelManager = Prevent.Argument.Null(channelManager);
+    public Producer(IChannelProvider channelProvider, IClock clock, ILogger<Producer> logger) {
+        _channelProvider = Prevent.Argument.Null(channelProvider);
+        _clock = Prevent.Argument.Null(clock);
         _logger = Prevent.Argument.Null(logger);
     }
 
-    public Task ProduceAsync(string topic, object message, ProducerArgs? args = null, CancellationToken cancellationToken = default) {
-        var innerArgs = args ?? ProducerArgs.Empty;
-        var properties = CreateProperties(Channel, innerArgs);
-        var envelope = CreateEnvelope(message, properties);
-
+    public async Task ProduceAsync(string topic,
+                                   object message,
+                                   ProducerArgs args,
+                                   CancellationToken cancellationToken) {
         try {
-            var routingKeys = innerArgs.GetRoutingKeys()
-                                       .Append(topic);
-            var batch = Channel.CreateBasicPublishBatch();
+            var properties = CreateProperties(args);
+            var envelope = CreateEnvelope(message, properties);
+
+            await using var channel = await _channelProvider.CreateChannelAsync(args.GetExchangeName(),
+                                                                                cancellationToken)
+                                                            .ConfigureAwait(continueOnCapturedContext: false);
+
+            var routingKeys = args.GetRoutingKeys()
+                                  .Append(topic);
+
             var buffer = envelope.CreateBuffer();
 
             foreach (var routingKey in routingKeys) {
-                batch.Add(exchange: innerArgs.GetExchangeName(),
-                          routingKey: routingKey,
-                          mandatory: innerArgs.GetMandatory(),
-                          properties: properties,
-                          body: buffer);
+                await channel.BasicPublishAsync(args.GetExchangeName(),
+                                                routingKey,
+                                                mandatory: args.GetMandatory(),
+                                                basicProperties: properties,
+                                                body: buffer,
+                                                cancellationToken)
+                             .ConfigureAwait(continueOnCapturedContext: false);
             }
+        } catch (Exception ex) {
+            _logger.ErrorOnMessagePublishing(ex);
 
-            batch.Publish();
-        } catch (Exception ex) { _logger.ErrorOnMessagePublishing(ex); throw; }
-
-        return Task.CompletedTask;
+            throw;
+        }
     }
 
-    private static Envelope CreateEnvelope(object message, IBasicProperties properties)
+    private Envelope CreateEnvelope(object message, BasicProperties properties)
         => new() {
             Message = message,
             MessageId = properties.MessageId,
             CorrelationId = properties.CorrelationId,
-            PublishedAt = DateTime.UtcNow
+            PublishedAt = _clock.GetUtcNowOffset()
         };
 
-    private static IBasicProperties CreateProperties(IModel channel, ProducerArgs innerArgs)
-        => channel.CreateBasicProperties()
-                  .FillWith(innerArgs);
+    private static BasicProperties CreateProperties(ProducerArgs innerArgs)
+        => new BasicProperties().FillWith(innerArgs);
 }

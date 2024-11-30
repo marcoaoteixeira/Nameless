@@ -26,10 +26,14 @@ public sealed class EmailDispatcher : IEmailDispatcher {
 
         var mail = CreateMimeMessage(message);
 
-        using var client = await _smtpClientFactory.CreateAsync(cancellationToken);
+        using var client = await _smtpClientFactory.CreateAsync(cancellationToken)
+                                                   .ConfigureAwait(continueOnCapturedContext: false);
 
         string result;
-        try { result = await client.SendAsync(mail, cancellationToken: cancellationToken); }
+        try {
+            result = await client.SendAsync(mail, cancellationToken: cancellationToken)
+                                 .ConfigureAwait(continueOnCapturedContext: false);
+        }
         catch (Exception ex) {
             _logger.SendMessageError(ex);
             result = ex.Message;

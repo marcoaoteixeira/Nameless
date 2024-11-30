@@ -109,10 +109,10 @@ public static class ProducerArgsExtension {
         return self;
     }
 
-    public static byte GetDeliveryMode(this ProducerArgs self) {
-        var arg = self[nameof(IBasicProperties.DeliveryMode)] ?? byte.MinValue;
+    public static DeliveryModes GetDeliveryMode(this ProducerArgs self) {
+        var arg = self[nameof(IBasicProperties.DeliveryMode)] ?? DeliveryModes.Transient;
 
-        return (byte)arg;
+        return (DeliveryModes)arg;
     }
 
     public static ProducerArgs SetDeliveryMode(this ProducerArgs self, byte value) {
@@ -135,10 +135,10 @@ public static class ProducerArgsExtension {
         return self;
     }
 
-    public static IDictionary<string, object> GetHeaders(this ProducerArgs self) {
-        var arg = self[nameof(IBasicProperties.Headers)] ?? new Dictionary<string, object>();
+    public static IDictionary<string, object?> GetHeaders(this ProducerArgs self) {
+        var arg = self[nameof(IBasicProperties.Headers)] ?? new Dictionary<string, object?>();
 
-        return (IDictionary<string, object>)arg;
+        return (IDictionary<string, object?>)arg;
     }
 
     public static ProducerArgs SetHeaders(this ProducerArgs self, IDictionary<string, object> value) {

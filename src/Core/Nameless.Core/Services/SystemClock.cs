@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Services;
 
-public sealed class SystemClock : ISystemClock {
+public sealed class SystemClock : IClock {
     public DateTime GetUtcNow()
         => DateTime.UtcNow;
 

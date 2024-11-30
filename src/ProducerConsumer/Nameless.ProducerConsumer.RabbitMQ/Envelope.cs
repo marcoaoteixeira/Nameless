@@ -21,5 +21,5 @@ public sealed record Envelope {
     /// <summary>
     /// Gets or sets the message published date.
     /// </summary>
-    public DateTime PublishedAt { get; init; }
+    public DateTimeOffset PublishedAt { get; init; }
 }

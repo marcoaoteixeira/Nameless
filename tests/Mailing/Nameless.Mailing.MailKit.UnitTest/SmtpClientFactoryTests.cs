@@ -9,7 +9,7 @@ public class SmtpClientFactoryTests {
     [Test]
     public async Task Create_New_Smtp_Client() {
         // arrange
-        var options = Microsoft.Extensions.Options.Options.Create(new MailServerOptions {
+        var options = Microsoft.Extensions.Options.Options.Create(new MailingOptions {
             Host = "localhost",
             Port = 5025,
         });

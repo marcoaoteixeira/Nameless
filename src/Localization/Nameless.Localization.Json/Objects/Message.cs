@@ -20,4 +20,10 @@ public sealed record Message {
         Id = Prevent.Argument.Null(id);
         Text = Prevent.Argument.Null(text);
     }
+
+    public string GetId(object[] args)
+        => args.Length > 0 ? string.Format(Id, args) : Id;
+
+    public string GetText(object[] args)
+        => args.Length > 0 ? string.Format(Text, args) : Text;
 }

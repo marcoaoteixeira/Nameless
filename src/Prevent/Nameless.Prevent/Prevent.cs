@@ -6,7 +6,6 @@
 /// "failing fast", checking for invalid inputs up front and immediately
 /// failing if any are found.
 /// </summary>
-[Singleton]
 public sealed class Prevent {
     /// <summary>
     /// Gets the unique instance of <see cref="Prevent" />.

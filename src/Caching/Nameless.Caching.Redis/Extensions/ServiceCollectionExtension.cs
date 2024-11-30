@@ -20,7 +20,7 @@ public static class ServiceCollectionExtension {
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
-                  .RegisterCacheServices();
+                  .RegisterCachingServices();
 
     /// <summary>
     /// Adds <see cref="ICache"/> service for Redis.
@@ -34,9 +34,10 @@ public static class ServiceCollectionExtension {
         => Prevent.Argument
                   .Null(self)
                   .Configure<RedisOptions>(redisConfigSection)
-                  .RegisterCacheServices();
+                  .RegisterCachingServices();
 
-    private static IServiceCollection RegisterCacheServices(this IServiceCollection services)
+    private static IServiceCollection RegisterCachingServices(this IServiceCollection services)
         => services.AddSingleton<IConfigurationOptionsFactory, ConfigurationOptionsFactory>()
+                   .AddSingleton<IConnectionMultiplexerManager, ConnectionMultiplexerManager>()
                    .AddSingleton<ICache, RedisCache>();
 }

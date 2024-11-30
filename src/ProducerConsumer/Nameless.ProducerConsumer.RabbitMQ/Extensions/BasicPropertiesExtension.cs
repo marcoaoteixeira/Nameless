@@ -3,7 +3,7 @@
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 internal static class BasicPropertiesExtension {
-    internal static IBasicProperties FillWith(this IBasicProperties self, ProducerArgs args) {
+    internal static BasicProperties FillWith(this BasicProperties self, ProducerArgs args) {
         self.AppId = args.GetAppId();
         self.ClusterId = args.GetClusterId();
         self.ContentEncoding = args.GetContentEncoding();
