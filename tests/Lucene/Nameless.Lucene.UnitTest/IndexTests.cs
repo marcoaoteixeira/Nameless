@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.Infrastructure;
 using Nameless.Mockers;
 
 namespace Nameless.Lucene;
@@ -44,18 +43,18 @@ public class IndexTests {
 
     [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Test]
-    public void StoreDocument_Should_Create_A_New_Document_In_Index() {
-        using var provider = CreateServiceProvider();
+    public async Task StoreDocument_Should_Create_A_New_Document_In_Index() {
+        await using var provider = CreateServiceProvider();
         const string INDEX_NAME = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
         var index = indexManager.CreateIndex(INDEX_NAME);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
-        var loremIpsum = File.ReadAllText(loremIpsumFilePath);
+        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
-                       .Set("Name", "Test User", FieldOptions.Store)
+                       .Set("Name", "Test User")
                        .Set("Email", "test_user@test.com", FieldOptions.Store)
                        .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
                        .Set("Weight", 75d, FieldOptions.Store)
@@ -63,7 +62,7 @@ public class IndexTests {
                        .Set("Age", 50, FieldOptions.Store)
                        .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
-        var result = index.StoreDocuments([document]);
+        var result = await index.StoreDocumentsAsync([document], CancellationToken.None);
 
         Assert.Multiple(() => {
             Assert.That(index, Is.Not.Null);
@@ -74,18 +73,18 @@ public class IndexTests {
 
     [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Test]
-    public void CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
-        using var provider = CreateServiceProvider();
+    public async Task CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
+        await using var provider = CreateServiceProvider();
         const string INDEX_NAME = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
         var index = indexManager.CreateIndex(INDEX_NAME);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
-        var loremIpsum = File.ReadAllText(loremIpsumFilePath);
+        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
-                       .Set("Name", "Test User", FieldOptions.Store)
+                       .Set("Name", "Test User")
                        .Set("Email", "test_user@test.com", FieldOptions.Store)
                        .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
                        .Set("Weight", 75d, FieldOptions.Store)
@@ -93,7 +92,7 @@ public class IndexTests {
                        .Set("Age", 50, FieldOptions.Store)
                        .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
-        index.StoreDocuments([document]);
+        await index.StoreDocumentsAsync([document], CancellationToken.None);
 
         var searcher = index.CreateSearchBuilder();
         var tokens = new[] {
@@ -126,9 +125,9 @@ public class IndexTests {
 
     [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Test]
-    public void Multiple_Documents_Store_Different_Moments() {
+    public async Task Multiple_Documents_Store_Different_Moments() {
         // setup
-        using var provider = CreateServiceProvider();
+        await using var provider = CreateServiceProvider();
         const string INDEX_NAME = "e112b156-ecfc-4fb9-90db-9675bc61b3ba";
         const string FIELD_NAME = "Content";
 
@@ -138,13 +137,13 @@ public class IndexTests {
             
         // act 1
         var filePathForText001 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_001.txt");
-        var contentText001 = File.ReadAllText(filePathForText001);
+        var contentText001 = await File.ReadAllTextAsync(filePathForText001);
 
         var documentText001 = index
                               .NewDocument(Guid.NewGuid()
                                                .ToString("N"))
                               .Set(FIELD_NAME, contentText001, FieldOptions.Analyze | FieldOptions.Store);
-        var resultDocumentText001 = index.StoreDocuments([documentText001]);
+        var resultDocumentText001 = await index.StoreDocumentsAsync([documentText001], CancellationToken.None);
 
         var searchBuilderText001 = index.CreateSearchBuilder();
 
@@ -157,13 +156,13 @@ public class IndexTests {
 
         // act 2
         var filePathForText002 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_002.txt");
-        var contentText002 = File.ReadAllText(filePathForText002);
+        var contentText002 = await File.ReadAllTextAsync(filePathForText002);
 
         var documentText002 = index
                               .NewDocument(Guid.NewGuid()
                                                .ToString("N"))
                               .Set(FIELD_NAME, contentText002, FieldOptions.Analyze | FieldOptions.Store);
-        var resultDocumentText002 = index.StoreDocuments([documentText002]);
+        var resultDocumentText002 = await index.StoreDocumentsAsync([documentText002], CancellationToken.None);
 
         var searchBuilderText002 = index.CreateSearchBuilder();
 
