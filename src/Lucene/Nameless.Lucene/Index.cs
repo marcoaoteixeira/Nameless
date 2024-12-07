@@ -11,6 +11,8 @@ namespace Nameless.Lucene;
 /// Default implementation of <see cref="IIndex"/>
 /// </summary>
 public sealed class Index : IIndex, IDisposable {
+    private static int BatchSize => BooleanQuery.MaxClauseCount;
+
     private readonly Analyzer _analyzer;
     private readonly string _indexDirectoryPath;
     private readonly ILogger _logger;
@@ -21,8 +23,6 @@ public sealed class Index : IIndex, IDisposable {
     private IndexWriter? _indexWriter;
 
     private bool _disposed;
-
-    private static int BatchSize => BooleanQuery.MaxClauseCount;
 
     /// <inheritdoc />
     public string Name { get; }
@@ -82,43 +82,50 @@ public sealed class Index : IIndex, IDisposable {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="documents"/> is <c>null</c>.
     /// </exception>
-    public IndexActionResult StoreDocuments(IDocument[] documents) {
+    public async Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
 
         if (documents.Length == 0) {
-            return IndexActionResult.Success(count: 0);
+            return IndexActionResult.Success(count: 0, documents.Length);
         }
 
-        var result = InnerDeleteDocuments(documents);
-        if (result.Succeeded) {
-            result = InnerStoreDocuments(documents);
+        var deleteResult = await InnerDeleteDocumentsAsync(documents, cancellationToken);
+        if (!deleteResult.Succeeded) {
+            return deleteResult;
+        }
+
+        var storeResult = await InnerStoreDocumentsAsync(documents, cancellationToken);
+        if (!storeResult.Succeeded) {
+            return storeResult;
         }
 
         InnerCommitChanges();
 
-        return result;
+        return storeResult;
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="documents"/> is <c>null</c>.
     /// </exception>
-    public IndexActionResult DeleteDocuments(IDocument[] documents) {
+    public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
 
         if (documents.Length == 0) {
-            return IndexActionResult.Success(count: 0);
+            return IndexActionResult.Success(count: 0, documents.Length);
         }
 
-        var result = InnerDeleteDocuments(documents);
+        var deleteResult = await InnerDeleteDocumentsAsync(documents, cancellationToken);
 
-        InnerCommitChanges();
+        if (deleteResult.Succeeded) {
+            InnerCommitChanges();
+        }
 
-        return result;
+        return deleteResult;
     }
 
     private void InnerCommitChanges() {
@@ -127,12 +134,15 @@ public sealed class Index : IIndex, IDisposable {
             indexWriter.Flush(triggerMerge: true, applyAllDeletes: true);
             indexWriter.PrepareCommit();
             indexWriter.Commit();
-        } catch (OutOfMemoryException ex) {
-            DestroyIndexWriter();
+        } catch (Exception ex) { HandleCommitChangesException(ex); }
+    }
+
+    private void HandleCommitChangesException(Exception ex) {
+        if (ex is OutOfMemoryException) {
             _logger.IndexWriterOutOfMemoryError(ex);
-        } catch (Exception ex) {
-            _logger.CommitChangesError(ex);
-        }
+
+            DestroyIndexWriter();
+        } else { _logger.CommitChangesError(ex); }
     }
 
     /// <inheritdoc />
@@ -145,7 +155,7 @@ public sealed class Index : IIndex, IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    private IndexActionResult InnerStoreDocuments(IEnumerable<IDocument> documents) {
+    private Task<IndexActionResult> InnerStoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         IndexActionResult result;
         var counter = 0;
 
@@ -153,62 +163,76 @@ public sealed class Index : IIndex, IDisposable {
             var indexWriter = GetIndexWriter();
 
             foreach (var document in documents) {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 indexWriter.AddDocument(doc: document.ToLuceneDocument());
                 counter++;
             }
 
-            result = IndexActionResult.Success(counter);
-        } catch (OutOfMemoryException ex) {
-            DestroyIndexWriter();
-            _logger.IndexWriterOutOfMemoryError(ex);
-            result = IndexActionResult.Failure(counter, ex.Message);
+            result = IndexActionResult.Success(counter, documents.Length);
         } catch (Exception ex) {
-            _logger.StoreDocumentError(ex);
-            result = IndexActionResult.Failure(counter, ex.Message);
+            HandleStoreDocumentsException(ex);
+
+            result = IndexActionResult.Failure(counter, documents.Length, ex.Message);
         }
 
-        return result;
+        return Task.FromResult(result);
     }
 
-    private IndexActionResult InnerDeleteDocuments(IReadOnlyCollection<IDocument> documents) {
-        var counter = 0;
+    private void HandleStoreDocumentsException(Exception ex) {
+        if (ex is OutOfMemoryException) {
+            _logger.IndexWriterOutOfMemoryError(ex);
 
+            DestroyIndexWriter();
+        } else { _logger.StoreDocumentError(ex); }
+    }
+
+    private Task<IndexActionResult> InnerDeleteDocumentsAsync(IReadOnlyCollection<IDocument> documents, CancellationToken cancellationToken) {
+        var counter = 0;
         var batches = documents.Count / BatchSize;
         if (documents.Count % BatchSize != 0) {
             ++batches;
         }
 
-        for (var batch = 0; batch < batches; batch++) {
-            var query = new BooleanQuery();
-            try {
+        IndexActionResult result;
+
+        try {
+            for (var batch = 0; batch < batches; batch++) {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var query = new BooleanQuery();
                 var documentBatch = documents.Skip(batch * BatchSize)
                                              .Take(BatchSize);
 
                 foreach (var document in documentBatch) {
-                    var term = new Term(fld: nameof(ISearchHit.DocumentID),
-                                        text: document.ID);
-
+                    var term = new Term(fld: nameof(ISearchHit.DocumentID), text: document.ID);
                     var termQuery = new TermQuery(term);
-
-                    var booleanClause = new BooleanClause(query: termQuery,
-                                                          occur: Occur.SHOULD);
+                    var booleanClause = new BooleanClause(query: termQuery, occur: Occur.SHOULD);
 
                     query.Add(booleanClause);
+
                     counter++;
                 }
 
                 GetIndexWriter().DeleteDocuments(query);
-            } catch (OutOfMemoryException ex) {
-                DestroyIndexWriter();
-                _logger.IndexWriterOutOfMemoryError(ex);
-                return IndexActionResult.Failure(counter, ex.Message);
-            } catch (Exception ex) {
-                _logger.DeleteDocumentError(ex);
-                return IndexActionResult.Failure(counter, ex.Message);
             }
+
+            result = IndexActionResult.Success(counter, documents.Count);
+        } catch (Exception ex) {
+            HandleDeleteDocumentsException(ex);
+
+            result = IndexActionResult.Failure(counter, documents.Count, ex.Message);
         }
 
-        return IndexActionResult.Success(counter);
+        return Task.FromResult(result);
+    }
+
+    private void HandleDeleteDocumentsException(Exception ex) {
+        if (ex is OutOfMemoryException) {
+            _logger.IndexWriterOutOfMemoryError(ex);
+
+            DestroyIndexWriter();
+        } else { _logger.DeleteDocumentError(ex); }
     }
 
     private IndexWriter GetIndexWriter()

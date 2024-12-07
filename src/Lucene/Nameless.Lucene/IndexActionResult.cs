@@ -7,6 +7,8 @@ namespace Nameless.Lucene;
 public sealed record IndexActionResult {
     public int Count { get; }
 
+    public int Total { get; }
+
 #if NET6_0_OR_GREATER
     [MemberNotNullWhen(returnValue: false, nameof(Error))]
 #endif
@@ -15,14 +17,15 @@ public sealed record IndexActionResult {
     
     public string Error { get; }
 
-    private IndexActionResult(int count, string error) {
+    private IndexActionResult(int count, int total, string error) {
         Count = count;
+        Total = total;
         Error = error;
     }
 
-    public static IndexActionResult Success(int count)
-        => new(count, error: string.Empty);
+    public static IndexActionResult Success(int count, int total)
+        => new(count, total, error: string.Empty);
 
-    public static IndexActionResult Failure(int count, string error)
-        => new(count: count, error: Prevent.Argument.NullOrWhiteSpace(error));
+    public static IndexActionResult Failure(int count, int total, string error)
+        => new(count: count, total, error: Prevent.Argument.NullOrWhiteSpace(error));
 }

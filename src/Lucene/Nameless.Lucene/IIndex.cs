@@ -29,19 +29,21 @@ public interface IIndex {
     /// Stores all documents into the index.
     /// </summary>
     /// <param name="documents">List of documents to store.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// An <see cref="IndexActionResult"/> with information regards to this action.
+    /// A <see cref="Task{TResult}"/> representing the store documents action.
     /// </returns>
-    IndexActionResult StoreDocuments(IDocument[] documents);
+    Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     /// Removes all documents from the index.
     /// </summary>
     /// <param name="documents">List of documents to delete.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    /// An <see cref="IndexActionResult"/> with information regards to this action.
+    /// A <see cref="Task{TResult}"/> representing the delete documents action.
     /// </returns>
-    IndexActionResult DeleteDocuments(IDocument[] documents);
+    Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     /// Creates a search builder for this provider
