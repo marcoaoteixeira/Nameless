@@ -6,7 +6,7 @@ namespace Nameless.Localization.Json.Mockers;
 
 public class CultureProviderMocker : MockerBase<ICultureProvider> {
     public CultureProviderMocker WithCulture(CultureInfo culture) {
-        InnerMock.Setup(mock => mock.GetCurrentCulture())
+        Mock.Setup(mock => mock.GetCurrentCulture())
                     .Returns(culture);
 
         return this;

@@ -25,9 +25,6 @@ public static class ByteArrayExtension {
     /// <returns>
     /// A base64 string representation for the current array.
     /// </returns>
-    public static string ToBase64String(this byte[] self, Base64FormattingOptions options = Base64FormattingOptions.None) {
-        Prevent.Argument.Null(self);
-
-        return Convert.ToBase64String(self, options);
-    }
+    public static string ToBase64String(this byte[] self, Base64FormattingOptions options = Base64FormattingOptions.None)
+        => Convert.ToBase64String(self, options);
 }

@@ -127,8 +127,7 @@ public sealed class Database : IDatabase, IDisposable {
             );
         }
 
-        _logger.OutputDbCommand(command.CommandText,
-                                command.GetParameterList());
+        _logger.OutputDbCommand(command);
 
         return command;
     }

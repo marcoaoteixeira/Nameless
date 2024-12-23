@@ -4,14 +4,14 @@ namespace Nameless.Mockers;
 
 public class ConfigurationSectionMocker : MockerBase<IConfigurationSection> {
     public ConfigurationSectionMocker WithKey(string key) {
-        InnerMock.Setup(mock => mock.Key)
+        Mock.Setup(mock => mock.Key)
                     .Returns(key);
 
         return this;
     }
 
     public ConfigurationSectionMocker WithValue(string value) {
-        InnerMock.Setup(mock => mock.Value)
+        Mock.Setup(mock => mock.Value)
                     .Returns(value);
 
         return this;

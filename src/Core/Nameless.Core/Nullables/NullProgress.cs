@@ -1,10 +1,5 @@
 namespace Nameless;
 
-/// <summary>
-/// Singleton Pattern implementation for <see cref="IProgress{T}" />.
-/// See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
-/// </summary>
-[Singleton]
 public sealed class NullProgress<T> : IProgress<T> {
     /// <summary>
     /// Gets the unique instance of <see cref="NullProgress{T}" />.
@@ -22,10 +17,22 @@ public sealed class NullProgress<T> : IProgress<T> {
 }
 
 /// <summary>
-/// Singleton Pattern implementation for <see cref="IProgress{T}" /> where T is <see cref="int"/>.
-/// See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
+/// Singleton + Null Object Pattern implementation for <see cref="IProgress{T}" />.
+/// <list type="bullet">
+///     <item>
+///         <term>Singleton Pattern</term>
+///         <description>
+///             <a href="https://en.wikipedia.org/wiki/Singleton_pattern">See here</a>
+///         </description>
+///     </item>
+///     <item>
+///         <term>Null-Object Pattern</term>
+///         <description>
+///             <a href="https://en.wikipedia.org/wiki/Null_object_pattern">See here</a>
+///         </description>
+///     </item>
+/// </list>
 /// </summary>
-[Singleton]
 public sealed class NullProgress : IProgress<int> {
     /// <summary>
     /// Gets the unique instance of <see cref="NullProgress" />.

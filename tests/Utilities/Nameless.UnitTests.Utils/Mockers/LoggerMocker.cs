@@ -4,9 +4,27 @@ using Moq;
 namespace Nameless.Mockers;
 
 public class LoggerMocker<T> : MockerBase<ILogger<T>> {
+    public LoggerMocker<T> WithAllLogLevels() {
+        foreach (var logLevel in Enum.GetValues<LogLevel>()) {
+            Mock.Setup(mock => mock.IsEnabled(logLevel))
+                .Returns(true);
+        }
+
+        return this;
+    }
+
     public LoggerMocker<T> WithLogLevel(LogLevel logLevel, bool isEnabled = true) {
-        InnerMock.Setup(mock => mock.IsEnabled(logLevel))
+        Mock.Setup(mock => mock.IsEnabled(logLevel))
                  .Returns(isEnabled);
+
+        return this;
+    }
+
+    public LoggerMocker<T> WithLogLevels(LogLevel[] logLevels) {
+        foreach (var logLevel in logLevels) {
+            Mock.Setup(mock => mock.IsEnabled(logLevel))
+                     .Returns(true);
+        }
 
         return this;
     }
@@ -28,7 +46,7 @@ public class LoggerMocker<T> : MockerBase<ILogger<T>> {
             => (assertMessage ?? (_ => true)).Invoke(value.ToString() ?? string.Empty) &&
                type.Name.Contains("LogValues", StringComparison.OrdinalIgnoreCase);
 
-        InnerMock.Verify(mock => mock.Log(It.Is<LogLevel>(currentLogLevel => currentLogLevel == level),
+        Mock.Verify(mock => mock.Log(It.Is<LogLevel>(currentLogLevel => currentLogLevel == level),
                                           It.Is<EventId>(eventId => eventId.Id == 0),
                                           It.Is<It.IsAnyType>((value, type) => state(value, type)),
                                           It.IsAny<Exception>(),

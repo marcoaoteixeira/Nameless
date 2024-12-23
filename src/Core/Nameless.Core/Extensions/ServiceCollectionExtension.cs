@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Nameless.Infrastructure;
-using Nameless.Services;
+using Nameless.Application;
 
 namespace Nameless;
 
@@ -11,9 +9,8 @@ public static class ServiceCollectionExtension {
     /// Registers <see cref="IApplicationContext"/> implementation in the service collection.
     /// </summary>
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <param name="useAppDataSpecialFolder">
-    /// <c>true</c> if it should use environment special folder;
-    /// <c>false</c> if it should use <see cref="AppDomain.BaseDirectory"/> + "App_Data"
+    /// <param name="useCommonAppDataFolder">
+    /// Whether it will use the common data folder or the user level data folder.
     /// </param>
     /// <param name="appVersion">The application version.</param>
     /// <returns>
@@ -22,13 +19,21 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection AddApplicationContext(this IServiceCollection self, bool useAppDataSpecialFolder = false, Version? appVersion = null)
+    public static IServiceCollection RegisterApplicationContext(this IServiceCollection self,
+                                                                bool useCommonAppDataFolder = false,
+                                                                Version? appVersion = null)
         => Prevent.Argument
                   .Null(self)
-                  .AddSingleton<IApplicationContext>(provider => new ApplicationContext(hostEnvironment: provider.GetRequiredService<IHostEnvironment>(),
-                                                                                        logger: provider.GetRequiredService<ILogger<ApplicationContext>>(),
-                                                                                        useSpecialFolder: useAppDataSpecialFolder,
-                                                                                        appVersion: appVersion));
+                  .AddSingleton<IApplicationContext>(provider => {
+                      var hostEnv = provider.GetRequiredService<IHostEnvironment>();
+                      var logger = provider.GetLogger<ApplicationContext>();
+
+                      return new ApplicationContext(environment: hostEnv.EnvironmentName,
+                                                    appName: hostEnv.ApplicationName,
+                                                    useCommonAppDataFolder,
+                                                    appVersion ?? new Version(major: 1, minor: 0, build: 0),
+                                                    logger);
+                  });
 
     /// <summary>
     /// Registers service <see cref="IClock"/>
@@ -40,38 +45,8 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection AddSystemClock(this IServiceCollection self)
+    public static IServiceCollection RegisterClock(this IServiceCollection self)
         => Prevent.Argument
                   .Null(self)
-                  .AddSingleton<IClock, SystemClock>();
-
-    /// <summary>
-    /// Registers service <see cref="IPluralizationRuleProvider"/>
-    /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <returns>
-    /// The current <see cref="IServiceCollection"/>, so other actions can be chained.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> is <c>null</c>.
-    /// </exception>
-    public static IServiceCollection AddPluralizationRuleProvider(this IServiceCollection self)
-        => Prevent.Argument
-                  .Null(self)
-                  .AddSingleton<IPluralizationRuleProvider, PluralizationRuleProvider>();
-
-    /// <summary>
-    /// Registers service <see cref="IXmlSchemaValidator"/>
-    /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <returns>
-    /// The current <see cref="IServiceCollection"/>, so other actions can be chained.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> is <c>null</c>.
-    /// </exception>
-    public static IServiceCollection AddXmlSchemaValidator(this IServiceCollection self)
-        => Prevent.Argument
-                  .Null(self)
-                  .AddSingleton<IXmlSchemaValidator, XmlSchemaValidator>();
+                  .AddSingleton<IClock, Clock>();
 }

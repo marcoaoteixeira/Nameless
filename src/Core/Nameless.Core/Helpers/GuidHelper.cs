@@ -19,15 +19,16 @@ public static class GuidHelper {
 
         // The value parameter representation as bytes
         Span<byte> valueBuffer = stackalloc byte[16];
+
         // The base64 representation as bytes
         Span<byte> base64Buffer = stackalloc byte[24];
 
         var memoryWriteSucceeded = MemoryMarshal.TryWrite(
-            valueBuffer,
+            destination: valueBuffer,
 #if NET8_0_OR_GREATER
-            in value
+            value: in value
 #else
-            ref value
+            value: ref value
 #endif
         );
         if (!memoryWriteSucceeded) {
@@ -35,7 +36,11 @@ public static class GuidHelper {
         }
 
         // The only place that we allocate memory
-        var status = Base64.EncodeToUtf8(valueBuffer, base64Buffer, out _, out _, isFinalBlock: true);
+        var status = Base64.EncodeToUtf8(bytes: valueBuffer,
+                                         utf8: base64Buffer,
+                                         bytesConsumed: out _,
+                                         bytesWritten: out _,
+                                         isFinalBlock: true);
 
         if (status != OperationStatus.Done) {
             throw new InvalidOperationException($"Couldn't encode {nameof(valueBuffer)}.");
@@ -71,7 +76,7 @@ public static class GuidHelper {
 
         Span<byte> result = stackalloc byte[16];
 
-        if (!Convert.TryFromBase64Chars(base64Buffer, result, out _)) {
+        if (!Convert.TryFromBase64Chars(chars: base64Buffer, bytes: result, bytesWritten: out _)) {
             throw new InvalidOperationException("Couldn't convert from Base64 chars.");
         }
 

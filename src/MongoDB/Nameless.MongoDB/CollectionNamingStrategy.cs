@@ -11,7 +11,7 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
             return attr.Name;
         }
 
-        return string.Join(separator: Constants.Separators.UNDERSCORE, type.Name.SplitUpperCase())
+        return string.Join("_", type.Name.SplitUpperCase())
                      .ToLowerInvariant();
     }
 }

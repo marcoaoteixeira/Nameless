@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using Nameless.Infrastructure;
+using Nameless.IO;
 using Nameless.Lucene.Options;
 using Polly;
 using Polly.Retry;
@@ -18,7 +19,8 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
     private readonly IApplicationContext _applicationContext;
     private readonly IAnalyzerProvider _analyzerProvider;
-    private readonly LuceneOptions _options;
+    private readonly IFileSystem _fileSystem;
+    private readonly IOptions<LuceneOptions> _options;
     private readonly ILogger<Index> _loggerForIndex;
     private readonly RetryPolicy _deleteIndexRetryPolicy;
 
@@ -32,12 +34,18 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     /// <param name="applicationContext">The application context.</param>
     /// <param name="analyzerProvider">The analyzer provider.</param>
     /// <param name="loggerForIndex">The <see cref="ILogger{Index}"/> that will be passed to the Index when created.</param>
+    /// <param name="fileSystem">The file system services.</param>
     /// <param name="options">The settings.</param>
-    public IndexProvider(IApplicationContext applicationContext, IAnalyzerProvider analyzerProvider, IOptions<LuceneOptions> options, ILogger<Index> loggerForIndex) {
+    public IndexProvider(IApplicationContext applicationContext,
+                         IAnalyzerProvider analyzerProvider,
+                         IFileSystem fileSystem,
+                         IOptions<LuceneOptions> options,
+                         ILogger<Index> loggerForIndex) {
         _applicationContext = Prevent.Argument.Null(applicationContext);
         _analyzerProvider = Prevent.Argument.Null(analyzerProvider);
+        _fileSystem = Prevent.Argument.Null(fileSystem);
         _loggerForIndex = Prevent.Argument.Null(loggerForIndex);
-        _options = Prevent.Argument.Null(options).Value;
+        _options = Prevent.Argument.Null(options);
 
         // In case of IOException, wait and try again.
         // Time will increase over attempts.
@@ -61,11 +69,12 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
         _deleteIndexRetryPolicy.Execute(() => {
             var indexDirectoryPath = GetIndexDirectoryPath(name);
 
-            if (!Directory.Exists(indexDirectoryPath)) {
+            if (!_fileSystem.Directory.Exists(indexDirectoryPath)) {
                 return;
             }
 
-            Directory.Delete(path: indexDirectoryPath, recursive: true);
+            _fileSystem.Directory.Delete(directoryPath: indexDirectoryPath,
+                                         recursive: true);
 
             if (Cache.TryRemove(name, out var index) &&
                 index is IDisposable disposable) {
@@ -88,7 +97,7 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
         var indexDirectoryPath = GetIndexDirectoryPath(name);
 
-        return Directory.Exists(indexDirectoryPath);
+        return _fileSystem.Directory.Exists(indexDirectoryPath);
     }
 
     /// <inheritdoc />
@@ -110,12 +119,12 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     public IEnumerable<string> ListIndexes() {
         BlockAccessAfterDispose();
 
-        var rootPath = Path.Combine(_applicationContext.AppDataFolderPath,
-                                    _options.IndexesFolderName);
-        var directories = Directory.GetDirectories(rootPath);
+        var rootPath = _fileSystem.Path.Combine(_applicationContext.AppDataFolderPath,
+                                                _options.Value.IndexesFolderName);
+        var directories = _fileSystem.Directory.GetDirectories(rootPath);
 
         foreach (var directory in directories) {
-            var indexName = Path.GetFileName(directory);
+            var indexName = _fileSystem.Path.GetFileName(directory.Path);
             if (indexName is not null) {
                 yield return indexName;
             }
@@ -148,19 +157,19 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     }
 
     private string GetIndexDirectoryPath(string indexName) {
-        var path = Path.Combine(_applicationContext.AppDataFolderPath,
-                                _options.IndexesFolderName,
-                                indexName);
+        var path = _fileSystem.Path.Combine(_applicationContext.AppDataFolderPath,
+                                            _options.Value.IndexesFolderName,
+                                            indexName);
 
         return PathHelper.Normalize(path);
     }
 
     private Index Create(string indexName) {
         var indexDirectoryPath = GetIndexDirectoryPath(indexName);
-        var directory = Directory.CreateDirectory(indexDirectoryPath);
+        var directory = _fileSystem.Directory.Create(indexDirectoryPath);
 
         return new Index(analyzer: _analyzerProvider.GetAnalyzer(indexName),
-                         indexDirectoryPath: directory.FullName,
+                         indexDirectoryPath: directory.Path,
                          logger: _loggerForIndex);
     }
 }

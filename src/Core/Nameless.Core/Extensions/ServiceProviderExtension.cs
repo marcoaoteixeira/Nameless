@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -8,47 +7,6 @@ using Microsoft.Extensions.Options;
 namespace Nameless;
 
 public static class ServiceProviderExtension {
-    /// <summary>
-    /// Tries to retrieve the specified service.
-    /// </summary>
-    /// <typeparam name="TService">Type of the service.</typeparam>
-    /// <param name="self">The current <see cref="IServiceProvider"/>.</param>
-    /// <param name="service">The service, if found.</param>
-    /// <returns>
-    /// <c>true</c> if the service was found, otherwise; <c>false</c>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> is <c>null</c>.
-    /// </exception>
-    public static bool TryGetService<TService>(this IServiceProvider self, [NotNullWhen(returnValue: true)] out TService? service) {
-        Prevent.Argument.Null(self);
-
-        service = self.GetService<TService>();
-
-        return service is not null;
-    }
-
-    /// <summary>
-    /// Tries to retrieve the specified service by its key.
-    /// </summary>
-    /// <typeparam name="TService">Type of the service.</typeparam>
-    /// <param name="self">The current <see cref="IServiceProvider"/>.</param>
-    /// <param name="key">The service key.</param>
-    /// <param name="service">The service, if found.</param>
-    /// <returns>
-    /// <c>true</c> if the service was found, otherwise; <c>false</c>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> is <c>null</c>.
-    /// </exception>
-    public static bool TryGetKeyedService<TService>(this IServiceProvider self, string key, [NotNullWhen(returnValue: true)] out TService? service) {
-        Prevent.Argument.Null(self);
-
-        service = self.GetKeyedService<TService>(key);
-
-        return service is not null;
-    }
-
     /// <summary>
     /// Retrieves an instance of <see cref="ILogger{TCategoryName}"/>
     /// from the current <see cref="IServiceProvider"/>.
@@ -135,7 +93,8 @@ public static class ServiceProviderExtension {
         }
 
         // shoot, no good. let's try get it from configuration service
-        if (self.TryGetService<IConfiguration>(out var configuration)) {
+        var configuration = self.GetService<IConfiguration>();
+        if (configuration is not null) {
             var sectionName = typeof(TOptions).Name;
             var configOptions = configuration.GetSection(sectionName)
                                              .Get<TOptions>();

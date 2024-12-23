@@ -5,7 +5,7 @@ namespace Nameless.Mailing.MailKit;
 
 public static class MessageExtension {
     public static MimeMessage ToMimeMessage(this Message self) {
-        var format = self.Parameters.GetUseHtmlBody()
+        var format = self.IsBodyHtml
             ? TextFormat.Html
             : TextFormat.Plain;
 

@@ -21,11 +21,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 		<ProjectReference Include="..\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>
 

@@ -23,7 +23,7 @@ public interface IIndex {
     /// Creates an empty document
     /// </summary>
     /// <returns></returns>
-    IDocument NewDocument(string documentID);
+    IIndexDocument NewDocument(string documentID);
 
     /// <summary>
     /// Stores all documents into the index.
@@ -33,7 +33,7 @@ public interface IIndex {
     /// <returns>
     /// A <see cref="Task{TResult}"/> representing the store documents action.
     /// </returns>
-    Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken);
+    Task<IndexActionResult> StoreDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     /// Removes all documents from the index.
@@ -43,7 +43,7 @@ public interface IIndex {
     /// <returns>
     /// A <see cref="Task{TResult}"/> representing the delete documents action.
     /// </returns>
-    Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken);
+    Task<IndexActionResult> DeleteDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     /// Creates a search builder for this provider

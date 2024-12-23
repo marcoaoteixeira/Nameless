@@ -1,6 +1,4 @@
-﻿using Nameless.Validation.Internals;
-
-namespace Nameless.Validation;
+﻿namespace Nameless.Validation;
 
 /// <summary>
 /// Represents a validation error entry.
@@ -26,15 +24,7 @@ public sealed record ValidationEntry {
     /// <paramref name="message"/> is <c>null</c>, empty or white spaces.
     /// </exception>
     public ValidationEntry(string code, string message) {
-        if (string.IsNullOrWhiteSpace(code)) {
-            throw new ArgumentException(Constants.Messages.ParameterCannotBeStringNullOrWhiteSpace, nameof(code));
-        }
-
-        if (string.IsNullOrWhiteSpace(message)) {
-            throw new ArgumentException(Constants.Messages.ParameterCannotBeStringNullOrWhiteSpace, nameof(message));
-        }
-
-        Code = code;
-        Message = message;
+        Code = Prevent.Argument.NullOrWhiteSpace(code);
+        Message = Prevent.Argument.NullOrWhiteSpace(message);
     }
 }

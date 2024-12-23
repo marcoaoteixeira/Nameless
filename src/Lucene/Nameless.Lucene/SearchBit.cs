@@ -33,11 +33,11 @@ public sealed class SearchBit : ISearchBit {
         => _openBitSet.Cardinality;
 
     private SearchBit Apply(ISearchBit other, Action<OpenBitSet, OpenBitSet> operation) {
-        var bitset = (OpenBitSet)_openBitSet.Clone();
-
         if (other is not SearchBit otherBitSet) {
             throw new InvalidOperationException("The other bitset must be of type OpenBitSet");
         }
+
+        var bitset = (OpenBitSet)_openBitSet.Clone();
 
         operation(bitset, otherBitSet._openBitSet);
 

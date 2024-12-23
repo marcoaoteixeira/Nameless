@@ -53,7 +53,7 @@ public class IndexTests {
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
 
-        var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
+        var document = new IndexDocument("146ef344-ae25-4346-b07a-7da8f418a26f")
                        .Set("Name", "Test User")
                        .Set("Email", "test_user@test.com", FieldOptions.Store)
                        .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
@@ -83,7 +83,7 @@ public class IndexTests {
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
 
-        var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
+        var document = new IndexDocument("146ef344-ae25-4346-b07a-7da8f418a26f")
                        .Set("Name", "Test User")
                        .Set("Email", "test_user@test.com", FieldOptions.Store)
                        .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)

@@ -43,43 +43,6 @@ public static class TypeExtension {
     }
 
     /// <summary>
-    /// Retrieves the generic method associated to the self type.
-    /// </summary>
-    /// <param name="self">The self type.</param>
-    /// <param name="name">The name of the method.</param>
-    /// <param name="genericArgumentTypes">Method generic argument types, if any.</param>
-    /// <param name="argumentTypes">Method argument types, if any.</param>
-    /// <param name="returnType">Method return type.</param>
-    /// <returns>Returns an instance of <see cref="MethodInfo"/> representing the generic method.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> or
-    /// <paramref name="name"/> or
-    /// <paramref name="genericArgumentTypes"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// if <paramref name="name"/> is empty or white spaces.
-    /// </exception>
-    public static MethodInfo? CreateGenericMethod(this Type self, string name, Type[] genericArgumentTypes, Type[]? argumentTypes = null, Type? returnType = null) {
-        Prevent.Argument.Null(self);
-        Prevent.Argument.NullOrWhiteSpace(name);
-        Prevent.Argument.Null(genericArgumentTypes);
-
-        var innerArgumentTypes = argumentTypes ?? [];
-        var innerReturnType = returnType ?? typeof(void);
-
-        return self
-               .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
-               .SingleOrDefault(method => method.Name == name &&
-                                          method.GetGenericArguments()
-                                                .Length == genericArgumentTypes.Length &&
-                                          method.GetParameters()
-                                                .Select(parameter => parameter.ParameterType)
-                                                .SequenceEqual(innerArgumentTypes) &&
-                                          (method.ReturnType is { IsGenericType: true, IsGenericTypeDefinition: false } ? innerReturnType.GetGenericTypeDefinition() : method.ReturnType) == innerReturnType)
-               ?.MakeGenericMethod(genericArgumentTypes);
-    }
-
-    /// <summary>
     /// Verifies if the <paramref name="self"/> is a simple type.
     /// </summary>
     /// <param name="self">The self type.</param>

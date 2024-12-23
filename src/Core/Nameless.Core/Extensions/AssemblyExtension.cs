@@ -82,7 +82,6 @@ public static class AssemblyExtension {
 
         return self.GetExportedTypes()
                    .Where(type => type is { IsInterface: false, IsAbstract: false } &&
-                                  type.GetCustomAttribute<SingletonAttribute>(inherit: true) is null &&
                                   (serviceType.IsAssignableFrom(type) || serviceType.IsAssignableFromOpenGenericType(type)));
     }
 }

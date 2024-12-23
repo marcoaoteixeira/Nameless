@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Nameless.MongoDB.Internals;
@@ -26,12 +27,12 @@ public static class ServiceCollectionExtension {
     /// Registers MongoDb configuration.
     /// </summary>
     /// <param name="self">The service collection instance.</param>
-    /// <param name="mongoOptionsConfigSection">The configuration section for Mongo options.</param>
+    /// <param name="mongoDbConfigSection">The configuration section for Mongo options.</param>
     /// <returns>The current <see cref="IServiceCollection"/> instance so other actions can be chained.</returns>
-    public static IServiceCollection AddMongoDB(this IServiceCollection self, IConfigurationSection mongoOptionsConfigSection)
+    public static IServiceCollection AddMongoDB(this IServiceCollection self, IConfigurationSection mongoDbConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<MongoOptions>(mongoOptionsConfigSection)
+                  .Configure<MongoOptions>(mongoDbConfigSection)
                   .RegisterMongoServices();
 
     private static IServiceCollection RegisterMongoServices(this IServiceCollection self)
@@ -41,7 +42,7 @@ public static class ServiceCollectionExtension {
                .AddSingleton(ResolveMongoCollectionProvider);
 
     private static MongoClient ResolveMongoClient(IServiceProvider provider) {
-        var options = provider.GetOptions<MongoOptions>().Value;
+        var options = provider.GetRequiredService<IOptions<MongoOptions>>().Value;
 
         var settings = new MongoClientSettings {
             Server = new MongoServerAddress(options.Host, options.Port)
@@ -73,15 +74,15 @@ public static class ServiceCollectionExtension {
     }
 
     private static IMongoDatabase ResolveMongoDatabase(IServiceProvider provider) {
-        var options = provider.GetOptions<MongoOptions>().Value;
+        var options = provider.GetRequiredService<IOptions<MongoOptions>>().Value;
 
         return provider.GetRequiredService<IMongoClient>()
                        .GetDatabase(options.DatabaseName);
     }
 
     private static IMongoCollectionProvider ResolveMongoCollectionProvider(IServiceProvider provider) {
-        var options = provider.GetOptions<MongoOptions>().Value;
-        var logger = provider.GetLogger<MongoOptions>();
+        var options = provider.GetRequiredService<IOptions<MongoOptions>>().Value;
+        var logger = provider.GetRequiredService<ILogger<MongoOptions>>();
 
         ExecuteDocumentMappers(options.DocumentMappers, logger);
 

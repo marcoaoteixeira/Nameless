@@ -161,7 +161,7 @@ public static class ExpressionExtension {
                     builder.Insert(0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(0, Constants.Separators.DOT);
+                        builder.Insert(0, Separators.DOT);
                     }
 
                     part = memberExpression.Expression;
@@ -175,7 +175,7 @@ public static class ExpressionExtension {
                     builder.Insert(0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(0, Constants.Separators.DOT);
+                        builder.Insert(0, Separators.DOT);
                     }
 
                     part = null;
@@ -201,7 +201,7 @@ public static class ExpressionExtension {
         Prevent.Argument.Null(self);
         Prevent.Argument.Null(expression);
 
-        var param = Expression.Parameter(typeof(T), Constants.Separators.UNDERSCORE);
+        var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
         var body = Expression.And(
             left: Expression.Invoke(self, param),
             right: Expression.Invoke(expression, param)
@@ -224,7 +224,7 @@ public static class ExpressionExtension {
         Prevent.Argument.Null(self);
         Prevent.Argument.Null(expression);
 
-        var param = Expression.Parameter(typeof(T), Constants.Separators.UNDERSCORE);
+        var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
         var body = Expression.Or(
             left: Expression.Invoke(self, param),
             right: Expression.Invoke(expression, param)

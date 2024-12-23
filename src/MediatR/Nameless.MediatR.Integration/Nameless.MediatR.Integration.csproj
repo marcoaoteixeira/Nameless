@@ -24,8 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-	  <ProjectReference Include="..\..\Validation\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Validation\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

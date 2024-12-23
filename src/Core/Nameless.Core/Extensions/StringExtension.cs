@@ -146,7 +146,7 @@ public static class StringExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static byte[] FromHexToByteArray(this string self) {
+    public static byte[] ToHexByteArray(this string self) {
         Prevent.Argument.Null(self);
 
         return Enumerable.Range(0, self.Length)
@@ -304,44 +304,6 @@ public static class StringExtension {
     }
 
     /// <summary>
-    /// Changes the specified <see cref="char"/>s of <paramref name="from"/> with the
-    /// specified <see cref="char"/>s of <paramref name="to"/>.
-    /// </summary>
-    /// <param name="self">The current <see cref="string"/>.</param>
-    /// <param name="from">"from" <see cref="char"/> array</param>
-    /// <param name="to">"to" <see cref="char"/> array</param>
-    /// <returns>The translated representation of <paramref name="self"/>.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> or
-    /// <paramref name="from"/> or
-    /// <paramref name="to"/> is <c>null</c>.</exception>
-    public static string Translate(this string self, char[] from, char[] to) {
-        Prevent.Argument.Null(self);
-        Prevent.Argument.Null(from);
-        Prevent.Argument.Null(to);
-
-        if (string.IsNullOrEmpty(self)) { return string.Empty; }
-
-        if (from.Length != to.Length) {
-            throw new ArgumentNullException(nameof(from), "Parameters must have the same length");
-        }
-
-        var map = new Dictionary<char, char>(from.Length);
-        for (var idx = 0; idx < from.Length; idx++) {
-            map[from[idx]] = to[idx];
-        }
-
-        var result = new char[self.Length];
-        for (var idx = 0; idx < self.Length; idx++) {
-            var current = self[idx];
-
-            result[idx] = map.GetValueOrDefault(current, current);
-        }
-
-        return new string(result);
-    }
-
-    /// <summary>
     /// Generates a valid technical name.
     /// </summary>
     /// <param name="self">The current <see cref="string"/>.</param>
@@ -354,7 +316,7 @@ public static class StringExtension {
     /// <exception cref="ArgumentOutOfRangeException">
     /// if <paramref name="maxSize"/> is less than 1.
     /// </exception>
-    public static string ToSafeName(this string self, int maxSize = 128) {
+    public static string ToTechnicalName(this string self, int maxSize = 128) {
         Prevent.Argument.Null(self);
         Prevent.Argument.OutOfRange(maxSize, min: 1, max: int.MaxValue);
 
@@ -589,16 +551,16 @@ public static class StringExtension {
 
     public static bool ToBoolean(this string? self) {
         // ReSharper disable InconsistentNaming
-        const string TrueAsYes = nameof(TrueAsYes);
-        const string FalseAsNo = nameof(FalseAsNo);
-        const string TrueAsY = nameof(TrueAsY);
-        const string FalseAsN = nameof(FalseAsN);
+        const string TrueAsYes = "Yes";
+        const string TrueAsY = "Y";
+        const string FalseAsNo = "No";
+        const string FalseAsN = "N";
         // ReSharper restore InconsistentNaming
 
         // we'll consider null as false.
         if (self is null) { return false; }
 
-        // any numeric value less than 0 is false.
+        // any numeric value greater than 0 is true.
         if (double.TryParse(self, out var result)) {
             return result > 0d;
         }

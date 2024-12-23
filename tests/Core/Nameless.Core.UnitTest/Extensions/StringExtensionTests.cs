@@ -102,7 +102,7 @@ public class StringExtensionTests {
         var value = string.Join(string.Empty, array);
 
         // act
-        var actual = StringExtension.FromHexToByteArray(value);
+        var actual = StringExtension.ToHexByteArray(value);
 
         // assert
         Assert.That(Encoding.UTF8.GetString(actual), Is.EqualTo(expected));

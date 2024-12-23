@@ -4,7 +4,7 @@ namespace Nameless.Mockers;
 
 public class HostEnvironmentMocker : MockerBase<IHostEnvironment> {
     public HostEnvironmentMocker WithEnvironmentName(string environmentName) {
-        InnerMock.Setup(mock => mock.EnvironmentName)
+        Mock.Setup(mock => mock.EnvironmentName)
                     .Returns(environmentName);
 
         return this;
