@@ -32,7 +32,7 @@ public static class PreventExtension {
 
         throw exceptionCreator?.Invoke() ?? new ArgumentNullException(paramName: paramName,
                                                                       message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgNullMessage
+                                                                          ? Messages.ArgNullMessage
                                                                           : message);
     }
 
@@ -63,7 +63,7 @@ public static class PreventExtension {
 
         throw exceptionCreator?.Invoke() ?? new ArgumentNullException(paramName: paramName,
                                                                       message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgNullMessage
+                                                                          ? Messages.ArgNullMessage
                                                                           : message);
     }
 
@@ -77,7 +77,7 @@ public static class PreventExtension {
 
         if (paramValue.Length == 0) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgEmptyMessage
+                                                                          ? Messages.ArgEmptyMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -95,7 +95,7 @@ public static class PreventExtension {
 
         if (paramValue.Trim().Length == 0) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgWhiteSpacesMessage
+                                                                          ? Messages.ArgWhiteSpacesMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -113,7 +113,7 @@ public static class PreventExtension {
 
         if (paramValue == Guid.Empty) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgEmptyMessage
+                                                                          ? Messages.ArgEmptyMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -150,7 +150,7 @@ public static class PreventExtension {
 
         static void ThrowError(string? paramName, string? message, Func<Exception>? exceptionCreator) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgEmptyMessage
+                                                                          ? Messages.ArgEmptyMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -164,7 +164,7 @@ public static class PreventExtension {
                                Func<Exception>? exceptionCreator = null) {
         if (EqualityComparer<T?>.Default.Equals(paramValue, default) || paramValue is null) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgDefaultMessage
+                                                                          ? Messages.ArgDefaultMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -182,7 +182,7 @@ public static class PreventExtension {
         var match = Regex.Match(paramValue, pattern);
         if (!match.Success || match.Value != paramValue) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? string.Format(Constants.ArgNoMatchingPatternMessage, pattern)
+                                                                          ? string.Format(Messages.ArgNoMatchingPatternMessage, pattern)
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -198,7 +198,7 @@ public static class PreventExtension {
                                            Func<Exception>? exceptionCreator = null) {
         if (paramValue.Length == 0 || paramValue == string.Empty) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgEmptyMessage
+                                                                          ? Messages.ArgEmptyMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -214,7 +214,7 @@ public static class PreventExtension {
                                                 Func<Exception>? exceptionCreator = null) {
         if (paramValue.IsWhiteSpace()) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgWhiteSpacesMessage
+                                                                          ? Messages.ArgWhiteSpacesMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -231,7 +231,7 @@ public static class PreventExtension {
                                         Func<Exception>? exceptionCreator = null) {
         if (paramValue <= to) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgLowerOrEqualMessage, to)
+                                                                                    ? string.Format(Messages.ArgLowerOrEqualMessage, to)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -249,7 +249,7 @@ public static class PreventExtension {
                                           Func<Exception>? exceptionCreator = null) {
         if (paramValue >= to) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgGreaterOrEqualMessage, to)
+                                                                                    ? string.Format(Messages.ArgGreaterOrEqualMessage, to)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -267,7 +267,7 @@ public static class PreventExtension {
                                    Func<Exception>? exceptionCreator = null) {
         if (paramValue <= to) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgLowerOrEqualMessage, to)
+                                                                                    ? string.Format(Messages.ArgLowerOrEqualMessage, to)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -285,7 +285,7 @@ public static class PreventExtension {
                                      Func<Exception>? exceptionCreator = null) {
         if (paramValue >= to) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgGreaterOrEqualMessage, to)
+                                                                                    ? string.Format(Messages.ArgGreaterOrEqualMessage, to)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -303,7 +303,7 @@ public static class PreventExtension {
                                 Func<Exception>? exceptionCreator = null) {
         if (paramValue < minValue) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgLowerThanMessage, minValue)
+                                                                                    ? string.Format(Messages.ArgLowerThanMessage, minValue)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -321,7 +321,7 @@ public static class PreventExtension {
                                   Func<Exception>? exceptionCreator = null) {
         if (paramValue > maxValue) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgGreaterThanMessage, maxValue)
+                                                                                    ? string.Format(Messages.ArgGreaterThanMessage, maxValue)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -340,7 +340,7 @@ public static class PreventExtension {
                                  Func<Exception>? exceptionCreator = null) {
         if (paramValue < min || paramValue > max) {
             throw exceptionCreator?.Invoke() ?? new ArgumentOutOfRangeException(message: string.IsNullOrWhiteSpace(message)
-                                                                                    ? string.Format(Constants.ArgOutOfRangeMessage, min, max)
+                                                                                    ? string.Format(Messages.ArgOutOfRangeMessage, min, max)
                                                                                     : message,
                                                                                 paramName: paramName,
                                                                                 actualValue: paramValue);
@@ -357,7 +357,7 @@ public static class PreventExtension {
                            Func<Exception>? exceptionCreator = null) {
         if (paramValue == 0) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgZeroMessage
+                                                                          ? Messages.ArgZeroMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -373,7 +373,7 @@ public static class PreventExtension {
                               Func<Exception>? exceptionCreator = null) {
         if (paramValue == 0D) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgZeroMessage
+                                                                          ? Messages.ArgZeroMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -389,7 +389,7 @@ public static class PreventExtension {
                                Func<Exception>? exceptionCreator = null) {
         if (paramValue == 0M) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgZeroMessage
+                                                                          ? Messages.ArgZeroMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -405,7 +405,7 @@ public static class PreventExtension {
                                 Func<Exception>? exceptionCreator = null) {
         if (paramValue == TimeSpan.Zero) {
             throw exceptionCreator?.Invoke() ?? new ArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                          ? Constants.ArgZeroMessage
+                                                                          ? Messages.ArgZeroMessage
                                                                           : message,
                                                                       paramName: paramName);
         }
@@ -435,7 +435,7 @@ public static class PreventExtension {
         where TEnum : struct, Enum {
         if (!Enum.IsDefined(typeof(TEnum), paramValue)) {
             throw exceptionCreator?.Invoke() ?? new InvalidEnumArgumentException(message: string.IsNullOrWhiteSpace(message)
-                                                                                     ? string.Format(Constants.ArgUndefinedEnumMessage, paramName, paramValue, typeof(TEnum))
+                                                                                     ? string.Format(Messages.ArgUndefinedEnumMessage, paramName, paramValue, typeof(TEnum))
                                                                                      : message);
         }
 

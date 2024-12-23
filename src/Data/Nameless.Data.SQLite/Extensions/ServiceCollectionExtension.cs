@@ -5,16 +5,16 @@ using Nameless.Data.SQLite.Options;
 namespace Nameless.Data.SQLite;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection AddSQLiteDatabase(this IServiceCollection self, Action<SQLiteOptions> configure)
+    public static IServiceCollection RegisterSqliteDatabase(this IServiceCollection self, Action<SQLiteOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterDatabaseServices();
 
-    public static IServiceCollection AddSQLiteDatabase(this IServiceCollection self, IConfigurationSection sqliteOptionsConfigurationSection)
+    public static IServiceCollection RegisterSqliteDatabase(this IServiceCollection self, IConfigurationSection sqliteConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<SQLiteOptions>(sqliteOptionsConfigurationSection)
+                  .Configure<SQLiteOptions>(sqliteConfigSection)
                   .RegisterDatabaseServices();
 
     private static IServiceCollection RegisterDatabaseServices(this IServiceCollection self)

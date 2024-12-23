@@ -70,19 +70,19 @@ public sealed class Index : IIndex, IDisposable {
     /// <exception cref="ArgumentException">
     /// if <paramref name="documentID"/> is empty or white spaces.
     /// </exception>
-    public IDocument NewDocument(string documentID) {
+    public IIndexDocument NewDocument(string documentID) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.NullOrWhiteSpace(documentID);
 
-        return new Document(documentID);
+        return new IndexDocument(documentID);
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="documents"/> is <c>null</c>.
     /// </exception>
-    public async Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    public async Task<IndexActionResult> StoreDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
@@ -110,7 +110,7 @@ public sealed class Index : IIndex, IDisposable {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="documents"/> is <c>null</c>.
     /// </exception>
-    public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    public async Task<IndexActionResult> DeleteDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
@@ -155,7 +155,7 @@ public sealed class Index : IIndex, IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    private Task<IndexActionResult> InnerStoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    private Task<IndexActionResult> InnerStoreDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken) {
         IndexActionResult result;
         var counter = 0;
 
@@ -165,13 +165,13 @@ public sealed class Index : IIndex, IDisposable {
             foreach (var document in documents) {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                indexWriter.AddDocument(doc: document.ToLuceneDocument());
+                indexWriter.AddDocument(doc: document.ToDocument());
                 counter++;
             }
 
             result = IndexActionResult.Success(counter, documents.Length);
         } catch (Exception ex) {
-            HandleStoreDocumentsException(ex);
+            StoreDocumentsExceptionHandler(ex);
 
             result = IndexActionResult.Failure(counter, documents.Length, ex.Message);
         }
@@ -179,7 +179,7 @@ public sealed class Index : IIndex, IDisposable {
         return Task.FromResult(result);
     }
 
-    private void HandleStoreDocumentsException(Exception ex) {
+    private void StoreDocumentsExceptionHandler(Exception ex) {
         if (ex is OutOfMemoryException) {
             _logger.IndexWriterOutOfMemoryError(ex);
 
@@ -187,10 +187,10 @@ public sealed class Index : IIndex, IDisposable {
         } else { _logger.StoreDocumentError(ex); }
     }
 
-    private Task<IndexActionResult> InnerDeleteDocumentsAsync(IReadOnlyCollection<IDocument> documents, CancellationToken cancellationToken) {
+    private Task<IndexActionResult> InnerDeleteDocumentsAsync(IIndexDocument[] documents, CancellationToken cancellationToken) {
         var counter = 0;
-        var batches = documents.Count / BatchSize;
-        if (documents.Count % BatchSize != 0) {
+        var batches = documents.Length / BatchSize;
+        if (documents.Length % BatchSize != 0) {
             ++batches;
         }
 
@@ -205,7 +205,7 @@ public sealed class Index : IIndex, IDisposable {
                                              .Take(BatchSize);
 
                 foreach (var document in documentBatch) {
-                    var term = new Term(fld: nameof(ISearchHit.DocumentID), text: document.ID);
+                    var term = new Term(fld: nameof(ISearchHit.IndexDocumentID), text: document.ID);
                     var termQuery = new TermQuery(term);
                     var booleanClause = new BooleanClause(query: termQuery, occur: Occur.SHOULD);
 
@@ -217,17 +217,17 @@ public sealed class Index : IIndex, IDisposable {
                 GetIndexWriter().DeleteDocuments(query);
             }
 
-            result = IndexActionResult.Success(counter, documents.Count);
+            result = IndexActionResult.Success(counter, documents.Length);
         } catch (Exception ex) {
-            HandleDeleteDocumentsException(ex);
+            DeleteDocumentsExceptionHandler(ex);
 
-            result = IndexActionResult.Failure(counter, documents.Count, ex.Message);
+            result = IndexActionResult.Failure(counter, documents.Length, ex.Message);
         }
 
         return Task.FromResult(result);
     }
 
-    private void HandleDeleteDocumentsException(Exception ex) {
+    private void DeleteDocumentsExceptionHandler(Exception ex) {
         if (ex is OutOfMemoryException) {
             _logger.IndexWriterOutOfMemoryError(ex);
 
@@ -263,9 +263,13 @@ public sealed class Index : IIndex, IDisposable {
         => System.IO.Directory.Exists(path: _indexDirectoryPath);
 
     private void BlockAccessAfterDispose() {
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(_disposed, typeof(Index));
+#else
         if (_disposed) {
-            throw new ObjectDisposedException($"Index: {Name}");
+            throw new ObjectDisposedException(nameof(Index));
         }
+#endif
     }
 
     private void Dispose(bool disposing) {

@@ -10,10 +10,9 @@ public sealed class ValidationService : IValidationService {
     private readonly IValidator[] _validators;
     private readonly ILogger _logger;
 
-    public ValidationService(IEnumerable<IValidator> validators, ILogger<ValidationService> logger) {
-        _validators = Prevent.Argument
-                           .Null(validators, nameof(validators))
-                           .ToArray();
+    public ValidationService(IEnumerable<IValidator> validators,
+                             ILogger<ValidationService> logger) {
+        _validators = Prevent.Argument.Null(validators, nameof(validators)).ToArray();
         _logger = Prevent.Argument.Null(logger);
     }
 
@@ -34,7 +33,7 @@ public sealed class ValidationService : IValidationService {
         }
 
         // Validator not found, log it.
-        _logger.ValidatorNotFoundFor<TValue>();
+        _logger.MissingValidatorForType<TValue>();
 
         return ValidationResult.Empty;
     }

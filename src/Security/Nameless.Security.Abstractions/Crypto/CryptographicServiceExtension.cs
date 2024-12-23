@@ -1,4 +1,6 @@
-﻿namespace Nameless.Security.Crypto;
+﻿using System.Text;
+
+namespace Nameless.Security.Crypto;
 
 public static class CryptographicServiceExtension {
     public static string Encrypt(this ICryptographicService self, string value)
@@ -8,11 +10,11 @@ public static class CryptographicServiceExtension {
         => ExecuteAction(self, value, encrypt: false);
 
     private static string ExecuteAction(ICryptographicService cryptographicService, string value, bool encrypt = true) {
-        using var stream = new MemoryStream(Defaults.Encoding.GetBytes(value));
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(value));
         var result = encrypt
             ? cryptographicService.Encrypt(stream)
             : cryptographicService.Decrypt(stream);
 
-        return Defaults.Encoding.GetString(result);
+        return Encoding.UTF8.GetString(result);
     }
 }

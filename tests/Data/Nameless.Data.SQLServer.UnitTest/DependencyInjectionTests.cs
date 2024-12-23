@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<Database>().Build());
-        services.AddSQLServerDatabase(_ => { });
+        services.RegisterSqlServerDatabase(_ => { });
         using var provider = services.BuildServiceProvider();
 
         // act

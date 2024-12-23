@@ -6,5 +6,5 @@ namespace Nameless.Lucene.Internals;
 
 internal class Defaults {
     internal static readonly LuceneVersion Version = LuceneVersion.LUCENE_48;
-    internal static Analyzer Analyzer { get; } = new StandardAnalyzer(matchVersion: Version);
+    internal static Analyzer Analyzer => new StandardAnalyzer(matchVersion: Version);
 }

@@ -59,5 +59,5 @@ public class EntryPoint {
 
         // Add our localization services.
         builder.Services
-               .AddJsonLocalization(builder.Configuration.GetSection("Localization")); }
+               .RegisterJsonLocalization(builder.Configuration.GetSection("Localization")); }
 }

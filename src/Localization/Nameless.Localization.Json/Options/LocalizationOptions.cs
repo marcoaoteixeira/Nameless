@@ -6,7 +6,7 @@ public sealed class LocalizationOptions {
     private string? _resourcesFolderName;
     /// <summary>
     /// Gets or sets the name of the folder where the JSON resources files
-    /// will be located. (This is relative to the application base path)
+    /// will be located.
     /// </summary>
     /// <remarks>
     /// Default value is <see cref="DEFAULT_RESOURCES_FOLDER_NAME"/>

@@ -14,7 +14,6 @@ public static class ExceptionExtension {
     /// <returns><c>true</c> if is fatal, otherwise, <c>false</c>.</returns>
     /// <remarks>
     /// What would be considered fatal exception? All exceptions listed below:
-    /// - <see cref="FatalException"/>
     /// - <see cref="StackOverflowException"/>
     /// - <see cref="OutOfMemoryException"/>
     /// - <see cref="AccessViolationException"/>
@@ -24,8 +23,7 @@ public static class ExceptionExtension {
     /// - <see cref="SEHException"/>
     /// </remarks>
     public static bool IsFatal(this Exception self)
-        => self is FatalException or
-                   StackOverflowException or
+        => self is StackOverflowException or
                    OutOfMemoryException or
                    AccessViolationException or
                    AppDomainUnloadedException or

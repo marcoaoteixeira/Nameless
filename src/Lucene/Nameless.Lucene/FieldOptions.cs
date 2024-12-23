@@ -6,19 +6,19 @@
 [Flags]
 public enum FieldOptions {
     /// <summary>
-    /// No option defined.
+    /// None
     /// </summary>
     None = 0,
     /// <summary>
-    /// Just store
+    /// Store (no tokenize)
     /// </summary>
     Store = 1,
     /// <summary>
-    /// Analise and store.
+    /// Analyze (tokenize)
     /// </summary>
     Analyze = 2,
     /// <summary>
-    /// Sanitize the stored document.
+    /// Sanitize the field
     /// </summary>
     Sanitize = 4
 }

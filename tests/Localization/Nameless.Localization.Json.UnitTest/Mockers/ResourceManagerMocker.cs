@@ -6,7 +6,7 @@ using Nameless.Mockers;
 namespace Nameless.Localization.Json.Mockers;
 public class ResourceManagerMocker : MockerBase<IResourceManager> {
     public ResourceManagerMocker WithResource(Resource resource) {
-        InnerMock
+        Mock
             .Setup(mock => mock.GetResource(It.IsAny<string>(), It.IsAny<string>(), resource.Culture))
             .Returns(resource);
 

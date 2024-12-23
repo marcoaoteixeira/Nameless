@@ -7,84 +7,32 @@ namespace Nameless.Helpers;
 /// </summary>
 public static class ReflectionHelper {
     /// <summary>
-    /// Searches, recursively, and retrieves the value of a private read-only field.
+    /// Retrieves all methods from a type.
     /// </summary>
-    /// <param name="instance">The <see cref="object"/> instance where the field belongs.</param>
-    /// <param name="name">The name of the field.</param>
-    /// <returns>The value of the field.</returns>
-    public static object? GetPrivateFieldValue(object instance, string name) {
-        Prevent.Argument.Null(instance);
-        Prevent.Argument.NullOrWhiteSpace(name);
-
-        var field = GetPrivateField(instance.GetType(), name);
-
-        return field is not null
-            ? field.GetValue(instance)
-            : throw new FieldAccessException($"Field \"{name}\" not found.");
-    }
-
-    /// <summary>
-    /// Searches, recursively, and sets the value of a private read-only field.
-    /// </summary>
-    /// <param name="instance">The <see cref="object"/> instance where the field belongs.</param>
-    /// <param name="name">The name of the field.</param>
-    /// <param name="value">The new value.</param>
-    public static void SetPrivateFieldValue(object instance, string name, object value) {
-        Prevent.Argument.Null(instance);
-        Prevent.Argument.NullOrWhiteSpace(name);
-
-        var field = GetPrivateField(instance.GetType(), name)
-                 ?? throw new FieldAccessException($"Field \"{name}\" not found.");
-
-        field.SetValue(instance, value);
-    }
-
-    /// <summary>
-    /// Retrieves all methods by a specific signature.
-    /// </summary>
-    /// <param name="type">The type that will be looked up.</param>
-    /// <param name="returnType">The method return type.</param>
-    /// <param name="methodAttributeType">The method attribute type, if exists.</param>
-    /// <param name="matchParameterInheritance">If it matches parameter inheritance.</param>
+    /// <param name="type">The type to look upon.</param>
+    /// <param name="returnType">The expected method return type. If <c>null</c> then matches any <c>void</c>.</param>
+    /// <param name="matchParameterInheritance">If the method parameters matches the types in <paramref name="parameterTypes"/>.</param>
     /// <param name="parameterTypes">The method parameters type.</param>
-    /// <returns>An <see cref="IEnumerable{MethodInfo}"/> with all found methods.</returns>
-    public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, Type? methodAttributeType = null, bool matchParameterInheritance = true, params Type[] parameterTypes) {
-        Prevent.Argument.Null(type);
+    /// <returns>An <see cref="IEnumerable{T}"/> object, where T is <see cref="MethodInfo"/>.</returns>
+    public static IEnumerable<MethodInfo> GetMethodsBySignature(Type type, Type? returnType = null, bool matchParameterInheritance = true, params Type[] parameterTypes)
+        => Prevent.Argument
+                  .Null(type)
+                  .GetRuntimeMethods()
+                  .Where(method => {
+                      if (method.ReturnType != (returnType ?? typeof(void))) {
+                          return false;
+                      }
 
-        return type
-               .GetRuntimeMethods()
-               .Where(method => {
-                   if (method.ReturnType != (returnType ?? typeof(void))) {
-                       return false;
-                   }
+                      var parameters = method.GetParameters();
+                      var filter = CreateParameterFilter(matchParameterInheritance, parameters);
 
-                   if (methodAttributeType is not null && method.GetCustomAttributes(methodAttributeType, inherit: true)
-                                                                .Length == 0) {
-                       return false;
-                   }
+                      return parameterTypes.Select(filter).All(result => result);
+                  });
 
-                   var parameters = method.GetParameters();
-
-                   return parameterTypes
-                          .Select((parameterType, index) => {
-                              var match = parameters[index].ParameterType == parameterType;
-                              var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
-                              return match || (assignable && matchParameterInheritance);
-                          })
-                          .All(result => result);
-               });
-    }
-
-    private static FieldInfo? GetPrivateField(Type type, string name) {
-        while (true) {
-            var result = type.GetField(name,
-                                       bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (result is not null || type.BaseType is null) {
-                return result;
-            }
-
-            type = type.BaseType;
-        }
-    }
+    private static Func<Type, int, bool> CreateParameterFilter(bool matchParameterInheritance, ParameterInfo[] parameters)
+        => (parameterType, index) => {
+            var match = parameters[index].ParameterType == parameterType;
+            var assignable = parameterType.IsAssignableFrom(parameters[index].ParameterType);
+            return match || (assignable && matchParameterInheritance);
+        };
 }

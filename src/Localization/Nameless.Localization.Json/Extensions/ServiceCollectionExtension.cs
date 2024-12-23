@@ -29,7 +29,7 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection AddJsonLocalization(this IServiceCollection self, Action<LocalizationOptions> configure)
+    public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<LocalizationOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
@@ -50,22 +50,23 @@ public static class ServiceCollectionExtension {
     /// </list>
     /// </remarks>
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <param name="localizationOptionsConfigurationSection">The <see cref="LocalizationOptions"/> configuration section.</param>
+    /// <param name="localizationConfigSection">The <see cref="LocalizationOptions"/> configuration section.</param>
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection AddJsonLocalization(this IServiceCollection self, IConfigurationSection localizationOptionsConfigurationSection)
+    public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, IConfigurationSection localizationConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<LocalizationOptions>(localizationOptionsConfigurationSection)
+                  .Configure<LocalizationOptions>(localizationConfigSection)
                   .RegisterLocalizationServices();
 
     private static IServiceCollection RegisterLocalizationServices(this IServiceCollection self)
         => self.AddSingleton<ICultureProvider, CultureProvider>()
                .AddSingleton<IResourceManager, ResourceManager>()
+               .AddSingleton<IPluralizationRuleProvider, PluralizationRuleProvider>()
                .AddSingleton<IStringLocalizerFactory, StringLocalizerFactory>()
                .AddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
 }

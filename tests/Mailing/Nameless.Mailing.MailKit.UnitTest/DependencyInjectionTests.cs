@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<EmailDispatcher>().Build());
-        services.AddMailkitMailing(_ => { });
+        services.RegisterMailKitMailing(_ => { });
 
         using var provider = services.BuildServiceProvider();
 

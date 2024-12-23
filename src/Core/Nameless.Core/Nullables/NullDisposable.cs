@@ -1,10 +1,22 @@
 namespace Nameless;
 
 /// <summary>
-/// Singleton Pattern implementation for <see cref="IDisposable" />.
-/// See <a href="https://en.wikipedia.org/wiki/Singleton_pattern">Singleton Pattern on Wikipedia</a>
+/// Singleton + Null Object Pattern implementation for <see cref="IDisposable" />.
+/// <list type="bullet">
+///     <item>
+///         <term>Singleton Pattern</term>
+///         <description>
+///             <a href="https://en.wikipedia.org/wiki/Singleton_pattern">See here</a>
+///         </description>
+///     </item>
+///     <item>
+///         <term>Null-Object Pattern</term>
+///         <description>
+///             <a href="https://en.wikipedia.org/wiki/Null_object_pattern">See here</a>
+///         </description>
+///     </item>
+/// </list>
 /// </summary>
-[Singleton]
 public sealed class NullDisposable : IDisposable {
     /// <summary>
     /// Gets the unique instance of <see cref="NullDisposable" />.

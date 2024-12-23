@@ -13,32 +13,33 @@ public sealed class EmailDispatcher : IEmailDispatcher {
         _logger = Prevent.Argument.Null(logger);
     }
 
-    public async Task<string> DispatchAsync(Message message, CancellationToken cancellationToken) {
+    public async Task DispatchAsync(Message message, CancellationToken cancellationToken) {
         Prevent.Argument.Null(message);
 
-        if (message.From.IsNullOrEmpty()) {
-            throw new InvalidOperationException("Missing sender address.");
-        }
-
-        if (message.To.IsNullOrEmpty()) {
-            throw new InvalidOperationException("Missing recipient address.");
-        }
-
         var mail = CreateMimeMessage(message);
+
+        if (mail.From.Count == 0) {
+            throw new InvalidOperationException("Sender address not found.");
+        }
+
+        if (mail.To.Count == 0) {
+            throw new InvalidOperationException("Recipient address not found.");
+        }
 
         using var client = await _smtpClientFactory.CreateAsync(cancellationToken)
                                                    .ConfigureAwait(continueOnCapturedContext: false);
 
-        string result;
         try {
-            result = await client.SendAsync(mail, cancellationToken: cancellationToken)
-                                 .ConfigureAwait(continueOnCapturedContext: false);
+            var result = await client.SendAsync(mail, cancellationToken: cancellationToken)
+                                     .ConfigureAwait(continueOnCapturedContext: false);
+
+            _logger.EmailSentResult(result);
         }
         catch (Exception ex) {
             _logger.SendMessageError(ex);
-            result = ex.Message;
+
+            throw;
         }
-        return result;
     }
 
     private static MimeMessage CreateMimeMessage(Message message) {
@@ -46,8 +47,8 @@ public sealed class EmailDispatcher : IEmailDispatcher {
 
         AddressHelper.SetRecipients(mail.From, message.From);
         AddressHelper.SetRecipients(mail.To, message.To);
-        AddressHelper.SetRecipients(mail.Cc, AddressHelper.SplitAddresses(message.Parameters.GetCarbonCopy()));
-        AddressHelper.SetRecipients(mail.Bcc, AddressHelper.SplitAddresses(message.Parameters.GetBlindCarbonCopy()));
+        AddressHelper.SetRecipients(mail.Cc, message.Cc);
+        AddressHelper.SetRecipients(mail.Bcc, message.Bcc);
 
         return mail;
     }

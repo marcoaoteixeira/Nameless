@@ -7,53 +7,68 @@ namespace Nameless.Mailing;
 /// </summary>
 public sealed record Message {
     /// <summary>
-    /// Gets or sets the message subject.
+    /// Gets the message subject.
     /// </summary>
     public string Subject { get; }
+    
     /// <summary>
-    /// Gets or sets the message content.
+    /// Gets an array of address to be used as senders.
+    /// </summary>
+    public string[] From { get; }
+
+    /// <summary>
+    /// Gets an array of address to be used as recipients.
+    /// </summary>
+    public string[] To { get; }
+
+    /// <summary>
+    /// Gets an array of address to be used as carbon copy recipients.
+    /// </summary>
+    public string[] Cc { get; }
+
+    /// <summary>
+    /// Gets an array of address to be used as blank carbon copy recipients.
+    /// </summary>
+    public string[] Bcc { get; }
+
+    /// <summary>
+    /// Gets the message content.
     /// </summary>
     public string Content { get; }
+
     /// <summary>
-    /// Gets or sets the message language.
+    /// Gets the message language.
     /// </summary>
     public string? Language { get; }
 
     /// <summary>
-    /// Gets or sets the message encoding.
+    /// Gets the message encoding.
     /// </summary>
     public Encoding Encoding { get; }
+    
     /// <summary>
-    /// Gets or sets an array of address from the
-    /// person (or people) who sends the message
+    /// Whether the message body should be HTML.
     /// </summary>
-    public string[] From { get; }
+    public bool IsBodyHtml { get; }
+
     /// <summary>
-    /// Gets or sets an array of address to the
-    /// person (or people) who receives the message
-    /// </summary>
-    public string[] To { get; }
-    /// <summary>
-    /// A dictionary of properties that can be used
-    /// by the messenger.
-    /// </summary>
-    public MessageArgs Parameters { get; }
-    /// <summary>
-    /// Gets or sets the message priority.
+    /// Gets the message priority.
     /// </summary>
     public Priority Priority { get; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="Message"/>.
     /// </summary>
-    /// <param name="subject">The message subject.</param>
-    /// <param name="content">The message body content.</param>
-    /// <param name="from">The message FROM list.</param>
-    /// <param name="to">The message TO list.</param>
-    /// <param name="language">The message language.</param>
+    /// <param name="subject">The subject.</param>
+    /// <param name="from">The senders address.</param>
+    /// <param name="to">The recipients address.</param>
+    /// <param name="content">The content.</param>
+    /// <param name="cc">The carbon copy recipients address.</param>
+    /// <param name="bcc">The blank carbon copy recipients address.</param>
     /// <param name="encoding">The encoding.</param>
-    /// <param name="parameters">The message extra parameters.</param>
-    /// <param name="priority">The message priority.</param>
+    /// <param name="language">The language.</param>
+    /// <param name="isBodyHtml">Whether the body is HTML.</param>
+    /// <param name="priority">The priority.</param>
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="subject"/> or
     /// <paramref name="content"/> or
@@ -68,14 +83,25 @@ public sealed record Message {
     /// if <paramref name="from"/> or
     /// <paramref name="to"/> is empty array.
     /// </exception>
-    public Message(string subject, string content, string[] from, string[] to, string? language = null, Encoding? encoding = null, MessageArgs? parameters = null, Priority priority = Priority.Normal) {
+    public Message(string subject,
+                   string[] from,
+                   string[] to,
+                   string content,
+                   string[]? cc = null,
+                   string[]? bcc = null,
+                   Encoding? encoding = null,
+                   string? language = null,
+                   bool isBodyHtml = false,
+                   Priority priority = Priority.Normal) {
         Subject = Prevent.Argument.NullOrWhiteSpace(subject);
         Content = Prevent.Argument.NullOrWhiteSpace(content);
         Language = language;
-        Encoding = encoding ?? Defaults.Encoding;
+        Encoding = encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         From = Prevent.Argument.NullOrEmpty(from);
         To = Prevent.Argument.NullOrEmpty(to);
-        Parameters = parameters ?? [];
+        Cc = cc ?? [];
+        Bcc = bcc ?? [];
+        IsBodyHtml = isBodyHtml;
         Priority = priority;
     }
 }

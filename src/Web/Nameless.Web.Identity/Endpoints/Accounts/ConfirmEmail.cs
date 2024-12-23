@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -50,7 +51,7 @@ public sealed class ConfirmEmail : MinimalEndpointBase {
                                    title: Constants.Messages.ConfirmEmail.UNABLE_LOAD_USER_TITLE);
         }
 
-        var currentCode = Defaults.Encoding.GetString(WebEncoders.Base64UrlDecode(input.Code));
+        var currentCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(input.Code));
         var confirmEmailResult = await _userManager.ConfirmEmailAsync(currentUser, currentCode);
 
         return confirmEmailResult.Succeeded

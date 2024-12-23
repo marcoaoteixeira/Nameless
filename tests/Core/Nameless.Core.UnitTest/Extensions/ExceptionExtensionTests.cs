@@ -7,7 +7,6 @@ public class ExceptionExtensionTests {
     // This test should also test for ThreadAbortException, but
     // since is not possible to instantiate a new ThreadAbortException
     // will skip it.
-    [TestCase(typeof(FatalException))]
     [TestCase(typeof(StackOverflowException))]
     [TestCase(typeof(OutOfMemoryException))]
     [TestCase(typeof(AccessViolationException))]

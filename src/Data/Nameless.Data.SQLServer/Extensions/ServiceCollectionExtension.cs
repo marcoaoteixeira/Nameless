@@ -5,16 +5,16 @@ using Nameless.Data.SQLServer.Options;
 namespace Nameless.Data.SQLServer;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection AddSQLServerDatabase(this IServiceCollection self, Action<SQLServerOptions> configure)
+    public static IServiceCollection RegisterSqlServerDatabase(this IServiceCollection self, Action<SQLServerOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterDatabaseServices();
 
-    public static IServiceCollection AddSQLServerDatabase(this IServiceCollection self, IConfigurationSection sqlServerOptionsConfigurationSection)
+    public static IServiceCollection RegisterSqlServerDatabase(this IServiceCollection self, IConfigurationSection sqlServerConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<SQLServerOptions>(sqlServerOptionsConfigurationSection)
+                  .Configure<SQLServerOptions>(sqlServerConfigSection)
                   .RegisterDatabaseServices();
 
     private static IServiceCollection RegisterDatabaseServices(this IServiceCollection self)

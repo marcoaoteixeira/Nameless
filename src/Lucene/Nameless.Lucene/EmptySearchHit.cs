@@ -1,17 +1,24 @@
 ﻿namespace Nameless.Lucene;
 
 public sealed class EmptySearchHit : ISearchHit {
-    public string DocumentID => string.Empty;
+    public string IndexDocumentID
+        => string.Empty;
 
-    public float Score => 0F;
+    public float Score
+        => 0F;
 
-    public bool GetBoolean(string fieldName) => false;
+    public bool? GetBoolean(string fieldName)
+        => null;
 
-    public DateTimeOffset GetDateTimeOffset(string fieldName) => DateTimeOffset.MinValue;
+    public DateTimeOffset? GetDateTimeOffset(string fieldName)
+        => null;
 
-    public double GetDouble(string fieldName) => double.NaN;
+    public double? GetDouble(string fieldName)
+        => null;
 
-    public int GetInt(string fieldName) => -1;
+    public int? GetInt(string fieldName)
+        => null;
 
-    public string GetString(string fieldName) => string.Empty;
+    public string? GetString(string fieldName)
+        => null;
 }

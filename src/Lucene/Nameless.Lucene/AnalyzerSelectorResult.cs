@@ -3,19 +3,27 @@
 namespace Nameless.Lucene;
 
 /// <summary>
-/// Represents a Lucene analyzer selector result.
+/// Represents an analyzer selector result.
 /// </summary>
 public sealed record AnalyzerSelectorResult {
     /// <summary>
-    /// Gets or sets the priority.
+    /// Gets the priority.
     /// </summary>
     public int Priority { get; }
 
     /// <summary>
-    /// Gets or sets the analyzer instance.
+    /// Gets the analyzer.
     /// </summary>
     public Analyzer Analyzer { get; }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="AnalyzerSelectorResult"/>
+    /// </summary>
+    /// <param name="analyzer">The analyzer</param>
+    /// <param name="priority">The priority</param>
+    /// <exception cref="ArgumentNullException">
+    /// if <paramref name="analyzer"/> is <c>null</c>
+    /// </exception>
     public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
         Analyzer = Prevent.Argument.Null(analyzer);
         Priority = priority;

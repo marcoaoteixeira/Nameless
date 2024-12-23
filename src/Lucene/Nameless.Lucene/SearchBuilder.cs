@@ -14,7 +14,7 @@ namespace Nameless.Lucene;
 public sealed class SearchBuilder : ISearchBuilder {
     private const double EPSILON = 0.001;
     private const int MAX_RESULTS = short.MaxValue;
-
+    
     private readonly Analyzer _analyzer;
     private readonly List<BooleanClause> _clauses = [];
     private readonly List<BooleanClause> _filters = [];
@@ -63,9 +63,11 @@ public sealed class SearchBuilder : ISearchBuilder {
 
         foreach (var defaultField in defaultFields) {
             CreatePendingClause();
-            _query = new QueryParser(matchVersion: Internals.Defaults.Version,
-                                     f: defaultField,
-                                     a: _analyzer).Parse(query);
+            var parser = new QueryParser(matchVersion: Internals.Defaults.Version,
+                                         f: defaultField,
+                                         a: _analyzer);
+
+            _query = parser.Parse(query);
         }
 
         return this;
@@ -115,6 +117,7 @@ public sealed class SearchBuilder : ISearchBuilder {
         foreach (var term in terms) {
             phraseQuery.Add(term);
         }
+        
         _query = phraseQuery;
 
         return this;
@@ -334,7 +337,7 @@ public sealed class SearchBuilder : ISearchBuilder {
         var results = collector.GetTopDocs()
                                .ScoreDocs
                                .Skip(_skip)
-                               .Select(scoreDoc => new SearchHit(document: _indexSearcher.Doc(scoreDoc.Doc),
+                               .Select(scoreDoc => new SearchHit(document: new DocumentWrapper(_indexSearcher.Doc(scoreDoc.Doc)),
                                                                  score: scoreDoc.Score))
                                .ToList();
 
@@ -344,14 +347,14 @@ public sealed class SearchBuilder : ISearchBuilder {
     /// <inheritdoc />
     public ISearchHit GetDocument(Guid documentID) {
         var query = new TermQuery(
-            new Term(nameof(ISearchHit.DocumentID),
-                     documentID.ToString())
+            new Term(fld: nameof(ISearchHit.IndexDocumentID),
+                     text: documentID.ToString())
         );
 
         var hits = _indexSearcher.Search(query: query, n: 1);
 
         return hits.ScoreDocs.Length > 0
-            ? new SearchHit(document: _indexSearcher.Doc(hits.ScoreDocs[0].Doc),
+            ? new SearchHit(document: new DocumentWrapper(_indexSearcher.Doc(hits.ScoreDocs[0].Doc)),
                             score: hits.ScoreDocs[0].Score)
             : new EmptySearchHit();
     }
@@ -362,10 +365,10 @@ public sealed class SearchBuilder : ISearchBuilder {
         var filter = new QueryWrapperFilter(query);
         var context = (AtomicReaderContext)_indexSearcher.IndexReader.Context;
         var bits = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-        var documentSetIDIterator = new OpenBitSetDISI(disi: bits.GetIterator(),
-                                                       maxSize: _indexSearcher.IndexReader.MaxDoc);
+        var documentOpenBitSetDISI = new OpenBitSetDISI(disi: bits.GetIterator(),
+                                                        maxSize: _indexSearcher.IndexReader.MaxDoc);
 
-        return new SearchBit(documentSetIDIterator);
+        return new SearchBit(documentOpenBitSetDISI);
     }
 
     /// <inheritdoc />
@@ -413,7 +416,7 @@ public sealed class SearchBuilder : ISearchBuilder {
 
         // comparing floating-point numbers using an epsilon value
         if (Math.Abs(_boost - 0) > EPSILON) { _query.Boost = _boost; }
-
+        
         if (!_notAnalyzed) {
             if (_query is TermQuery termQuery) {
                 var term = termQuery.Term;
@@ -460,7 +463,7 @@ public sealed class SearchBuilder : ISearchBuilder {
 
         var booleanQuery = new BooleanQuery();
         Query resultQuery = booleanQuery;
-
+        
         if (_clauses.Count == 0) {
             if (_filters.Count > 0) {
                 // only filters applied => transform to a boolean query

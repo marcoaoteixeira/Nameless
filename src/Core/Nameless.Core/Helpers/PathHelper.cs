@@ -49,29 +49,26 @@ public static class PathHelper {
     }
 
     /// <summary>
-    /// Retrieves the physical path to a file.
-    /// It also executes the <see cref="Normalize(string)"/> method.
+    /// Gets the full path based on the <paramref name="root"/> and <paramref name="relativePath"/>.
     /// </summary>
     /// <param name="root">The root path.</param>
-    /// <param name="relativePath">
-    /// The relative path to the <paramref name="root" />.
-    /// </param>
-    /// <returns>The physical path to the content.</returns>
-    public static string GetPhysicalPath(string root, string relativePath) {
+    /// <param name="relativePath"> The relative path to the <paramref name="root" />. </param>
+    /// <returns>
+    /// Returns the full path if it resolves to a path inside the root; otherwise <c>null</c>.
+    /// </returns>
+    public static string? GetFullPath(string root, string relativePath) {
         Prevent.Argument.NullOrWhiteSpace(root);
         Prevent.Argument.NullOrWhiteSpace(relativePath);
 
         root = Normalize(root);
         relativePath = Normalize(relativePath);
+
         var result = Path.Join(root, relativePath);
         var fullPath = Path.GetFullPath(result);
 
         // Verify that the resulting path is inside the root file system path.
-        var isInsideFileSystem = fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase);
-        if (!isInsideFileSystem) {
-            throw new PathResolutionException($"The path '{result}' resolves to a physical path outside the root.");
-        }
-
-        return result;
+        return fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase)
+            ? fullPath
+            : null;
     }
 }

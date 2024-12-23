@@ -3,13 +3,15 @@
 namespace Nameless.Lucene;
 
 /// <summary>
-/// Defines methods to a Lucene analyzer provider.
+/// Provides methods to retrieve an <see cref="Analyzer"/>
 /// </summary>
 public interface IAnalyzerProvider {
     /// <summary>
-    /// Retrieves the analyzer.
+    /// Retrieves the analyzer given an index
     /// </summary>
-    /// <param name="indexName">The index name.</param>
-    /// <returns>An instance of <see cref="Analyzer"/>.</returns>
+    /// <param name="indexName">The index name</param>
+    /// <returns>
+    /// An instance of <see cref="Analyzer"/> associated to the index
+    /// </returns>
     Analyzer GetAnalyzer(string indexName);
 }
