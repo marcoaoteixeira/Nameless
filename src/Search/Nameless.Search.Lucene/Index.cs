@@ -250,7 +250,9 @@ public sealed class Index : IIndex, IDisposable {
         } catch { /* ignore */ }
     }
 
+#pragma warning disable CA1859
     private IndexReader GetIndexReader() {
+#pragma warning restore CA1859
         if (_indexReader is DirectoryReader currentDirectoryReader) {
             var newIndexReader = DirectoryReader.OpenIfChanged(currentDirectoryReader);
             if (newIndexReader is not null) {

@@ -22,13 +22,13 @@ public sealed class Document : IDocument {
 
         _fields[nameof(ISearchHit.DocumentID)] = new Field(name: nameof(ISearchHit.DocumentID),
                                                            value: ID,
-                                                           type: IndexableType.Text,
+                                                           type: IndexableType.String,
                                                            options: FieldOptions.Store);
     }
 
     /// <inheritdoc />
     public IDocument Set(string field, string value, FieldOptions options = FieldOptions.Store)
-        => Set(field, value, options, IndexableType.Text);
+        => Set(field, value, options, IndexableType.String);
 
     /// <inheritdoc />
     public IDocument Set(string field, int value, FieldOptions options = FieldOptions.Store)
@@ -36,7 +36,7 @@ public sealed class Document : IDocument {
 
     /// <inheritdoc />
     public IDocument Set(string field, DateTimeOffset value, FieldOptions options = FieldOptions.Store)
-        => Set(field, value, options, IndexableType.DateTime);
+        => Set(field, value, options, IndexableType.DateTimeOffset);
 
     /// <inheritdoc />
     public IDocument Set(string field, bool value, FieldOptions options = FieldOptions.Store)
@@ -44,7 +44,7 @@ public sealed class Document : IDocument {
 
     /// <inheritdoc />
     public IDocument Set(string field, double value, FieldOptions options = FieldOptions.Store)
-        => Set(field, value, options, IndexableType.Number);
+        => Set(field, value, options, IndexableType.Double);
 
     /// <inheritdoc />
     public IEnumerator<Field> GetEnumerator()

@@ -10,15 +10,30 @@ public sealed class EmptySearchHit : ISearchHit {
     public bool? GetBoolean(string fieldName)
         => null;
 
-    public DateTimeOffset? GetDateTimeOffset(string fieldName)
+    public string? GetString(string fieldName)
+        => null;
+
+    public byte? GetByte(string fieldName)
+        => null;
+
+    public short? GetShort(string fieldName)
+        => null;
+
+    public int? GetInteger(string fieldName)
+        => null;
+    
+    public long? GetLong(string fieldName)
+        => null;
+
+    public float? GetFloat(string fieldName)
         => null;
 
     public double? GetDouble(string fieldName)
         => null;
 
-    public int? GetInt(string fieldName)
+    public DateTimeOffset? GetDateTimeOffset(string fieldName)
         => null;
 
-    public string? GetString(string fieldName)
+    public DateTime? GetDateTime(string fieldName)
         => null;
 }
