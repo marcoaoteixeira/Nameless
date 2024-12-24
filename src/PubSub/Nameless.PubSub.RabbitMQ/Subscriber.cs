@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Nameless.PubSub.RabbitMQ.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 

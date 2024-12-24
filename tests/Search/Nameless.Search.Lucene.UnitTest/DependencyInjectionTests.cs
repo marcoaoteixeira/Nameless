@@ -28,7 +28,7 @@ public class DependencyInjectionTests {
         var options = new OptionsMocker<LuceneOptions>().Build();
         services.AddSingleton(options);
 
-        services.AddLuceneSearch(_ => { });
+        services.RegisterLuceneSearch(_ => { });
 
         using var provider = services.BuildServiceProvider();
 
