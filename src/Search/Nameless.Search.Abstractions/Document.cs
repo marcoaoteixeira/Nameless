@@ -27,24 +27,44 @@ public sealed class Document : IDocument {
     }
 
     /// <inheritdoc />
+    public IDocument Set(string field, bool value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.Boolean);
+
+    /// <inheritdoc />
     public IDocument Set(string field, string value, FieldOptions options = FieldOptions.Store)
         => Set(field, value, options, IndexableType.String);
+
+    /// <inheritdoc />
+    public IDocument Set(string field, byte value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.Byte);
+
+    /// <inheritdoc />
+    public IDocument Set(string field, short value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.Short);
 
     /// <inheritdoc />
     public IDocument Set(string field, int value, FieldOptions options = FieldOptions.Store)
         => Set(field, value, options, IndexableType.Integer);
 
     /// <inheritdoc />
-    public IDocument Set(string field, DateTimeOffset value, FieldOptions options = FieldOptions.Store)
-        => Set(field, value, options, IndexableType.DateTimeOffset);
+    public IDocument Set(string field, long value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.Long);
 
     /// <inheritdoc />
-    public IDocument Set(string field, bool value, FieldOptions options = FieldOptions.Store)
-        => Set(field, value, options, IndexableType.Boolean);
+    public IDocument Set(string field, float value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.Float);
 
     /// <inheritdoc />
     public IDocument Set(string field, double value, FieldOptions options = FieldOptions.Store)
         => Set(field, value, options, IndexableType.Double);
+
+    /// <inheritdoc />
+    public IDocument Set(string field, DateTimeOffset value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.DateTimeOffset);
+
+    /// <inheritdoc />
+    public IDocument Set(string field, DateTime value, FieldOptions options = FieldOptions.Store)
+        => Set(field, value, options, IndexableType.DateTime);
 
     /// <inheritdoc />
     public IEnumerator<Field> GetEnumerator()
