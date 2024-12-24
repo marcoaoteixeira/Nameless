@@ -15,7 +15,7 @@ public class DocumentTests {
             Assert.That(field, Is.Not.Null);
             Assert.That(field.Name, Is.EqualTo(nameof(ISearchHit.DocumentID)));
             Assert.That(field.Value, Is.EqualTo(id));
-            Assert.That(field.Type, Is.EqualTo(IndexableType.Text));
+            Assert.That(field.Type, Is.EqualTo(IndexableType.String));
             Assert.That(field.Options, Is.EqualTo(FieldOptions.Store));
         });
     }
@@ -44,7 +44,7 @@ public class DocumentTests {
                 Assert.That(field, Is.Not.Null);
                 Assert.That(field.Name, Is.EqualTo(fieldName));
                 Assert.That(field.Value, Is.EqualTo(value));
-                Assert.That(field.Type, Is.EqualTo(IndexableType.DateTime));
+                Assert.That(field.Type, Is.EqualTo(IndexableType.DateTimeOffset));
                 Assert.That(field.Options, Is.EqualTo(option));
             });
         }
@@ -68,7 +68,7 @@ public class DocumentTests {
                 Assert.That(field, Is.Not.Null);
                 Assert.That(field.Name, Is.EqualTo(fieldName));
                 Assert.That(field.Value, Is.EqualTo(value));
-                Assert.That(field.Type, Is.EqualTo(IndexableType.Text));
+                Assert.That(field.Type, Is.EqualTo(IndexableType.String));
                 Assert.That(field.Options, Is.EqualTo(option));
             });
         }
@@ -116,7 +116,7 @@ public class DocumentTests {
                 Assert.That(field, Is.Not.Null);
                 Assert.That(field.Name, Is.EqualTo(fieldName));
                 Assert.That(field.Value, Is.EqualTo(value));
-                Assert.That(field.Type, Is.EqualTo(IndexableType.Number));
+                Assert.That(field.Type, Is.EqualTo(IndexableType.Double));
                 Assert.That(field.Options, Is.EqualTo(option));
             });
         }

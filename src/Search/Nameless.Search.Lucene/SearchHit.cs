@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Documents;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using LuceneDocument = Lucene.Net.Documents.Document;
 
 namespace Nameless.Search.Lucene;
@@ -29,46 +28,58 @@ public sealed class SearchHit : ISearchHit {
     public float Score { get; }
 
     /// <inheritdoc />
-    public int? GetInt(string name) {
-        var field = GetField(name);
+    public bool? GetBoolean(string name) {
+        var value = GetString(name);
 
-        return field is not null &&
-               int.TryParse(field.GetStringValue(), out var result)
-            ? result
+        return value is not null
+            ? string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase)
             : null;
     }
-
-    /// <inheritdoc />
-    public double? GetDouble(string name) {
-        var field = GetField(name);
-
-        return field is not null &&
-               double.TryParse(field.GetStringValue(), out var result)
-            ? result
-            : null;
-    }
-
-    /// <inheritdoc />
-    public bool? GetBoolean(string name)
-        => GetInt(name) is > 0;
 
     /// <inheritdoc />
     public string? GetString(string name)
         => GetField(name)?.GetStringValue();
 
     /// <inheritdoc />
+    public byte? GetByte(string name)
+        => GetField(name)?.GetByteValue();
+
+    /// <inheritdoc />
+    public short? GetShort(string name)
+        => GetField(name)?.GetInt16Value();
+
+    /// <inheritdoc />
+    public int? GetInteger(string name)
+        => GetField(name)?.GetInt32Value();
+
+    /// <inheritdoc />
+    public long? GetLong(string name)
+        => GetField(name)?.GetInt64Value();
+
+    /// <inheritdoc />
+    public float? GetFloat(string name)
+        => GetField(name)?.GetSingleValue();
+
+    /// <inheritdoc />
+    public double? GetDouble(string name)
+        => GetField(name)?.GetDoubleValue();
+
+    /// <inheritdoc />
     public DateTimeOffset? GetDateTimeOffset(string name) {
-        var field = GetField(name);
+        var value = GetLong(name);
 
-        DateTimeOffset? result = null;
+        return value.HasValue
+            ? DateTimeOffset.FromUnixTimeMilliseconds(value.Value)
+            : null;
+    }
 
-        try {
-            result = field is not null
-                ? DateTools.StringToDate(field.GetStringValue())
-                : null;
-        } catch { /* swallow */ }
-
-        return result;
+    /// <inheritdoc />
+    public DateTime? GetDateTime(string name) {
+        var value = GetLong(name);
+        
+        return value.HasValue
+            ? DateTime.FromBinary(value.Value)
+            : null;
     }
 
     private string GetDocumentID() {

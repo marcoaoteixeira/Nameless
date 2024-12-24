@@ -18,7 +18,7 @@ public sealed record Field {
     /// Gets the indexable type.
     /// </summary>
     /// <remarks>
-    /// Default value is <see cref="IndexableType.Text"/>
+    /// Default value is <see cref="IndexableType.String"/>
     /// </remarks>
     public IndexableType Type { get; }
 
@@ -45,9 +45,31 @@ public sealed record Field {
     /// if <paramref name="name"/> is empty or white spaces.
     /// </exception>
     public Field(string name, object value, IndexableType type, FieldOptions options) {
+        if (!IsValueAssignable(value, type)) {
+            throw new InvalidOperationException($"{nameof(IndexableType)} '{type}' does not match underlying type of parameter {nameof(value)}");
+        }
+
         Name = Prevent.Argument.NullOrWhiteSpace(name);
         Value = Prevent.Argument.Null(value);
         Type = type;
         Options = options;
+    }
+
+    private static bool IsValueAssignable(object value, IndexableType type) {
+        var valueType = value.GetType();
+
+        return type switch {
+            IndexableType.Boolean => valueType == typeof(bool),
+            IndexableType.String => valueType == typeof(string),
+            IndexableType.Byte => valueType == typeof(byte),
+            IndexableType.Short => valueType == typeof(short),
+            IndexableType.Integer => valueType == typeof(int),
+            IndexableType.Long => valueType == typeof(long),
+            IndexableType.Float => valueType == typeof(float),
+            IndexableType.Double => valueType == typeof(double),
+            IndexableType.DateTimeOffset => valueType == typeof(DateTimeOffset),
+            IndexableType.DateTime => valueType == typeof(DateTime),
+            _ => false
+        };
     }
 }
