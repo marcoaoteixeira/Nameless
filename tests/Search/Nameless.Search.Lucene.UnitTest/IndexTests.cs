@@ -21,7 +21,7 @@ public class IndexTests {
         services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(IndexDirectoryPath)
                                                             .Build());
 
-        services.AddLuceneSearch(_ => { });
+        services.RegisterLuceneSearch(_ => { });
 
         return services.BuildServiceProvider();
     }

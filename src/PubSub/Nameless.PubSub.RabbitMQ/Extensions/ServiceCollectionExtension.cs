@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.PubSub.RabbitMQ.Contracts;
 using Nameless.PubSub.RabbitMQ.Options;
 
 namespace Nameless.PubSub.RabbitMQ;

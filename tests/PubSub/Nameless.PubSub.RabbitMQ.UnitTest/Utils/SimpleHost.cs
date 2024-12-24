@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nameless.Mockers;
-using Nameless.PubSub.RabbitMQ.Contracts;
 using Nameless.PubSub.RabbitMQ.Options;
 
 namespace Nameless.PubSub.RabbitMQ.Utils;

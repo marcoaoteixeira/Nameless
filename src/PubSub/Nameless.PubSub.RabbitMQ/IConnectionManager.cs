@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace Nameless.PubSub.RabbitMQ.Contracts;
+namespace Nameless.PubSub.RabbitMQ;
 
 /// <summary>
 /// Provides means to manage RabbitMQ connections.

@@ -261,12 +261,13 @@ public sealed class Index : IIndex, IDisposable {
             }
         }
 
-        return _indexReader ??= DirectoryReader.Open(_fsDirectory);
+        try { return _indexReader ??= DirectoryReader.Open(_fsDirectory); }
+        catch (IndexNotFoundException) { return new EmptyIndexReader(); }
     }
 
     private void BlockAccessAfterDispose() {
 #if NET8_0_OR_GREATER
-        ObjectDisposedException.ThrowIf(_disposed, typeof(Index));
+        ObjectDisposedException.ThrowIf(_disposed, this);
 #else
         if (_disposed) {
             throw new ObjectDisposedException(nameof(Index));

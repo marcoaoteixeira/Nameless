@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Options;
-using Nameless.PubSub.RabbitMQ.Contracts;
 using Nameless.PubSub.RabbitMQ.Options;
 using RabbitMQ.Client;
 
