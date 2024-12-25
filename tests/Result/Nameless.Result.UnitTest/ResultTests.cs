@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Nameless.Result;
+﻿namespace Nameless.Result;
 
 public class ResultTests {
     [Test]
-    public void WhenResultHasValue_ThenSucceededMustBeTrue_AndValueShouldBeExpected() {
+    public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange
         const int expected = 123;
         Result<int> result;
@@ -14,13 +12,13 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.HasErrors, Is.False);
             Assert.That(result.Value, Is.EqualTo(expected));
         });
     }
 
     [Test]
-    public void WhenResultIsError_ThenSucceededMustBeFalse_WhenErrorsContainsAtLeastOneError() {
+    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsAtLeastOneError() {
         // arrange
         var expected = Error.Failure("Error");
         Result<int> result;
@@ -30,13 +28,13 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.That(result.Errors, Has.Length.AtLeast(1));
         });
     }
 
     [Test]
-    public void WhenResultIsError_ThenSucceededMustBeFalse_WhenErrorsContainsMoreThanOneError() {
+    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsMoreThanOneError() {
         // arrange
         var expected = new[] { Error.Failure("Error"), Error.Conflict("Error") };
         Result<int> result;
@@ -46,7 +44,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.That(result.Errors, Has.Length.AtLeast(2));
         });
     }
@@ -62,7 +60,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.HasErrors, Is.False);
             Assert.Throws<InvalidOperationException>(() => _ = result.Errors);
         });
     }
@@ -78,7 +76,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.Throws<InvalidOperationException>(() => _ = result.Value);
         });
     }
@@ -86,10 +84,10 @@ public class ResultTests {
     [Test]
     public void WhenResultIsValid_ThenMatchShouldAccessSuccessActionWithReturningValue() {
         // arrange
-        var result = (Result<int>)123;
+        Result<int> result = 123;
 
         // act
-        var match = result.Match(SuccessAction, FailureAction);
+        var match = result.Switch(SuccessAction, FailureAction);
 
         // assert
         Assert.That(match, Is.True);
@@ -108,10 +106,10 @@ public class ResultTests {
     [Test]
     public async Task WhenResultIsValid_ThenMatchAsyncShouldAccessSuccessActionAsyncWithReturningValue() {
         // arrange
-        var result = (Result<int>)123;
+        Result<int> result = 123;
 
         // act
-        var match = await result.MatchAsync(SuccessActionAsync, FailureActionAsync);
+        var match = await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(match, Is.True);
@@ -130,10 +128,10 @@ public class ResultTests {
     [Test]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithReturningValue() {
         // arrange
-        var result = (Result<int>)Error.Failure("Error");
+        Result<int> result = Error.Failure("Error");
 
         // act
-        var match = result.Match(SuccessAction, FailureAction);
+        var match = result.Switch(SuccessAction, FailureAction);
 
         // assert
         Assert.That(match, Is.False);
@@ -152,10 +150,10 @@ public class ResultTests {
     [Test]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithReturningValue() {
         // arrange
-        var result = (Result<int>)Error.Failure("Error");
+        Result<int> result = Error.Failure("Error");
 
         // act
-        var match = await result.MatchAsync(SuccessActionAsync, FailureActionAsync);
+        var match = await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(match, Is.False);
@@ -174,11 +172,11 @@ public class ResultTests {
     [Test]
     public void WhenResultIsValid_ThenMatchShouldAccessSuccessActionWithoutReturningValue() {
         // arrange
-        var result = (Result<int>)123;
+        Result<int> result = 123;
         object captured = null;
 
         // act
-        result.Match(SuccessAction, FailureAction);
+        result.Switch(SuccessAction, FailureAction);
 
         // assert
         Assert.That(captured, Is.True);
@@ -197,11 +195,11 @@ public class ResultTests {
     [Test]
     public async Task WhenResultIsValid_ThenMatchAsyncShouldAccessSuccessActionAsyncWithoutReturningValue() {
         // arrange
-        var result = (Result<int>)123;
+        Result<int> result = 123;
         object captured = null;
 
         // act
-        await result.MatchAsync(SuccessActionAsync, FailureActionAsync);
+        await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(captured, Is.True);
@@ -224,11 +222,11 @@ public class ResultTests {
     [Test]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithoutReturningValue() {
         // arrange
-        var result = (Result<int>)Error.Failure("Error");
+        Result<int> result = Error.Failure("Error");
         object captured = null;
 
         // act
-        result.Match(SuccessAction, FailureAction);
+        result.Switch(SuccessAction, FailureAction);
 
         // assert
         Assert.That(captured, Is.False);
@@ -247,11 +245,11 @@ public class ResultTests {
     [Test]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithoutReturningValue() {
         // arrange
-        var result = (Result<int>)Error.Failure("Error");
+        Result<int> result = Error.Failure("Error");
         object captured = null;
 
         // act
-        await result.MatchAsync(SuccessActionAsync, FailureActionAsync);
+        await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(captured, Is.False);
@@ -274,11 +272,11 @@ public class ResultTests {
     [Test]
     public void WhenResult_ThenMultipleMatches() {
         // arrange
-        var result = (Result<int>)123;
+        Result<int> result = 123;
 
         // act
-        var match = result.Match(SuccessAction, FailureAction)
-                          .Match(FinalSuccessAction, FinalFailureAction);
+        var match = result.Switch(SuccessAction, FailureAction)
+                          .Switch(FinalSuccessAction, FinalFailureAction);
 
         // assert
         Assert.That(match, Is.False);
@@ -304,5 +302,20 @@ public class ResultTests {
         bool FinalFailureAction(Error[] errors) {
             return false;
         }
+    }
+
+    [Test]
+    public void WhenResultHasNullabeValue_ThenHasErrorMustBeFalse() {
+        // arrange
+        Result<int?> result;
+
+        // act
+        result = (int?)null;
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.That(result.HasErrors, Is.False);
+            Assert.That(result.Value, Is.Null);
+        });
     }
 }

@@ -17,37 +17,39 @@ public sealed record Result<TValue> {
     /// </summary>
     /// <remarks>
     /// It will throw <see cref="InvalidOperationException"/> if
-    /// <see cref="Succeeded"/> is <c>false</c>.
+    /// <see cref="HasErrors"/> is <c>true</c>.
     /// </remarks>
     public TValue Value {
         get {
-            if (!Succeeded) {
+            if (HasErrors) {
                 throw new InvalidOperationException($"The {nameof(Value)} property cannot be accessed when errors have been recorded.");
             }
 
-            return _value ?? throw new ArgumentNullException(nameof(_value));
+#pragma warning disable CS8603 // Possible null reference return.
+            return _value;
+#pragma warning restore CS8603 // Possible null reference return.
         }
     }
 
     /// <summary>
-    /// Returns <c>true</c> if the result is marked as successful;
+    /// Returns <c>true</c> if the result has errors;
     /// otherwise <c>false</c>.
     /// </summary>
 #if NET8_0_OR_GREATER
-    [MemberNotNullWhen(returnValue: true, nameof(_value))]
+    [MemberNotNullWhen(returnValue: false, nameof(_value))]
 #endif
-    public bool Succeeded => _errors.Length == 0;
+    public bool HasErrors => _errors.Length > 0;
 
     /// <summary>
     /// Gets an array of errors.
     /// </summary>
     /// <remarks>
     /// It will throw <see cref="InvalidOperationException"/> if
-    /// <see cref="Succeeded"/> is <c>true</c>.
+    /// <see cref="HasErrors"/> is <c>false</c>.
     /// </remarks>
     public Error[] Errors {
         get {
-            if (Succeeded) {
+            if (!HasErrors) {
                 throw new InvalidOperationException($"The {nameof(Errors)} property cannot be accessed when no errors have been recorded.");
             }
 
@@ -95,25 +97,24 @@ public sealed record Result<TValue> {
         => new(errors);
 
     /// <summary>
-    /// Matches the specified functions given the result state.
+    /// Switches between functions given the result state.
     /// </summary>
     /// <typeparam name="TNext">The match function result.</typeparam>
-    /// <param name="onSuccess">Executes this function when <see cref="Succeeded"/> is <c>true</c>.</param>
-    /// <param name="onFailure">Executes this function when <see cref="Succeeded"/> is <c>false</c>.</param>
+    /// <param name="onSuccess">Executes this function when <see cref="HasErrors"/> is <c>false</c>.</param>
+    /// <param name="onError">Executes this function when <see cref="HasErrors"/> is <c>true</c>.</param>
     /// <returns>
     /// The result value of the matched function.
     /// </returns>
-    public TNext Match<TNext>(Func<TValue, TNext> onSuccess, Func<Error[], TNext> onFailure)
-        => Succeeded ? onSuccess(Value) : onFailure(Errors);
+    public TNext Switch<TNext>(Func<TValue, TNext> onSuccess, Func<Error[], TNext> onError)
+        => HasErrors ? onError(Errors) : onSuccess(Value);
 
-    public Task<TNext> MatchAsync<TNext>(Func<TValue, Task<TNext>> onSuccess, Func<Error[], Task<TNext>> onFailure)
-        => Succeeded ? onSuccess(Value) : onFailure(Errors);
+    public Task<TNext> SwitchAsync<TNext>(Func<TValue, Task<TNext>> onSuccessAsync, Func<Error[], Task<TNext>> onErrorAsync)
+        => HasErrors ? onErrorAsync(Errors) : onSuccessAsync(Value);
 
-    public void Match(Action<TValue> onSuccess, Action<Error[]> onFailure) {
-        if (Succeeded) { onSuccess(Value); }
-        else { onFailure(Errors); }
+    public void Switch(Action<TValue> onSuccess, Action<Error[]> onError) {
+        if (HasErrors) { onError(Errors); } else { onSuccess(Value); }
     }
 
-    public Task MatchAsync(Func<TValue, Task> onSuccess, Func<Error[], Task> onFailure)
-        => Succeeded ? onSuccess(Value) : onFailure(Errors);
+    public Task SwitchAsync(Func<TValue, Task> onSuccessAsync, Func<Error[], Task> onErrorAsync)
+        => HasErrors ? onErrorAsync(Errors) : onSuccessAsync(Value);
 }
