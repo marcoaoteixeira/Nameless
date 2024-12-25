@@ -97,25 +97,24 @@ public sealed record Result<TValue> {
         => new(errors);
 
     /// <summary>
-    /// Matches the specified functions given the result state.
+    /// Switches between functions given the result state.
     /// </summary>
     /// <typeparam name="TNext">The match function result.</typeparam>
     /// <param name="onSuccess">Executes this function when <see cref="HasErrors"/> is <c>false</c>.</param>
-    /// <param name="onFailure">Executes this function when <see cref="HasErrors"/> is <c>true</c>.</param>
+    /// <param name="onError">Executes this function when <see cref="HasErrors"/> is <c>true</c>.</param>
     /// <returns>
     /// The result value of the matched function.
     /// </returns>
-    public TNext Match<TNext>(Func<TValue, TNext> onSuccess, Func<Error[], TNext> onFailure)
-        => !HasErrors ? onSuccess(Value) : onFailure(Errors);
+    public TNext Switch<TNext>(Func<TValue, TNext> onSuccess, Func<Error[], TNext> onError)
+        => HasErrors ? onError(Errors) : onSuccess(Value);
 
-    public Task<TNext> MatchAsync<TNext>(Func<TValue, Task<TNext>> onSuccess, Func<Error[], Task<TNext>> onFailure)
-        => !HasErrors ? onSuccess(Value) : onFailure(Errors);
+    public Task<TNext> SwitchAsync<TNext>(Func<TValue, Task<TNext>> onSuccessAsync, Func<Error[], Task<TNext>> onErrorAsync)
+        => HasErrors ? onErrorAsync(Errors) : onSuccessAsync(Value);
 
-    public void Match(Action<TValue> onSuccess, Action<Error[]> onFailure) {
-        if (!HasErrors) { onSuccess(Value); }
-        else { onFailure(Errors); }
+    public void Switch(Action<TValue> onSuccess, Action<Error[]> onError) {
+        if (HasErrors) { onError(Errors); } else { onSuccess(Value); }
     }
 
-    public Task MatchAsync(Func<TValue, Task> onSuccess, Func<Error[], Task> onFailure)
-        => !HasErrors ? onSuccess(Value) : onFailure(Errors);
+    public Task SwitchAsync(Func<TValue, Task> onSuccessAsync, Func<Error[], Task> onErrorAsync)
+        => HasErrors ? onErrorAsync(Errors) : onSuccessAsync(Value);
 }
