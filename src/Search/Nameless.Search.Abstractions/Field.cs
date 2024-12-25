@@ -13,14 +13,14 @@ public sealed record Field {
     /// Gets the value.
     /// </summary>
     public object Value { get; }
-    
+
     /// <summary>
     /// Gets the indexable type.
     /// </summary>
     /// <remarks>
     /// Default value is <see cref="IndexableType.String"/>
     /// </remarks>
-    public IndexableType Type { get; }
+    public IndexableType Type { get; } = IndexableType.String;
 
     /// <summary>
     /// Gets the field options.
@@ -44,32 +44,14 @@ public sealed record Field {
     /// <exception cref="ArgumentException">
     /// if <paramref name="name"/> is empty or white spaces.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// if <paramref name="value"/> type is not the same as defined
+    /// by <paramref name="type"/>.
+    /// </exception>
     public Field(string name, object value, IndexableType type, FieldOptions options) {
-        if (!IsValueAssignable(value, type)) {
-            throw new InvalidOperationException($"{nameof(IndexableType)} '{type}' does not match underlying type of parameter {nameof(value)}");
-        }
-
         Name = Prevent.Argument.NullOrWhiteSpace(name);
-        Value = Prevent.Argument.Null(value);
+        Value = Prevent.Argument.NullOrNoMatchingType(value, type, nameof(value));
         Type = type;
         Options = options;
-    }
-
-    private static bool IsValueAssignable(object value, IndexableType type) {
-        var valueType = value.GetType();
-
-        return type switch {
-            IndexableType.Boolean => valueType == typeof(bool),
-            IndexableType.String => valueType == typeof(string),
-            IndexableType.Byte => valueType == typeof(byte),
-            IndexableType.Short => valueType == typeof(short),
-            IndexableType.Integer => valueType == typeof(int),
-            IndexableType.Long => valueType == typeof(long),
-            IndexableType.Float => valueType == typeof(float),
-            IndexableType.Double => valueType == typeof(double),
-            IndexableType.DateTimeOffset => valueType == typeof(DateTimeOffset),
-            IndexableType.DateTime => valueType == typeof(DateTime),
-            _ => false
-        };
     }
 }

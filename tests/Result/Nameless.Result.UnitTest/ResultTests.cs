@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Nameless.Result;
+﻿namespace Nameless.Result;
 
 public class ResultTests {
     [Test]
-    public void WhenResultHasValue_ThenSucceededMustBeTrue_AndValueShouldBeExpected() {
+    public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange
         const int expected = 123;
         Result<int> result;
@@ -14,13 +12,13 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.HasErrors, Is.False);
             Assert.That(result.Value, Is.EqualTo(expected));
         });
     }
 
     [Test]
-    public void WhenResultIsError_ThenSucceededMustBeFalse_WhenErrorsContainsAtLeastOneError() {
+    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsAtLeastOneError() {
         // arrange
         var expected = Error.Failure("Error");
         Result<int> result;
@@ -30,13 +28,13 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.That(result.Errors, Has.Length.AtLeast(1));
         });
     }
 
     [Test]
-    public void WhenResultIsError_ThenSucceededMustBeFalse_WhenErrorsContainsMoreThanOneError() {
+    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsMoreThanOneError() {
         // arrange
         var expected = new[] { Error.Failure("Error"), Error.Conflict("Error") };
         Result<int> result;
@@ -46,7 +44,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.That(result.Errors, Has.Length.AtLeast(2));
         });
     }
@@ -62,7 +60,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.True);
+            Assert.That(result.HasErrors, Is.False);
             Assert.Throws<InvalidOperationException>(() => _ = result.Errors);
         });
     }
@@ -78,7 +76,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.Succeeded, Is.False);
+            Assert.That(result.HasErrors, Is.True);
             Assert.Throws<InvalidOperationException>(() => _ = result.Value);
         });
     }
@@ -304,5 +302,20 @@ public class ResultTests {
         bool FinalFailureAction(Error[] errors) {
             return false;
         }
+    }
+
+    [Test]
+    public void WhenResultHasNullabeValue_ThenHasErrorMustBeFalse() {
+        // arrange
+        Result<int?> result;
+
+        // act
+        result = (int?)null;
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.That(result.HasErrors, Is.False);
+            Assert.That(result.Value, Is.Null);
+        });
     }
 }

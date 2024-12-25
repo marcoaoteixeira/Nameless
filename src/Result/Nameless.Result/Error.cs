@@ -7,32 +7,35 @@ public sealed record Error {
 
     public ErrorType Type { get; }
 
+    public Exception? Exception { get; }
+
     public ReadOnlyDictionary<string, object> Metadata { get; }
 
-    private Error(string description, ErrorType type, ReadOnlyDictionary<string, object> metadata) {
+    private Error(string description, ErrorType type, Exception? exception, ReadOnlyDictionary<string, object> metadata) {
         Description = Prevent.Argument.NullOrWhiteSpace(description);
         Type = type;
+        Exception = exception;
         Metadata = metadata;
     }
 
-    public static Error Validation(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Validation, metadata ?? []);
+    public static Error Validation(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Validation, exception, metadata ?? []);
 
-    public static Error Missing(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Missing, metadata ?? []);
+    public static Error Missing(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Missing, exception, metadata ?? []);
 
-    public static Error Conflict(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Conflict, metadata ?? []);
+    public static Error Conflict(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Conflict, exception, metadata ?? []);
 
-    public static Error Failure(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Failure, metadata ?? []);
+    public static Error Failure(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Failure, exception, metadata ?? []);
 
-    public static Error Forbidden(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Forbidden, metadata ?? []);
+    public static Error Forbidden(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Forbidden, exception, metadata ?? []);
 
-    public static Error Unauthorized(string description, Dictionary<string, object>? metadata = null)
-        => Create(description, ErrorType.Unauthorized, metadata ?? []);
+    public static Error Unauthorized(string description, Exception? exception = null, Dictionary<string, object>? metadata = null)
+        => Create(description, ErrorType.Unauthorized, exception, metadata ?? []);
 
-    private static Error Create(string description, ErrorType type, Dictionary<string, object> metadata)
-        => new(description, type, metadata: new ReadOnlyDictionary<string, object>(metadata));
+    private static Error Create(string description, ErrorType type, Exception? exception, Dictionary<string, object> metadata)
+        => new(description, type, exception, metadata: new ReadOnlyDictionary<string, object>(metadata));
 }
