@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Register GitHub Package Registry As NuGet Source
-        run: |
+        run: >-
           dotnet nuget add source
           --username ${{ github.repository_owner }}
           --password ${{ secrets.GITHUB_TOKEN }}
@@ -46,14 +46,14 @@ jobs:
           --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
       - name: Build Solution
-        run: |
+        run: >-
           dotnet build ${{ env.SOLUTION }}
           --configuration Release
           --nologo
           --verbosity detailed
 
       - name: Create NuGet Packages
-        run: |
+        run: >-
           dotnet pack
           --configuration Release
           --include-symbols
@@ -66,7 +66,7 @@ jobs:
           -p:Version=${{ env.VERSION }}
 
       - name: Publish NuGet Packages
-        run: |
+        run: >-
           dotnet nuget push ${{ env.NUPKG_OUTPUT_PATH }}/*.nupkg
           --source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
           --api-key ${{ secrets.PACKAGE_SOURCE_API_KEY_NUGET_ORG }}

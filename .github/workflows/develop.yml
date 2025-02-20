@@ -29,7 +29,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Install Code Coverage Report Tool
-        run: |
+        run: >-
           dotnet tool install -g dotnet-reportgenerator-globaltool
           --add-source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
           --version 5.4.3
@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Register GitHub Package Registry As NuGet Source
-        run: |
+        run: >-
           dotnet nuget add source
           --username ${{ github.repository_owner }}
           --password ${{ secrets.GITHUB_TOKEN }}
@@ -46,14 +46,14 @@ jobs:
           --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
       - name: Build Solution
-        run: |
+        run: >-
           dotnet build ${{ env.SOLUTION }}
           --configuration Debug
           --nologo
           --verbosity detailed
 
       - name: Run Tests
-        run: |
+        run: >-
           dotnet test ${{ env.SOLUTION }}
           --configuration Debug
           --collect:"XPlat Code Coverage"
@@ -67,7 +67,7 @@ jobs:
           --verbosity detailed
 
       - name: Generate Coverage Report
-        run: |
+        run: >-
           reportgenerator
           "-reports:${{ env.CODE_COVERAGE_COBERTURA_FILE_PATH }}"
           "-targetdir:${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}"
