@@ -23,6 +23,9 @@ jobs:
         dotnet-version: ["9.0.x"]
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.2.2
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.2.0
         with:
@@ -33,9 +36,6 @@ jobs:
           dotnet tool install dotnet-reportgenerator-globaltool
           --version 5.4.3
           --global
-
-      - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2
 
       - name: Register GitHub Package Registry As NuGet Source
         run: |
