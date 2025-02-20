@@ -23,9 +23,6 @@ jobs:
         dotnet-version: ["9.0.x"]
 
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4.2.0
         with:
@@ -33,9 +30,12 @@ jobs:
 
       - name: Install Code Coverage Report Tool
         run: |
-          dotnet tool install dotnet-reportgenerator-globaltool
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          --add-source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
           --version 5.4.3
-          --global
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.2.2
 
       - name: Register GitHub Package Registry As NuGet Source
         run: |
