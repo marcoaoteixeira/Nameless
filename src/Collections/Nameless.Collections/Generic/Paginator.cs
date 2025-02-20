@@ -6,9 +6,7 @@ namespace Nameless.Collections.Generic;
 /// Implementation of <see cref="IPaginator{TItem}"/>
 /// </summary>
 /// <typeparam name="TItem">The type of the page's items.</typeparam>
-public sealed class Paginator<TItem> : IPaginator<TItem> {
-    public const int DEFAULT_PAGE_SIZE = 10;
-
+public sealed class Paginator<TItem> : IPaginator<TItem>, IEnumerable<IPage<TItem>> {
     private readonly IQueryable<TItem> _query;
 
     /// <inheritdoc />
@@ -20,45 +18,44 @@ public sealed class Paginator<TItem> : IPaginator<TItem> {
     /// <summary>
     /// Initializes a new instance of <see cref="Paginator{TItem}"/>.
     /// </summary>
-    /// <param name="query">
-    /// The query that will provide the items.
-    /// </param>
-    /// <param name="pageSize">
-    /// The page size. Default value is <see cref="DEFAULT_PAGE_SIZE"/>.
-    /// </param>
+    /// <param name="query">The query that will provide the items.</param>
+    /// <param name="pageSize">The page size.</param>
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="query"/> is <c>null</c>.
     /// </exception>
     /// <remarks>
-    /// If the value provided to <paramref name="pageSize"/> is lower than <c>1</c>,
-    /// then the value will be set to <see cref="DEFAULT_PAGE_SIZE"/>.
+    /// If the value provided for <paramref name="pageSize"/> is lower than <c>1</c>,
+    /// then the value will be set to <see cref="Page{TItem}.DEFAULT_SIZE"/>.
     /// </remarks>
-    public Paginator(IQueryable<TItem> query, int pageSize = DEFAULT_PAGE_SIZE) {
+    public Paginator(IQueryable<TItem> query, int pageSize = Page<TItem>.DEFAULT_SIZE) {
         _query = Prevent.Argument.Null(query);
 
-        PageSize = pageSize >= 1 ? pageSize : DEFAULT_PAGE_SIZE;
+        PageSize = pageSize >= 1 ? pageSize : Page<TItem>.DEFAULT_SIZE;
     }
 
-    public IEnumerator<Page<TItem>> GetEnumerator()
-        => GetPages().GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
-
-    private IEnumerable<Page<TItem>> GetPages() {
-        var pages = Total / PageSize;
+    /// <inheritdoc />
+    public IEnumerable<IPage<TItem>> GetPages() {
+        var totalPages = Total / PageSize;
         if (Total % PageSize != 0) {
-            ++pages;
+            ++totalPages;
         }
 
-        for (var pageIndex = 0; pageIndex < pages; pageIndex++) {
+        for (var pageIndex = 0; pageIndex < totalPages; pageIndex++) {
             var items = _query.Skip(pageIndex * PageSize)
-                                  .Take(PageSize)
-                                  .ToArray();
+                              .Take(PageSize)
+                              .ToArray();
 
             yield return new Page<TItem>(items: items,
-                                     number: pageIndex + 1,
-                                     size: PageSize);
+                                         number: pageIndex + 1,
+                                         size: PageSize);
         }
     }
+
+    /// <inheritdoc />
+    public IEnumerator<IPage<TItem>> GetEnumerator()
+        => GetPages().GetEnumerator();
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetEnumerator();
 }

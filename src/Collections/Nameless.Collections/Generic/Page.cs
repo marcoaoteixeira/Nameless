@@ -6,11 +6,9 @@ namespace Nameless.Collections.Generic;
 /// Represents a page of items.
 /// </summary>
 /// <typeparam name="TItem">Type of the page's items.</typeparam>
-public sealed class Page<TItem> : IEnumerable<TItem> {
+public sealed class Page<TItem> : IPage<TItem>, IEnumerable<TItem> {
     public const int DEFAULT_NUMBER = 1;
     public const int DEFAULT_SIZE = 10;
-
-    private readonly TItem[] _items;
 
     /// <summary>
     /// Gets the page number.
@@ -25,7 +23,12 @@ public sealed class Page<TItem> : IEnumerable<TItem> {
     /// <summary>
     /// Gets the page total number of items.
     /// </summary>
-    public int Count => _items.Length;
+    public int Count => Items.Length;
+
+    /// <summary>
+    /// Gets the page items.
+    /// </summary>
+    public TItem[] Items { get; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="Page{TItem}"/>.
@@ -40,13 +43,12 @@ public sealed class Page<TItem> : IEnumerable<TItem> {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="items"/> is <c>null</c>.
     /// </exception>
-    /// <remarks>
-    /// If the values provided to <paramref name="number"/> or <paramref name="size"/>
-    /// were less than <c>1</c>, then their values will be set to their mentioned defaults.
-    /// Values <c>1</c> and <c>10</c> respectively.
+    /// /// <remarks>
+    /// If the value provided for <paramref name="size"/> is lower than <c>1</c>,
+    /// then the value will be set to <see cref="DEFAULT_SIZE"/>.
     /// </remarks>
     public Page(TItem[] items, int number = DEFAULT_NUMBER, int size = DEFAULT_SIZE) {
-        _items = Prevent.Argument.Null(items);
+        Items = Prevent.Argument.Null(items);
 
         Number = number >= 1 ? number : DEFAULT_NUMBER;
         Size = size >= 1 ? size : DEFAULT_SIZE;
@@ -54,9 +56,9 @@ public sealed class Page<TItem> : IEnumerable<TItem> {
 
     /// <inheritdoc />
     public IEnumerator<TItem> GetEnumerator()
-        => (IEnumerator<TItem>)_items.GetEnumerator();
+        => (IEnumerator<TItem>)Items.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
-        => _items.GetEnumerator();
+        => Items.GetEnumerator();
 }

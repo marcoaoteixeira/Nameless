@@ -9,12 +9,13 @@ on:
       - 'proposal/**'
 
 env:
+  SOLUTION: "./Nameless.sln"
   CODE_COVERAGE_COBERTURA_FILE_PATH: "./code-coverage/**/coverage.cobertura.xml"
   CODE_COVERAGE_REPORT_FOLDER_PATH: "./code-coverage/report"
-  SOLUTION: "./Nameless.sln"
+  CODE_COVERAGE_FOLDER_PATH: "./code-coverage"
 
 jobs:
-  build_and_test:
+  development:
     runs-on: ubuntu-latest
 
     strategy:
@@ -23,62 +24,57 @@ jobs:
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.1.0
+        uses: actions/setup-dotnet@v4.2.0
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Install Code Coverage Report Tool
+        run: >-
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          --add-source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
+          --version 5.4.3
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.2.2
 
-      - name: Add GitHub Package Registry As NuGet Source
-        run: |
-          dotnet nuget add source \
-          --username ${{ github.repository_owner }} \
-          --password ${{ secrets.GITHUB_TOKEN }} \
-          --store-password-in-clear-text \
-          --name github ${{ vars.API_URL_GITHUB_PACKAGES }}
+      - name: Register GitHub Package Registry As NuGet Source
+        run: >-
+          dotnet nuget add source
+          --username ${{ github.repository_owner }}
+          --password ${{ secrets.GITHUB_TOKEN }}
+          --store-password-in-clear-text
+          --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
       - name: Build Solution
-        if: success()
-        run: |
-          dotnet build ${{ env.SOLUTION }} \
-            --configuration Debug \
-            --nologo \
-            --verbosity normal
+        run: >-
+          dotnet build ${{ env.SOLUTION }}
+          --configuration Debug
+          --nologo
+          --verbosity detailed
 
       - name: Run Tests
-        if: success()
-        run: |
-          dotnet test ${{ env.SOLUTION }} \
-            --configuration Debug \
-            --collect:"XPlat Code Coverage" \
-            --filter "Category!=RunsOnDevMachine" \
-            --logger:"Html;LogFileName=code-coverage-log.html" \
-            --no-build \
-            --nologo \
-            --no-restore \
-            --results-directory ./code-coverage/ \
-            --settings .runsettings \
-            --verbosity normal
-
-      - name: Install Coverage Report Tool
-        if: success()
-        run: |
-          dotnet tool install dotnet-reportgenerator-globaltool \
-            --version 5.4.1 \
-            --global
+        run: >-
+          dotnet test ${{ env.SOLUTION }}
+          --configuration Debug
+          --collect:"XPlat Code Coverage"
+          --filter "Category!=RunsOnDevMachine"
+          --logger:"Html;LogFileName=code-coverage-log.html"
+          --no-build
+          --nologo
+          --no-restore
+          --results-directory ${{ env.CODE_COVERAGE_FOLDER_PATH }}
+          --settings .runsettings
+          --verbosity detailed
 
       - name: Generate Coverage Report
-        if: success()
-        run: |
-          reportgenerator \
-            "-reports:${{ env.CODE_COVERAGE_COBERTURA_FILE_PATH }}" \
-            "-targetdir:${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}" \
-            -reporttypes:Html
+        run: >-
+          reportgenerator
+          "-reports:${{ env.CODE_COVERAGE_COBERTURA_FILE_PATH }}"
+          "-targetdir:${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}"
+          -reporttypes:Html
 
       - name: Upload Coverage Report to Artifacts
-        uses: actions/upload-artifact@v4.4.3
-        if: success()
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: coverage-report
           path: ${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}

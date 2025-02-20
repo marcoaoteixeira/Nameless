@@ -6,7 +6,6 @@
 		<!-- NUGET PACKING -->
 		<Title>Nameless Prevent Library</Title>
 		<Description>This simple library containing guard clauses.</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

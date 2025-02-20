@@ -89,7 +89,7 @@ public static class TypeExtension {
     }
 
     /// <summary>
-    /// Checks if the current type implements the specified interface <see cref="TInterface"/>.
+    /// Checks if the current type implements the specified interface.
     /// </summary>
     /// <typeparam name="TInterface">Type of the interface.</typeparam>
     /// <param name="self">The current type.</param>
@@ -120,10 +120,24 @@ public static class TypeExtension {
                                 interfaceType.IsAssignableFromOpenGenericType(type));
     }
 
+    /// <summary>
+    /// Checks if type has the specified attribute.
+    /// </summary>
+    /// <typeparam name="TAttribute">Type of the attribute.</typeparam>
+    /// <param name="self">The current type instance.</param>
+    /// <param name="inherit">Whether the attribute is inherited.</param>
+    /// <returns><c>true</c> if the type has the attribute; otherwise <c>false</c>.</returns>
     public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)
         where TAttribute : Attribute
         => HasAttribute(self, typeof(TAttribute), inherit);
 
+    /// <summary>
+    /// Checks if type has the specified attribute.
+    /// </summary>
+    /// <param name="self">The current type instance.</param>
+    /// <param name="attributeType">Type of the attribute.</param>
+    /// <param name="inherit">Whether the attribute is inherited.</param>
+    /// <returns><c>true</c> if the type has the attribute; otherwise <c>false</c>.</returns>
     public static bool HasAttribute(this Type self, Type attributeType, bool inherit = false) {
         Prevent.Argument.Null(self);
         Prevent.Argument.Null(attributeType);
@@ -131,6 +145,11 @@ public static class TypeExtension {
         return self.GetCustomAttribute(attributeType, inherit) is not null;
     }
 
+    /// <summary>
+    /// Checks if the type has a parameterless constructor.
+    /// </summary>
+    /// <param name="self">The current type instance.</param>
+    /// <returns><c>true</c> if the type has a parameterless constructor; otherwise <c>false</c>.</returns>
     public static bool HasParameterlessConstructor(this Type self)
         => Prevent.Argument
                   .Null(self)

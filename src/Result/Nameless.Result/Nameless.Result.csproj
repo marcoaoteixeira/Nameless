@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<RootNamespace>Nameless.Result</RootNamespace>
-
 		<!-- NUGET PACKING -->
 		<Title>Nameless Result (Pattern) Library</Title>
 		<Description>This library contains the implementation of Result Pattern.</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

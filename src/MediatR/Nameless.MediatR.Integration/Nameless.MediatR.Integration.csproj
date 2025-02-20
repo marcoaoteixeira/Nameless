@@ -4,7 +4,6 @@
 		<!-- NUGET PACKING -->
 		<Title>Nameless MediatR Integration Library</Title>
 		<Description>This library contains classes and interfaces that provides integratio for MediatR.</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MediatR" Version="12.4.1" />
+		<PackageReference Include="MediatR" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<RootNamespace>Nameless.Autofac</RootNamespace>
-
 		<!-- NUGET PACKING -->
 		<Title>Nameless Autofac Library</Title>
 		<Description>This library contains some utilities classes to use in conjunction with Autofac.</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,8 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.1.1" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Autofac"/>
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" />
 	</ItemGroup>
 
 	<ItemGroup>

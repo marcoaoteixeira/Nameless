@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Nameless.Application;
+using Nameless.Infrastructure;
 
 namespace Nameless.Internals;
 

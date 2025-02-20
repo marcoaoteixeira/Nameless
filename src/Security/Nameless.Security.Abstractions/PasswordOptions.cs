@@ -1,10 +1,28 @@
 ﻿namespace Nameless.Security;
 
+/// <summary>
+/// Password options.
+/// </summary>
 public sealed record PasswordOptions {
-    private const string DEFAULT_SYMBOLS = "*$-+?_&=!%{}/";
-    private const string DEFAULT_NUMERICS = "0123456789";
-    private const string DEFAULT_LOWER_CASE = "abcdefgijkmnopqrstwxyz";
-    private const string DEFAULT_UPPER_CASE = "ABCDEFGIJKMNOPQRSTWXYZ";
+    /// <summary>
+    /// Default symbols values.
+    /// </summary>
+    public const string DEFAULT_SYMBOLS = "*$-+?_&=!%{}/";
+
+    /// <summary>
+    /// Default numeric values.
+    /// </summary>
+    public const string DEFAULT_NUMERICS = "0123456789";
+
+    /// <summary>
+    /// Default lower case values.
+    /// </summary>
+    public const string DEFAULT_LOWER_CASE = "abcdefgijkmnopqrstwxyz";
+    
+    /// <summary>
+    /// Default upper case values.
+    /// </summary>
+    public const string DEFAULT_UPPER_CASE = "ABCDEFGIJKMNOPQRSTWXYZ";
 
     private string? _symbols;
     private string? _numerics;
@@ -25,7 +43,7 @@ public sealed record PasswordOptions {
     /// <summary>
     /// Gets or sets if whether will use special chars.
     /// </summary>
-    /// <remarks>Default are <c>*$-+?_&=!%{}/</c></remarks>
+    /// <remarks>Default are <see cref="DEFAULT_SYMBOLS"/></remarks>
     public string Symbols {
         get => _symbols.WithFallback(DEFAULT_SYMBOLS);
         set => _symbols = value;
