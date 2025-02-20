@@ -7,12 +7,10 @@ on:
 
 env:
   SOLUTION: "./Nameless.sln"
-  OUTPUT_PATH: './nupkgs'
+  NUPKG_OUTPUT_PATH: './nupkgs'
 
 jobs:
-
-  deploy:
-
+  release:
     runs-on: ubuntu-latest
 
     strategy:
@@ -20,60 +18,56 @@ jobs:
         dotnet-version: ['9.0.x']
 
     steps:
-      - name: Fetch Build Version Number
-        id: build
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.2.0
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Get Version Number From Tag
         run: |
           if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
           then
-            echo BUILD_VERSION=${BASH_REMATCH[1]} >> $GITHUB_ENV
+            echo VERSION=${BASH_REMATCH[1]} >> $GITHUB_ENV
+            echo Version ${BASH_REMATCH[1]}
           else
-            echo BUILD_VERSION='1.0.0' >> $GITHUB_ENV
-          fi
-
-      - name: Current Build Version Number
-        run: echo ${{ env.BUILD_VERSION }}
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4.1.0
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+            echo VERSION='1.0.0' >> $GITHUB_ENV
+            echo Version 1.0.0
+          fi      
 
       - name: Checkout Source Code
         uses: actions/checkout@v4.2.2
 
-      - name: Add GitHub Package Registry As NuGet Source
+      - name: Register GitHub Package Registry As NuGet Source
         run: |
-          dotnet nuget add source \
-          --username ${{ github.repository_owner }} \
-          --password ${{ secrets.GITHUB_TOKEN }} \
-          --store-password-in-clear-text \
-          --name github ${{ vars.API_URL_GITHUB_PACKAGES }}
+          dotnet nuget add source
+          --username ${{ github.repository_owner }}
+          --password ${{ secrets.GITHUB_TOKEN }}
+          --store-password-in-clear-text
+          --name github ${{ vars.PACKAGE_SOURCE_URL_GITHUB }}
 
       - name: Build Solution
-        if: success()
         run: |
-          dotnet build ${{ env.SOLUTION }} \
-            --configuration Release \
-            --nologo \
-            --verbosity normal
+          dotnet build ${{ env.SOLUTION }}
+          --configuration Release
+          --nologo
+          --verbosity detailed
 
       - name: Create NuGet Packages
         run: |
-          dotnet pack \
-            --configuration Release \
-            --include-symbols \
-            --nologo \
-            --output ${{ env.OUTPUT_PATH }} \
-            --verbosity normal \
-            -p:AssemblyVersion=${{ env.BUILD_VERSION }} \
-            -p:FileVersion=${{ env.BUILD_VERSION }} \
-            -p:PackageVersion=${{ env.BUILD_VERSION }} \
-            -p:Version=${{ env.BUILD_VERSION }}
+          dotnet pack
+          --configuration Release
+          --include-symbols
+          --nologo
+          --output ${{ env.NUPKG_OUTPUT_PATH }}
+          --verbosity normal
+          -p:AssemblyVersion=${{ env.VERSION }}
+          -p:FileVersion=${{ env.VERSION }}
+          -p:PackageVersion=${{ env.VERSION }}
+          -p:Version=${{ env.VERSION }}
 
       - name: Publish NuGet Packages
-        if: success()
         run: |
-          dotnet nuget push ${{ env.OUTPUT_PATH }}/*.nupkg \
-            --source ${{ vars.API_URL_NUGET_ORG }} \
-            --api-key ${{ secrets.API_KEY_NUGET_ORG }} \
-            --skip-duplicate
+          dotnet nuget push ${{ env.NUPKG_OUTPUT_PATH }}/*.nupkg
+          --source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
+          --api-key ${{ secrets.PACKAGE_SOURCE_API_KEY_NUGET_ORG }}
+          --skip-duplicate

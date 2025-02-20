@@ -6,7 +6,6 @@
 		<!-- NUGET PACKING -->
 		<Title>Nameless Data Abstractions Library</Title>
 		<Description>This library contains classes and interfaces to deal with data (RDBMS).</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>

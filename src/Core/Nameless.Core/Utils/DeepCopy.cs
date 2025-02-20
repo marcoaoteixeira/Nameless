@@ -16,13 +16,12 @@ public static class DeepCopy {
     public static object Clone(object value) {
         Prevent.Argument.Null(value);
 
-        var type = value.GetType();
-        if (type.IsAbstract || type.IsInterface || type.IsPointer) {
-            throw new InvalidOperationException($"Cannot clone abstract classes, interfaces or pointers. Object type: {type}");
+        if (value is Type) {
+            throw new InvalidOperationException($"Cannot clone non-class object. Object type: {value.GetType()}");
         }
 
         var json = JsonSerializer.Serialize(value);
-        var result = JsonSerializer.Deserialize(json, type);
+        var result = JsonSerializer.Deserialize(json, value.GetType());
 
         return result ?? throw new InvalidOperationException("Unable to clone object.");
     }

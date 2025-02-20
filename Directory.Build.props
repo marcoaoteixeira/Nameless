@@ -1,0 +1,74 @@
+<Project>
+	<PropertyGroup>
+		<IsTestProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', 'IntegrationTests|UnitTests'))</IsTestProject>
+		<IsWebProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', 'Web'))</IsWebProject>
+		<IsCoreProject>False</IsCoreProject>
+		<IsCoreProject Condition="$(IsTestProject) == 'False' And $(IsWebProject) == 'False'">True</IsCoreProject>
+	</PropertyGroup>
+	
+	<!-- COMMON PROPERTIES -->
+	<PropertyGroup Condition="$(IsCoreProject) == 'True' Or $(IsWebProject) == 'True'">
+		<TargetFrameworks Condition="$(IsCoreProject)">netstandard2.1;net8.0;net9.0</TargetFrameworks>
+		<TargetFramework Condition="$(IsWebProject)">net9.0</TargetFramework>
+		
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		
+		<!-- NUGET PACKING -->
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Company>Nameless</Company>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless</RepositoryUrl>
+		<PackageReleaseNotes>https://github.com/marcoaoteixeira/nameless/releases</PackageReleaseNotes>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageIconUrl>https://github.com/marcoaoteixeira/Nameless/tree/main/branding/icon.png</PackageIconUrl>
+		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		
+		<PublishRepositoryUrl>True</PublishRepositoryUrl>
+		<EmbedUntrackedSources>True</EmbedUntrackedSources>
+	</PropertyGroup>
+	
+	<!-- CODE ANALYSIS -->
+	<PropertyGroup Condition="$(IsCoreProject) == 'True' Or $(IsWebProject) == 'True'">
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="$(IsCoreProject) == 'True' Or $(IsWebProject) == 'True'">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="$(IsWebProject)">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="$(IsCoreProject) == 'True' Or $(IsWebProject) == 'True'">
+		<None Include="..\..\..\branding\icon.png" Pack="true" PackagePath=""/>
+	</ItemGroup>
+	
+	<PropertyGroup Condition="$(IsTestProject)">
+		<TargetFramework>net9.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>False</IsPackable>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="$(IsTestProject)">
+		<Using Include="NUnit.Framework" />
+	</ItemGroup>
+</Project>

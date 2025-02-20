@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nameless.Application;
+using Nameless.Infrastructure;
 using Nameless.NHibernate.Options;
 using NHibernate;
 using NHibernate.Cfg;

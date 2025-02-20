@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.Application;
 using Nameless.FileSystem;
 using Nameless.Helpers;
+using Nameless.Infrastructure;
 using Nameless.Search.Lucene.Options;
 
 namespace Nameless.Search.Lucene;

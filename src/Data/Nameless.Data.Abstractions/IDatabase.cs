@@ -38,6 +38,6 @@ public interface IDatabase {
     /// <param name="text">The command text.</param>
     /// <param name="type">The command type. Default is <see cref="CommandType.Text"/></param>
     /// <param name="parameters">The command parameters.</param>
-    /// <returns>A <see cref="TResult"/> representing the query result.</returns>
+    /// <returns>The result for the command.</returns>
     TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters);
 }

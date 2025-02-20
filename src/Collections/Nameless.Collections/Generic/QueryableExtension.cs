@@ -15,7 +15,7 @@ public static class QueryableExtension {
     /// </exception>
     /// <remarks>
     /// If the value provided to <paramref name="pageSize"/> is lower than <c>1</c>,
-    /// then the value will be set to <see cref="Paginator{TItem}.DEFAULT_PAGE_SIZE"/>.
+    /// then the value will be set to <see cref="Page{TItem}.DEFAULT_SIZE"/>.
     /// </remarks>
     public static IPaginator<TItem> AsPaginator<TItem>(this IQueryable<TItem> self, int pageSize)
         => new Paginator<TItem>(query: Prevent.Argument.Null(self),

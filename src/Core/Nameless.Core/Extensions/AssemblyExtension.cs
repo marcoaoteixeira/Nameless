@@ -52,7 +52,7 @@ public static class AssemblyExtension {
     }
 
     /// <summary>
-    /// Searches for all implementations of a given service <typeparamref name="TService"/>
+    /// Searches for all concrete implementations of a given service <typeparamref name="TService"/>
     /// in the current assembly.
     /// <br /><br />
     /// <strong>Note:</strong> we look only for public exported types, never private, protected or internal.
@@ -64,7 +64,7 @@ public static class AssemblyExtension {
         => SearchForImplementations(self, typeof(TService));
 
     /// <summary>
-    /// Searches for all implementations of a given service <paramref name="serviceType"/>
+    /// Searches for all concrete implementations of a given service <paramref name="serviceType"/>
     /// in the current assembly.
     /// <br /><br />
     /// <strong>Note:</strong> we look only for public exported types, never private, protected or internal.
