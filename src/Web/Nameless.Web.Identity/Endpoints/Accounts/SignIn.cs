@@ -7,6 +7,7 @@ using Nameless.Web.Endpoints;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Endpoints.Accounts.Requests;
 using Nameless.Web.Identity.Endpoints.Accounts.Responses;
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web.Identity.Endpoints.Accounts;
 
@@ -53,13 +54,13 @@ public sealed class SignIn : MinimalEndpointBase {
         if (signInResult.Succeeded) {
             _logger.UserSignInSucceeded();
 
-            return Results.Ok(new SignInResponse {
+            return HttpResults.Ok(new SignInResponse {
                 Redirect = input.ReturnUrl
             });
         }
 
         if (signInResult.RequiresTwoFactor) {
-            return Results.Ok(new RequiresTwoFactorResponse {
+            return HttpResults.Ok(new RequiresTwoFactorResponse {
                 Redirect = $"{_options.Value.BaseUrl}{Constants.Endpoints.TWO_FACTOR_AUTH}",
                 RememberMe = input.RememberMe,
                 ReturnUrl = input.ReturnUrl
@@ -69,12 +70,12 @@ public sealed class SignIn : MinimalEndpointBase {
         if (signInResult.IsLockedOut) {
             _logger.SignInUserIsLockedOut();
 
-            return Results.Problem(detail: Constants.Messages.SignIn.USER_LOCKED_OUT_MESSAGE,
+            return HttpResults.Problem(detail: Constants.Messages.SignIn.USER_LOCKED_OUT_MESSAGE,
                                    statusCode: StatusCodes.Status423Locked,
                                    title: Constants.Messages.SignIn.USER_LOCKED_OUT_TITLE);
         }
 
-        return Results.Problem(detail: Constants.Messages.SignIn.INVALID_SIGNIN_ATTEMPT_MESSAGE,
+        return HttpResults.Problem(detail: Constants.Messages.SignIn.INVALID_SIGNIN_ATTEMPT_MESSAGE,
                                statusCode: StatusCodes.Status401Unauthorized,
                                title: Constants.Messages.SignIn.INVALID_SIGNIN_ATTEMPT_TITLE);
     }

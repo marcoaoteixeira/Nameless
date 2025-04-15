@@ -7,6 +7,7 @@ using Nameless.Web.Endpoints;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Endpoints.Accounts.Requests;
 using Nameless.Web.Identity.Endpoints.Accounts.Responses;
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web.Identity.Endpoints.Accounts;
 
@@ -48,7 +49,7 @@ public sealed class TwoFactorAuth : MinimalEndpointBase {
         var currentUser = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
         if (currentUser is null) {
-            return Results.Problem(detail: Constants.Messages.TwoFactorAuth.UNABLE_LOAD_USER_MESSAGE,
+            return HttpResults.Problem(detail: Constants.Messages.TwoFactorAuth.UNABLE_LOAD_USER_MESSAGE,
                                    statusCode: StatusCodes.Status400BadRequest,
                                    title: Constants.Messages.TwoFactorAuth.UNABLE_LOAD_USER_TITLE);
         }
@@ -60,7 +61,7 @@ public sealed class TwoFactorAuth : MinimalEndpointBase {
         if (twoFactorResult.Succeeded) {
             _logger.TwoFactorAuthSucceeded(currentUser);
 
-            return Results.Ok(new TwoFactorAuthResponse {
+            return HttpResults.Ok(new TwoFactorAuthResponse {
                 Redirect = input.ReturnUrl
             });
         }
@@ -68,14 +69,14 @@ public sealed class TwoFactorAuth : MinimalEndpointBase {
         if (twoFactorResult.IsLockedOut) {
             _logger.TwoFactorUserIsLockedOut(currentUser);
 
-            return Results.Problem(detail: string.Format(Constants.Messages.TwoFactorAuth.USER_LOCKED_OUT_MESSAGE, currentUser.Id),
+            return HttpResults.Problem(detail: string.Format(Constants.Messages.TwoFactorAuth.USER_LOCKED_OUT_MESSAGE, currentUser.Id),
                                    statusCode: StatusCodes.Status423Locked,
                                    title: Constants.Messages.TwoFactorAuth.USER_LOCKED_OUT_TITLE);
         }
 
         _logger.InvalidTwoFactorCode(currentUser);
 
-        return Results.Problem(detail: string.Format(Constants.Messages.TwoFactorAuth.INVALID_CODE_MESSAGE, currentUser.Id),
+        return HttpResults.Problem(detail: string.Format(Constants.Messages.TwoFactorAuth.INVALID_CODE_MESSAGE, currentUser.Id),
                                statusCode: StatusCodes.Status401Unauthorized,
                                title: Constants.Messages.TwoFactorAuth.INVALID_CODE_TITLE);
     }
