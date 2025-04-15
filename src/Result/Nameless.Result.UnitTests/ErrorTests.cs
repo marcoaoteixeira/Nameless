@@ -1,3 +1,5 @@
+using Nameless.Results;
+
 namespace Nameless.Result;
 
 public class ErrorTests {
