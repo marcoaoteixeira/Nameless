@@ -8,6 +8,7 @@ using Nameless.Web.Endpoints;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Endpoints.Accounts.Requests;
 using Nameless.Web.Identity.Endpoints.Accounts.Responses;
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web.Identity.Endpoints.Accounts;
 
@@ -46,7 +47,7 @@ public sealed class ConfirmEmail : MinimalEndpointBase {
         var currentUser = await _userManager.FindByIdAsync(input.UserId);
 
         if (currentUser is null) {
-            return Results.Problem(detail: string.Format(Constants.Messages.ConfirmEmail.UNABLE_LOAD_USER_MESSAGE, input.UserId),
+            return HttpResults.Problem(detail: string.Format(Constants.Messages.ConfirmEmail.UNABLE_LOAD_USER_MESSAGE, input.UserId),
                                    statusCode: StatusCodes.Status404NotFound,
                                    title: Constants.Messages.ConfirmEmail.UNABLE_LOAD_USER_TITLE);
         }
@@ -55,10 +56,10 @@ public sealed class ConfirmEmail : MinimalEndpointBase {
         var confirmEmailResult = await _userManager.ConfirmEmailAsync(currentUser, currentCode);
 
         return confirmEmailResult.Succeeded
-            ? Results.Ok(new ConfirmEmailResponse {
+            ? HttpResults.Ok(new ConfirmEmailResponse {
                 Message = Constants.Messages.ConfirmEmail.CONFIRM_EMAIL_SUCCEEDED
             })
-            : Results.Problem(detail: Constants.Messages.ConfirmEmail.CONFIRM_EMAIL_FAILED_MESSAGE,
+            : HttpResults.Problem(detail: Constants.Messages.ConfirmEmail.CONFIRM_EMAIL_FAILED_MESSAGE,
                               statusCode: StatusCodes.Status400BadRequest,
                               title: Constants.Messages.ConfirmEmail.CONFIRM_EMAIL_FAILED_TITLE);
     }

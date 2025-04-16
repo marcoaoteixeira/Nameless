@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Nameless.Result;
+namespace Nameless.Results;
 
 public sealed record Error {
     public string Description { get; }

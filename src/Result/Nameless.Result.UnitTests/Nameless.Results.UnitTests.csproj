@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Result\Nameless.Result\Nameless.Result.csproj" />
+		<ProjectReference Include="..\Nameless.Result\Nameless.Results.csproj" />
 	</ItemGroup>
 
 </Project>

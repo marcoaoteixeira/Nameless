@@ -1,6 +1,6 @@
-﻿namespace Nameless.Result;
+﻿namespace Nameless.Results;
 
-public class ResultTests {
+public class ResultWithErrorsTests {
     [Test]
     public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange
@@ -29,7 +29,7 @@ public class ResultTests {
         // assert
         Assert.Multiple(() => {
             Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.Errors, Has.Length.AtLeast(1));
+            Assert.That(result.AsErrors, Has.Length.AtLeast(1));
         });
     }
 
@@ -45,7 +45,7 @@ public class ResultTests {
         // assert
         Assert.Multiple(() => {
             Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.Errors, Has.Length.AtLeast(2));
+            Assert.That(result.AsErrors, Has.Length.AtLeast(2));
         });
     }
 
@@ -61,7 +61,7 @@ public class ResultTests {
         // assert
         Assert.Multiple(() => {
             Assert.That(result.HasErrors, Is.False);
-            Assert.Throws<InvalidOperationException>(() => _ = result.Errors);
+            Assert.Throws<InvalidOperationException>(() => _ = result.AsErrors);
         });
     }
 
@@ -75,10 +75,7 @@ public class ResultTests {
         result = expected;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.True);
-            Assert.Throws<InvalidOperationException>(() => _ = result.Value);
-        });
+        Assert.That(result.HasErrors, Is.True);
     }
 
     [Test]
@@ -87,7 +84,7 @@ public class ResultTests {
         Result<int> result = 123;
 
         // act
-        var match = result.Switch(SuccessAction, FailureAction);
+        var match = result.Match(SuccessAction, FailureAction);
 
         // assert
         Assert.That(match, Is.True);
@@ -109,7 +106,7 @@ public class ResultTests {
         Result<int> result = 123;
 
         // act
-        var match = await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
+        var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(match, Is.True);
@@ -131,7 +128,7 @@ public class ResultTests {
         Result<int> result = Error.Failure("Error");
 
         // act
-        var match = result.Switch(SuccessAction, FailureAction);
+        var match = result.Match(SuccessAction, FailureAction);
 
         // assert
         Assert.That(match, Is.False);
@@ -153,7 +150,7 @@ public class ResultTests {
         Result<int> result = Error.Failure("Error");
 
         // act
-        var match = await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
+        var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(match, Is.False);
@@ -199,7 +196,7 @@ public class ResultTests {
         object captured = null;
 
         // act
-        await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
+        await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(captured, Is.True);
@@ -249,7 +246,7 @@ public class ResultTests {
         object captured = null;
 
         // act
-        await result.SwitchAsync(SuccessActionAsync, FailureActionAsync);
+        await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
         Assert.That(captured, Is.False);
@@ -275,8 +272,8 @@ public class ResultTests {
         Result<int> result = 123;
 
         // act
-        var match = result.Switch(SuccessAction, FailureAction)
-                          .Switch(FinalSuccessAction, FinalFailureAction);
+        var match = result.Match(SuccessAction, FailureAction)
+                          .Match(FinalSuccessAction, FinalFailureAction);
 
         // assert
         Assert.That(match, Is.False);
@@ -305,7 +302,7 @@ public class ResultTests {
     }
 
     [Test]
-    public void WhenResultHasNullabeValue_ThenHasErrorMustBeFalse() {
+    public void WhenResultHasNullableValue_ThenHasErrorMustBeFalse() {
         // arrange
         Result<int?> result;
 

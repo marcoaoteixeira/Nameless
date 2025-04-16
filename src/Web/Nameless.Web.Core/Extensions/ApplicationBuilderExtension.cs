@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation;
 using Nameless.Web.Endpoints;
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web;
 
@@ -23,7 +24,7 @@ public static class ApplicationBuilderExtension {
 
         self.UseExceptionHandler(builder => builder.Run(ctx => TryHandleValidationException(ctx, out var result)
                                                             ? result.ExecuteAsync(ctx)
-                                                            : Results.Problem().ExecuteAsync(ctx)));
+                                                            : HttpResults.Problem().ExecuteAsync(ctx)));
 
         self.UseEndpoints(builder => {
             var endpoints = builder.ServiceProvider
@@ -49,8 +50,8 @@ public static class ApplicationBuilderExtension {
         var ex = GetExceptionFromHttpContext<ValidationException>(ctx);
         if (ex is null) { return false; }
 
-        result = Results.ValidationProblem(ex.Result.ToDictionary(),
-                                           ex.Message);
+        result = HttpResults.ValidationProblem(ex.Result.ToDictionary(),
+                                               ex.Message);
 
         return true;
     }

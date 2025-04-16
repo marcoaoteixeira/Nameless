@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation;
+using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web.Filters;
 
@@ -37,7 +38,7 @@ public sealed class ValidateEndpointFilter : IEndpointFilter {
                                                                cancellationToken);
 
             if (!result.Succeeded) {
-                return Results.ValidationProblem(result.ToDictionary());
+                return HttpResults.ValidationProblem(result.ToDictionary());
             }
         }
 
