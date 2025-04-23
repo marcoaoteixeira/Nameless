@@ -146,11 +146,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.CQRS.Abstractions", "src\CQRS\Nameless.CQRS.Abstractions\Nameless.CQRS.Abstractions.csproj", "{CA6178D7-7275-4A69-B250-33E1182E6658}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Mediator.Abstractions", "src\CQRS\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj", "{CA6178D7-7275-4A69-B250-33E1182E6658}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CQRS", "CQRS", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mediator", "Mediator", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.CQRS", "src\CQRS\Nameless.CQRS\Nameless.CQRS.csproj", "{54BCC898-157D-4892-AB61-A3D53DD7DA2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Mediator", "src\Mediator\Nameless.Mediator\Nameless.Mediator.csproj", "{54BCC898-157D-4892-AB61-A3D53DD7DA2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

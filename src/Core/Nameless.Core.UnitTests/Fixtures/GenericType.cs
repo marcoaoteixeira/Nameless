@@ -12,7 +12,6 @@ public class ConcreteGenericAbstractClassImpl : GenericAbstractClass<object> { }
 
 public class DeriveConcreteGenericAbstractClassImpl : ConcreteGenericAbstractClassImpl { }
 
-
 public class ConcreteMixedGenericImpl : GenericAbstractClass<object>, IGenericInterface<object> { }
 
 public class DeriveConcreteMixedGenericImpl : ConcreteMixedGenericImpl { }
