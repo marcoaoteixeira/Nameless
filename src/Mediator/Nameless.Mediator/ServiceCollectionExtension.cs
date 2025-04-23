@@ -30,8 +30,8 @@ public static class ServiceCollectionExtension {
         return self;
     }
 
-    private static IServiceCollection RegisterServices(this IServiceCollection self) =>
-        self.AddTransient<IRequestHandlerProxy, RequestHandlerProxy>()
-            .AddTransient<IEventHandlerProxy, EventHandlerProxy>()
-            .AddTransient<IStreamHandlerProxy, StreamHandlerProxy>();
+    private static IServiceCollection RegisterServices(this IServiceCollection self)
+        => self.AddTransient<IRequestHandlerProxy, RequestHandlerProxy>()
+               .AddTransient<IEventHandlerProxy, EventHandlerProxy>()
+               .AddTransient<IStreamHandlerProxy, StreamHandlerProxy>();
 }

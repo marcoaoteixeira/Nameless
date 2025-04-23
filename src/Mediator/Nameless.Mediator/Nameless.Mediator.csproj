@@ -26,7 +26,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Prevent\Nameless.Prevent\Nameless.Prevent.csproj" />
-	  <ProjectReference Include="..\Nameless.CQRS.Abstractions\Nameless.Mediator.Abstractions.csproj" />
+	  <ProjectReference Include="..\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>
