@@ -6,13 +6,13 @@ namespace Nameless;
 /// <see cref="Type"/> extension methods.
 /// </summary>
 public static class TypeExtension {
-    private static readonly Type[] WriteTypes = new[] {
+    private static readonly Type[] WriteTypes = [
         typeof(string),
         typeof(DateTime),
         typeof(Enum),
         typeof(decimal),
         typeof(Guid)
-    };
+    ];
 
     /// <summary>
     /// Verifies if the <see cref="Type"/> is an instance of <see cref="Nullable"/>.

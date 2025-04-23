@@ -1,6 +1,7 @@
 ﻿using Nameless.Fixtures;
 
 namespace Nameless;
+
 public class TypeExtensionTests {
     [TestCase(typeof(IGenericInterface<>), typeof(DeriveConcreteGenericInterfaceImpl), true)]
     [TestCase(typeof(GenericAbstractClass<>), typeof(ConcreteGenericAbstractClassImpl), true)]
