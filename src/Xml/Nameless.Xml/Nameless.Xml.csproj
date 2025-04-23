@@ -22,7 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Prevent\Nameless.Prevent\Nameless.Prevent.csproj" />
 		<ProjectReference Include="..\Nameless.Xml.Abstractions\Nameless.Xml.Abstractions.csproj" />
 	</ItemGroup>
 

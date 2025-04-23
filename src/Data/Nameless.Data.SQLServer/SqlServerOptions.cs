@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 #endif
 
-namespace Nameless.Data.SQLServer.Options;
+namespace Nameless.Data.SqlServer;
 
-public sealed record SQLServerOptions {
+public sealed record SqlServerOptions {
     public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
         
     public string Database { get; set; } = "master";

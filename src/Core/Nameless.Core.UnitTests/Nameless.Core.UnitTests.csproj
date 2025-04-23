@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\Utilities\Nameless.UnitTests.Utils\Nameless.UnitTests.Utils.csproj" />
 	</ItemGroup>
 
 </Project>

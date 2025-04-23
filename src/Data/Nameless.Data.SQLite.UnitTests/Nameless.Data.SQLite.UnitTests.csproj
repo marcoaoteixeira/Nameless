@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<RootNamespace>Nameless.Data.SQLite</RootNamespace>
+		<RootNamespace>Nameless.Data.Sqlite</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Data\Nameless.Data.SQLite\Nameless.Data.SQLite.csproj" />
+	  <ProjectReference Include="..\Nameless.Data.SQLite\Nameless.Data.Sqlite.csproj" />
 	  <ProjectReference Include="..\..\Utilities\Nameless.UnitTests.Utils\Nameless.UnitTests.Utils.csproj" />
 	</ItemGroup>
 

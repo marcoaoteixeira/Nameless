@@ -22,10 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Prevent\Nameless.Prevent\Nameless.Prevent.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Using Include="NUnit.Framework" />
 	</ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Mockers;
 
-namespace Nameless.Data.SQLServer;
+namespace Nameless.Data.SqlServer;
 
 public class DependencyInjectionTests {
     [Test]
@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<Database>().Build());
-        services.RegisterSqlServerDatabase(_ => { });
+        services.RegisterSqlServerServices(_ => { });
         using var provider = services.BuildServiceProvider();
 
         // act

@@ -1,20 +1,22 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Data.SQLite.Options;
 
-namespace Nameless.Data.SQLite;
+namespace Nameless.Data.Sqlite;
 
+/// <summary>
+/// Extension methods for <see cref="IServiceCollection"/>.
+/// </summary>
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterSqliteDatabase(this IServiceCollection self, Action<SQLiteOptions> configure)
+    public static IServiceCollection RegisterSqliteServices(this IServiceCollection self, Action<SqliteOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterDatabaseServices();
 
-    public static IServiceCollection RegisterSqliteDatabase(this IServiceCollection self, IConfigurationSection sqliteConfigSection)
+    public static IServiceCollection RegisterSqliteServices(this IServiceCollection self, IConfigurationSection sqliteConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<SQLiteOptions>(sqliteConfigSection)
+                  .Configure<SqliteOptions>(sqliteConfigSection)
                   .RegisterDatabaseServices();
 
     private static IServiceCollection RegisterDatabaseServices(this IServiceCollection self)

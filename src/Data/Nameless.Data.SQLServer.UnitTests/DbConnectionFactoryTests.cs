@@ -1,13 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
-using Nameless.Data.SQLServer.Options;
 
-namespace Nameless.Data.SQLServer;
+namespace Nameless.Data.SqlServer;
 
 public class DbConnectionFactoryTests {
     [Test]
     public void GetDbConnection_Should_Return_A_SqlConnection() {
         // arrange
-        var options = Microsoft.Extensions.Options.Options.Create(new SQLServerOptions());
+        var options = Microsoft.Extensions.Options.Options.Create(new SqlServerOptions());
         var sut = new DbConnectionFactory(options);
 
         // act
@@ -20,7 +19,7 @@ public class DbConnectionFactoryTests {
     [Test]
     public void Two_Calls_To_GetDbConnection_Should_Return_Different_SqlConnection() {
         // arrange
-        var options = Microsoft.Extensions.Options.Options.Create(new SQLServerOptions());
+        var options = Microsoft.Extensions.Options.Options.Create(new SqlServerOptions());
         var sut = new DbConnectionFactory(options);
 
         // act

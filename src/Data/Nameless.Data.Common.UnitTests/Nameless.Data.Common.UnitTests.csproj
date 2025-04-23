@@ -15,7 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Data\Nameless.Data.Common\Nameless.Data.Common.csproj" />
 	  <ProjectReference Include="..\..\Utilities\Nameless.UnitTests.Utils\Nameless.UnitTests.Utils.csproj" />
 	</ItemGroup>
 

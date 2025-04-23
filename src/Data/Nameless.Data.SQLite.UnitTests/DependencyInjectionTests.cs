@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Mockers;
 
-namespace Nameless.Data.SQLite;
+namespace Nameless.Data.Sqlite;
 
 public class DependencyInjectionTests {
     [Test]
@@ -9,7 +9,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<Database>().Build());
-        services.RegisterSqliteDatabase(_ => { });
+        services.RegisterSqliteServices(_ => { });
         using var provider = services.BuildServiceProvider();
 
         // act

@@ -20,8 +20,4 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Prevent\Nameless.Prevent\Nameless.Prevent.csproj" />
-	</ItemGroup>
-
 </Project>

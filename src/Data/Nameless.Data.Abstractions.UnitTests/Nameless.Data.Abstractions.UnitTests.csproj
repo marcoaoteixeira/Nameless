@@ -14,8 +14,4 @@
 		<PackageReference Include="NUnit3TestAdapter" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\Data\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
-	</ItemGroup>
-
 </Project>

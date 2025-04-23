@@ -1,16 +1,15 @@
 ﻿using System.Data;
 using System.Data.SQLite;
 using Microsoft.Extensions.Options;
-using Nameless.Data.SQLite.Options;
 
-namespace Nameless.Data.SQLite;
+namespace Nameless.Data.Sqlite;
 
 public sealed class DbConnectionFactory : IDbConnectionFactory {
-    private readonly IOptions<SQLiteOptions> _options;
+    private readonly IOptions<SqliteOptions> _options;
 
-    public string ProviderName => "SQLite";
+    public string ProviderName => "Sqlite";
 
-    public DbConnectionFactory(IOptions<SQLiteOptions> options) {
+    public DbConnectionFactory(IOptions<SqliteOptions> options) {
         _options = Prevent.Argument.Null(options);
     }
 

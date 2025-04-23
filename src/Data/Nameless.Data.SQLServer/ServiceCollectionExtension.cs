@@ -1,20 +1,19 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Data.SQLServer.Options;
 
-namespace Nameless.Data.SQLServer;
+namespace Nameless.Data.SqlServer;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterSqlServerDatabase(this IServiceCollection self, Action<SQLServerOptions> configure)
+    public static IServiceCollection RegisterSqlServerServices(this IServiceCollection self, Action<SqlServerOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterDatabaseServices();
 
-    public static IServiceCollection RegisterSqlServerDatabase(this IServiceCollection self, IConfigurationSection sqlServerConfigSection)
+    public static IServiceCollection RegisterSqlServerServices(this IServiceCollection self, IConfigurationSection sqlServerConfigSection)
         => Prevent.Argument
                   .Null(self)
-                  .Configure<SQLServerOptions>(sqlServerConfigSection)
+                  .Configure<SqlServerOptions>(sqlServerConfigSection)
                   .RegisterDatabaseServices();
 
     private static IServiceCollection RegisterDatabaseServices(this IServiceCollection self)

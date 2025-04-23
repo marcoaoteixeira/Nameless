@@ -1,10 +1,10 @@
-﻿#if NET6_0_OR_GREATER
+﻿#if NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
 
-namespace Nameless.Data.SQLite.Options;
+namespace Nameless.Data.Sqlite;
 
-public sealed record SQLiteOptions {
+public sealed record SqliteOptions {
     /// <summary>
     /// Gets or sets whether database will be set in-memory.
     /// Default is <c>true</c>.
@@ -15,7 +15,7 @@ public sealed record SQLiteOptions {
 
     public string? Password { get; set; }
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
     [MemberNotNullWhen(returnValue: true, nameof(Password))]
 #endif
     public bool UseCredentials
@@ -25,7 +25,9 @@ public sealed record SQLiteOptions {
         var connStr = string.Empty;
 
         connStr += $"Data Source={(UseInMemory ? ":memory:" : DatabasePath)};";
-        connStr += UseCredentials ? $"Password={Password};" : string.Empty;
+        connStr += UseCredentials && !UseInMemory
+            ? $"Password={Password};"
+            : string.Empty;
 
         return connStr;
     }

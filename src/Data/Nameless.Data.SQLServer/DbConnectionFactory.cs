@@ -1,16 +1,15 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using Nameless.Data.SQLServer.Options;
 
-namespace Nameless.Data.SQLServer;
+namespace Nameless.Data.SqlServer;
 
 public sealed class DbConnectionFactory : IDbConnectionFactory {
-    private readonly IOptions<SQLServerOptions> _options;
+    private readonly IOptions<SqlServerOptions> _options;
     
     public string ProviderName => "Microsoft SQL Server";
 
-    public DbConnectionFactory(IOptions<SQLServerOptions> options) {
+    public DbConnectionFactory(IOptions<SqlServerOptions> options) {
         _options = Prevent.Argument.Null(options);
     }
 
