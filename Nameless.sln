@@ -19,13 +19,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Core.UnitTests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{ADC0B9BD-2632-4529-8D05-9EAF624E8C1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite", "src\Data\Nameless.Data.SQLite\Nameless.Data.Sqlite.csproj", "{131580BD-9A3F-41DA-9932-991FF7D617B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite", "src\Data\Nameless.Data.Sqlite\Nameless.Data.Sqlite.csproj", "{131580BD-9A3F-41DA-9932-991FF7D617B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite.UnitTests", "src\Data\Nameless.Data.SQLite.UnitTests\Nameless.Data.Sqlite.UnitTests.csproj", "{56AA4C9D-11CD-448C-8E77-C6DFB72D64C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite.UnitTests", "src\Data\Nameless.Data.Sqlite.UnitTests\Nameless.Data.Sqlite.UnitTests.csproj", "{56AA4C9D-11CD-448C-8E77-C6DFB72D64C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer", "src\Data\Nameless.Data.SQLServer\Nameless.Data.SqlServer.csproj", "{43D39E04-4CD8-42EF-99DC-042AA07C0339}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer", "src\Data\Nameless.Data.SqlServer\Nameless.Data.SqlServer.csproj", "{43D39E04-4CD8-42EF-99DC-042AA07C0339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer.UnitTests", "src\Data\Nameless.Data.SQLServer.UnitTests\Nameless.Data.SqlServer.UnitTests.csproj", "{61D083AC-3761-4654-A175-741702EB0682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer.UnitTests", "src\Data\Nameless.Data.SqlServer.UnitTests\Nameless.Data.SqlServer.UnitTests.csproj", "{61D083AC-3761-4654-A175-741702EB0682}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{4979CD85-BFBC-431A-8B08-16893938F578}"
 EndProject
