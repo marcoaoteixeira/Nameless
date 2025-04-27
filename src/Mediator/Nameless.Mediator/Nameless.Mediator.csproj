@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	  <ProjectReference Include="..\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 	</ItemGroup>
 

@@ -65,7 +65,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\FileSystem\Nameless.FileSystem\Nameless.FileSystem.csproj" />
 		<ProjectReference Include="..\..\..\src\Search\Nameless.Search.Lucene\Nameless.Search.Lucene.csproj" />
 		<ProjectReference Include="..\..\Utilities\Nameless.UnitTests.Utils\Nameless.UnitTests.Utils.csproj" />
 	</ItemGroup>

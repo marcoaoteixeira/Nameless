@@ -46,6 +46,6 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
                                                cancellationToken: cancellationToken)
                                 .ConfigureAwait(continueOnCapturedContext: false);
 
-        return await next().ConfigureAwait(continueOnCapturedContext: false);
+        return await next(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
     }
 }

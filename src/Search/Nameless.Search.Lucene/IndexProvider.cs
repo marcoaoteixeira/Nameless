@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.FileSystem;
 using Nameless.Helpers;
 using Nameless.Infrastructure;
+using Nameless.IO;
 using Nameless.Search.Lucene.Options;
 
 namespace Nameless.Search.Lucene;
@@ -111,10 +111,7 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
         var directories = _fileSystem.Directory.GetDirectories(rootPath);
 
         foreach (var directory in directories) {
-            var indexName = _fileSystem.Path.GetFileName(directory.Path);
-            if (indexName is not null) {
-                yield return indexName;
-            }
+            yield return _fileSystem.Path.GetFileName(directory.Path);
         }
     }
 
@@ -149,7 +146,9 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
     private void BlockAccessAfterDispose() {
 #if NET8_0_OR_GREATER
+#pragma warning disable IDE0022
         ObjectDisposedException.ThrowIf(_disposed, this);
+#pragma warning restore IDE0022
 #else
         if (_disposed) {
             throw new ObjectDisposedException(nameof(IndexProvider));

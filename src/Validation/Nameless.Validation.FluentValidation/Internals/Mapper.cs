@@ -7,7 +7,7 @@ internal static class Mapper {
         if (result.IsValid) { return ValidationResult.Empty; }
 
         var entries = result.Errors
-                            .Select(error => new ValidationEntry(error.PropertyName ?? error.ErrorCode,
+                            .Select(error => new ValidationError(error.PropertyName ?? error.ErrorCode,
                                                                  error.ErrorMessage))
                             .ToArray();
 

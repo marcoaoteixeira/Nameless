@@ -5,13 +5,13 @@ using Nameless.Mailing.MailKit.Options;
 namespace Nameless.Mailing.MailKit;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterMailKitMailing(this IServiceCollection self, Action<MailingOptions> configure)
+    public static IServiceCollection RegisterMailKitMailingServices(this IServiceCollection self, Action<MailingOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterMailingServices();
 
-    public static IServiceCollection RegisterMailKitMailing(this IServiceCollection self, IConfigurationSection mailingConfigSection)
+    public static IServiceCollection RegisterMailKitMailingServices(this IServiceCollection self, IConfigurationSection mailingConfigSection)
         => Prevent.Argument
                   .Null(self)
                   .Configure<MailingOptions>(mailingConfigSection)
@@ -19,5 +19,5 @@ public static class ServiceCollectionExtension {
 
     private static IServiceCollection RegisterMailingServices(this IServiceCollection self)
         => self.AddSingleton<ISmtpClientFactory, SmtpClientFactory>()
-               .AddSingleton<IEmailDispatcher, EmailDispatcher>();
+               .AddSingleton<IMailingService, MailingService>();
 }

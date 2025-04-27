@@ -1,4 +1,4 @@
-﻿using Nameless.FileSystem;
+﻿using Nameless.IO;
 using Nameless.Mockers;
 
 namespace Nameless.Search.Lucene.Mockers;

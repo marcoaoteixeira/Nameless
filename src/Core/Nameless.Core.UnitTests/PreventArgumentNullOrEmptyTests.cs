@@ -9,24 +9,24 @@ public class PreventArgumentNullOrEmptyTests {
 
     [Test]
     public void WhenNonNullOrEmptyParamValue_ThenDoNotThrows()
-        // arrage & act & assert
+        // arrange & act & assert
         => Assert.DoesNotThrow(() => Prevent.Argument.NullOrEmpty(paramValue: _nonEmptyEnumerable));
 
     [Test]
     public void WhenNullParamValue_ThenThrowsArgumentNullException()
-        // arrage & act & assert
+        // arrange & act & assert
         => Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable));
 
     [Test]
     public void WhenEmptyParamValue_ThenThrowsArgumentException()
-        // arrage & act & assert
+        // arrange & act & assert
         => Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable));
 
     [Test]
     public void WhenNullParamValue_WithCustomMessage_ThenThrowsWithCustomMessage() {
         const string message = "Parameter is null";
 
-        // arrage & act & assert
+        // arrange & act & assert
         Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable, message: message))
               .ShouldNotBeNull()
               .Message
@@ -37,7 +37,7 @@ public class PreventArgumentNullOrEmptyTests {
     public void WhenEmptyParamValue_WithCustomMessage_ThenThrowsWithCustomMessage() {
         const string message = "Parameter is empty";
 
-        // arrage & act & assert
+        // arrange & act & assert
         Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable, message: message))
               .ShouldNotBeNull()
               .Message
@@ -46,35 +46,33 @@ public class PreventArgumentNullOrEmptyTests {
 
     [Test]
     public void WhenNullParamValue_WithCustomExceptionCreator_ThenThrowsCustomException()
-        // arrage & act & assert
+        // arrange & act & assert
         => Assert.Throws<InvalidOperationException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable, exceptionCreator: () => new InvalidOperationException()));
 
     [Test]
     public void WhenEmptyParamValue_WithCustomExceptionCreator_ThenThrowsCustomException()
-        // arrage & act & assert
+        // arrange & act & assert
         => Assert.Throws<InvalidOperationException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable, exceptionCreator: () => new InvalidOperationException()));
 
     [Test]
-    public void WhenNullParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName() {
-        // arrage & act & assert
-        Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable))
-              .ShouldNotBeNull()
-              .Message
-              .ShouldContain(nameof(_nullEnumerable));
-    }
+    public void WhenNullParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName()
+        // arrange & act & assert
+        => Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable))
+                 .ShouldNotBeNull()
+                 .Message
+                 .ShouldContain(nameof(_nullEnumerable));
 
     [Test]
-    public void WhenEmptyParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName() {
-        // arrage & act & assert
-        Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable))
-              .ShouldNotBeNull()
-              .Message
-              .ShouldContain(nameof(_emptyEnumerable));
-    }
+    public void WhenEmptyParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName()
+        // arrange & act & assert
+        => Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable))
+                 .ShouldNotBeNull()
+                 .Message
+                 .ShouldContain(nameof(_emptyEnumerable));
 
     [Test]
     public void WhenNullParamValue_WithParamName_ThenExceptionMessageContainsParamName() {
-        // arrage & act & assert
+        // arrange & act & assert
         const string paramName = "test_parameter";
 
         Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(paramValue: _nullEnumerable, paramName: paramName))
@@ -85,7 +83,7 @@ public class PreventArgumentNullOrEmptyTests {
 
     [Test]
     public void WhenEmptyParamValue_WithParamName_ThenExceptionMessageContainsParamName() {
-        // arrage & act & assert
+        // arrange & act & assert
         const string paramName = "test_parameter";
 
         Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(paramValue: _emptyEnumerable, paramName: paramName))
