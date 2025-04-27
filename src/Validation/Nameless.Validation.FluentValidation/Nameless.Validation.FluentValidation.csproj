@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	</ItemGroup>
 
 </Project>

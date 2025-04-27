@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
@@ -20,8 +20,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\FileSystem\Nameless.FileSystem.Abstractions\Nameless.FileSystem.Abstractions.csproj" />
-		<ProjectReference Include="..\Nameless.Search.Abstractions\Nameless.Search.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

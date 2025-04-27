@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<RootNamespace>Nameless.Mediator</RootNamespace>
@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Prevent\Nameless.Prevent\Nameless.Prevent.csproj" />
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	  <ProjectReference Include="..\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 	</ItemGroup>
 

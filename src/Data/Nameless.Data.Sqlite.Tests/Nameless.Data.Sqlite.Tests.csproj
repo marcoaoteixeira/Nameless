@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Data.Sqlite</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="NUnit.Analyzers" />
+		<PackageReference Include="NUnit3TestAdapter" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Nameless.Data.Sqlite\Nameless.Data.Sqlite.csproj" />
+	  <ProjectReference Include="..\..\Utilities\Nameless.Tests.Utils\Nameless.Tests.Utils.csproj" />
+	</ItemGroup>
+
+</Project>

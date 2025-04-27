@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<RootNamespace>Nameless.Web</RootNamespace>
@@ -31,7 +31,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\Validation\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

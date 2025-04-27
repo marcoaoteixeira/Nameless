@@ -23,7 +23,12 @@ namespace Nameless.Security.Crypto;
 /// when a cryptographic exception occurs.
 /// </remarks>
 public sealed class RijndaelCryptographicService : ICryptographicService, IDisposable {
+#if NET9_0_OR_GREATER
+    private readonly Lock _lock = new();
+#else
     private readonly object _lock = new();
+#endif
+
     private readonly RijndaelCryptoOptions _options;
     private readonly ILogger _logger;
     private readonly byte[] _ivBuffer;
@@ -325,9 +330,16 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
     }
 
     private void BlockAccessAfterDispose() {
+#if NET8_0_OR_GREATER
+#pragma warning disable IDE0022
+        ObjectDisposedException.ThrowIf(_disposed, this);
+#pragma warning restore IDE0022
+#else
         if (_disposed) {
             throw new ObjectDisposedException(nameof(RijndaelCryptographicService));
         }
+#endif
+
     }
 
     private void Dispose(bool disposing) {

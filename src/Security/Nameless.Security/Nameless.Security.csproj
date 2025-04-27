@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!-- NUGET PACKING -->
@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Security.Abstractions\Nameless.Security.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\Core\Nameless.Core\Nameless.Core.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Content\LoremIpsun.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Content\LoremIpsun.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="NUnit.Analyzers" />
+		<PackageReference Include="NUnit3TestAdapter" />
+		<PackageReference Include="Shouldly" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Core\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\Utilities\Nameless.Tests.Utils\Nameless.Tests.Utils.csproj" />
+	</ItemGroup>
+
+</Project>

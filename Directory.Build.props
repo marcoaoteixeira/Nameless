@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<IsTestProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', 'IntegrationTests|UnitTests'))</IsTestProject>
+		<IsTestProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', 'IntegrationTests|UnitTests|Tests'))</IsTestProject>
 		<IsWebProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', 'Web'))</IsWebProject>
 		<IsCoreProject>False</IsCoreProject>
 		<IsCoreProject Condition="$(IsTestProject) == 'False' And $(IsWebProject) == 'False'">True</IsCoreProject>
