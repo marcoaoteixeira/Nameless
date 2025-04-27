@@ -9,35 +9,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Autofac", "Autofac", "{D6C1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Autofac", "src\Autofac\Nameless.Autofac\Nameless.Autofac.csproj", "{59027F19-C2AA-4AD1-A2B5-5B10FEE2ED45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Autofac.UnitTests", "src\Autofac\Nameless.Autofac.UnitTests\Nameless.Autofac.UnitTests.csproj", "{7AE3684B-7F65-49F0-8D0A-B6CD5FF28D38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Autofac.Tests", "src\Autofac\Nameless.Autofac.Tests\Nameless.Autofac.Tests.csproj", "{7AE3684B-7F65-49F0-8D0A-B6CD5FF28D38}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F9FD5905-CBC6-42CC-AF04-D4655EFB9C46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Core", "src\Core\Nameless.Core\Nameless.Core.csproj", "{6542BEA2-63DC-4516-8F52-8CA33DA2A1AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Core.UnitTests", "src\Core\Nameless.Core.UnitTests\Nameless.Core.UnitTests.csproj", "{DB6D0A89-14B3-4ED6-AAA1-6D7028A79163}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Core.Tests", "src\Core\Nameless.Core.Tests\Nameless.Core.Tests.csproj", "{DB6D0A89-14B3-4ED6-AAA1-6D7028A79163}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{ADC0B9BD-2632-4529-8D05-9EAF624E8C1A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite", "src\Data\Nameless.Data.Sqlite\Nameless.Data.Sqlite.csproj", "{131580BD-9A3F-41DA-9932-991FF7D617B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite.UnitTests", "src\Data\Nameless.Data.Sqlite.UnitTests\Nameless.Data.Sqlite.UnitTests.csproj", "{56AA4C9D-11CD-448C-8E77-C6DFB72D64C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Sqlite.Tests", "src\Data\Nameless.Data.Sqlite.Tests\Nameless.Data.Sqlite.Tests.csproj", "{56AA4C9D-11CD-448C-8E77-C6DFB72D64C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer", "src\Data\Nameless.Data.SqlServer\Nameless.Data.SqlServer.csproj", "{43D39E04-4CD8-42EF-99DC-042AA07C0339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer.UnitTests", "src\Data\Nameless.Data.SqlServer.UnitTests\Nameless.Data.SqlServer.UnitTests.csproj", "{61D083AC-3761-4654-A175-741702EB0682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.SqlServer.Tests", "src\Data\Nameless.Data.SqlServer.Tests\Nameless.Data.SqlServer.Tests.csproj", "{61D083AC-3761-4654-A175-741702EB0682}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{4979CD85-BFBC-431A-8B08-16893938F578}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Localization.Json", "src\Localization\Nameless.Localization.Json\Nameless.Localization.Json.csproj", "{493DE46C-989A-49B8-A78E-D7414C7DFF58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Localization.Json.UnitTests", "src\Localization\Nameless.Localization.Json.UnitTests\Nameless.Localization.Json.UnitTests.csproj", "{8A14AD3C-CC26-4845-A511-A41C02E8F288}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Localization.Json.Tests", "src\Localization\Nameless.Localization.Json.Tests\Nameless.Localization.Json.Tests.csproj", "{8A14AD3C-CC26-4845-A511-A41C02E8F288}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mailing", "Mailing", "{AA7028AD-15E5-426C-8527-1F00CDBA56CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Mailing.MailKit", "src\Mailing\Nameless.Mailing.MailKit\Nameless.Mailing.MailKit.csproj", "{1F4503F5-7343-4AE7-9135-1420D47656A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Mailing.MailKit.UnitTests", "src\Mailing\Nameless.Mailing.MailKit.UnitTests\Nameless.Mailing.MailKit.UnitTests.csproj", "{B8360EF4-F6F7-4DA6-9D95-B4ACFF2BC126}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Mailing.MailKit.Tests", "src\Mailing\Nameless.Mailing.MailKit.Tests\Nameless.Mailing.MailKit.Tests.csproj", "{B8360EF4-F6F7-4DA6-9D95-B4ACFF2BC126}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediatR", "MediatR", "{31904536-BEDB-443E-BA64-C18985532912}"
 EndProject
@@ -47,49 +47,49 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MongoDB", "MongoDB", "{4C25
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.MongoDB", "src\MongoDB\Nameless.MongoDB\Nameless.MongoDB.csproj", "{C560D914-EE43-48E7-B1D0-678140CAD4EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.MongoDB.UnitTests", "src\MongoDB\Nameless.MongoDB.UnitTests\Nameless.MongoDB.UnitTests.csproj", "{44E46B4B-4136-4EE3-BFD9-7E3E9EC280AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.MongoDB.Tests", "src\MongoDB\Nameless.MongoDB.Tests\Nameless.MongoDB.Tests.csproj", "{44E46B4B-4136-4EE3-BFD9-7E3E9EC280AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NHibernate", "NHibernate", "{BEAA74BC-90CB-4ABE-858A-09C5D281F9BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.NHibernate", "src\NHibernate\Nameless.NHibernate\Nameless.NHibernate.csproj", "{1C0247B3-11A0-49FD-BC92-7315A89552E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.NHibernate.UnitTests", "src\NHibernate\Nameless.NHibernate.UnitTests\Nameless.NHibernate.UnitTests.csproj", "{36E03ACB-B6C6-443D-86E3-4895D4EF3B3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.NHibernate.Tests", "src\NHibernate\Nameless.NHibernate.Tests\Nameless.NHibernate.Tests.csproj", "{36E03ACB-B6C6-443D-86E3-4895D4EF3B3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PubSub", "PubSub", "{BA0CD005-71BF-4743-89DF-EFE6C8667F65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.PubSub.RabbitMQ", "src\PubSub\Nameless.PubSub.RabbitMQ\Nameless.PubSub.RabbitMQ.csproj", "{ABF478A6-F78C-4AA5-A3EF-C0F0867CD97A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.PubSub.RabbitMQ.UnitTests", "src\PubSub\Nameless.PubSub.RabbitMQ.UnitTests\Nameless.PubSub.RabbitMQ.UnitTests.csproj", "{81C461EC-C1CF-4AE0-BFF3-592015FEBBDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.PubSub.RabbitMQ.Tests", "src\PubSub\Nameless.PubSub.RabbitMQ.Tests\Nameless.PubSub.RabbitMQ.Tests.csproj", "{81C461EC-C1CF-4AE0-BFF3-592015FEBBDF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Search", "Search", "{6C6377D1-9D93-4A56-8574-9A1A93A72D51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Search.Lucene", "src\Search\Nameless.Search.Lucene\Nameless.Search.Lucene.csproj", "{3FAB6773-C532-46CC-8EF1-342B9D5C3FB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Search.Lucene.UnitTests", "src\Search\Nameless.Search.Lucene.UnitTests\Nameless.Search.Lucene.UnitTests.csproj", "{5E836FAE-F3F7-4EA3-93AE-775FD2532B31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Search.Lucene.Tests", "src\Search\Nameless.Search.Lucene.Tests\Nameless.Search.Lucene.Tests.csproj", "{5E836FAE-F3F7-4EA3-93AE-775FD2532B31}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{063FF6AE-49F7-4A28-8D4E-A9156023A044}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Security.UnitTests", "src\Security\Nameless.Security.UnitTests\Nameless.Security.UnitTests.csproj", "{FEF30775-E94B-49FE-83AA-D701F7F84A2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Security.Tests", "src\Security\Nameless.Security.Tests\Nameless.Security.Tests.csproj", "{FEF30775-E94B-49FE-83AA-D701F7F84A2C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{62AA23D5-BFC0-4E9D-A3AE-71FD61C5AB9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.UnitTests.Utils", "src\Utilities\Nameless.UnitTests.Utils\Nameless.UnitTests.Utils.csproj", "{E0CFD1C8-3A3A-461D-98E3-90868B2CE5D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Tests.Utils", "src\Utilities\Nameless.Tests.Utils\Nameless.Tests.Utils.csproj", "{E0CFD1C8-3A3A-461D-98E3-90868B2CE5D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation", "Validation", "{CEF2498B-D6E5-4528-B490-EAF6246CAE7F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Validation.FluentValidation", "src\Validation\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj", "{D170D450-1643-4C5B-A3A3-70DE97E168C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Validation.FluentValidation.UnitTests", "src\Validation\Nameless.Validation.FluentValidation.UnitTests\Nameless.Validation.FluentValidation.UnitTests.csproj", "{09581080-EC76-4DC8-ACA1-7FF2A71C9F5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Validation.FluentValidation.Tests", "src\Validation\Nameless.Validation.FluentValidation.Tests\Nameless.Validation.FluentValidation.Tests.csproj", "{09581080-EC76-4DC8-ACA1-7FF2A71C9F5F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{D02B82A0-018A-48B7-91B8-D64D79285704}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Core", "src\Web\Nameless.Web.Core\Nameless.Web.Core.csproj", "{235578A5-2C8D-46FE-9363-8008149C19C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Core.UnitTests", "src\Web\Nameless.Web.Core.UnitTests\Nameless.Web.Core.UnitTests.csproj", "{F01D6663-0F06-4027-9CDA-711222CAFCBE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Core.Tests", "src\Web\Nameless.Web.Core.Tests\Nameless.Web.Core.Tests.csproj", "{F01D6663-0F06-4027-9CDA-711222CAFCBE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Identity", "src\Web\Nameless.Web.Identity\Nameless.Web.Identity.csproj", "{3864EEF4-50AC-4335-B722-DCC53224A575}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Identity.UnitTests", "src\Web\Nameless.Web.Identity.UnitTests\Nameless.Web.Identity.UnitTests.csproj", "{5FE54C23-2B21-4340-A1FF-58590F2DCCEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Web.Identity.Tests", "src\Web\Nameless.Web.Identity.Tests\Nameless.Web.Identity.Tests.csproj", "{5FE54C23-2B21-4340-A1FF-58590F2DCCEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D44A915A-FC33-4000-8D3C-1D859E2C0A0D}"
 	ProjectSection(SolutionItems) = preProject
