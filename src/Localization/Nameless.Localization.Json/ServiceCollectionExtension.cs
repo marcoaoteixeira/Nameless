@@ -29,11 +29,11 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<LocalizationOptions> configure)
+    public static IServiceCollection RegisterJsonLocalizationServices(this IServiceCollection self, Action<LocalizationOptions> configure)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
-                  .RegisterLocalizationServices();
+                  .RegisterServices();
 
     /// <summary>
     /// Registers localization service based on JSON files.
@@ -57,13 +57,13 @@ public static class ServiceCollectionExtension {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="self"/> is <c>null</c>.
     /// </exception>
-    public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, IConfigurationSection localizationConfigSection)
+    public static IServiceCollection RegisterJsonLocalizationServices(this IServiceCollection self, IConfigurationSection localizationConfigSection)
         => Prevent.Argument
                   .Null(self)
                   .Configure<LocalizationOptions>(localizationConfigSection)
-                  .RegisterLocalizationServices();
+                  .RegisterServices();
 
-    private static IServiceCollection RegisterLocalizationServices(this IServiceCollection self)
+    private static IServiceCollection RegisterServices(this IServiceCollection self)
         => self.AddSingleton<ICultureProvider, CultureProvider>()
                .AddSingleton<IResourceManager, ResourceManager>()
                .AddSingleton<IPluralizationRuleProvider, PluralizationRuleProvider>()

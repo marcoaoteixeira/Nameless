@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using Nameless.Infrastructure;
-using Nameless.IO;
 using Nameless.Search.Lucene.Options;
 
 namespace Nameless.Search.Lucene;
@@ -12,11 +11,8 @@ namespace Nameless.Search.Lucene;
 /// Default implementation of <see cref="IIndexProvider"/>
 /// </summary>
 public sealed class IndexProvider : IIndexProvider, IDisposable {
+    private readonly string _rootPath;
     private readonly IAnalyzerProvider _analyzerProvider;
-    private readonly IApplicationContext _applicationContext;
-    private readonly IFileSystem _fileSystem;
-    private readonly IOptions<LuceneOptions> _options;
-
     private readonly ILogger<IndexProvider> _logger;
     private readonly ILogger<Index> _loggerForIndex;
 
@@ -29,24 +25,25 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     /// </summary>
     /// <param name="analyzerProvider">The analyzer provider.</param>
     /// <param name="applicationContext">The application context.</param>
-    /// <param name="fileSystem">The file system services.</param>
     /// <param name="loggerFactory">The logger factory.</param>
     /// <param name="options">The settings.</param>
     public IndexProvider(IAnalyzerProvider analyzerProvider,
                          IApplicationContext applicationContext,
-                         IFileSystem fileSystem,
                          ILoggerFactory loggerFactory,
                          IOptions<LuceneOptions> options) {
+        Prevent.Argument.Null(applicationContext);
         Prevent.Argument.Null(loggerFactory);
+        Prevent.Argument.Null(options);
 
-        _applicationContext = Prevent.Argument.Null(applicationContext);
         _analyzerProvider = Prevent.Argument.Null(analyzerProvider);
-        _fileSystem = Prevent.Argument.Null(fileSystem);
 
         _logger = loggerFactory.CreateLogger<IndexProvider>();
         _loggerForIndex = loggerFactory.CreateLogger<Index>();
 
-        _options = Prevent.Argument.Null(options);
+        var rootPath = Path.Combine(applicationContext.AppDataFolderPath,
+                                    options.Value.LuceneFolderName);
+
+        _rootPath = PathHelper.Normalize(rootPath);
     }
 
     ~IndexProvider() {
@@ -83,8 +80,8 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
         Prevent.Argument.NullOrWhiteSpace(name);
 
         var indexDirectoryPath = GetIndexDirectoryPath(name);
-
-        return _fileSystem.Directory.Exists(indexDirectoryPath);
+        
+        return Directory.Exists(indexDirectoryPath);
     }
 
     /// <inheritdoc />
@@ -105,13 +102,11 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
     /// <inheritdoc />
     public IEnumerable<string> ListIndexes() {
         BlockAccessAfterDispose();
-
-        var rootPath = _fileSystem.Path.Combine(_applicationContext.AppDataFolderPath,
-                                                _options.Value.LuceneFolderName);
-        var directories = _fileSystem.Directory.GetDirectories(rootPath);
+        
+        var directories = Directory.GetDirectories(_rootPath);
 
         foreach (var directory in directories) {
-            yield return _fileSystem.Path.GetFileName(directory.Path);
+            yield return Path.GetFileName(directory);
         }
     }
 
@@ -124,9 +119,9 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
         var indexDirectoryPath = GetIndexDirectoryPath(indexName);
 
         try {
-            if (_fileSystem.Directory.Exists(indexDirectoryPath)) {
-                _fileSystem.Directory.Delete(directoryPath: indexDirectoryPath,
-                                             recursive: true);
+            if (Directory.Exists(indexDirectoryPath)) {
+                Directory.Delete(path: indexDirectoryPath,
+                                 recursive: true);
             }
         } catch (Exception ex) {
             _logger.DeleteIndexDirectoryError(indexName, ex);
@@ -172,20 +167,15 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
         _disposed = true;
     }
 
-    private string GetIndexDirectoryPath(string indexName) {
-        var path = _fileSystem.Path.Combine(_applicationContext.AppDataFolderPath,
-                                            _options.Value.LuceneFolderName,
-                                            indexName);
-
-        return PathHelper.Normalize(path);
-    }
+    private string GetIndexDirectoryPath(string indexName)
+        => Path.Combine(_rootPath, indexName);
 
     private Index Create(string indexName) {
         var indexDirectoryPath = GetIndexDirectoryPath(indexName);
-        var directory = _fileSystem.Directory.Create(indexDirectoryPath);
+        var directory = Directory.CreateDirectory(indexDirectoryPath);
 
         return new Index(analyzer: _analyzerProvider.GetAnalyzer(indexName),
-                         indexDirectoryPath: directory.Path,
+                         indexDirectoryPath: directory.FullName,
                          indexName: indexName,
                          logger: _loggerForIndex);
     }
