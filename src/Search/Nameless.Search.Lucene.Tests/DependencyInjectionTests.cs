@@ -11,11 +11,9 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
 
-        var applicationContext = new ApplicationContextMocker().Build();
+        var applicationContext = new ApplicationContextMocker().WithAppDataFolderPath("\\Temp")
+                                                               .Build();
         services.AddSingleton(applicationContext);
-
-        var fileSystem = new FileSystemMocker().Build();
-        services.AddSingleton(fileSystem);
 
         var loggerForIndexProvider = new LoggerMocker<IndexProvider>().Build();
         var loggerForIndex = new LoggerMocker<Index>().Build();
@@ -25,10 +23,12 @@ public class DependencyInjectionTests {
             .Build();
         services.AddSingleton(loggerFactory);
 
-        var options = new OptionsMocker<LuceneOptions>().Build();
+        var options = new OptionsMocker<LuceneOptions>()
+            .WithValue(new LuceneOptions())
+            .Build();
         services.AddSingleton(options);
 
-        services.RegisterLuceneSearch(_ => { });
+        services.RegisterSearchServices(_ => { });
 
         using var provider = services.BuildServiceProvider();
 

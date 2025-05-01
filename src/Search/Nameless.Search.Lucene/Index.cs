@@ -32,7 +32,10 @@ public sealed class Index : IIndex, IDisposable {
     /// <param name="indexDirectoryPath">The index directory path.</param>
     /// <param name="indexName">The index name.</param>
     /// <param name="logger">The <see cref="ILogger{TCategory}"/> object.</param>
-    public Index(Analyzer analyzer, string indexDirectoryPath, string indexName, ILogger<Index> logger) {
+    public Index(Analyzer analyzer,
+                 string indexDirectoryPath,
+                 string indexName,
+                 ILogger<Index> logger) {
         Prevent.Argument.NullOrWhiteSpace(indexDirectoryPath);
 
         _analyzer = Prevent.Argument.Null(analyzer);

@@ -6,13 +6,13 @@ using Nameless.Search.Lucene.Options;
 namespace Nameless.Search.Lucene;
 
 public static class ServiceCollectionExtension {
-    public static IServiceCollection RegisterLuceneSearch(this IServiceCollection self, Action<LuceneOptions> configure, params Assembly[] supportAssemblies)
+    public static IServiceCollection RegisterSearchServices(this IServiceCollection self, Action<LuceneOptions> configure, params Assembly[] supportAssemblies)
         => Prevent.Argument
                   .Null(self)
                   .Configure(configure)
                   .RegisterServices(supportAssemblies);
 
-    public static IServiceCollection RegisterLuceneSearch(this IServiceCollection self, IConfigurationSection luceneConfigSection, params Assembly[] supportAssemblies)
+    public static IServiceCollection RegisterSearchServices(this IServiceCollection self, IConfigurationSection luceneConfigSection, params Assembly[] supportAssemblies)
         => Prevent.Argument
                   .Null(self)
                   .Configure<LuceneOptions>(luceneConfigSection)

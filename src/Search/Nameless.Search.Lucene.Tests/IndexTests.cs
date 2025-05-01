@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.IO;
 using Nameless.Mockers;
 
 namespace Nameless.Search.Lucene;
@@ -15,13 +14,12 @@ public class IndexTests {
 
         var services = new ServiceCollection();
 
-        services.AddSingleton<IFileSystem>(new FileSystem());
         services.AddSingleton(loggerFactory);
         services.AddSingleton(new LoggerMocker<Index>().Build());
         services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(IndexDirectoryPath)
                                                             .Build());
 
-        services.RegisterLuceneSearch(_ => { });
+        services.RegisterSearchServices(_ => { });
 
         return services.BuildServiceProvider();
     }
