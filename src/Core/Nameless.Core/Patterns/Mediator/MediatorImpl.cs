@@ -24,8 +24,8 @@ public sealed class MediatorImpl : IMediator {
     public Task<TResponse> ExecuteAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken)
         => _requestHandlerProxy.ExecuteAsync(request, cancellationToken);
 
-    public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken) where TEvent : IEvent
-        => _eventHandlerProxy.PublishAsync(@event, cancellationToken);
+    public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken) where TEvent : IEvent
+        => _eventHandlerProxy.PublishAsync(evt, cancellationToken);
 
     public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request, CancellationToken cancellationToken)
         => _streamHandlerProxy.CreateAsync(request, cancellationToken);

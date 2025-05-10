@@ -5,7 +5,7 @@ namespace Nameless.Patterns.Mediator.Events;
 /// <summary>
 /// The default implementation of <see cref="IEventHandlerProxy"/>.
 /// </summary>
-public class EventHandlerProxy : IEventHandlerProxy {
+public sealed class EventHandlerProxy : IEventHandlerProxy {
     private readonly ConcurrentDictionary<Type, EventHandlerWrapper> _cache = new();
 
     private readonly IServiceProvider _provider;
@@ -19,16 +19,18 @@ public class EventHandlerProxy : IEventHandlerProxy {
     }
 
     /// <inheritdoc />
-    public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken)
+    public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IEvent {
-        var handler = _cache.GetOrAdd(@event.GetType(), static eventType => {
-            var wrapperType = typeof(EventHandlerWrapperImpl<>).MakeGenericType(eventType);
-            var wrapper = Activator.CreateInstance(wrapperType)
-                          ?? throw new InvalidOperationException($"Couldn't create event handler wrapper for event: {eventType}");
+        var handler = _cache.GetOrAdd(typeof(TEvent), CreateEventHandlerWrapper);
 
-            return (EventHandlerWrapper)wrapper;
-        });
-
-        return handler.HandleAsync(@event, _provider, cancellationToken);
+        return handler.HandleAsync(evt, _provider, cancellationToken);
     }
+
+    private static EventHandlerWrapper CreateEventHandlerWrapper(Type evtType) {
+        var wrapperType = typeof(EventHandlerWrapperImpl<>).MakeGenericType(evtType);
+        var wrapper = Activator.CreateInstance(wrapperType)
+                      ?? throw new InvalidOperationException($"Couldn't create event handler wrapper for event: {evtType}");
+
+        return (EventHandlerWrapper)wrapper;
+    }   
 }

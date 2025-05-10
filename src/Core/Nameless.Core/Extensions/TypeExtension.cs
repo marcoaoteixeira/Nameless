@@ -6,14 +6,6 @@ namespace Nameless;
 /// <see cref="Type"/> extension methods.
 /// </summary>
 public static class TypeExtension {
-    private static readonly Type[] WriteTypes = [
-        typeof(string),
-        typeof(DateTime),
-        typeof(Enum),
-        typeof(decimal),
-        typeof(Guid)
-    ];
-
     /// <summary>
     /// Verifies if the <see cref="Type"/> is an instance of <see cref="Nullable"/>.
     /// </summary>
@@ -40,20 +32,6 @@ public static class TypeExtension {
         Prevent.Argument.Null(self);
 
         return !self.IsValueType || self.IsNullable();
-    }
-
-    /// <summary>
-    /// Verifies if the <paramref name="self"/> is a simple type.
-    /// </summary>
-    /// <param name="self">The self type.</param>
-    /// <returns><c>true</c> if is simple type; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// if <paramref name="self"/> is <c>null</c>.
-    /// </exception>
-    public static bool IsSimple(this Type self) {
-        Prevent.Argument.Null(self);
-
-        return self.IsPrimitive || WriteTypes.Contains(self);
     }
 
     /// <summary>
@@ -84,7 +62,7 @@ public static class TypeExtension {
 
         bool Assignable(Type current) {
             return current.IsGenericType &&
-                   current.GetGenericTypeDefinition() == self;
+                   current.GetGenericTypeDefinition() == self.GetGenericTypeDefinition();
         }
     }
 

@@ -302,6 +302,50 @@ public class ResultWithErrorsTests {
     }
 
     [Test]
+    public void Result_With_Three_Matches() {
+        // arrange
+        Result<int> result = 123;
+
+        // act
+        var match = result.Match(FirstSuccessAction, FirstFailureAction)
+                          .Match(SecondSuccessAction, SecondFailureAction)
+                          .Match(FinalSuccessAction, FinalFailureAction);
+
+        // assert
+        Assert.That(match, Is.True);
+
+        return;
+
+        Result<bool> FirstSuccessAction(int value) {
+            return Error.Conflict("Conflict");
+        }
+
+        Result<bool> FirstFailureAction(Error[] errors) {
+            if (errors.Length is > 1 and < 3) {
+                return true;
+            }
+
+            return Error.Failure("Error should be exactly 2");
+        }
+
+        Result<string> SecondSuccessAction(bool value) {
+            return value.ToString();
+        }
+
+        Result<string> SecondFailureAction(Error[] errors) {
+            return errors;
+        }
+
+        bool FinalSuccessAction(string value) {
+            return value == "Hello world";
+        }
+
+        bool FinalFailureAction(Error[] errors) {
+            return errors.Length > 0;
+        }
+    }
+
+    [Test]
     public void WhenResultHasNullableValue_ThenHasErrorMustBeFalse() {
         // arrange
         Result<int?> result;

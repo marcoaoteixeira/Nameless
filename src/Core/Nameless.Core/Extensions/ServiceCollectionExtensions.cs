@@ -4,7 +4,7 @@ using Nameless.Infrastructure;
 
 namespace Nameless;
 
-public static class ServiceCollectionExtension {
+public static class ServiceCollectionExtensions {
     /// <summary>
     /// Registers <see cref="IApplicationContext"/> implementation in the service collection.
     /// </summary>

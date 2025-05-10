@@ -1,14 +1,15 @@
-﻿using System.Collections;
-
-namespace Nameless.Collections.Generic;
+﻿namespace Nameless.Collections.Generic;
 
 /// <summary>
 /// Default implementation of <see cref="IPage{TItem}"/>.
 /// </summary>
 /// <typeparam name="TItem">Type of the page's items.</typeparam>
-public sealed class Page<TItem> : IPage<TItem>, IEnumerable<TItem> {
+public sealed class Page<TItem> : IPage<TItem> {
     public const int DEFAULT_NUMBER = 1;
     public const int DEFAULT_SIZE = 10;
+
+    /// <inheritdoc />
+    public TItem this[int index] => Items[index];
 
     /// <inheritdoc />
     public int Number { get; }
@@ -63,9 +64,5 @@ public sealed class Page<TItem> : IPage<TItem>, IEnumerable<TItem> {
 
     /// <inheritdoc />
     public IEnumerator<TItem> GetEnumerator()
-        => (IEnumerator<TItem>)Items.GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator()
-        => Items.GetEnumerator();
+        => ((IEnumerable<TItem>)Items).GetEnumerator();
 }

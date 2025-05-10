@@ -45,8 +45,9 @@ public sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHand
                               .Aggregate(seed: (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
                                          func: (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token))(cancellationToken);
 
-        Task<TResponse> InnerHandleAsync(CancellationToken token)
-            => serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>()
-                              .HandleAsync((TRequest)request, token);
+        Task<TResponse> InnerHandleAsync(CancellationToken token) {
+            return serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>()
+                                  .HandleAsync((TRequest)request, token);
+        }
     }
 }
