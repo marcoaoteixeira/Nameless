@@ -1,4 +1,4 @@
-﻿namespace Nameless.Patterns.Mediator.Pipeline;
+﻿namespace Nameless.Patterns.Mediator.Requests;
 
 /// <summary>
 /// Represents an async continuation for the next task to execute in the pipeline
@@ -13,7 +13,7 @@ public delegate Task<TResponse> RequestHandlerDelegate<TResponse>(CancellationTo
 /// </summary>
 /// <typeparam name="TRequest">Request type</typeparam>
 /// <typeparam name="TResponse">Response type</typeparam>
-public interface IPipelineBehavior<in TRequest, TResponse>
+public interface IRequestPipelineBehavior<in TRequest, TResponse>
     where TRequest : notnull {
     /// <summary>
     /// Pipeline handler. Perform any additional behavior and await the <paramref name="next"/> delegate as necessary

@@ -26,7 +26,6 @@ public sealed record ValidationResult {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="errors"/> is <c>null</c>.
     /// </exception>
-    public ValidationResult(params ValidationError[] errors) {
-        Errors = errors ?? throw new ArgumentNullException(nameof(errors));
-    }
+    public ValidationResult(params ValidationError[] errors)
+        => Errors = Prevent.Argument.Null(errors);
 }

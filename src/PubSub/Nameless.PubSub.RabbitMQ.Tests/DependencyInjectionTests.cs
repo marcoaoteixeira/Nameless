@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Nameless.Services;
 using Shouldly;
 
 namespace Nameless.PubSub.RabbitMQ;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Infrastructure;
+using Nameless.Services;
 
 namespace Nameless;
 

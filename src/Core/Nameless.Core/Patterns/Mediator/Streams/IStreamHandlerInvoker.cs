@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Patterns.Mediator.Streams;
 
 /// <summary>
-/// An interface that represents a streamer.
+/// An interface that represents a stream handler invoker.
 /// </summary>
-public interface IStreamHandlerProxy {
+public interface IStreamHandlerInvoker {
     /// <summary>
     /// Creates a stream of data from a request.
     /// </summary>

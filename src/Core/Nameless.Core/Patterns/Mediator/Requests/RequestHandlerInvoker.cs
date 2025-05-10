@@ -3,20 +3,23 @@
 namespace Nameless.Patterns.Mediator.Requests;
 
 /// <summary>
-/// The default implementation of <see cref="IRequestHandlerProxy"/>.
+/// The default implementation of <see cref="IRequestHandlerInvoker"/>.
 /// </summary>
-public sealed class RequestHandlerProxy : IRequestHandlerProxy {
+public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
     private readonly IServiceProvider _provider;
 
     private readonly ConcurrentDictionary<Type, RequestHandlerWrapperBase> _cache = new();
 
-    public RequestHandlerProxy(IServiceProvider provider) {
-        _provider = Prevent.Argument.Null(provider);
-    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RequestHandlerInvoker"/> class.
+    /// </summary>
+    /// <param name="provider">The service provider.</param>
+    public RequestHandlerInvoker(IServiceProvider provider)
+        => _provider = Prevent.Argument.Null(provider);
 
     /// <inheritdoc />
     public Task ExecuteAsync<TRequest>(TRequest request, CancellationToken cancellationToken)
-        where TRequest : IRequest  {
+        where TRequest : IRequest {
         Prevent.Argument.Default(request);
 
         var handler = _cache.GetOrAdd(request.GetType(), static requestType => {

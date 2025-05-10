@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Patterns.Mediator.Pipeline;
 
 namespace Nameless.Patterns.Mediator.Streams;
 

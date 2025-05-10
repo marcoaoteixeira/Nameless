@@ -3,20 +3,19 @@
 namespace Nameless.Patterns.Mediator.Events;
 
 /// <summary>
-/// The default implementation of <see cref="IEventHandlerProxy"/>.
+/// The default implementation of <see cref="IEventHandlerInvoker"/>.
 /// </summary>
-public sealed class EventHandlerProxy : IEventHandlerProxy {
+public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     private readonly ConcurrentDictionary<Type, EventHandlerWrapper> _cache = new();
 
     private readonly IServiceProvider _provider;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EventHandlerProxy"/>.
+    /// Initializes a new instance of the <see cref="EventHandlerInvoker"/>.
     /// </summary>
     /// <param name="provider">The service provider.</param>
-    public EventHandlerProxy(IServiceProvider provider) {
-        _provider = Prevent.Argument.Null(provider);
-    }
+    public EventHandlerInvoker(IServiceProvider provider)
+        => _provider = Prevent.Argument.Null(provider);
 
     /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
@@ -32,5 +31,5 @@ public sealed class EventHandlerProxy : IEventHandlerProxy {
                       ?? throw new InvalidOperationException($"Couldn't create event handler wrapper for event: {evtType}");
 
         return (EventHandlerWrapper)wrapper;
-    }   
+    }
 }

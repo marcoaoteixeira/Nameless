@@ -25,9 +25,7 @@ public record MediatorOptions {
     /// If <see cref="UseAutoRegister"/> is set to <c>true</c>, this property is ignored.
     /// </remarks>
     public Type[] RequestHandlers { get; set; } = [];
-    public Type[] RequestHandlerPreProcessors { get; set; } = [];
-    public Type[] RequestHandlerPostProcessors { get; set; } = [];
-    public Type[] RequestBehaviors { get; set; } = [];
+    public Type[] RequestPipelineBehaviors { get; set; } = [];
 
     /// <summary>
     /// Gets an array of stream handler implementations.
@@ -36,7 +34,7 @@ public record MediatorOptions {
     /// If <see cref="UseAutoRegister"/> is set to <c>true</c>, this property is ignored.
     /// </remarks>
     public Type[] StreamHandlers { get; set; } = [];
-    public Type[] StreamBehaviors { get; set; } = [];
+    public Type[] StreamPipelineBehaviors { get; set; } = [];
 }
 
 public static class ServiceCollectionExtensions {
@@ -46,76 +44,105 @@ public static class ServiceCollectionExtensions {
 
         innerConfigure(options);
 
-        self.RegisterServices(options);
+        return self
+               .RegisterEventHandlers(options)
 
-        return self;
+               .RegisterRequestHandlers(options)
+               .RegisterRequestPipelineBehaviors(options)
+
+               .RegisterStreamHandlers(options)
+               .RegisterStreamPipelineBehaviors(options)
+
+               .RegisterMediator();
     }
 
-    private static IServiceCollection RegisterServices(this IServiceCollection self, MediatorOptions options) {
-        const string RequestHandlerProxyKey = "56a2e194-5833-43e5-b58e-6ba17bf429d6";
-        const string EventHandlerProxyKey = "8b544d44-bcd7-4fe0-8b46-e980f0eb7139";
-        const string StreamHandlerProxyKey = "cc1e729c-c09d-4b6d-b8b6-bf5d72ba00b8";
-
-        self.RegisterEventServices(options)
-            .AddKeyedScoped<IRequestHandlerProxy, RequestHandlerProxy>(RequestHandlerProxyKey)
-            .AddKeyedScoped<IEventHandlerProxy, EventHandlerProxy>(EventHandlerProxyKey)
-            .AddKeyedScoped<IStreamHandlerProxy, StreamHandlerProxy>(StreamHandlerProxyKey)
-            .AddScoped<IMediator>(provider => new MediatorImpl(requestHandlerProxy: provider.GetRequiredKeyedService<IRequestHandlerProxy>(RequestHandlerProxyKey),
-                                                               eventHandlerProxy: provider.GetRequiredKeyedService<IEventHandlerProxy>(EventHandlerProxyKey),
-                                                               streamHandlerProxy: provider.GetRequiredKeyedService<IStreamHandlerProxy>(StreamHandlerProxyKey)));
-
-        return self;
-    }
-
-    private static IServiceCollection RegisterEventServices(this IServiceCollection self, MediatorOptions options) {
+    private static IServiceCollection RegisterEventHandlers(this IServiceCollection self, MediatorOptions options) {
+        var serviceType = typeof(IEventHandler<>);
         var eventHandlers = options.UseAutoRegister
             ? options.SupportAssemblies
-                     .SelectMany(assembly => assembly.SearchForImplementations(typeof(IEventHandler<>)))
+                     .GetImplementations([serviceType])
                      .ToArray()
             : options.EventHandlers;
 
-        return self.RegisterHandlers(typeof(IEventHandler<>), eventHandlers);
+        return self
+                .AddSingleton<IEventHandlerInvoker, EventHandlerInvoker>()
+                .RegisterImplementations(serviceType, eventHandlers);
     }
 
-    private static IServiceCollection RegisterRequestServices(this IServiceCollection self, MediatorOptions options) {
-        var eventHandlers = options.UseAutoRegister
+    private static IServiceCollection RegisterRequestHandlers(this IServiceCollection self, MediatorOptions options) {
+        var serviceTypes = new[] { typeof(IRequestHandler<>), typeof(IRequestHandler<,>) };
+        var requestHandlers = options.UseAutoRegister
             ? options.SupportAssemblies
-                     .SelectMany(assembly => assembly.SearchForImplementations(typeof(IRequestHandler<>)))
+                     .GetImplementations(serviceTypes)
                      .ToArray()
             : options.RequestHandlers;
 
-        return self.RegisterHandlers(typeof(IEventHandler<>), eventHandlers);
+        return self
+               .AddSingleton<IRequestHandlerInvoker, RequestHandlerInvoker>()
+               .RegisterImplementations(serviceTypes[0], requestHandlers)
+               .RegisterImplementations(serviceTypes[1], requestHandlers);
     }
 
-    private static IServiceCollection RegisterStreamServices(this IServiceCollection self, MediatorOptions options) {
-        var eventHandlers = options.UseAutoRegister
+    private static IServiceCollection RegisterRequestPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
+        var serviceType = typeof(IRequestPipelineBehavior<,>);
+        var requestPipelineBehaviors = options.UseAutoRegister
             ? options.SupportAssemblies
-                     .SelectMany(assembly => assembly.SearchForImplementations(typeof(IEventHandler<>)))
+                     .GetImplementations([serviceType])
+                     .ToArray()
+            : options.RequestPipelineBehaviors;
+
+        return self
+               .RegisterImplementations(serviceType, requestPipelineBehaviors);
+    }
+
+    private static IServiceCollection RegisterStreamHandlers(this IServiceCollection self, MediatorOptions options) {
+        var serviceType = typeof(IStreamHandler<,>);
+        var streamHandlers = options.UseAutoRegister
+            ? options.SupportAssemblies
+                     .GetImplementations([serviceType])
                      .ToArray()
             : options.StreamHandlers;
 
-        return self.RegisterHandlers(typeof(IEventHandler<>), eventHandlers);
+        return self
+               .AddSingleton<IStreamHandlerInvoker, StreamHandlerInvoker>()
+               .RegisterImplementations(serviceType, streamHandlers);
     }
 
-    private static IServiceCollection RegisterHandlers(this IServiceCollection self, Type handlerServiceType, IEnumerable<Type> handlerImplementations) {
-        // For each handler implementation
-        foreach (var handlerImplementation in handlerImplementations) {
-            // For each interface implemented by the handler
-            foreach (var handlerInterface in handlerImplementation.GetInterfaces()) {
-                // Is the interface assignable to the handler service type?
-                if (!handlerServiceType.IsAssignableFromOpenGenericType(handlerInterface)) {
+    private static IServiceCollection RegisterStreamPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
+        var serviceType = typeof(IStreamPipelineBehavior<,>);
+        var streamPipelineBehaviors = options.UseAutoRegister
+            ? options.SupportAssemblies
+                     .GetImplementations([serviceType])
+                     .ToArray()
+            : options.StreamPipelineBehaviors;
+
+        return self
+            .RegisterImplementations(serviceType, streamPipelineBehaviors);
+    }
+
+    private static IEnumerable<Type> GetImplementations(this Assembly[] self, Type[] serviceTypes)
+        => serviceTypes.SelectMany(serviceType => self.SelectMany(assembly => assembly.SearchForImplementations(serviceType)));
+
+    private static IServiceCollection RegisterImplementations(this IServiceCollection self, Type serviceType, IEnumerable<Type> implementations) {
+        // For each implementation
+        foreach (var implementation in implementations) {
+            // For each interface in the implementation
+            foreach (var implementationInterface in implementation.GetInterfaces()) {
+                // Is the interface assignable to the service type?
+                if (!serviceType.IsAssignableFromOpenGenericType(implementationInterface)) {
                     continue;
                 }
 
                 // Register the interface as service of the implementation.
-                self.AddScoped(serviceType: handlerInterface,
-                               implementationType: handlerImplementation);
+                self.AddTransient(serviceType: implementationInterface,
+                                  implementationType: implementation);
             }
-            // Registers as self
-            self.AddScoped(serviceType: handlerImplementation,
-                           implementationType: handlerImplementation);
         }
-
         return self;
     }
+
+    private static IServiceCollection RegisterMediator(this IServiceCollection self)
+        => self.AddSingleton<IMediator>(provider => new MediatorImpl(eventHandlerInvoker: provider.GetRequiredService<IEventHandlerInvoker>(),
+                                                                     requestHandlerInvoker: provider.GetRequiredService<IRequestHandlerInvoker>(),
+                                                                     streamHandlerInvoker: provider.GetRequiredService<IStreamHandlerInvoker>()));
 }

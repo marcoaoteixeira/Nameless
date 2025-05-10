@@ -37,7 +37,7 @@ public static class TypeExtension {
     /// <summary>
     /// Checks if the current open generic type is assignable from the <paramref name="type"/>.
     /// </summary>
-    /// <param name="self">The current open generic type.</param>
+    /// <param name="self">The current generic type.</param>
     /// <param name="type">The assignable from type.</param>
     /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
     /// <exception cref="ArgumentNullException">
@@ -45,6 +45,8 @@ public static class TypeExtension {
     /// </exception>
     public static bool IsAssignableFromOpenGenericType(this Type self, Type? type) {
         Prevent.Argument.Null(self);
+
+        if (!self.IsGenericType) { return false; }
 
         while (true) {
             if (type is null) { return false; }

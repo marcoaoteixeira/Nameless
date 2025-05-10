@@ -7,6 +7,6 @@ namespace Nameless.Patterns.Mediator;
 /// <summary>
 /// The mediator interface.
 /// </summary>
-public interface IMediator : IRequestHandlerProxy,
-                             IEventHandlerProxy,
-                             IStreamHandlerProxy;
+public interface IMediator : IRequestHandlerInvoker,
+                             IEventHandlerInvoker,
+                             IStreamHandlerInvoker;

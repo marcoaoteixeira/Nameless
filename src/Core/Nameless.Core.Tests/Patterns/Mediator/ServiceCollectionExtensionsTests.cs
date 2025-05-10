@@ -55,8 +55,9 @@ public class ServiceCollectionExtensionsTests {
         });
     }
 
-    [Test]
-    public void WhenRegisteringMediatorEventHandlers_WhenClassImplementsMoreThanOneEventHandlerInterface_ThenResolveEventHandlersAccordingly() {
+    [TestCase(typeof(IEventHandler<UserCreatedEvent>))]
+    [TestCase(typeof(IEventHandler<UserDeletedEvent>))]
+    public void WhenRegisteringMediatorEventHandlers_WhenClassImplementsMoreThanOneEventHandlerInterface_ThenResolveEventHandlersAccordingly(Type requestHandlerType) {
         // arrange
         var serviceCollection = CreateServiceCollection();
 
@@ -69,18 +70,11 @@ public class ServiceCollectionExtensionsTests {
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         // assert
-        var userCreatedEventHandler = serviceProvider.GetService<IEventHandler<UserCreatedEvent>>();
-        var userDeletedEventHandler = serviceProvider.GetService<IEventHandler<UserDeletedEvent>>();
-        var multipleEventHandler = serviceProvider.GetService<MultipleEventHandler>();
+        var requestHandler = serviceProvider.GetService(requestHandlerType);
 
         Assert.Multiple(() => {
-            Assert.That(userCreatedEventHandler, Is.Not.Null);
-            Assert.That(userCreatedEventHandler, Is.InstanceOf<MultipleEventHandler>());
-            
-            Assert.That(userDeletedEventHandler, Is.Not.Null);
-            Assert.That(userDeletedEventHandler, Is.InstanceOf<MultipleEventHandler>());
-
-            Assert.That(multipleEventHandler, Is.Not.Null);
+            Assert.That(requestHandler, Is.Not.Null);
+            Assert.That(requestHandler, Is.InstanceOf<MultipleEventHandler>());
         });
     }
 }
