@@ -104,6 +104,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Security", "src\Security\Nameless.Security\Nameless.Security.csproj", "{E81441DB-4A3F-9557-56B6-3EA74C04B41E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\.efcore = scripts\.efcore
+		scripts\code_coverage.ps1 = scripts\code_coverage.ps1
+		scripts\create_solution_file.ps1 = scripts\create_solution_file.ps1
+		scripts\efcore_db_migration.ps1 = scripts\efcore_db_migration.ps1
+		scripts\efcore_db_update.ps1 = scripts\efcore_db_update.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -280,6 +299,7 @@ Global
 		{5FE54C23-2B21-4340-A1FF-58590F2DCCEB} = {D02B82A0-018A-48B7-91B8-D64D79285704}
 		{3758E68C-2240-47D0-95B7-86EC3C6D553E} = {D44A915A-FC33-4000-8D3C-1D859E2C0A0D}
 		{E81441DB-4A3F-9557-56B6-3EA74C04B41E} = {063FF6AE-49F7-4A28-8D4E-A9156023A044}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {01D85DB3-F592-4BFC-A878-836AE45ADAAC}

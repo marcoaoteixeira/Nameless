@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Patterns.Mediator.Pipeline;
 
 namespace Nameless.Patterns.Mediator.Streams;
 
@@ -32,8 +31,10 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
 
         yield break;
 
-        IAsyncEnumerable<TResponse> InnerHandlerAsync() => serviceProvider.GetRequiredService<IStreamHandler<TRequest, TResponse>>()
-                                                                          .HandleAsync((TRequest)request, cancellationToken);
+        IAsyncEnumerable<TResponse> InnerHandlerAsync() {
+            return serviceProvider.GetRequiredService<IStreamHandler<TRequest, TResponse>>()
+                                  .HandleAsync((TRequest)request, cancellationToken);
+        }
     }
 
     private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items,

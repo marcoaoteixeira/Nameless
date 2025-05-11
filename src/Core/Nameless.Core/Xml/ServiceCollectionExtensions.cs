@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Nameless.Xml;
-public static class ServiceCollectionExtension {
+public static class ServiceCollectionExtensions {
     /// <summary>
     /// Registers service <see cref="IXmlSchemaValidator"/>
     /// </summary>

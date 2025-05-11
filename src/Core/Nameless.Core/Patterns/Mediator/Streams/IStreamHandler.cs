@@ -1,7 +1,7 @@
 ﻿namespace Nameless.Patterns.Mediator.Streams;
 
 /// <summary>
-/// Represents a handler to a stream request.
+/// Interface for all stream handlers.
 /// </summary>
 /// <typeparam name="TRequest">Type of the request.</typeparam>
 /// <typeparam name="TResponse">Type of the response.</typeparam>

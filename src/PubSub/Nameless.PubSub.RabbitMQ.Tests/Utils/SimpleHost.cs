@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Nameless.Mockers;
 using Nameless.PubSub.RabbitMQ.Options;
+using Nameless.Services;
 
 namespace Nameless.PubSub.RabbitMQ.Utils;
 public class SimpleHost : IDisposable {

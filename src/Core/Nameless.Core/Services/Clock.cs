@@ -1,4 +1,4 @@
-﻿namespace Nameless;
+﻿namespace Nameless.Services;
 
 /// <summary>
 /// Default implementation of <see cref="IClock"/>

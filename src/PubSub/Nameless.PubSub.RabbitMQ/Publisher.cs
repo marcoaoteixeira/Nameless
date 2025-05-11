@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.Services;
 using RabbitMQ.Client;
 
 namespace Nameless.PubSub.RabbitMQ;

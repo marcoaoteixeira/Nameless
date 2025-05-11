@@ -1,4 +1,4 @@
-﻿namespace Nameless.Patterns.Mediator.Pipeline;
+﻿namespace Nameless.Patterns.Mediator.Streams;
 
 /// <summary>
 /// Represents an async enumerable continuation for the next task to execute in the pipeline

@@ -1,9 +1,9 @@
 ﻿namespace Nameless.Patterns.Mediator.Requests;
 
 /// <summary>
-/// An interface that represents a requester.
+/// An interface that represents a request handler invoker.
 /// </summary>
-public interface IRequestHandlerProxy {
+public interface IRequestHandlerInvoker {
     /// <summary>
     /// Executes a request asynchronously.
     /// </summary>

@@ -1,6 +1,6 @@
 ﻿namespace Nameless;
 
-public enum BufferSize : int {
+public enum BufferSize {
     /// <summary>
     /// 1Kb
     /// </summary>

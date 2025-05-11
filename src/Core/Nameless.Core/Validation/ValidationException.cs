@@ -16,9 +16,8 @@ public class ValidationException : Exception {
     /// <exception cref="ArgumentNullException">
     /// if <paramref name="result"/> is <c>null</c>.
     /// </exception>
-    public ValidationException(ValidationResult result) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-    }
+    public ValidationException(ValidationResult result)
+        => Result = result ?? throw new ArgumentNullException(nameof(result));
 
     /// <summary>
     /// Initializes a new instance of <see cref="ValidationException"/>
@@ -29,9 +28,8 @@ public class ValidationException : Exception {
     /// if <paramref name="result"/> is <c>null</c>.
     /// </exception>
     public ValidationException(ValidationResult result, string message)
-        : base(message) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-    }
+        : base(message)
+        => Result = result ?? throw new ArgumentNullException(nameof(result));
 
     /// <summary>
     /// Initializes a new instance of <see cref="ValidationException"/>
@@ -43,7 +41,6 @@ public class ValidationException : Exception {
     /// if <paramref name="result"/> is <c>null</c>.
     /// </exception>
     public ValidationException(ValidationResult result, string message, Exception inner)
-        : base(message, inner) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-    }
+        : base(message, inner)
+        => Result = result ?? throw new ArgumentNullException(nameof(result));
 }

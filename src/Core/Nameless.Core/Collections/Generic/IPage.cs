@@ -6,6 +6,14 @@
 /// <typeparam name="TItem">Type of the item</typeparam>
 public interface IPage<out TItem> {
     /// <summary>
+    /// Gets the item at the specified index.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>
+    /// The item at the specified index.
+    /// </returns>
+    TItem this[int index] { get; }
+    /// <summary>
     /// Gets the page number.
     /// </summary>
     int Number { get; }
@@ -37,4 +45,8 @@ public interface IPage<out TItem> {
     /// Whether it has next page or not.
     /// </summary>
     bool HasNext { get; }
+    /// <summary>
+    /// Gets an enumerator for this page.
+    /// </summary>
+    IEnumerator<TItem> GetEnumerator();
 }
