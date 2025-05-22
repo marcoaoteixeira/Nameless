@@ -30,7 +30,7 @@ public static class AssemblyExtension {
 
         var result = Path.Combine(combineWith.Prepend(directoryPath)
                                              .ToArray());
-        
+
         return PathHelper.Normalize(result);
     }
 
@@ -60,8 +60,8 @@ public static class AssemblyExtension {
     /// <typeparam name="TService">The type of the service, usually the base class or interface.</typeparam>
     /// <param name="self">The current assembly.</param>
     /// <returns>A collection of types that implements <typeparamref name="TService"/>.</returns>
-    public static IEnumerable<Type> SearchForImplementations<TService>(this Assembly self)
-        => SearchForImplementations(self, typeof(TService));
+    public static IEnumerable<Type> GetImplementationsFor<TService>(this Assembly self)
+        => GetImplementationsFor(self, typeof(TService));
 
     /// <summary>
     /// Searches for all concrete implementations of a given service <paramref name="serviceType"/>
@@ -76,7 +76,7 @@ public static class AssemblyExtension {
     /// if <paramref name="self"/> or
     /// <paramref name="serviceType"/> is <c>null</c>.
     /// </exception>
-    public static IEnumerable<Type> SearchForImplementations(this Assembly self, Type serviceType) {
+    public static IEnumerable<Type> GetImplementationsFor(this Assembly self, Type serviceType) {
         Prevent.Argument.Null(self);
         Prevent.Argument.Null(serviceType);
 

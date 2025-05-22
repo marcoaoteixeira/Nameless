@@ -9,7 +9,7 @@ namespace Nameless.Autofac;
 /// <summary>
 /// <see cref="IComponentContext"/> extension methods.
 /// </summary>
-public static class ComponentContextExtension {
+public static class ComponentContextExtensions {
     /// <summary>
     /// Retrieves an instance of <see cref="ILogger{TCategoryName}"/>
     /// from the current <see cref="IComponentContext"/>.

@@ -7,7 +7,7 @@ namespace Nameless.Autofac;
 /// <summary>
 /// <see cref="IServiceProvider"/> extensions methods.
 /// </summary>
-public static class ServiceProviderExtension {
+public static class ServiceProviderExtensions {
     /// <summary>
     /// Adds Autofac dispose action to the application lifecycle stop event.
     /// Tear down the composition root and free all resources

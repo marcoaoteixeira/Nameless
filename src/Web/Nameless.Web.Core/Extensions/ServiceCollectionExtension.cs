@@ -38,7 +38,7 @@ public static class ServiceCollectionExtension {
 
         var endpointType = typeof(MinimalEndpointBase);
         var endpointImplementations =
-            assemblies.SelectMany(assembly => assembly.SearchForImplementations<MinimalEndpointBase>());
+            assemblies.SelectMany(assembly => assembly.GetImplementationsFor<MinimalEndpointBase>());
 
         foreach (var endpointImplementation in endpointImplementations) {
             self.AddScoped(endpointType, endpointImplementation);

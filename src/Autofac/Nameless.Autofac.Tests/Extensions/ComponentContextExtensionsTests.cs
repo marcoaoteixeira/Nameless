@@ -6,7 +6,7 @@ using Nameless.Mockers;
 
 namespace Nameless.Autofac;
 
-public class ComponentContextExtensionTests {
+public class ComponentContextExtensionsTests {
     [Test]
     public void WhenGetLogger_WhenNoLoggingConfigured_ThenResolveNullLogger() {
         // arrange
@@ -14,7 +14,7 @@ public class ComponentContextExtensionTests {
         using var container = builder.Build();
 
         // act
-        var sut = container.GetLogger(typeof(ComponentContextExtensionTests));
+        var sut = container.GetLogger(typeof(ComponentContextExtensionsTests));
 
         // assert
         sut.Should().BeAssignableTo<NullLogger>();
@@ -27,16 +27,16 @@ public class ComponentContextExtensionTests {
         using var container = builder.Build();
 
         // act
-        var sut = container.GetLogger<ComponentContextExtensionTests>();
+        var sut = container.GetLogger<ComponentContextExtensionsTests>();
 
         // assert
-        sut.Should().BeAssignableTo<NullLogger<ComponentContextExtensionTests>>();
+        sut.Should().BeAssignableTo<NullLogger<ComponentContextExtensionsTests>>();
     }
 
     [Test]
     public void WhenGetLogger_WhenLoggingIsConfigured_ThenResolveLogger() {
         // arrange
-        var logger = new LoggerMocker<ComponentContextExtensionTests>()
+        var logger = new LoggerMocker<ComponentContextExtensionsTests>()
             .Build();
         var loggerFactory = new LoggerFactoryMocker()
             .WithCreateLogger(logger)
@@ -47,19 +47,19 @@ public class ComponentContextExtensionTests {
         using var container = builder.Build();
 
         // act
-        var sut = container.GetLogger(typeof(ComponentContextExtensionTests));
+        var sut = container.GetLogger(typeof(ComponentContextExtensionsTests));
 
         // assert
         sut.Should()
-           .NotBeAssignableTo<NullLogger<ComponentContextExtensionTests>>()
+           .NotBeAssignableTo<NullLogger<ComponentContextExtensionsTests>>()
            .And
-           .BeAssignableTo<ILogger<ComponentContextExtensionTests>>();
+           .BeAssignableTo<ILogger<ComponentContextExtensionsTests>>();
     }
 
     [Test]
     public void WhenGetLoggerGeneric_WhenLoggingIsConfigured_ThenResolveLoggerGeneric() {
         // arrange
-        var logger = new LoggerMocker<ComponentContextExtensionTests>()
+        var logger = new LoggerMocker<ComponentContextExtensionsTests>()
             .Build();
         var loggerFactory = new LoggerFactoryMocker()
                             .WithCreateLogger(logger)
@@ -70,12 +70,12 @@ public class ComponentContextExtensionTests {
         using var container = builder.Build();
 
         // act
-        var sut = container.GetLogger<ComponentContextExtensionTests>();
+        var sut = container.GetLogger<ComponentContextExtensionsTests>();
 
         // assert
         sut.Should()
-           .NotBeAssignableTo<NullLogger<ComponentContextExtensionTests>>()
+           .NotBeAssignableTo<NullLogger<ComponentContextExtensionsTests>>()
            .And
-           .BeAssignableTo<ILogger<ComponentContextExtensionTests>>();
+           .BeAssignableTo<ILogger<ComponentContextExtensionsTests>>();
     }
 }
