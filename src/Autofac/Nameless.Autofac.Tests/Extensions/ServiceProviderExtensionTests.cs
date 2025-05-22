@@ -19,7 +19,7 @@ public class ServiceProviderExtensionTests {
         var serviceProvider = new AutofacServiceProvider(lifetimeScopeMocker.Build());
 
         // act
-        ServiceProviderExtension.RegisterAutofacDisposeHandler(serviceProvider);
+        ServiceProviderExtensions.RegisterAutofacDisposeHandler(serviceProvider);
         cts.Cancel();
 
         // assert
@@ -35,7 +35,7 @@ public class ServiceProviderExtensionTests {
         var serviceProvider = new AutofacServiceProvider(lifetimeScopeMocker.Build());
 
         // act
-        ServiceProviderExtension.RegisterAutofacDisposeHandler(serviceProvider);
+        ServiceProviderExtensions.RegisterAutofacDisposeHandler(serviceProvider);
         cts.Cancel();
 
         // assert

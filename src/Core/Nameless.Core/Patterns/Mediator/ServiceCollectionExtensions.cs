@@ -121,7 +121,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IEnumerable<Type> GetImplementations(this Assembly[] self, Type[] serviceTypes)
-        => serviceTypes.SelectMany(serviceType => self.SelectMany(assembly => assembly.SearchForImplementations(serviceType)));
+        => serviceTypes.SelectMany(serviceType => self.SelectMany(assembly => assembly.GetImplementationsFor(serviceType)));
 
     private static IServiceCollection RegisterImplementations(this IServiceCollection self, Type serviceType, IEnumerable<Type> implementations) {
         // For each implementation

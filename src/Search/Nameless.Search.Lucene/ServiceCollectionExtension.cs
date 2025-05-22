@@ -19,7 +19,7 @@ public static class ServiceCollectionExtension {
                   .RegisterServices(supportAssemblies);
 
     private static IServiceCollection RegisterServices(this IServiceCollection self, Assembly[] supportAssemblies) {
-        var analyzerSelectors = supportAssemblies.SelectMany(assembly => assembly.SearchForImplementations<IAnalyzerSelector>())
+        var analyzerSelectors = supportAssemblies.SelectMany(assembly => assembly.GetImplementationsFor<IAnalyzerSelector>())
                                                  .ToArray();
 
         foreach (var analyzerSelector in analyzerSelectors) {

@@ -13,8 +13,8 @@ public class DummyModule : ModuleBase {
         => SearchForImplementation(serviceType);
 
     public IEnumerable<Type> GetImplementations<T>()
-        => SearchForImplementations<T>();
+        => GetImplementationsFor<T>();
 
     public IEnumerable<Type> GetImplementations(Type serviceType)
-        => SearchForImplementations(serviceType);
+        => GetImplementationsFor(serviceType);
 }
