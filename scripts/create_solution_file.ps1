@@ -21,9 +21,9 @@ Param (
 	[Alias("s")]
     [String]$SolutionName = $null,
 	
-	[Parameter(Mandatory = $true, HelpMessage = "The project folder")]
-	[Alias("p")]
-    [String]$ProjectFolder = $null,
+	[Parameter(Mandatory = $true, HelpMessage = "The lookup folder")]
+	[Alias("l")]
+    [String]$LookupFolder = $null,
 	
     [Parameter(Mandatory = $false, HelpMessage = "Whether should show prompt for errors")]
     [Switch]$PromptOnError = $false
@@ -85,7 +85,7 @@ Try {
 	}
 	
 	dotnet new sln -n $SolutionName
-	Get-ChildItem -Path $ProjectFolder -Filter *.csproj -Recurse | ForEach-Object { dotnet sln $Solution add $_.FullName }
+	Get-ChildItem -Path $LookupFolder -Filter *.csproj -Recurse | ForEach-Object { dotnet sln $Solution add $_.FullName }
 	
 } Finally {
     Write-Verbose "[$($SCRIPT_NAME)] Performing cleanup..."

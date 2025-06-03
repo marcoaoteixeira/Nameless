@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Content\LoremIpsun.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Content\LoremIpsun.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.analyzers" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Data\Nameless.Data.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
+		<ProjectReference Include="..\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
+	</ItemGroup>
+
+</Project>
