@@ -22,7 +22,7 @@ public class QueryableExtensionsTests {
                     .OrderBy(nameof(Student.Name));
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class QueryableExtensionsTests {
                     .OrderByDescending(nameof(Student.Name));
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
     }
 
     [Fact]

@@ -21,7 +21,7 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.That(actual.Name, Is.EqualTo("es-ES"));
+        Assert.Equal("es-ES", actual.Name);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.That(actual.Name, Is.EqualTo("fr-FR"));
+        Assert.Equal("fr-FR", actual.Name);
     }
 
     [Fact]
@@ -52,6 +52,6 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.That(actual.Name, Is.EqualTo("en-US"));
+        Assert.Equal("en-US", actual.Name);
     }
 }

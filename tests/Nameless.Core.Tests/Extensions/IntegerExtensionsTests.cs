@@ -12,7 +12,7 @@ public class IntegerExtensionsTests {
         times.Times(() => array.Add(times));
 
         // assert
-        Assert.That(array, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, array);
     }
 
     [Fact]
@@ -26,6 +26,6 @@ public class IntegerExtensionsTests {
         times.Times(idx => array[idx] = idx);
 
         // assert
-        Assert.That(array, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, array);
     }
 }

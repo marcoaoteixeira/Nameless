@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions {
     private static IServiceCollection RegisterValidators(this IServiceCollection self, ValidationOptions options) {
         var serviceType = typeof(IValidator);
         var validators = options.Assemblies
-                                .GetImplementationsFor([serviceType])
+                                .GetImplementations([serviceType])
                                 .Where(type => !type.IsGenericTypeDefinition);
 
         foreach (var validator in validators) {

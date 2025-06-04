@@ -21,7 +21,7 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
     }
 
     /// <inhertidoc />
-    public async Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken = default) {
+    public async Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken) {
         var client = new SmtpClient();
 
         await client.ConnectAsync(_options.Value.Host,

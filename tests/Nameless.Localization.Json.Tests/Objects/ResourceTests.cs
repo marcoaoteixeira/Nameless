@@ -18,8 +18,8 @@ public class ResourceTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(found, Is.True);
-            Assert.That(actual.Id, Is.EqualTo("Message C"));
+            Assert.True(found);
+            Assert.Equal("Message C", actual.Id);
         });
     }
 
@@ -40,13 +40,14 @@ public class ResourceTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(found, Is.False);
-            Assert.That(actual, Is.Null);
+            Assert.False(found);
+            Assert.Null(actual);
         });
     }
 
-    [TestCase("Region A", "Region A", true)]
-    [TestCase("Region A", "Region B", false)]
+    [Theory]
+    [InlineData("Region A", "Region A", true)]
+    [InlineData("Region A", "Region B", false)]
     public void Equals_Should_Return_Corresponding_Result(string nameX, string nameY, bool expected) {
         // arrange
         var regionX = new Resource(nameX, nameX, [], true);
@@ -56,11 +57,12 @@ public class ResourceTests {
         var actual = regionX.Equals(regionY);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
-    [TestCase("Region A", "Region A", true)]
-    [TestCase("Region A", "Region B", false)]
+    [Theory]
+    [InlineData("Region A", "Region A", true)]
+    [InlineData("Region A", "Region B", false)]
     public void GetHashCode_Should_Return_Corresponding_Result(string nameX, string nameY, bool expected) {
         // arrange
         var regionX = new Resource(nameX, nameX, [], true);
@@ -71,6 +73,6 @@ public class ResourceTests {
         var hashCodeY = regionY.GetHashCode();
 
         // assert
-        Assert.That(hashCodeX == hashCodeY, Is.EqualTo(expected));
+        Assert.Equal(expected, hashCodeX == hashCodeY);
     }
 }

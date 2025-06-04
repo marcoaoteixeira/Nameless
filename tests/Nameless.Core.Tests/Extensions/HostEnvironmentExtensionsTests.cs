@@ -16,7 +16,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = hostEnvironmentMock.Object.IsDeveloperMachine();
 
         // assert
-        Assert.That(actual, Is.True);
+        Assert.True(actual);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = hostEnvironmentMock.Object.IsDeveloperMachine();
 
         // assert
-        Assert.That(actual, Is.False);
+        Assert.False(actual);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = Mock.Of<IHostEnvironment>().IsRunningOnContainer();
 
         // assert
-        Assert.That(actual, Is.True);
+        Assert.True(actual);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = Mock.Of<IHostEnvironment>().IsRunningOnContainer();
 
         // assert
-        Assert.That(actual, Is.False);
+        Assert.False(actual);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = Mock.Of<IHostEnvironment>().GetEnvironmentVariable(id);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class HostEnvironmentExtensionsTests {
         var actual = Mock.Of<IHostEnvironment>().GetEnvironmentVariable(id);
 
         // assert
-        Assert.That(actual, Is.Null);
+        Assert.Null(actual);
     }
 
     [Fact]
@@ -95,6 +95,6 @@ public class HostEnvironmentExtensionsTests {
         var actual = Environment.GetEnvironmentVariable(id);
 
         // assert
-        Assert.That(actual, Is.EqualTo(value));
+        Assert.Equal(value, actual);
     }
 }

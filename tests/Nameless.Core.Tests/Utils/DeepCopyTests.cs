@@ -12,7 +12,7 @@ public class DeepCopyTests {
         var newStudent = DeepCopy.Clone(student);
 
         // assert
-        Assert.That(newStudent, Is.Not.SameAs(student));
+        Assert.NotSame(newStudent, student);
     }
 
     [Fact]

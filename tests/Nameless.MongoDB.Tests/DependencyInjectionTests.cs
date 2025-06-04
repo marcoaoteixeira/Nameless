@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Nameless.MongoDB.Fixtures.Mappings;
 
 namespace Nameless.MongoDB;
 
@@ -14,8 +13,7 @@ public class DependencyInjectionTests {
         services.AddSingleton(mongoDbOptionsLogger);
         services.RegisterMongoServices(opts => {
             opts.DatabaseName = "sample";
-            opts.DocumentMappers =
-                [$"{typeof(AnimalClassMapper).FullName}, {typeof(AnimalClassMapper).Assembly.GetName().Name}"];
+            opts.Assemblies = [typeof(DependencyInjectionTests).Assembly];
         });
 
         using var provider = services.BuildServiceProvider();
@@ -24,6 +22,6 @@ public class DependencyInjectionTests {
         var service = provider.GetService<IMongoCollectionProvider>();
 
         // assert
-        Assert.That(service, Is.InstanceOf<MongoCollectionProvider>());
+        Assert.IsType<MongoCollectionProvider>(service);
     }
 }

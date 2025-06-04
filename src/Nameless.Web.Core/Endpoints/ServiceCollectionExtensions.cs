@@ -67,7 +67,7 @@ public static class ServiceCollectionExtensions {
     private static IServiceCollection RegisterMainServices(this IServiceCollection self, EndpointOptions options) {
         var serviceType = typeof(IEndpoint);
         var endpoints = options.Assemblies
-                               .GetImplementationsFor([serviceType])
+                               .GetImplementations([serviceType])
                                .Where(type => !type.IsGenericTypeDefinition);
 
         foreach (var endpoint in endpoints) {

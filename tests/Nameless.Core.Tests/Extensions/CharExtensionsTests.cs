@@ -25,7 +25,7 @@ public class CharExtensionsTests {
             values[idx] = characteres[idx].IsLetter();
         }
 
-        var result = values.All(item => item == isOnlyLetter);
+        var result = values.All(item => item);
 
         // assert
         Assert.Equal(isOnlyLetter, result);

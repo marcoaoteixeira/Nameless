@@ -6,7 +6,7 @@ public static class Categories {
     ///     isolation and do not depend on any external resources or services.
     ///     They are typically fast and should not require any setup or teardown.
     /// </summary>
-    public const string UnitTests = nameof(UnitTests);
+    public const string UNIT_TESTS = "UnitTests";
 
     /// <summary>
     ///     Categories for integration test cases. Integration tests are tests that
@@ -14,7 +14,7 @@ public static class Categories {
     ///     typically require more setup and teardown than unit tests and may
     ///     depend on external resources or services.
     /// </summary>
-    public const string IntegrationTests = nameof(IntegrationTests);
+    public const string INTEGRATION_TESTS = "IntegrationTests";
 
     /// <summary>
     ///     Categories for end-to-end test cases. End-to-end tests are tests that
@@ -23,12 +23,12 @@ public static class Categories {
     ///     resources or services. They are typically the slowest tests and should
     ///     be run infrequently.
     /// </summary>
-    public const string EndToEnd = nameof(EndToEnd);
+    public const string END_TO_END = "E2E";
 
     /// <summary>
     ///     Categories for test cases that only runs on developer machine. These
     ///     tests are typically used for testing features that are  not available
     ///     in the CI/CD pipeline or that require a specific environment to run.
     /// </summary>
-    public const string RunsOnDevMachine = nameof(RunsOnDevMachine);
+    public const string RUNS_ON_DEV_MACHINE = "RunsOnDevMachine";
 }

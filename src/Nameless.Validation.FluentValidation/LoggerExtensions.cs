@@ -7,9 +7,9 @@ internal static class LoggerExtensions {
         = LoggerMessage.Define<string>(
             LogLevel.Information,
             default,
-            "Validator not found for {Type}");
+            "Validator not found for type '{Type}'");
 
-    internal static void MissingValidatorForType<TType>(this ILogger self) {
-        MissingValidatorForTypeDelegate(self, typeof(TType).Name, null /* exception */);
+    internal static void MissingValidatorForType(this ILogger<ValidationService> self, object instance) {
+        MissingValidatorForTypeDelegate(self, instance.GetType().Name, null /* exception */);
     }
 }

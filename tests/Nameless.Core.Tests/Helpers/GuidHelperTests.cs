@@ -1,7 +1,7 @@
 ﻿namespace Nameless.Helpers;
 
 public class GuidHelperTests {
-    private const string StringValue = "ykBtEknUGE_Pw0Pshkajag";
+    private const string STRING_VALUE = "ykBtEknUGE_Pw0Pshkajag";
     private readonly Guid GuidValue = Guid.Parse("126d40ca-d449-4f18-8fc3-43ec8646a36a");
 
     [Fact]
@@ -13,8 +13,8 @@ public class GuidHelperTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(actual, Is.Not.Null);
-            Assert.That(actual, Is.EqualTo(StringValue));
+            Assert.NotNull(actual);
+            Assert.Equal(STRING_VALUE, actual);
         });
     }
 
@@ -23,9 +23,9 @@ public class GuidHelperTests {
         // arrange
 
         // act
-        var actual = GuidHelper.Decode(StringValue);
+        var actual = GuidHelper.Decode(STRING_VALUE);
 
         // assert
-        Assert.That(actual, Is.EqualTo(GuidValue));
+        Assert.Equal(GuidValue, actual);
     }
 }

@@ -34,6 +34,6 @@ public class DependencyInjectionTests {
         var service = provider.GetService<IIndexProvider>();
 
         // assert
-        Assert.That(service, Is.InstanceOf<IndexProvider>());
+        Assert.IsType<IndexProvider>(service);
     }
 }

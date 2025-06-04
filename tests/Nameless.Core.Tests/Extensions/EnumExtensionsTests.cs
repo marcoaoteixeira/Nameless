@@ -18,7 +18,7 @@ public class EnumExtensionsTests {
         var attr = status.GetAttribute<DescriptionAttribute>();
 
         // assert
-        Assert.That(attr, Is.InstanceOf<DescriptionAttribute>());
+        Assert.IsType<DescriptionAttribute>(attr);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class EnumExtensionsTests {
         var attr = status.GetAttribute<DescriptionAttribute>();
 
         // assert
-        Assert.That(attr, Is.Null);
+        Assert.Null(attr);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class EnumExtensionsTests {
         var attr = status.GetAttribute<AttributeUsageAttribute>();
 
         // assert
-        Assert.That(attr, Is.Null);
+        Assert.Null(attr);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class EnumExtensionsTests {
         var actual = status.GetDescription();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -67,6 +67,6 @@ public class EnumExtensionsTests {
         var actual = status.GetDescription();
 
         // assert
-        Assert.That(actual, Is.EqualTo(nameof(Status.Fatal)));
+        Assert.Equal(nameof(Status.Fatal), actual);
     }
 }

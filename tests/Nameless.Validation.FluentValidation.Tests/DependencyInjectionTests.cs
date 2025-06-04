@@ -17,6 +17,6 @@ public class DependencyInjectionTests {
         var sut = container.GetService<IValidationService>();
 
         // assert
-        Assert.That(sut, Is.InstanceOf<ValidationService>());
+        Assert.IsType<ValidationService>(sut);
     }
 }

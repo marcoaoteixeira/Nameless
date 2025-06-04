@@ -4,16 +4,15 @@ public class CustomResultTests {
     [Fact]
     public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange
-        const int expected = 123;
-        CustomResult result;
+        const int Expected = 123;
 
         // act
-        result = expected;
+        CustomResult result = Expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.False);
-            Assert.That(result.Value, Is.EqualTo(expected));
+            Assert.False(result.HasErrors);
+            Assert.Equal(Expected, result.Value);
         });
     }
 
@@ -21,15 +20,14 @@ public class CustomResultTests {
     public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsAtLeastOneError() {
         // arrange
         var expected = Error.Failure("Error");
-        CustomResult result;
 
         // act
-        result = expected;
+        CustomResult result = expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.AsErrors, Has.Length.AtLeast(1));
+            Assert.True(result.HasErrors);
+            Assert.Single(result.AsErrors);
         });
     }
 
@@ -37,30 +35,28 @@ public class CustomResultTests {
     public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsMoreThanOneError() {
         // arrange
         var expected = new[] { Error.Failure("Error"), Error.Conflict("Error") };
-        CustomResult result;
 
         // act
-        result = expected;
+        CustomResult result = expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.AsErrors, Has.Length.AtLeast(2));
+            Assert.True(result.HasErrors);
+            Assert.Equal(2, result.AsErrors.Length);
         });
     }
 
     [Fact]
     public void WhenResultIsValid_ThenAccessErrorThrowsInvalidOperationException() {
         // arrange
-        const int expected = 123;
-        CustomResult result;
+        const int Expected = 123;
 
         // act
-        result = expected;
+        CustomResult result = Expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.False);
+            Assert.False(result.HasErrors);
             Assert.Throws<InvalidOperationException>(() => _ = result.AsErrors);
         });
     }
@@ -69,13 +65,12 @@ public class CustomResultTests {
     public void WhenResultIsError_ThenAccessValueThrowsInvalidOperationException() {
         // arrange
         var expected = Error.Failure("Error");
-        CustomResult result;
 
         // act
-        result = expected;
+        CustomResult result = expected;
 
         // assert
-        Assert.That(result.HasErrors, Is.True);
+        Assert.True(result.HasErrors);
     }
 
     [Fact]
@@ -87,7 +82,7 @@ public class CustomResultTests {
         var match = result.Match(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(match, Is.True);
+        Assert.True(match);
 
         return;
 
@@ -109,7 +104,7 @@ public class CustomResultTests {
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(match, Is.True);
+        Assert.True(match);
 
         return;
 
@@ -131,7 +126,7 @@ public class CustomResultTests {
         var match = result.Match(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 
@@ -153,7 +148,7 @@ public class CustomResultTests {
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 
@@ -176,7 +171,7 @@ public class CustomResultTests {
         result.Switch(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(captured, Is.True);
+        Assert.True((bool)captured);
 
         return;
 
@@ -199,7 +194,7 @@ public class CustomResultTests {
         await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(captured, Is.True);
+        Assert.True((bool)captured);
 
         return;
 
@@ -226,7 +221,7 @@ public class CustomResultTests {
         result.Switch(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(captured, Is.False);
+        Assert.False((bool)captured);
 
         return;
 
@@ -249,7 +244,7 @@ public class CustomResultTests {
         await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(captured, Is.False);
+        Assert.False((bool)captured);
 
         return;
 
@@ -276,7 +271,7 @@ public class CustomResultTests {
                           .Match(FinalSuccessAction, FinalFailureAction);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 

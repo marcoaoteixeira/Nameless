@@ -21,6 +21,6 @@ public class DependencyInjectionTests {
         var session = provider.GetRequiredService<ISession>();
 
         // assert
-        Assert.That(session, Is.InstanceOf<SessionImpl>());
+        Assert.IsType<SessionImpl>(session);
     }
 }

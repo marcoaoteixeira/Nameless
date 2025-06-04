@@ -33,34 +33,34 @@ public class StringLocalizerTests {
     [Fact]
     public void WhenCallingIndexer_ThenReturnsAssociatedLocalizesMessage() {
         // arrange
-        const string messageId = "This is a test";
-        const string expected = "Isso é um teste";
+        const string MessageId = "This is a test";
+        const string Expected = "Isso é um teste";
 
-        var resource = CreateResource(messages: [new Message(messageId, expected)]);
+        var resource = CreateResource(messages: [new Message(MessageId, Expected)]);
         var sut = CreateSut(resource);
 
         // act
-        var actual = sut[messageId];
+        var actual = sut[MessageId];
 
         // assert
-        Assert.That(actual.Value, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual.Value);
     }
 
     [Fact]
     public void WhenCallingIndexerWithParameters_ThenReturnsFormattedLocalizedMessage() {
         // arrange
-        const string messageId = "This is a test {0}, {1}, {2}, {3}";
-        const string expected = "Isso é um teste 1, 2, 3, 4";
+        const string MessageId = "This is a test {0}, {1}, {2}, {3}";
+        const string Expected = "Isso é um teste 1, 2, 3, 4";
         var args = new object[] { 1, 2, 3, 4 };
 
-        var resource = CreateResource(messages: [new Message(messageId, expected)]);
+        var resource = CreateResource(messages: [new Message(MessageId, Expected)]);
         var sut = CreateSut(resource);
 
         // act
-        var actual = sut[messageId, args];
+        var actual = sut[MessageId, args];
 
         // assert
-        Assert.That(actual.Value, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual.Value);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class StringLocalizerTests {
         var expected = messages.Select(message => message.Id);
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class StringLocalizerTests {
                                    .ToArray();
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
 
         return;
 

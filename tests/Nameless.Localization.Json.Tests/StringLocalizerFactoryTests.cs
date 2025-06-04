@@ -1,18 +1,20 @@
 ﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
 using Nameless.Localization.Json.Mockers;
 using Nameless.Localization.Json.Objects;
+using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Localization.Json;
 
 public class StringLocalizerFactoryTests {
     private static StringLocalizerFactory CreateSut() {
-        const string cultureName = "pt-BR";
+        const string CultureName = "pt-BR";
 
-        var cultureContext = new CultureProviderMocker().WithCulture(new CultureInfo(cultureName))
+        var cultureContext = new CultureProviderMocker().WithCulture(new CultureInfo(CultureName))
                                                         .Build();
 
-        var resource = new Resource(culture: cultureName,
+        var resource = new Resource(culture: CultureName,
             path: "Path_To_The_Resource",
             messages: [
                 new Message("This is a test", "Isso é um teste")
@@ -22,7 +24,10 @@ public class StringLocalizerFactoryTests {
         var resourceManager = new ResourceManagerMocker().WithResource(resource)
                                                          .Build();
 
-        var loggerFactory = new LoggerFactoryMocker().Build();
+        var loggerFactory = new LoggerFactoryMocker()
+                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizer>>())
+                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizerFactory>>())
+                           .Build();
         var options = Microsoft.Extensions.Options.Options.Create(new LocalizationOptions());
 
         return new StringLocalizerFactory(
@@ -41,7 +46,7 @@ public class StringLocalizerFactoryTests {
         var actual = sut.Create(typeof(StringLocalizerFactoryTests));
 
         // assert
-        Assert.That(actual, Is.Not.Null);
+        Assert.NotNull(actual);
     }
 
     [Fact]
@@ -49,12 +54,12 @@ public class StringLocalizerFactoryTests {
         // arrange
         var sut = CreateSut();
         var baseName = typeof(StringLocalizerFactoryTests).Namespace ?? string.Empty;
-        const string location = nameof(StringLocalizerFactoryTests);
+        const string Location = nameof(StringLocalizerFactoryTests);
 
         // act
-        var actual = sut.Create(baseName, location);
+        var actual = sut.Create(baseName, Location);
 
         // assert
-        Assert.That(actual, Is.Not.Null);
+        Assert.NotNull(actual);
     }
 }

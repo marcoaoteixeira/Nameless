@@ -25,23 +25,23 @@ public class PageTests {
     [Fact]
     public void WhenQueryHas100Items_WhenPageSizeIs15_ThenTotalPagesIs7() {
         // arrange
-        const int pageSize = 15;
-        const int expectedTotalPages = 7;
+        const int PageSize = 15;
+        const int ExpectedTotalPages = 7;
         // 100 items
         var items = Enumerable.Range(0, Page<int>.DEFAULT_SIZE * 10)
                               .AsQueryable();
-        var expectedItems = items.Take(pageSize)
+        var expectedItems = items.Take(PageSize)
                                  .ToArray();
 
         // act
-        var page = new Page<int>(items, size: pageSize);
+        var page = new Page<int>(items, size: PageSize);
 
         // assert
         Assert.Multiple(() => {
             Assert.Equal(expected: 1, page.Number);
-            Assert.Equal(expected: pageSize, page.Size);
+            Assert.Equal(expected: PageSize, page.Size);
             Assert.Equal(expected: 100, page.TotalItems);
-            Assert.Equal(expected: expectedTotalPages, page.TotalPages);
+            Assert.Equal(expected: ExpectedTotalPages, page.TotalPages);
             Assert.Equivalent(expectedItems, page.Items);
             Assert.False(page.HasPrevious);
             Assert.True(page.HasNext);
@@ -51,23 +51,23 @@ public class PageTests {
     [Fact]
     public void WhenQueryHas100Items_WhenPageSizeIs100_ThenHasPreviousAndHasNextIsFalse() {
         // arrange
-        const int pageSize = 100;
-        const int expectedTotalPages = 1;
+        const int PageSize = 100;
+        const int ExpectedTotalPages = 1;
         // 100 items
         var items = Enumerable.Range(0, Page<int>.DEFAULT_SIZE * 10)
                               .AsQueryable();
-        var expectedItems = items.Take(pageSize)
+        var expectedItems = items.Take(PageSize)
                                  .ToArray();
 
         // act
-        var page = new Page<int>(items, size: pageSize);
+        var page = new Page<int>(items, size: PageSize);
 
         // assert
         Assert.Multiple(() => {
             Assert.Equal(expected: 1, page.Number);
-            Assert.Equal(expected: pageSize, page.Size);
+            Assert.Equal(expected: PageSize, page.Size);
             Assert.Equal(expected: 100, page.TotalItems);
-            Assert.Equal(expected: expectedTotalPages, page.TotalPages);
+            Assert.Equal(expected: ExpectedTotalPages, page.TotalPages);
             Assert.Equivalent(expectedItems, page.Items);
             Assert.False(page.HasPrevious);
             Assert.False(page.HasNext);

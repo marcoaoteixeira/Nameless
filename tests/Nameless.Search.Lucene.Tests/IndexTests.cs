@@ -1,11 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
+using Xunit.Abstractions;
 
 namespace Nameless.Search.Lucene;
 
 public class IndexTests {
     private static readonly string IndexDirectoryPath = typeof(IndexTests).Assembly.GetDirectoryPath("Output");
+
+    public IndexTests(ITestOutputHelper output) {
+        try { Directory.Delete(IndexDirectoryPath, true); }
+        catch (Exception ex) { output.WriteLine(ex.Message); }
+    }
 
     private static ServiceProvider CreateServiceProvider() {
         var loggerFactory = new LoggerFactoryMocker()
@@ -25,37 +32,31 @@ public class IndexTests {
         return services.BuildServiceProvider();
     }
 
-    [OneTimeTearDown]
-    public void OneTimeTearDown() {
-        try { Directory.Delete(IndexDirectoryPath, true); }
-        catch (Exception ex) { Console.WriteLine(ex.Message); }
-    }
-
-    [Category(Categories.RunsOnDevMachine)]
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Fact]
-    public void Should_Create_Instance_Of_Index_Class() {
+    public void WhenCreatingIndex_WithIndexName_ThenReturnsIndexInstance_Cache() {
         using var provider = CreateServiceProvider();
-        const string INDEX_NAME = "32b52ab3-7069-4fae-ac15-d9f3442db19b";
+        const string IndexName = "32b52ab3-7069-4fae-ac15-d9f3442db19b";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var indexA = indexManager.CreateIndex(INDEX_NAME);
-        var indexB = indexManager.CreateIndex(INDEX_NAME);
+        var indexA = indexManager.CreateIndex(IndexName);
+        var indexB = indexManager.CreateIndex(IndexName);
 
         Assert.Multiple(() => {
-            Assert.That(indexA, Is.Not.Null);
-            Assert.That(indexB, Is.Not.Null);
-            Assert.That(indexA.GetHashCode(), Is.EqualTo(indexB.GetHashCode()));
+            Assert.NotNull(indexA);
+            Assert.NotNull(indexB);
+            Assert.Same(indexA, indexB);
         });
     }
 
-    [Category(Categories.RunsOnDevMachine)]
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Fact]
     public async Task StoreDocument_Should_Create_A_New_Document_In_Index() {
         await using var provider = CreateServiceProvider();
-        const string INDEX_NAME = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
+        const string IndexName = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.CreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
@@ -72,20 +73,20 @@ public class IndexTests {
         var result = await index.StoreDocumentsAsync([document], CancellationToken.None);
 
         Assert.Multiple(() => {
-            Assert.That(index, Is.Not.Null);
-            Assert.That(result.Succeeded, Is.True);
-            Assert.That(result.Total, Is.EqualTo(1));
+            Assert.NotNull(index);
+            Assert.True(result.Succeeded);
+            Assert.Equal(1, result.Total);
         });
     }
 
-    [Category(Categories.RunsOnDevMachine)]
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Fact]
     public async Task CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
         await using var provider = CreateServiceProvider();
-        const string INDEX_NAME = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
+        const string IndexName = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
 
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.CreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
@@ -124,22 +125,22 @@ public class IndexTests {
         var result = searcher.Search();
 
         Assert.Multiple(() => {
-            Assert.That(index, Is.Not.Null);
-            Assert.That(result, Is.Not.Empty);
+            Assert.NotNull(index);
+            Assert.NotEmpty(result);
         });
     }
 
-    [Category(Categories.RunsOnDevMachine)]
+    [Category(Categories.RUNS_ON_DEV_MACHINE)]
     [Fact]
     public async Task Multiple_Documents_Store_Different_Moments() {
         // setup
         await using var provider = CreateServiceProvider();
-        const string INDEX_NAME = "e112b156-ecfc-4fb9-90db-9675bc61b3ba";
-        const string FIELD_NAME = "Content";
+        const string IndexName = "e112b156-ecfc-4fb9-90db-9675bc61b3ba";
+        const string FieldName = "Content";
 
         // arrange
         var indexManager = provider.GetRequiredService<IIndexProvider>();
-        var index = indexManager.CreateIndex(INDEX_NAME);
+        var index = indexManager.CreateIndex(IndexName);
 
         // act 1
         var filePathForText001 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_001.txt");
@@ -148,16 +149,16 @@ public class IndexTests {
         var documentText001 = index
                              .NewDocument(Guid.NewGuid()
                                               .ToString("N"))
-                             .Set(FIELD_NAME, contentText001, FieldOptions.Analyze | FieldOptions.Store);
+                             .Set(FieldName, contentText001, FieldOptions.Analyze | FieldOptions.Store);
         var resultDocumentText001 = await index.StoreDocumentsAsync([documentText001], CancellationToken.None);
 
         var searchBuilderText001 = index.CreateSearchBuilder();
 
-        searchBuilderText001.WithField(FIELD_NAME, "vibrant", false);
+        searchBuilderText001.WithField(FieldName, "vibrant", false);
 
         var resultText001 = searchBuilderText001
                            .Search()
-                           .Select(hit => hit.GetString(FIELD_NAME))
+                           .Select(hit => hit.GetString(FieldName))
                            .ToArray();
 
         // act 2
@@ -167,24 +168,24 @@ public class IndexTests {
         var documentText002 = index
                              .NewDocument(Guid.NewGuid()
                                               .ToString("N"))
-                             .Set(FIELD_NAME, contentText002, FieldOptions.Analyze | FieldOptions.Store);
+                             .Set(FieldName, contentText002, FieldOptions.Analyze | FieldOptions.Store);
         var resultDocumentText002 = await index.StoreDocumentsAsync([documentText002], CancellationToken.None);
 
         var searchBuilderText002 = index.CreateSearchBuilder();
 
-        searchBuilderText002.WithField(FIELD_NAME, "ideas", false);
+        searchBuilderText002.WithField(FieldName, "ideas", false);
 
         var resultText002 = searchBuilderText002
                            .Search()
-                           .Select(hit => hit.GetString(FIELD_NAME))
+                           .Select(hit => hit.GetString(FieldName))
                            .ToArray();
 
         Assert.Multiple(() => {
-            Assert.That(resultText001, Is.Not.Empty);
-            Assert.That(resultDocumentText001.Succeeded, Is.True);
+            Assert.NotEmpty(resultText001);
+            Assert.True(resultDocumentText001.Succeeded);
 
-            Assert.That(resultText002, Is.Not.Empty);
-            Assert.That(resultDocumentText002.Succeeded, Is.True);
+            Assert.NotEmpty(resultText002);
+            Assert.True(resultDocumentText002.Succeeded);
         });
     }
 }

@@ -14,9 +14,9 @@ public class DependencyInjectionTests {
         using var provider = services.BuildServiceProvider();
 
         // act
-        var service = provider.GetService<IMailingService>();
+        var sut = provider.GetService<IMailingService>();
 
         // assert
-        Assert.That(service, Is.InstanceOf<MailingService>());
+        Assert.IsType<MailingService>(sut);
     }
 }

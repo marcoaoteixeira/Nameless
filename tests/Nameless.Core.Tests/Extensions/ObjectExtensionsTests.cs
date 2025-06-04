@@ -12,7 +12,7 @@ public class ObjectExtensionsTests {
         var actual = obj.IsAnonymous();
 
         // assert
-        Assert.That(actual, Is.True);
+        Assert.True(actual);
     }
 
     [Fact]
@@ -24,6 +24,6 @@ public class ObjectExtensionsTests {
         var actual = obj.IsAnonymous();
 
         // assert
-        Assert.That(actual, Is.False);
+        Assert.False(actual);
     }
 }

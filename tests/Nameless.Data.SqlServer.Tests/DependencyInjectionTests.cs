@@ -13,9 +13,9 @@ public class DependencyInjectionTests {
         using var provider = services.BuildServiceProvider();
 
         // act
-        var database = provider.GetService<IDatabase>();
+        var sut = provider.GetService<IDatabase>();
 
         // assert
-        Assert.That(database, Is.InstanceOf<Database>());
+        Assert.IsType<Database>(sut);
     }
 }

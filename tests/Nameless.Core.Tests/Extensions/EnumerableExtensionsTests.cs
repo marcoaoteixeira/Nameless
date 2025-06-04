@@ -16,7 +16,7 @@ public class EnumerableExtensionsTests {
         array.Each(item => actual.Add(item * item));
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class EnumerableExtensionsTests {
         array.Each((item, idx) => actual[idx] = item * item);
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class EnumerableExtensionsTests {
         array.Each(item => actual.Add(item * item));
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class EnumerableExtensionsTests {
         array.Each(item => actual.Add(Convert.ToInt32(item) * Convert.ToInt32(item)));
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class EnumerableExtensionsTests {
         var result = array.IsNullOrEmpty();
 
         // assert
-        Assert.That(result, Is.True);
+        Assert.True(result);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class EnumerableExtensionsTests {
         var result = array.IsNullOrEmpty();
 
         // assert
-        Assert.That(result, Is.True);
+        Assert.True(result);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class EnumerableExtensionsTests {
         var result = array.IsNullOrEmpty();
 
         // assert
-        Assert.That(result, Is.False);
+        Assert.False(result);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class EnumerableExtensionsTests {
         var result = enumerable.IsNullOrEmpty();
 
         // assert
-        Assert.That(result, Is.True);
+        Assert.True(result);
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class EnumerableExtensionsTests {
         array.Each(item => actual.Add(Convert.ToInt32(item) * Convert.ToInt32(item)));
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class EnumerableExtensionsTests {
         array.Each((item, idx) => actual[idx] = Convert.ToInt32(item) * Convert.ToInt32(item));
 
         // assert
-        Assert.That(actual.ToArray(), Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual.ToArray());
     }
 
     [Fact]
@@ -165,8 +165,8 @@ public class EnumerableExtensionsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(actual, Is.InstanceOf<ReadOnlyCollection<int>>());
-            Assert.That(actual, Is.EquivalentTo(array));
+            Assert.IsType<ReadOnlyCollection<int>>(actual);
+            Assert.Equivalent(array, actual);
         });
     }
 
@@ -187,6 +187,6 @@ public class EnumerableExtensionsTests {
         var actual = array.DistinctBy(student => student.Name);
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
     }
 }

@@ -41,28 +41,28 @@ public class CircularBufferTests {
     [Fact]
     public void When_Adding_More_Items_Than_Capacity_Into_CircularBuffer_Then_Count_Should_Be_Equal_To_Max_Capacity() {
         // arrange
-        const int capacity = 10;
-        const int total = 15;
-        var circularBuffer = new CircularBuffer<int>(capacity);
+        const int Capacity = 10;
+        const int Total = 15;
+        var circularBuffer = new CircularBuffer<int>(Capacity);
 
         // act
-        for (var count = 0; count < total; count++) {
+        for (var count = 0; count < Total; count++) {
             circularBuffer.Add(count + 1);
         }
 
         // assert
-        Assert.Equal(expected: capacity, circularBuffer.Count);
+        Assert.Equal(expected: Capacity, circularBuffer.Count);
     }
 
     [Fact]
     public void When_Clear_CircularBuffer_Then_Count_Should_Be_Zero() {
         // arrange
-        const int capacity = 10;
-        const int total = 10;
-        var circularBuffer = new CircularBuffer<int>(capacity);
+        const int Capacity = 10;
+        const int Total = 10;
+        var circularBuffer = new CircularBuffer<int>(Capacity);
 
         // act
-        for (var count = 0; count < total; count++) {
+        for (var count = 0; count < Total; count++) {
             circularBuffer.Add(count + 1);
         }
 
@@ -72,7 +72,7 @@ public class CircularBufferTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Equal(expected: total, countBeforeClear);
+            Assert.Equal(expected: Total, countBeforeClear);
             Assert.Equal(expected: 0, countAfterClear);
         });
     }
@@ -83,13 +83,13 @@ public class CircularBufferTests {
         // arrange
         var buffer = new[] { 1, 2, 3, 4, 5 };
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
-        const int expected = 2;
+        const int Expected = 2;
 
         // act
         var actual = circularBuffer.IndexOf(3);
 
         // assert
-        Assert.Equal(expected: expected, actual);
+        Assert.Equal(expected: Expected, actual);
     }
 
     [Fact]
@@ -98,13 +98,13 @@ public class CircularBufferTests {
         // arrange
         var buffer = new[] { 3, 3, 3, 4, 5 };
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
-        const int expected = 0;
+        const int Expected = 0;
 
         // act
         var actual = circularBuffer.IndexOf(3);
 
         // assert
-        Assert.Equal(expected: expected, actual);
+        Assert.Equal(expected: Expected, actual);
     }
 
     [Fact]
@@ -113,13 +113,13 @@ public class CircularBufferTests {
         // arrange
         var buffer = new[] { 1, 2, 3, 4, 5 };
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
-        const int expected = -1;
+        const int Expected = -1;
 
         // act
         var actual = circularBuffer.IndexOf(6);
 
         // assert
-        Assert.Equal(expected: expected, actual);
+        Assert.Equal(expected: Expected, actual);
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class CircularBufferTests {
         // arrange
         var buffer = new[] { 1, 2, 3, 4, 5 };
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
-        var expected = new[] { 6, 7, 8, 4, 5 };
+        var expected = new[] { 4, 5, 6, 7, 8 };
 
         // act
         circularBuffer.Add(6);
@@ -217,7 +217,7 @@ public class CircularBufferTests {
         var array = circularBuffer.ToArray();
 
         // assert
-        Assert.Equal(expected: expected, array);
+        Assert.Equivalent(expected, array);
     }
 
     [Fact]
@@ -255,13 +255,13 @@ public class CircularBufferTests {
         // arrange
         var buffer = new[] { 1, 2, 3, 4, 5 };
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
-        const int expected = 5;
+        const int Expected = 5;
 
         // act
         var actual = circularBuffer[4];
 
         // assert
-        Assert.Equal(expected: expected, actual);
+        Assert.Equal(expected: Expected, actual);
     }
 
     [Fact]

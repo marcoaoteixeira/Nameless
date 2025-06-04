@@ -22,30 +22,30 @@ public class ServiceCollectionExtensionsTests {
         // act & assert
         Assert.Multiple(() => {
             var requestHandlerWithResponseRequestHandler = provider.GetService<IRequestHandler<RequestWithResponse, object>>();
-            Assert.That(requestHandlerWithResponseRequestHandler, Is.Not.Null);
-            Assert.That(requestHandlerWithResponseRequestHandler, Is.InstanceOf<RequestWithResponseRequestHandler>());
+            Assert.NotNull(requestHandlerWithResponseRequestHandler);
+            Assert.IsType<RequestWithResponseRequestHandler>(requestHandlerWithResponseRequestHandler);
 
             var requestHandlerWithoutResponseRequestHandler = provider.GetService<IRequestHandler<RequestWithoutResponse>>();
-            Assert.That(requestHandlerWithoutResponseRequestHandler, Is.Not.Null);
-            Assert.That(requestHandlerWithoutResponseRequestHandler, Is.InstanceOf<RequestWithoutResponseRequestHandler>());
+            Assert.NotNull(requestHandlerWithoutResponseRequestHandler);
+            Assert.IsType<RequestWithoutResponseRequestHandler>(requestHandlerWithoutResponseRequestHandler);
 
-            var numericRequestHandler = provider.GetServices<IRequestHandler<NumericRequest, double>>().ToArray();
-            Assert.That(numericRequestHandler, Has.Length.EqualTo(3));
-            Assert.That(numericRequestHandler, Has.One.Items.InstanceOf<SumNumericRequestHandler>());
-            Assert.That(numericRequestHandler, Has.One.Items.InstanceOf<SubtractNumericRequestHandler>());
-            Assert.That(numericRequestHandler, Has.One.Items.InstanceOf<MultiplyNumericRequestHandler>());
+            var numericRequestHandlers = provider.GetServices<IRequestHandler<NumericRequest, double>>().ToArray();
+            Assert.Equal(3, numericRequestHandlers.Length);
+            Assert.Contains(numericRequestHandlers, item => typeof(SumNumericRequestHandler).IsAssignableFrom(item.GetType()));
+            Assert.Contains(numericRequestHandlers, item => typeof(SubtractNumericRequestHandler).IsAssignableFrom(item.GetType()));
+            Assert.Contains(numericRequestHandlers, item => typeof(MultiplyNumericRequestHandler).IsAssignableFrom(item.GetType()));
 
             var dayOfWeekCloseTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<DayOfWeek>, DayOfWeek>>();
-            Assert.That(dayOfWeekCloseTypeRequestHandler, Is.Not.Null);
-            Assert.That(dayOfWeekCloseTypeRequestHandler, Is.InstanceOf<DayOfWeekCloseTypeRequestHandler>());
+            Assert.NotNull(dayOfWeekCloseTypeRequestHandler);
+            Assert.IsType<DayOfWeekCloseTypeRequestHandler>(dayOfWeekCloseTypeRequestHandler);
 
             var integerCloseTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<int>, int>>();
-            Assert.That(integerCloseTypeRequestHandler, Is.Not.Null);
-            Assert.That(integerCloseTypeRequestHandler, Is.InstanceOf<IntegerCloseTypeRequestHandler>());
+            Assert.NotNull(integerCloseTypeRequestHandler);
+            Assert.IsType<IntegerCloseTypeRequestHandler>(integerCloseTypeRequestHandler);
 
             var structResultOpenTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<StructResult>, StructResult>>();
-            Assert.That(structResultOpenTypeRequestHandler, Is.Not.Null);
-            Assert.That(structResultOpenTypeRequestHandler, Is.InstanceOf<OpenGenericRequestHandler<StructResult>>());
+            Assert.NotNull(structResultOpenTypeRequestHandler);
+            Assert.IsType<OpenGenericRequestHandler<StructResult>>(structResultOpenTypeRequestHandler);
         });
     }
 }

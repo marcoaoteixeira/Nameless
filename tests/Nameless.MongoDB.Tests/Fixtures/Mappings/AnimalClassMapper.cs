@@ -6,7 +6,7 @@ using Nameless.MongoDB.Fixtures.Entities;
 namespace Nameless.MongoDB.Fixtures.Mappings;
 
 public class AnimalClassMapper : IDocumentMapper {
-    public override BsonClassMap CreateMap() {
+    public BsonClassMap CreateMap() {
         return new BsonClassMap<Animal>(mapper => {
             mapper
                .MapIdProperty(animal => animal.ID)

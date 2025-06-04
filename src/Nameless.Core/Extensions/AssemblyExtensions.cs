@@ -25,7 +25,7 @@ public static class AssemblyExtensions {
 
         if (directoryPath is null) { return string.Empty; }
 
-        var result = Path.Combine(combineWith.Prepend(directoryPath).ToArray());
+        var result = Path.Combine([.. combineWith.Prepend(directoryPath)]);
 
         return PathHelper.Normalize(result);
     }

@@ -8,13 +8,13 @@ public class ExpressionExtensionsTests {
     public void GetExpressionPath_Should_Return_Property_Path_Lambda() {
         // arrange
         LambdaExpression lambda = (Category category) => category.Children[123].Children[456].Name;
-        const string expected = "category.Children[123].Children[456].Name";
+        const string Expected = "category.Children[123].Children[456].Name";
 
         // act
         var actual = lambda.GetExpressionPath();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class ExpressionExtensionsTests {
         var actual = lambda.GetExpressionPath();
 
         // assert
-        Assert.That(actual, Is.Empty);
+        Assert.Empty(actual);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class ExpressionExtensionsTests {
         var actual = lambda.GetExpressionPath();
 
         // assert
-        Assert.That(actual, Is.Empty);
+        Assert.Empty(actual);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ExpressionExtensionsTests {
         var actual = students.Single(expression.Compile());
 
         // assert
-        Assert.That(actual, Is.EqualTo(students[0]));
+        Assert.Equal(students[0], actual);
     }
 
     [Fact]
@@ -72,6 +72,6 @@ public class ExpressionExtensionsTests {
         var actual = students.Where(where.Compile());
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(students));
+        Assert.Equivalent(students, actual);
     }
 }

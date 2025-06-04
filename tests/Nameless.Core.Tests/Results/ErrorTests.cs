@@ -17,8 +17,8 @@ public class ErrorTests {
 
             // assert
             Assert.Multiple(() => {
-                Assert.That(error.Description, Is.EqualTo(type.ToString()));
-                Assert.That(error.Type, Is.EqualTo(type));
+                Assert.Equal(type.ToString(), error.Description);
+                Assert.Equal(type, error.Type);
             });
         }
     }

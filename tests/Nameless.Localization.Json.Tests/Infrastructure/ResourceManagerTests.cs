@@ -30,11 +30,10 @@ public class ResourceManagerTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(resource, Is.Not.Null);
-            Assert.That(resource.Culture, Is.Not.Null);
-            Assert.That(resource.Path, Is.Not.Null);
-            Assert.That(resource.IsAvailable, Is.True);
+            Assert.NotNull(resource);
+            Assert.NotNull(resource.Culture);
+            Assert.NotNull(resource.Path);
+            Assert.True(resource.IsAvailable);
         });
-        Assert.That(resource, Is.Not.Null);
     }
 }

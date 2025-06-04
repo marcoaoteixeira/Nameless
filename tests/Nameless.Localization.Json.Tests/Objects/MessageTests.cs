@@ -1,8 +1,9 @@
 ﻿namespace Nameless.Localization.Json.Objects;
 
 public class MessageTests {
-    [TestCase("Message A", "Message A", true)]
-    [TestCase("Message A", "Message B", false)]
+    [Theory]
+    [InlineData("Message A", "Message A", true)]
+    [InlineData("Message A", "Message B", false)]
     public void Equals_Should_Return_Corresponding_Result(string idX, string idY, bool expected) {
         // arrange
         var messageX = new Message(idX, string.Empty);
@@ -12,11 +13,12 @@ public class MessageTests {
         var actual = messageX.Equals(messageY);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
-    [TestCase("Message A", "Message A", true)]
-    [TestCase("Message A", "Message B", false)]
+    [Theory]
+    [InlineData("Message A", "Message A", true)]
+    [InlineData("Message A", "Message B", false)]
     public void GetHashCode_Should_Return_Corresponding_Result(string idX, string idY, bool expected) {
         // arrange
         var messageX = new Message(idX, string.Empty);
@@ -27,6 +29,6 @@ public class MessageTests {
         var hashCodeY = messageY.GetHashCode();
 
         // assert
-        Assert.That(hashCodeX == hashCodeY, Is.EqualTo(expected));
+        Assert.Equal(expected, hashCodeX == hashCodeY);
     }
 }

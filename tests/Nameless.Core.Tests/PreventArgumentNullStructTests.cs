@@ -4,7 +4,9 @@ public class PreventArgumentNullStructTests {
     [Fact]
     public void WhenNonNullParamValue_ThenDoNotThrows() {
         // arrange & act & assert
-        Assert.DoesNotThrow(() => Prevent.Argument.Null<int>(1));
+        var value = Prevent.Argument.Null<int>(1);
+
+        Assert.Equal(1, value);
     }
 
     [Fact]
@@ -15,14 +17,14 @@ public class PreventArgumentNullStructTests {
 
     [Fact]
     public void WhenNullParamValue_WithCustomMessage_ThenThrowsWithCustomMessage() {
-        const string message = "Parameter is null";
+        const string Message = "Parameter is null";
 
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception =
-                Assert.Throws<ArgumentNullException>(() => Prevent.Argument.Null<int>(null, message: message));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(message));
+                Assert.Throws<ArgumentNullException>(() => Prevent.Argument.Null<int>(null, message: Message));
+            Assert.NotNull(exception);
+            Assert.Contains(Message, exception.Message);
         });
     }
 
@@ -40,20 +42,20 @@ public class PreventArgumentNullStructTests {
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception = Assert.Throws<ArgumentNullException>(() => Prevent.Argument.Null(value));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(nameof(value)));
+            Assert.NotNull(exception);
+            Assert.Contains(nameof(value), exception.Message);
         });
     }
 
     [Fact]
     public void WhenNullParamValue_WithParamName_ThenExceptionMessageContainsParamName() {
-        const string paramName = "test_parameter";
+        const string ParamName = "test_parameter";
 
         // arrange & act & assert
         Assert.Multiple(() => {
-            var exception = Assert.Throws<ArgumentNullException>(() => Prevent.Argument.Null<int>(null, paramName));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(paramName));
+            var exception = Assert.Throws<ArgumentNullException>(() => Prevent.Argument.Null<int>(null, ParamName));
+            Assert.NotNull(exception);
+            Assert.Contains(ParamName, exception.Message);
         });
     }
 }

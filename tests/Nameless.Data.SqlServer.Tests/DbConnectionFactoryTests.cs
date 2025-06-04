@@ -14,7 +14,7 @@ public class DbConnectionFactoryTests {
         var actual = sut.CreateDbConnection();
 
         // assert
-        Assert.That(actual, Is.InstanceOf<SqlConnection>());
+        Assert.IsType<SqlConnection>(actual);
     }
 
     [Fact]
@@ -29,9 +29,9 @@ public class DbConnectionFactoryTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(first, Is.InstanceOf<SqlConnection>());
-            Assert.That(second, Is.InstanceOf<SqlConnection>());
-            Assert.That(first.GetHashCode(), Is.Not.EqualTo(second.GetHashCode()));
+            Assert.IsType<SqlConnection>(first);
+            Assert.IsType<SqlConnection>(second);
+            Assert.NotSame(first, second);
         });
     }
 }

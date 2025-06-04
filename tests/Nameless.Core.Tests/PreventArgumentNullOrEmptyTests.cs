@@ -8,7 +8,9 @@ public class PreventArgumentNullOrEmptyTests {
     [Fact]
     public void WhenNonNullOrEmptyParamValue_ThenDoNotThrows() {
         // arrange & act & assert
-        Assert.DoesNotThrow(() => Prevent.Argument.NullOrEmpty(_nonEmptyEnumerable));
+        var value = Prevent.Argument.NullOrEmpty(_nonEmptyEnumerable);
+
+        Assert.NotNull(value);
     }
 
     [Fact]
@@ -25,29 +27,29 @@ public class PreventArgumentNullOrEmptyTests {
 
     [Fact]
     public void WhenNullParamValue_WithCustomMessage_ThenThrowsWithCustomMessage() {
-        const string message = "Parameter is null";
+        const string Message = "Parameter is null";
 
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception =
                 Assert.Throws<ArgumentNullException>(() =>
-                    Prevent.Argument.NullOrEmpty(_nullEnumerable, message: message));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(message));
+                    Prevent.Argument.NullOrEmpty(_nullEnumerable, message: Message));
+            Assert.NotNull(exception);
+            Assert.Contains(Message, exception.Message);
         });
     }
 
     [Fact]
     public void WhenEmptyParamValue_WithCustomMessage_ThenThrowsWithCustomMessage() {
-        const string message = "Parameter is empty";
+        const string Message = "Parameter is empty";
 
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception =
                 Assert.Throws<ArgumentException>(() =>
-                    Prevent.Argument.NullOrEmpty(_emptyEnumerable, message: message));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(message));
+                    Prevent.Argument.NullOrEmpty(_emptyEnumerable, message: Message));
+            Assert.NotNull(exception);
+            Assert.Contains(Message, exception.Message);
         });
     }
 
@@ -72,8 +74,8 @@ public class PreventArgumentNullOrEmptyTests {
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception = Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(_nullEnumerable));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(nameof(_nullEnumerable)));
+            Assert.NotNull(exception);
+            Assert.Contains(nameof(_nullEnumerable), exception.Message);
         });
     }
 
@@ -82,34 +84,34 @@ public class PreventArgumentNullOrEmptyTests {
         // arrange & act & assert
         Assert.Multiple(() => {
             var exception = Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(_emptyEnumerable));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(nameof(_emptyEnumerable)));
+            Assert.NotNull(exception);
+            Assert.Contains(nameof(_emptyEnumerable), exception.Message);
         });
     }
 
     [Fact]
     public void WhenNullParamValue_WithParamName_ThenExceptionMessageContainsParamName() {
         // arrange & act & assert
-        const string paramName = "test_parameter";
+        const string ParamName = "test_parameter";
 
         Assert.Multiple(() => {
             var exception =
-                Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(_nullEnumerable, paramName));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(paramName));
+                Assert.Throws<ArgumentNullException>(() => Prevent.Argument.NullOrEmpty(_nullEnumerable, ParamName));
+            Assert.NotNull(exception);
+            Assert.Contains(ParamName, exception.Message);
         });
     }
 
     [Fact]
     public void WhenEmptyParamValue_WithParamName_ThenExceptionMessageContainsParamName() {
         // arrange & act & assert
-        const string paramName = "test_parameter";
+        const string ParamName = "test_parameter";
 
         Assert.Multiple(() => {
             var exception =
-                Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(_emptyEnumerable, paramName));
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(exception.Message, Contains.Substring(paramName));
+                Assert.Throws<ArgumentException>(() => Prevent.Argument.NullOrEmpty(_emptyEnumerable, ParamName));
+            Assert.NotNull(exception);
+            Assert.Contains(ParamName, exception.Message);
         });
     }
 }

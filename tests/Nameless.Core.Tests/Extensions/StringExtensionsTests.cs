@@ -17,7 +17,7 @@ public class StringExtensionsTests {
         var actual = value.RemoveDiacritics();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class StringExtensionsTests {
         var actual = value.Repeat(times);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -45,58 +45,58 @@ public class StringExtensionsTests {
         var actual = value.Repeat(times);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void ToStream_Should_Create_A_MemoryStream_From_A_String() {
         // arrange
-        const string value = "This is a Test";
+        const string Value = "This is a Test";
 
         // act
-        using var actual = value.ToMemoryStream();
+        using var actual = Value.ToMemoryStream();
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(actual, Is.Not.Null);
-            Assert.That(actual.ToArray(), Is.Not.Empty);
-            Assert.That(actual, Is.InstanceOf<MemoryStream>());
+            Assert.NotNull(actual);
+            Assert.NotEmpty(actual.ToArray());
+            Assert.IsType<MemoryStream>(actual);
         });
     }
 
     [Fact]
     public void CamelFriendly_Should_Create_A_Space_Separated_String_From_A_Camel_String_Value() {
         // arrange
-        const string value = "ThisIsATest";
-        const string expected = "This Is A Test";
+        const string Value = "ThisIsATest";
+        const string Expected = "This Is A Test";
 
         // act
-        var actual = value.CamelFriendly();
+        var actual = Value.CamelFriendly();
 
         // arrange
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void Ellipsize_Should_Return_A_Portion_Of_A_String_Ending_With_Ellipsis() {
         // arrange
-        const string value = "This Is A Test";
-        const string ellipsis = "...";
-        const string expected = $"This Is{ellipsis}";
-        const int count = 8;
+        const string Value = "This Is A Test";
+        const string Ellipsis = "...";
+        const string Expected = $"This Is{Ellipsis}";
+        const int Count = 8;
 
         // act
-        var actual = value.Ellipsize(count, ellipsis, false);
+        var actual = Value.Ellipsize(Count, Ellipsis, false);
 
         // arrange
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void FromHexToByteArray_Should_Return_Array_Of_Bytes() {
         // arrange
-        const string expected = "Test Is A Test";
-        var array = expected.ToCharArray()
+        const string Expected = "Test Is A Test";
+        var array = Expected.ToCharArray()
                             .Select(item => ((int)item).ToString("X2"));
         var value = string.Join(string.Empty, array);
 
@@ -104,46 +104,46 @@ public class StringExtensionsTests {
         var actual = value.ToHexByteArray();
 
         // assert
-        Assert.That(Encoding.UTF8.GetString(actual), Is.EqualTo(expected));
+        Assert.Equal(Expected, Encoding.UTF8.GetString(actual));
     }
 
     [Fact]
     public void ReplaceAll_Use_Dictionary_To_Replace_Values_Inside_Text() {
         // arrange
         var replacements = new Dictionary<string, string> { { "cat", "dog" }, { "meow", "bark" } };
-        const string phrase = "The cat goes meow";
-        const string expected = "The dog goes bark";
+        const string Phrase = "The cat goes meow";
+        const string Expected = "The dog goes bark";
 
         // act
-        var actual = phrase.ReplaceAll(replacements);
+        var actual = Phrase.ReplaceAll(replacements);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void ToBase64_Is_Just_A_Syntax_Sugar_For_Convert_ToBase64String() {
         // arrange
-        const string expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
-        const string phrase = "This is a test";
+        const string Expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
+        const string Phrase = "This is a test";
 
         // act
-        var actual = phrase.ToBase64();
+        var actual = Phrase.ToBase64();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void ToBase64_Using_Different_Encoding() {
         // arrange
-        const string expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
-        const string phrase = "This is a test";
+        const string Expected = "VGhpcyBpcyBhIHRlc3Q="; // This is a test
+        const string Phrase = "This is a test";
 
         // act
-        var actual = phrase.ToBase64(Encoding.ASCII);
+        var actual = Phrase.ToBase64(Encoding.ASCII);
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 }

@@ -14,7 +14,7 @@ public class StreamExtensionsTests {
         var actual = stream.ToText();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class StreamExtensionsTests {
         var actual = stream.ToByteArray();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -75,6 +75,6 @@ public class StreamExtensionsTests {
         var actual = stream.ToByteArray();
 
         // assert
-        Assert.That(actual, Is.EquivalentTo(expected));
+        Assert.Equivalent(expected, actual);
     }
 }

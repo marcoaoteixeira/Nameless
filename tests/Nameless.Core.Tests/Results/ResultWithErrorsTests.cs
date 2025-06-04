@@ -4,16 +4,16 @@ public class ResultWithErrorsTests {
     [Fact]
     public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange
-        const int expected = 123;
+        const int Expected = 123;
         Result<int> result;
 
         // act
-        result = expected;
+        result = Expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.False);
-            Assert.That(result.Value, Is.EqualTo(expected));
+            Assert.False(result.HasErrors);
+            Assert.Equal(Expected, result.Value);
         });
     }
 
@@ -28,8 +28,8 @@ public class ResultWithErrorsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.AsErrors, Has.Length.AtLeast(1));
+            Assert.True(result.HasErrors);
+            Assert.Single(result.AsErrors);
         });
     }
 
@@ -44,23 +44,23 @@ public class ResultWithErrorsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.True);
-            Assert.That(result.AsErrors, Has.Length.AtLeast(2));
+            Assert.True(result.HasErrors);
+            Assert.Equal(2, result.AsErrors.Length);
         });
     }
 
     [Fact]
     public void WhenResultIsValid_ThenAccessErrorThrowsInvalidOperationException() {
         // arrange
-        const int expected = 123;
+        const int Expected = 123;
         Result<int> result;
 
         // act
-        result = expected;
+        result = Expected;
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.False);
+            Assert.False(result.HasErrors);
             Assert.Throws<InvalidOperationException>(() => _ = result.AsErrors);
         });
     }
@@ -75,7 +75,7 @@ public class ResultWithErrorsTests {
         result = expected;
 
         // assert
-        Assert.That(result.HasErrors, Is.True);
+        Assert.True(result.HasErrors);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class ResultWithErrorsTests {
         var match = result.Match(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(match, Is.True);
+        Assert.True(match);
 
         return;
 
@@ -109,7 +109,7 @@ public class ResultWithErrorsTests {
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(match, Is.True);
+        Assert.True(match);
 
         return;
 
@@ -131,7 +131,7 @@ public class ResultWithErrorsTests {
         var match = result.Match(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 
@@ -153,7 +153,7 @@ public class ResultWithErrorsTests {
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 
@@ -176,7 +176,7 @@ public class ResultWithErrorsTests {
         result.Switch(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(captured, Is.True);
+        Assert.True((bool)captured);
 
         return;
 
@@ -199,7 +199,7 @@ public class ResultWithErrorsTests {
         await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(captured, Is.True);
+        Assert.True((bool)captured);
 
         return;
 
@@ -226,7 +226,7 @@ public class ResultWithErrorsTests {
         result.Switch(SuccessAction, FailureAction);
 
         // assert
-        Assert.That(captured, Is.False);
+        Assert.False((bool)captured);
 
         return;
 
@@ -249,7 +249,7 @@ public class ResultWithErrorsTests {
         await result.Switch(SuccessActionAsync, FailureActionAsync);
 
         // assert
-        Assert.That(captured, Is.False);
+        Assert.False((bool)captured);
 
         return;
 
@@ -276,7 +276,7 @@ public class ResultWithErrorsTests {
                           .Match(FinalSuccessAction, FinalFailureAction);
 
         // assert
-        Assert.That(match, Is.False);
+        Assert.False(match);
 
         return;
 
@@ -312,7 +312,7 @@ public class ResultWithErrorsTests {
                           .Match(FinalSuccessAction, FinalFailureAction);
 
         // assert
-        Assert.That(match, Is.True);
+        Assert.True(match);
 
         return;
 
@@ -355,8 +355,8 @@ public class ResultWithErrorsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(result.HasErrors, Is.False);
-            Assert.That(result.Value, Is.Null);
+            Assert.False(result.HasErrors);
+            Assert.Null(result.Value);
         });
     }
 }

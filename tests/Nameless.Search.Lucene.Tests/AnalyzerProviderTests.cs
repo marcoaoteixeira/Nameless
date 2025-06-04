@@ -8,55 +8,55 @@ public class AnalyzerProviderTests {
     [Fact]
     public void WhenGetAnalyzer_ThenReturnsAnalyzerForIndex() {
         // arrange
-        const string indexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
-        var selectors = new[] { new AnalyzerSelectorMocker().WithAnalyzerFor(indexName).Build() };
+        const string IndexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
+        var selectors = new[] { new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName).Build() };
         var sut = new AnalyzerProvider(selectors);
 
         // act
-        var actual = sut.GetAnalyzer(indexName);
+        var actual = sut.GetAnalyzer(IndexName);
 
         // assert
-        Assert.That(actual, Is.Not.Null);
+        Assert.NotNull(actual);
     }
 
     [Fact]
     public void WhenGetAnalyzer_IfNoAnalyzerFound_ThenReturnsDefaultStandardAnalyzer() {
         // arrange
-        const string indexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
+        const string IndexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
         var selectors = Array.Empty<IAnalyzerSelector>();
         var sut = new AnalyzerProvider(selectors);
 
         // act
-        var actual = sut.GetAnalyzer(indexName);
+        var actual = sut.GetAnalyzer(IndexName);
 
         // assert
-        Assert.That(actual, Is.Not.Null);
-        Assert.That(actual, Is.InstanceOf<StandardAnalyzer>());
+        Assert.NotNull(actual);
+        Assert.IsType<StandardAnalyzer>(actual);
     }
 
     [Fact]
     public void WhenGetAnalyzer_WithMoreThanOneAnalyzer_ThenReturnsPrioritizeAnalyzer() {
         // arrange
-        const string indexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
-        const int lowestPriority = 1;
-        const int mediumPriority = 5;
-        const int highestPriority = 10;
+        const string IndexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
+        const int LowestPriority = 1;
+        const int MediumPriority = 5;
+        const int HighestPriority = 10;
         var selectors = new[] {
-            new AnalyzerSelectorMocker().WithAnalyzerFor(indexName, new FakeAnalyzer(mediumPriority), mediumPriority)
+            new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName, new FakeAnalyzer(MediumPriority), MediumPriority)
                                         .Build(),
-            new AnalyzerSelectorMocker().WithAnalyzerFor(indexName, new FakeAnalyzer(lowestPriority), lowestPriority)
+            new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName, new FakeAnalyzer(LowestPriority), LowestPriority)
                                         .Build(),
-            new AnalyzerSelectorMocker().WithAnalyzerFor(indexName, new FakeAnalyzer(highestPriority), highestPriority)
+            new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName, new FakeAnalyzer(HighestPriority), HighestPriority)
                                         .Build()
         };
         var sut = new AnalyzerProvider(selectors);
 
         // act
-        var actual = sut.GetAnalyzer(indexName);
+        var actual = sut.GetAnalyzer(IndexName);
 
         // assert
-        Assert.That(actual, Is.Not.Null);
-        Assert.That(actual, Is.InstanceOf<FakeAnalyzer>());
-        Assert.That(((FakeAnalyzer)actual).Priority, Is.EqualTo(highestPriority));
+        Assert.NotNull(actual);
+        Assert.IsType<FakeAnalyzer>(actual);
+        Assert.Equal(HighestPriority, ((FakeAnalyzer)actual).Priority);
     }
 }

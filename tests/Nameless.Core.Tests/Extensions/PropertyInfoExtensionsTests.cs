@@ -7,26 +7,26 @@ public class PropertyInfoExtensionsTests {
     public void When_Property_Has_Valid_DescriptionAttribute_Then_Return_Description() {
         // arrange
         var instance = new PropertyAnnotatedClass();
-        const string expected = "Name of something";
+        const string Expected = "Name of something";
 
         // act
         var actual = instance.GetPropertyWithDescriptionAttribute().GetDescription();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void When_Property_Does_Not_Have_DescriptionAttribute_And_FallbackToName_Is_True_Then_Return_PropertyName() {
         // arrange
         var instance = new PropertyAnnotatedClass();
-        const string expected = nameof(PropertyAnnotatedClass.LastName);
+        const string Expected = nameof(PropertyAnnotatedClass.LastName);
 
         // act
         var actual = instance.GetPropertyWithoutDescriptionAttribute().GetDescription();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -34,13 +34,13 @@ public class PropertyInfoExtensionsTests {
         When_Property_Has_DescriptionAttribute_But_Is_Empty_And_FallbackToName_Is_True_Then_Return_PropertyName() {
         // arrange
         var instance = new PropertyAnnotatedClass();
-        const string expected = nameof(PropertyAnnotatedClass.Age);
+        const string Expected = nameof(PropertyAnnotatedClass.Age);
 
         // act
         var actual = instance.GetPropertyWithEmptyDescriptionAttribute().GetDescription();
 
         // assert
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class PropertyInfoExtensionsTests {
         var actual = instance.GetPropertyWithEmptyDescriptionAttribute().GetDescription(false);
 
         // assert
-        Assert.That(actual, Is.EqualTo(string.Empty));
+        Assert.Equal(string.Empty, actual);
     }
 
     [Fact]
@@ -66,6 +66,6 @@ public class PropertyInfoExtensionsTests {
         var actual = instance.GetPropertyWithoutDescriptionAttribute().GetDescription(false);
 
         // assert
-        Assert.That(actual, Is.EqualTo(string.Empty));
+        Assert.Equal(string.Empty, actual);
     }
 }

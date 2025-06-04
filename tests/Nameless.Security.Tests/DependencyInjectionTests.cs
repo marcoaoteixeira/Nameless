@@ -19,8 +19,8 @@ public class DependencyInjectionTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.That(cryptographicService, Is.InstanceOf<RijndaelCryptographicService>());
-            Assert.That(passwordGenerator, Is.InstanceOf<RandomPasswordGenerator>());
+            Assert.IsType<RijndaelCryptographicService>(cryptographicService);
+            Assert.IsType<RandomPasswordGenerator>(passwordGenerator);
         });
     }
 }

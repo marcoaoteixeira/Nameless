@@ -13,7 +13,7 @@ public class HashtableDynamicObjectTests {
         provider = new HashtableDynamicObject();
 
         // assert
-        Assert.That(provider, Is.Not.Null);
+        Assert.NotNull(provider);
     }
 
     [Fact]
@@ -25,8 +25,8 @@ public class HashtableDynamicObjectTests {
         hashtable.Id = 1;
 
         // assert
-        Assert.That(hashtable, Is.Not.Null);
-        Assert.That(hashtable.Id, Is.EqualTo(1));
+        Assert.NotNull(hashtable);
+        Assert.Equal(1, hashtable.Id);
     }
 
     [Fact]
@@ -42,9 +42,9 @@ public class HashtableDynamicObjectTests {
         var name = entity.GetAttributes().First().value;
 
         Assert.Multiple(() => {
-            Assert.That(entity.Attribute, Is.Not.Null);
-            Assert.That(entity.Attribute.Name, Is.EqualTo("Test"));
-            Assert.That(name, Is.EqualTo("Test"));
+            Assert.NotNull(entity.Attribute);
+            Assert.Equal("Test", entity.Attribute.Name);
+            Assert.Equal("Test", name);
         });
     }
 
