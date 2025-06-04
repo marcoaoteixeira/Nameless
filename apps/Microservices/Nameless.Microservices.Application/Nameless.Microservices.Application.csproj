@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Nameless.Core\Nameless.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\src\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
+    <ProjectReference Include="..\Nameless.Microservices.Infrastructure\Nameless.Microservices.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\..\..\..\Users\marco\.nuget\packages\microsoft.extensions.logging.abstractions\9.0.5\lib\net9.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
