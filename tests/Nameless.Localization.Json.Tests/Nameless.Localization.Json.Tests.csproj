@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Nameless.Localization.Json\Nameless.Localization.Json.csproj" />
+	  <ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

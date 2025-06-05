@@ -35,11 +35,8 @@ public class ComponentContextExtensionsTests {
     [Fact]
     public void WhenGetLogger_WhenLoggingIsConfigured_ThenResolveLogger() {
         // arrange
-        var logger = new LoggerMocker<ComponentContextExtensionsTests>()
-           .Build();
-        var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(logger)
-                           .Build();
+        var logger = new LoggerMocker<ComponentContextExtensionsTests>().Build();
+        var loggerFactory = new LoggerFactoryMocker().WithCreateLogger(logger).Build();
         var builder = new ContainerBuilder();
         builder.RegisterInstance(loggerFactory);
 

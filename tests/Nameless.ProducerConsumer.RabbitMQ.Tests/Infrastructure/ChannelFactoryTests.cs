@@ -9,7 +9,7 @@ public class ChannelFactoryTests {
     public async Task WhenCreatingChannel_WithExchangeName_ThenReturnsAChannel() {
         // arrange
         const string ExchangeName = "Exchange_b0b8fb97_c6d8_44f6_898a_af74b73d419a";
-        var channel = Fast.Mock<IChannel>();
+        var channel = Quick.Mock<IChannel>();
         var connection = new ConnectionMocker().WithChannel(channel)
                                                .Build();
         var sut = CreateSut(connection: connection);

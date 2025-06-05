@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	  <ProjectReference Include="..\..\src\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
 	</ItemGroup>
 

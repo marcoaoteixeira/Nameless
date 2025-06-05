@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Nameless.ProducerConsumer.RabbitMQ\Nameless.ProducerConsumer.RabbitMQ.csproj" />
+	  <ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -25,8 +25,8 @@ public class StringLocalizerFactoryTests {
                                                          .Build();
 
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizer>>())
-                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizerFactory>>())
+                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
+                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
                            .Build();
         var options = Microsoft.Extensions.Options.Options.Create(new LocalizationOptions());
 

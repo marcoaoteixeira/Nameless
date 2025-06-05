@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Autofac\Nameless.Autofac.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

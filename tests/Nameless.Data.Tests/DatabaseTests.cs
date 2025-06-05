@@ -2,138 +2,68 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Nameless.Data.Fixtures;
+using Nameless.Data.Mockers;
+using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Data;
 
 public class DatabaseTests {
-    private static Mock<IDataParameterCollection> CreateDataParameterCollectionMock() {
-        var dataParameterCollectionMock = new Mock<IDataParameterCollection>();
-        dataParameterCollectionMock
-           .Setup(mock => mock.Add(It.IsAny<object>()))
-           .Returns(1);
-        dataParameterCollectionMock.Setup(mock => mock.GetEnumerator())
-                                   .Returns(Enumerable.Empty<IDataParameter>().GetEnumerator);
-
-        return dataParameterCollectionMock;
+    private static DataParameterCollectionMocker CreateDataParameterCollectionMocker() {
+        return new DataParameterCollectionMocker().WithEmptyGetEnumerator();
     }
 
-    private static Mock<IDbCommand> CreateDbCommandMock(IDataParameterCollection dataParameterCollection) {
-        var dbCommandMock = new Mock<IDbCommand>();
-        dbCommandMock
-           .Setup(mock => mock.CreateParameter())
-           .Returns(Mock.Of<IDbDataParameter>());
-
-        dbCommandMock
-           .Setup(mock => mock.Parameters)
-           .Returns(dataParameterCollection);
-
-        return dbCommandMock;
+    private static DbCommandMocker CreateDbCommandMocker(IDataParameterCollection dataParameterCollection) {
+        return new DbCommandMocker().WithCreateParameter(Quick.Mock<IDbDataParameter>())
+                                    .WithParameters(dataParameterCollection);
     }
 
-    private static Mock<IDbConnectionFactory> CreateDbConnectionFactoryMock(IDbConnection dbConnection) {
-        var result = new Mock<IDbConnectionFactory>();
+    private static Database CreateSut(IDataParameterCollection dataParameterCollection, IDbCommand dbCommand, ILogger<Database> logger = null) {
+        var dbConnection = new DbConnectionMocker().WithCreateCommand(dbCommand).Build();
+        var dbConnectionFactory = new DbConnectionFactoryMocker().WithCreateDbConnection(dbConnection).Build();
 
-        result
-           .Setup(mock => mock.CreateDbConnection())
-           .Returns(dbConnection);
-
-        return result;
-    }
-
-    private static Mock<IDbConnection> CreateDbConnectionMock(IDbCommand dbCommand = null) {
-        var dbConnectionMock = new Mock<IDbConnection>();
-
-        if (dbCommand is not null) {
-            dbConnectionMock
-               .Setup(mock => mock.CreateCommand())
-               .Returns(dbCommand);
-        }
-
-        return dbConnectionMock;
-    }
-
-    private static Mock<IDataReader> CreateDataReaderMock() {
-        return new Mock<IDataReader>();
+        return new Database(dbConnectionFactory, logger ?? Quick.Mock<ILogger<Database>>());
     }
 
     [Fact]
     public void ExecuteNonQuery_Should_Query_Against_Database() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteNonQuery())
-           .Returns(1);
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            Mock.Of<ILogger<Database>>()
-        );
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery(result: 1);
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
 
         // act
         var actual = sut.ExecuteNonQuery("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
 
         // assert
         Assert.Equal(expected: 1, actual);
-        dbCommandMock.Verify(mock => mock.CreateParameter());
-        dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
+        dbCommandMocker.Verify(mock => mock.CreateParameter());
+        dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
     }
 
     [Fact]
     public void ExecuteNonQuery_On_Error_Should_Log() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteNonQuery())
-           .Throws<InvalidOperationException>();
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var loggerMock = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            loggerMock.Build()
-        );
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery<InvalidOperationException>();
+        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
 
         // act & assert
         Assert.Multiple(() => {
-            Assert.Throws<InvalidOperationException>(
-                () => sut.ExecuteNonQuery("STATEMENT",
-                    CommandType.Text,
-                    new Parameter("Param", 1, DbType.Int32))
-            );
-            dbCommandMock.Verify(mock => mock.CreateParameter());
-            dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMock.VerifyErrorCall();
+            Assert.Throws<InvalidOperationException>(() => sut.ExecuteNonQuery("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32)));
+            dbCommandMocker.Verify(mock => mock.CreateParameter());
+            dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
+            loggerMocker.VerifyErrorCall();
         });
     }
 
     [Fact]
     public void ExecuteScalar_Should_Query_Against_Database() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteScalar())
-           .Returns("Field");
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            Mock.Of<ILogger<Database>>()
-        );
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar("Field");
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
 
         // act
         var actual = sut.ExecuteScalar<string>("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
@@ -141,29 +71,18 @@ public class DatabaseTests {
         // assert
         Assert.Multiple(() => {
             Assert.Equal(expected: "Field", actual);
-            dbCommandMock.Verify(mock => mock.CreateParameter());
-            dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
+            dbCommandMocker.Verify(mock => mock.CreateParameter());
+            dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
         });
     }
 
     [Fact]
     public void ExecuteScalar_On_Error_Should_Log() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteScalar())
-           .Throws<InvalidOperationException>();
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var loggerMock = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            loggerMock.Build()
-        );
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar<InvalidOperationException>();
+        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
 
         // act
 
@@ -172,47 +91,31 @@ public class DatabaseTests {
             Assert.Throws<InvalidOperationException>(
                 () => sut.ExecuteScalar<object>("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32))
             );
-            dbCommandMock.Verify(mock => mock.CreateParameter());
-            dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMock.VerifyErrorCall();
+            dbCommandMocker.Verify(mock => mock.CreateParameter());
+            dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
+            loggerMocker.VerifyErrorCall();
         });
     }
 
     [Fact]
     public void ExecuteReader_Should_Query_Against_Database() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-        var dataReaderMock = CreateDataReaderMock();
+        var dataReader = new DataReaderMocker().WithReadSequence(true, false).Build();
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader(dataReader);
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
 
-        dataReaderMock
-           .SetupSequence(mock => mock.Read())
-           .Returns(true)
-           .Returns(false);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteReader())
-           .Returns(dataReaderMock.Object);
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            Mock.Of<ILogger<Database>>()
-        );
         var expected = new Animal { Name = "Dog" };
 
         // act
-        var actual = sut
-                    .ExecuteReader("STATEMENT", CommandType.Text, MapperFunc, new Parameter("Param", 1, DbType.Int32))
-                    .ToArray();
+        var actual = sut.ExecuteReader("STATEMENT", CommandType.Text, MapperFunc, new Parameter("Param", 1, DbType.Int32))
+                        .ToArray();
 
         // assert
         Assert.Multiple(() => {
             Assert.Equal(expected, actual[0]);
-            dbCommandMock.Verify(mock => mock.CreateParameter());
-            dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
+            dbCommandMocker.Verify(mock => mock.CreateParameter());
+            dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
         });
         return;
 
@@ -226,21 +129,10 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteReader_On_Error_Should_Log() {
         // arrange
-        var dataParameterCollectionMock = CreateDataParameterCollectionMock();
-        var dbCommandMock = CreateDbCommandMock(dataParameterCollectionMock.Object);
-
-        dbCommandMock
-           .Setup(mock => mock.ExecuteReader())
-           .Throws<InvalidOperationException>();
-
-        var dbConnectionMock = CreateDbConnectionMock(dbCommandMock.Object);
-        var loggerMock = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
-
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            loggerMock.Build()
-        );
+        var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader<InvalidOperationException>();
+        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
 
         // act
 
@@ -252,31 +144,28 @@ public class DatabaseTests {
                     _ => new Animal { Name = "ERROR" },
                     new Parameter("Param", 1, DbType.Int32)).ToArray()
             );
-            dbCommandMock.Verify(mock => mock.CreateParameter());
-            dataParameterCollectionMock.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMock.VerifyErrorCall();
+            dbCommandMocker.Verify(mock => mock.CreateParameter());
+            dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
+            loggerMocker.VerifyErrorCall();
         });
     }
 
     [Fact]
     public void StartTransaction_Should_Start_A_New_Transaction() {
         // arrange
-        var dbConnectionMock = CreateDbConnectionMock();
-        dbConnectionMock
-           .Setup(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()))
-           .Returns(Mock.Of<IDbTransaction>());
+        var dbConnectionMocker = new DbConnectionMocker()
+                                .WithBeginTransaction(Quick.Mock<IDbTransaction>());
 
-        var dbConnectionFactoryMock = CreateDbConnectionFactoryMock(dbConnectionMock.Object);
+        var dbConnectionFactory = new DbConnectionFactoryMocker()
+                                 .WithCreateDbConnection(dbConnectionMocker.Build())
+                                 .Build();
 
-        var sut = new Database(
-            dbConnectionFactoryMock.Object,
-            Mock.Of<ILogger<Database>>()
-        );
+        var sut = new Database(dbConnectionFactory, Mock.Of<ILogger<Database>>());
 
         // act
         sut.BeginTransaction(IsolationLevel.Unspecified);
 
         // assert
-        dbConnectionMock.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
+        dbConnectionMocker.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
     }
 }

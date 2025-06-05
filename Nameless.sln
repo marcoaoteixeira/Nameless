@@ -135,6 +135,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Microservices.Aspi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Microservices.Aspire.Shared", "apps\Microservices\Nameless.Microservices.Aspire.Shared\Nameless.Microservices.Aspire.Shared.csproj", "{704A913D-CE94-7AD3-DDD8-F84BEAA25A9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Testing.Tools", "src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj", "{13009A49-6A88-B8A8-1D54-99E63524A6DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -685,6 +687,18 @@ Global
 		{704A913D-CE94-7AD3-DDD8-F84BEAA25A9C}.Release|x64.Build.0 = Release|Any CPU
 		{704A913D-CE94-7AD3-DDD8-F84BEAA25A9C}.Release|x86.ActiveCfg = Release|Any CPU
 		{704A913D-CE94-7AD3-DDD8-F84BEAA25A9C}.Release|x86.Build.0 = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|x64.Build.0 = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Debug|x86.Build.0 = Debug|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|x64.ActiveCfg = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|x64.Build.0 = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -741,6 +755,7 @@ Global
 		{6924625E-FDDE-43DD-85DE-0D69AA9B14F4} = {43BD8CB3-7679-405F-840C-C4C22FB68796}
 		{AE9D58B2-A601-430D-B773-59B48453B79B} = {43BD8CB3-7679-405F-840C-C4C22FB68796}
 		{704A913D-CE94-7AD3-DDD8-F84BEAA25A9C} = {43BD8CB3-7679-405F-840C-C4C22FB68796}
+		{13009A49-6A88-B8A8-1D54-99E63524A6DB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6445D740-FA25-46C5-BC0C-3A08A5699E5D}

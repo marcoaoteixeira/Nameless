@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Nameless.NHibernate\Nameless.NHibernate.csproj" />
+	  <ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

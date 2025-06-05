@@ -34,7 +34,7 @@ public class ValidatorServiceTests {
            .AddSingleton(animalValidatorMock.Object);
 
         var provider = services.BuildServiceProvider();
-        var sut = new ValidationService(provider.GetServices<IValidator>(), Fast.Mock<ILogger<ValidationService>>());
+        var sut = new ValidationService(provider.GetServices<IValidator>(), Quick.Mock<ILogger<ValidationService>>());
         var dog = new Animal { Name = "Dog" };
 
         // act
@@ -72,7 +72,7 @@ public class ValidatorServiceTests {
         services.AddSingleton(animalValidatorMock.Object);
 
         var provider = services.BuildServiceProvider();
-        var sut = new ValidationService(provider.GetServices<IValidator>(), Fast.Mock<ILogger<ValidationService>>());
+        var sut = new ValidationService(provider.GetServices<IValidator>(), Quick.Mock<ILogger<ValidationService>>());
         var dog = new Animal { Name = "Dog" };
         var dataContext = new DataContext();
 

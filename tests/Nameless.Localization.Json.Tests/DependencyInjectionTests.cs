@@ -23,8 +23,8 @@ public class DependencyInjectionTests {
            .Returns(Mock.Of<IFileInfo>());
 
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizer>>())
-                           .WithCreateLogger(Fast.Mock<ILogger<StringLocalizerFactory>>())
+                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
+                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
                            .Build();
 
         services.AddSingleton(fileProviderMock.Object);
