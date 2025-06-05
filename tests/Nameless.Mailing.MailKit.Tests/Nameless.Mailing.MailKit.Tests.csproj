@@ -19,7 +19,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Mailing.MailKit\Nameless.Mailing.MailKit.csproj" />
-		<ProjectReference Include="..\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

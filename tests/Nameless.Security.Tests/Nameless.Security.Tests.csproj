@@ -18,7 +18,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Security\Nameless.Security.csproj" />
-		<ProjectReference Include="..\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

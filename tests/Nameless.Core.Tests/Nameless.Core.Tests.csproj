@@ -33,7 +33,6 @@
 		<ProjectReference Include="..\..\src\Nameless.Data\Nameless.Data.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
-		<ProjectReference Include="..\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -10,15 +10,11 @@
 		<PackageReference Include="Moq" />
 		<PackageReference Include="xunit" />
 		<PackageReference Include="xunit.analyzers" />
-		<PackageReference Include="xunit.runner.visualstudio">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Autofac\Nameless.Autofac.csproj" />
-		<ProjectReference Include="..\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

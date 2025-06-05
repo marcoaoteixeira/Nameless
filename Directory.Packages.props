@@ -1,58 +1,63 @@
 <Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <NoWarn>NU1507</NoWarn>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageVersion Include="Bogus" Version="35.6.3" />
-    <PackageVersion Include="FluentValidation" Version="12.0.0" />
-    <PackageVersion Include="Lucene.Net.Analysis.Common" Version="4.8.1" />
-    <PackageVersion Include="Lucene.Net.Queries" Version="4.8.1" />
-    <PackageVersion Include="Lucene.Net.QueryParser" Version="4.8.1" />
-    <PackageVersion Include="MailKit" Version="4.12.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="8.0.0" />
-    <PackageVersion Include="MongoDB.Driver" Version="3.4.0" />
-    <PackageVersion Include="NHibernate" Version="5.5.2" />
-    <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.4.4" />
-    <PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.4.8" />
-    <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageVersion Include="System.Net.Http" Version="4.3.4" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.5" />
-    <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.3.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.5.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.3.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.analyzers" Version="1.21.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageVersion>
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageVersion>
-    <PackageVersion Include="Testcontainers" Version="4.4.0" />
-    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.4.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<NoWarn>NU1507</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageVersion Include="Aspire.Hosting.AppHost" Version="9.3.0" />
+		<PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageVersion Include="Bogus" Version="35.6.3" />
+		<PackageVersion Include="Castle.Core" Version="5.1.1" />
+		<PackageVersion Include="FluentValidation" Version="12.0.0" />
+		<PackageVersion Include="Lucene.Net.Analysis.Common" Version="4.8.1" />
+		<PackageVersion Include="Lucene.Net.Queries" Version="4.8.1" />
+		<PackageVersion Include="Lucene.Net.QueryParser" Version="4.8.1" />
+		<PackageVersion Include="MailKit" Version="4.12.1" />
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.5.0" />
+		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.3.0" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageVersion Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="8.0.0" />
+		<PackageVersion Include="MongoDB.Driver" Version="3.4.0" />
+		<PackageVersion Include="Moq" Version="4.20.72" />
+		<PackageVersion Include="NHibernate" Version="5.5.2" />
+		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
+		<PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
+		<PackageVersion Include="Scalar.AspNetCore" Version="2.4.4" />
+		<PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.4.8" />
+		<PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
+		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
+		<PackageVersion Include="System.Text.Json" Version="9.0.5" />
+		<PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
+		<PackageVersion Include="Testcontainers" Version="4.4.0" />
+		<PackageVersion Include="Testcontainers.RabbitMq" Version="4.4.0" />
+		<PackageVersion Include="xunit" Version="2.9.3" />
+
+		<PackageVersion Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageVersion>
+		<PackageVersion Include="xunit.analyzers" Version="1.21.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageVersion>
+		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageVersion>
+	</ItemGroup>
 </Project>
