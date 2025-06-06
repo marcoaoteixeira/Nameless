@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Data Library</Title>
+		<Description>Data Access default implementation.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

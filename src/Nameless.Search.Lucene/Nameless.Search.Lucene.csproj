@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Search (Lucene) Library</Title>
+		<Description>This library contains the implementation of search using Lucene.NET</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Lucene.Net.Analysis.Common" />
+		<PackageReference Include="Lucene.Net.Queries" />
+		<PackageReference Include="Lucene.Net.QueryParser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Search.Abstractions\Nameless.Search.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

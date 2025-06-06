@@ -50,7 +50,7 @@ jobs:
           dotnet build ${{ env.SOLUTION }}
           --configuration Debug
           --nologo
-          --verbosity detailed
+          --verbosity normal
 
       - name: Run Tests
         run: >-
@@ -64,7 +64,7 @@ jobs:
           --no-restore
           --results-directory ${{ env.CODE_COVERAGE_FOLDER_PATH }}
           --settings .runsettings
-          --verbosity detailed
+          --verbosity normal
 
       - name: Generate Coverage Report
         run: >-

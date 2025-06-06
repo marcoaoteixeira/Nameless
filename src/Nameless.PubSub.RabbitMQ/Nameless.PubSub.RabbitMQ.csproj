@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Publisher/Subscriber for RabbitMQ Library</Title>
+		<Description>RabbitMQ Publisher/Subscriber implementation.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RabbitMQ.Client" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.PubSub.Abstractions\Nameless.PubSub.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>
