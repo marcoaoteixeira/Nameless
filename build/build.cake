@@ -98,7 +98,8 @@ Task("Test")
     .Does(() =>
     {
         var filter = Argument("test-filter", string.Empty);
-        var logger = Argument("test-logger", $"Html;LogFileName={codeCoverageDir.Combine("code_coverage_log.html")}");
+        //var logger = Argument("test-logger", $"Html;LogFileName={codeCoverageDir.Combine("code_coverage_log.html")}");
+        var logger = Argument("test-logger", "console;verbosity=normal");
         var collector = Argument("test-collector", "XPlat Code Coverage");
 
         DotNetTest(solutionPath, new DotNetTestSettings

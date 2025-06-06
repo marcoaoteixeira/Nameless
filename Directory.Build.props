@@ -9,16 +9,16 @@
 <Project>
 	<!-- Boolean variables -->
 	<PropertyGroup>
-		<IsAspireHost>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', '.*\.Aspire\.AppHost$'))</IsAspireHost>
-		<IsAspireSharedProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', '.*\.Aspire\.Shared$'))</IsAspireSharedProject>
-		<IsTestProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectFullPath)', '\\tests\\'))</IsTestProject>
-		<IsTemplateProject>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectFullPath)', '\\templates\\'))</IsTemplateProject>
+		<IsAspireHost>$(MSBuildProjectName.EndsWith('.Aspire.AppHost'))</IsAspireHost>
+		<IsAspireSharedProject>$(MSBuildProjectName.EndsWith('.Aspire.Shared'))</IsAspireSharedProject>
+		<IsTestProject>$(MSBuildProjectName.EndsWith('.Tests'))</IsTestProject>
+		<IsAppsProject>$(MSBuildProjectFullPath.Contains('\apps\'))</IsAppsProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
 		<EnableCodeAnalysis Condition="$(IsTestProject) == 'False'">True</EnableCodeAnalysis>
 
 		<!-- Pack only projects in "src" folder. -->
-		<IncludeNuGetPackageInfo>$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectFullPath)', '\\src\\'))</IncludeNuGetPackageInfo>
+		<IncludeNuGetPackageInfo>$(MSBuildProjectFullPath.Contains('\src\'))</IncludeNuGetPackageInfo>
 	</PropertyGroup>
 
 	<!-- All projects must include these properties. -->
@@ -28,6 +28,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<IsPackable>False</IsPackable>
 	</PropertyGroup>
 
 	<!-- All projects, except tests, must include these properties -->
