@@ -39,7 +39,7 @@ public static class ComponentContextExtensions {
     ///     is available, otherwise; <see cref="NullLogger" />.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="categoryType" /> is <c>null</c>.
+    ///     if <paramref name="categoryType" /> is <see langword="null"/>.
     /// </exception>
     public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
         Prevent.Argument.Null(categoryType);
@@ -60,7 +60,7 @@ public static class ComponentContextExtensions {
     ///     An instance of <see cref="IOptions{TOptions}" />.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> is <c>null</c>.
+    ///     if <paramref name="self" /> is <see langword="null"/>.
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self)
         where TOptions : class, new() {

@@ -1,7 +1,10 @@
-﻿using Asp.Versioning;
+﻿// ReSharper disable SeparateLocalFunctionsWithJumpStatement
+
+using Asp.Versioning;
+using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Scalar.AspNetCore;
 
 namespace Nameless.Web.Endpoints;
 
@@ -13,59 +16,83 @@ public static class ApplicationBuilderExtensions {
     /// Registers endpoints in the application options.
     /// </summary>
     /// <param name="self">The application options.</param>
-    /// <param name="configureScalar">Configure Scalar Open API.</param>
     /// <returns>
     /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
     /// <remarks>
-    /// We use Scalar to generate the Open API specification for our endpoints.
-    /// See more at: <a href="https://scalar.com/">Scalar</a>.
-    /// <br /><br />
     /// It's necessary to call <c>UseRouting</c> before calling <c>UseMinimalEndpoints</c>.
-    /// Also, if you are using Open API, you need to call <c>MapOpenApi</c> before calling this
-    /// method either. To ensure that the Open API specification is generated correctly.
     /// </remarks>
-    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self, Action<ScalarOptions>? configureScalar = null) {
+    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self) {
         self.UseEndpoints(builder => {
             using var scope = self.ApplicationServices.CreateScope();
 
+            // resolve all our endpoints so we can configure them.
             var endpoints = scope.ServiceProvider.GetServices<IEndpoint>();
-            var groups = endpoints.Select(CreateEndpointConfiguration)
-                                  .GroupBy(tuple => tuple.Configuration.VersionSet);
 
-            foreach (var group in groups) {
-                var versionSetBuilder = builder.NewApiVersionSet(group.Key);
-                var versionDefinitions = group.Select(item => (
-                    item.Configuration.Version,
-                    item.Configuration.Deprecated
-                ));
+            // create all endpoint builders and configure them.
+            var endpointBuilders = endpoints.Select(CreateEndpointBuilder)
+                                            .ToArray();
 
-                foreach (var versionDefinition in versionDefinitions.Distinct()) {
-                    var apiVersion = new ApiVersion(versionDefinition.Version);
+            // create the version set object.
+            var versionSet = builder.CreateVersionSet(endpointBuilders);
 
-                    versionSetBuilder = versionDefinition.Deprecated
-                        ? versionSetBuilder.HasDeprecatedApiVersion(apiVersion)
-                        : versionSetBuilder.HasApiVersion(apiVersion);
-                }
+            // group all endpoint builders so we can configure them
+            // by group name
+            var endpointBuilderGroups = endpointBuilders.GroupBy(item => item.GetGroupName())
+                                                        .ToArray();
 
-                var versionSet = versionSetBuilder.ReportApiVersions()
-                                                  .Build();
-
-                foreach (var item in group) {
-                    item.Configuration.Apply(builder, item.Endpoint, versionSet);
-                }
+            // finish the endpoint configuration
+            foreach (var endpointBuilderGroup in endpointBuilderGroups) {
+                builder.ConfigureEndpointBuilderGroup(endpointBuilderGroup, versionSet);
             }
-
-            // Configure Scalar last.
-            builder.MapScalarApiReference(configureScalar ?? (_ => { }));
         });
 
         return self;
 
-        static (EndpointBuilder Configuration, IEndpoint Endpoint) CreateEndpointConfiguration(IEndpoint endpoint) {
-            var config = new EndpointBuilder();
+        static EndpointBuilder CreateEndpointBuilder(IEndpoint endpoint) {
+            var config = new EndpointBuilder(endpoint.GetType());
             endpoint.Configure(config);
-            return (Configuration: config, Endpoint: endpoint);
+            return config;
+        }
+    }
+
+    private static ApiVersionSet CreateVersionSet(this IEndpointRouteBuilder self, IEnumerable<EndpointBuilder> endpointBuilders) {
+        // extract all available versions from the groups.
+        var availableVersions = endpointBuilders.Select(CreateVersionMetadata)
+                                                .Distinct()
+                                                .ToArray();
+
+        // we need to add the versioning capability to the
+        // builder, so calling NewVersionedApi() will do the trick.
+        var versionSetBuilder = self.NewApiVersionSet();
+        foreach (var availableVersion in availableVersions) {
+            var apiVersion = new ApiVersion(availableVersion.Number);
+            switch (availableVersion.Deprecated) {
+                case true:
+                    versionSetBuilder.HasDeprecatedApiVersion(apiVersion);
+                    break;
+                default:
+                    versionSetBuilder.HasApiVersion(apiVersion);
+                    break;
+            }
+        }
+
+        return versionSetBuilder.ReportApiVersions().Build();
+
+        static (int Number, bool Deprecated) CreateVersionMetadata(EndpointBuilder endpointBuilder) {
+            return (
+                endpointBuilder.Version,
+                endpointBuilder.Stability == Stability.Deprecated
+            );
+        }
+    }
+
+    private static void ConfigureEndpointBuilderGroup(this IEndpointRouteBuilder self, IGrouping<string, EndpointBuilder> endpointBuilderGroup, ApiVersionSet versionSet) {
+        var routeGroupBuilder = self.MapGroup(endpointBuilderGroup.Key)
+                                    .WithApiVersionSet(versionSet);
+
+        foreach (var endpointBuilder in endpointBuilderGroup) {
+            endpointBuilder.Apply(routeGroupBuilder);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Results;
 
-public class ResultWithErrorsTests {
+public class ResultTests {
     [Fact]
     public void WhenResultHasValue_ThenHasErrorMustBeFalse_AndValueShouldBeExpected() {
         // arrange

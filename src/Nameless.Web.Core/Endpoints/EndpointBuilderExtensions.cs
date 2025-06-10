@@ -1,35 +1,28 @@
 ﻿using System.Reflection;
-using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Scalar.AspNetCore;
 
 namespace Nameless.Web.Endpoints;
 
 internal static class EndpointBuilderExtensions {
-    internal static void Apply(this EndpointBuilder self, IEndpointRouteBuilder builder, IEndpoint endpoint, ApiVersionSet versionSet) {
-        var route = self.GetRoute();
-        if (string.IsNullOrWhiteSpace(route)) {
+    internal static void Apply(this EndpointBuilder self, IEndpointRouteBuilder builder) {
+        if (string.IsNullOrWhiteSpace(self.RoutePattern)) {
             builder.ServiceProvider
                    .GetLogger<EndpointBuilder>()
-                   .MissingEndpointRoute(endpoint);
+                   .MissingEndpointRoute(self.EndpointType);
 
             return;
         }
 
         var routeHandlerBuilder = builder.MapMethods(
-            pattern: route,
+            pattern: self.RoutePattern,
             httpMethods: [self.HttpMethod],
             handler: Prevent.Argument.Null(self.Handler));
 
-        // Always call WithOpenApi() to ensure OpenAPI
-        // documentation is generated for the endpointBase.
-        routeHandlerBuilder
-           .WithOpenApi()
-           .WithName(self.Name);
+        routeHandlerBuilder.WithName(self.GetName());
 
         if (self.DisplayName is not null) {
             routeHandlerBuilder.WithDisplayName(self.DisplayName);
@@ -41,10 +34,6 @@ internal static class EndpointBuilderExtensions {
 
         if (self.Summary is not null) {
             routeHandlerBuilder.WithSummary(self.Summary);
-        }
-
-        if (self.GroupName is not null) {
-            routeHandlerBuilder.WithGroupName(self.GroupName);
         }
 
         routeHandlerBuilder.WithTags(self.Tags);
@@ -105,15 +94,8 @@ internal static class EndpointBuilderExtensions {
             routeHandlerBuilder.RequireCors(corsPolicy);
         }
 
-        routeHandlerBuilder.WithApiVersionSet(versionSet);
-
-        if (self.Deprecated) {
-            routeHandlerBuilder.Deprecated();
-        }
-
-        if (self.MapToVersion > 0) {
-            routeHandlerBuilder.MapToApiVersion(self.MapToVersion);
-        }
+        routeHandlerBuilder.MapToApiVersion(self.Version);
+        routeHandlerBuilder.WithMetadata(self.Stability);
     }
 }
 

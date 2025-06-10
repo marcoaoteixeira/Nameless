@@ -68,7 +68,7 @@ public sealed class Index : IIndex, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="documentID" /> is <c>null</c>.
+    ///     if <paramref name="documentID" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="documentID" /> is empty or white spaces.
@@ -83,7 +83,7 @@ public sealed class Index : IIndex, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="documents" /> is <c>null</c>.
+    ///     if <paramref name="documents" /> is <see langword="null"/>.
     /// </exception>
     public async Task<IndexActionResult>
         StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
@@ -109,7 +109,7 @@ public sealed class Index : IIndex, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="documents" /> is <c>null</c>.
+    ///     if <paramref name="documents" /> is <see langword="null"/>.
     /// </exception>
     public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents,
                                                               CancellationToken cancellationToken) {

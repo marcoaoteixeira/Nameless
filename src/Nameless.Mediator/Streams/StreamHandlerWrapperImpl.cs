@@ -23,7 +23,7 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="serviceProvider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="serviceProvider"/> is <see langword="null"/>.
     /// </exception>
     public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request,
                                                                   IServiceProvider serviceProvider,

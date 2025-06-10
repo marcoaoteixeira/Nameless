@@ -65,7 +65,7 @@ public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="culture"/> is <c>null</c>.
+    ///     Thrown when <paramref name="culture"/> is <see langword="null"/>.
     /// </exception>
     public bool TryGet(CultureInfo culture, [NotNullWhen(true)] out PluralizationRuleDelegate? rule) {
         Prevent.Argument.Null(culture);

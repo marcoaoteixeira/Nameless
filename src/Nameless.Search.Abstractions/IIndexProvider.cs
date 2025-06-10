@@ -15,7 +15,7 @@ public interface IIndexProvider {
     ///     Deletes an index.
     /// </summary>
     /// <param name="name">Name of the index.</param>
-    /// <returns>if it was deleted <c>true</c>; otherwise <c>false</c>.</returns>
+    /// <returns>if it was deleted <see langword="true"/>; otherwise <see langword="false"/>.</returns>
     bool DeleteIndex(string name);
 
     /// <summary>
@@ -23,7 +23,7 @@ public interface IIndexProvider {
     /// </summary>
     /// <param name="name">Name of the index.</param>
     /// <returns>
-    ///     <c>true</c> if it exists, otherwise; <c>false</c>.
+    ///     <see langword="true"/> if it exists, otherwise; <see langword="false"/>.
     /// </returns>
     bool IndexExists(string name);
 

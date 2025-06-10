@@ -22,4 +22,10 @@ public class ErrorTests {
             });
         }
     }
+
+    [Fact]
+    public void WhenCallingParameterlessConstructor_ThenThrowsInvalidOperationException() {
+        // arrange & act & assert
+        Assert.Throws<InvalidOperationException>(() => new Error());
+    }
 }

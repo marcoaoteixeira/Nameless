@@ -9,16 +9,21 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Moq" />
-		<PackageReference Include="xunit" />
-		<PackageReference Include="xunit.analyzers" />
-		<PackageReference Include="xunit.runner.visualstudio">
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.analyzers">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Mockers\" />
 	</ItemGroup>
 
 </Project>

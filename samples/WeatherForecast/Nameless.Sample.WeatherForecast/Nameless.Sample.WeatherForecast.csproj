@@ -3,6 +3,7 @@
 	<ItemGroup>
 		<PackageReference Include="Bogus" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Scalar.AspNetCore.Microsoft" />
 	</ItemGroup>
 
 	<ItemGroup>

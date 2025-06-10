@@ -12,7 +12,7 @@ public static class DeepCopy {
     /// <remarks>
     ///     Reference article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
     /// </remarks>
-    /// <exception cref="ArgumentNullException">if <paramref name="value" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException">if <paramref name="value" /> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Can't clone abstract, interface or pointer.</exception>
     public static object Clone(object value) {
         Prevent.Argument.Null(value);
@@ -37,7 +37,7 @@ public static class DeepCopy {
     /// <remarks>
     ///     Reference article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
     /// </remarks>
-    /// <exception cref="ArgumentNullException">if <paramref name="value" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException">if <paramref name="value" /> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Can't clone abstract, interface or pointer.</exception>
     public static T Clone<T>(T value)
         where T : class {

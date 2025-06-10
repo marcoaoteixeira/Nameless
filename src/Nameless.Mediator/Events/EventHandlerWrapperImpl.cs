@@ -10,7 +10,7 @@ public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     where TEvent : IEvent {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="serviceProvider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="serviceProvider"/> is <see langword="null"/>.
     /// </exception>
     public override Task HandleAsync(IEvent evt,
                                      IServiceProvider serviceProvider,

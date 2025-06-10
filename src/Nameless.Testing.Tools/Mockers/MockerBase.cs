@@ -4,7 +4,13 @@ using Moq;
 namespace Nameless.Testing.Tools.Mockers;
 
 public abstract class MockerBase<TService> where TService : class {
-    protected Mock<TService> MockInstance { get; } = new();
+    protected Mock<TService> MockInstance { get; }
+
+    protected MockerBase() : this(MockBehavior.Default) { }
+
+    protected MockerBase(MockBehavior behavior) {
+        MockInstance = new Mock<TService>(behavior);
+    }
 
     public virtual TService Build() {
         return MockInstance.Object;

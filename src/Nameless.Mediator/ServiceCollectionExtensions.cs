@@ -39,55 +39,47 @@ public static class ServiceCollectionExtensions {
     private static IServiceCollection RegisterEventHandlers(this IServiceCollection self, MediatorOptions options) {
         if (!options.UseEventHandler) { return self; }
 
-        var serviceType = typeof(IEventHandler<>);
-        var eventHandlers = options.Assemblies
-                                   .GetImplementations([serviceType])
-                                   .ToArray();
+        var service = typeof(IEventHandler<>);
+        var implementations = options.Assemblies
+                                     .GetImplementations([service])
+                                     .ToArray();
 
-        return self.RegisterImplementations(serviceType, eventHandlers, options.Assemblies);
+        return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
     }
 
     private static IServiceCollection RegisterRequestHandlers(this IServiceCollection self, MediatorOptions options) {
         if (!options.UseRequestHandler) { return self; }
 
-        var serviceTypes = new[] { typeof(IRequestHandler<>), typeof(IRequestHandler<,>) };
-        var requestHandlers = options.Assemblies
-                                     .GetImplementations(serviceTypes)
+        var services = new[] { typeof(IRequestHandler<>), typeof(IRequestHandler<,>) };
+        var implementations = options.Assemblies
+                                     .GetImplementations(services)
                                      .ToArray();
 
-        return self.RegisterImplementations(serviceTypes[0], requestHandlers, options.Assemblies)
-                   .RegisterImplementations(serviceTypes[1], requestHandlers, options.Assemblies);
+        return self.RegisterHandlerImplementations(services[0], implementations, options.Assemblies)
+                   .RegisterHandlerImplementations(services[1], implementations, options.Assemblies);
     }
 
     private static IServiceCollection RegisterRequestPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseRequestHandler) { return self; }
-
-        return self.RegisterImplementations(
-            typeof(IRequestPipelineBehavior<,>),
-            options.RequestPipelineBehaviors,
-            options.Assemblies
-        );
+        return options.UseRequestHandler
+            ? self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<,>), options.RequestPipelineBehaviors)
+            : self;
     }
 
     private static IServiceCollection RegisterStreamHandlers(this IServiceCollection self, MediatorOptions options) {
         if (!options.UseStreamHandler) { return self; }
 
         var service = typeof(IStreamHandler<,>);
-        var streamHandlers = options.Assemblies
-                                    .GetImplementations([service])
-                                    .ToArray();
+        var implementations = options.Assemblies
+                                     .GetImplementations([service])
+                                     .ToArray();
 
-        return self.RegisterImplementations(service, streamHandlers, options.Assemblies);
+        return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
     }
 
     private static IServiceCollection RegisterStreamPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseStreamHandler) { return self; }
-
-        return self.RegisterImplementations(
-            typeof(IStreamPipelineBehavior<,>),
-            options.StreamPipelineBehaviors,
-            options.Assemblies
-        );
+        return options.UseStreamHandler
+            ? self.RegisterPipelineBehaviors(typeof(IStreamPipelineBehavior<,>), options.StreamPipelineBehaviors)
+            : self;
     }
 
     private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
@@ -97,33 +89,60 @@ public static class ServiceCollectionExtensions {
                    .AddScoped<IMediator, MediatorImpl>();
     }
 
-    private static IServiceCollection RegisterImplementations(this IServiceCollection self, Type service, Type[] implementations, Assembly[] assemblies) {
+    private static IServiceCollection RegisterHandlerImplementations(this IServiceCollection self, Type service, Type[] implementations, Assembly[] assemblies) {
         // This will expand the registrations with closed generic types
         foreach (var implementation in implementations) {
-            if (!implementation.IsGenericTypeDefinition) {
-                self.RegisterImplementation(service, implementation);
+            if (!implementation.IsOpenGeneric()) {
+                self.RegisterHandlerImplementationCore(service, implementation);
                 continue;
             }
 
             // If the implementation is an open generic type,
             // we need to close it in order to be able to resolve it later.
-            var closingTypeGroups = GenericTypeHelper.FindClosingTypes(implementation, assemblies);
-            foreach (var closingTypeGroup in closingTypeGroups) {
-                var concrete = implementation.MakeGenericType(closingTypeGroup);
-                self.RegisterImplementation(service, concrete);
+            var typesThatCloseGroup = GenericTypeHelper.GetTypesThatClose(implementation, assemblies);
+            foreach (var typesThatClose in typesThatCloseGroup) {
+                var concrete = implementation.MakeGenericType(typesThatClose);
+                self.RegisterHandlerImplementationCore(service, concrete);
             }
         }
 
         return self;
     }
 
-    private static void RegisterImplementation(this IServiceCollection self, Type service, Type implementation) {
-        foreach (var implInterface in implementation.GetInterfaces()) {
-            if (!service.IsAssignableFromGenericType(implInterface)) {
+    private static void RegisterHandlerImplementationCore(this IServiceCollection self, Type service, Type implementation) {
+        foreach (var @interface in implementation.GetInterfaces()) {
+            if (!service.IsAssignableFromGenericType(@interface)) {
                 continue;
             }
 
-            self.AddScoped(implInterface, implementation);
+            self.AddScoped(@interface, implementation);
         }
+    }
+
+    private static IServiceCollection RegisterPipelineBehaviors(this IServiceCollection self, Type service, Type[] implementations) {
+        // Pipelines need a slightly different way to be registered.
+        foreach (var pipelineBehavior in implementations) {
+
+            // if the pipeline is not an open generic, we need to find all
+            // interfaces that closes and register them.
+            if (!pipelineBehavior.IsOpenGeneric()) {
+                var interfaces = pipelineBehavior.GetInterfacesThatClose(service);
+                foreach (var @interface in interfaces) {
+                    self.AddScoped(@interface, pipelineBehavior);
+                }
+
+                continue;
+            }
+
+            // if we reach here, means that the pipeline behavior is an open generic type.
+            var genericDefinitions = pipelineBehavior.GetInterfaces()
+                                                     .Where(service.IsAssignableFromGenericType)
+                                                     .Select(type => type.GetGenericTypeDefinition());
+            foreach (var genericDefinition in genericDefinitions) {
+                self.AddScoped(genericDefinition, pipelineBehavior);
+            }
+        }
+
+        return self;
     }
 }

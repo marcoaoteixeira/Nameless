@@ -11,7 +11,7 @@ public static class TypeExtensions {
     ///     Verifies if the <see cref="Type" /> is an instance of <see cref="Nullable" />.
     /// </summary>
     /// <param name="self">The self type.</param>
-    /// <returns><c>true</c>, if is instance of <see cref="Nullable" />, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/>, if is instance of <see cref="Nullable" />, otherwise, <see langword="false"/>.</returns>
     public static bool IsNullable(this Type self) {
         return self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
     }
@@ -20,7 +20,7 @@ public static class TypeExtensions {
     ///     Can convert to <see cref="Nullable" /> type.
     /// </summary>
     /// <param name="self">The self type.</param>
-    /// <returns><c>true</c>, if it can convert, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/>, if it can convert, otherwise, <see langword="false"/>.</returns>
     public static bool AllowNull(this Type self) {
         return !self.IsValueType || self.IsNullable();
     }
@@ -30,7 +30,7 @@ public static class TypeExtensions {
     /// </summary>
     /// <param name="self">The current generic type.</param>
     /// <param name="type">The assignable from type.</param>
-    /// <returns><c>true</c> if assignable; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if assignable; otherwise <see langword="false"/>.</returns>
     public static bool IsAssignableFromGenericType(this Type self, Type? type) {
         if (!self.IsGenericType) { return false; }
 
@@ -59,7 +59,7 @@ public static class TypeExtensions {
     /// </summary>
     /// <typeparam name="TInterface">Type of the interface.</typeparam>
     /// <param name="self">The current type.</param>
-    /// <returns><c>true</c> if implements; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if implements; otherwise <see langword="false"/>.</returns>
     public static bool HasInterface<TInterface>(this Type self)
         where TInterface : class {
         return self.HasInterface(typeof(TInterface));
@@ -70,7 +70,7 @@ public static class TypeExtensions {
     /// </summary>
     /// <param name="self">The current type.</param>
     /// <param name="interfaceType">The interface type.</param>
-    /// <returns><c>true</c> if implements; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if implements; otherwise <see langword="false"/>.</returns>
     public static bool HasInterface(this Type self, Type interfaceType) {
         return self.GetInterfaces()
                    .Any(type => interfaceType.IsAssignableFrom(type) ||
@@ -83,7 +83,7 @@ public static class TypeExtensions {
     /// <typeparam name="TAttribute">Type of the attribute.</typeparam>
     /// <param name="self">The current type instance.</param>
     /// <param name="inherit">Whether the attribute is inherited.</param>
-    /// <returns><c>true</c> if the type has the attribute; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the type has the attribute; otherwise <see langword="false"/>.</returns>
     public static bool HasAttribute<TAttribute>(this Type self, bool inherit = false)
         where TAttribute : Attribute {
         return self.HasAttribute(typeof(TAttribute), inherit);
@@ -95,7 +95,7 @@ public static class TypeExtensions {
     /// <param name="self">The current type instance.</param>
     /// <param name="attributeType">Type of the attribute.</param>
     /// <param name="inherit">Whether the attribute is inherited.</param>
-    /// <returns><c>true</c> if the type has the attribute; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the type has the attribute; otherwise <see langword="false"/>.</returns>
     public static bool HasAttribute(this Type self, Type attributeType, bool inherit = false) {
         return self.GetCustomAttribute(attributeType, inherit) is not null;
     }
@@ -104,7 +104,7 @@ public static class TypeExtensions {
     ///     Checks if the type has a parameterless constructor.
     /// </summary>
     /// <param name="self">The current type instance.</param>
-    /// <returns><c>true</c> if the type has a parameterless constructor; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the type has a parameterless constructor; otherwise <see langword="false"/>.</returns>
     public static bool HasParameterlessConstructor(this Type self) {
         return self.GetConstructor(Type.EmptyTypes) is not null || (self.IsValueType && !self.IsNullable());
     }
@@ -178,5 +178,53 @@ public static class TypeExtensions {
             // Only public types
             IsPublic: true
         } && self.HasParameterlessConstructor();
+    }
+
+    /// <summary>
+    /// Retrieves all interfaces that are "closed" (concrete)
+    /// versions of a generic template type.
+    /// </summary>
+    /// <param name="self">The current type.</param>
+    /// <param name="template">The template type.</param>
+    /// <returns>
+    /// A collection of <see cref="Type"/> that closes the type.
+    /// </returns>
+    public static IEnumerable<Type> GetInterfacesThatClose(this Type self, Type template) {
+        return GetInterfacesThatCloseCore(self, template);
+    }
+
+    private static IEnumerable<Type> GetInterfacesThatCloseCore(Type? service, Type template) {
+        if (service is null || service.IsAbstract || service.IsInterface) { yield break; }
+
+        if (template.IsInterface) {
+            var interfaces = service.GetInterfaces()
+                                    .Where(type => type.IsGenericType &&
+                                                   type.GetGenericTypeDefinition() == template);
+            foreach (var @interface in interfaces) {
+                yield return @interface;
+            }
+        }
+        else if (service.BaseType is { IsGenericType: true } && service.BaseType.GetGenericTypeDefinition() == template) {
+            yield return service.BaseType;
+        }
+
+        if (service.BaseType == typeof(object)) {
+            yield break;
+        }
+
+        foreach (var @interface in GetInterfacesThatCloseCore(service.BaseType, template)) {
+            yield return @interface;
+        }
+    }
+
+    /// <summary>
+    /// Checks if a type is an open generic.
+    /// </summary>
+    /// <param name="self">The current type.</param>
+    /// <returns>
+    /// <see langword="true"/> if the type is an open generic; otherwise <see langword="false"/>.
+    /// </returns>
+    public static bool IsOpenGeneric(this Type self) {
+        return self.IsGenericTypeDefinition || self.ContainsGenericParameters;
     }
 }

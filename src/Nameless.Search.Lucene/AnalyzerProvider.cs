@@ -13,7 +13,7 @@ public sealed class AnalyzerProvider : IAnalyzerProvider {
     /// </summary>
     /// <param name="selectors">A collection of <see cref="IAnalyzerSelector" /></param>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="selectors" /> is <c>null</c>
+    ///     if <paramref name="selectors" /> is <see langword="null"/>
     /// </exception>
     public AnalyzerProvider(IEnumerable<IAnalyzerSelector> selectors) {
         _selectors = Prevent.Argument.Null(selectors).ToArray();

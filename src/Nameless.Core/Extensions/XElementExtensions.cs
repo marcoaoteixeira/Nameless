@@ -12,7 +12,7 @@ public static class XElementExtensions {
     /// </summary>
     /// <param name="self">The self <see cref="XElement" />.</param>
     /// <param name="attributeName">The attribute name.</param>
-    /// <returns><c>true</c> if is present, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is present, otherwise, <see langword="false"/>.</returns>
     public static bool HasAttribute(this XElement self, string attributeName) {
         return self.Attribute(attributeName) is not null;
     }

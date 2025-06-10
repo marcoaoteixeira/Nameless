@@ -12,10 +12,10 @@ public static class XmlSchemaValidatorExtension {
     /// <param name="self">The source <see cref="IXmlSchemaValidator" />.</param>
     /// <param name="xmlFilePath">The XML file path.</param>
     /// <param name="schemaFilePath">The XML schema file path.</param>
-    /// <returns><c>true</c> if is valid; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="xmlFilePath" /> or
-    ///     <paramref name="schemaFilePath" /> is <c>null</c>.
+    ///     <paramref name="schemaFilePath" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     <paramref name="xmlFilePath" /> or
@@ -36,10 +36,10 @@ public static class XmlSchemaValidatorExtension {
     /// <param name="self">The source <see cref="IXmlSchemaValidator" />.</param>
     /// <param name="xmlBuffer">The XML buffer.</param>
     /// <param name="schemaBuffer">The XML schema buffer.</param>
-    /// <returns><c>true</c> if is valid; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="xmlBuffer" /> or
-    ///     <paramref name="schemaBuffer" /> is <c>null</c>.
+    ///     <paramref name="schemaBuffer" /> is <see langword="null"/>.
     /// </exception>
     public static bool Validate(this IXmlSchemaValidator self, byte[] xmlBuffer, byte[] schemaBuffer) {
         Prevent.Argument.Null(schemaBuffer);

@@ -8,7 +8,7 @@ namespace Nameless.MongoDB;
 public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="type"/> is <c>null</c>.
+    ///     Thrown when <paramref name="type"/> is <see langword="null"/>.
     /// </exception>
     /// <remarks>
     /// This method retrieves the name of the MongoDB collection in two ways:

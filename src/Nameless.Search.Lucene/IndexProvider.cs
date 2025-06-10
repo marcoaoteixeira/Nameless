@@ -52,7 +52,7 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="name" /> is <c>null</c>.
+    ///     if <paramref name="name" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="name" /> is empty or white spaces.
@@ -69,7 +69,7 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="name" /> is <c>null</c>.
+    ///     if <paramref name="name" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="name" /> is empty or white spaces.
@@ -86,7 +86,7 @@ public sealed class IndexProvider : IIndexProvider, IDisposable {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="name" /> is <c>null</c>.
+    ///     if <paramref name="name" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="name" /> is empty or white spaces.

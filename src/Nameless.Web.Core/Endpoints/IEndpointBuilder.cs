@@ -8,49 +8,56 @@ namespace Nameless.Web.Endpoints;
 /// </summary>
 public interface IEndpointBuilder {
     /// <summary>
-    /// Configures GET for the endpoint with the specified route template.
+    /// Configures GET for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routeTemplate">The route template.</param>
+    /// <param name="routePattern">The route pattern.</param>
+    /// <param name="handler">The endpoint handler.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder Get([StringSyntax("Route")] string routeTemplate, Delegate handler);
+    IEndpointBuilder Get([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Configures POST for the endpoint with the specified route template.
+    /// Configures POST for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routeTemplate">The route template.</param>
+    /// <param name="routePattern">The route pattern.</param>
+    /// <param name="handler">The endpoint handler.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder Post([StringSyntax("Route")] string routeTemplate, Delegate handler);
+    IEndpointBuilder Post([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Configures PUT for the endpoint with the specified route template.
+    /// Configures PUT for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routeTemplate">The route template.</param>
+    /// <param name="routePattern">The route pattern.</param>
+    /// <param name="handler">The endpoint handler.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder Put([StringSyntax("Route")] string routeTemplate, Delegate handler);
+    IEndpointBuilder Put([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Configures DELETE for the endpoint with the specified route template.
+    /// Configures DELETE for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routeTemplate">The route template.</param>
+    /// <param name="routePattern">The route pattern.</param>
+    /// <param name="handler">The endpoint handler.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder Delete([StringSyntax("Route")] string routeTemplate, Delegate handler);
+    IEndpointBuilder Delete([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Sets the route suffix for the endpointBase.
+    /// Sets the route prefix for the endpoint.
     /// </summary>
-    /// <param name="routeSuffix">The route suffix.</param>
+    /// <param name="routePrefix">The route prefix.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder WithRouteSuffix(string routeSuffix);
+    /// <remarks>
+    /// To avoid conflicts, do not use route pattern in the prefix.
+    /// </remarks>
+    IEndpointBuilder WithRoutePrefix(string routePrefix);
 
     /// <summary>
     /// Sets the name of the endpointBase.
@@ -87,15 +94,6 @@ public interface IEndpointBuilder {
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
     IEndpointBuilder WithSummary(string summary);
-
-    /// <summary>
-    /// Sets the group name for the endpointBase.
-    /// </summary>
-    /// <param name="groupName">The group name.</param>
-    /// <returns>
-    /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
-    /// </returns>
-    IEndpointBuilder WithGroupName(string groupName);
 
     /// <summary>
     /// Sets the tags for the endpointBase.
@@ -149,7 +147,7 @@ public interface IEndpointBuilder {
     /// endpointBase to support content negotiation.</remarks>
     /// <typeparam name="TResponse">The type of the response that the endpointBase produces.</typeparam>
     /// <param name="statusCode">The HTTP status code that the endpointBase will return. The default is <see cref="StatusCodes.Status200OK"/>.</param>
-    /// <param name="contentType">The primary content type of the response, such as "application/json". If <c>null</c>, the default content type is used.</param>
+    /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <param name="additionalContentTypes">Additional content types that the endpointBase can produce, specified as an array of strings.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
@@ -165,7 +163,7 @@ public interface IEndpointBuilder {
     /// endpointBase to support content negotiation.</remarks>
     /// <param name="responseType">The type of the response that the endpointBase produces.</param>
     /// <param name="statusCode">The HTTP status code that the endpointBase will return. The default is <see cref="StatusCodes.Status200OK"/>.</param>
-    /// <param name="contentType">The primary content type of the response, such as "application/json". If <c>null</c>, the default content type is used.</param>
+    /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <param name="additionalContentTypes">Additional content types that the endpointBase can produce, specified as an array of strings.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
@@ -176,7 +174,7 @@ public interface IEndpointBuilder {
     /// Configures the endpointBase to produce a problem details response for error handling, with a specified status code and content type.
     /// </summary>
     /// <param name="statusCode">The HTTP status code that the endpointBase will return. The default is <see cref="StatusCodes.Status500InternalServerError"/>.</param>
-    /// <param name="contentType">The primary content type of the response, such as "application/json". If <c>null</c>, the default content type is used.</param>
+    /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
@@ -186,7 +184,7 @@ public interface IEndpointBuilder {
     /// Configures the endpointBase to produce a validation problem details response for error handling, with a specified status code and content type.
     /// </summary>
     /// <param name="statusCode">The HTTP status code that the endpointBase will return. The default is <see cref="StatusCodes.Status400BadRequest"/>.</param>
-    /// <param name="contentType">The primary content type of the response, such as "application/json". If <c>null</c>, the default content type is used.</param>
+    /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
@@ -245,29 +243,12 @@ public interface IEndpointBuilder {
     IEndpointBuilder WithCorsPolicy(string policyName);
 
     /// <summary>
-    /// Configures the endpointBase to use a specific API version set by versionSet.
-    /// </summary>
-    /// <param name="versionSet">The version set name.</param>
-    /// <returns>
-    /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
-    /// </returns>
-    IEndpointBuilder WithVersionSet(string versionSet);
-
-    /// <summary>
     /// Configures the version for the endpointBase to use.
     /// </summary>
     /// <param name="version">The version.</param>
-    /// <param name="deprecated">Whether it is deprecated or not.</param>
+    /// <param name="stability">The stability of the endpoint.</param>
     /// <returns>
     /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
     /// </returns>
-    IEndpointBuilder WithVersion(int version, bool deprecated = false);
-    /// <summary>
-    /// Configures the endpoint to map to a specific version.
-    /// </summary>
-    /// <param name="mapToVersion">The version to map to.</param>
-    /// <returns>
-    /// The current <see cref="IEndpointBuilder"/> instance so other actions can be chained.
-    /// </returns>
-    IEndpointBuilder WithVersionMap(int mapToVersion);
+    IEndpointBuilder WithVersion(int version, Stability stability = Stability.Stable);
 }

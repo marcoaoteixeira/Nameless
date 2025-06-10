@@ -31,9 +31,9 @@ public class ServiceCollectionExtensionsTests {
 
             var numericRequestHandlers = provider.GetServices<IRequestHandler<NumericRequest, double>>().ToArray();
             Assert.Equal(3, numericRequestHandlers.Length);
-            Assert.Contains(numericRequestHandlers, item => typeof(SumNumericRequestHandler).IsAssignableFrom(item.GetType()));
-            Assert.Contains(numericRequestHandlers, item => typeof(SubtractNumericRequestHandler).IsAssignableFrom(item.GetType()));
-            Assert.Contains(numericRequestHandlers, item => typeof(MultiplyNumericRequestHandler).IsAssignableFrom(item.GetType()));
+            Assert.Contains(numericRequestHandlers, item => item is SumNumericRequestHandler);
+            Assert.Contains(numericRequestHandlers, item => item is SubtractNumericRequestHandler);
+            Assert.Contains(numericRequestHandlers, item => item is MultiplyNumericRequestHandler);
 
             var dayOfWeekCloseTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<DayOfWeek>, DayOfWeek>>();
             Assert.NotNull(dayOfWeekCloseTypeRequestHandler);

@@ -14,7 +14,7 @@ public sealed class ApplicationContext : IApplicationContext {
     /// <param name="appVersion">The application version.</param>
     /// <param name="logger">The logger.</param>
     /// <remarks>
-    ///     When using <paramref name="useCommonAppDataFolder" /> if <c>true</c>, then
+    ///     When using <paramref name="useCommonAppDataFolder" /> if <see langword="true"/>, then
     ///     <list type="bullet">
     ///         <item>
     ///             <term>On Windows</term>

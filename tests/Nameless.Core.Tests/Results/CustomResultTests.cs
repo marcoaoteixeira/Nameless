@@ -296,7 +296,51 @@ public class CustomResultTests {
         }
     }
 
+    [Fact]
+    public void WhenCallingParameterlessConstructor_ThenThrowsInvalidOperationException() {
+        // arrange & act & assert
+        Assert.Throws<InvalidOperationException>(() => new CustomResult());
+    }
+
+    [Fact]
+    public void WhenArg0IsPresent_ThenValueReturnsCorrectValue() {
+        // arrange
+        const int Value = 1234;
+
+        // act
+        CustomResult actual = Value;
+
+        // assert
+        Assert.IsType<int>(actual.Value);
+    }
+
+    [Fact]
+    public void WhenErrorIsPresent_ThenValueReturnsError() {
+        // arrange
+        var error = Error.Failure("Failure");
+
+        // act
+        CustomResult actual = error;
+
+        // assert
+        Assert.IsType<Error[]>(actual.Value);
+    }
+
+    [Fact]
+    public void WhenIncorrectImplementationWithInvalidIndex_WhenGettingValue_ThenThrowsInvalidOperationException() {
+        // arrange
+        const string Error = "Error Message";
+
+        // act
+        CustomResult actual = Error;
+
+        // assert
+        Assert.Throws<InvalidOperationException>(() => actual.Value);
+    }
+
     public class CustomResult : ResultBase<int> {
+        public CustomResult() { }
+
         private CustomResult(int index, int? arg0 = null, Error[] errors = null)
             : base(index, arg0.GetValueOrDefault(), errors) {
         }
@@ -309,5 +353,9 @@ public class CustomResultTests {
 
         public static implicit operator CustomResult(Error[] errors)
             => new(1, errors: errors);
+
+        // Implementation error, index is out of bounds
+        public static implicit operator CustomResult(string error)
+            => new(2, errors: [Error.Failure(error)]);
     }
 }

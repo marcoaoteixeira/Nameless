@@ -18,7 +18,7 @@ public sealed class MailingService : IMailingService {
     /// <param name="logger">The logger.</param>
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="smtpClientFactory"/> or
-    ///     <paramref name="logger"/> is <c>null</c>.
+    ///     <paramref name="logger"/> is <see langword="null"/>.
     /// </exception>
     public MailingService(ISmtpClientFactory smtpClientFactory, ILogger<MailingService> logger) {
         _smtpClientFactory = Prevent.Argument.Null(smtpClientFactory);
@@ -27,7 +27,7 @@ public sealed class MailingService : IMailingService {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="message"/> is <c>null</c>.
+    ///     Thrown when <paramref name="message"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
     ///     Thrown when <see cref="Message.From"/> or

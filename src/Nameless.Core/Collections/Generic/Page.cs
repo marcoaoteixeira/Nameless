@@ -19,7 +19,7 @@ public sealed class Page<TItem> : IPage<TItem> {
     ///     The page size. If not provided, the default value is <see cref="DEFAULT_SIZE" />.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="query" /> is <c>null</c>.
+    ///     if <paramref name="query" /> is <see langword="null"/>.
     /// </exception>
     /// ///
     /// <remarks>

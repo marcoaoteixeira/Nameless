@@ -12,15 +12,12 @@ public sealed class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrapper
     public override async Task<object?> HandleAsync(object request,
                                                     IServiceProvider serviceProvider,
                                                     CancellationToken cancellationToken) {
-        return await HandleAsync((TRequest)request,
-                serviceProvider,
-                cancellationToken)
-           .ConfigureAwait(false);
+        return await HandleAsync((TRequest)request, serviceProvider, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="serviceProvider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="serviceProvider"/> is <see langword="null"/>.
     /// </exception>
     public override Task<Nothing> HandleAsync(IRequest request,
                                               IServiceProvider serviceProvider,
@@ -29,9 +26,10 @@ public sealed class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrapper
 
         return serviceProvider.GetServices<IRequestPipelineBehavior<TRequest, Nothing>>()
                               .Reverse()
-                              .Aggregate((RequestHandlerDelegate<Nothing>)InnerHandleAsync,
-                                   (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token))(
-                                   cancellationToken);
+                              .Aggregate(
+                                   seed: (RequestHandlerDelegate<Nothing>)InnerHandleAsync,
+                                   func: (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token))
+                              .Invoke(cancellationToken);
 
         async Task<Nothing> InnerHandleAsync(CancellationToken token) {
             await serviceProvider.GetRequiredService<IRequestHandler<TRequest>>()
@@ -54,19 +52,22 @@ public sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHand
     public override async Task<object?> HandleAsync(object request,
                                                     IServiceProvider serviceProvider,
                                                     CancellationToken cancellationToken) {
-        return await HandleAsync((IRequest<TResponse>)request, serviceProvider, cancellationToken)
-           .ConfigureAwait(false);
+        return await HandleAsync((IRequest<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public override Task<TResponse> HandleAsync(IRequest<TResponse> request,
                                                 IServiceProvider serviceProvider,
                                                 CancellationToken cancellationToken) {
+        Prevent.Argument.Null(serviceProvider);
+
         return serviceProvider.GetServices<IRequestPipelineBehavior<TRequest, TResponse>>()
                               .Reverse()
-                              .Aggregate((RequestHandlerDelegate<TResponse>)InnerHandleAsync,
-                                   (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token))(
-                                   cancellationToken);
+                              .Aggregate(
+                                   seed: (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
+                                   func: (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token)
+                                )
+                              .Invoke(cancellationToken);
 
         Task<TResponse> InnerHandleAsync(CancellationToken token) {
             return serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>()

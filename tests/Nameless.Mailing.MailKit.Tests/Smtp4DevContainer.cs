@@ -36,11 +36,11 @@ public sealed class Smtp4DevContainer : IAsyncLifetime {
         BaseAddress = new Uri($"http://localhost:{WEB_UI_PORT}/api/")
     };
 
-    public async Task InitializeAsync() {
+    public async ValueTask InitializeAsync() {
         await _container.StartAsync();
     }
 
-    public async Task DisposeAsync() {
+    public async ValueTask DisposeAsync() {
         await _container.DisposeAsync();
     }
 

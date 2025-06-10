@@ -16,7 +16,7 @@ public abstract class ValueObject {
     /// <param name="left">The left side.</param>
     /// <param name="right">The right side.</param>
     /// <returns>
-    /// <c>true</c> if the value objects are equal; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the value objects are equal; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool operator ==(ValueObject left, ValueObject right) => EqualOperator(left, right);
 
@@ -26,7 +26,7 @@ public abstract class ValueObject {
     /// <param name="left">The left side.</param>
     /// <param name="right">The right side.</param>
     /// <returns>
-    /// <c>true</c> if the value objects are not equal; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the value objects are not equal; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool operator !=(ValueObject left, ValueObject right) => NotEqualOperator(left, right);
 
@@ -36,7 +36,7 @@ public abstract class ValueObject {
     /// <param name="left">The left side.</param>
     /// <param name="right">The right side.</param>
     /// <returns>
-    /// <c>true</c> if the value objects are equal; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the value objects are equal; otherwise, <see langword="false"/>.
     /// </returns>
     protected static bool EqualOperator(ValueObject left, ValueObject right) {
         if (left is null ^ right is null) {
@@ -52,7 +52,7 @@ public abstract class ValueObject {
     /// <param name="left">The left side.</param>
     /// <param name="right">The right side.</param>
     /// <returns>
-    /// <c>true</c> if the value objects are not equal; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the value objects are not equal; otherwise, <see langword="false"/>.
     /// </returns>
     protected static bool NotEqualOperator(ValueObject left, ValueObject right) {
         return !EqualOperator(left, right);

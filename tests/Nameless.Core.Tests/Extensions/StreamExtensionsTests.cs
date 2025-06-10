@@ -1,80 +1,114 @@
 ﻿using System.Text;
-using Moq;
+using Nameless.Testing.Tools;
+using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless;
 
 public class StreamExtensionsTests {
     [Fact]
-    public void ToText_Should_Read_And_Return_Text_From_Stream() {
+    public void WhenGettingContentAsString_WhenStreamCanRead_WhenStreamCanSeek_WhenStreamHasContent_ThenReturnsStreamContentAsString() {
         // arrange
-        var expected = "This is a test";
-        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(expected));
+        const string Expected = "This is a test";
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(Expected));
 
         // act
-        var actual = stream.ToText();
+        var actual = stream.GetContentAsString();
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
-    public void ToText_Should_Throw_InvalidOperationException_If_Can_Not_Read_Stream() {
+    public void WhenGettingContentAsString_WhenStreamCantRead_ThenThrowsInvalidOperationException() {
         // arrange
-        var streamMock = new Mock<Stream>();
-        streamMock
-           .Setup(mock => mock.CanRead)
-           .Returns(false);
+        var stream = new StreamMocker().WithCanRead(false).Build();
 
         // act
 
         // assert
-        Assert.Throws<InvalidOperationException>(
-            () => streamMock.Object.ToText()
-        );
+        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsString());
     }
 
     [Fact]
-    public void ToByteArray_Should_Return_Byte_Array_From_Stream() {
+    public void WhenGettingContentAsString_WhenReadFromStart_WhenStreamCantSeek_ThenThrowsInvalidOperationException() {
         // arrange
-        var expected = Encoding.UTF8.GetBytes("This is a test");
+        var stream = new StreamMocker()
+                    .WithCanRead()
+                    .WithCanSeek(false)
+                    .Build();
+
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsString(fromStart: true));
+    }
+
+    [Fact]
+    public void WhenGettingContentAsString_WhenStreamCanSeek_WhenFromStartIsTrue_ThenReadsFromTheStreamBeginning() {
+        // arrange
+        const string Expected = "This is a test";
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(Expected));
+
+        var originalPosition = stream.Seek(offset: 10, SeekOrigin.Begin);
+
+        // act
+        var notFromStart = stream.GetContentAsString(fromStart: false);
+        var fromStart = stream.GetContentAsString(fromStart: true);
+
+        var finalPosition = stream.Position;
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.Equal("test", notFromStart);
+            Assert.Equal(Expected, fromStart);
+            Assert.Equal(originalPosition, finalPosition);
+        });
+    }
+
+    [Fact]
+    public void WhenGettingContentAsByteArray_WhenStreamIsMemoryStream_ThenReturnsStreamAsByteArray() {
+        // arrange
+        var expected = "This is a test"u8.ToArray();
         using var stream = new MemoryStream(expected);
 
         // act
-        var actual = stream.ToByteArray();
+        var actual = stream.GetContentAsByteArray();
 
         // assert
         Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void ToByteArray_Should_Throw_InvalidOperationException_If_Can_Not_Read_Stream() {
+    public void WhenGettingContentAsByteArray_WhenStreamIsNotMemoryStream_WhenCanRead_ThenReturnsStreamAsByteArray() {
         // arrange
-        var streamMock = new Mock<Stream>();
-        streamMock
-           .Setup(mock => mock.CanRead)
-           .Returns(false);
+        var stream = FileUtils.GetResourceFile("ThisIsATest.txt");
+        var expected = "This Is A Test"u8.ToArray();
 
         // act
-
-        // assert
-        Assert.Throws<InvalidOperationException>(
-            () => streamMock.Object.ToByteArray()
-        );
-    }
-
-    [Fact]
-    public void ToByteArray_Should_Return_Byte_Array_From_FileStream() {
-        // arrange
-        var assemblyPath = Path.GetDirectoryName(GetType().Assembly.Location)!;
-        var filePath = Path.Combine(assemblyPath, "Content", "LoremIpsun.txt");
-        var expected = File.ReadAllBytes(filePath);
-
-        using var stream = File.OpenRead(filePath);
-
-        // act
-        var actual = stream.ToByteArray();
+        var actual = stream.GetContentAsByteArray();
 
         // assert
         Assert.Equivalent(expected, actual);
+    }
+
+    [Fact]
+    public void WhenGettingContentAsByteArray_WhenStreamCantRead_ThenThrowsInvalidOperationException() {
+        // arrange
+        var stream = new StreamMocker().WithCanRead(false).Build();
+
+        // act
+
+        // assert
+        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsByteArray());
+    }
+
+    [Fact]
+    public void WhenGettingContentAsByteArray_WhenReadFromStart_WhenStreamCantSeek_ThenThrowsInvalidOperationException() {
+        // arrange
+        var stream = new StreamMocker()
+                    .WithCanRead()
+                    .WithCanSeek(false)
+                    .Build();
+
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsByteArray(fromStart: true));
     }
 }

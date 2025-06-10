@@ -16,7 +16,7 @@ public static class PropertyInfoExtensions {
     /// <param name="fallbackToName">
     ///     Whether it should return the name of the property if there is no description for it.
     ///     No description means <see cref="DescriptionAttribute" /> is not present or its
-    ///     <see cref="DescriptionAttribute.Description" /> is <c>null</c> or white spaces.
+    ///     <see cref="DescriptionAttribute.Description" /> is <see langword="null"/> or white spaces.
     /// </param>
     /// <returns>The property description or its name.</returns>
     public static string GetDescription(this PropertyInfo self, bool fallbackToName = true) {

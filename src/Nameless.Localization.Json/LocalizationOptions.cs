@@ -28,7 +28,7 @@ public sealed class LocalizationOptions {
 
     /// <summary>
     ///     Whether it will remove the arity sign (`) from generic
-    ///     types. Default is <c>true</c>.
+    ///     types. Default is <see langword="true"/>.
     /// </summary>
     public bool RemoveArityFromGenerics { get; set; } = true;
 }

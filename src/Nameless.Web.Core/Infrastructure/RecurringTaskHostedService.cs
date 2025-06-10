@@ -19,8 +19,12 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
         _logger = logger;
     }
 
-    public virtual void Dispose() {
-        Dispose(true);
+    ~RecurringTaskHostedService() {
+        Dispose(disposing: false);
+    }
+
+    public void Dispose() {
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
@@ -53,7 +57,7 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
 
             // Do not await the _executeTask because cancelling it will throw
             // an OperationCanceledException which we are explicitly ignoring
-            await Task.WhenAny([_executeTask, tcs.Task])
+            await Task.WhenAny(_executeTask, tcs.Task)
                       .ConfigureAwait(false);
         }
     }
@@ -104,7 +108,7 @@ public abstract class RecurringTaskHostedService : IHostedService, IDisposable {
         ObjectDisposedException.ThrowIf(_disposed, GetType());
     }
 
-    private void Dispose(bool disposing) {
+    protected virtual void Dispose(bool disposing) {
         if (_disposed) {
             return;
         }

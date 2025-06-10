@@ -15,7 +15,7 @@ public sealed class CollectionNameAttribute : Attribute {
     /// </summary>
     /// <param name="name">The collection name.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="name"/> is <c>null</c>.
+    ///     Thrown when <paramref name="name"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="name"/> is empty or white space.

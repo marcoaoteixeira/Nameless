@@ -65,7 +65,7 @@ public static class EnumerableExtensions {
     ///     Checks if an <see cref="IEnumerable" /> is empty.
     /// </summary>
     /// <param name="self">The <see cref="IEnumerable" /> instance.</param>
-    /// <returns><c>true</c>, if is empty, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/>, if is empty, otherwise, <see langword="false"/>.</returns>
     public static bool IsNullOrEmpty([NotNullWhen(false)] this IEnumerable? self) {
         switch (self) {
             case null:

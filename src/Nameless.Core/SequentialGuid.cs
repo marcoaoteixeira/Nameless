@@ -49,8 +49,8 @@ public static class SequentialGuid {
     ///     performance under various database types; see below.
     /// </param>
     /// <param name="useRandomNumberGenerator">
-    ///     Whether if should use RandomNumberGenerator or Guid.NewGuid().ToByteArray()
-    ///     to populate the random array. if <c>false</c>, will generate the GUID faster.
+    ///     Whether if should use RandomNumberGenerator or Guid.NewGuid().GetContentAsByteArray()
+    ///     to populate the random array. if <see langword="false"/>, will generate the GUID faster.
     /// </param>
     /// <returns>
     ///     A <see cref="Guid" /> structure whose value is created by replacing
@@ -97,7 +97,7 @@ public static class SequentialGuid {
 
         // An alternate method: use a normally-created GUID to get our initial
         // random data:
-        // byte[] randomBytes = Guid.NewGuid().ToByteArray();
+        // byte[] randomBytes = Guid.NewGuid().GetContentAsByteArray();
         // This is faster than using RandomNumberGenerator, but I don't
         // recommend it because the .NET Framework makes no guarantee of the
         // randomness of GUID data, and future versions (or different

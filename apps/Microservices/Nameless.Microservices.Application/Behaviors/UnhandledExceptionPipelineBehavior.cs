@@ -8,16 +8,16 @@ namespace Nameless.Microservices.Application.Behaviors;
 /// </summary>
 /// <typeparam name="TRequest">Type of the request.</typeparam>
 /// <typeparam name="TResponse">Type of the response.</typeparam>
-public sealed class UnhandledExceptionBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull {
+public sealed class UnhandledExceptionPipelineBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequestBase {
 
-    private readonly ILogger<UnhandledExceptionBehavior<TRequest, TResponse>> _logger;
+    private readonly ILogger<UnhandledExceptionPipelineBehavior<TRequest, TResponse>> _logger;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="UnhandledExceptionBehavior{TRequest, TResponse}"/>.
+    /// Initializes a new instance of <see cref="UnhandledExceptionPipelineBehavior{TRequest,TResponse}"/>.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    public UnhandledExceptionBehavior(ILogger<UnhandledExceptionBehavior<TRequest, TResponse>> logger) {
+    public UnhandledExceptionPipelineBehavior(ILogger<UnhandledExceptionPipelineBehavior<TRequest, TResponse>> logger) {
         _logger = logger;
     }
 

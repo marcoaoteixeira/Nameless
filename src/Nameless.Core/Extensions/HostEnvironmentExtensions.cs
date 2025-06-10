@@ -12,7 +12,7 @@ public static class HostEnvironmentExtensions {
     ///     Checks if the current host environment name is <see cref="DeveloperMachine" />.
     /// </summary>
     /// <param name="self">The current instance that implements <see cref="IHostEnvironment" />.</param>
-    /// <returns><c>true</c> if the environment name is <see cref="DeveloperMachine" />; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the environment name is <see cref="DeveloperMachine" />; otherwise <see langword="false"/>.</returns>
     public static bool IsDeveloperMachine(this IHostEnvironment self) {
         return self.IsEnvironment(DeveloperMachine);
     }

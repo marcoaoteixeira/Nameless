@@ -16,7 +16,7 @@ public sealed class MongoCollectionProvider : IMongoCollectionProvider {
     /// <param name="collectionNamingStrategy">The collection naming strategy.</param>
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="database"/> or
-    ///     <paramref name="collectionNamingStrategy"/> is <c>null</c>.
+    ///     <paramref name="collectionNamingStrategy"/> is <see langword="null"/>.
     /// </exception>
     public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
         _database = Prevent.Argument.Null(database);

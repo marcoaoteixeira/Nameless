@@ -14,7 +14,7 @@ public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
     /// </summary>
     /// <param name="provider">The service provider.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="provider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public RequestHandlerInvoker(IServiceProvider provider) {
         _provider = Prevent.Argument.Null(provider);
@@ -22,7 +22,7 @@ public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="request"/> is <c>null</c>.
+    ///     Thrown when <paramref name="request"/> is <see langword="null"/>.
     /// </exception>
     public Task ExecuteAsync<TRequest>(TRequest request, CancellationToken cancellationToken)
         where TRequest : IRequest {

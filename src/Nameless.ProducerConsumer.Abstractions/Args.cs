@@ -12,7 +12,7 @@ public record Args : IEnumerable<KeyValuePair<string, object>> {
     ///     Gets or sets an argument given a key.
     /// </summary>
     /// <param name="key">The argument key.</param>
-    /// <returns>The value if it exists; otherwise <c>null</c>.</returns>
+    /// <returns>The value if it exists; otherwise <see langword="null"/>.</returns>
     public object? this[string key] {
         get => _args.GetValueOrDefault(key);
         set => _args[key] = value;

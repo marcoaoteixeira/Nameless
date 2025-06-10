@@ -1,12 +1,17 @@
+using Nameless.Microservices.Web.Configs;
+
 namespace Nameless.Microservices.Web;
 
 public static class EntryPoint {
     public static void Main(string[] args) {
-        var builder = WebApplication.CreateBuilder(args);
-        var app = builder.Build();
+        WebApplication.CreateBuilder(args)
 
-        app.MapGet("/", () => "Hello World!");
+                      .RegisterMinimalEndpoints()
 
-        app.Run();
+                      .Build()
+
+                      .ResolveMinimalEndpoints()
+
+                      .Run();
     }
 }

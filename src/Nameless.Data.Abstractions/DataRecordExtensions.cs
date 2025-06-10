@@ -8,6 +8,8 @@ namespace Nameless.Data;
 ///     <see cref="IDataRecord" /> extension methods.
 /// </summary>
 public static class DataRecordExtensions {
+    private const string EMPTY = "";
+
     /// <summary>
     ///     Tries retrieve the value for the specific row/colum of a data record.
     /// </summary>
@@ -16,7 +18,7 @@ public static class DataRecordExtensions {
     /// <param name="columnName">The colum name.</param>
     /// <param name="output">The output.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
-    /// <returns><c>true</c> if was able to retrieve the data; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if was able to retrieve the data; otherwise <see langword="false"/>.</returns>
     public static bool TryGet<T>(this IDataRecord self,
                                  string columnName,
                                  [NotNullWhen(true)] out T? output,
@@ -27,29 +29,15 @@ public static class DataRecordExtensions {
         if (value is null) { return false; }
 
         object? current = null;
-
-        try {
-            current = Transform(value,
-                typeof(T),
-                formatProvider ?? CultureInfo.CurrentCulture);
-        }
+        try { current = Transform(value, typeof(T), formatProvider ?? CultureInfo.CurrentCulture); }
         catch { /* ignore */ }
 
-        output = (T?)current;
-        return current is not null;
-    }
+        if (current is null) {
+            return false;
+        }
 
-    /// <summary>
-    ///     Retrieves a string value or the default value.
-    /// </summary>
-    /// <param name="self">The data record instance.</param>
-    /// <param name="columnName">The column name.</param>
-    /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
-    /// <returns>A string value.</returns>
-    public static string GetString(this IDataRecord self, string columnName, IFormatProvider? formatProvider = null) {
-        return self.TryGet<string>(columnName, out var result, formatProvider)
-            ? result
-            : string.Empty;
+        output = (T)current;
+        return true;
     }
 
     /// <summary>
@@ -60,8 +48,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A string value.</returns>
-    public static string GetString(this IDataRecord self, string columnName, string fallback,
-                                   IFormatProvider? formatProvider = null) {
+    public static string GetString(this IDataRecord self, string columnName, string fallback = EMPTY, IFormatProvider? formatProvider = null) {
         return self.TryGet<string>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -75,8 +62,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A boolean value.</returns>
-    public static bool GetBoolean(this IDataRecord self, string columnName, bool fallback = false,
-                                  IFormatProvider? formatProvider = null) {
+    public static bool GetBoolean(this IDataRecord self, string columnName, bool fallback = false, IFormatProvider? formatProvider = null) {
         return self.TryGet<bool>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -90,8 +76,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A char value.</returns>
-    public static char GetChar(this IDataRecord self, string columnName, char fallback = char.MinValue,
-                               IFormatProvider? formatProvider = null) {
+    public static char GetChar(this IDataRecord self, string columnName, char fallback = char.MinValue, IFormatProvider? formatProvider = null) {
         return self.TryGet<char>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -105,8 +90,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A sbyte value.</returns>
-    public static sbyte GetSByte(this IDataRecord self, string columnName, sbyte fallback = 0,
-                                 IFormatProvider? formatProvider = null) {
+    public static sbyte GetSByte(this IDataRecord self, string columnName, sbyte fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<sbyte>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -120,8 +104,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A byte value.</returns>
-    public static byte GetByte(this IDataRecord self, string columnName, byte fallback = 0,
-                               IFormatProvider? formatProvider = null) {
+    public static byte GetByte(this IDataRecord self, string columnName, byte fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<byte>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -135,8 +118,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A short value.</returns>
-    public static short GetInt16(this IDataRecord self, string columnName, short fallback = 0,
-                                 IFormatProvider? formatProvider = null) {
+    public static short GetInt16(this IDataRecord self, string columnName, short fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<short>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -150,8 +132,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>An ushort value.</returns>
-    public static ushort GetUInt16(this IDataRecord self, string columnName, ushort fallback = 0,
-                                   IFormatProvider? formatProvider = null) {
+    public static ushort GetUInt16(this IDataRecord self, string columnName, ushort fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<ushort>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -165,8 +146,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>An int value.</returns>
-    public static int GetInt32(this IDataRecord self, string columnName, int fallback = 0,
-                               IFormatProvider? formatProvider = null) {
+    public static int GetInt32(this IDataRecord self, string columnName, int fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<int>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -180,8 +160,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>An uint value.</returns>
-    public static uint GetUInt32(this IDataRecord self, string columnName, uint fallback = 0,
-                                 IFormatProvider? formatProvider = null) {
+    public static uint GetUInt32(this IDataRecord self, string columnName, uint fallback = 0, IFormatProvider? formatProvider = null) {
         return self.TryGet<uint>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -195,8 +174,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A long value.</returns>
-    public static long GetInt64(this IDataRecord self, string columnName, long fallback = 0L,
-                                IFormatProvider? formatProvider = null) {
+    public static long GetInt64(this IDataRecord self, string columnName, long fallback = 0L, IFormatProvider? formatProvider = null) {
         return self.TryGet<long>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -210,8 +188,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>An ulong value.</returns>
-    public static ulong GetUInt64(this IDataRecord self, string columnName, ulong fallback = 0UL,
-                                  IFormatProvider? formatProvider = null) {
+    public static ulong GetUInt64(this IDataRecord self, string columnName, ulong fallback = 0UL, IFormatProvider? formatProvider = null) {
         return self.TryGet<ulong>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -225,8 +202,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A float value.</returns>
-    public static float GetSingle(this IDataRecord self, string columnName, float fallback = 0F,
-                                  IFormatProvider? formatProvider = null) {
+    public static float GetSingle(this IDataRecord self, string columnName, float fallback = 0F, IFormatProvider? formatProvider = null) {
         return self.TryGet<float>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -240,8 +216,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A double value.</returns>
-    public static double GetDouble(this IDataRecord self, string columnName, double fallback = 0D,
-                                   IFormatProvider? formatProvider = null) {
+    public static double GetDouble(this IDataRecord self, string columnName, double fallback = 0D, IFormatProvider? formatProvider = null) {
         return self.TryGet<double>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -255,8 +230,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A decimal value.</returns>
-    public static decimal GetDecimal(this IDataRecord self, string columnName, decimal fallback = 0M,
-                                     IFormatProvider? formatProvider = null) {
+    public static decimal GetDecimal(this IDataRecord self, string columnName, decimal fallback = 0M, IFormatProvider? formatProvider = null) {
         return self.TryGet<decimal>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -270,8 +244,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A date/time value.</returns>
-    public static DateTime GetDateTime(this IDataRecord self, string columnName, DateTime fallback = default,
-                                       IFormatProvider? formatProvider = null) {
+    public static DateTime GetDateTime(this IDataRecord self, string columnName, DateTime fallback = default, IFormatProvider? formatProvider = null) {
         return self.TryGet<DateTime>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -285,9 +258,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A date/time offset value.</returns>
-    public static DateTimeOffset GetDateTimeOffset(this IDataRecord self, string columnName,
-                                                   DateTimeOffset fallback = default,
-                                                   IFormatProvider? formatProvider = null) {
+    public static DateTimeOffset GetDateTimeOffset(this IDataRecord self, string columnName, DateTimeOffset fallback = default, IFormatProvider? formatProvider = null) {
         return self.TryGet<DateTimeOffset>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -301,8 +272,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
     /// <returns>A time span value.</returns>
-    public static TimeSpan GetTimeSpan(this IDataRecord self, string columnName, TimeSpan fallback = default,
-                                       IFormatProvider? formatProvider = null) {
+    public static TimeSpan GetTimeSpan(this IDataRecord self, string columnName, TimeSpan fallback = default, IFormatProvider? formatProvider = null) {
         return self.TryGet<TimeSpan>(columnName, out var result, formatProvider)
             ? result
             : fallback;
@@ -329,11 +299,7 @@ public static class DataRecordExtensions {
     /// <param name="fallback">The default value.</param>
     /// <returns>An Enum value.</returns>
     public static TEnum GetEnum<TEnum>(this IDataRecord self, string columnName, TEnum fallback = default)
-        where TEnum : struct {
-        if (!typeof(TEnum).IsEnum) {
-            throw new InvalidOperationException($"{typeof(TEnum).Name} must be an Enum.");
-        }
-
+        where TEnum : struct, Enum {
         return self.TryGet<TEnum>(columnName, out var result)
             ? result
             : fallback;
@@ -378,7 +344,7 @@ public static class DataRecordExtensions {
 
         if (type == typeof(Guid)) {
             return value switch {
-                string stringValue => Guid.Parse(stringValue),
+                string stringValue => Guid.Parse(stringValue, formatProvider),
                 _ => (Guid)value
             };
         }
@@ -399,7 +365,7 @@ public static class DataRecordExtensions {
 
         if (type.IsEnum) {
             return value switch {
-                string stringValue => Enum.Parse(type, stringValue, false),
+                string stringValue => Enum.Parse(type, stringValue, ignoreCase: false),
                 int or Enum => (int)value,
                 _ => null
             };

@@ -30,7 +30,7 @@ public static class EnumExtensions {
     ///     Whether it should return the string representation of the enum if
     ///     there is no description for it. No description means
     ///     <see cref="DescriptionAttribute" /> is not present or its
-    ///     <see cref="DescriptionAttribute.Description" /> is <c>null</c> or
+    ///     <see cref="DescriptionAttribute.Description" /> is <see langword="null"/> or
     ///     white spaces.
     /// </param>
     /// <returns>The enum description or its name.</returns>

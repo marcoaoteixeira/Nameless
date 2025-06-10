@@ -6,12 +6,20 @@
 
 	<ItemGroup>
 		<None Remove="Content\LoremIpsun.txt" />
+		<None Remove="Resources\ThisIsATest.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Content\LoremIpsun.txt">
+		<Content Include="Resources\LoremIpsun.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Resources\ThisIsATest.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Content\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,12 +27,12 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Moq" />
-		<PackageReference Include="xunit" />
-		<PackageReference Include="xunit.analyzers" />
-		<PackageReference Include="xunit.runner.visualstudio">
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.analyzers">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,6 +41,7 @@
 		<ProjectReference Include="..\..\src\Nameless.Data\Nameless.Data.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

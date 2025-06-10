@@ -11,27 +11,42 @@ public static class StreamExtensions {
     /// </summary>
     /// <param name="self">The stream</param>
     /// <param name="encoding">The encoding. Default is <see cref="Encoding.UTF8" /> without BOM</param>
+    /// <param name="fromStart">Whether it should read from the start of the stream. Default is <see langword="true"/>.</param>
     /// <param name="bufferSize">The size of the buffer. Default is <see cref="BufferSize.Tiny" /></param>
     /// <returns>The stream as a string.</returns>
     /// <exception cref="InvalidOperationException">
     ///     if the current stream can not be read.
     /// </exception>
-    public static string ToText(this Stream self, Encoding? encoding = null, BufferSize bufferSize = BufferSize.Tiny) {
+    public static string GetContentAsString(this Stream self, Encoding? encoding = null, bool fromStart = true, BufferSize bufferSize = BufferSize.Tiny) {
         if (!self.CanRead) {
-            throw new InvalidOperationException("Stream does not support read operation.");
+            throw new InvalidOperationException("Can't read the stream.");
         }
 
-        // Set stream cursor to the begging of the stream.
-        if (self.CanSeek) {
-            self.Seek(0, SeekOrigin.Begin);
+        if (fromStart && !self.CanSeek) {
+            throw new InvalidOperationException("Can't change stream cursor position.");
         }
 
-        using var reader = new StreamReader(stream: self,
+        // let's record the current position for this stream
+        var previousPosition = self.Position;
+
+        // if we want it from start, it must be able to seek
+        if (fromStart && self.CanSeek) {
+            self.Position = 0L; // Set the stream cursor at the beginning.
+        }
+
+        var result = new StreamReader(
+            stream: self,
             encoding: encoding ?? Defaults.Encoding,
             detectEncodingFromByteOrderMarks: true,
-            bufferSize: (int)bufferSize);
+            bufferSize: (int)bufferSize).ReadToEnd();
 
-        return reader.ReadToEnd();
+        // again, if we can seek let's put the cursor in the
+        // original position
+        if (self.CanSeek) {
+            self.Position = previousPosition; // Set the stream cursor at its original position.
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -39,31 +54,44 @@ public static class StreamExtensions {
     ///     at the beginning of the stream.
     /// </summary>
     /// <param name="self">The source <see cref="Stream" /></param>
+    /// <param name="fromStart">Whether it should read from the start of the stream. Default is <see langword="true"/>.</param>
     /// <param name="bufferSize">The buffer size. Default is <see cref="BufferSize.Tiny" /></param>
     /// <returns>A byte array representing the <see cref="Stream" />.</returns>
     /// <exception cref="InvalidOperationException">
     ///     if the current stream can not be read.
     /// </exception>
-    public static byte[] ToByteArray(this Stream self, BufferSize bufferSize = BufferSize.Tiny) {
-        if (!self.CanRead) {
-            throw new InvalidOperationException("Can't read stream.");
-        }
-
-        if (!self.CanSeek) {
-            throw new InvalidOperationException("Can't execute stream seek.");
-        }
-
-        self.Seek(0, SeekOrigin.Begin);
-
+    public static byte[] GetContentAsByteArray(this Stream self, bool fromStart = true, BufferSize bufferSize = BufferSize.Tiny) {
         // Return, but faster...
         if (self is MemoryStream ms) { return ms.ToArray(); }
+
+        if (!self.CanRead) {
+            throw new InvalidOperationException("Can't read the stream.");
+        }
+
+        if (fromStart && !self.CanSeek) {
+            throw new InvalidOperationException("Can't change stream cursor position.");
+        }
+
+        // let's record the current position for this stream
+        var previousPosition = self.Position;
+
+        // if we want it from start, it must be able to seek
+        if (fromStart && self.CanSeek) {
+            self.Position = 0L; // Set the stream cursor at the beginning.
+        }
 
         var allocationSize = (int)bufferSize;
         using var memoryStream = new MemoryStream();
         var buffer = new byte[allocationSize];
         int count;
-        while ((count = self.Read(buffer, 0, allocationSize)) > 0) {
-            memoryStream.Write(buffer, 0, count);
+        while ((count = self.Read(buffer, offset: 0, allocationSize)) > 0) {
+            memoryStream.Write(buffer, offset: 0, count);
+        }
+
+        // again, if we can seek let's put the cursor in the
+        // original position
+        if (self.CanSeek) {
+            self.Position = previousPosition; // Set the stream cursor at its original position.
         }
 
         return memoryStream.ToArray();

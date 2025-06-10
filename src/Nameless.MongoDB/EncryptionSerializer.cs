@@ -30,7 +30,7 @@ public sealed class EncryptionSerializer : SerializerBase<string?> {
     /// <param name="iv">The initialization vector.</param>
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="key"/> or
-    ///     <paramref name="iv"/> is <c>null</c>.
+    ///     <paramref name="iv"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="key"/> or

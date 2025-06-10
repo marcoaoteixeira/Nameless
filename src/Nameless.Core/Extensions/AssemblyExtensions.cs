@@ -15,7 +15,7 @@ public static class AssemblyExtensions {
     /// <returns>The path to the assembly folder.</returns>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="self" /> or
-    ///     <paramref name="combineWith" /> is <c>null</c>.
+    ///     <paramref name="combineWith" /> is <see langword="null"/>.
     /// </exception>
     public static string GetDirectoryPath(this Assembly self, params IEnumerable<string> combineWith) {
         var location = $"file://{self.Location}";
@@ -37,7 +37,7 @@ public static class AssemblyExtensions {
     /// <param name="self">The current assembly.</param>
     /// <returns>The semantic version.</returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> is <c>null</c>.
+    ///     if <paramref name="self" /> is <see langword="null"/>.
     /// </exception>
     public static string GetSemanticVersion(this Assembly self) {
         var version = self.GetName().Version ?? new Version(0, 0, 0);

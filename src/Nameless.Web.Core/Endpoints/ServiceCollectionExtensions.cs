@@ -1,8 +1,6 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
-using Scalar.AspNetCore;
 
 namespace Nameless.Web.Endpoints;
 
@@ -22,11 +20,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterOpenApiServices(this IServiceCollection self, EndpointOptions options) {
-        return self.AddOpenApi(options.ConfigureOpenApi ?? DefaultConfigureOpenApiOptions);
-    }
-
-    private static void DefaultConfigureOpenApiOptions(OpenApiOptions options) {
-        options.AddScalarTransformers();
+        return self.AddOpenApi(options.ConfigureOpenApi ?? (_ => { }));
     }
 
     private static IServiceCollection RegisterVersioningServices(this IServiceCollection self, EndpointOptions options) {

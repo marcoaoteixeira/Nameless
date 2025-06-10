@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Nameless.Sample.WeatherForecast.Configs;
 using Nameless.Web.Endpoints;
+using Nameless.Web.OpenApi;
+using Scalar.AspNetCore;
 
 namespace Nameless.Sample.WeatherForecast;
 
@@ -10,6 +13,19 @@ public static class EntryPoint {
         // Add services to the container.
         builder.Services
                .AddAuthorization()
+               .AddOpenApi("v1", options => {
+                   options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+               })
+              .AddOpenApi("v2", options => {
+                  options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+              })
+              .AddAuthentication(options => {
+                  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+              })
+             .AddJwtBearer();
+
+        builder.Services
                .RegisterApplicationServices()
                .RegisterMinimalEndpoints(configure => {
                    configure.Assemblies = [typeof(EntryPoint).Assembly];
@@ -20,6 +36,11 @@ public static class EntryPoint {
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment()) {
             app.MapOpenApi();
+            app.MapScalarApiReference(options => {
+                options.Title = "Weather Forecast App";
+                options.Theme = ScalarTheme.BluePlanet;
+                options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            });
         }
 
         app.UseHttpsRedirection();

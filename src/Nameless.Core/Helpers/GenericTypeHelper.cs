@@ -21,7 +21,7 @@ public static class GenericTypeHelper {
     ///     Thrown when a generic parameter has no discoverable constraints, making it
     ///     impossible to find closing types.
     /// </exception>
-    public static IEnumerable<Type[]> FindClosingTypes(Type openGeneric, params Assembly[] assemblies) {
+    public static IEnumerable<Type[]> GetTypesThatClose(Type openGeneric, params Assembly[] assemblies) {
         if (!openGeneric.IsGenericTypeDefinition) {
             throw new ArgumentException("The type must be a generic type definition.", nameof(openGeneric));
         }
@@ -156,24 +156,18 @@ public static class GenericTypeHelper {
         var attrs = genericArg.GenericParameterAttributes;
 
         // Check reference type constraint
-        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0) {
-            if (candidateType.IsValueType) {
-                return false;
-            }
+        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0 && candidateType.IsValueType) {
+            return false;
         }
 
         // Check value type constraint
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0) {
-            if (!candidateType.IsValueType || candidateType.IsNullable()) {
-                return false;
-            }
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable())) {
+            return false;
         }
 
         // Check new() constraint
-        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0) {
-            if (!candidateType.HasParameterlessConstructor()) {
-                return false;
-            }
+        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 && !candidateType.HasParameterlessConstructor()) {
+            return false;
         }
 
         // Check type constraints

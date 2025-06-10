@@ -39,7 +39,7 @@ public sealed record Field {
     /// <param name="options">The options</param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="name" />
-    ///     or <paramref name="value" /> is <c>null</c>
+    ///     or <paramref name="value" /> is <see langword="null"/>
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="name" /> is empty or white spaces.

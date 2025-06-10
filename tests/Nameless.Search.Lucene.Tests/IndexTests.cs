@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
-using Xunit.Abstractions;
 
 namespace Nameless.Search.Lucene;
 
@@ -59,7 +58,7 @@ public class IndexTests {
         var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
-        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
+        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
                       .Set("Name", "Test User")
@@ -89,7 +88,7 @@ public class IndexTests {
         var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
-        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath);
+        var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
                       .Set("Name", "Test User")
@@ -144,7 +143,7 @@ public class IndexTests {
 
         // act 1
         var filePathForText001 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_001.txt");
-        var contentText001 = await File.ReadAllTextAsync(filePathForText001);
+        var contentText001 = await File.ReadAllTextAsync(filePathForText001, CancellationToken.None);
 
         var documentText001 = index
                              .NewDocument(Guid.NewGuid()
@@ -163,7 +162,7 @@ public class IndexTests {
 
         // act 2
         var filePathForText002 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_002.txt");
-        var contentText002 = await File.ReadAllTextAsync(filePathForText002);
+        var contentText002 = await File.ReadAllTextAsync(filePathForText002, CancellationToken.None);
 
         var documentText002 = index
                              .NewDocument(Guid.NewGuid()

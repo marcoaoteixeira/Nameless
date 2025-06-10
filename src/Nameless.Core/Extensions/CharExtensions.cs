@@ -9,7 +9,7 @@ public static class CharExtensions {
     ///     digit.
     /// </summary>
     /// <param name="self">The <see cref="char" />.</param>
-    /// <returns><c>true</c> if is a digit; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is a digit; otherwise, <see langword="false"/>.</returns>
     public static bool IsDigit(this char self) {
         return char.IsDigit(self);
     }
@@ -19,7 +19,7 @@ public static class CharExtensions {
     ///     letter.
     /// </summary>
     /// <param name="self">The <see cref="char" />.</param>
-    /// <returns><c>true</c> if is a letter; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is a letter; otherwise, <see langword="false"/>.</returns>
     public static bool IsLetter(this char self) {
         return char.IsLetter(self);
     }
@@ -28,7 +28,7 @@ public static class CharExtensions {
     ///     <strong>(Syntax sugar)</strong> Indicates whether the specified Unicode character is categorized as white space.
     /// </summary>
     /// <param name="self">The <see cref="char" />.</param>
-    /// <returns><c>true</c> if is a white space; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is a white space; otherwise, <see langword="false"/>.</returns>
     public static bool IsWhiteSpace(this char self) {
         return char.IsWhiteSpace(self);
     }
@@ -38,7 +38,7 @@ public static class CharExtensions {
     ///     letter.
     /// </summary>
     /// <param name="self">The <see cref="char" />.</param>
-    /// <returns><c>true</c> if is an uppercase letter; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is an uppercase letter; otherwise, <see langword="false"/>.</returns>
     public static bool IsUpper(this char self) {
         return char.IsUpper(self);
     }
@@ -48,7 +48,7 @@ public static class CharExtensions {
     ///     letter.
     /// </summary>
     /// <param name="self">The <see cref="char" />.</param>
-    /// <returns><c>true</c> if is a lowercase letter; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is a lowercase letter; otherwise, <see langword="false"/>.</returns>
     public static bool IsLower(this char self) {
         return char.IsLower(self);
     }

@@ -19,7 +19,7 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     /// <param name="factory">The factory function that will resolve the component.</param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="serviceType" /> or
-    ///     <paramref name="factory" /> is <c>null</c>.
+    ///     <paramref name="factory" /> is <see langword="null"/>.
     /// </exception>
     public PropertyResolveMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
         _serviceType = Prevent.Argument.Null(serviceType);
@@ -32,7 +32,7 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="context" /> or
-    ///     <paramref name="next" /> is <c>null</c>.
+    ///     <paramref name="next" /> is <see langword="null"/>.
     /// </exception>
     public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
         Prevent.Argument.Null(context);

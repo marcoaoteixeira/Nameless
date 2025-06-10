@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Nameless.Microservices.Infrastructure.Monitoring;
+namespace Nameless.Microservices.Application.Monitoring;
 
 /// <summary>
 ///     Provides methods to retrieve <see cref="ActivitySource" /> instances.

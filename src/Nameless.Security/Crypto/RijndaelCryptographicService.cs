@@ -72,7 +72,7 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
                 using var cryptoStream = new CryptoStream(memoryStream,
                     GetEncryptor(),
                     CryptoStreamMode.Write);
-                var value = stream.ToByteArray();
+                var value = stream.GetContentAsByteArray();
                 var valueWithSalt = AddSalt(value);
 
                 // Start encrypting data.
@@ -113,7 +113,7 @@ public sealed class RijndaelCryptographicService : ICryptographicService, IDispo
         // Let's make cryptographic operations thread-safe.
         using (_lock.EnterScope()) {
             try {
-                var value = stream.ToByteArray();
+                var value = stream.GetContentAsByteArray();
 
                 // Since we do not know how big decrypted value will be, use the same
                 // size as cipher text. Cipher text is always longer than plain text

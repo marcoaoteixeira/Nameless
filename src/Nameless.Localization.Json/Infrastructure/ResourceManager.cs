@@ -27,7 +27,7 @@ public sealed class ResourceManager : IResourceManager {
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="fileProvider" /> or
     ///     <paramref name="options" /> or
-    ///     <paramref name="logger" /> is <c>null</c>.
+    ///     <paramref name="logger" /> is <see langword="null"/>.
     /// </exception>
     public ResourceManager(IFileProvider fileProvider, IOptions<LocalizationOptions> options, ILogger<ResourceManager> logger) {
         _fileProvider = Prevent.Argument.Null(fileProvider);
@@ -39,7 +39,7 @@ public sealed class ResourceManager : IResourceManager {
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="baseName"/> or
     ///     <paramref name="location" /> or
-    ///     <paramref name="culture"/> is <c>null</c>.
+    ///     <paramref name="culture"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="baseName"/> or
@@ -101,7 +101,7 @@ public sealed class ResourceManager : IResourceManager {
 
         try {
             using var fileStream = file.CreateReadStream();
-            content = fileStream.ToText();
+            content = fileStream.GetContentAsString();
 
             if (string.IsNullOrWhiteSpace(content)) {
                 _logger.ResourceFileContentIsEmpty(file.Name);

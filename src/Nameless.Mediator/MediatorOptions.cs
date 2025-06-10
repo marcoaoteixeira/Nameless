@@ -18,19 +18,19 @@ public record MediatorOptions {
 
     /// <summary>
     /// Whether to use event handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
     public bool UseEventHandler { get; set; } = true;
 
     /// <summary>
     /// Whether to use request handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
     public bool UseRequestHandler { get; set; } = true;
 
     /// <summary>
     /// Whether to use stream handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
     public bool UseStreamHandler { get; set; } = true;
 

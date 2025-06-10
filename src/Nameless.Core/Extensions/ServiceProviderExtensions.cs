@@ -75,7 +75,7 @@ public static class ServiceProviderExtensions {
     /// </returns>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="self" /> or
-    ///     <paramref name="optionsFactory" /> is <c>null</c>.
+    ///     <paramref name="optionsFactory" /> is <see langword="null"/>.
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IServiceProvider self, Func<TOptions> optionsFactory)
         where TOptions : class {

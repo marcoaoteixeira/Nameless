@@ -35,7 +35,7 @@ public sealed record Message {
     /// <param name="text">The text.</param>
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="id"/> or
-    ///     <paramref name="text"/> is <c>null</c>.
+    ///     <paramref name="text"/> is <see langword="null"/>.
     /// </exception>
     public Message(string id, string text) {
         Id = Prevent.Argument.Null(id);

@@ -18,7 +18,7 @@ public class DatabaseTests {
                                     .WithParameters(dataParameterCollection);
     }
 
-    private static Database CreateSut(IDataParameterCollection dataParameterCollection, IDbCommand dbCommand, ILogger<Database> logger = null) {
+    private static Database CreateSut(IDbCommand dbCommand, ILogger<Database> logger = null) {
         var dbConnection = new DbConnectionMocker().WithCreateCommand(dbCommand).Build();
         var dbConnectionFactory = new DbConnectionFactoryMocker().WithCreateDbConnection(dbConnection).Build();
 
@@ -30,7 +30,7 @@ public class DatabaseTests {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery(result: 1);
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build());
 
         // act
         var actual = sut.ExecuteNonQuery("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
@@ -47,7 +47,7 @@ public class DatabaseTests {
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act & assert
         Assert.Multiple(() => {
@@ -63,7 +63,7 @@ public class DatabaseTests {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar("Field");
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build());
 
         // act
         var actual = sut.ExecuteScalar<string>("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
@@ -82,7 +82,7 @@ public class DatabaseTests {
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act
 
@@ -103,12 +103,16 @@ public class DatabaseTests {
         var dataReader = new DataReaderMocker().WithReadSequence(true, false).Build();
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader(dataReader);
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build());
 
         var expected = new Animal { Name = "Dog" };
 
         // act
-        var actual = sut.ExecuteReader("STATEMENT", CommandType.Text, MapperFunc, new Parameter("Param", 1, DbType.Int32))
+        var actual = sut.ExecuteReader(
+                             "STATEMENT",
+                             CommandType.Text,
+                             _ => new Animal { Name = "Dog" },
+                             new Parameter("Param", 1, DbType.Int32))
                         .ToArray();
 
         // assert
@@ -117,13 +121,6 @@ public class DatabaseTests {
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
         });
-        return;
-
-        static Animal MapperFunc(IDataRecord reader) {
-            ArgumentNullException.ThrowIfNull(reader);
-
-            return new Animal { Name = "Dog" };
-        }
     }
 
     [Fact]
@@ -132,7 +129,7 @@ public class DatabaseTests {
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
-        var sut = CreateSut(dataParameterCollectionMocker.Build(), dbCommandMocker.Build(), loggerMocker.Build());
+        var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act
 
