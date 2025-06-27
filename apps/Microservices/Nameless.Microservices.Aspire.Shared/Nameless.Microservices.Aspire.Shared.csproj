@@ -12,4 +12,8 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	</ItemGroup>
+
 </Project>

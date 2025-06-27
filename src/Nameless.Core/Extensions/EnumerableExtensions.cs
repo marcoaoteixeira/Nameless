@@ -1,3 +1,5 @@
+#pragma warning disable S3267
+
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;

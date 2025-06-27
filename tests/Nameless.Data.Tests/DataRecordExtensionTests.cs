@@ -729,4 +729,64 @@ public class DataRecordExtensionsTests {
             Assert.Null(actual);
         });
     }
+
+    [Fact]
+    public void WhenTryGet_WhenRecordValueIsString_WhenTypedArgumentIsGuid_ThenReturnsGuid() {
+        // arrange
+        const string Key = nameof(Key);
+        var expected = Guid.NewGuid();
+        var value = expected.ToString();
+        var dataRecord = new DataRecordMocker()
+                        .WithIndexer(Key, value)
+                        .Build();
+
+        // act
+        var result = dataRecord.TryGet<Guid>(Key, out var actual);
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.True(result);
+            Assert.Equal(expected, actual);
+        });
+    }
+
+    [Fact]
+    public void WhenTryGet_WhenRecordValueIsString_WhenTypedArgumentIsDateTimeOffset_ThenReturnsGuid() {
+        // arrange
+        const string Key = nameof(Key);
+        var expected = DateTimeOffset.UtcNow;
+        var value = expected.ToString("O");
+        var dataRecord = new DataRecordMocker()
+                        .WithIndexer(Key, value)
+                        .Build();
+
+        // act
+        var result = dataRecord.TryGet<DateTimeOffset>(Key, out var actual);
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.True(result);
+            Assert.Equal(expected, actual);
+        });
+    }
+
+    [Fact]
+    public void WhenTryGet_WhenRecordValueIsString_WhenTypedArgumentIsTimeSpan_ThenReturnsGuid() {
+        // arrange
+        const string Key = nameof(Key);
+        var expected = TimeSpan.FromMilliseconds(654123);
+        var value = expected.ToString();
+        var dataRecord = new DataRecordMocker()
+                        .WithIndexer(Key, value)
+                        .Build();
+
+        // act
+        var result = dataRecord.TryGet<TimeSpan>(Key, out var actual);
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.True(result);
+            Assert.Equal(expected, actual);
+        });
+    }
 }

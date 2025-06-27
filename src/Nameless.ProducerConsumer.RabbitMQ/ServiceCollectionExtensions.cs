@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions ca be chained.
     /// </returns>
-    public static IServiceCollection RegisterProducerConsumerServices(this IServiceCollection self, Action<RabbitMQOptions>? configure = null) {
+    public static IServiceCollection ConfigureProducerConsumerServices(this IServiceCollection self, Action<RabbitMQOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
                    .RegisterMainServices();
     }

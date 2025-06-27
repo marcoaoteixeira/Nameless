@@ -3,44 +3,67 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers;
 
-public sealed class LoggerMocker<T> : MockerBase<ILogger<T>> {
-    public LoggerMocker<T> EnableAllLogLevels() {
+public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
+    public LoggerMocker<T> WithAnyLogLevel() {
         MockInstance.Setup(mock => mock.IsEnabled(It.IsAny<LogLevel>()))
                     .Returns(true);
 
         return this;
     }
 
-    public LoggerMocker<T> WithLogLevel(LogLevel logLevel, bool isEnabled = true) {
-        MockInstance.Setup(mock => mock.IsEnabled(logLevel))
-                    .Returns(isEnabled);
+    public LoggerMocker<T> WithLogLevel(params LogLevel[] levels) {
+        foreach (var level in levels) {
+            MockInstance.Setup(mock => mock.IsEnabled(level))
+                        .Returns(true);
+        }
 
         return this;
     }
 
-    public MockerBase<ILogger<T>> VerifyDebugCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public LoggerMocker<T> WithLogCallback(LogLevel level, Action<string> callback) {
+        MockInstance
+           .Setup(mock => mock.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()))
+           .Callback(new InvocationAction(invocation => {
+               var state = invocation.Arguments[2];
+               var formatter = invocation.Arguments[4];
+               var invoker = formatter.GetType().GetMethod("Invoke");
+               var message = (string)invoker!.Invoke(formatter, [state, null])!;
+
+               callback(message);
+           }));
+
+        return this;
+    }
+
+    public Mocker<ILogger<T>> VerifyDebugCall(Func<string, bool>? assertMessage = null, Times times = default) {
         return VerifyCallFor(assertMessage, LogLevel.Debug, times);
     }
 
-    public MockerBase<ILogger<T>> VerifyErrorCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyErrorCall(Func<string, bool>? assertMessage = null, Times times = default) {
         return VerifyCallFor(assertMessage, LogLevel.Error, times);
     }
 
-    public MockerBase<ILogger<T>> VerifyInformationCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyInformationCall(Func<string, bool>? assertMessage = null, Times times = default) {
         return VerifyCallFor(assertMessage, LogLevel.Information, times);
     }
 
-    public MockerBase<ILogger<T>> VerifyWarningCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyWarningCall(Func<string, bool>? assertMessage = null, Times times = default) {
         return VerifyCallFor(assertMessage, LogLevel.Warning, times);
     }
 
-    public MockerBase<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, Times times = default) {
+    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, Times times = default) {
         Func<object, Type, bool> state = (value, type)
             => (assertMessage ?? (_ => true)).Invoke(value.ToString() ?? string.Empty) &&
                type.Name.Contains("LogValues", StringComparison.OrdinalIgnoreCase);
 
-        MockInstance.Verify(mock => mock.Log(It.Is<LogLevel>(currentLogLevel => currentLogLevel == level),
-            It.Is<EventId>(eventId => eventId.Id == 0),
+        MockInstance.Verify(mock => mock.Log(
+            It.Is<LogLevel>(currentLogLevel => currentLogLevel == level),
+            It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((value, type) => state(value, type)),
             It.IsAny<Exception?>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()), times);

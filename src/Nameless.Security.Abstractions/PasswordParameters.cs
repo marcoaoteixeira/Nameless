@@ -4,32 +4,25 @@
 ///     Password parameters.
 /// </summary>
 public sealed record PasswordParameters {
-    public static readonly PasswordParameters Default = new();
-
     /// <summary>
     ///     Default symbols values.
     /// </summary>
-    public const string DefaultSymbols = "*$-+?_&=!%{}/";
+    public const string DEFAULT_SYMBOLS = "*$-+?_&=!%{}/";
 
     /// <summary>
     ///     Default numeric values.
     /// </summary>
-    public const string DefaultNumerics = "0123456789";
+    public const string DEFAULT_NUMERICS = "0123456789";
 
     /// <summary>
     ///     Default lower case values.
     /// </summary>
-    public const string DefaultLowerCase = "abcdefgijkmnopqrstwxyz";
+    public const string DEFAULT_LOWER_CASE = "abcdefgijkmnopqrstwxyz";
 
     /// <summary>
     ///     Default upper case values.
     /// </summary>
-    public const string DefaultUpperCase = "ABCDEFGIJKMNOPQRSTWXYZ";
-
-    private string? _lowerCase;
-    private string? _numerics;
-    private string? _symbols;
-    private string? _upperCase;
+    public const string DEFAULT_UPPER_CASE = "ABCDEFGIJKMNOPQRSTWXYZ";
 
     /// <summary>
     ///     Gets or sets the minimum length for the password.
@@ -45,37 +38,33 @@ public sealed record PasswordParameters {
 
     /// <summary>
     ///     Gets or sets the symbols to use in the password.
-    ///     If not set, will use <see cref="DefaultSymbols" />.
     /// </summary>
-    public string Symbols {
-        get => _symbols.WithFallback(DefaultSymbols);
-        set => _symbols = value;
-    }
+    /// <remarks>
+    ///     Default is <see cref="DEFAULT_SYMBOLS" />.
+    /// </remarks>
+    public string Symbols { get; set; } = DEFAULT_SYMBOLS;
 
     /// <summary>
     ///     Gets or sets the numerics to use in the password.
-    ///     If not set, will use <see cref="DefaultNumerics" />.
     /// </summary>
-    public string Numerics {
-        get => _numerics.WithFallback(DefaultNumerics);
-        set => _numerics = value;
-    }
+    /// <remarks>
+    ///     Default is <see cref="DEFAULT_NUMERICS" />.
+    /// </remarks>
+    public string Numerics { get; set; } = DEFAULT_NUMERICS;
 
     /// <summary>
     ///     Gets or sets the lower case chars to use in the password.
-    ///     If not set, will use <see cref="DefaultLowerCase" />.
     /// </summary>
-    public string LowerCases {
-        get => _lowerCase.WithFallback(DefaultLowerCase);
-        set => _lowerCase = value;
-    }
+    /// <remarks>
+    ///     Default is <see cref="DEFAULT_LOWER_CASE" />.
+    /// </remarks>
+    public string LowerCases { get; set; } = DEFAULT_LOWER_CASE;
 
     /// <summary>
     ///     Gets or sets the upper case chars to use in the password.
-    ///     If not set, will use <see cref="DefaultUpperCase" />.
     /// </summary>
-    public string UpperCases {
-        get => _upperCase.WithFallback(DefaultUpperCase);
-        set => _upperCase = value;
-    }
+    /// <remarks>
+    ///     Default is <see cref="DEFAULT_UPPER_CASE" />.
+    /// </remarks>
+    public string UpperCases { get; set; } = DEFAULT_UPPER_CASE;
 }

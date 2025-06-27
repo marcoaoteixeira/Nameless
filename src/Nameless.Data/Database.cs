@@ -86,11 +86,11 @@ public sealed class Database : IDatabase, IDisposable {
     /// <inheritdoc />
     public void Dispose() {
         GC.SuppressFinalize(this);
-        Dispose(true);
+        Dispose(disposing: true);
     }
 
     ~Database() {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 
     private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {

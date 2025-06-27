@@ -4,7 +4,7 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Data.Mockers;
 
-public class DataParameterCollectionMocker : MockerBase<IDataParameterCollection> {
+public class DataParameterCollectionMocker : Mocker<IDataParameterCollection> {
     public DataParameterCollectionMocker WithAdd(int result) {
         MockInstance.Setup(mock => mock.Add(It.IsAny<object>()))
                     .Returns(result);

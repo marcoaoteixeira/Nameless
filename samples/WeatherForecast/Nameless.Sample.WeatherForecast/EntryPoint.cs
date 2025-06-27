@@ -12,22 +12,27 @@ public static class EntryPoint {
 
         // Add services to the container.
         builder.Services
+               .AddOutputCache(options => {
+                   options.AddPolicy("5Minutes", policyBuilder => {
+                       policyBuilder.Expire(TimeSpan.FromMinutes(5));
+                   });
+               })
                .AddAuthorization()
                .AddOpenApi("v1", options => {
                    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
                })
-              .AddOpenApi("v2", options => {
-                  options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-              })
-              .AddAuthentication(options => {
-                  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-              })
-             .AddJwtBearer();
+               .AddOpenApi("v2", options => {
+                   options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+               })
+               .AddAuthentication(options => {
+                   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                   options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+               })
+               .AddJwtBearer();
 
         builder.Services
                .RegisterApplicationServices()
-               .RegisterMinimalEndpoints(configure => {
+               .ConfigureMinimalEndpoint(configure => {
                    configure.Assemblies = [typeof(EntryPoint).Assembly];
                });
 
@@ -46,6 +51,7 @@ public static class EntryPoint {
         app.UseHttpsRedirection();
 
         app.UseRouting()
+           .UseOutputCache()
            .UseAuthorization()
            .UseMinimalEndpoints();
 

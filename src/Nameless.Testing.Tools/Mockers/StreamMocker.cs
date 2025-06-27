@@ -1,27 +1,27 @@
 ﻿using Moq;
 
 namespace Nameless.Testing.Tools.Mockers;
-public class StreamMocker : MockerBase<Stream> {
-    public StreamMocker WithCanRead(bool result = true) {
+public class StreamMocker : Mocker<Stream> {
+    public StreamMocker WithCanRead(bool returnValue = true) {
         MockInstance
            .Setup(mock => mock.CanRead)
-           .Returns(result);
+           .Returns(returnValue);
 
         return this;
     }
 
-    public StreamMocker WithCanSeek(bool result = true) {
+    public StreamMocker WithCanSeek(bool returnValue = true) {
         MockInstance
            .Setup(mock => mock.CanSeek)
-           .Returns(result);
+           .Returns(returnValue);
 
         return this;
     }
 
-    public StreamMocker WithSeek(long result = 0) {
+    public StreamMocker WithSeek(long returnValue = 0) {
         MockInstance
            .Setup(mock => mock.Seek(It.IsAny<int>(), It.IsAny<SeekOrigin>()))
-           .Returns(result);
+           .Returns(returnValue);
 
         return this;
     }

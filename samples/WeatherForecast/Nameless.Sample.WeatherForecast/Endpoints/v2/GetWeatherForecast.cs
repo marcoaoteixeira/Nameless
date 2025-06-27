@@ -12,14 +12,16 @@ public class GetWeatherForecast : IEndpoint {
         _forecastService = forecastService;
     }
 
-    public void Configure(IEndpointBuilder builder) {
-        builder
+    public void Configure(IEndpointDescriptor descriptor) {
+        descriptor
            .Get("/forecast", HandleAsync)
            .AllowAnonymous()
            .WithRoutePrefix("/weather")
            .WithTags("Information")
            .Produces<ForecastDto[]>()
            .ProducesProblem()
+           .DisableHttpMetrics()
+           .WithDescription("TEST")
            .WithVersion(version: 2);
     }
 

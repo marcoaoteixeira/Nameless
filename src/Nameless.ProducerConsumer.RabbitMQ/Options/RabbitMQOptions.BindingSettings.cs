@@ -1,16 +1,16 @@
 ﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
+/// <summary>
+///     Represents the settings for a RabbitMQ binding.
+/// </summary>
 public sealed record BindingSettings {
-    private Dictionary<string, object?>? _arguments;
-    private string? _routingKey;
+    /// <summary>
+    ///     Gets or sets the routing key for the binding.
+    /// </summary>
+    public string RoutingKey { get; set; } = string.Empty;
 
-    public string RoutingKey {
-        get => _routingKey ??= string.Empty;
-        set => _routingKey = value;
-    }
-
-    public Dictionary<string, object?> Arguments {
-        get => _arguments ??= [];
-        set => _arguments = value;
-    }
+    /// <summary>
+    ///     Gets or sets the binding arguments.
+    /// </summary>
+    public Dictionary<string, object?> Arguments { get; set; } = [];
 }

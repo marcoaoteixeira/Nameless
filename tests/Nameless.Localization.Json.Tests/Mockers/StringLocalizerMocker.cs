@@ -3,4 +3,4 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Localization.Json.Mockers;
 
-public class StringLocalizerMocker : MockerBase<IStringLocalizer>;
+public class StringLocalizerMocker : Mocker<IStringLocalizer>;

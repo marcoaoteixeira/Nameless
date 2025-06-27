@@ -17,9 +17,16 @@ public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
                                      CancellationToken cancellationToken) {
         Prevent.Argument.Null(serviceProvider);
 
+        var logger = serviceProvider.GetLogger<EventHandlerWrapper>();
         var handlers = serviceProvider.GetServices<IEventHandler<TEvent>>()
-                                      .Select(handler => handler.HandleAsync((TEvent)evt, cancellationToken));
+                                      .ToArray();
 
-        return Task.WhenAll(handlers);
+        if (handlers.Length == 0) {
+            logger.MissingEventHandler(evt);
+        }
+
+        var tasks = handlers.Select(handler => handler.HandleAsync((TEvent)evt, cancellationToken));
+
+        return Task.WhenAll(tasks);
     }
 }

@@ -205,7 +205,7 @@ public interface ISearchBuilder {
     ///     Slice the search.
     /// </summary>
     /// <param name="skip">Records to skip.</param>
-    /// <param name="count">Total of records to retrieve.</param>
+    /// <param name="count">TotalDocumentsAffected of records to retrieve.</param>
     /// <returns>A <see cref="ISearchBuilder" /> object.</returns>
     ISearchBuilder Slice(int skip, int count);
 

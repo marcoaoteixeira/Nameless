@@ -10,7 +10,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<RijndaelCryptographicService>().Build());
-        services.RegisterSecurityServices();
+        services.ConfigureSecurityServices();
         using var provider = services.BuildServiceProvider();
 
         // act

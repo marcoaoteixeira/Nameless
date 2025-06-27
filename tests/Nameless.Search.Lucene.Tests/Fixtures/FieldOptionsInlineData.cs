@@ -1,15 +1,9 @@
-﻿using System.Collections;
+﻿namespace Nameless.Search.Lucene.Fixtures;
 
-namespace Nameless.Search.Lucene.Fixtures;
-
-public sealed class FieldOptionsInlineData : IEnumerable<object[]> {
-    public IEnumerator<object[]> GetEnumerator() {
-        foreach (var value in Enum.GetValues<FieldOptions>()) {
-            yield return [value];
+public sealed class FieldOptionsInlineData : TheoryData<FieldOptions> {
+    public FieldOptionsInlineData() {
+        foreach (var fieldOption in Enum.GetValues<FieldOptions>()) {
+            Add(fieldOption);
         }
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() {
-        return GetEnumerator();
     }
 }

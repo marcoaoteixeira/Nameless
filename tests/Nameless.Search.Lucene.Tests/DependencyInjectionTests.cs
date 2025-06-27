@@ -26,7 +26,7 @@ public class DependencyInjectionTests {
                      .Build();
         services.AddSingleton(options);
 
-        services.RegisterSearchServices(_ => { });
+        services.ConfigureSearchServices(_ => { });
 
         using var provider = services.BuildServiceProvider();
 

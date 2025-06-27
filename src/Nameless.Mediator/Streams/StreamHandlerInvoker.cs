@@ -36,8 +36,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
         static StreamHandlerWrapperBase CreateStreamHandlerWrapper(Type requestType) {
             var wrapperType = typeof(StreamHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType)
-                       ?? throw new InvalidOperationException(
-                              $"Couldn't create stream handler wrapper for request: {requestType}");
+                       ?? throw new InvalidOperationException($"Couldn't create stream handler wrapper for request: {requestType}");
             return (StreamHandlerWrapperBase)wrapper;
         }
     }

@@ -9,7 +9,7 @@ internal static class LoggerExtensions {
             eventId: default,
             formatString: "Missing route for endpoint '{Endpoint}'.");
 
-    internal static void MissingEndpointRoute(this ILogger<EndpointBuilder> self, Type endpointType) {
+    internal static void MissingEndpointRoute(this ILogger<EndpointDescriptor> self, Type endpointType) {
         MissingEndpointRouteDelegate(self, endpointType.Name, null /* exception */);
     }
 }

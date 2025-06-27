@@ -9,36 +9,48 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 /// </summary>
 public sealed class ProducerFactory : IProducerFactory {
     private readonly IChannelFactory _channelFactory;
+    private readonly IChannelConfigurator _channelConfigurator;
     private readonly TimeProvider _timeProvider;
-    private readonly ILogger<ProducerFactory> _producerFactoryLogger;
+    private readonly ILogger<ProducerFactory> _logger;
     private readonly ILogger<Producer> _producerLogger;
 
-    public ProducerFactory(IChannelFactory channelFactory, TimeProvider timeProvider, ILoggerFactory loggerFactory) {
+    public ProducerFactory(IChannelFactory channelFactory,
+                           IChannelConfigurator channelConfigurator,
+                           TimeProvider timeProvider,
+                           ILoggerFactory loggerFactory) {
         _channelFactory = Prevent.Argument.Null(channelFactory);
+        _channelConfigurator = Prevent.Argument.Null(channelConfigurator);
         _timeProvider = Prevent.Argument.Null(timeProvider);
-        _producerFactoryLogger = loggerFactory.CreateLogger<ProducerFactory>();
+        _logger = loggerFactory.CreateLogger<ProducerFactory>();
         _producerLogger = loggerFactory.CreateLogger<Producer>();
     }
 
     /// <inheritdoc />
-    public async Task<IProducer> CreateAsync(string topic, Args args, CancellationToken cancellationToken) {
+    public async Task<IProducer> CreateAsync(string topic, Parameters parameters, CancellationToken cancellationToken) {
         IChannel? channel = null;
 
         try {
-            channel = await _channelFactory.CreateAsync(args.GetExchangeName(), cancellationToken)
-                                           .ConfigureAwait(continueOnCapturedContext: false);
+            channel = await _channelFactory.CreateAsync(cancellationToken)
+                                           .ConfigureAwait(false);
 
-            return new Producer(channel, topic, _timeProvider, _producerLogger);
+            await _channelConfigurator.ConfigureAsync(channel,
+                                           topic,
+                                           usePrefetch: false,
+                                           cancellationToken)
+                                      .ConfigureAwait(false);
+
+            return new Producer(topic, channel, _timeProvider, _producerLogger);
         }
         catch (Exception ex) {
-            _producerFactoryLogger.UnhandledErrorWhileCreatingProducer(ex);
+            _logger.UnhandledErrorWhileCreatingProducer(ex);
+
+            // if the channel was created, then dispose it.
+            if (channel is not null) {
+                await channel.DisposeAsync()
+                             .ConfigureAwait(false);
+            }
 
             throw;
-        }
-        finally {
-            if (channel is not null) {
-                await channel.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
-            }
         }
     }
 }

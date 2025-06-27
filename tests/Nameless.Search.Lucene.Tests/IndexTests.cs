@@ -15,8 +15,8 @@ public class IndexTests {
 
     private static ServiceProvider CreateServiceProvider() {
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(new LoggerMocker<IndexProvider>().EnableAllLogLevels().Build())
-                           .WithCreateLogger(new LoggerMocker<Index>().EnableAllLogLevels().Build())
+                           .WithCreateLogger(new LoggerMocker<IndexProvider>().WithAnyLogLevel().Build())
+                           .WithCreateLogger(new LoggerMocker<Index>().WithAnyLogLevel().Build())
                            .Build();
 
         var services = new ServiceCollection();
@@ -26,7 +26,7 @@ public class IndexTests {
         services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(IndexDirectoryPath)
                                                             .Build());
 
-        services.RegisterSearchServices(_ => { });
+        services.ConfigureSearchServices(_ => { });
 
         return services.BuildServiceProvider();
     }
@@ -74,7 +74,7 @@ public class IndexTests {
         Assert.Multiple(() => {
             Assert.NotNull(index);
             Assert.True(result.Succeeded);
-            Assert.Equal(1, result.Total);
+            Assert.Equal(1, result.TotalDocumentsAffected);
         });
     }
 

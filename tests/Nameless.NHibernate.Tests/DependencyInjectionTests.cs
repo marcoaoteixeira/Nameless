@@ -13,7 +13,7 @@ public class DependencyInjectionTests {
         services.AddSingleton(new LoggerMocker<ConfigurationFactory>().Build());
         services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(Path.GetTempPath())
                                                             .Build());
-        services.RegisterNHibernateServices(_ => { });
+        services.ConfigureNHibernateServices(_ => { });
 
         using var provider = services.BuildServiceProvider();
 

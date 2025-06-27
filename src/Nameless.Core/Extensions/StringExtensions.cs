@@ -117,10 +117,11 @@ public static class StringExtensions {
     /// <param name="self">The current <see cref="string" />.</param>
     /// <returns>An array of <see cref="byte" />.</returns>
     public static byte[] ToHexByteArray(this string self) {
-        return Enumerable.Range(0, self.Length)
-                         .Where(index => index % 2 == 0)
-                         .Select(index => Convert.ToByte(self.Substring(index, 2), 16 /* hexadecimal */))
-                         .ToArray();
+        var result = Enumerable.Range(0, self.Length)
+                               .Where(index => index % 2 == 0)
+                               .Select(index => Convert.ToByte(self.Substring(index, 2), 16 /* hexadecimal */));
+
+        return [.. result];
     }
 
     /// <summary>

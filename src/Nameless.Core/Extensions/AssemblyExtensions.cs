@@ -53,7 +53,7 @@ public static class AssemblyExtensions {
     /// <returns>
     ///     A collection of types that implements any of <paramref name="services" />.
     /// </returns>
-    public static IEnumerable<Type> GetImplementations(this IEnumerable<Assembly> self, IEnumerable<Type> services) {
+    public static IEnumerable<Type> GetImplementations(this IEnumerable<Assembly> self, params IEnumerable<Type> services) {
         return from assembly in self
                from service in services
                from implementation in assembly.GetImplementations(service)

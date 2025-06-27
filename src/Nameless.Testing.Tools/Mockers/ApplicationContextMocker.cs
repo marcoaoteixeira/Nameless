@@ -2,38 +2,38 @@ using Nameless.Infrastructure;
 
 namespace Nameless.Testing.Tools.Mockers;
 
-public sealed class ApplicationContextMocker : MockerBase<IApplicationContext> {
-    public ApplicationContextMocker WithEnvironment(string environment) {
+public sealed class ApplicationContextMocker : Mocker<IApplicationContext> {
+    public ApplicationContextMocker WithEnvironment(string returnValue) {
         MockInstance.Setup(mock => mock.Environment)
-                    .Returns(environment);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithAppName(string appName) {
+    public ApplicationContextMocker WithAppName(string returnValue) {
         MockInstance.Setup(mock => mock.AppName)
-                    .Returns(appName);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithAppBasePath(string appBasePath) {
+    public ApplicationContextMocker WithAppBasePath(string returnValue) {
         MockInstance.Setup(mock => mock.AppFolderPath)
-                    .Returns(appBasePath);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithAppDataFolderPath(string appDataFolderPath) {
+    public ApplicationContextMocker WithAppDataFolderPath(string returnValue) {
         MockInstance.Setup(mock => mock.AppDataFolderPath)
-                    .Returns(appDataFolderPath);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithSemVer(string semVer) {
+    public ApplicationContextMocker WithSemVer(string resul) {
         MockInstance.Setup(mock => mock.Version)
-                    .Returns(semVer);
+                    .Returns(resul);
 
         return this;
     }

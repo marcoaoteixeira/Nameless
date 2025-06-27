@@ -5,7 +5,7 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Autofac.Mockers;
 
-public sealed class LifetimeScopeMocker : MockerBase<ILifetimeScope> {
+public sealed class LifetimeScopeMocker : Mocker<ILifetimeScope> {
     public LifetimeScopeMocker() {
         var componentRegistryMock = new Mock<IComponentRegistry>();
         var serviceRegistration = new ServiceRegistration();

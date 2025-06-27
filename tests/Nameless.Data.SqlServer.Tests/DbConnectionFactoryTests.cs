@@ -5,6 +5,20 @@ namespace Nameless.Data.SqlServer;
 
 public class DbConnectionFactoryTests {
     [Fact]
+    public void WhenCreatingDbConnectionFactory_ProviderShouldBeMsSqlServer() {
+        // arrange
+        const string Expected = "Microsoft SQL Server";
+        var options = Options.Create(new SqlServerOptions());
+        var sut = new DbConnectionFactory(options);
+
+        // act
+        var actual = sut.ProviderName;
+
+        // assert
+        Assert.Equal(Expected, actual);
+    }
+
+    [Fact]
     public void GetDbConnection_Should_Return_A_SqlConnection() {
         // arrange
         var options = Options.Create(new SqlServerOptions());

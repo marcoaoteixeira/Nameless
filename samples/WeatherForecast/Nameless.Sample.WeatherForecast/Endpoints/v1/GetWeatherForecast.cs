@@ -12,15 +12,16 @@ public class GetWeatherForecast : IEndpoint {
         _forecastService = forecastService;
     }
 
-    public void Configure(IEndpointBuilder builder) {
-        builder
+    public void Configure(IEndpointDescriptor descriptor) {
+        descriptor
            .Get("/forecast", HandleAsync)
            .AllowAnonymous()
            .WithRoutePrefix("/weather")
            .WithTags("Information")
            .Produces<ForecastDto[]>()
            .ProducesProblem()
-           .WithVersion(version: 1, stability: Stability.Deprecated);
+           .WithOutputCachePolicy("5Minutes")
+           .WithVersion(version: 1);
     }
 
     public Task<ForecastDto[]> HandleAsync([FromQuery] string? summary = null) {

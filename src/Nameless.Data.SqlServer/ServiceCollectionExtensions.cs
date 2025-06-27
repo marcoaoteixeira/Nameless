@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterDataServices(this IServiceCollection self, Action<SqlServerOptions>? configure = null) {
+    public static IServiceCollection ConfigureDataServices(this IServiceCollection self, Action<SqlServerOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
                    .RegisterMainServices();
     }

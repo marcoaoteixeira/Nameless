@@ -22,8 +22,4 @@
 		<ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Mockers\" />
-	</ItemGroup>
-
 </Project>

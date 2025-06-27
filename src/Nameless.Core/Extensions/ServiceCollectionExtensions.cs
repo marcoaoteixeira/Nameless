@@ -18,9 +18,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     ///     The current <see cref="IServiceCollection" />, so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterApplicationContext(this IServiceCollection self,
-                                                                bool useCommonAppDataFolder = false,
-                                                                Version? appVersion = null) {
+    public static IServiceCollection ConfigureApplicationContext(this IServiceCollection self, bool useCommonAppDataFolder = false, Version? appVersion = null) {
         return self.AddSingleton<IApplicationContext>(provider => {
             var hostEnv = provider.GetRequiredService<IHostEnvironment>();
             var logger = provider.GetLogger<ApplicationContext>();

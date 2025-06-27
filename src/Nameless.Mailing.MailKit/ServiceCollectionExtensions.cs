@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterMailingServices(this IServiceCollection self, Action<MailingOptions>? configure = null) {
+    public static IServiceCollection ConfigureMailingServices(this IServiceCollection self, Action<MailingOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
                    .RegisterMainServices();
     }

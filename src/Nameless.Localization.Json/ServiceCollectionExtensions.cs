@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     ///     The current <see cref="IServiceCollection" /> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterLocalizationServices(this IServiceCollection self, Action<LocalizationOptions>? configure = null) {
+    public static IServiceCollection ConfigureLocalizationServices(this IServiceCollection self, Action<LocalizationOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
                    .RegisterMainServices();
     }

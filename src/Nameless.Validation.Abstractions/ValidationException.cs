@@ -17,7 +17,7 @@ public class ValidationException : Exception {
     ///     if <paramref name="result" /> is <see langword="null"/>.
     /// </exception>
     public ValidationException(ValidationResult result) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
+        Result = Prevent.Argument.Null(result);
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class ValidationException : Exception {
     /// </exception>
     public ValidationException(ValidationResult result, string message)
         : base(message) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
+        Result = Prevent.Argument.Null(result);
     }
 
     /// <summary>
@@ -44,6 +44,6 @@ public class ValidationException : Exception {
     /// </exception>
     public ValidationException(ValidationResult result, string message, Exception inner)
         : base(message, inner) {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
+        Result = Prevent.Argument.Null(result);
     }
 }

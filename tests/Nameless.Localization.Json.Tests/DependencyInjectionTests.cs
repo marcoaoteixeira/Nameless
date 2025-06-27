@@ -14,7 +14,7 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterLocalizationServices(_ => { });
+        services.ConfigureLocalizationServices(_ => { });
 
         // We need an IFileProvider
         var fileProviderMock = new Mock<IFileProvider>();

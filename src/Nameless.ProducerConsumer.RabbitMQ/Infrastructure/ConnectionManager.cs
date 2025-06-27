@@ -1,7 +1,9 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
@@ -10,25 +12,43 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 /// </summary>
 public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncDisposable {
     private readonly IOptions<RabbitMQOptions> _options;
-    private IConnection? _connection;
+    private readonly ILogger<ConnectionManager> _logger;
 
     private ConnectionFactory? _connectionFactory;
+    private IConnection? _connection;
     private bool _disposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConnectionManager" /> class.
     /// </summary>
     /// <param name="options">The RabbitMQ options.</param>
-    public ConnectionManager(IOptions<RabbitMQOptions> options) {
+    /// <param name="logger">The logger.</param>
+    public ConnectionManager(IOptions<RabbitMQOptions> options, ILogger<ConnectionManager> logger) {
         _options = Prevent.Argument.Null(options);
+        _logger = Prevent.Argument.Null(logger);
     }
 
     /// <inheritdoc />
+    ~ConnectionManager() {
+        Dispose(disposing: false);
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="BrokerUnreachableException">
+    ///     When the RabbitMQ broker is unreachable or the connection cannot be established.
+    /// </exception>
     public async Task<IConnection> GetConnectionAsync(CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        return _connection ??= await GetConnectionFactory().CreateConnectionAsync(cancellationToken)
-                                                           .ConfigureAwait(continueOnCapturedContext: false);
+        try {
+            return _connection ??= await GetConnectionFactory().CreateConnectionAsync(cancellationToken)
+                                                               .ConfigureAwait(false);
+        }
+        catch (BrokerUnreachableException ex) {
+            _logger.BrokerUnreachable(_options.Value.Server, ex);
+
+            throw;
+        }
     }
 
     /// <inheritdoc />
@@ -39,14 +59,10 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync() {
-        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
+        await DisposeAsyncCore().ConfigureAwait(false);
 
         Dispose(disposing: false);
         GC.SuppressFinalize(this);
-    }
-
-    ~ConnectionManager() {
-        Dispose(disposing: false);
     }
 
     private void BlockAccessAfterDispose() {
@@ -69,9 +85,10 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     private async ValueTask DisposeAsyncCore() {
         if (_connection is not null) {
             await _connection.CloseAsync(Constants.ReplySuccess, reasonText: "Disposing RabbitMQ connection.")
-                             .ConfigureAwait(continueOnCapturedContext: false);
+                             .ConfigureAwait(false);
+
             await _connection.DisposeAsync()
-                             .ConfigureAwait(continueOnCapturedContext: false);
+                             .ConfigureAwait(false);
         }
     }
 
@@ -115,7 +132,6 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
         if (!opts.Server.Certificate.IsAvailable) { return; }
 
         connectionFactory.Ssl.CertificateSelectionCallback = (_, _, _, _, _)
-            => X509CertificateLoader.LoadPkcs12FromFile(opts.Server.Certificate.CertPath,
-                opts.Server.Certificate.CertPassword);
+            => X509CertificateLoader.LoadPkcs12FromFile(opts.Server.Certificate.CertPath, opts.Server.Certificate.CertPassword);
     }
 }

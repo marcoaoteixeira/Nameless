@@ -85,14 +85,13 @@ public sealed class Index : IIndex, IDisposable {
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="documents" /> is <see langword="null"/>.
     /// </exception>
-    public async Task<IndexActionResult>
-        StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    public async Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
 
         if (documents.Length == 0) {
-            return IndexActionResult.Success(0);
+            return IndexActionResult.Success(totalDocumentsAffected: 0);
         }
 
         var result = await InnerDeleteDocumentsAsync(documents, cancellationToken);
@@ -103,7 +102,7 @@ public sealed class Index : IIndex, IDisposable {
         result = await InnerStoreDocumentsAsync(documents, cancellationToken);
 
         return result.Succeeded
-            ? InnerCommitChanges(result.Total)
+            ? InnerCommitChanges(result.TotalDocumentsAffected)
             : result;
     }
 
@@ -111,8 +110,7 @@ public sealed class Index : IIndex, IDisposable {
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="documents" /> is <see langword="null"/>.
     /// </exception>
-    public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents,
-                                                              CancellationToken cancellationToken) {
+    public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Prevent.Argument.Null(documents);
@@ -124,7 +122,7 @@ public sealed class Index : IIndex, IDisposable {
         var result = await InnerDeleteDocumentsAsync(documents, cancellationToken);
 
         return result.Succeeded
-            ? InnerCommitChanges(result.Total)
+            ? InnerCommitChanges(result.TotalDocumentsAffected)
             : result;
     }
 
@@ -137,8 +135,7 @@ public sealed class Index : IIndex, IDisposable {
         Dispose(false);
     }
 
-    private Task<IndexActionResult>
-        InnerStoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    private Task<IndexActionResult> InnerStoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         IndexActionResult result;
 
         var counter = 0;
@@ -162,13 +159,9 @@ public sealed class Index : IIndex, IDisposable {
         return Task.FromResult(result);
     }
 
-    private Task<IndexActionResult> InnerDeleteDocumentsAsync(IDocument[] documents,
-                                                              CancellationToken cancellationToken) {
+    private Task<IndexActionResult> InnerDeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         var counter = 0;
-        var batches = documents.Length / BatchSize;
-        if (documents.Length % BatchSize != 0) {
-            ++batches;
-        }
+        var batches = (int)Math.Ceiling(documents.Length / (double)BatchSize);
 
         IndexActionResult result;
 

@@ -1,0 +1,44 @@
+﻿using Nameless.Web.OpenTelemetry;
+using Serilog;
+
+namespace Nameless.Microservices.Web.Configs;
+
+/// <summary>
+///     <see cref="WebApplicationBuilder"/> extension methods for configuring accessors.
+/// </summary>
+public static class LoggingConfig {
+    /// <summary>
+    ///     Configures the services required for accessors in the
+    ///     <see cref="WebApplicationBuilder"/>.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="WebApplicationBuilder"/>.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="WebApplicationBuilder"/> so other actions
+    ///     can be chained.
+    /// </returns>
+    /// <remarks>
+    ///     Responsible for registering services that provide access to the
+    ///     current HTTP context and correlation ID.
+    /// </remarks>
+    public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder self) {
+        self.Services.AddSerilog((provider, config) => {
+            config.ReadFrom
+                  .Configuration(self.Configuration)
+
+                  .Enrich.FromLogContext()
+                  //.Enrich.WithCorrelationId(provider.GetRequiredService<ICorrelationAccessor>())
+
+                  .WriteTo.Console()
+                  .WriteTo.OpenTelemetry(options => {
+                      var openTelemetryExporterEndpoint = self.Configuration[OpenTelemetryConstants.OPEN_TELEMETRY_EXPORTER_ENDPOINT];
+                      if (!string.IsNullOrWhiteSpace(openTelemetryExporterEndpoint)) {
+                          options.Endpoint = openTelemetryExporterEndpoint;
+                      }
+                  });
+        });
+
+        return self;
+    }
+}

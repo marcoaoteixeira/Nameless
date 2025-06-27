@@ -4,7 +4,7 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Data.Mockers;
 
-public class DbCommandMocker : MockerBase<IDbCommand> {
+public class DbCommandMocker : Mocker<IDbCommand> {
     public DbCommandMocker WithCreateParameter(IDbDataParameter parameter) {
         MockInstance.Setup(mock => mock.CreateParameter())
                     .Returns(parameter);

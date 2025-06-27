@@ -11,7 +11,7 @@ public static class EntryPoint {
         builder.Services
                .AddAuthorization()
                .RegisterApplicationServices()
-               .RegisterMinimalEndpoints(configure => {
+               .ConfigureMinimalEndpoint(configure => {
                    configure.Assemblies = [typeof(EntryPoint).Assembly];
                });
 

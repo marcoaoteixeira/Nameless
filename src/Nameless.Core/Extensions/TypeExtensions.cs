@@ -73,8 +73,7 @@ public static class TypeExtensions {
     /// <returns><see langword="true"/> if implements; otherwise <see langword="false"/>.</returns>
     public static bool HasInterface(this Type self, Type interfaceType) {
         return self.GetInterfaces()
-                   .Any(type => interfaceType.IsAssignableFrom(type) ||
-                                interfaceType.IsAssignableFromGenericType(type));
+                   .Any(type => interfaceType.IsAssignableFrom(type) || interfaceType.IsAssignableFromGenericType(type));
     }
 
     /// <summary>

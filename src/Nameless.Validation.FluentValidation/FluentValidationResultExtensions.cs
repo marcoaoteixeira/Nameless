@@ -2,8 +2,8 @@
 
 namespace Nameless.Validation.FluentValidation;
 
-internal static class FluentValidationResultExtensions {
-    internal static ValidationResult ToValidationResult(this IEnumerable<FluentValidationResult> self) {
+public static class FluentValidationResultExtensions {
+    public static ValidationResult ToValidationResult(this IEnumerable<FluentValidationResult> self) {
         var validationErrorCollection = self.Where(item => !item.IsValid)
                                             .SelectMany(item => item.Errors)
                                             .Select(error => new ValidationError(

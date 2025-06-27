@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Web.Endpoints;
 
@@ -8,24 +9,49 @@ namespace Nameless.Web.Endpoints;
 /// <see cref="IServiceCollection"/> extension methods for registering endpoints.
 /// </summary>
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection RegisterMinimalEndpoints(this IServiceCollection self, Action<EndpointOptions>? configure = null) {
+    /// <summary>
+    ///     Configures minimal endpoint services for the application,
+    ///     including OpenAPI, versioning, and all implemented endpoints.
+    /// </summary>
+    /// <remarks>
+    ///     This method sets up essential services required for minimal
+    ///     endpoint functionality, including OpenAPI documentation, API
+    ///     versioning, and core application services.
+    /// 
+    ///     Use the <paramref name="configure"/> parameter to customize
+    ///     endpoint options, such as enabling or disabling specific features.
+    /// </remarks>
+    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
+    /// <param name="configure">
+    ///     An optional delegate to configure <see cref="EndpointOptions"/> for
+    ///     customizing endpoint behavior. If not provided, default options are
+    ///     used.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
+    /// </returns>
+    public static THostApplicationBuilder ConfigureMinimalEndpoint<THostApplicationBuilder>(this THostApplicationBuilder self, Action<EndpointOptions>? configure = null)
+        where THostApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new EndpointOptions();
 
         innerConfigure(options);
 
-        return self.RegisterOpenApiServices(options)
-                   .RegisterVersioningServices(options)
-                   .RegisterMainServices(options);
-    }
-
-    private static IServiceCollection RegisterOpenApiServices(this IServiceCollection self, EndpointOptions options) {
-        return self.AddOpenApi(options.ConfigureOpenApi ?? (_ => { }));
-    }
-
-    private static IServiceCollection RegisterVersioningServices(this IServiceCollection self, EndpointOptions options) {
-        self.AddApiVersioning(options.ConfigureApiVersioning ?? DefaultConfigureApiVersioningOptions)
+        self.Services
+            .AddProblemDetails()
+            .AddOpenApi(options.ConfigureOpenApi ?? (_ => { }))
+            .AddApiVersioning(options.ConfigureApiVersioning ?? DefaultConfigureApiVersioningOptions)
             .AddApiExplorer(options.ConfigureApiExplorer ?? DefaultConfigureApiExplorerOptions);
+
+        // Register all endpoints that implement IEndpoint interface
+        var serviceType = typeof(IEndpoint);
+        var endpoints = options.Assemblies
+                               .GetImplementations([serviceType])
+                               .Where(type => !type.IsGenericTypeDefinition);
+
+        foreach (var endpoint in endpoints) {
+            self.Services.AddScoped(serviceType, endpoint);
+        }
 
         return self;
     }
@@ -56,18 +82,5 @@ public static class ServiceCollectionExtensions {
         // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
         // can also be used to control the format of the API version in route templates
         options.SubstituteApiVersionInUrl = true;
-    }
-
-    private static IServiceCollection RegisterMainServices(this IServiceCollection self, EndpointOptions options) {
-        var serviceType = typeof(IEndpoint);
-        var endpoints = options.Assemblies
-                               .GetImplementations([serviceType])
-                               .Where(type => !type.IsGenericTypeDefinition);
-
-        foreach (var endpoint in endpoints) {
-            self.AddScoped(serviceType, endpoint);
-        }
-
-        return self;
     }
 }

@@ -3,7 +3,7 @@
 namespace Nameless.Search.Lucene;
 
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection RegisterSearchServices(this IServiceCollection self, Action<LuceneOptions>? configure = null) {
+    public static IServiceCollection ConfigureSearchServices(this IServiceCollection self, Action<LuceneOptions>? configure = null) {
         var innerConfigure = configure ?? (_ => { });
         var options = new LuceneOptions();
 

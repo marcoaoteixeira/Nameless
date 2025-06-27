@@ -157,12 +157,30 @@ public class DatabaseTests {
                                  .WithCreateDbConnection(dbConnectionMocker.Build())
                                  .Build();
 
-        var sut = new Database(dbConnectionFactory, Mock.Of<ILogger<Database>>());
+        var sut = new Database(dbConnectionFactory, Quick.Mock<ILogger<Database>>());
 
         // act
         sut.BeginTransaction(IsolationLevel.Unspecified);
 
         // assert
         dbConnectionMocker.Verify(mock => mock.BeginTransaction(It.IsAny<IsolationLevel>()));
+    }
+
+    [Fact]
+    public void CallDisposeMultipleTimes_DoNotThrowException() {
+        // arrange
+        var dbConnection = new DbConnectionMocker().WithBeginTransaction(Quick.Mock<IDbTransaction>()).Build();
+        var dbConnectionFactory = new DbConnectionFactoryMocker().WithCreateDbConnection(dbConnection).Build();
+
+        var sut = new Database(dbConnectionFactory, Quick.Mock<ILogger<Database>>());
+
+        // act
+        var exception = Record.Exception(() => {
+            sut.Dispose();
+            sut.Dispose();
+        });
+
+        // assert
+        Assert.Null(exception);
     }
 }

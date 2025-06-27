@@ -5,22 +5,26 @@ namespace Nameless.Data;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, IDataParameterCollection, Exception?> OutputDbCommandDelegate
-        = LoggerMessage.Define<string, IDataParameterCollection>(logLevel: LogLevel.Debug,
+        = LoggerMessage.Define<string, IDataParameterCollection>(
+            logLevel: LogLevel.Debug,
             eventId: Events.OutputDbCommandEvent,
             formatString: "Command text: {CommandText} | Parameters: {@Params}");
 
     private static readonly Action<ILogger, Exception> ExecuteNonQueryFailureDelegate
-        = LoggerMessage.Define(logLevel: LogLevel.Error,
+        = LoggerMessage.Define(
+            logLevel: LogLevel.Error,
             eventId: Events.ExecuteNonQueryFailureEvent,
             formatString: "An error occurs while executing non-query command.");
 
     private static readonly Action<ILogger, Exception> ExecuteScalarFailureDelegate
-        = LoggerMessage.Define(logLevel: LogLevel.Error,
+        = LoggerMessage.Define(
+            logLevel: LogLevel.Error,
             eventId: Events.ExecuteScalarFailureEvent,
             formatString: "An error occurs while executing scalar command.");
 
     private static readonly Action<ILogger, Exception> ExecuteReaderFailureDelegate
-        = LoggerMessage.Define(logLevel: LogLevel.Error,
+        = LoggerMessage.Define(
+            logLevel: LogLevel.Error,
             eventId: Events.ExecuteReaderFailureEvent,
             formatString: "An error occurs while executing reader command.");
 

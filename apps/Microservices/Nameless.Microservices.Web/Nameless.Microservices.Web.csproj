@@ -2,11 +2,14 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Scalar.AspNetCore.Microsoft" />
+	  <PackageReference Include="Serilog.AspNetCore" />
+	  <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	  <ProjectReference Include="..\Nameless.Microservices.Aspire.Shared\Nameless.Microservices.Aspire.Shared.csproj" />
+	  <ProjectReference Include="..\Nameless.Microservices.Infrastructure\Nameless.Microservices.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -50,7 +50,7 @@ public sealed record Field {
     /// </exception>
     public Field(string name, object value, IndexableType type, FieldOptions options) {
         Name = Prevent.Argument.NullOrWhiteSpace(name);
-        Value = Prevent.Argument.NullOrNoMatchingType(value, type, nameof(value));
+        Value = Prevent.Argument.NullOrNonMatchingType(value, type, nameof(value));
         Type = type;
         Options = options;
     }

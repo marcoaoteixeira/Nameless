@@ -10,28 +10,33 @@ namespace Nameless.Microservices.Application.Behaviors;
 /// <typeparam name="TRequest">Type of the request.</typeparam>
 /// <typeparam name="TResponse">Type of the response.</typeparam>
 public sealed class PerformancePipelineBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse> where TRequest : IRequestBase {
-    private const string ACTIVITY_SOURCE_NAME = "Request Handlers Performance";
-
-    private readonly IActivitySourceProvider _activitySourceProvider;
+    private readonly IActivitySourceManager _activitySourceManager;
     private readonly TimeProvider _timeProvider;
 
     /// <summary>
     /// Initializes a new instance of <see cref="PerformancePipelineBehavior{TRequest, TResponse}"/>.
     /// </summary>
-    /// <param name="activitySourceProvider">The activity source provider.</param>
-    public PerformancePipelineBehavior(IActivitySourceProvider activitySourceProvider, TimeProvider timeProvider) {
-        _activitySourceProvider = Prevent.Argument.Null(activitySourceProvider);
+    /// <param name="activitySourceManager">The activity source provider.</param>
+    public PerformancePipelineBehavior(IActivitySourceManager activitySourceManager, TimeProvider timeProvider) {
+        _activitySourceManager = Prevent.Argument.Null(activitySourceManager);
         _timeProvider = Prevent.Argument.Null(timeProvider);
     }
 
     /// <inheritdoc />
-    public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-        var activityName = $"Executing request handler for request '{typeof(TRequest).GetPrettyName()}' with response '{typeof(TResponse).GetPrettyName()}'";
+    public async Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
+        var requestName = typeof(TRequest).GetPrettyName();
+        var responseName = typeof(TResponse).GetPrettyName();
+        var sourceName = $"IRequestHandler<{requestName}, {responseName}>";
+        var activityName = $"Executing request handler '{sourceName}'";
 
-        using var activity = _activitySourceProvider
-            .GetActivitySource(ACTIVITY_SOURCE_NAME)
-            .StartActivity(ActivityKind.Internal, startTime: _timeProvider.GetUtcNow(), name: activityName);
+        using var activity = _activitySourceManager.GetActivitySource(sourceName)
+                                                   .StartActivity(
+                                                       ActivityKind.Internal,
+                                                       startTime: _timeProvider.GetUtcNow(),
+                                                       name: activityName
+                                                    );
 
-        return next(cancellationToken);
+        // We need to wait for the activity to be registered before proceeding
+        return await next(cancellationToken);
     }
 }

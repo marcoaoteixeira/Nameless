@@ -9,42 +9,52 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 /// </summary>
 public sealed class ConsumerFactory : IConsumerFactory {
     private readonly IChannelFactory _channelFactory;
-    private readonly ILogger<ConsumerFactory> _consumerFactoryLogger;
-    private readonly ILogger<Consumer> _consumerLogger;
+    private readonly IChannelConfigurator _channelConfigurator;
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger<ConsumerFactory> _logger;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ConsumerFactory"/>.
     /// </summary>
     /// <param name="channelFactory">The channel factory.</param>
+    /// <param name="channelConfigurator">The channel configurator.</param>
     /// <param name="loggerFactory">The logger factory.</param>
-    public ConsumerFactory(IChannelFactory channelFactory, ILoggerFactory loggerFactory) {
+    public ConsumerFactory(IChannelFactory channelFactory, IChannelConfigurator channelConfigurator, ILoggerFactory loggerFactory) {
         _channelFactory = Prevent.Argument.Null(channelFactory);
-
-        Prevent.Argument.Null(loggerFactory);
-
-        _consumerFactoryLogger = loggerFactory.CreateLogger<ConsumerFactory>();
-        _consumerLogger = loggerFactory.CreateLogger<Consumer>();
+        _channelConfigurator = Prevent.Argument.Null(channelConfigurator);
+        _loggerFactory = Prevent.Argument.Null(loggerFactory);
+        _logger = loggerFactory.CreateLogger<ConsumerFactory>();
     }
 
     /// <inheritdoc />
-    public async Task<IConsumer> CreateAsync(string topic, Args args, CancellationToken cancellationToken) {
+    public async Task<IConsumer<TMessage>> CreateAsync<TMessage>(string topic, Parameters parameters, CancellationToken cancellationToken)
+        where TMessage : notnull {
         IChannel? channel = null;
 
         try {
-            channel = await _channelFactory.CreateAsync(topic, cancellationToken)
-                                           .ConfigureAwait(continueOnCapturedContext: false);
+            channel = await _channelFactory.CreateAsync(cancellationToken)
+                                           .ConfigureAwait(false);
 
-            return new Consumer(channel, topic, _consumerLogger);
+            await _channelConfigurator.ConfigureAsync(channel,
+                                           topic,
+                                           parameters.GetUsePrefetch(),
+                                           cancellationToken)
+                                      .ConfigureAwait(false);
+
+            var consumerLogger = _loggerFactory.CreateLogger<Consumer<TMessage>>();
+
+            return new Consumer<TMessage>(topic, channel, consumerLogger);
         }
         catch (Exception ex) {
-            _consumerFactoryLogger.UnhandledErrorWhileCreatingConsumer(ex);
+            _logger.UnhandledErrorWhileCreatingConsumer(ex);
+
+            // if we have a channel, we probably should dispose it.
+            if (channel is not null) {
+                await channel.DisposeAsync()
+                             .ConfigureAwait(false);
+            }
 
             throw;
-        }
-        finally {
-            if (channel is not null) {
-                await channel.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
-            }
         }
     }
 }

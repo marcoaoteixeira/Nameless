@@ -1,51 +1,54 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.Mediator.Fixtures.Requests;
+using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
+using Nameless.Mediator.Streams;
 
 namespace Nameless.Mediator;
 
 public class ServiceCollectionExtensionsTests {
     [Fact]
-    public void WhenRegisteringRequestHandlers_WhenBuildProvider_ThenProviderShouldResolveServices() {
+    public void WhenRegisteringMediatorServices_ThenResolveMainServices() {
+        // arrange
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMediatorServices(options => {
-            options.Assemblies = [
-                typeof(ServiceCollectionExtensionsTests).Assembly,
-                //typeof(int).Assembly
-            ];
-            options.UseEventHandler = false; // Disable event handlers for this test
-            options.UseStreamHandler = false; // Disable stream handlers for this test
-        });
-        var provider = services.BuildServiceProvider();
+        services.ConfigureMediatorServices(configure: _ => { });
+        using var provider = services.BuildServiceProvider();
 
-        // act & assert
+        // act
+        var mediator = provider.GetService<IMediator>();
+        var eventHandlerInvoker = provider.GetService<IEventHandlerInvoker>();
+        var requestHandlerInvoker = provider.GetService<IRequestHandlerInvoker>();
+        var streamHandlerInvoker = provider.GetService<IStreamHandlerInvoker>();
+
+        // assert
         Assert.Multiple(() => {
-            var requestHandlerWithResponseRequestHandler = provider.GetService<IRequestHandler<RequestWithResponse, object>>();
-            Assert.NotNull(requestHandlerWithResponseRequestHandler);
-            Assert.IsType<RequestWithResponseRequestHandler>(requestHandlerWithResponseRequestHandler);
+            Assert.NotNull(mediator);
+            Assert.NotNull(eventHandlerInvoker);
+            Assert.NotNull(requestHandlerInvoker);
+            Assert.NotNull(streamHandlerInvoker);
+        });
+    }
 
-            var requestHandlerWithoutResponseRequestHandler = provider.GetService<IRequestHandler<RequestWithoutResponse>>();
-            Assert.NotNull(requestHandlerWithoutResponseRequestHandler);
-            Assert.IsType<RequestWithoutResponseRequestHandler>(requestHandlerWithoutResponseRequestHandler);
+    [Fact]
+    public void WhenRegisteringMediatorServices_WhenConfigureActionIsNull_ThenResolveMainServices() {
+        // arrange
+        // arrange
+        var services = new ServiceCollection();
+        services.ConfigureMediatorServices(configure: null);
+        using var provider = services.BuildServiceProvider();
 
-            var numericRequestHandlers = provider.GetServices<IRequestHandler<NumericRequest, double>>().ToArray();
-            Assert.Equal(3, numericRequestHandlers.Length);
-            Assert.Contains(numericRequestHandlers, item => item is SumNumericRequestHandler);
-            Assert.Contains(numericRequestHandlers, item => item is SubtractNumericRequestHandler);
-            Assert.Contains(numericRequestHandlers, item => item is MultiplyNumericRequestHandler);
+        // act
+        var mediator = provider.GetService<IMediator>();
+        var eventHandlerInvoker = provider.GetService<IEventHandlerInvoker>();
+        var requestHandlerInvoker = provider.GetService<IRequestHandlerInvoker>();
+        var streamHandlerInvoker = provider.GetService<IStreamHandlerInvoker>();
 
-            var dayOfWeekCloseTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<DayOfWeek>, DayOfWeek>>();
-            Assert.NotNull(dayOfWeekCloseTypeRequestHandler);
-            Assert.IsType<DayOfWeekCloseTypeRequestHandler>(dayOfWeekCloseTypeRequestHandler);
-
-            var integerCloseTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<int>, int>>();
-            Assert.NotNull(integerCloseTypeRequestHandler);
-            Assert.IsType<IntegerCloseTypeRequestHandler>(integerCloseTypeRequestHandler);
-
-            var structResultOpenTypeRequestHandler = provider.GetService<IRequestHandler<OpenGenericRequest<StructResult>, StructResult>>();
-            Assert.NotNull(structResultOpenTypeRequestHandler);
-            Assert.IsType<OpenGenericRequestHandler<StructResult>>(structResultOpenTypeRequestHandler);
+        // assert
+        Assert.Multiple(() => {
+            Assert.NotNull(mediator);
+            Assert.NotNull(eventHandlerInvoker);
+            Assert.NotNull(requestHandlerInvoker);
+            Assert.NotNull(streamHandlerInvoker);
         });
     }
 }

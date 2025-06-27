@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterMediatorServices(this IServiceCollection self, Action<MediatorOptions>? configure = null) {
+    public static IServiceCollection ConfigureMediatorServices(this IServiceCollection self, Action<MediatorOptions>? configure = null) {
         var innerConfigure = configure ?? (_ => { });
         var options = new MediatorOptions();
 
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterEventHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseEventHandler) { return self; }
+        if (!options.UseEventHandlers) { return self; }
 
         var service = typeof(IEventHandler<>);
         var implementations = options.Assemblies
@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterRequestHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseRequestHandler) { return self; }
+        if (!options.UseRequestHandlers) { return self; }
 
         var services = new[] { typeof(IRequestHandler<>), typeof(IRequestHandler<,>) };
         var implementations = options.Assemblies
@@ -60,13 +60,13 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterRequestPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        return options.UseRequestHandler
+        return options.UseRequestHandlers
             ? self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<,>), options.RequestPipelineBehaviors)
             : self;
     }
 
     private static IServiceCollection RegisterStreamHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseStreamHandler) { return self; }
+        if (!options.UseStreamHandlers) { return self; }
 
         var service = typeof(IStreamHandler<,>);
         var implementations = options.Assemblies
@@ -77,7 +77,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterStreamPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        return options.UseStreamHandler
+        return options.UseStreamHandlers
             ? self.RegisterPipelineBehaviors(typeof(IStreamPipelineBehavior<,>), options.StreamPipelineBehaviors)
             : self;
     }

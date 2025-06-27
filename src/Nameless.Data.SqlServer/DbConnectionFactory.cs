@@ -10,6 +10,9 @@ namespace Nameless.Data.SqlServer;
 public sealed class DbConnectionFactory : IDbConnectionFactory {
     private readonly IOptions<SqlServerOptions> _options;
 
+    /// <inheritdoc />
+    public string ProviderName => "Microsoft SQL Server";
+
     /// <summary>
     /// Initializes a new instance of <see cref="DbConnectionFactory"/>.
     /// </summary>
@@ -20,9 +23,6 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
     public DbConnectionFactory(IOptions<SqlServerOptions> options) {
         _options = Prevent.Argument.Null(options);
     }
-
-    /// <inheritdoc />
-    public string ProviderName => "Microsoft SQL Server";
 
     /// <inheritdoc />
     public IDbConnection CreateDbConnection() {

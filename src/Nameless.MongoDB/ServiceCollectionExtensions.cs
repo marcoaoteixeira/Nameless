@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions {
     /// <param name="self">The service collection instance.</param>
     /// <param name="configure">An action to configure MongoDb options.</param>
     /// <returns>The current <see cref="IServiceCollection" /> instance so other actions can be chained.</returns>
-    public static IServiceCollection RegisterMongoServices(this IServiceCollection self, Action<MongoOptions>? configure = null) {
+    public static IServiceCollection ConfigureMongoServices(this IServiceCollection self, Action<MongoOptions>? configure = null) {
         var innerConfigure = configure ?? (_ => { });
         var options = new MongoOptions();
 

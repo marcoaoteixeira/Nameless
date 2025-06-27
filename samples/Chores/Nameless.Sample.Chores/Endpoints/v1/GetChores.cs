@@ -12,8 +12,8 @@ public class GetChores : IEndpoint {
         _choreService = choreService;
     }
 
-    public void Configure(IEndpointBuilder builder) {
-        builder
+    public void Configure(IEndpointDescriptor descriptor) {
+        descriptor
            .Get("/chores", HandleAsync)
            .AllowAnonymous()
            .WithName($"{nameof(GetChores)}_v1")

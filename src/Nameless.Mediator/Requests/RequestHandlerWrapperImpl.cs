@@ -65,8 +65,7 @@ public sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHand
                               .Reverse()
                               .Aggregate(
                                    seed: (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
-                                   func: (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token)
-                                )
+                                   func: (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next, token))
                               .Invoke(cancellationToken);
 
         Task<TResponse> InnerHandleAsync(CancellationToken token) {

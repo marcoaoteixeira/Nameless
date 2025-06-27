@@ -1,7 +1,7 @@
 ﻿namespace Nameless.ProducerConsumer;
 
 /// <summary>
-///     Represents a publisher that can publish messages to topics.
+///     Represents a producer.
 /// </summary>
 public interface IProducer : IDisposable, IAsyncDisposable {
     /// <summary>
@@ -10,13 +10,13 @@ public interface IProducer : IDisposable, IAsyncDisposable {
     string Topic { get; }
 
     /// <summary>
-    ///     Produces a message with the provided arguments.
+    ///     Produces a message.
     /// </summary>
     /// <param name="message">The message.</param>
-    /// <param name="args">The arguments.</param>
+    /// <param name="parameters">The parameters.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
     ///     A <see cref="Task"/> representing the asynchronous operation.
     /// </returns>
-    Task ProduceAsync(object message, Args args, CancellationToken cancellationToken);
+    Task ProduceAsync(object message, Parameters parameters, CancellationToken cancellationToken);
 }

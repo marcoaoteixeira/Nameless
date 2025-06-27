@@ -12,7 +12,7 @@ namespace Nameless.NHibernate;
 /// Extension methods for <see cref="IServiceCollection"/> to register NHibernate services.
 /// </summary>
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection RegisterNHibernateServices(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
+    public static IServiceCollection ConfigureNHibernateServices(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
                    .RegisterMainServices();
     }

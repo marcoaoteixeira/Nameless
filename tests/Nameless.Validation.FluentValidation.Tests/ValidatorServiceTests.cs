@@ -5,6 +5,7 @@ using Moq;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
 using Nameless.Validation.FluentValidation.Fixtures;
+using Nameless.Validation.FluentValidation.Mockers;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Nameless.Validation.FluentValidation;
@@ -83,5 +84,45 @@ public class ValidatorServiceTests {
 
         // assert
         Assert.True(first.Succeeded && second.Succeeded && third.Succeeded);
+    }
+
+    [Fact]
+    public async Task WhenValidateAsync_WhenNotProvideDataContext_WhenObjectIsValid_ThenReturnsSuccessfulResult() {
+        // arrange
+        var validator = new ValidatorMocker<Animal>()
+                       .WithSuccessfulValidateAsync()
+                       .Build();
+        var sut = new ValidationService([validator], Quick.Mock<ILogger<ValidationService>>());
+        var dog = new Animal { Name = "Dog" };
+
+        // act
+        var actual = await sut.ValidateAsync(dog, CancellationToken.None);
+
+        // assert
+        Assert.True(actual.Succeeded);
+    }
+
+    [Fact]
+    public async Task WhenValidateAsync_WhenProvidingDataContextWithValues_ThenDataContextShouldBeConsumed() {
+        // arrange
+        DataContext dataContext = [
+            new KeyValuePair<string, object>("Value", 123)
+        ];
+        var validatorMocker = new ValidatorMocker<Animal>().WithSuccessfulValidateAsync();
+        var sut = new ValidationService([validatorMocker.Build()], Quick.Mock<ILogger<ValidationService>>());
+        var dog = new Animal { Name = "Dog" };
+
+        // act
+        var actual = await sut.ValidateAsync(dog, dataContext, CancellationToken.None);
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.True(actual.Succeeded);
+
+            validatorMocker.Verify(mock => mock.ValidateAsync(
+                It.Is<IValidationContext>(ctx => ctx.RootContextData.ContainsKey("Value")),
+                It.IsAny<CancellationToken>())
+            );
+        });
     }
 }

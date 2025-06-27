@@ -1,4 +1,5 @@
-﻿using Nameless.ProducerConsumer.RabbitMQ.Mockers;
+﻿using Moq;
+using Nameless.ProducerConsumer.RabbitMQ.Mockers;
 using Nameless.Testing.Tools;
 using RabbitMQ.Client;
 
@@ -6,27 +7,27 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
 public class ChannelFactoryTests {
     [Fact]
-    public async Task WhenCreatingChannel_WithExchangeName_ThenReturnsAChannel() {
+    public async Task WhenCreatingChannel_ThenReturnsNewChannel() {
         // arrange
-        const string ExchangeName = "Exchange_b0b8fb97_c6d8_44f6_898a_af74b73d419a";
-        var channel = Quick.Mock<IChannel>();
-        var connection = new ConnectionMocker().WithChannel(channel)
-                                               .Build();
-        var sut = CreateSut(connection: connection);
+        var connectionMocker = new ConnectionMocker().WithCreateChannelAsync();
+        var connectionManagerMocker = new ConnectionManagerMocker().WithGetConnectionAsync(connectionMocker.Build());
+        var sut = CreateSut(connectionManagerMocker.Build());
 
         // act
-        var actual = await sut.CreateAsync(ExchangeName, CancellationToken.None);
+        var actual = await sut.CreateAsync(CancellationToken.None);
 
         // assert
-        Assert.NotNull(actual);
+        Assert.Multiple(() => {
+            Assert.NotNull(actual);
+
+            connectionManagerMocker.Verify(mock => mock.GetConnectionAsync(It.IsAny<CancellationToken>()));
+            connectionMocker.Verify(mock => mock.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()));
+        });
     }
 
-    private static IChannelFactory CreateSut(IConnectionManager connectionManager = null, IConnection connection = null, IChannelConfigurator channelConfigurator = null) {
-        connection ??= new ConnectionMocker().Build();
-        connectionManager ??= new ConnectionManagerMocker().WithGetConnectionAsync(connection)
-                                                           .Build();
-        channelConfigurator ??= new ChannelConfiguratorMocker().Build();
+    private static ChannelFactory CreateSut(IConnectionManager connectionManager = null) {
+        connectionManager ??= Quick.Mock<IConnectionManager>();
 
-        return new ChannelFactory(connectionManager, channelConfigurator);
+        return new ChannelFactory(connectionManager);
     }
 }

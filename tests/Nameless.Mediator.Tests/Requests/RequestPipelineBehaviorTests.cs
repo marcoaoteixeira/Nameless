@@ -12,12 +12,12 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenRequestHasPipelineBehavior_ThenBehaviorShouldBeExecutedBeforeRequestHandler() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMediatorServices(options => {
+        services.ConfigureMediatorServices(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<,>));
         });
 
-        var loggerMocker = new LoggerMocker<object>().EnableAllLogLevels();
+        var loggerMocker = new LoggerMocker<object>().WithAnyLogLevel();
         services.AddTransient(_ => (ILogger)loggerMocker.Build());
 
         await using var provider = services.BuildServiceProvider();
@@ -38,12 +38,12 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenRequestHasPipelineBehavior_ThenBehaviorShouldBeExecutedForSpecificRequest() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMediatorServices(options => {
+        services.ConfigureMediatorServices(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<RequestWithoutResponse, Nothing>));
         });
 
-        var loggerMocker = new LoggerMocker<object>().EnableAllLogLevels();
+        var loggerMocker = new LoggerMocker<object>().WithAnyLogLevel();
         services.AddTransient(_ => (ILogger)loggerMocker.Build());
         services.AddTransient(_ => Quick.Mock<ILogger<RequestWithoutResponseRequestHandler>>());
 
@@ -68,12 +68,12 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenOpenGenericPipelineBehavior_WhenMultipleRequestHandler_ThenExecutePipelineForEachRequestHandler() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMediatorServices(options => {
+        services.ConfigureMediatorServices(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<,>));
         });
 
-        var loggerMocker = new LoggerMocker<object>().EnableAllLogLevels();
+        var loggerMocker = new LoggerMocker<object>().WithAnyLogLevel();
         services.AddTransient(_ => (ILogger)loggerMocker.Build());
         services.AddTransient(_ => Quick.Mock<ILogger<RequestWithoutResponseRequestHandler>>());
 

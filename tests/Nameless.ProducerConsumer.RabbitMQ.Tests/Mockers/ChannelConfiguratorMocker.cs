@@ -3,6 +3,6 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Mockers;
 
-public class ChannelConfiguratorMocker : MockerBase<IChannelConfigurator> {
+public class ChannelConfiguratorMocker : Mocker<IChannelConfigurator> {
 
 }
