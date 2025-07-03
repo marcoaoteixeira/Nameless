@@ -21,13 +21,11 @@ public static class EntryPoint {
     }
 
     private static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder self) {
-        // Doesn't matter the order where the services are
-        // registered.
-
+        // Doesn't matter the order where the services are registered.
         self.ConfigureMonitoring()
-            .ConfigureServiceDiscovery()
+            .RegisterDiscoverability()
             .ConfigureSecurity()
-            .ConfigureMinimalEndpoint(options => {
+            .RegisterMinimalEndpoints(options => {
                 options.Assemblies = Assemblies;
                 options.ConfigureOpenApi = openApiOpts => {
                     openApiOpts.AddDocumentTransformer<BearerSecuritySchemeTransformer>();

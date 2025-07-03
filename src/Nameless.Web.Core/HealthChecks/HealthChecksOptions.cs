@@ -26,9 +26,9 @@ public sealed record HealthChecksOptions {
     ///     The current <see cref="HealthChecksOptions"/> instance so other actions can be chained.
     /// </returns>
     public HealthChecksOptions RegisterHealthCheck<THealthCheck>(string? name = null,
-                                                                            HealthStatus? failureStatus = null,
-                                                                            IEnumerable<string>? tags = null,
-                                                                            TimeSpan? timeout = null)
+        HealthStatus? failureStatus = null,
+        IEnumerable<string>? tags = null,
+        TimeSpan? timeout = null)
         where THealthCheck : class, IHealthCheck {
 
         _healthChecks.Add(builder => builder.AddCheck<THealthCheck>(

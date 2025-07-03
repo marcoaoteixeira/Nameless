@@ -20,7 +20,7 @@ public static class ApplicationBuilderExtensions {
     ///     The current <typeparamref name="TApplicationBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public static TApplicationBuilder UseCorrelationMiddleware<TApplicationBuilder>(this TApplicationBuilder self)
+    public static TApplicationBuilder UseCorrelation<TApplicationBuilder>(this TApplicationBuilder self)
         where TApplicationBuilder : IApplicationBuilder {
         self.UseMiddleware<CorrelationMiddleware>();
 

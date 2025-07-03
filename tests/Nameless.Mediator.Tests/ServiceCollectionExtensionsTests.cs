@@ -11,7 +11,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureMediatorServices(configure: _ => { });
+        services.RegisterMediator(configure: _ => { });
         using var provider = services.BuildServiceProvider();
 
         // act
@@ -34,7 +34,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureMediatorServices(configure: null);
+        services.RegisterMediator(configure: null);
         using var provider = services.BuildServiceProvider();
 
         // act

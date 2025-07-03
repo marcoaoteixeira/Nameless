@@ -1,25 +1,34 @@
-﻿using Lucene.Net.Analysis;
+﻿#pragma warning disable CA1859 // IndexReader is not assignable from AtomicReader
+
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
+using Nameless.Search.Lucene.Null;
 
 namespace Nameless.Search.Lucene;
 
 /// <summary>
 ///     Default implementation of <see cref="IIndex" />
 /// </summary>
-public sealed class Index : IIndex, IDisposable {
+public sealed class Index : IIndex {
+    private static int BatchSize => BooleanQuery.MaxClauseCount;
+
     private readonly Analyzer _analyzer;
     private readonly IndexWriterConfig _indexWriterConfig;
     private readonly ILogger _logger;
 
-    private bool _disposed;
-
     private FSDirectory? _fsDirectory;
     private IndexReader? _indexReader;
     private IndexWriter? _indexWriter;
-    private static int BatchSize => BooleanQuery.MaxClauseCount;
+
+    private bool _disposed;
+
+    /// <inheritdoc />
+    public string Name { get; }
+
+    public EventHandler<DisposeIndexEventArgs>? OnDispose;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Index" />.
@@ -37,20 +46,14 @@ public sealed class Index : IIndex, IDisposable {
         _analyzer = Prevent.Argument.Null(analyzer);
         _logger = Prevent.Argument.Null(logger);
         _indexWriterConfig = new IndexWriterConfig(Defaults.Version, _analyzer);
-
         _fsDirectory = FSDirectory.Open(new DirectoryInfo(indexDirectoryPath));
 
         Name = Prevent.Argument.NullOrWhiteSpace(indexName);
     }
 
-    /// <inheritdoc />
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+    ~Index() {
+        Dispose(false);
     }
-
-    /// <inheritdoc />
-    public string Name { get; }
 
     /// <inheritdoc />
     public bool IsEmpty() {
@@ -131,8 +134,10 @@ public sealed class Index : IIndex, IDisposable {
         return new SearchBuilder(_analyzer, GetIndexReader());
     }
 
-    ~Index() {
-        Dispose(false);
+    /// <inheritdoc />
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     private Task<IndexActionResult> InnerStoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
@@ -252,17 +257,14 @@ public sealed class Index : IIndex, IDisposable {
             _indexWriter?.Dispose();
             _indexWriter = null;
         }
-        catch {
-            /* ignore */
-        }
+        catch { /* ignore */ }
     }
 
-#pragma warning disable CA1859
     private IndexReader GetIndexReader() {
-#pragma warning restore CA1859
         if (_indexReader is DirectoryReader currentDirectoryReader) {
             var newIndexReader = DirectoryReader.OpenIfChanged(currentDirectoryReader);
             if (newIndexReader is not null) {
+                // This is necessary to refresh the index reader
                 _indexReader.Dispose();
                 _indexReader = null;
 
@@ -271,17 +273,11 @@ public sealed class Index : IIndex, IDisposable {
         }
 
         try { return _indexReader ??= DirectoryReader.Open(_fsDirectory); }
-        catch (IndexNotFoundException) { return new EmptyIndexReader(); }
+        catch (IndexNotFoundException) { return NullIndexReader.Instance; }
     }
 
     private void BlockAccessAfterDispose() {
-#if NET8_0_OR_GREATER
         ObjectDisposedException.ThrowIf(_disposed, this);
-#else
-        if (_disposed) {
-            throw new ObjectDisposedException(nameof(Index));
-        }
-#endif
     }
 
     private void Dispose(bool disposing) {
@@ -298,6 +294,8 @@ public sealed class Index : IIndex, IDisposable {
         _fsDirectory = null;
 
         _disposed = true;
+
+        OnDispose?.Invoke(this, new DisposeIndexEventArgs(Name));
     }
 
     private enum ActionType {

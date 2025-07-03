@@ -14,7 +14,7 @@ namespace Nameless.Localization.Json;
 public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     private readonly ICultureProvider _cultureContext;
     private readonly IResourceManager _resourceManager;
-    private readonly IOptions<LocalizationOptions> _options;
+    private readonly IOptions<JsonLocalizationOptions> _options;
 
     private readonly ILogger<StringLocalizerFactory> _stringLocalizerFactoryLogger;
     private readonly ILogger<StringLocalizer> _stringLocalizerLogger;
@@ -34,7 +34,7 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     /// </exception>
     public StringLocalizerFactory(ICultureProvider cultureContext,
                                   IResourceManager resourceManager,
-                                  IOptions<LocalizationOptions> options,
+                                  IOptions<JsonLocalizationOptions> options,
                                   ILoggerFactory loggerFactory) {
         _cultureContext = Prevent.Argument.Null(cultureContext);
         _resourceManager = Prevent.Argument.Null(resourceManager);

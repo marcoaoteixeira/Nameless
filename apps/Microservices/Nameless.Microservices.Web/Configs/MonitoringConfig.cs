@@ -10,10 +10,10 @@ namespace Nameless.Microservices.Web.Configs;
 
 public static class MonitoringConfig {
     public static WebApplicationBuilder ConfigureMonitoring(this WebApplicationBuilder self) {
-        self.ConfigureOpenTelemetry()
-            .ConfigureHealthChecks()
-            .ConfigureLogging()
-            .ConfigureCorrelationAccessor();
+        self.RegisterOpenTelemetry()
+            .RegisterHealthChecks()
+            .RegisterLogging()
+            .RegisterCorrelationAccessor();
 
         self.Services.TryAddSingleton<IActivitySourceManager, ActivitySourceManager>();
 
@@ -21,7 +21,7 @@ public static class MonitoringConfig {
     }
     public static WebApplication UseMonitoring(this WebApplication self) {
         self.UseHealthChecks(self.Environment);
-        self.UseCorrelationMiddleware();
+        self.UseCorrelation();
         self.UseSerilogRequestLogging();
 
         return self;

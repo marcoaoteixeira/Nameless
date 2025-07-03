@@ -89,13 +89,13 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId GettingResourceForCultureEvent = new(1, nameof(GettingResourceForCulture));
-        internal static readonly EventId ResourceFileNotFoundEvent = new(2, nameof(ResourceFileNotFound));
-        internal static readonly EventId ResourceFileContentIsEmptyEvent = new(3, nameof(ResourceFileContentIsEmpty));
-        internal static readonly EventId CreatingCacheEntryForResourceFileEvent = new(4, nameof(CreatingCacheEntryForResourceFile));
-        internal static readonly EventId SettingFileWatcherForResourceFileEvent = new(5, nameof(SettingFileWatcherForResourceFile));
-        internal static readonly EventId ErrorReadingResourceFileEvent = new(6, nameof(ErrorReadingResourceFile));
-        internal static readonly EventId ResourceDeserializationFailedEvent = new(7, nameof(ResourceDeserializationFailed));
-        internal static readonly EventId GettingCurrentCultureFromContextEvent = new(8, nameof(GettingCurrentCultureFromContext));
+        internal static readonly EventId GettingResourceForCultureEvent = new(4001, nameof(GettingResourceForCulture));
+        internal static readonly EventId ResourceFileNotFoundEvent = new(4002, nameof(ResourceFileNotFound));
+        internal static readonly EventId ResourceFileContentIsEmptyEvent = new(4003, nameof(ResourceFileContentIsEmpty));
+        internal static readonly EventId CreatingCacheEntryForResourceFileEvent = new(4004, nameof(CreatingCacheEntryForResourceFile));
+        internal static readonly EventId SettingFileWatcherForResourceFileEvent = new(4005, nameof(SettingFileWatcherForResourceFile));
+        internal static readonly EventId ErrorReadingResourceFileEvent = new(4006, nameof(ErrorReadingResourceFile));
+        internal static readonly EventId ResourceDeserializationFailedEvent = new(4007, nameof(ResourceDeserializationFailed));
+        internal static readonly EventId GettingCurrentCultureFromContextEvent = new(4008, nameof(GettingCurrentCultureFromContext));
     }
 }

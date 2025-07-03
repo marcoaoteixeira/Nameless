@@ -15,6 +15,6 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId ErrorOnSchemaExportExecutionEvent = new(1, nameof(ErrorOnSchemaExportExecution));
+        internal static readonly EventId ErrorOnSchemaExportExecutionEvent = new(7001, nameof(ErrorOnSchemaExportExecution));
     }
 }

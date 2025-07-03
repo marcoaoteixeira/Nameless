@@ -20,7 +20,7 @@ public static class HostApplicationBuilderExtensions {
     /// <returns>
     ///     The current <typeparamref name="THostApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
-    public static THostApplicationBuilder ConfigureOpenTelemetry<THostApplicationBuilder>(this THostApplicationBuilder self, Action<OpenTelemetryOptions>? configure = null)
+    public static THostApplicationBuilder RegisterOpenTelemetry<THostApplicationBuilder>(this THostApplicationBuilder self, Action<OpenTelemetryOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new OpenTelemetryOptions();

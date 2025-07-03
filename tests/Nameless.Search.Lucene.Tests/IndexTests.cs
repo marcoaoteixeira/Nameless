@@ -15,7 +15,7 @@ public class IndexTests {
 
     private static ServiceProvider CreateServiceProvider() {
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(new LoggerMocker<IndexProvider>().WithAnyLogLevel().Build())
+                           .WithCreateLogger(new LoggerMocker<IndexManager>().WithAnyLogLevel().Build())
                            .WithCreateLogger(new LoggerMocker<Index>().WithAnyLogLevel().Build())
                            .Build();
 
@@ -37,7 +37,7 @@ public class IndexTests {
         using var provider = CreateServiceProvider();
         const string IndexName = "32b52ab3-7069-4fae-ac15-d9f3442db19b";
 
-        var indexManager = provider.GetRequiredService<IIndexProvider>();
+        var indexManager = provider.GetRequiredService<IIndexManager>();
         var indexA = indexManager.CreateIndex(IndexName);
         var indexB = indexManager.CreateIndex(IndexName);
 
@@ -54,7 +54,7 @@ public class IndexTests {
         await using var provider = CreateServiceProvider();
         const string IndexName = "d39ff2d3-7d84-4d41-99e6-e096754d14be";
 
-        var indexManager = provider.GetRequiredService<IIndexProvider>();
+        var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
@@ -84,7 +84,7 @@ public class IndexTests {
         await using var provider = CreateServiceProvider();
         const string IndexName = "82b3dcd7-85c1-4c73-8f49-c54ae82ab2f8";
 
-        var indexManager = provider.GetRequiredService<IIndexProvider>();
+        var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
         var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
@@ -138,7 +138,7 @@ public class IndexTests {
         const string FieldName = "Content";
 
         // arrange
-        var indexManager = provider.GetRequiredService<IIndexProvider>();
+        var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
         // act 1

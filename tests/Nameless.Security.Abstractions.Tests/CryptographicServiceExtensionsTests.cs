@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Moq;
-using Nameless.Security.Crypto;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Security;
@@ -34,7 +33,7 @@ public class CryptographicServiceExtensionsTests {
     }
 }
 
-public class CryptographicServiceMocker : Mocker<ICryptographicService> {
+public class CryptographicServiceMocker : Mocker<ICrypto> {
     public CryptographicServiceMocker WithEncrypt(string result) {
         return WithEncrypt(Encoding.UTF8.GetBytes(result));
     }

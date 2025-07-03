@@ -27,24 +27,26 @@ public sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransforme
         Prevent.Argument.Null(document);
 
         var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
-        if (authenticationSchemes.Any(authScheme => authScheme.Name == JwtBearerDefaults.AuthenticationScheme)) {
-            document.Components ??= new OpenApiComponents();
-
-            document.Components.SecuritySchemes.Add(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme {
-                Type = SecuritySchemeType.Http,
-                Scheme = JwtBearerDefaults.AuthenticationScheme.ToLowerInvariant(),
-                In = ParameterLocation.Header,
-                BearerFormat = "JSON Web Token"
-            });
-
-            document.SecurityRequirements.Add(new OpenApiSecurityRequirement {
-                [new OpenApiSecurityScheme {
-                    Reference = new OpenApiReference {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
-                    }
-                }] = []
-            });
+        if (authenticationSchemes.All(authScheme => authScheme.Name != JwtBearerDefaults.AuthenticationScheme)) {
+            return;
         }
+
+        document.Components ??= new OpenApiComponents();
+
+        document.Components.SecuritySchemes.Add(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme {
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme.ToLowerInvariant(),
+            In = ParameterLocation.Header,
+            BearerFormat = "JSON Web Token"
+        });
+
+        document.SecurityRequirements.Add(new OpenApiSecurityRequirement {
+            [new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            }] = []
+        });
     }
 }

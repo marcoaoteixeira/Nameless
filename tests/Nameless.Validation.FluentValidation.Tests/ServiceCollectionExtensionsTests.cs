@@ -11,7 +11,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(Quick.Mock<ILogger<ValidationService>>());
-        services.ConfigureValidationServices();
+        services.RegisterValidation();
 
         using var container = services.BuildServiceProvider();
 
@@ -26,7 +26,7 @@ public class ServiceCollectionExtensionsTests {
     public void WhenRegisterServices_IgnoreOpenGenericValidators_ThenResolveSuccessfully() {
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureValidationServices(opts => {
+        services.RegisterValidation(opts => {
             opts.Assemblies = [typeof(ServiceCollectionExtensionsTests).Assembly];
         });
 

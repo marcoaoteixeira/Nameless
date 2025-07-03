@@ -19,7 +19,7 @@ public class PostChore : IEndpoint {
            .Post("/chores", HandleAsync)
            .AllowAnonymous()
            .WithName($"{nameof(PostChore)}_v1")
-           .WithFilter<ValidateEndpointFilter>()
+           .WithFilter<ValidationEndpointFilter>()
            .Produces<ChoreDto>()
            .ProducesProblem()
            .ProducesValidationProblem()

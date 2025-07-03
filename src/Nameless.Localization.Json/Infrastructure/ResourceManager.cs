@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Localization.Json.Internals;
 using Nameless.Localization.Json.Objects;
+using Nameless.Null;
 
 namespace Nameless.Localization.Json.Infrastructure;
 
@@ -16,7 +17,7 @@ public sealed class ResourceManager : IResourceManager {
     private readonly ConcurrentDictionary<CacheKey, CacheEntry> _cache = [];
     private readonly IFileProvider _fileProvider;
     private readonly ILogger<ResourceManager> _logger;
-    private readonly IOptions<LocalizationOptions> _options;
+    private readonly IOptions<JsonLocalizationOptions> _options;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="ResourceManager" />.
@@ -29,7 +30,7 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="options" /> or
     ///     <paramref name="logger" /> is <see langword="null"/>.
     /// </exception>
-    public ResourceManager(IFileProvider fileProvider, IOptions<LocalizationOptions> options, ILogger<ResourceManager> logger) {
+    public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options, ILogger<ResourceManager> logger) {
         _fileProvider = Prevent.Argument.Null(fileProvider);
         _options = Prevent.Argument.Null(options);
         _logger = Prevent.Argument.Null(logger);

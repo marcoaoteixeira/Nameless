@@ -42,8 +42,8 @@ internal static class LoggerExtension {
     }
 
     internal static class Events {
-        internal static readonly EventId QueueSettingsNotFoundEvent = new(1, nameof(QueueSettingsNotFound));
-        internal static readonly EventId ExchangeNotFoundEvent = new(2, nameof(ExchangeNotFound));
-        internal static readonly EventId BrokerUnreachableEvent = new(2, nameof(BrokerUnreachable));
+        internal static readonly EventId QueueSettingsNotFoundEvent = new(8001, nameof(QueueSettingsNotFound));
+        internal static readonly EventId ExchangeNotFoundEvent = new(8002, nameof(ExchangeNotFound));
+        internal static readonly EventId BrokerUnreachableEvent = new(8003, nameof(BrokerUnreachable));
     }
 }

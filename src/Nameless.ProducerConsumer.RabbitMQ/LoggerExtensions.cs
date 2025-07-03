@@ -115,17 +115,16 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId UnhandledErrorWhileProducingMessageEvent = new(1, nameof(UnhandledErrorWhileProducingMessage));
-        internal static readonly EventId UnhandledErrorWhileCreatingProducerEvent = new(2, nameof(UnhandledErrorWhileCreatingProducer));
-        internal static readonly EventId UnhandledErrorWhileCreatingConsumerEvent = new(3, nameof(UnhandledErrorWhileCreatingConsumer));
-        internal static readonly EventId EnvelopeDeserializationFailureEvent = new(4, nameof(EnvelopeDeserializationFailure));
-        internal static readonly EventId EnvelopeDeserializationErrorEvent = new(5, nameof(EnvelopeDeserializationError));
-        internal static readonly EventId ConsumerAlreadyStartedEvent = new(6, nameof(ConsumerAlreadyStarted));
-        internal static readonly EventId ConsumerShutdownEvent = new(7, nameof(ConsumerShutdown));
-        internal static readonly EventId MessageHandlerThrownExceptionEvent = new(8, nameof(MessageHandlerThrownException));
-        internal static readonly EventId ConsumerStartedEvent = new(9, nameof(ConsumerStarted));
-        internal static readonly EventId EnvelopeReceivedEvent = new(10, nameof(EnvelopeReceived));
-
-        internal static readonly EventId UnableDeserializeMessageEvent = new(10, nameof(UnableDeserializeMessage));
+        internal static readonly EventId UnhandledErrorWhileProducingMessageEvent = new(8004, nameof(UnhandledErrorWhileProducingMessage));
+        internal static readonly EventId UnhandledErrorWhileCreatingProducerEvent = new(8005, nameof(UnhandledErrorWhileCreatingProducer));
+        internal static readonly EventId UnhandledErrorWhileCreatingConsumerEvent = new(8006, nameof(UnhandledErrorWhileCreatingConsumer));
+        internal static readonly EventId EnvelopeDeserializationFailureEvent = new(8007, nameof(EnvelopeDeserializationFailure));
+        internal static readonly EventId EnvelopeDeserializationErrorEvent = new(8008, nameof(EnvelopeDeserializationError));
+        internal static readonly EventId ConsumerAlreadyStartedEvent = new(8009, nameof(ConsumerAlreadyStarted));
+        internal static readonly EventId ConsumerShutdownEvent = new(8010, nameof(ConsumerShutdown));
+        internal static readonly EventId MessageHandlerThrownExceptionEvent = new(8011, nameof(MessageHandlerThrownException));
+        internal static readonly EventId ConsumerStartedEvent = new(8012, nameof(ConsumerStarted));
+        internal static readonly EventId EnvelopeReceivedEvent = new(8013, nameof(EnvelopeReceived));
+        internal static readonly EventId UnableDeserializeMessageEvent = new(8014, nameof(UnableDeserializeMessage));
     }
 }

@@ -12,20 +12,31 @@ namespace Nameless.NHibernate;
 /// Extension methods for <see cref="IServiceCollection"/> to register NHibernate services.
 /// </summary>
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection ConfigureNHibernateServices(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .RegisterMainServices();
-    }
+    private const string SESSION_FACTORY_KEY = $"{nameof(ISessionFactory)} :: 3c7db659-6884-4fb9-92cb-202fa851d967";
+    private const string CONFIGURATION_FACTORY_KEY = $"{nameof(IConfigurationFactory)} :: f93b5672-e26c-4d07-9cf3-be1f957a726f";
 
-    private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        return self.AddSingleton<IConfigurationFactory, ConfigurationFactory>()
-                   .AddSingleton(SessionFactoryResolver)
+    /// <summary>
+    ///     Registers NHibernate services in the provided <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/> instance.
+    /// </param>
+    /// <param name="configure">
+    ///     A configuration action for <see cref="NHibernateOptions"/>.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection"/> so other actions can be chained. 
+    /// </returns>
+    public static IServiceCollection RegisterNHibernate(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
+        return self.Configure(configure ?? (_ => { }))
+                   .AddKeyedSingleton<IConfigurationFactory, ConfigurationFactory>(CONFIGURATION_FACTORY_KEY)
+                   .AddKeyedSingleton(SESSION_FACTORY_KEY, SessionFactoryResolver)
                    .AddScoped(SessionResolver);
     }
 
     private static ISessionFactory SessionFactoryResolver(this IServiceProvider self) {
         var options = self.GetOptions<NHibernateOptions>();
-        var configurationFactory = self.GetRequiredService<IConfigurationFactory>();
+        var configurationFactory = self.GetRequiredKeyedService<IConfigurationFactory>(CONFIGURATION_FACTORY_KEY);
         var configuration = configurationFactory.CreateConfiguration();
         var sessionFactory = configuration.BuildSessionFactory();
 
@@ -41,7 +52,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static ISession SessionResolver(this IServiceProvider self) {
-        return self.GetRequiredService<ISessionFactory>().OpenSession();
+        return self.GetRequiredKeyedService<ISessionFactory>(SESSION_FACTORY_KEY).OpenSession();
     }
 
     private static void StartUp(ISessionFactory sessionFactory,
@@ -49,7 +60,7 @@ public static class ServiceCollectionExtensions {
                                 IApplicationContext applicationContext,
                                 SchemaExportSettings schemaExportSettings,
                                 ILogger<SchemaExport> logger) {
-        var outputFilePath = Path.Combine(applicationContext.AppDataFolderPath,
+        var outputFilePath = Path.Combine(applicationContext.ApplicationDataFolderPath,
             schemaExportSettings.OutputFolderName,
             $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.dat");
 

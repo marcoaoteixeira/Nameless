@@ -37,8 +37,8 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId GettingResourceEvent = new(1, nameof(GettingResource));
-        internal static readonly EventId ResourceNotAvailableEvent = new(2, nameof(ResourceNotAvailable));
-        internal static readonly EventId MessageNotFoundEvent = new(3, nameof(MessageNotFound));
+        internal static readonly EventId GettingResourceEvent = new(4009, nameof(GettingResource));
+        internal static readonly EventId ResourceNotAvailableEvent = new(4010, nameof(ResourceNotAvailable));
+        internal static readonly EventId MessageNotFoundEvent = new(4011, nameof(MessageNotFound));
     }
 }

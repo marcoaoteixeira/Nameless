@@ -16,25 +16,25 @@ public static class HostApplicationBuilderExtensions {
     /// <returns>
     ///     The current <typeparamref name="THostApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
-    public static THostApplicationBuilder ConfigureServiceDiscovery<THostApplicationBuilder>(this THostApplicationBuilder self, Action<ServiceDiscoveryOptions>? configure = null)
+    /// <remarks>
+    ///     This will add the ser
+    /// </remarks>
+    public static THostApplicationBuilder RegisterDiscoverability<THostApplicationBuilder>(this THostApplicationBuilder self, Action<DiscoverabilityOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
-        var options = new ServiceDiscoveryOptions();
+        var options = new DiscoverabilityOptions();
 
         innerConfigure(options);
 
         self.Services
-            .AddServiceDiscovery()
+            .AddServiceDiscovery(options.ConfigureServiceDiscovery ?? (_ => { }))
             .ConfigureHttpClientDefaults(http => {
-                http.AddStandardResilienceHandler(options.ConfigureHttpStandardResilience); // Turn on resilience by default
-                http.AddServiceDiscovery(); // Turn on service discovery by default
-            });
+                // Turn on resilience by default
+                http.AddStandardResilienceHandler(options.ConfigureHttpStandardResilience ?? (_ => { }));
 
-        // Uncomment the following to restrict the allowed schemes for service discovery.
-        // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-        // {
-        //     options.AllowedSchemes = ["https"];
-        // });
+                // Turn on service discovery by default
+                http.AddServiceDiscovery();
+            });
 
         return self;
     }

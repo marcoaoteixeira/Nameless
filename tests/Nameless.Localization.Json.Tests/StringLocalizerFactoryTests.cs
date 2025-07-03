@@ -28,7 +28,7 @@ public class StringLocalizerFactoryTests {
                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
                            .Build();
-        var options = Microsoft.Extensions.Options.Options.Create(new LocalizationOptions());
+        var options = Microsoft.Extensions.Options.Options.Create(new JsonLocalizationOptions());
 
         return new StringLocalizerFactory(
             cultureContext,

@@ -45,9 +45,9 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId OutputDbCommandEvent = new(1, nameof(OutputDbCommand));
-        internal static readonly EventId ExecuteNonQueryFailureEvent = new(2, nameof(ExecuteNonQueryFailure));
-        internal static readonly EventId ExecuteScalarFailureEvent = new(3, nameof(ExecuteScalarFailure));
-        internal static readonly EventId ExecuteReaderFailureEvent = new(4, nameof(ExecuteReaderFailure));
+        internal static readonly EventId OutputDbCommandEvent = new(3001, nameof(OutputDbCommand));
+        internal static readonly EventId ExecuteNonQueryFailureEvent = new(3002, nameof(ExecuteNonQueryFailure));
+        internal static readonly EventId ExecuteScalarFailureEvent = new(3003, nameof(ExecuteScalarFailure));
+        internal static readonly EventId ExecuteReaderFailureEvent = new(3004, nameof(ExecuteReaderFailure));
     }
 }

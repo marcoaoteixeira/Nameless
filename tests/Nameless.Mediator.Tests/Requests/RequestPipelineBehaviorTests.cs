@@ -12,7 +12,7 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenRequestHasPipelineBehavior_ThenBehaviorShouldBeExecutedBeforeRequestHandler() {
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureMediatorServices(options => {
+        services.RegisterMediator(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<,>));
         });
@@ -38,7 +38,7 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenRequestHasPipelineBehavior_ThenBehaviorShouldBeExecutedForSpecificRequest() {
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureMediatorServices(options => {
+        services.RegisterMediator(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<RequestWithoutResponse, Nothing>));
         });
@@ -68,7 +68,7 @@ public class RequestPipelineBehaviorTests {
     public async Task WhenOpenGenericPipelineBehavior_WhenMultipleRequestHandler_ThenExecutePipelineForEachRequestHandler() {
         // arrange
         var services = new ServiceCollection();
-        services.ConfigureMediatorServices(options => {
+        services.RegisterMediator(options => {
             options.Assemblies = [typeof(RequestPipelineBehaviorTests).Assembly];
             options.RegisterRequestPipelineBehavior(typeof(LoggerRequestPipelineBehavior<,>));
         });

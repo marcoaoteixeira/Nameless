@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using Nameless.MongoDB.Infrastructure;
 
 namespace Nameless.MongoDB;
 

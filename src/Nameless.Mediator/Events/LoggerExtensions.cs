@@ -15,6 +15,6 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId MissingEventHandlerEvent = new(1, nameof(MissingEventHandler));
+        internal static readonly EventId MissingEventHandlerEvent = new(6001, nameof(MissingEventHandler));
     }
 }

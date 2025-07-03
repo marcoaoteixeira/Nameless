@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Web.Correlation;
@@ -25,12 +24,18 @@ public static class HostApplicationBuilderExtensions {
     ///     The current <typeparamref name="THostApplicationBuilder"/> instance
     ///     so other actions can be chained.
     /// </returns>
-    public static THostApplicationBuilder ConfigureCorrelationAccessor<THostApplicationBuilder>(this THostApplicationBuilder self, Action<CorrelationOptions>? configure = null)
+    public static THostApplicationBuilder RegisterCorrelationAccessor<THostApplicationBuilder>(this THostApplicationBuilder self, Action<CorrelationOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         self.Services
             .Configure(configure ?? (_ => { }))
+
+            // Ensure IHttpContextAccessor is available since
+            // ICorrelationAccessor depends on it. There is no
+            // harm in calling this multiple times because
+            // it is only added if it is not already registered.
             .AddHttpContextAccessor()
-            .TryAddSingleton<ICorrelationAccessor, CorrelationAccessor>();
+
+            .AddSingleton<ICorrelationAccessor, CorrelationAccessor>();
 
         return self;
     }

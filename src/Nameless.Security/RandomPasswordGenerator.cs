@@ -32,6 +32,14 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
     /// <remarks>
     ///     On failure will return a <see cref="string.Empty" /> value.
     /// </remarks>
+    public Task<string> GenerateAsync(CancellationToken cancellationToken) {
+        return GenerateAsync(new PasswordParameters(), cancellationToken);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    ///     On failure will return a <see cref="string.Empty" /> value.
+    /// </remarks>
     public Task<string> GenerateAsync(PasswordParameters parameters, CancellationToken cancellationToken) {
         Prevent.Argument.Null(parameters);
 

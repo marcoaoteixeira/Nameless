@@ -1,6 +1,4 @@
-﻿using FluentValidationResult = FluentValidation.Results.ValidationResult;
-
-namespace Nameless.Validation.FluentValidation;
+﻿namespace Nameless.Validation.FluentValidation;
 
 public static class FluentValidationResultExtensions {
     public static ValidationResult ToValidationResult(this IEnumerable<FluentValidationResult> self) {

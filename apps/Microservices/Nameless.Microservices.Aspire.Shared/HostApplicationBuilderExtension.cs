@@ -14,8 +14,8 @@ public static class HostApplicationBuilderExtension {
     /// <returns>The current <see cref="IHostApplicationBuilder"/> instance so other actions can be chained.</returns>
     public static TApplicationBuilder RegisterAspireServices<TApplicationBuilder>(this TApplicationBuilder self)
         where TApplicationBuilder : IHostApplicationBuilder {
-        return self.ConfigureOpenTelemetry()
-                   .ConfigureHealthChecks()
-                   .ConfigureServiceDiscovery();
+        return self.RegisterOpenTelemetry()
+                   .RegisterHealthChecks()
+                   .RegisterDiscoverability();
     }
 }

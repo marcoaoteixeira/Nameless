@@ -32,7 +32,7 @@ public static class EntryPoint {
 
         builder.Services
                .RegisterApplicationServices()
-               .ConfigureMinimalEndpoint(configure => {
+               .RegisterMinimalEndpoints(configure => {
                    configure.Assemblies = [typeof(EntryPoint).Assembly];
                });
 

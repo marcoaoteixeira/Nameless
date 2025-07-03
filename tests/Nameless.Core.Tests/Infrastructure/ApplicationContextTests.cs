@@ -25,10 +25,10 @@ public class ApplicationContextTests {
         // assert
         Assert.Multiple(() => {
             Assert.Equal($"v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}", sut.Version);
-            Assert.Equal(appDataFolder, sut.AppDataFolderPath);
-            Assert.Equal(baseAppFolder, sut.AppFolderPath);
-            Assert.Equal(AppName, sut.AppName);
-            Assert.Equal(Environment, sut.Environment);
+            Assert.Equal(appDataFolder, sut.ApplicationDataFolderPath);
+            Assert.Equal(baseAppFolder, sut.ApplicationFolderPath);
+            Assert.Equal(AppName, sut.ApplicationName);
+            Assert.Equal(Environment, sut.EnvironmentName);
         });
     }
 }

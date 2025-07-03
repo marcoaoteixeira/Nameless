@@ -17,7 +17,7 @@ public static class HostApplicationBuilderExtensions {
     /// <returns>
     ///     The current <see cref="TApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
-    public static TApplicationBuilder ConfigureHealthChecks<TApplicationBuilder>(this TApplicationBuilder self, Action<HealthChecksOptions>? configure = null)
+    public static TApplicationBuilder RegisterHealthChecks<TApplicationBuilder>(this TApplicationBuilder self, Action<HealthChecksOptions>? configure = null)
         where TApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new HealthChecksOptions();

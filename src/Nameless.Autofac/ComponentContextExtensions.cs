@@ -64,19 +64,26 @@ public static class ComponentContextExtensions {
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self)
         where TOptions : class, new() {
-        return GetOptions(self, () => new TOptions());
+        return self.GetOptions(() => new TOptions());
     }
 
     /// <summary>
-    ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current <see cref="IComponentContext" />.
+    ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current
+    ///     <see cref="IComponentContext" />.
     /// </summary>
-    /// <typeparam name="TOptions">Type of the options.</typeparam>
-    /// <param name="self">The current <see cref="IComponentContext" /></param>
-    /// <param name="optionsFactory">An options optionsFactory, if the options were not to be found.</param>
+    /// <typeparam name="TOptions">
+    ///     Type of the options.
+    /// </typeparam>
+    /// <param name="self">
+    ///     The current <see cref="IComponentContext" />.
+    /// </param>
+    /// <param name="fallback">
+    ///     An options fallback, if the options were not to be found.
+    /// </param>
     /// <returns>
     ///     An instance of <see cref="IOptions{TOptions}" />.
     /// </returns>
-    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> optionsFactory)
+    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> fallback)
         where TOptions : class {
         // let's first check if our provider can resolve this option
         if (self.TryResolve<IOptions<TOptions>>(out var options)) {
@@ -96,8 +103,8 @@ public static class ComponentContextExtensions {
 
         // whoops...if we reach this far, seems like we don't have
         // the configuration set or missing this particular option.
-        // If we have the optionsFactory let's construct it.
-        var optionsFromFactory = optionsFactory();
+        // If we have the fallback let's construct it.
+        var optionsFromFactory = fallback();
 
         return Options.Create(optionsFromFactory);
     }

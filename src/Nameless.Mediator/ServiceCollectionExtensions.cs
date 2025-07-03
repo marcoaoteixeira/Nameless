@@ -19,7 +19,10 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection ConfigureMediatorServices(this IServiceCollection self, Action<MediatorOptions>? configure = null) {
+    public static IServiceCollection RegisterMediator(this IServiceCollection self, Action<MediatorOptions>? configure = null) {
+        // We are not going to register the configuration
+        // action since there are no services that use
+        // it after they have been registered.
         var innerConfigure = configure ?? (_ => { });
         var options = new MediatorOptions();
 

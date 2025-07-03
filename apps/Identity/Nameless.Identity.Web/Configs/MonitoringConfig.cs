@@ -10,9 +10,9 @@ public static class MonitoringConfig {
     public static WebApplicationBuilder ConfigureMonitoringServices(this WebApplicationBuilder self) {
         self.Services.AddHttpContextAccessor();
 
-        self.ConfigureOpenTelemetry()
-            .ConfigureHealthChecks()
-            .ConfigureServiceDiscovery();
+        self.RegisterOpenTelemetry()
+            .RegisterHealthChecks()
+            .RegisterDiscoverability();
 
         self.Services.AddSerilog((_, config) => {
             config.ReadFrom

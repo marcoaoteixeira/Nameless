@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis;
+using Microsoft.Extensions.Options;
 
 namespace Nameless.Search.Lucene;
 
@@ -6,31 +7,27 @@ namespace Nameless.Search.Lucene;
 ///     Default implementation of <see cref="IAnalyzerProvider" />.
 /// </summary>
 public sealed class AnalyzerProvider : IAnalyzerProvider {
-    private readonly IAnalyzerSelector[] _selectors;
+    private readonly IOptions<SearchOptions> _options;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="AnalyzerProvider" />
     /// </summary>
-    /// <param name="selectors">A collection of <see cref="IAnalyzerSelector" /></param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="selectors" /> is <see langword="null"/>
+    ///     if <paramref name="options" /> is <see langword="null"/>
     /// </exception>
-    public AnalyzerProvider(IEnumerable<IAnalyzerSelector> selectors) {
-        _selectors = Prevent.Argument.Null(selectors).ToArray();
+    public AnalyzerProvider(IOptions<SearchOptions> options) {
+        _options = Prevent.Argument.Null(options);
     }
 
     /// <inheritdoc />
     public Analyzer GetAnalyzer(string indexName) {
-        var selectors = _selectors.Select(selector => selector.GetAnalyzer(indexName));
+        var result = _options.Value.AnalyzerSelectors
+                             .Select(selector => selector.GetAnalyzer(indexName))
+                             .MaxBy(item => item.Priority);
 
-        var selector = selectors
-#if NET8_0_OR_GREATER
-           .MaxBy(selector => selector.Priority);
-#else
-            .OrderByDescending(selector => selector.Priority)
-            .FirstOrDefault();
-#endif
-
-        return selector?.Analyzer ?? Defaults.Analyzer;
+        return result?.Analyzer ?? Defaults.Analyzer;
     }
 }

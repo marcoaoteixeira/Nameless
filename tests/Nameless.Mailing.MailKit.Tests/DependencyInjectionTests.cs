@@ -8,15 +8,15 @@ public class DependencyInjectionTests {
     public void Register_Resolve_Service() {
         // arrange
         var services = new ServiceCollection();
-        services.AddSingleton(new LoggerMocker<MailingService>().Build());
-        services.ConfigureMailingServices(_ => { });
+        services.AddSingleton(new LoggerMocker<MailingImpl>().Build());
+        services.RegisterMailing(_ => { });
 
         using var provider = services.BuildServiceProvider();
 
         // act
-        var sut = provider.GetService<IMailingService>();
+        var sut = provider.GetService<IMailing>();
 
         // assert
-        Assert.IsType<MailingService>(sut);
+        Assert.IsType<MailingImpl>(sut);
     }
 }

@@ -13,7 +13,7 @@ public static class EntryPoint {
     public static void Main(string[] args) {
         WebApplication.CreateBuilder(args)
                       .ConfigureMonitoringServices()
-                      .ConfigureMinimalEndpoint(options => {
+                      .RegisterMinimalEndpoints(options => {
                           options.Assemblies = Assemblies;
                           options.ConfigureOpenApi = openApiOpts => {
                               openApiOpts.AddDocumentTransformer<BearerSecuritySchemeTransformer>();

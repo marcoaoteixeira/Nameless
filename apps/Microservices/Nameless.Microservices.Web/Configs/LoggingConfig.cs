@@ -22,8 +22,8 @@ public static class LoggingConfig {
     ///     Responsible for registering services that provide access to the
     ///     current HTTP context and correlation ID.
     /// </remarks>
-    public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder self) {
-        self.Services.AddSerilog((provider, config) => {
+    public static WebApplicationBuilder RegisterLogging(this WebApplicationBuilder self) {
+        self.Services.AddSerilog((_, config) => {
             config.ReadFrom
                   .Configuration(self.Configuration)
 

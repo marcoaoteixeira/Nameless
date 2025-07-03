@@ -9,6 +9,9 @@ namespace Nameless.Null;
 /// <typeparam name="TKey">Type of the key.</typeparam>
 /// <typeparam name="TValue">Type of the value.</typeparam>
 public sealed class NullDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
+    /// <summary>
+    ///     Gets the unique instance of <see cref="NullDictionary{TKey, TValue}"/>.
+    /// </summary>
     public static IDictionary<TKey, TValue> Instance { get; } = new NullDictionary<TKey, TValue>();
 
     /// <inheritdoc />
@@ -29,6 +32,8 @@ public sealed class NullDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
     /// <inheritdoc />
     public ICollection<TValue> Values => [];
 
+    // Explicit static constructor to tell the C# compiler
+    // not to mark type as beforefieldinit
     static NullDictionary() { }
 
     private NullDictionary() { }

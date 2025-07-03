@@ -19,7 +19,7 @@ public static class ServiceProviderExtensions {
 
         if (lifetime is null) {
             self.GetLogger(typeof(ServiceProviderExtensions))
-                .HostApplicationLifetimeUnavailable(typeof(IHostApplicationLifetime));
+                .HostApplicationLifetimeUnavailable(nameof(IHostApplicationLifetime));
 
             return;
         }
