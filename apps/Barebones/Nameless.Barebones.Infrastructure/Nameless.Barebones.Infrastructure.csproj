@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Serilog" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	</ItemGroup>
+
+</Project>

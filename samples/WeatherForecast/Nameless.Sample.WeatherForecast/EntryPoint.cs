@@ -31,10 +31,11 @@ public static class EntryPoint {
                .AddJwtBearer();
 
         builder.Services
-               .RegisterApplicationServices()
-               .RegisterMinimalEndpoints(configure => {
-                   configure.Assemblies = [typeof(EntryPoint).Assembly];
-               });
+               .RegisterApplicationServices();
+
+        builder.RegisterMinimalEndpoints(configure => {
+            configure.Assemblies = [typeof(EntryPoint).Assembly];
+        });
 
         var app = builder.Build();
 

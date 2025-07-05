@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Standard;
+using Microsoft.Extensions.Options;
 using Nameless.Search.Lucene.Fixtures;
 using Nameless.Search.Lucene.Mockers;
 
@@ -9,8 +10,10 @@ public class AnalyzerProviderTests {
     public void WhenGetAnalyzer_ThenReturnsAnalyzerForIndex() {
         // arrange
         const string IndexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
-        var selectors = new[] { new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName).Build() };
-        var sut = new AnalyzerProvider(selectors);
+        var searchOptions = new SearchOptions();
+        searchOptions.RegisterAnalyzerSelector(new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName).Build());
+        var options = Options.Create(searchOptions);
+        var sut = new AnalyzerProvider(options);
 
         // act
         var actual = sut.GetAnalyzer(IndexName);
@@ -23,8 +26,7 @@ public class AnalyzerProviderTests {
     public void WhenGetAnalyzer_IfNoAnalyzerFound_ThenReturnsDefaultStandardAnalyzer() {
         // arrange
         const string IndexName = "48574ce1-1c24-4727-8d74-9dc8f01bf98c";
-        var selectors = Array.Empty<IAnalyzerSelector>();
-        var sut = new AnalyzerProvider(selectors);
+        var sut = new AnalyzerProvider(Options.Create(new SearchOptions()));
 
         // act
         var actual = sut.GetAnalyzer(IndexName);
@@ -49,7 +51,12 @@ public class AnalyzerProviderTests {
             new AnalyzerSelectorMocker().WithAnalyzerFor(IndexName, new FakeAnalyzer(HighestPriority), HighestPriority)
                                         .Build()
         };
-        var sut = new AnalyzerProvider(selectors);
+        var searchOptions = new SearchOptions();
+        searchOptions.RegisterAnalyzerSelector(selectors[0]);
+        searchOptions.RegisterAnalyzerSelector(selectors[1]);
+        searchOptions.RegisterAnalyzerSelector(selectors[2]);
+
+        var sut = new AnalyzerProvider(Options.Create(searchOptions));
 
         // act
         var actual = sut.GetAnalyzer(IndexName);

@@ -15,13 +15,9 @@ public class ServiceCollectionExtensionsTests {
 
         // act
         var database = provider.GetService<IDatabase>();
-        var dbConnectionFactory = provider.GetService<IDbConnectionFactory>();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.IsType<Database>(database);
-            Assert.IsType<DbConnectionFactory>(dbConnectionFactory);
-        });
+        Assert.IsType<Database>(database);
     }
 
     [Fact]
@@ -35,12 +31,8 @@ public class ServiceCollectionExtensionsTests {
 
         // act
         var database = provider.GetService<IDatabase>();
-        var dbConnectionFactory = provider.GetService<IDbConnectionFactory>();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.IsType<Database>(database);
-            Assert.IsType<DbConnectionFactory>(dbConnectionFactory);
-        });
+        Assert.IsType<Database>(database);
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
-using Nameless.Testing.Tools;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Search.Lucene;
@@ -26,12 +25,12 @@ public class IndexTests {
         services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(IndexDirectoryPath)
                                                             .Build());
 
-        services.ConfigureSearchServices(_ => { });
+        services.RegisterSearch(_ => { });
 
         return services.BuildServiceProvider();
     }
 
-    [Category(Categories.RUNS_ON_DEV_MACHINE)]
+    [IntegrationTest]
     [Fact]
     public void WhenCreatingIndex_WithIndexName_ThenReturnsIndexInstance_Cache() {
         using var provider = CreateServiceProvider();
@@ -48,7 +47,7 @@ public class IndexTests {
         });
     }
 
-    [Category(Categories.RUNS_ON_DEV_MACHINE)]
+    [IntegrationTest]
     [Fact]
     public async Task StoreDocument_Should_Create_A_New_Document_In_Index() {
         await using var provider = CreateServiceProvider();
@@ -78,7 +77,7 @@ public class IndexTests {
         });
     }
 
-    [Category(Categories.RUNS_ON_DEV_MACHINE)]
+    [IntegrationTest]
     [Fact]
     public async Task CreateSearchBuilder_Should_Return_Search_Service_And_Find_Document() {
         await using var provider = CreateServiceProvider();
@@ -129,7 +128,7 @@ public class IndexTests {
         });
     }
 
-    [Category(Categories.RUNS_ON_DEV_MACHINE)]
+    [IntegrationTest]
     [Fact]
     public async Task Multiple_Documents_Store_Different_Moments() {
         // setup

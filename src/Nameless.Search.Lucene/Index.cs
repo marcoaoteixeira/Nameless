@@ -28,7 +28,7 @@ public sealed class Index : IIndex {
     /// <inheritdoc />
     public string Name { get; }
 
-    public EventHandler<DisposeIndexEventArgs>? OnDispose;
+    public event EventHandler<DisposeIndexEventArgs>? OnDispose;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Index" />.

@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions {
                    .AddScoped(SessionResolver);
     }
 
-    private static ISessionFactory SessionFactoryResolver(this IServiceProvider self) {
+    private static ISessionFactory SessionFactoryResolver(this IServiceProvider self, object? key) {
         var options = self.GetOptions<NHibernateOptions>();
         var configurationFactory = self.GetRequiredKeyedService<IConfigurationFactory>(CONFIGURATION_FACTORY_KEY);
         var configuration = configurationFactory.CreateConfiguration();

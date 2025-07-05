@@ -10,10 +10,11 @@ public static class EntryPoint {
         // Add services to the container.
         builder.Services
                .AddAuthorization()
-               .RegisterApplicationServices()
-               .RegisterMinimalEndpoints(configure => {
-                   configure.Assemblies = [typeof(EntryPoint).Assembly];
-               });
+               .RegisterApplicationServices();
+
+        builder.RegisterMinimalEndpoints(configure => {
+            configure.Assemblies = [typeof(EntryPoint).Assembly];
+        });
 
         var app = builder.Build();
 

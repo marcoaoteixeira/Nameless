@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Nameless.Core\Nameless.Core.csproj" />
-		<ProjectReference Include="..\..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
-		<ProjectReference Include="..\..\..\src\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
-	</ItemGroup>
-</Project>
