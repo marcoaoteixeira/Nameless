@@ -34,21 +34,29 @@ public sealed class RabbitContainer : IAsyncLifetime {
     }
 
     public async ValueTask DisposeAsync() {
-        await _connection.DisposeAsync();
-        await _container.DisposeAsync();
+        if (_connection is not null) {
+            await _connection.DisposeAsync();
+        }
+
+        if (_container is not null) {
+            await _container.StopAsync();
+            await _container.DisposeAsync();
+        }
     }
 
     public async Task<IConnection> GetDefaultConnectionAsync() {
-        if (_connection is null) {
-            var configurationFactory = new ConnectionFactory {
-                HostName = HOST_NAME,
-                Port = HOST_PORT,
-                UserName = USERNAME,
-                Password = PASSWORD
-            };
-
-            _connection = await configurationFactory.CreateConnectionAsync(CancellationToken.None);
+        if (_connection is not null) {
+            return _connection;
         }
+
+        var configurationFactory = new ConnectionFactory {
+            HostName = HOST_NAME,
+            Port = HOST_PORT,
+            UserName = USERNAME,
+            Password = PASSWORD
+        };
+
+        _connection = await configurationFactory.CreateConnectionAsync(CancellationToken.None);
 
         return _connection;
     }
