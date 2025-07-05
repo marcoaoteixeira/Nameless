@@ -7,7 +7,7 @@ namespace Nameless.Sample.Chores.Configs;
 public static class AppConfig {
     public static IServiceCollection RegisterApplicationServices(this IServiceCollection self) {
         return self
-              .RegisterValidationServices(configure => {
+              .RegisterValidation(configure => {
                   configure.Assemblies = [typeof(AppConfig).Assembly];
               })
               .AddSingleton<IChoreService, ChoreService>()

@@ -1,50 +1,64 @@
-﻿using Testcontainers.RabbitMq;
+﻿using System.Collections.ObjectModel;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
+using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
-public sealed class RabbitContainer : IDisposable, IAsyncDisposable {
-    private bool _disposed;
-    public RabbitMqContainer Instance { get; private set; }
+public sealed class RabbitContainer : IAsyncLifetime {
+    private const string HOST_NAME = "localhost";
+    private const int CONTAINER_PORT = 5672;
+    private const string USERNAME = "guest";
+    private const string PASSWORD = "guest";
 
-    public RabbitContainer() {
-        Instance = new RabbitMqBuilder()
-                  .WithImage(image: "rabbitmq:4.1.0-alpine")
-                  .WithName(name: "rabbitmq-test-container")
-                  .WithHostname("localhost")
-                  .WithPortBinding(5672, 5672)
-                  .WithUsername(username: "guest")
-                  .WithPassword(password: "guest")
-                  .WithCleanUp(cleanUp: true)
-                  .Build();
+    public const int HOST_PORT = 15672;
 
-        Instance.StartAsync().Wait();
-    }
+    private static readonly ReadOnlyDictionary<string, string> Parameter = new(new Dictionary<string, string> {
+        { "RABBITMQ_DEFAULT_USER", USERNAME },
+        { "RABBITMQ_DEFAULT_PASS", PASSWORD }
+    });
 
-    public void Dispose() {
-        if (_disposed) { return; }
+    private readonly IContainer _container = new ContainerBuilder().WithImage("rabbitmq:4.1.0-alpine")
+                                                                   .WithName("rabbitmq-test-container")
+                                                                   .WithPortBinding(HOST_PORT, CONTAINER_PORT)
+                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(CONTAINER_PORT))
+                                                                   .WithHostname(HOST_NAME)
+                                                                   .WithCleanUp(cleanUp: true)
+                                                                   .WithEnvironment(Parameter)
+                                                                   .Build();
 
-        DisposeAsync().AsTask().Wait();
+    private IConnection _connection;
 
-        _disposed = true;
+    public async ValueTask InitializeAsync() {
+        await _container.StartAsync();
     }
 
     public async ValueTask DisposeAsync() {
-        if (_disposed) { return; }
+        if (_connection is not null) {
+            await _connection.DisposeAsync();
+        }
 
-        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
-
-        _disposed = true;
+        if (_container is not null) {
+            await _container.StopAsync();
+            await _container.DisposeAsync();
+        }
     }
 
-    private async ValueTask DisposeAsyncCore() {
-        if (Instance is not null) {
-            await Instance.StopAsync()
-                          .ConfigureAwait(continueOnCapturedContext: false);
-            await Instance.DisposeAsync()
-                          .ConfigureAwait(continueOnCapturedContext: false);
-
-            Instance = null;
+    public async Task<IConnection> GetDefaultConnectionAsync() {
+        if (_connection is not null) {
+            return _connection;
         }
+
+        var configurationFactory = new ConnectionFactory {
+            HostName = HOST_NAME,
+            Port = HOST_PORT,
+            UserName = USERNAME,
+            Password = PASSWORD
+        };
+
+        _connection = await configurationFactory.CreateConnectionAsync(CancellationToken.None);
+
+        return _connection;
     }
 }
 

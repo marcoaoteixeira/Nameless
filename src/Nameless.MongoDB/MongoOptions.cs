@@ -6,8 +6,6 @@ namespace Nameless.MongoDB;
 /// Options for configuring the MongoDB connection.
 /// </summary>
 public sealed record MongoOptions {
-    private CredentialsSettings? _credentials;
-
     /// <summary>
     /// Gets or sets the assemblies to scan for document mappers.
     /// </summary>
@@ -33,8 +31,5 @@ public sealed record MongoOptions {
     /// <summary>
     /// Gets or sets the credentials settings for the MongoDB connection.
     /// </summary>
-    public CredentialsSettings Credentials {
-        get => _credentials ??= new CredentialsSettings();
-        set => _credentials = value;
-    }
+    public CredentialsSettings Credentials { get; set; } = new();
 }

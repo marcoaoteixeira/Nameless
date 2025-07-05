@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Barebones</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
+		<ProjectReference Include="..\Nameless.Barebones.Api\Nameless.Barebones.Api.csproj" />
+		<ProjectReference Include="..\Nameless.Barebones.Application\Nameless.Barebones.Application.csproj" />
+		<ProjectReference Include="..\Nameless.Barebones.Domains\Nameless.Barebones.Domains.csproj" />
+		<ProjectReference Include="..\Nameless.Barebones.Frontend\Nameless.Barebones.Frontend.csproj" />
+		<ProjectReference Include="..\Nameless.Barebones.Infrastructure\Nameless.Barebones.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

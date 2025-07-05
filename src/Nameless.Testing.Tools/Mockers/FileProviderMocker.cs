@@ -4,31 +4,31 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers;
 
-public sealed class FileProviderMocker : MockerBase<IFileProvider> {
-    public FileProviderMocker WithFileInfo(IFileInfo fileInfo) {
+public sealed class FileProviderMocker : Mocker<IFileProvider> {
+    public FileProviderMocker WithFileInfo(IFileInfo returnValue) {
         MockInstance.Setup(mock => mock.GetFileInfo(It.IsAny<string>()))
-                    .Returns(fileInfo);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public FileProviderMocker WithFileInfo(IFileInfo fileInfo, string subPath) {
+    public FileProviderMocker WithFileInfo(string subPath, IFileInfo returnValue) {
         MockInstance.Setup(mock => mock.GetFileInfo(subPath))
-                    .Returns(fileInfo);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public FileProviderMocker WithWatch(IChangeToken changeToken) {
+    public FileProviderMocker WithWatch(IChangeToken returnValue) {
         MockInstance.Setup(mock => mock.Watch(It.IsAny<string>()))
-                    .Returns(changeToken);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public FileProviderMocker WithWatch(IChangeToken changeToken, string filter) {
+    public FileProviderMocker WithWatch(string filter, IChangeToken returnValue) {
         MockInstance.Setup(mock => mock.Watch(filter))
-                    .Returns(changeToken);
+                    .Returns(returnValue);
 
         return this;
     }

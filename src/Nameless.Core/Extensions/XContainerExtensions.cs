@@ -15,7 +15,7 @@ public static class XContainerExtensions {
     /// </summary>
     /// <param name="self">The self <see cref="XContainer" />.</param>
     /// <param name="elementName">The element name.</param>
-    /// <returns><c>true</c> if exists, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if exists, otherwise, <see langword="false"/>.</returns>
     public static bool HasElement(this XContainer self, string elementName) {
         return self.Element(elementName) is not null;
     }
@@ -29,7 +29,7 @@ public static class XContainerExtensions {
     /// <param name="elementName">The name of the element.</param>
     /// <param name="attributeName">The attribute name.</param>
     /// <param name="attributeValue">The attribute value.</param>
-    /// <returns><c>true</c> if it has the attribute; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if it has the attribute; otherwise <see langword="false"/>.</returns>
     public static bool HasElement(this XContainer self, string elementName, string attributeName,
                                   string attributeValue) {
         var expression = string.Format(ElementPathPattern, elementName, attributeName, attributeValue);

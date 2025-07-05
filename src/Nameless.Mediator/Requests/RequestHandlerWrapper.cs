@@ -1,4 +1,6 @@
-﻿namespace Nameless.Mediator.Requests;
+﻿#pragma warning disable S1694
+
+namespace Nameless.Mediator.Requests;
 
 /// <summary>
 ///     A wrapper class for a request handler.

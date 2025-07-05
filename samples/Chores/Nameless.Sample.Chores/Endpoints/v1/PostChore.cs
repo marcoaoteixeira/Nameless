@@ -14,12 +14,12 @@ public class PostChore : IEndpoint {
         _choreService = choreService;
     }
 
-    public void Configure(IEndpointBuilder builder) {
-        builder
+    public void Configure(IEndpointDescriptor descriptor) {
+        descriptor
            .Post("/chores", HandleAsync)
            .AllowAnonymous()
            .WithName($"{nameof(PostChore)}_v1")
-           .WithFilter<ValidateEndpointFilter>()
+           .WithFilter<ValidationEndpointFilter>()
            .Produces<ChoreDto>()
            .ProducesProblem()
            .ProducesValidationProblem()

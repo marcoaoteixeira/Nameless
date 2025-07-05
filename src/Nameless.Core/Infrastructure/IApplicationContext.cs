@@ -7,22 +7,22 @@ public interface IApplicationContext {
     /// <summary>
     ///     Gets the application environment name.
     /// </summary>
-    string Environment { get; }
+    string EnvironmentName { get; }
 
     /// <summary>
     ///     Gets the application name.
     /// </summary>
-    string AppName { get; }
+    string ApplicationName { get; }
 
     /// <summary>
     ///     Gets the path to the application folder.
     /// </summary>
-    string AppFolderPath { get; }
+    string ApplicationFolderPath { get; }
 
     /// <summary>
     ///     Gets the path to the application data folder.
     /// </summary>
-    string AppDataFolderPath { get; }
+    string ApplicationDataFolderPath { get; }
 
     /// <summary>
     ///     Gets the application version.

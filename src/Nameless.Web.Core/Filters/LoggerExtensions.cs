@@ -6,10 +6,14 @@ internal static class LoggerExtensions {
     private static readonly Action<ILogger, Exception?> ValidationServiceUnavailableDelegate
         = LoggerMessage.Define(
             logLevel: LogLevel.Warning,
-            eventId: default,
+            eventId: Events.ValidationServiceUnavailableEvent,
             formatString: "Validation service is unavailable.");
 
-    internal static void ValidationServiceUnavailable(this ILogger<ValidateEndpointFilter> self) {
+    internal static void ValidationServiceUnavailable(this ILogger<ValidationEndpointFilter> self) {
         ValidationServiceUnavailableDelegate(self, null /* exception */);
+    }
+
+    internal static class Events {
+        internal static readonly EventId ValidationServiceUnavailableEvent = new(11002, nameof(ValidationServiceUnavailable));
     }
 }

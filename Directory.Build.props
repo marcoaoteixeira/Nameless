@@ -83,6 +83,7 @@
 	<PropertyGroup Condition="$(IsTestProject)">
 		<Nullable>disable</Nullable>
 		<IsPackable>False</IsPackable>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!-- Test projects must include these properties -->

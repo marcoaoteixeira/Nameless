@@ -117,10 +117,11 @@ public static class StringExtensions {
     /// <param name="self">The current <see cref="string" />.</param>
     /// <returns>An array of <see cref="byte" />.</returns>
     public static byte[] ToHexByteArray(this string self) {
-        return Enumerable.Range(0, self.Length)
-                         .Where(index => index % 2 == 0)
-                         .Select(index => Convert.ToByte(self.Substring(index, 2), 16 /* hexadecimal */))
-                         .ToArray();
+        var result = Enumerable.Range(0, self.Length)
+                               .Where(index => index % 2 == 0)
+                               .Select(index => Convert.ToByte(self.Substring(index, 2), 16 /* hexadecimal */));
+
+        return [.. result];
     }
 
     /// <summary>
@@ -196,7 +197,7 @@ public static class StringExtensions {
     /// </summary>
     /// <param name="self">The current <see cref="string" /></param>
     /// <param name="chars">The <see cref="char" />s to check.</param>
-    /// <returns><c>true</c> if any of the <see cref="char" /> exists, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if any of the <see cref="char" /> exists, otherwise, <see langword="false"/>.</returns>
     public static bool Any(this string self, params char[] chars) {
         return chars.Length != 0 && self.Any(current => Array.IndexOf(chars, current) >= 0);
     }
@@ -206,7 +207,7 @@ public static class StringExtensions {
     /// </summary>
     /// <param name="self">The current <see cref="string" /></param>
     /// <param name="chars">The <see cref="char" />s to check.</param>
-    /// <returns><c>true</c> if all of the <see cref="char" /> exists, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if all of the <see cref="char" /> exists, otherwise, <see langword="false"/>.</returns>
     public static bool All(this string self, params char[] chars) {
         return self.All(current => Array.IndexOf(chars, current) >= 0);
     }
@@ -245,7 +246,7 @@ public static class StringExtensions {
     ///     Removes all HTML tags from <paramref name="self" /> <see cref="string" />.
     /// </summary>
     /// <param name="self">The current <see cref="string" />.</param>
-    /// <param name="htmlDecode"><c>true</c> if should HTML decode.</param>
+    /// <param name="htmlDecode"><see langword="true"/> if should HTML decode.</param>
     /// <returns>The <see cref="string" /> without HTML tags</returns>
     public static string RemoveHtmlTags(this string self, bool htmlDecode = false) {
         var content = new char[self.Length];
@@ -278,7 +279,7 @@ public static class StringExtensions {
     /// <param name="self">The current <see cref="string" />.</param>
     /// <param name="contains">The text that should look for.</param>
     /// <param name="stringComparison">Comparison style.</param>
-    /// <returns><c>true</c> if contains, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if contains, otherwise, <see langword="false"/>.</returns>
     public static bool Contains(this string self, string contains,
                                 StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
         return self.IndexOf(contains, stringComparison) > 0;
@@ -290,7 +291,7 @@ public static class StringExtensions {
     /// <param name="self">The current <see cref="string" />.</param>
     /// <param name="regExp">The regexp.</param>
     /// <param name="regexOptions">The regexp options.</param>
-    /// <returns><c>true</c> if matches, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if matches, otherwise, <see langword="false"/>.</returns>
     public static bool IsMatch(this string self, string regExp, RegexOptions regexOptions = RegexOptions.None) {
         return Regex.IsMatch(self, regExp, regexOptions);
     }
@@ -471,13 +472,13 @@ public static class StringExtensions {
     }
 
     /// <summary>
-    ///     If the current <see cref="string" /> is <c>null</c> or <see cref="string.Empty" /> or
+    ///     If the current <see cref="string" /> is <see langword="null"/> or <see cref="string.Empty" /> or
     ///     only white spaces, it will return the <paramref name="fallback" />.
     /// </summary>
     /// <param name="self">The current string.</param>
     /// <param name="fallback">The fallback.</param>
     /// <returns>
-    ///     if <see cref="string" /> is <c>null</c> or <see cref="string.Empty" />,
+    ///     if <see cref="string" /> is <see langword="null"/> or <see cref="string.Empty" />,
     ///     it will return the <paramref name="fallback" />, otherwise; the current
     ///     string.
     /// </returns>

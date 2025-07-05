@@ -9,8 +9,11 @@ public interface IChannelFactory {
     /// <summary>
     ///     Creates a new RabbitMQ <see cref="IChannel" />.
     /// </summary>
-    /// <param name="exchangeName">The exchange which will be associated with the channel.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A new <see cref="IChannel" /> instance.</returns>
-    Task<IChannel> CreateAsync(string exchangeName, CancellationToken cancellationToken);
+    /// <returns>
+    ///     An asynchronous task representing the execution where
+    ///     <see cref="Task{TResult}.Result"/> is the <see cref="IChannel" />
+    ///     instance.
+    /// </returns>
+    Task<IChannel> CreateAsync(CancellationToken cancellationToken);
 }

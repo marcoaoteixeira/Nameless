@@ -8,7 +8,7 @@ public static class TaskExtensions {
     ///     Checks if the <see cref="Task" /> can continue.
     /// </summary>
     /// <param name="self">The <see cref="Task" /> source</param>
-    /// <returns><c>true</c> if it can continue; otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if it can continue; otherwise <see langword="false"/>.</returns>
     public static bool CanContinue(this Task self) {
         return self.Exception is null && self is { IsCanceled: false, IsFaulted: false, IsCompleted: true };
     }

@@ -6,6 +6,8 @@ namespace Nameless.Data.Sqlite;
 ///     Extension methods for <see cref="IServiceCollection" />.
 /// </summary>
 public static class ServiceCollectionExtensions {
+    private const string DB_CONNECTION_FACTORY_KEY = $"{nameof(IDbConnectionFactory)} :: 9dc9ad38-b1f4-450a-ad39-e2c3a288afca";
+
     /// <summary>
     /// Registers the data services.
     /// </summary>
@@ -14,13 +16,16 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterDataServices(this IServiceCollection self, Action<SqliteOptions>? configure = null) {
+    public static IServiceCollection RegisterDatabaseServices(this IServiceCollection self, Action<SqliteOptions>? configure = null) {
         return self.Configure(configure ?? (_ => { }))
-                   .RegisterMainServices();
+                   .AddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY)
+                   .AddScoped(ResolveDatabase);
     }
 
-    private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        return self.AddSingleton<IDbConnectionFactory, DbConnectionFactory>()
-                   .AddSingleton<IDatabase, Database>();
+    private static IDatabase ResolveDatabase(IServiceProvider provider) {
+        var dbConnectionFactory = provider.GetRequiredKeyedService<IDbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
+        var logger = provider.GetLogger<Database>();
+
+        return new Database(dbConnectionFactory, logger);
     }
 }

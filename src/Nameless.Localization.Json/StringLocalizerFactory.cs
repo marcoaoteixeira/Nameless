@@ -14,7 +14,7 @@ namespace Nameless.Localization.Json;
 public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     private readonly ICultureProvider _cultureContext;
     private readonly IResourceManager _resourceManager;
-    private readonly IOptions<LocalizationOptions> _options;
+    private readonly IOptions<JsonLocalizationOptions> _options;
 
     private readonly ILogger<StringLocalizerFactory> _stringLocalizerFactoryLogger;
     private readonly ILogger<StringLocalizer> _stringLocalizerLogger;
@@ -30,11 +30,11 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     Thrown when <paramref name="cultureContext"/> or
     ///     <paramref name="resourceManager"/> or
     ///     <paramref name="options"/> or
-    ///     <paramref name="loggerFactory"/> is <c>null</c>.
+    ///     <paramref name="loggerFactory"/> is <see langword="null"/>.
     /// </exception>
     public StringLocalizerFactory(ICultureProvider cultureContext,
                                   IResourceManager resourceManager,
-                                  IOptions<LocalizationOptions> options,
+                                  IOptions<JsonLocalizationOptions> options,
                                   ILoggerFactory loggerFactory) {
         _cultureContext = Prevent.Argument.Null(cultureContext);
         _resourceManager = Prevent.Argument.Null(resourceManager);
@@ -48,7 +48,7 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="resourceSource"/> is <c>null</c>.
+    ///     Thrown when <paramref name="resourceSource"/> is <see langword="null"/>.
     /// </exception>
     public IStringLocalizer Create(Type resourceSource) {
         Prevent.Argument.Null(resourceSource);
@@ -64,7 +64,7 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="baseName"/> or
-    ///     <paramref name="location"/> is <c>null</c>.
+    ///     <paramref name="location"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="baseName"/> or

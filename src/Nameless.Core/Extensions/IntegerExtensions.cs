@@ -39,7 +39,7 @@ public static class IntegerExtensions {
     ///     <paramref name="max" /> limits.
     /// </param>
     /// <returns>
-    ///     <c>true</c> if it falls between; otherwise <c>false</c>.
+    ///     <see langword="true"/> if it falls between; otherwise <see langword="false"/>.
     /// </returns>
     public static bool IsWithinRange(this int self, int min, int max, bool includeLimit = true) {
         return includeLimit

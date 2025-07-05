@@ -21,7 +21,7 @@ public sealed class MediatorImpl : IMediator {
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="eventHandlerInvoker"/> or
     ///     <paramref name="requestHandlerInvoker"/> or
-    ///     <paramref name="streamHandlerInvoker"/> is <c>null</c>.
+    ///     <paramref name="streamHandlerInvoker"/> is <see langword="null"/>.
     /// </exception>
     public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker,
                         IRequestHandlerInvoker requestHandlerInvoker,

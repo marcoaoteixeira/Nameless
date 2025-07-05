@@ -3,7 +3,7 @@ using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Data.Mockers;
 
-public class DataReaderMocker : MockerBase<IDataReader> {
+public class DataReaderMocker : Mocker<IDataReader> {
     public DataReaderMocker WithReadSequence(params bool[] sequence) {
         var setup = MockInstance.SetupSequence(mock => mock.Read());
 

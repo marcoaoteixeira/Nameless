@@ -8,10 +8,10 @@ namespace Nameless;
 /// </summary>
 public static class ExceptionExtensions {
     /// <summary>
-    ///     Returns <c>true</c> if is a fatal exception.
+    ///     Returns <see langword="true"/> if is a fatal exception.
     /// </summary>
     /// <param name="self">The self <see cref="Exception" />.</param>
-    /// <returns><c>true</c> if is fatal, otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if is fatal, otherwise, <see langword="false"/>.</returns>
     /// <remarks>
     ///     What would be considered fatal exception? All exceptions listed below:
     ///     - <see cref="StackOverflowException" />

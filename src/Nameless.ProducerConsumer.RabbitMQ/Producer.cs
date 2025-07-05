@@ -16,38 +16,47 @@ public sealed class Producer : IProducer {
     private IChannel? _channel;
     private bool _disposed;
 
+    /// <inheritdoc />
+    public string Topic { get; }
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Producer"/> class.
     /// </summary>
-    /// <param name="channel">The channel.</param>
     /// <param name="topic">The topic.</param>
+    /// <param name="channel">The channel.</param>
     /// <param name="timeProvider">The time provider.</param>
     /// <param name="logger">The logger.</param>
-    public Producer(IChannel channel, string topic, TimeProvider timeProvider, ILogger<Producer> logger) {
+    public Producer(string topic, IChannel channel, TimeProvider timeProvider, ILogger<Producer> logger) {
+        Topic = Prevent.Argument.Null(topic);
+
         _channel = Prevent.Argument.Null(channel);
         _timeProvider = Prevent.Argument.Null(timeProvider);
         _logger = Prevent.Argument.Null(logger);
-
-        Topic = Prevent.Argument.Null(topic);
     }
 
     ~Producer() {
-        Dispose(disposing: false);
+        Dispose(false);
     }
 
-    public string Topic { get; }
-
-    public async Task ProduceAsync(object message, Args args, CancellationToken cancellationToken) {
+    /// <inheritdoc />
+    public async Task ProduceAsync(object message, Parameters parameters, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        var properties = CreateProperties(args);
+        var properties = parameters.CreateBasicProperties();
         var buffer = CreateEnvelope(message, properties).GetBuffer();
 
         try {
-            foreach (var routingKey in args.GetRoutingKeys()) {
-                await GetChannel().BasicPublishAsync(Topic,
+            // if we don't have any routing key
+            var routingKeys = parameters.GetRoutingKeys();
+            if (routingKeys.Length == 0) {
+                // to topic will be our routing key.
+                routingKeys = [Topic];
+            }
+
+            foreach (var routingKey in routingKeys) {
+                await GetChannel().BasicPublishAsync(parameters.GetExchangeName(),
                                        routingKey,
-                                       args.GetMandatory(),
+                                       parameters.GetMandatory(),
                                        properties,
                                        buffer,
                                        cancellationToken)
@@ -58,14 +67,14 @@ public sealed class Producer : IProducer {
     }
 
     public void Dispose() {
-        Dispose(disposing: true);
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
     public async ValueTask DisposeAsync() {
-        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
+        await DisposeAsyncCore().ConfigureAwait(false);
 
-        Dispose(disposing: false);
+        Dispose(false);
         GC.SuppressFinalize(this);
     }
 
@@ -78,11 +87,10 @@ public sealed class Producer : IProducer {
     }
 
     private Envelope CreateEnvelope(object message, BasicProperties properties) {
-        return new Envelope(message, properties.MessageId, properties.CorrelationId, _timeProvider.GetUtcNow());
-    }
-
-    private static BasicProperties CreateProperties(Args args) {
-        return new BasicProperties().FillWith(args);
+        return new Envelope(message,
+            properties.MessageId,
+            properties.CorrelationId,
+            _timeProvider.GetUtcNow());
     }
 
     private void BlockAccessAfterDispose() {
@@ -102,10 +110,10 @@ public sealed class Producer : IProducer {
     private async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
             await _channel.CloseAsync(Constants.ReplySuccess, "Publisher finished work.")
-                          .ConfigureAwait(continueOnCapturedContext: false);
+                          .ConfigureAwait(false);
 
             await _channel.DisposeAsync()
-                          .ConfigureAwait(continueOnCapturedContext: false);
+                          .ConfigureAwait(false);
         }
     }
 }

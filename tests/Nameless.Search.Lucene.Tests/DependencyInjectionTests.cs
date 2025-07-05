@@ -13,7 +13,7 @@ public class DependencyInjectionTests {
                                                                .Build();
         services.AddSingleton(applicationContext);
 
-        var loggerForIndexProvider = new LoggerMocker<IndexProvider>().Build();
+        var loggerForIndexProvider = new LoggerMocker<IndexManager>().Build();
         var loggerForIndex = new LoggerMocker<Index>().Build();
         var loggerFactory = new LoggerFactoryMocker()
                            .WithCreateLogger(loggerForIndexProvider)
@@ -21,19 +21,19 @@ public class DependencyInjectionTests {
                            .Build();
         services.AddSingleton(loggerFactory);
 
-        var options = new OptionsMocker<LuceneOptions>()
-                     .WithValue(new LuceneOptions())
+        var options = new OptionsMocker<SearchOptions>()
+                     .WithValue(new SearchOptions())
                      .Build();
         services.AddSingleton(options);
 
-        services.RegisterSearchServices(_ => { });
+        services.RegisterSearch(_ => { });
 
         using var provider = services.BuildServiceProvider();
 
         // act
-        var service = provider.GetService<IIndexProvider>();
+        var service = provider.GetService<IIndexManager>();
 
         // assert
-        Assert.IsType<IndexProvider>(service);
+        Assert.IsType<IndexManager>(service);
     }
 }

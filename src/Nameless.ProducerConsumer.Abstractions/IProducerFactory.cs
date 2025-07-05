@@ -1,18 +1,18 @@
 ﻿namespace Nameless.ProducerConsumer;
 
 /// <summary>
-///     Defines a factory for creating producers.
+///     Represents a producer factory.
 /// </summary>
 public interface IProducerFactory {
     /// <summary>
-    ///     Creates a producer for the specified topic with the given arguments.
+    ///     Creates a producer and associated it to the specified topic.
     /// </summary>
     /// <param name="topic">The topic.</param>
-    /// <param name="args">The arguments.</param>
+    /// <param name="parameters">The arguments.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    ///     A <see cref="Task{TResult}"/> representing the asynchronous operation,
-    ///     containing the created <see cref="IProducer"/> instance as its result.
+    ///     A <see cref="Task{TResult}"/> representing the asynchronous operation.
+    ///     The result of the task is a new <see cref="IProducer"/> instance.
     /// </returns>
-    Task<IProducer> CreateAsync(string topic, Args args, CancellationToken cancellationToken);
+    Task<IProducer> CreateAsync(string topic, Parameters parameters, CancellationToken cancellationToken);
 }

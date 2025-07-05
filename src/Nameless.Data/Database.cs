@@ -40,7 +40,7 @@ public sealed class Database : IDatabase, IDisposable {
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
-            _logger.ErrorOnExecuteNonQueryCommand(ex);
+            _logger.ExecuteNonQueryFailure(ex);
             throw;
         }
     }
@@ -57,7 +57,7 @@ public sealed class Database : IDatabase, IDisposable {
         IDataReader reader;
         try { reader = command.ExecuteReader(); }
         catch (Exception ex) {
-            _logger.ErrorOnExecuteReaderCommand(ex);
+            _logger.ExecuteReaderFailure(ex);
             throw;
         }
 
@@ -78,7 +78,7 @@ public sealed class Database : IDatabase, IDisposable {
 
         try { return (TResult?)command.ExecuteScalar(); }
         catch (Exception ex) {
-            _logger.ErrorOnExecuteScalarCommand(ex);
+            _logger.ExecuteScalarFailure(ex);
             throw;
         }
     }
@@ -86,11 +86,11 @@ public sealed class Database : IDatabase, IDisposable {
     /// <inheritdoc />
     public void Dispose() {
         GC.SuppressFinalize(this);
-        Dispose(true);
+        Dispose(disposing: true);
     }
 
     ~Database() {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 
     private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {
@@ -111,9 +111,7 @@ public sealed class Database : IDatabase, IDisposable {
     }
 
     private void BlockAccessAfterDispose() {
-        if (_disposed) {
-            throw new ObjectDisposedException(nameof(Database));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
     }
 
     private void Dispose(bool disposing) {

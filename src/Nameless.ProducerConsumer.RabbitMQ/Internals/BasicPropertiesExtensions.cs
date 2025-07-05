@@ -3,26 +3,27 @@
 namespace Nameless.ProducerConsumer.RabbitMQ.Internals;
 
 internal static class BasicPropertiesExtensions {
-    internal static BasicProperties FillWith(this BasicProperties self, Args args) {
-        self.AppId = args.GetAppId();
-        self.ClusterId = args.GetClusterId();
-        self.ContentEncoding = args.GetContentEncoding();
-        self.ContentType = args.GetContentType();
-        self.CorrelationId = args.GetCorrelationId();
-        self.DeliveryMode = args.GetDeliveryMode();
-        self.Expiration = args.GetExpiration();
-        self.Headers = args.GetHeaders();
-        self.MessageId = args.GetMessageId();
-        self.Persistent = args.GetPersistent();
-        self.Priority = args.GetPriority();
-        self.ReplyTo = args.GetReplyTo();
-        if (args.GetReplyToAddress() is not null) {
-            self.ReplyToAddress = args.GetReplyToAddress();
+    internal static BasicProperties FillWith(this BasicProperties self, Parameters parameters) {
+        self.AppId = parameters.GetAppId();
+        self.ClusterId = parameters.GetClusterId();
+        self.ContentEncoding = parameters.GetContentEncoding();
+        self.ContentType = parameters.GetContentType();
+        self.CorrelationId = parameters.GetCorrelationId();
+        self.DeliveryMode = parameters.GetDeliveryMode();
+        self.Expiration = parameters.GetExpiration();
+        self.Headers = parameters.GetHeaders();
+        self.MessageId = parameters.GetMessageId();
+        self.Persistent = parameters.GetPersistent();
+        self.Priority = parameters.GetPriority();
+        self.ReplyTo = parameters.GetReplyTo();
+
+        if (parameters.GetReplyToAddress() is not null) {
+            self.ReplyToAddress = parameters.GetReplyToAddress();
         }
 
-        self.Timestamp = args.GetTimestamp();
-        self.Type = args.GetTypeProp();
-        self.UserId = args.GetUserId();
+        self.Timestamp = parameters.GetTimestamp();
+        self.Type = parameters.GetTypeProp();
+        self.UserId = parameters.GetUserId();
 
         return self;
     }

@@ -46,7 +46,7 @@ public sealed record Resource {
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="path"/> or
     ///     <paramref name="culture"/> or
-    ///     <paramref name="messages"/> is <c>null</c>.
+    ///     <paramref name="messages"/> is <see langword="null"/>.
     /// </exception>
     public Resource(string path, string culture, IEnumerable<Message> messages, bool isAvailable) {
         Path = Prevent.Argument.Null(path);
@@ -61,7 +61,7 @@ public sealed record Resource {
     /// <param name="id">The ID.</param>
     /// <param name="output">The message; if available.</param>
     /// <returns>
-    /// <c>true</c> if the message was found; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the message was found; otherwise, <see langword="false"/>.
     /// </returns>
     public bool TryGetMessage(string id, [NotNullWhen(true)] out Message? output) {
         var current = Messages.SingleOrDefault(item => string.Equals(id, item.Id, StringComparison.Ordinal));

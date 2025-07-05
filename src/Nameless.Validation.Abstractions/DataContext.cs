@@ -17,7 +17,7 @@ public sealed record DataContext : IEnumerable<KeyValuePair<string, object?>> {
     /// </returns>
     public object? this[string key] {
         get => _data.GetValueOrDefault(key);
-        set => _data[key] = value;
+        set => _data[Prevent.Argument.NullOrWhiteSpace(key)] = value;
     }
 
     /// <summary>
@@ -26,15 +26,12 @@ public sealed record DataContext : IEnumerable<KeyValuePair<string, object?>> {
     public IEnumerable<string> Keys => _data.Keys;
 
     /// <summary>
-    /// Gets the values of the data context.
+    /// Adds a new value to the data context. If the key
+    /// already exists, them update it.
     /// </summary>
-    public IEnumerable<object?> Values => _data.Values;
-
-    /// <summary>
-    /// Clears the data context.
-    /// </summary>
-    public void Clear() {
-        _data.Clear();
+    /// <param name="kvp">The key/value pair.</param>
+    public void Add(KeyValuePair<string, object?> kvp) {
+        _data[Prevent.Argument.NullOrWhiteSpace(kvp.Key)] = kvp.Value;
     }
 
     /// <inheritdoc />

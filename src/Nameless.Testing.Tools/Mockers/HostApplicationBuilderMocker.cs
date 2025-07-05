@@ -4,24 +4,24 @@ using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Testing.Tools.Mockers;
 
-public sealed class HostApplicationBuilderMocker : MockerBase<IHostApplicationBuilder> {
-    public HostApplicationBuilderMocker WithServices(IServiceCollection services) {
+public sealed class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilder> {
+    public HostApplicationBuilderMocker WithServices(IServiceCollection returnValue) {
         MockInstance.Setup(mock => mock.Services)
-                    .Returns(services);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public HostApplicationBuilderMocker WithConfigurationManager(IConfigurationManager configurationManager) {
+    public HostApplicationBuilderMocker WithConfigurationManager(IConfigurationManager returnValue) {
         MockInstance.Setup(mock => mock.Configuration)
-                    .Returns(configurationManager);
+                    .Returns(returnValue);
 
         return this;
     }
 
-    public HostApplicationBuilderMocker WithEnvironment(IHostEnvironment hostEnvironment) {
+    public HostApplicationBuilderMocker WithEnvironment(IHostEnvironment returnValue) {
         MockInstance.Setup(mock => mock.Environment)
-                    .Returns(hostEnvironment);
+                    .Returns(returnValue);
 
         return this;
     }

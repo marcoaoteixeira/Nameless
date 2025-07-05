@@ -32,7 +32,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="binder" /> is <c>null</c>.
+    ///     if <paramref name="binder" /> is <see langword="null"/>.
     /// </exception>
     public override bool TryGetMember(GetMemberBinder binder, out object? result) {
         Prevent.Argument.Null(binder);
@@ -43,7 +43,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="binder" /> is <c>null</c>.
+    ///     if <paramref name="binder" /> is <see langword="null"/>.
     /// </exception>
     public override bool TrySetMember(SetMemberBinder binder, object? value) {
         Prevent.Argument.Null(binder);
@@ -56,7 +56,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="binder" /> or
-    ///     <paramref name="indexes" /> is <c>null</c>.
+    ///     <paramref name="indexes" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="indexes" /> contains 0 (zero) or more than one element.
@@ -76,7 +76,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="binder" /> or
-    ///     <paramref name="indexes" /> is <c>null</c>.
+    ///     <paramref name="indexes" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="indexes" /> contains 0 (zero) or more than one element.

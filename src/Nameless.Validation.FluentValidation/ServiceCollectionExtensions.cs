@@ -15,8 +15,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     ///     The current <see cref="IServiceCollection" /> so that additional calls can be chained.
     /// </returns>
-    public static IServiceCollection RegisterValidationServices(this IServiceCollection self,
-        Action<ValidationOptions>? configure = null) {
+    public static IServiceCollection RegisterValidation(this IServiceCollection self, Action<ValidationOptions>? configure = null) {
         var innerConfigure = configure ?? (_ => { });
         var options = new ValidationOptions();
 

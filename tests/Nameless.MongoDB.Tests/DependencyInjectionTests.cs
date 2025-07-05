@@ -11,7 +11,7 @@ public class DependencyInjectionTests {
         var mongoDbOptionsLogger = Mock.Of<ILogger<MongoOptions>>();
         var services = new ServiceCollection();
         services.AddSingleton(mongoDbOptionsLogger);
-        services.RegisterMongoServices(opts => {
+        services.RegisterMongo(opts => {
             opts.DatabaseName = "sample";
             opts.Assemblies = [typeof(DependencyInjectionTests).Assembly];
         });

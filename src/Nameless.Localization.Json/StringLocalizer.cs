@@ -36,7 +36,7 @@ public sealed class StringLocalizer : IStringLocalizer {
     ///     <paramref name="culture"/> or
     ///     <paramref name="resource"/> or
     ///     <paramref name="factory"/> or
-    ///     <paramref name="logger"/> is <c>null</c>.
+    ///     <paramref name="logger"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="baseName"/> or

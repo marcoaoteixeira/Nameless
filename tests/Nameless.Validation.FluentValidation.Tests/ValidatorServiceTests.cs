@@ -1,10 +1,8 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
-using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
 using Nameless.Validation.FluentValidation.Fixtures;
+using Nameless.Validation.FluentValidation.Mockers;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Nameless.Validation.FluentValidation;
@@ -34,7 +32,7 @@ public class ValidatorServiceTests {
            .AddSingleton(animalValidatorMock.Object);
 
         var provider = services.BuildServiceProvider();
-        var sut = new ValidationService(provider.GetServices<IValidator>(), Quick.Mock<ILogger<ValidationService>>());
+        var sut = new ValidationService(provider.GetServices<IValidator>());
         var dog = new Animal { Name = "Dog" };
 
         // act
@@ -49,18 +47,14 @@ public class ValidatorServiceTests {
     [Fact]
     public async Task ValidateAsync_Should_Log_If_Validator_Not_Found() {
         // arrange
-        var loggerMock = new LoggerMocker<ValidationService>().WithLogLevel(LogLevel.Information);
-        var sut = new ValidationService([], loggerMock.Build());
+        var sut = new ValidationService([]);
         var dog = new Animal { Name = "Dog" };
 
         // act
-        var result = await sut.ValidateAsync(dog,
-            new DataContext(),
-            CancellationToken.None);
+        var result = await sut.ValidateAsync(dog, [], CancellationToken.None);
 
         // assert
         Assert.True(result.Succeeded);
-        loggerMock.VerifyInformationCall();
     }
 
     [Fact]
@@ -72,7 +66,7 @@ public class ValidatorServiceTests {
         services.AddSingleton(animalValidatorMock.Object);
 
         var provider = services.BuildServiceProvider();
-        var sut = new ValidationService(provider.GetServices<IValidator>(), Quick.Mock<ILogger<ValidationService>>());
+        var sut = new ValidationService(provider.GetServices<IValidator>());
         var dog = new Animal { Name = "Dog" };
         var dataContext = new DataContext();
 
@@ -83,5 +77,45 @@ public class ValidatorServiceTests {
 
         // assert
         Assert.True(first.Succeeded && second.Succeeded && third.Succeeded);
+    }
+
+    [Fact]
+    public async Task WhenValidateAsync_WhenNotProvideDataContext_WhenObjectIsValid_ThenReturnsSuccessfulResult() {
+        // arrange
+        var validator = new ValidatorMocker<Animal>()
+                       .WithSuccessfulValidateAsync()
+                       .Build();
+        var sut = new ValidationService([validator]);
+        var dog = new Animal { Name = "Dog" };
+
+        // act
+        var actual = await sut.ValidateAsync(dog, CancellationToken.None);
+
+        // assert
+        Assert.True(actual.Succeeded);
+    }
+
+    [Fact]
+    public async Task WhenValidateAsync_WhenProvidingDataContextWithValues_ThenDataContextShouldBeConsumed() {
+        // arrange
+        DataContext dataContext = [
+            new KeyValuePair<string, object>("Value", 123)
+        ];
+        var validatorMocker = new ValidatorMocker<Animal>().WithSuccessfulValidateAsync();
+        var sut = new ValidationService([validatorMocker.Build()]);
+        var dog = new Animal { Name = "Dog" };
+
+        // act
+        var actual = await sut.ValidateAsync(dog, dataContext, CancellationToken.None);
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.True(actual.Succeeded);
+
+            validatorMocker.Verify(mock => mock.ValidateAsync(
+                It.Is<IValidationContext>(ctx => ctx.RootContextData.ContainsKey("Value")),
+                It.IsAny<CancellationToken>())
+            );
+        });
     }
 }

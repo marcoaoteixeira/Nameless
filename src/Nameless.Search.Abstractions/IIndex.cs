@@ -3,11 +3,16 @@
 /// <summary>
 ///     Contract to an index.
 /// </summary>
-public interface IIndex {
+public interface IIndex : IDisposable {
     /// <summary>
     ///     Gets the name of the index.
     /// </summary>
     string Name { get; }
+
+    /// <summary>
+    ///     Occurs when the index is disposed.
+    /// </summary>
+    event EventHandler<DisposeIndexEventArgs>? OnDispose;
 
     /// <summary>
     ///     Whether it is empty or not.

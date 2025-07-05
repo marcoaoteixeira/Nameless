@@ -42,7 +42,7 @@ public sealed class Prevent {
     private Prevent() { }
 
     /// <summary>
-    ///     Throws an <see cref="ArgumentNullException" /> if parameter <paramref name="paramValue" /> is <c>null</c>.
+    ///     Throws an <see cref="ArgumentNullException" /> if parameter <paramref name="paramValue" /> is <see langword="null"/>.
     /// </summary>
     /// <typeparam name="TValue">Type of the parameter value.</typeparam>
     /// <param name="paramValue">The parameter value.</param>
@@ -69,7 +69,7 @@ public sealed class Prevent {
     }
 
     /// <summary>
-    ///     Throws an <see cref="ArgumentNullException" /> if parameter <paramref name="paramValue" /> is <c>null</c>.
+    ///     Throws an <see cref="ArgumentNullException" /> if parameter <paramref name="paramValue" /> is <see langword="null"/>.
     /// </summary>
     /// <typeparam name="TValue">Type of the parameter value.</typeparam>
     /// <param name="paramValue">The parameter value.</param>
@@ -80,7 +80,7 @@ public sealed class Prevent {
     ///     The current <paramref name="paramValue" />.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="paramValue" /> is <c>null</c>.
+    ///     if <paramref name="paramValue" /> is <see langword="null"/>.
     /// </exception>
     [DebuggerStepThrough]
     public TValue Null<TValue>([NotNull] TValue? paramValue,

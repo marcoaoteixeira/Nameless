@@ -7,7 +7,6 @@ namespace Nameless.Mediator.Events;
 /// </summary>
 public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     private readonly ConcurrentDictionary<Type, EventHandlerWrapper> _cache = new();
-
     private readonly IServiceProvider _provider;
 
     /// <summary>
@@ -15,7 +14,7 @@ public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     /// </summary>
     /// <param name="provider">The service provider.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="provider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public EventHandlerInvoker(IServiceProvider provider) {
         _provider = Prevent.Argument.Null(provider);
@@ -32,8 +31,7 @@ public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     private static EventHandlerWrapper CreateEventHandlerWrapper(Type evtType) {
         var wrapperType = typeof(EventHandlerWrapperImpl<>).MakeGenericType(evtType);
         var wrapper = Activator.CreateInstance(wrapperType)
-                   ?? throw new InvalidOperationException(
-                          $"Couldn't create event handler wrapper for event: {evtType}");
+                   ?? throw new InvalidOperationException($"Couldn't create event handler wrapper for event: {evtType}");
 
         return (EventHandlerWrapper)wrapper;
     }

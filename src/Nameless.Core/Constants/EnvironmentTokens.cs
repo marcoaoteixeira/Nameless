@@ -5,7 +5,7 @@
 /// </summary>
 public static class EnvironmentTokens {
     /// <summary>
-    ///     Environment parameter: DOTNET_RUNNING_IN_CONTAINER
+    ///     EnvironmentName parameter: DOTNET_RUNNING_IN_CONTAINER
     /// </summary>
     /// <remarks>
     ///     Commonly used in web applications that runs in containers.

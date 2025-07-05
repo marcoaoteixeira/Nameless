@@ -23,7 +23,7 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="serviceProvider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="serviceProvider"/> is <see langword="null"/>.
     /// </exception>
     public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request,
                                                                   IServiceProvider serviceProvider,
@@ -31,12 +31,10 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
                                                                   CancellationToken cancellationToken) {
         var items = serviceProvider.GetServices<IStreamPipelineBehavior<TRequest, TResponse>>()
                                    .Reverse()
-                                   .Aggregate((StreamHandlerDelegate<TResponse>)InnerHandlerAsync,
-                                        (next, pipeline) => () => pipeline.HandleAsync(
-                                            request: (TRequest)request,
-                                            next: () => NextWrapper(next(), cancellationToken),
-                                            cancellationToken: cancellationToken)
-                                        ).Invoke();
+                                   .Aggregate(
+                                        seed: (StreamHandlerDelegate<TResponse>)InnerHandlerAsync,
+                                        func: (next, pipeline) => () => pipeline.HandleAsync((TRequest)request, () => NextWrapper(next(), cancellationToken), cancellationToken))
+                                   .Invoke();
 
         await foreach (var item in items.WithCancellation(cancellationToken)) {
             yield return item;

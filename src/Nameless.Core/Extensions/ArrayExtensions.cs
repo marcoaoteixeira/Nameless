@@ -11,7 +11,7 @@ public static class ArrayExtensions {
     /// <param name="self">The array</param>
     /// <param name="index">The index</param>
     /// <param name="output">The output value for the index</param>
-    /// <returns><c>true</c> if the value in the specified index was found; otherwise <c>false</c></returns>
+    /// <returns><see langword="true"/> if the value in the specified index was found; otherwise <see langword="false"/></returns>
     public static bool TryGetElementAt<T>(this T?[] self, int index, out T? output) {
         output = default;
 
@@ -30,8 +30,8 @@ public static class ArrayExtensions {
     /// <param name="self">The current array.</param>
     /// <param name="index">The index.</param>
     /// <returns>
-    ///     <c>true</c> if <paramref name="index" /> is inside the array
-    ///     range, otherwise; <c>false</c>.
+    ///     <see langword="true"/> if <paramref name="index" /> is inside the array
+    ///     range, otherwise; <see langword="false"/>.
     /// </returns>
     public static bool IsInRange<T>(this T?[] self, long index) {
         return index > 0 && index < self.Length;

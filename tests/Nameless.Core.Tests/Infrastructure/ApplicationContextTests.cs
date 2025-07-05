@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Nameless.Infrastructure;
 
@@ -14,21 +15,22 @@ public class ApplicationContextTests {
         var appVersion = new Version(1, 2, 3);
         var baseAppFolder = AppDomain.CurrentDomain.BaseDirectory;
         var appDataFolder = Path.Combine(System.Environment.GetFolderPath(specialFolder), AppName);
-
+        var options = Options.Create(new ApplicationContextOptions {
+            EnvironmentName = Environment,
+            ApplicationName = AppName,
+            UseCommonAppDataFolder = specialFolder == System.Environment.SpecialFolder.CommonApplicationData,
+            Version = appVersion
+        });
         // act
-        var sut = new ApplicationContext(Environment,
-            AppName,
-            specialFolder == System.Environment.SpecialFolder.CommonApplicationData,
-            appVersion,
-            NullLogger<ApplicationContext>.Instance);
+        var sut = new ApplicationContext(options, NullLogger<ApplicationContext>.Instance);
 
         // assert
         Assert.Multiple(() => {
             Assert.Equal($"v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}", sut.Version);
-            Assert.Equal(appDataFolder, sut.AppDataFolderPath);
-            Assert.Equal(baseAppFolder, sut.AppFolderPath);
-            Assert.Equal(AppName, sut.AppName);
-            Assert.Equal(Environment, sut.Environment);
+            Assert.Equal(appDataFolder, sut.ApplicationDataFolderPath);
+            Assert.Equal(baseAppFolder, sut.ApplicationFolderPath);
+            Assert.Equal(AppName, sut.ApplicationName);
+            Assert.Equal(Environment, sut.EnvironmentName);
         });
     }
 }

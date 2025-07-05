@@ -5,14 +5,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 public sealed record ServerSettings {
-    private CertificateSettings? _certificate;
-    private SslSettings? _ssl;
-
     private string DebuggerDisplayValue
         => UseCredentials
             ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
             : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
 
+    /// <summary>
+    ///     Gets or sets the protocol to use. Default value is <c>amqp</c>.
+    /// </summary>
     public string Protocol { get; set; } = "amqp";
 
     /// <summary>
@@ -25,24 +25,36 @@ public sealed record ServerSettings {
     /// </summary>
     public string Password { get; set; } = "guest";
 
+    /// <summary>
+    ///     Gets or sets the hostname. Default value is <c>localhost</c>.
+    /// </summary>
     public string Hostname { get; set; } = "localhost";
 
+    /// <summary>
+    ///     Gets or sets the port. Default value is <c>5672</c>.
+    /// </summary>
     public int Port { get; set; } = 5672;
 
+    /// <summary>
+    ///     Gets or sets the virtual host. Default value is <c>/</c>.
+    /// </summary>
     public string VirtualHost { get; set; } = "/";
 
-    public SslSettings Ssl {
-        get => _ssl ??= new SslSettings();
-        set => _ssl = value;
-    }
+    /// <summary>
+    ///     Gets or sets the SSL settings for the RabbitMQ connection.
+    /// </summary>
+    public SslSettings Ssl { get; set; } = new();
 
-    public CertificateSettings Certificate {
-        get => _certificate ??= new CertificateSettings();
-        set => _certificate = value;
-    }
+    /// <summary>
+    ///     Gets or sets the certificate settings for the RabbitMQ connection.
+    /// </summary>
+    public CertificateSettings Certificate { get; set; } = new();
 
+    /// <summary>
+    ///     Whether to use credentials for the RabbitMQ connection.
+    /// </summary>
     [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
-    internal bool UseCredentials
+    public bool UseCredentials
         => !string.IsNullOrWhiteSpace(Username) &&
            !string.IsNullOrWhiteSpace(Password);
 }

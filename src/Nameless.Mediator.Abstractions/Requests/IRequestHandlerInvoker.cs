@@ -11,8 +11,7 @@ public interface IRequestHandlerInvoker {
     /// <param name="request">The request.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task" /> represeting the request execution.</returns>
-    Task ExecuteAsync<TRequest>(TRequest request,
-                                CancellationToken cancellationToken)
+    Task ExecuteAsync<TRequest>(TRequest request, CancellationToken cancellationToken)
         where TRequest : IRequest;
 
     /// <summary>
@@ -22,6 +21,5 @@ public interface IRequestHandlerInvoker {
     /// <param name="request">The request.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task{T}" /> represeting the request execution.</returns>
-    Task<TResponse> ExecuteAsync<TResponse>(IRequest<TResponse> request,
-                                            CancellationToken cancellationToken);
+    Task<TResponse> ExecuteAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken);
 }

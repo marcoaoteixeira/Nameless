@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
@@ -8,7 +9,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 /// <summary>
 /// Default implementation of <see cref="IChannelConfigurator"/> for configuring RabbitMQ channels.
 /// </summary>
-public class ChannelConfigurator : IChannelConfigurator {
+public sealed class ChannelConfigurator : IChannelConfigurator {
     private readonly IOptions<RabbitMQOptions> _options;
     private readonly ILogger<ChannelConfigurator> _logger;
 
@@ -22,46 +23,73 @@ public class ChannelConfigurator : IChannelConfigurator {
         _logger = Prevent.Argument.Null(logger);
     }
 
-    public async Task ConfigureChannelAsync(IChannel channel, string exchangeName, CancellationToken cancellationToken) {
-        // get the exchange object from options
-        var exchange = _options.Value.Exchanges.SingleOrDefault(exchange
-            => string.Equals(exchange.Name, exchangeName, StringComparison.Ordinal));
+    /// <inheritdoc />
+    public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch, CancellationToken cancellationToken) {
+        Prevent.Argument.Null(channel);
+        Prevent.Argument.NullOrWhiteSpace(queueName);
 
-        // if the exchange object was not found, log and return.
-        if (exchange is null) {
-            _logger.ExchangeNotFound(exchangeName);
+        if (!TryGetQueueSettings(queueName, out var queueSettings)) {
+            _logger.QueueSettingsNotFound(queueName);
 
             return;
         }
 
-        // exchange found. let's declare our exchange
-        await channel.ExchangeDeclareAsync(exchange.Name,
-                          exchange.Type.GetDescription(),
-                          exchange.Durable,
-                          exchange.AutoDelete,
-                          exchange.Arguments,
-                          cancellationToken: cancellationToken)
-                     .ConfigureAwait(false);
-
-        foreach (var queue in exchange.Queues) {
-            // let's declare our queues
-            await channel.QueueDeclareAsync(queue.Name,
-                              queue.Durable,
-                              queue.Exclusive,
-                              queue.AutoDelete,
-                              queue.Arguments,
+        if (TryGetExchangeSettings(queueSettings.ExchangeName, out var exchangeSettings)) {
+            await channel.ExchangeDeclareAsync(
+                              exchangeSettings.Name,
+                              exchangeSettings.Type.GetDescription(),
+                              exchangeSettings.Durable,
+                              exchangeSettings.AutoDelete,
+                              exchangeSettings.Arguments,
+                              passive: true,
                               cancellationToken: cancellationToken)
                          .ConfigureAwait(false);
+        }
 
-            // let's declare our bindings
-            foreach (var binding in queue.Bindings) {
-                await channel.QueueBindAsync(queue.Name,
-                                  exchange.Name,
-                                  binding.RoutingKey,
-                                  binding.Arguments,
-                                  cancellationToken: cancellationToken)
-                             .ConfigureAwait(false);
-            }
+        var queueDeclareResult = await channel.QueueDeclareAsync(queueSettings.Name,
+                                                   queueSettings.Durable,
+                                                   queueSettings.Exclusive,
+                                                   queueSettings.AutoDelete,
+                                                   queueSettings.Arguments,
+                                                   cancellationToken: cancellationToken)
+                                              .ConfigureAwait(false);
+
+        foreach (var binding in queueSettings.Bindings) {
+            await channel.QueueBindAsync(queueDeclareResult.QueueName,
+                              queueSettings.ExchangeName,
+                              binding.RoutingKey,
+                              binding.Arguments,
+                              cancellationToken: cancellationToken)
+                         .ConfigureAwait(false);
+        }
+
+        if (usePrefetch) {
+            var prefetch = _options.Value.Prefetch;
+            await channel.BasicQosAsync(prefetch.Size,
+                              prefetch.Count,
+                              prefetch.Global,
+                              cancellationToken)
+                         .ConfigureAwait(false);
+        }
+    }
+
+    private bool TryGetExchangeSettings(string exchangeName, [NotNullWhen(returnValue: true)] out ExchangeSettings? output) {
+        output = _options.Value.Exchanges.SingleOrDefault(Filter);
+
+        return output is not null;
+
+        bool Filter(ExchangeSettings exchange) {
+            return string.Equals(exchange.Name, exchangeName, StringComparison.Ordinal);
+        }
+    }
+
+    private bool TryGetQueueSettings(string queueName, [NotNullWhen(returnValue: true)] out QueueSettings? output) {
+        output = _options.Value.Queues.SingleOrDefault(Filter);
+
+        return output is not null;
+
+        bool Filter(QueueSettings item) {
+            return string.Equals(item.Name, queueName, StringComparison.Ordinal);
         }
     }
 }

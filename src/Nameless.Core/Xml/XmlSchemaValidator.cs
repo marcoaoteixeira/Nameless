@@ -11,7 +11,7 @@ public sealed class XmlSchemaValidator : IXmlSchemaValidator {
 
         var success = false;
         var settings = new XmlReaderSettings();
-        var xmlSchema = XmlSchema.Read(schema, null)
+        var xmlSchema = XmlSchema.Read(schema, validationEventHandler: null)
                      ?? throw new InvalidOperationException("XmlSchema is null.");
 
         settings.Schemas.Add(xmlSchema);
@@ -21,13 +21,16 @@ public sealed class XmlSchemaValidator : IXmlSchemaValidator {
         settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
         settings.ValidationEventHandler += (_, _) => success = true;
 
+        var xmlPreviousPosition = xml.Position;
+        var schemaPreviousPosition = schema.Position;
+
         using var xmlReader = XmlReader.Create(xml, settings);
         while (xmlReader.Read()) {
-            /* Do nothing */
+            /* The "Read" action triggers the validation event handler */
         }
 
-        schema.Seek(0, SeekOrigin.Begin);
-        xml.Seek(0, SeekOrigin.Begin);
+        xml.Position = xmlPreviousPosition;
+        schema.Position = schemaPreviousPosition;
 
         return success;
     }

@@ -5,7 +5,7 @@ namespace Nameless.Validation.FluentValidation;
 /// <summary>
 ///     Validation registration options.
 /// </summary>
-public record ValidationOptions {
+public sealed record ValidationOptions {
     /// <summary>
     ///     Gets an array of assemblies to scan for validators.
     /// </summary>

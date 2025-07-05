@@ -1,7 +1,10 @@
-﻿using Asp.Versioning;
+﻿// ReSharper disable SeparateLocalFunctionsWithJumpStatement
+
+using Asp.Versioning;
+using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Scalar.AspNetCore;
 
 namespace Nameless.Web.Endpoints;
 
@@ -10,62 +13,89 @@ namespace Nameless.Web.Endpoints;
 /// </summary>
 public static class ApplicationBuilderExtensions {
     /// <summary>
-    /// Registers endpoints in the application options.
+    ///     Registers endpoints in the application options.
     /// </summary>
+    /// <typeparam name="TApplicationBuilder">Type of the application builder.</typeparam>
     /// <param name="self">The application options.</param>
-    /// <param name="configureScalar">Configure Scalar Open API.</param>
     /// <returns>
-    /// The current <see cref="IApplicationBuilder"/> instance so other actions can be chained.
+    ///     The current <typeparamref name="TApplicationBuilder"/> instance so other actions can be chained.
     /// </returns>
     /// <remarks>
-    /// We use Scalar to generate the Open API specification for our endpoints.
-    /// See more at: <a href="https://scalar.com/">Scalar</a>.
-    /// <br /><br />
-    /// It's necessary to call <c>UseRouting</c> before calling <c>UseMinimalEndpoints</c>.
-    /// Also, if you are using Open API, you need to call <c>MapOpenApi</c> before calling this
-    /// method either. To ensure that the Open API specification is generated correctly.
+    ///     It's necessary to call <c>UseRouting</c> before calling <c>UseMinimalEndpoints</c>.
+    ///     If you are using authorization, you also need to call <c>UseAuthorization</c> before this method.
     /// </remarks>
-    public static IApplicationBuilder UseMinimalEndpoints(this IApplicationBuilder self, Action<ScalarOptions>? configureScalar = null) {
+    public static TApplicationBuilder UseMinimalEndpoints<TApplicationBuilder>(this TApplicationBuilder self)
+        where TApplicationBuilder : IApplicationBuilder {
         self.UseEndpoints(builder => {
             using var scope = self.ApplicationServices.CreateScope();
 
+            // resolve all our endpoints so we can configure them.
             var endpoints = scope.ServiceProvider.GetServices<IEndpoint>();
-            var groups = endpoints.Select(CreateEndpointConfiguration)
-                                  .GroupBy(tuple => tuple.Configuration.VersionSet);
 
-            foreach (var group in groups) {
-                var versionSetBuilder = builder.NewApiVersionSet(group.Key);
-                var versionDefinitions = group.Select(item => (
-                    item.Configuration.Version,
-                    item.Configuration.Deprecated
-                ));
+            // create all endpoint builders and configure them.
+            var endpointBuilders = endpoints.Select(CreateEndpointDescriptor)
+                                            .ToArray();
 
-                foreach (var versionDefinition in versionDefinitions.Distinct()) {
-                    var apiVersion = new ApiVersion(versionDefinition.Version);
+            // create the version set object.
+            var versionSet = builder.CreateVersionSet(endpointBuilders);
 
-                    versionSetBuilder = versionDefinition.Deprecated
-                        ? versionSetBuilder.HasDeprecatedApiVersion(apiVersion)
-                        : versionSetBuilder.HasApiVersion(apiVersion);
-                }
+            // group all endpoint builders so we can configure them
+            // by group name
+            var endpointBuilderGroups = endpointBuilders.GroupBy(item => item.GroupName)
+                                                        .ToArray();
 
-                var versionSet = versionSetBuilder.ReportApiVersions()
-                                                  .Build();
-
-                foreach (var item in group) {
-                    item.Configuration.Apply(builder, item.Endpoint, versionSet);
-                }
+            // finish the endpoint configuration
+            foreach (var endpointBuilderGroup in endpointBuilderGroups) {
+                builder.ConfigureEndpointBuilderGroup(endpointBuilderGroup, versionSet);
             }
-
-            // Configure Scalar last.
-            builder.MapScalarApiReference(configureScalar ?? (_ => { }));
         });
 
         return self;
 
-        static (EndpointBuilder Configuration, IEndpoint Endpoint) CreateEndpointConfiguration(IEndpoint endpoint) {
-            var config = new EndpointBuilder();
+        static EndpointDescriptor CreateEndpointDescriptor(IEndpoint endpoint) {
+            var config = new EndpointDescriptor(endpoint.GetType());
             endpoint.Configure(config);
-            return (Configuration: config, Endpoint: endpoint);
+            return config;
+        }
+    }
+
+    private static ApiVersionSet CreateVersionSet(this IEndpointRouteBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
+        // extract all available versions from the groups.
+        var availableVersions = endpointDescriptors.Select(CreateVersionMetadata)
+                                                   .Distinct()
+                                                   .ToArray();
+
+        // we need to add the versioning capability to the
+        // descriptor, so calling NewVersionedApi() will do the trick.
+        var versionSetBuilder = self.NewApiVersionSet();
+        foreach (var (number, deprecated) in availableVersions) {
+            var apiVersion = new ApiVersion(number);
+            switch (deprecated) {
+                case true:
+                    versionSetBuilder.HasDeprecatedApiVersion(apiVersion);
+                    break;
+                default:
+                    versionSetBuilder.HasApiVersion(apiVersion);
+                    break;
+            }
+        }
+
+        return versionSetBuilder.ReportApiVersions().Build();
+
+        static (int Number, bool Deprecated) CreateVersionMetadata(EndpointDescriptor endpointDescriptor) {
+            return (
+                endpointDescriptor.Version,
+                endpointDescriptor.Stability == Stability.Deprecated
+            );
+        }
+    }
+
+    private static void ConfigureEndpointBuilderGroup(this IEndpointRouteBuilder self, IGrouping<string, EndpointDescriptor> endpointDescriptorGroup, ApiVersionSet versionSet) {
+        var routeGroupBuilder = self.MapGroup(endpointDescriptorGroup.Key)
+                                    .WithApiVersionSet(versionSet);
+
+        foreach (var endpointDescriptor in endpointDescriptorGroup) {
+            endpointDescriptor.Apply(routeGroupBuilder);
         }
     }
 }

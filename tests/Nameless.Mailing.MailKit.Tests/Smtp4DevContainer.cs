@@ -23,24 +23,28 @@ public class MessageSummary {
 }
 
 public sealed class Smtp4DevContainer : IAsyncLifetime {
+    private const int CONTAINER_SMTP_PORT = 25;
+    private const int CONTAINER_WEB_PORT = 80;
+
     public const int SMTP_PORT = 2525;
-    private const int WEB_UI_PORT = 8080;
+    public const int WEB_PORT = 8080;
 
     private readonly IContainer _container = new ContainerBuilder().WithImage("rnwood/smtp4dev")
-                                                                   .WithPortBinding(SMTP_PORT, 25) // SMTP
-                                                                   .WithPortBinding(WEB_UI_PORT, 80) // Web UI/API
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(80))
-                                                                   .WithName("smtp4dev-test")
+                                                                   .WithName("smtp4dev-test-container")
+                                                                   .WithPortBinding(SMTP_PORT, CONTAINER_SMTP_PORT) // SMTP
+                                                                   .WithPortBinding(WEB_PORT, CONTAINER_WEB_PORT) // Web UI/API
+                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(CONTAINER_WEB_PORT))
+                                                                   .WithCleanUp(cleanUp: true)
                                                                    .Build();
     private readonly HttpClient _httpClient = new() {
-        BaseAddress = new Uri($"http://localhost:{WEB_UI_PORT}/api/")
+        BaseAddress = new Uri($"http://localhost:{WEB_PORT}/api/")
     };
 
-    public async Task InitializeAsync() {
+    public async ValueTask InitializeAsync() {
         await _container.StartAsync();
     }
 
-    public async Task DisposeAsync() {
+    public async ValueTask DisposeAsync() {
         await _container.DisposeAsync();
     }
 

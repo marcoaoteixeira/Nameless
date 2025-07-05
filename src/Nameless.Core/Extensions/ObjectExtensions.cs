@@ -11,7 +11,7 @@ public static class ObjectExtensions {
     ///     Verifies if the given object (or type) is an anonymous object (or type).
     /// </summary>
     /// <param name="self">The source object.</param>
-    /// <returns><c>true</c> if anonymous object (or type), otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if anonymous object (or type), otherwise, <see langword="false"/>.</returns>
     public static bool IsAnonymous(this object self) {
         Prevent.Argument.Null(self);
 
@@ -30,10 +30,10 @@ public static class ObjectExtensions {
     /// <param name="self">The current object.</param>
     /// <param name="inherit">Whether it should inspect ancestors or not.</param>
     /// <returns>
-    ///     <c>true</c> if it has the specified attribute, otherwise; <c>false</c>.
+    ///     <see langword="true"/> if it has the specified attribute, otherwise; <see langword="false"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> is <c>null</c>.
+    ///     if <paramref name="self" /> is <see langword="null"/>.
     /// </exception>
     public static bool HasAttribute<TAttribute>(this object self, bool inherit = false)
         where TAttribute : Attribute {

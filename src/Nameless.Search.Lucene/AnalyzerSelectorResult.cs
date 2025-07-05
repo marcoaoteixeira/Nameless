@@ -22,7 +22,7 @@ public sealed record AnalyzerSelectorResult {
     /// <param name="analyzer">The analyzer</param>
     /// <param name="priority">The priority</param>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="analyzer" /> is <c>null</c>
+    ///     if <paramref name="analyzer" /> is <see langword="null"/>
     /// </exception>
     public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
         Analyzer = Prevent.Argument.Null(analyzer);

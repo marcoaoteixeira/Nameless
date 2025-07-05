@@ -12,19 +12,19 @@ public class GetWeatherForecast : IEndpoint {
         _forecastService = forecastService;
     }
 
-    public void Configure(IEndpointBuilder builder) {
-        builder
-           .Get("/forecast/{summary}", HandleAsync)
+    public void Configure(IEndpointDescriptor descriptor) {
+        descriptor
+           .Get("/forecast", HandleAsync)
            .AllowAnonymous()
-           .WithRouteSuffix("weather")
-           .WithName($"{nameof(GetWeatherForecast)}_v1")
+           .WithRoutePrefix("/weather")
            .WithTags("Information")
            .Produces<ForecastDto[]>()
            .ProducesProblem()
+           .WithOutputCachePolicy("5Minutes")
            .WithVersion(version: 1);
     }
 
-    public Task<ForecastDto[]> HandleAsync([FromRoute] string summary) {
+    public Task<ForecastDto[]> HandleAsync([FromQuery] string? summary = null) {
         var forecasts = _forecastService.GetForecasts(summary).ToArray();
 
         return Task.FromResult(forecasts);

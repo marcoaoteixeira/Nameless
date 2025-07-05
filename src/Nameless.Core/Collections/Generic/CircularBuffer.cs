@@ -36,7 +36,7 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     /// </param>
     /// <param name="items">The startup items.</param>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="items" /> is <c>null</c>.
+    ///     if <paramref name="items" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentOutOfRangeException">
     ///     if <paramref name="capacity" /> is less than 1. Or
@@ -122,7 +122,7 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="array" /> is <c>null</c>.
+    ///     if <paramref name="array" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
     ///     if <paramref name="array" /> does not have enough positions

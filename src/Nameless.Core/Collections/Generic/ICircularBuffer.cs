@@ -39,7 +39,7 @@ public interface ICircularBuffer<TElement> : IEnumerable<TElement> {
     /// </summary>
     /// <param name="element">The element.</param>
     /// <returns>
-    ///     <c>true</c> if the buffer contains the element, otherwise; <c>false</c>.
+    ///     <see langword="true"/> if the buffer contains the element, otherwise; <see langword="false"/>.
     /// </returns>
     bool Contains(TElement element);
 

@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     ///     The current <see cref="IServiceCollection" />, so other actions can be chained.
     /// </returns>
-    public static IServiceCollection RegisterXmlSchemaValidatorServices(this IServiceCollection self) {
+    public static IServiceCollection RegisterXmlSchemaValidator(this IServiceCollection self) {
         return self.AddSingleton<IXmlSchemaValidator, XmlSchemaValidator>();
     }
 }

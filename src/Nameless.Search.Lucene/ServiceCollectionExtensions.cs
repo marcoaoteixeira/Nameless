@@ -1,33 +1,34 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.Infrastructure;
 
 namespace Nameless.Search.Lucene;
 
+/// <summary>
+///     <see cref="IServiceCollection"/> extensions for register search services.
+/// </summary>
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection RegisterSearchServices(this IServiceCollection self, Action<LuceneOptions>? configure = null) {
-        var innerConfigure = configure ?? (_ => { });
-        var options = new LuceneOptions();
+    private const string ANALYZER_PROVIDER_KEY = $"{nameof(IAnalyzerProvider)} :: 8fbb1bea-8dc4-40cc-8021-a44c4e363797";
 
-        innerConfigure(options);
-
-        return self.Configure(innerConfigure)
-                   .RegisterAnalyzerSelectors(options)
-                   .RegisterMainServices();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    public static IServiceCollection RegisterSearch(this IServiceCollection self, Action<SearchOptions>? configure = null) {
+        return self.Configure(configure ?? (_ => { }))
+                   .AddKeyedSingleton<IAnalyzerProvider, AnalyzerProvider>(ANALYZER_PROVIDER_KEY)
+                   .AddSingleton(ResolveIndexProvider);
     }
 
-    private static IServiceCollection RegisterAnalyzerSelectors(this IServiceCollection self, LuceneOptions options) {
-        var analyzerSelectors = options.UseAutoRegistration
-            ? options.Assemblies.GetImplementations([typeof(IAnalyzerSelector)])
-            : options.AnalyzerSelectors;
+    private static IIndexManager ResolveIndexProvider(IServiceProvider provider) {
+        var analyzerProvider = provider.GetRequiredKeyedService<IAnalyzerProvider>(ANALYZER_PROVIDER_KEY);
+        var applicationContext = provider.GetRequiredService<IApplicationContext>();
+        var loggerFactory = provider.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance;
+        var options = provider.GetOptions<SearchOptions>();
 
-        foreach (var analyzerSelector in analyzerSelectors) {
-            self.AddScoped(typeof(IAnalyzerSelector), analyzerSelector);
-        }
-
-        return self;
-    }
-
-    private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        return self.AddScoped<IAnalyzerProvider, AnalyzerProvider>()
-                   .AddScoped<IIndexProvider, IndexProvider>();
+        return new IndexManager(analyzerProvider, applicationContext, loggerFactory, options);
     }
 }

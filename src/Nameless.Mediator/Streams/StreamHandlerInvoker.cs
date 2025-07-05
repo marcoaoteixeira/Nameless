@@ -15,7 +15,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     /// </summary>
     /// <param name="provider">The service provider.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="provider"/> is <c>null</c>.
+    ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public StreamHandlerInvoker(IServiceProvider provider) {
         _provider = Prevent.Argument.Null(provider);
@@ -23,7 +23,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="request"/> is <c>null</c>.
+    ///     Thrown when <paramref name="request"/> is <see langword="null"/>.
     /// </exception>
     public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
                                                               CancellationToken cancellationToken) {
@@ -36,8 +36,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
         static StreamHandlerWrapperBase CreateStreamHandlerWrapper(Type requestType) {
             var wrapperType = typeof(StreamHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType)
-                       ?? throw new InvalidOperationException(
-                              $"Couldn't create stream handler wrapper for request: {requestType}");
+                       ?? throw new InvalidOperationException($"Couldn't create stream handler wrapper for request: {requestType}");
             return (StreamHandlerWrapperBase)wrapper;
         }
     }

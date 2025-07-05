@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Logging;
-using Nameless.Localization.Json.Internals;
 
 namespace Nameless.Localization.Json.Infrastructure;
 
@@ -17,7 +16,7 @@ public sealed class CultureProvider : ICultureProvider {
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="logger"/> is <c>null</c>.
+    ///     Thrown when <paramref name="logger"/> is <see langword="null"/>.
     /// </exception>
     public CultureProvider(ILogger<CultureProvider> logger) {
         _logger = Prevent.Argument.Null(logger);

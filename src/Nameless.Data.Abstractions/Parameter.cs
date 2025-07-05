@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Data;
 
@@ -8,8 +9,8 @@ namespace Nameless.Data;
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 public readonly record struct Parameter {
-    private string DebuggerDisplayValue
-        => $"[{Type}] {Name} => {Value ?? "NULL"}";
+    [ExcludeFromCodeCoverage]
+    private string DebuggerDisplayValue => $"[{Type}] {Name} => {Value ?? "NULL"}";
 
     /// <summary>
     ///     Gets the name of the parameter.
@@ -31,12 +32,12 @@ public readonly record struct Parameter {
     /// <param name="value">The value of the parameter.</param>
     /// <param name="type">The type of the parameter.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="name"/> is <c>null</c>.
+    ///     Thrown when <paramref name="name"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="name"/> is empty or white spaces.
     /// </exception>
-    public Parameter(string name, object? value, DbType type = DbType.String) {
+    public Parameter(string name, object? value = null, DbType type = DbType.String) {
         Name = Prevent.Argument.NullOrWhiteSpace(name);
         Value = value;
         Type = type;

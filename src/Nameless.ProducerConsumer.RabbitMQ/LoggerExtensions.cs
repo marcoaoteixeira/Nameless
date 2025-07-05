@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using RabbitMQ.Client.Events;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
@@ -51,57 +52,79 @@ internal static class LoggerExtensions {
             eventId: Events.MessageHandlerThrownExceptionEvent,
             formatString: "Message handler thrown exception during execution on consumer '{ConsumerTag}'.");
 
-    private static readonly Action<ILogger, string, string, Args, Exception?> ConsumerStartedDelegate
-        = LoggerMessage.Define<string, string, Args>(
+    private static readonly Action<ILogger, string, string, Parameters, Exception?> ConsumerStartedDelegate
+        = LoggerMessage.Define<string, string, Parameters>(
             logLevel: LogLevel.Information,
             eventId: Events.ConsumerStartedEvent,
-            formatString: "Consumer '{ConsumerTag}' started with status '{StartupStatus}'. Arguments: {@Args}");
+            formatString: "Consumer '{ConsumerTag}' started with status '{StartupStatus}'. Arguments: {@Parameters}");
 
-    internal static void UnhandledErrorWhileProducingMessage(this ILogger<Producer> logger, Exception exception) {
+    private static readonly Action<ILogger, Envelope, Exception?> EnvelopeReceivedDelegate
+        = LoggerMessage.Define<Envelope>(
+            logLevel: LogLevel.Debug,
+            eventId: Events.EnvelopeReceivedEvent,
+            formatString: "Envelope received: {@Envelope}");
+
+    private static readonly Action<ILogger, string, Exception?> UnableDeserializeMessageDelegate
+        = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Warning,
+            eventId: Events.UnableDeserializeMessageEvent,
+            formatString: "Unable to deserialize message to type '{MessageType}'.");
+
+    internal static void UnhandledErrorWhileProducingMessage(this ILogger logger, Exception exception) {
         UnhandledErrorWhileProducingMessageDelegate(logger, exception);
     }
 
-    internal static void UnhandledErrorWhileCreatingProducer(this ILogger<ProducerFactory> logger, Exception exception) {
+    internal static void UnhandledErrorWhileCreatingProducer(this ILogger logger, Exception exception) {
         UnhandledErrorWhileCreatingProducerDelegate(logger, exception);
     }
 
-    internal static void UnhandledErrorWhileCreatingConsumer(this ILogger<ConsumerFactory> logger, Exception exception) {
+    internal static void UnhandledErrorWhileCreatingConsumer(this ILogger logger, Exception exception) {
         UnhandledErrorWhileCreatingConsumerDelegate(logger, exception);
     }
 
-    internal static void EnvelopeDeserializationError(this ILogger<Consumer> logger, string consumerTag, Exception exception) {
+    internal static void EnvelopeDeserializationError(this ILogger logger, string consumerTag, Exception exception) {
         EnvelopeDeserializationErrorDelegate(logger, consumerTag, exception);
     }
 
-    internal static void EnvelopeDeserializationFailure(this ILogger<Consumer> logger, BasicDeliverEventArgs args) {
+    internal static void EnvelopeDeserializationFailure(this ILogger logger, BasicDeliverEventArgs args) {
         EnvelopeDeserializationFailureDelegate(logger, args, null /* exception */);
     }
 
-    internal static void ConsumerAlreadyStarted(this ILogger<Consumer> logger) {
+    internal static void ConsumerAlreadyStarted(this ILogger logger) {
         ConsumerAlreadyStartedDelegate(logger, null /* exception */);
     }
 
-    internal static void ConsumerShutdown(this ILogger<Consumer> logger, string consumerTag, string reason) {
+    internal static void ConsumerShutdown(this ILogger logger, string consumerTag, string reason) {
         ConsumerShutdownDelegate(logger, consumerTag, reason, null /* exception */);
     }
 
-    internal static void MessageHandlerThrownException(this ILogger<Consumer> logger, string consumerTag, Exception exception) {
+    internal static void MessageHandlerThrownException(this ILogger logger, string consumerTag, Exception exception) {
         MessageHandlerThrownExceptionDelegate(logger, consumerTag, exception);
     }
 
-    internal static void ConsumerStarted(this ILogger<Consumer> logger, string startupStatus, string consumerTag, Args args) {
-        ConsumerStartedDelegate(logger, startupStatus, consumerTag, args, null /* exception */);
+    internal static void ConsumerStarted(this ILogger logger, string startupStatus, string consumerTag, Parameters parameters) {
+        ConsumerStartedDelegate(logger, startupStatus, consumerTag, parameters, null /* exception */);
+    }
+
+    internal static void EnvelopeReceived(this ILogger logger, Envelope envelope) {
+        EnvelopeReceivedDelegate(logger, envelope, null /* exception */);
+    }
+
+    internal static void UnableDeserializeMessage(this ILogger logger, Type messageType) {
+        UnableDeserializeMessageDelegate(logger, messageType.Name, null /* exception */);
     }
 
     internal static class Events {
-        internal static readonly EventId UnhandledErrorWhileProducingMessageEvent = new(1, nameof(UnhandledErrorWhileProducingMessage));
-        internal static readonly EventId UnhandledErrorWhileCreatingProducerEvent = new(2, nameof(UnhandledErrorWhileCreatingProducer));
-        internal static readonly EventId UnhandledErrorWhileCreatingConsumerEvent = new(3, nameof(UnhandledErrorWhileCreatingConsumer));
-        internal static readonly EventId EnvelopeDeserializationFailureEvent = new(4, nameof(EnvelopeDeserializationFailure));
-        internal static readonly EventId EnvelopeDeserializationErrorEvent = new(5, nameof(EnvelopeDeserializationError));
-        internal static readonly EventId ConsumerAlreadyStartedEvent = new(6, nameof(ConsumerAlreadyStarted));
-        internal static readonly EventId ConsumerShutdownEvent = new(7, nameof(ConsumerShutdown));
-        internal static readonly EventId MessageHandlerThrownExceptionEvent = new(8, nameof(MessageHandlerThrownException));
-        internal static readonly EventId ConsumerStartedEvent = new(9, nameof(ConsumerStarted));
+        internal static readonly EventId UnhandledErrorWhileProducingMessageEvent = new(8004, nameof(UnhandledErrorWhileProducingMessage));
+        internal static readonly EventId UnhandledErrorWhileCreatingProducerEvent = new(8005, nameof(UnhandledErrorWhileCreatingProducer));
+        internal static readonly EventId UnhandledErrorWhileCreatingConsumerEvent = new(8006, nameof(UnhandledErrorWhileCreatingConsumer));
+        internal static readonly EventId EnvelopeDeserializationFailureEvent = new(8007, nameof(EnvelopeDeserializationFailure));
+        internal static readonly EventId EnvelopeDeserializationErrorEvent = new(8008, nameof(EnvelopeDeserializationError));
+        internal static readonly EventId ConsumerAlreadyStartedEvent = new(8009, nameof(ConsumerAlreadyStarted));
+        internal static readonly EventId ConsumerShutdownEvent = new(8010, nameof(ConsumerShutdown));
+        internal static readonly EventId MessageHandlerThrownExceptionEvent = new(8011, nameof(MessageHandlerThrownException));
+        internal static readonly EventId ConsumerStartedEvent = new(8012, nameof(ConsumerStarted));
+        internal static readonly EventId EnvelopeReceivedEvent = new(8013, nameof(EnvelopeReceived));
+        internal static readonly EventId UnableDeserializeMessageEvent = new(8014, nameof(UnableDeserializeMessage));
     }
 }

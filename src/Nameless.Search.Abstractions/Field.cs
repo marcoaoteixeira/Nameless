@@ -39,7 +39,7 @@ public sealed record Field {
     /// <param name="options">The options</param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="name" />
-    ///     or <paramref name="value" /> is <c>null</c>
+    ///     or <paramref name="value" /> is <see langword="null"/>
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="name" /> is empty or white spaces.
@@ -50,7 +50,7 @@ public sealed record Field {
     /// </exception>
     public Field(string name, object value, IndexableType type, FieldOptions options) {
         Name = Prevent.Argument.NullOrWhiteSpace(name);
-        Value = Prevent.Argument.NullOrNoMatchingType(value, type, nameof(value));
+        Value = Prevent.Argument.NullOrNonMatchingType(value, type, nameof(value));
         Type = type;
         Options = options;
     }

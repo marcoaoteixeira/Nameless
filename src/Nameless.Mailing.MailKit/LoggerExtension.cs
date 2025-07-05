@@ -27,7 +27,7 @@ internal static class LoggerExtension {
     }
 
     internal static class Events {
-        internal static readonly EventId SendMessageErrorEvent = new(1, nameof(SendMessageError));
-        internal static readonly EventId EmailSentResultEvent = new(2, nameof(EmailSentResult));
+        internal static readonly EventId SendMessageErrorEvent = new(5001, nameof(SendMessageError));
+        internal static readonly EventId EmailSentResultEvent = new(5002, nameof(EmailSentResult));
     }
 }

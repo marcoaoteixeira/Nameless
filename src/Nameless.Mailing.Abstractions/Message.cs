@@ -73,7 +73,7 @@ public sealed record Message {
     ///     if <paramref name="subject" /> or
     ///     <paramref name="content" /> or
     ///     <paramref name="from" /> or
-    ///     <paramref name="to" /> is <c>null</c>.
+    ///     <paramref name="to" /> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     Thrown when <paramref name="subject" /> or

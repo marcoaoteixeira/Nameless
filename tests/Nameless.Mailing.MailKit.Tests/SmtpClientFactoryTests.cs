@@ -1,11 +1,10 @@
-﻿using System.ComponentModel;
-using MailKit.Net.Smtp;
-using Nameless.Testing.Tools;
+﻿using MailKit.Net.Smtp;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Mailing.MailKit;
 
-[Category(Categories.RUNS_ON_DEV_MACHINE)]
+[IntegrationTest]
 [Collection(nameof(Smtp4DevContainerCollection))]
 public class SmtpClientFactoryTests {
     [Fact]

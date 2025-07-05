@@ -18,21 +18,21 @@ public record MediatorOptions {
 
     /// <summary>
     /// Whether to use event handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
-    public bool UseEventHandler { get; set; } = true;
+    public bool UseEventHandlers { get; set; } = true;
 
     /// <summary>
     /// Whether to use request handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
-    public bool UseRequestHandler { get; set; } = true;
+    public bool UseRequestHandlers { get; set; } = true;
 
     /// <summary>
     /// Whether to use stream handlers in the mediator.
-    /// Default is <c>true</c>.
+    /// Default is <see langword="true"/>.
     /// </summary>
-    public bool UseStreamHandler { get; set; } = true;
+    public bool UseStreamHandlers { get; set; } = true;
 
     /// <summary>
     /// Gets the registered request pipeline behaviors.
@@ -97,8 +97,8 @@ public record MediatorOptions {
             throw new InvalidOperationException($"Type '{pipelineBehavior.GetPrettyName()}' is not assignable from '{serviceType.GetPrettyName()}'.");
         }
 
-        if (!_requestPipelineBehaviorCollection.Contains(pipelineBehavior)) {
-            _requestPipelineBehaviorCollection.Add(pipelineBehavior);
+        if (!_streamPipelineBehaviorCollection.Contains(pipelineBehavior)) {
+            _streamPipelineBehaviorCollection.Add(pipelineBehavior);
         }
 
         return this;

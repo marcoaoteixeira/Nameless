@@ -39,7 +39,7 @@ public static class ComponentContextExtensions {
     ///     is available, otherwise; <see cref="NullLogger" />.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="categoryType" /> is <c>null</c>.
+    ///     if <paramref name="categoryType" /> is <see langword="null"/>.
     /// </exception>
     public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
         Prevent.Argument.Null(categoryType);
@@ -60,23 +60,30 @@ public static class ComponentContextExtensions {
     ///     An instance of <see cref="IOptions{TOptions}" />.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> is <c>null</c>.
+    ///     if <paramref name="self" /> is <see langword="null"/>.
     /// </exception>
     public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self)
         where TOptions : class, new() {
-        return GetOptions(self, () => new TOptions());
+        return self.GetOptions(() => new TOptions());
     }
 
     /// <summary>
-    ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current <see cref="IComponentContext" />.
+    ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current
+    ///     <see cref="IComponentContext" />.
     /// </summary>
-    /// <typeparam name="TOptions">Type of the options.</typeparam>
-    /// <param name="self">The current <see cref="IComponentContext" /></param>
-    /// <param name="optionsFactory">An options optionsFactory, if the options were not to be found.</param>
+    /// <typeparam name="TOptions">
+    ///     Type of the options.
+    /// </typeparam>
+    /// <param name="self">
+    ///     The current <see cref="IComponentContext" />.
+    /// </param>
+    /// <param name="fallback">
+    ///     An options fallback, if the options were not to be found.
+    /// </param>
     /// <returns>
     ///     An instance of <see cref="IOptions{TOptions}" />.
     /// </returns>
-    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> optionsFactory)
+    public static IOptions<TOptions> GetOptions<TOptions>(this IComponentContext self, Func<TOptions> fallback)
         where TOptions : class {
         // let's first check if our provider can resolve this option
         if (self.TryResolve<IOptions<TOptions>>(out var options)) {
@@ -96,8 +103,8 @@ public static class ComponentContextExtensions {
 
         // whoops...if we reach this far, seems like we don't have
         // the configuration set or missing this particular option.
-        // If we have the optionsFactory let's construct it.
-        var optionsFromFactory = optionsFactory();
+        // If we have the fallback let's construct it.
+        var optionsFromFactory = fallback();
 
         return Options.Create(optionsFromFactory);
     }
