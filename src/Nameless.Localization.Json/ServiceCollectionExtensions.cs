@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -22,11 +23,13 @@ public static class ServiceCollectionExtensions {
     ///     The current <see cref="IServiceCollection" /> so other actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<JsonLocalizationOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY)
-                   .AddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY)
-                   .AddSingleton(ResolveStringLocalizerFactory)
-                   .AddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
+        self.Configure(configure ?? (_ => { }));
+        self.TryAddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY);
+        self.TryAddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY);
+        self.TryAddSingleton(ResolveStringLocalizerFactory);
+        self.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
+
+        return self;
     }
 
     private static IStringLocalizerFactory ResolveStringLocalizerFactory(IServiceProvider provider) {

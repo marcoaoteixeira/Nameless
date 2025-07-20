@@ -9,6 +9,11 @@ namespace Nameless.Web.OpenTelemetry;
 /// </summary>
 public sealed record OpenTelemetryOptions {
     /// <summary>
+    ///     Gets or sets the activity sources.
+    /// </summary>
+    public string[] ActivitySources { get; set; } = [];
+
+    /// <summary>
     ///     Gets or sets the action to configure OpenTelemetry logger options.
     /// </summary>
     public Action<OpenTelemetryLoggerOptions> ConfigureLogger { get; set; } = logging => {

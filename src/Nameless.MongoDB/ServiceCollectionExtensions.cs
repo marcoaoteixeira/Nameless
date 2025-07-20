@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -18,15 +19,19 @@ public static class ServiceCollectionExtensions {
     /// <param name="configure">An action to configure MongoDb options.</param>
     /// <returns>The current <see cref="IServiceCollection" /> instance so other actions can be chained.</returns>
     public static IServiceCollection RegisterMongo(this IServiceCollection self, Action<MongoOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   // From the documentation: Because each MongoClient represents a pool
-                   // of connections to the database, most applications require only a
-                   // single instance of MongoClient
-                   // See more at https://www.mongodb.com/docs/drivers/csharp/current/fundamentals/connection/connect/#std-label-csharp-connect-to-mongodb
-                   .AddKeyedSingleton(MONGO_CLIENT_KEY, ResolveMongoClient)
-                   .AddKeyedSingleton(MONGO_DATABASE_KEY, ResolveMongoDatabase)
-                   .AddKeyedSingleton(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy)
-                   .AddSingleton(ResolveMongoCollectionProvider);
+        self.Configure(configure ?? (_ => { }));
+
+        // From the documentation: Because each MongoClient represents a pool
+        // of connections to the database, most applications require only a
+        // single instance of MongoClient
+        // See more at https://www.mongodb.com/docs/drivers/csharp/current/fundamentals/connection/connect/#std-label-csharp-connect-to-mongodb
+        self.TryAddKeyedSingleton(MONGO_CLIENT_KEY, ResolveMongoClient);
+
+        self.TryAddKeyedSingleton(MONGO_DATABASE_KEY, ResolveMongoDatabase);
+        self.TryAddKeyedSingleton(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy);
+        self.TryAddSingleton(ResolveMongoCollectionProvider);
+
+        return self;
     }
 
     private static IMongoClient ResolveMongoClient(IServiceProvider provider, object? _) {

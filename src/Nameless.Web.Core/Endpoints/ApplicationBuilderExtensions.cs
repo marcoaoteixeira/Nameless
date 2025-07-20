@@ -12,6 +12,8 @@ namespace Nameless.Web.Endpoints;
 /// Extension methods for <see cref="IApplicationBuilder"/> to register endpoints.
 /// </summary>
 public static class ApplicationBuilderExtensions {
+    public const string ROOT_ROUTE_PREFIX = "api/v{v:apiVersion}";
+
     /// <summary>
     ///     Registers endpoints in the application options.
     /// </summary>
@@ -35,6 +37,9 @@ public static class ApplicationBuilderExtensions {
             // create all endpoint builders and configure them.
             var endpointBuilders = endpoints.Select(CreateEndpointDescriptor)
                                             .ToArray();
+
+            // create the group for the API version
+            var rootMapGroup = builder.MapGroup(ROOT_ROUTE_PREFIX);
 
             // create the version set object.
             var versionSet = builder.CreateVersionSet(endpointBuilders);

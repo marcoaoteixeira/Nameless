@@ -9,7 +9,7 @@ internal static class LoggerExtensions {
             eventId: Events.ValidationServiceUnavailableEvent,
             formatString: "Validation service is unavailable.");
 
-    internal static void ValidationServiceUnavailable(this ILogger<ValidationEndpointFilter> self) {
+    internal static void ValidationServiceUnavailable(this ILogger<ValidateRequestEndpointFilter> self) {
         ValidationServiceUnavailableDelegate(self, null /* exception */);
     }
 

@@ -16,13 +16,13 @@ public sealed class UnitTestAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>
-    public string Author { get; set; } = string.Empty;
+    public string? Author { get; set; }
 
     /// <inheritdoc />
     public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits() {
         return [
-            new KeyValuePair<string, string>("Category", "UnitTest"),
-            new KeyValuePair<string, string>(nameof(Author), Author)
+            new KeyValuePair<string, string>(nameof(Category), nameof(Category.UnitTest)),
+            new KeyValuePair<string, string>(nameof(Author), Author ?? string.Empty)
         ];
     }
 }

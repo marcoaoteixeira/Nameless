@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Antiforgery;
+﻿using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -78,8 +77,8 @@ internal static class EndpointDescriptorExtensions {
             }
         }
 
-        foreach (var filterType in self.Filters) {
-            routeHandlerBuilder.InvokeAddEndpointFilter(filterType);
+        foreach (var filter in self.Filters) {
+            filter(routeHandlerBuilder);
         }
 
         if (self.UseAntiForgery && builder.ServiceProvider.GetService<IAntiforgery>() is null) {
@@ -110,25 +109,5 @@ internal static class EndpointDescriptorExtensions {
         if (!self.UseHttpMetrics) {
             routeHandlerBuilder.DisableHttpMetrics();
         }
-    }
-}
-
-// !HACK! This code is an extension to the RouteHandlerBuilder to allow
-// adding endpoint filters dynamically. This is necessary because the
-// AddEndpointFilter method is generic and requires a specific type to
-// be passed.
-internal static class RouteHandlerBuilderAccessor {
-    internal static void InvokeAddEndpointFilter(this RouteHandlerBuilder builder, Type filterType) {
-        var handler = typeof(EndpointFilterExtensions)
-                     .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                     .FirstOrDefault(member => member is { Name: nameof(EndpointFilterExtensions.AddEndpointFilter), IsGenericMethodDefinition: true, IsGenericMethod: true } &&
-                                               member.GetGenericArguments().Length == 2 && // TBuilder & TFilterType
-                                               member.GetParameters().Length == 1 && // current TBuilder
-                                               typeof(IEndpointConventionBuilder).IsAssignableFrom(member.GetParameters()[0].ParameterType));
-        if (handler is null) {
-            throw new InvalidOperationException($"Could not find {nameof(EndpointFilterExtensions.AddEndpointFilter)} method in {nameof(EndpointFilterExtensions)}.");
-        }
-
-        handler.MakeGenericMethod(typeof(RouteHandlerBuilder), filterType).Invoke(null, [builder]);
     }
 }

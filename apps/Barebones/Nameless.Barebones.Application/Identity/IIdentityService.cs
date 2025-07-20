@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Nameless.Barebones.Domains.Entities.Identity;
 using Nameless.Results;
 
 namespace Nameless.Barebones.Application.Identity;

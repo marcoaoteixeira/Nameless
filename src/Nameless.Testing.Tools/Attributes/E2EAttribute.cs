@@ -17,13 +17,13 @@ public sealed class E2EAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>
-    public string Author { get; set; } = string.Empty;
+    public string? Author { get; set; }
 
     /// <inheritdoc />
     public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits() {
         return [
-            new KeyValuePair<string, string>("Category", "E2E"),
-            new KeyValuePair<string, string>(nameof(Author), Author)
+            new KeyValuePair<string, string>(nameof(Category), nameof(Category.E2E)),
+            new KeyValuePair<string, string>(nameof(Author), Author ?? string.Empty)
         ];
     }
 }

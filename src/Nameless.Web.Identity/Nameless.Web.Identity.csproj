@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Nameless.EntityFrameworkCore\Nameless.EntityFrameworkCore.csproj" />
 	  <ProjectReference Include="..\Nameless.Web.Core\Nameless.Web.Core.csproj" />
 	</ItemGroup>
 

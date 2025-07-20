@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Validation.FluentValidation;
 
@@ -21,25 +22,26 @@ public static class ServiceCollectionExtensions {
 
         innerConfigure(options);
 
-        return self
-            .RegisterValidators(options)
-            .RegisterMainServices();
+        return self.RegisterValidators(options)
+                   .RegisterMainServices();
     }
 
     private static IServiceCollection RegisterValidators(this IServiceCollection self, ValidationOptions options) {
-        var serviceType = typeof(IValidator);
+        var service = typeof(IValidator);
         var validators = options.Assemblies
-                                .GetImplementations([serviceType])
+                                .GetImplementations(service)
                                 .Where(type => !type.IsGenericTypeDefinition);
 
         foreach (var validator in validators) {
-            self.AddScoped(serviceType, validator);
+            self.TryAddScoped(service, validator);
         }
 
         return self;
     }
 
     private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        return self.AddScoped<IValidationService, ValidationService>();
+        self.TryAddScoped<IValidationService, ValidationService>();
+
+        return self;
     }
 }

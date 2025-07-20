@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Infrastructure;
@@ -12,15 +13,25 @@ public static class ServiceCollectionExtensions {
     private const string ANALYZER_PROVIDER_KEY = $"{nameof(IAnalyzerProvider)} :: 8fbb1bea-8dc4-40cc-8021-a44c4e363797";
 
     /// <summary>
-    /// 
+    ///     Registers Lucene search services.
     /// </summary>
-    /// <param name="self"></param>
-    /// <param name="configure"></param>
-    /// <returns></returns>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configure">
+    ///     The configuration action.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection"/>. so other actions can
+    ///     be chained.
+    /// </returns>
     public static IServiceCollection RegisterSearch(this IServiceCollection self, Action<SearchOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<IAnalyzerProvider, AnalyzerProvider>(ANALYZER_PROVIDER_KEY)
-                   .AddSingleton(ResolveIndexProvider);
+        self.Configure(configure ?? (_ => { }));
+
+        self.TryAddKeyedSingleton<IAnalyzerProvider, AnalyzerProvider>(ANALYZER_PROVIDER_KEY);
+        self.TryAddSingleton(ResolveIndexProvider);
+
+        return self;
     }
 
     private static IIndexManager ResolveIndexProvider(IServiceProvider provider) {

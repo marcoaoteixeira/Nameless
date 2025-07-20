@@ -6,7 +6,7 @@
 public enum Stability {
     Stable,
 
-    Experimental,
+    Deprecated,
 
-    Deprecated
+    Experimental,
 }

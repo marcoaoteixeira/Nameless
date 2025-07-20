@@ -31,7 +31,9 @@ public static class EntryPoint {
         // Doesn't matter the order how
         // the services are registered.
 
-        return self.RegisterOpenTelemetry()
+        return self.RegisterDbContext()
+                   .RegisterIdentity()
+                   .RegisterOpenTelemetry()
                    .RegisterHealthChecks()
                    .RegisterLogging()
                    .RegisterCorrelationAccessor()
@@ -69,12 +71,7 @@ public static class EntryPoint {
         // to ensure proper initialization.
 
         self.UseExceptionHandler();
-
-        // Enables HSTS (HTTP Strict Transport Security) in non-development environments
-        if (!self.Environment.IsDevelopment()) {
-            self.UseHsts();
-        }
-
+        self.UseHsts(self.Environment);
         self.UseSerilogRequestLogging();
         self.UseHttpsRedirection();
         self.UseCorrelation();
@@ -88,7 +85,9 @@ public static class EntryPoint {
         self.UseRequestTimeouts();
         self.UseAntiforgery();
         self.UseMinimalEndpoints();
+        self.UseIdentityEndpoints();
         self.UseHealthChecks(self.Environment);
+        self.UseDbContext();
 
         return self;
     }

@@ -13,12 +13,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Moq" />
 		<PackageReference Include="xunit.v3.extensibility.core" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.EntityFrameworkCore\Nameless.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 
 </Project>

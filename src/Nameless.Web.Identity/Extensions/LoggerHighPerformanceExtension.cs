@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nameless.Web.Identity.Endpoints.Accounts;
 
-namespace Nameless.Web.Identity;
+namespace Nameless.Web.Identity.Extensions;
 
 internal static class LoggerHighPerformanceExtension {
     private static readonly Action<ILogger, Exception?> UserSignInSucceededDelegate

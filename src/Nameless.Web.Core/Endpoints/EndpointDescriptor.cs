@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
 namespace Nameless.Web.Endpoints;
@@ -7,13 +8,14 @@ namespace Nameless.Web.Endpoints;
 /// Default implementation of <see cref="IEndpointDescriptor"/> for building endpoints in a minimal API style.
 /// </summary>
 public sealed class EndpointDescriptor : IEndpointDescriptor {
+    public const string ROOT_ROUTE_PREFIX = $"api/v{ROUTE_VERSION_PARAM}";
+
     private const string ROUTE_VERSION_PARAM = "{v:apiVersion}";
-    private const string ROUTE_VERSION_PREFIX = $"api/v{ROUTE_VERSION_PARAM}";
 
     private readonly HashSet<AcceptMetadata> _accepts = [];
     private readonly HashSet<ProduceMetadata> _produces = [];
     private readonly HashSet<string> _authorizationPolicies = [];
-    private readonly HashSet<Type> _filters = [];
+    private readonly Dictionary<Type, Action<RouteHandlerBuilder>> _filters = [];
 
     private string? _name;
 
@@ -25,7 +27,7 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     /// <summary>
     /// Gets the endpoint group name.
     /// </summary>
-    public string GroupName => string.Concat(new[] { ROUTE_VERSION_PREFIX, RoutePrefix }.OfType<string>());
+    public string GroupName => string.Concat(new[] { ROOT_ROUTE_PREFIX, RoutePrefix }.OfType<string>());
 
     /// <summary>
     /// Gets the HTTP method for the endpoint.
@@ -95,7 +97,7 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     /// <summary>
     /// Gets the collection of filters applied to the endpoint.
     /// </summary>
-    public IEnumerable<Type> Filters => _filters;
+    public IEnumerable<Action<RouteHandlerBuilder>> Filters => _filters.Values;
 
     /// <summary>
     /// Whether to use anti-forgery tokens for the endpoint.
@@ -283,7 +285,9 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     /// <inheritdoc />
     public IEndpointDescriptor WithFilter<TEndpointFilter>()
         where TEndpointFilter : IEndpointFilter {
-        _filters.Add(typeof(TEndpointFilter));
+        _filters[typeof(TEndpointFilter)] = builder => {
+            builder.AddEndpointFilter<TEndpointFilter>();
+        };
 
         return this;
     }

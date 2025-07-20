@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Data.SqlServer;
 
@@ -17,9 +18,12 @@ public static class ServiceCollectionExtensions {
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterDatabase(this IServiceCollection self, Action<SqlServerOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY)
-                   .AddScoped(ResolveDatabase);
+        self.Configure(configure ?? (_ => { }));
+
+        self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
+        self.TryAddScoped(ResolveDatabase);
+
+        return self;
     }
 
     private static IDatabase ResolveDatabase(IServiceProvider provider) {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Security;
 
@@ -17,7 +18,9 @@ public static class ServiceCollectionExtensions {
     ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterPasswordGenerator(this IServiceCollection self) {
-        return self.AddSingleton<IPasswordGenerator, RandomPasswordGenerator>();
+        self.TryAddSingleton<IPasswordGenerator, RandomPasswordGenerator>();
+
+        return self;
     }
 
     /// <summary>
@@ -34,7 +37,10 @@ public static class ServiceCollectionExtensions {
     ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterCrypto(this IServiceCollection self, Action<CryptoOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddSingleton<ICrypto, RijndaelCrypto>();
+        self.Configure(configure ?? (_ => { }));
+
+        self.TryAddSingleton<ICrypto, RijndaelCrypto>();
+
+        return self;
     }
 }

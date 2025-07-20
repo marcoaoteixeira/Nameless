@@ -1,0 +1,3 @@
+﻿
+
+global static TypedResults

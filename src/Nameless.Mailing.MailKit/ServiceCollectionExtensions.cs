@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Mailing.MailKit;
 
@@ -17,9 +18,11 @@ public static class ServiceCollectionExtensions {
     /// The current <see cref="IServiceCollection"/> so other actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterMailing(this IServiceCollection self, Action<MailingOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<ISmtpClientFactory, SmtpClientFactory>(SMTP_CLIENT_FACTORY_KEY)
-                   .AddSingleton(ResolveMailing);
+        self.Configure(configure ?? (_ => { }));
+        self.TryAddKeyedSingleton<ISmtpClientFactory, SmtpClientFactory>(SMTP_CLIENT_FACTORY_KEY);
+        self.TryAddSingleton(ResolveMailing);
+
+        return self;
     }
 
     private static IMailing ResolveMailing(IServiceProvider provider) {
