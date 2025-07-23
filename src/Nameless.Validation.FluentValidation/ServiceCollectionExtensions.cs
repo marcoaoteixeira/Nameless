@@ -28,19 +28,18 @@ public static class ServiceCollectionExtensions {
 
     private static IServiceCollection RegisterValidators(this IServiceCollection self, ValidationOptions options) {
         var service = typeof(IValidator);
-        var validators = options.Assemblies
-                                .GetImplementations(service)
-                                .Where(type => !type.IsGenericTypeDefinition);
+        var descriptors = options.Assemblies
+                                 .GetImplementations(service)
+                                 .Where(type => !type.IsGenericTypeDefinition)
+                                 .Select(validator => new ServiceDescriptor(service, validator, ServiceLifetime.Singleton));
 
-        foreach (var validator in validators) {
-            self.TryAddScoped(service, validator);
-        }
+        self.TryAddEnumerable(descriptors);
 
         return self;
     }
 
     private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        self.TryAddScoped<IValidationService, ValidationService>();
+        self.TryAddTransient<IValidationService, ValidationService>();
 
         return self;
     }

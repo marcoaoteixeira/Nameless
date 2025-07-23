@@ -48,7 +48,7 @@ public static class HostApplicationBuilderExtensions {
         innerConfigure(options);
 
         self.Services
-            .AddOpenApi(options.ConfigureOpenApi ?? (_ => { }))
+            .AddOpenApi(options.ConfigureOpenApi)
             .AddApiVersioning(options.ConfigureApiVersioning ?? DefaultConfigureApiVersioningOptions)
             .AddApiExplorer(options.ConfigureApiExplorer ?? DefaultConfigureApiExplorerOptions);
 
@@ -56,10 +56,23 @@ public static class HostApplicationBuilderExtensions {
         var service = typeof(IEndpoint);
         var endpoints = options.Assemblies
                                .GetImplementations(service)
-                               .Where(type => !type.IsGenericTypeDefinition);
+                               .Where(type => !type.IsGenericTypeDefinition)
+                               .Select(endpoint => new ServiceDescriptor(service, endpoint, ServiceLifetime.Transient));
 
-        foreach (var endpoint in endpoints) {
-            self.Services.TryAddScoped(service, endpoint);
+        self.Services.TryAddEnumerable(endpoints);
+
+        return self;
+    }
+
+    private static IServiceCollection AddOpenApi(this IServiceCollection self, Func<IEnumerable<OpenApiDescriptor>>? configure) {
+        var descriptors = (configure?.Invoke() ?? []).ToArray();
+
+        if (descriptors.Length == 0) {
+            return self.AddOpenApi();
+        }
+
+        foreach (var descriptor in descriptors) {
+            self.AddOpenApi(descriptor.DocumentName, descriptor.Options ?? (_ => { }));
         }
 
         return self;

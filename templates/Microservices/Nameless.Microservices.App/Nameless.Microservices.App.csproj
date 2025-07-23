@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Scalar.AspNetCore.Microsoft" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.EntityFrameworkCore\Nameless.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	</ItemGroup>
+
+</Project>

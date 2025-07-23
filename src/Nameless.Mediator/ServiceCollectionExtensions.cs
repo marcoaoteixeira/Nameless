@@ -87,10 +87,10 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        self.TryAddScoped<IEventHandlerInvoker, EventHandlerInvoker>();
-        self.TryAddScoped<IRequestHandlerInvoker, RequestHandlerInvoker>();
-        self.TryAddScoped<IStreamHandlerInvoker, StreamHandlerInvoker>();
-        self.TryAddScoped<IMediator, MediatorImpl>();
+        self.TryAddTransient<IEventHandlerInvoker, EventHandlerInvoker>();
+        self.TryAddTransient<IRequestHandlerInvoker, RequestHandlerInvoker>();
+        self.TryAddTransient<IStreamHandlerInvoker, StreamHandlerInvoker>();
+        self.TryAddTransient<IMediator, MediatorImpl>();
 
         return self;
     }
@@ -121,7 +121,7 @@ public static class ServiceCollectionExtensions {
                 continue;
             }
 
-            self.TryAddScoped(@interface, implementation);
+            self.TryAddTransient(@interface, implementation);
         }
     }
 
@@ -134,7 +134,7 @@ public static class ServiceCollectionExtensions {
             if (!pipelineBehavior.IsOpenGeneric()) {
                 var interfaces = pipelineBehavior.GetInterfacesThatClose(service);
                 foreach (var @interface in interfaces) {
-                    self.TryAddScoped(@interface, pipelineBehavior);
+                    self.TryAddTransient(@interface, pipelineBehavior);
                 }
 
                 continue;
@@ -145,7 +145,7 @@ public static class ServiceCollectionExtensions {
                                                      .Where(service.IsAssignableFromGenericType)
                                                      .Select(type => type.GetGenericTypeDefinition());
             foreach (var genericDefinition in genericDefinitions) {
-                self.TryAddScoped(genericDefinition, pipelineBehavior);
+                self.TryAddTransient(genericDefinition, pipelineBehavior);
             }
         }
 

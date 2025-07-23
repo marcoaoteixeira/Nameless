@@ -1,7 +1,6 @@
 ﻿// ReSharper disable SeparateLocalFunctionsWithJumpStatement
 
 using Asp.Versioning;
-using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +11,7 @@ namespace Nameless.Web.Endpoints;
 /// Extension methods for <see cref="IApplicationBuilder"/> to register endpoints.
 /// </summary>
 public static class ApplicationBuilderExtensions {
-    public const string ROOT_ROUTE_PREFIX = "api/v{v:apiVersion}";
+    private const string ROOT_GROUP_ROUTE_PREFIX = "api/v{version:apiVersion}";
 
     /// <summary>
     ///     Registers endpoints in the application options.
@@ -29,30 +28,21 @@ public static class ApplicationBuilderExtensions {
     public static TApplicationBuilder UseMinimalEndpoints<TApplicationBuilder>(this TApplicationBuilder self)
         where TApplicationBuilder : IApplicationBuilder {
         self.UseEndpoints(builder => {
-            using var scope = self.ApplicationServices.CreateScope();
+            using var scope = builder.ServiceProvider.CreateScope();
 
             // resolve all our endpoints so we can configure them.
             var endpoints = scope.ServiceProvider.GetServices<IEndpoint>();
 
             // create all endpoint builders and configure them.
-            var endpointBuilders = endpoints.Select(CreateEndpointDescriptor)
-                                            .ToArray();
+            var endpointDescriptors = endpoints.Select(CreateEndpointDescriptor)
+                                               .ToArray();
 
-            // create the group for the API version
-            var rootMapGroup = builder.MapGroup(ROOT_ROUTE_PREFIX);
-
-            // create the version set object.
-            var versionSet = builder.CreateVersionSet(endpointBuilders);
-
-            // group all endpoint builders so we can configure them
-            // by group name
-            var endpointBuilderGroups = endpointBuilders.GroupBy(item => item.GroupName)
-                                                        .ToArray();
-
-            // finish the endpoint configuration
-            foreach (var endpointBuilderGroup in endpointBuilderGroups) {
-                builder.ConfigureEndpointBuilderGroup(endpointBuilderGroup, versionSet);
-            }
+            // create the root group
+            builder.MapGroup(ROOT_GROUP_ROUTE_PREFIX)
+                   // define the version set for all endpoints.
+                   .WithVersionSetFrom(endpointDescriptors)
+                   // map all endpoints to the root group
+                   .WithEndpoints(endpointDescriptors);
         });
 
         return self;
@@ -64,43 +54,42 @@ public static class ApplicationBuilderExtensions {
         }
     }
 
-    private static ApiVersionSet CreateVersionSet(this IEndpointRouteBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
+    private static RouteGroupBuilder WithVersionSetFrom(this RouteGroupBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
         // extract all available versions from the groups.
-        var availableVersions = endpointDescriptors.Select(CreateVersionMetadata)
+        var availableVersions = endpointDescriptors.Select(endpoint => endpoint.Version)
                                                    .Distinct()
                                                    .ToArray();
 
-        // we need to add the versioning capability to the
-        // descriptor, so calling NewVersionedApi() will do the trick.
+        // creates the version set builder.
         var versionSetBuilder = self.NewApiVersionSet();
-        foreach (var (number, deprecated) in availableVersions) {
-            var apiVersion = new ApiVersion(number);
-            switch (deprecated) {
-                case true:
-                    versionSetBuilder.HasDeprecatedApiVersion(apiVersion);
-                    break;
-                default:
-                    versionSetBuilder.HasApiVersion(apiVersion);
-                    break;
-            }
+
+        foreach (var version in availableVersions) {
+            versionSetBuilder.HasApiVersion(new ApiVersion(version));
         }
 
-        return versionSetBuilder.ReportApiVersions().Build();
+        // creates the version set.
+        var versionSet = versionSetBuilder.ReportApiVersions().Build();
 
-        static (int Number, bool Deprecated) CreateVersionMetadata(EndpointDescriptor endpointDescriptor) {
-            return (
-                endpointDescriptor.Version,
-                endpointDescriptor.Stability == Stability.Deprecated
-            );
-        }
+        // set the version set to the endpoint route builder.
+        self.WithApiVersionSet(versionSet);
+
+        return self;
     }
 
-    private static void ConfigureEndpointBuilderGroup(this IEndpointRouteBuilder self, IGrouping<string, EndpointDescriptor> endpointDescriptorGroup, ApiVersionSet versionSet) {
-        var routeGroupBuilder = self.MapGroup(endpointDescriptorGroup.Key)
-                                    .WithApiVersionSet(versionSet);
+    private static void WithEndpoints(this RouteGroupBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
+        // groups all endpoint descriptors by group name
+        var groups = endpointDescriptors.GroupBy(item => item.GroupName);
 
-        foreach (var endpointDescriptor in endpointDescriptorGroup) {
-            endpointDescriptor.Apply(routeGroupBuilder);
+        foreach (var group in groups) {
+            // with the group name, we create a new group builder for the
+            // similar endpoints.
+            var endpointGroup = self.MapGroup(group.Key);
+
+            // finally, we apply all endpoint descriptors to the group
+            // builder.
+            foreach (var endpointDescriptor in group) {
+                endpointDescriptor.Apply(endpointGroup);
+            }
         }
     }
 }

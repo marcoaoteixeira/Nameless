@@ -8,10 +8,6 @@ namespace Nameless.Web.Endpoints;
 /// Default implementation of <see cref="IEndpointDescriptor"/> for building endpoints in a minimal API style.
 /// </summary>
 public sealed class EndpointDescriptor : IEndpointDescriptor {
-    public const string ROOT_ROUTE_PREFIX = $"api/v{ROUTE_VERSION_PARAM}";
-
-    private const string ROUTE_VERSION_PARAM = "{v:apiVersion}";
-
     private readonly HashSet<AcceptMetadata> _accepts = [];
     private readonly HashSet<ProduceMetadata> _produces = [];
     private readonly HashSet<string> _authorizationPolicies = [];
@@ -27,7 +23,7 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     /// <summary>
     /// Gets the endpoint group name.
     /// </summary>
-    public string GroupName => string.Concat(new[] { ROOT_ROUTE_PREFIX, RoutePrefix }.OfType<string>());
+    public string GroupName { get; private set; } = string.Empty;
 
     /// <summary>
     /// Gets the HTTP method for the endpoint.
@@ -45,18 +41,11 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     public WeakReference<Delegate>? Handler { get; private set; }
 
     /// <summary>
-    /// Gets the route prefix for the endpoint, if any.
-    /// </summary>
-    public string? RoutePrefix { get; private set; }
-
-    /// <summary>
     /// Gets the name of the endpoint.
     /// </summary>
     public string Name {
-        get => string.IsNullOrWhiteSpace(_name)
-            ? string.Concat(GroupName.Replace(ROUTE_VERSION_PARAM, Version.ToString()), RoutePattern)
-            : _name;
-        set => _name = value;
+        get => GetName();
+        private set => _name = value;
     }
 
     /// <summary>
@@ -173,8 +162,8 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
     }
 
     /// <inheritdoc />
-    public IEndpointDescriptor WithRoutePrefix(string routePrefix) {
-        RoutePrefix = Prevent.Argument.NullOrWhiteSpace(routePrefix);
+    public IEndpointDescriptor WithGroupName(string groupName) {
+        GroupName = Prevent.Argument.NullOrWhiteSpace(groupName);
 
         return this;
     }
@@ -359,6 +348,12 @@ public sealed class EndpointDescriptor : IEndpointDescriptor {
         Handler = new WeakReference<Delegate>(Prevent.Argument.Null(handler));
 
         return this;
+    }
+
+    private string GetName() {
+        return string.IsNullOrWhiteSpace(_name)
+            ? $"{EndpointType.Name}_v{Version}"
+            : _name;
     }
 
     /// <summary>

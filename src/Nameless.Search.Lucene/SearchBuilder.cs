@@ -384,10 +384,10 @@ public sealed class SearchBuilder : ISearchBuilder {
         var filter = new QueryWrapperFilter(query);
         var context = (AtomicReaderContext)_indexSearcher.IndexReader.Context;
         var bits = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-        var documentOpenBitSetDISI = new OpenBitSetDISI(bits.GetIterator(),
+        var documentOpenBitSetDisi = new OpenBitSetDISI(bits.GetIterator(),
             _indexSearcher.IndexReader.MaxDoc);
 
-        return new SearchBit(documentOpenBitSetDISI);
+        return new SearchBit(documentOpenBitSetDisi);
     }
 
     /// <inheritdoc />

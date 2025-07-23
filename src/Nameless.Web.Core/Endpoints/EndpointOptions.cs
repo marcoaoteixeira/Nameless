@@ -17,7 +17,7 @@ public sealed record EndpointOptions {
     /// <summary>
     /// Gets or sets the action to configure OpenAPI options.
     /// </summary>
-    public Action<OpenApiOptions>? ConfigureOpenApi { get; set; }
+    public Func<IEnumerable<OpenApiDescriptor>>? ConfigureOpenApi { get; set; }
 
     /// <summary>
     /// Gets or sets the action to configure API versioning options.
@@ -28,4 +28,9 @@ public sealed record EndpointOptions {
     /// Gets or sets the action to configure API explorer options.
     /// </summary>
     public Action<ApiExplorerOptions>? ConfigureApiExplorer { get; set; }
+}
+
+public record OpenApiDescriptor {
+    public required string DocumentName { get; init; }
+    public Action<OpenApiOptions>? Options { get; init; }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nameless.Sample.WeatherForecast.Dtos;
 using Nameless.Sample.WeatherForecast.Services;
 using Nameless.Web.Endpoints;
 
@@ -16,18 +15,20 @@ public class GetWeatherForecast : IEndpoint {
         descriptor
            .Get("/forecast", HandleAsync)
            .AllowAnonymous()
-           .WithRoutePrefix("/weather")
            .WithTags("Information")
-           .Produces<ForecastDto[]>()
+           .Produces<OkResult>()
            .ProducesProblem()
-           .DisableHttpMetrics()
-           .WithDescription("TEST")
            .WithVersion(version: 2);
     }
 
-    public Task<ForecastDto[]> HandleAsync([FromQuery] string? summary = null) {
+    public Task<IResult> HandleAsync([FromQuery] string? summary = null) {
         var forecasts = _forecastService.GetForecasts(summary).ToArray();
 
-        return Task.FromResult(forecasts);
+        IResult ok = TypedResults.Ok(new {
+            Version = 2,
+            Result = forecasts
+        });
+
+        return Task.FromResult(ok);
     }
 }

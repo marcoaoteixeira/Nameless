@@ -90,11 +90,11 @@ public sealed class SearchHit : ISearchHit {
     }
 
     private string GetDocumentID() {
-        const string fieldName = nameof(ISearchHit.DocumentID);
+        const string FieldName = nameof(ISearchHit.DocumentID);
 
-        var id = GetString(fieldName);
+        var id = GetString(FieldName);
 
-        return Prevent.Argument.Null(id, fieldName);
+        return Prevent.Argument.Null(id, FieldName);
     }
 
     private IIndexableField? GetField(string name) {

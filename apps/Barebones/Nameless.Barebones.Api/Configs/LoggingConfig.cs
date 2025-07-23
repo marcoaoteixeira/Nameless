@@ -1,5 +1,6 @@
 ﻿using Nameless.Web.OpenTelemetry;
 using Serilog;
+using Serilog.Events;
 
 namespace Nameless.Barebones.Api.Configs;
 
@@ -36,7 +37,11 @@ public static class LoggingConfig {
                       if (!string.IsNullOrWhiteSpace(openTelemetryExporterEndpoint)) {
                           options.Endpoint = openTelemetryExporterEndpoint;
                       }
-                  });
+                  })
+
+                  .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+                  .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+                  .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
         });
 
         return self;

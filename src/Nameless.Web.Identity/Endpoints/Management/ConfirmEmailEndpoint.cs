@@ -20,7 +20,7 @@ public class ConfirmEmailEndpoint : EndpointBase {
     public override void Configure(IEndpointDescriptor descriptor) {
         descriptor
             .Get("accounts/confirm-email", HandleAsync)
-            .WithRoutePrefix("identity")
+            .WithGroupName("identity")
             .AllowAnonymous()
             .WithFilter<ValidateRequestEndpointFilter>()
             .Produces<ConfirmEmailResponse>()

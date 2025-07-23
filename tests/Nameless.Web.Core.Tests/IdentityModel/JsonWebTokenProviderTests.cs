@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Web.IdentityModel.Jwt;
 
 namespace Nameless.Web.IdentityModel;
 

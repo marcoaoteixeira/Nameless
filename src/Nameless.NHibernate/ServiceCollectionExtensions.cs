@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions {
 
         self.TryAddKeyedSingleton<IConfigurationFactory, ConfigurationFactory>(CONFIGURATION_FACTORY_KEY);
         self.TryAddKeyedSingleton(SESSION_FACTORY_KEY, SessionFactoryResolver);
-        self.TryAddScoped(SessionResolver);
+        self.TryAddTransient(SessionResolver);
 
         return self;
     }

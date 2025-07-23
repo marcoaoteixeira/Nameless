@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions {
         self.Configure(configure ?? (_ => { }));
 
         self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
-        self.TryAddScoped(ResolveDatabase);
+        self.TryAddTransient(ResolveDatabase);
 
         return self;
     }

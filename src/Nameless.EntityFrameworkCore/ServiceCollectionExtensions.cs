@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions {
     ///     the actual <see cref="DbContext"/> implementation.
     /// </remarks>
     public static IServiceCollection RegisterDbContextWrapper(this IServiceCollection self) {
-        self.TryAddScoped<IDbContext, DbContextWrapper>();
+        self.TryAddTransient<IDbContext, DbContextWrapper>();
 
         return self;
     }

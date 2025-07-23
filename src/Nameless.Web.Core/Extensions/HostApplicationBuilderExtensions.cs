@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Nameless.Web.IdentityModel;
+using Nameless.Web.IdentityModel.Jwt;
 
 namespace Nameless.Web;
 
@@ -69,23 +69,19 @@ public static class HostApplicationBuilderExtensions {
                                           .Get<JsonWebTokenOptions>() ?? new JsonWebTokenOptions();
 
             if (string.IsNullOrWhiteSpace(jsonWebTokenOptions.Secret)) {
-                throw new InvalidOperationException("JSON Web Token secret is not configured.");
-            }
-
-            if (string.IsNullOrWhiteSpace(jsonWebTokenOptions.Algorithm)) {
-                throw new InvalidOperationException("Hash algorithm is not configured.");
+                throw new MissingSecretConfigurationException();
             }
 
             var securityKey = new SymmetricSecurityKey(jsonWebTokenOptions.Secret.GetBytes());
 
             options.TokenValidationParameters = new TokenValidationParameters {
-                ValidAudience = jsonWebTokenOptions.Audience,
+                ValidAudiences = jsonWebTokenOptions.Audiences,
                 ValidateAudience = jsonWebTokenOptions.ValidateAudience,
                 ValidIssuer = jsonWebTokenOptions.Issuer,
                 ValidateIssuer = jsonWebTokenOptions.ValidateIssuer,
                 ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
                 IssuerSigningKey = securityKey,
-                ValidAlgorithms = [jsonWebTokenOptions.Algorithm],
+                ValidAlgorithms = [jsonWebTokenOptions.SecurityAlgorithm ?? SecurityAlgorithms.HmacSha256],
                 ValidateLifetime = jsonWebTokenOptions.ValidateLifetime,
                 ClockSkew = jsonWebTokenOptions.ClockSkew,
             };

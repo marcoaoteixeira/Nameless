@@ -8,32 +8,47 @@ namespace Nameless.Web.Endpoints;
 /// </summary>
 public interface IEndpointDescriptor {
     /// <summary>
-    /// Configures GET for the endpoint with the specified route pattern.
+    ///     Configures GET for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routePattern">The route pattern.</param>
-    /// <param name="handler">The endpoint handler.</param>
+    /// <param name="routePattern">
+    ///     The route pattern.
+    /// </param>
+    /// <param name="handler">
+    ///     The endpoint handler.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Get([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Configures POST for the endpoint with the specified route pattern.
+    ///     Configures POST for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routePattern">The route pattern.</param>
-    /// <param name="handler">The endpoint handler.</param>
+    /// <param name="routePattern">
+    ///     The route pattern.
+    /// </param>
+    /// <param name="handler">
+    ///     The endpoint handler.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Post([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Configures PUT for the endpoint with the specified route pattern.
+    ///     Configures PUT for the endpoint with the specified route pattern.
     /// </summary>
-    /// <param name="routePattern">The route pattern.</param>
-    /// <param name="handler">The endpoint handler.</param>
+    /// <param name="routePattern">
+    ///     The route pattern.
+    /// </param>
+    /// <param name="handler">
+    ///     The endpoint handler.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Put([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
@@ -43,28 +58,31 @@ public interface IEndpointDescriptor {
     /// <param name="routePattern">The route pattern.</param>
     /// <param name="handler">The endpoint handler.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Delete([StringSyntax(Constants.ROUTE_STRING_SYNTAX)] string routePattern, Delegate handler);
 
     /// <summary>
-    /// Sets the route prefix for the endpoint.
+    ///     Sets the group name for the endpoint. This will act like a route
+    ///     prefix.
     /// </summary>
-    /// <param name="routePrefix">The route prefix.</param>
+    /// <param name="groupName">
+    ///     The route prefix.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
-    /// <remarks>
-    /// To avoid conflicts, do not use route pattern in the prefix.
-    /// </remarks>
-    IEndpointDescriptor WithRoutePrefix(string routePrefix);
+    IEndpointDescriptor WithGroupName(string groupName);
 
     /// <summary>
     /// Sets the name of the endpoint.
     /// </summary>
     /// <param name="name">The endpoint name.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithName(string name);
 
@@ -73,7 +91,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="displayName">The display name.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithDisplayName(string displayName);
 
@@ -82,7 +101,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="description">The description.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithDescription(string description);
 
@@ -91,7 +111,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="summary">The summary.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithSummary(string summary);
 
@@ -100,7 +121,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="tags">The tags.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithTags(params string[] tags);
 
@@ -109,7 +131,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="policyName">The policy name.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithRequestTimeout(string policyName);
 
@@ -121,7 +144,8 @@ public interface IEndpointDescriptor {
     /// <param name="contentType">The primary content type that the endpoint accepts, such as "application/json".</param>
     /// <param name="additionalContentTypes">Additional content types that the endpoint can accept, specified as an array of strings.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Accepts<TRequestType>(bool isOptional, string contentType, params string[] additionalContentTypes)
         where TRequestType : notnull;
@@ -134,7 +158,8 @@ public interface IEndpointDescriptor {
     /// <param name="contentType">The primary content type that the endpoint accepts, such as "application/json".</param>
     /// <param name="additionalContentTypes">Additional content types that the endpoint can accept, specified as an array of strings.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Accepts(Type requestType, bool isOptional, string contentType, params string[] additionalContentTypes);
 
@@ -150,7 +175,8 @@ public interface IEndpointDescriptor {
     /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <param name="additionalContentTypes">Additional content types that the endpoint can produce, specified as an array of strings.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Produces<TResponse>(int statusCode = StatusCodes.Status200OK, string? contentType = null, params string[] additionalContentTypes);
 
@@ -166,7 +192,8 @@ public interface IEndpointDescriptor {
     /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <param name="additionalContentTypes">Additional content types that the endpoint can produce, specified as an array of strings.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor Produces(Type responseType, int statusCode = StatusCodes.Status200OK, string? contentType = null, params string[] additionalContentTypes);
 
@@ -186,7 +213,8 @@ public interface IEndpointDescriptor {
     /// <param name="statusCode">The HTTP status code that the endpoint will return. The default is <see cref="StatusCodes.Status400BadRequest"/>.</param>
     /// <param name="contentType">The primary content type of the response, such as "application/json". If <see langword="null"/>, the default content type is used.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor ProducesValidationProblem(int statusCode = StatusCodes.Status400BadRequest, string? contentType = null);
 
@@ -195,7 +223,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <typeparam name="TEndpointFilter">Type of the endpoint filter.</typeparam>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithFilter<TEndpointFilter>() where TEndpointFilter : IEndpointFilter;
 
@@ -203,7 +232,8 @@ public interface IEndpointDescriptor {
     /// Configures the endpoint to use anti-forgery protection.
     /// </summary>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithAntiForgery();
 
@@ -212,7 +242,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="policyName">The name of the rate limiting policy to apply.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithRateLimiting(string policyName);
 
@@ -220,7 +251,8 @@ public interface IEndpointDescriptor {
     /// Configures the endpoint to allow anonymous access.
     /// </summary>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor AllowAnonymous();
 
@@ -229,7 +261,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="policyNames">The policy names.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithAuthorization(params string[] policyNames);
 
@@ -238,7 +271,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="policyName">The policy name.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithCorsPolicy(string policyName);
 
@@ -248,7 +282,8 @@ public interface IEndpointDescriptor {
     /// <param name="version">The version.</param>
     /// <param name="stability">The stability of the endpoint.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithVersion(int version, Stability stability = Stability.Stable);
 
@@ -257,7 +292,8 @@ public interface IEndpointDescriptor {
     /// </summary>
     /// <param name="policyName">The output cache policy name.</param>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor WithOutputCachePolicy(string policyName);
 
@@ -265,7 +301,8 @@ public interface IEndpointDescriptor {
     /// Disables the HTTP metrics for the endpoint.
     /// </summary>
     /// <returns>
-    /// The current <see cref="IEndpointDescriptor"/> instance so other actions can be chained.
+    ///     The current <see cref="IEndpointDescriptor"/> instance so other
+    ///     actions can be chained.
     /// </returns>
     IEndpointDescriptor DisableHttpMetrics();
 }

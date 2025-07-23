@@ -20,7 +20,7 @@ public class ConfirmEmailChangeEndpoint : EndpointBase {
     public override void Configure(IEndpointDescriptor descriptor) {
         descriptor
             .Get("accounts/confirm-email-change", HandleAsync)
-            .WithRoutePrefix("identity")
+            .WithGroupName("identity")
             .AllowAnonymous()
             .WithFilter<ValidateRequestEndpointFilter>()
             .Produces<ConfirmEmailChangeResponse>()

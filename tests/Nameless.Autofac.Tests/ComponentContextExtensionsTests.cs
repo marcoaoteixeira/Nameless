@@ -16,7 +16,7 @@ public class ComponentContextExtensionsTests {
         var sut = container.GetLogger(typeof(ComponentContextExtensionsTests));
 
         // assert
-        Assert.IsAssignableFrom<NullLogger>(sut);
+        Assert.IsType<NullLogger>(sut);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class ComponentContextExtensionsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.IsNotAssignableFrom<NullLogger<ComponentContextExtensionsTests>>(sut);
-            Assert.IsAssignableFrom<ILogger<ComponentContextExtensionsTests>>(sut);
+            Assert.IsNotType<NullLogger<ComponentContextExtensionsTests>>(sut);
+            Assert.IsType<Logger<ComponentContextExtensionsTests>>(sut);
         });
     }
 
@@ -70,8 +70,8 @@ public class ComponentContextExtensionsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.IsNotAssignableFrom<NullLogger<ComponentContextExtensionsTests>>(sut);
-            Assert.IsAssignableFrom<ILogger<ComponentContextExtensionsTests>>(sut);
+            Assert.IsNotType<NullLogger<ComponentContextExtensionsTests>>(sut);
+            Assert.IsType<Logger<ComponentContextExtensionsTests>>(sut);
         });
     }
 }

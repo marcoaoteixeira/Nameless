@@ -46,23 +46,23 @@ public static class ServiceCollectionExtensions {
         var mongoClient = provider.GetRequiredKeyedService<IMongoClient>(MONGO_CLIENT_KEY);
         var mongoDatabase = mongoClient.GetDatabase(options.DatabaseName);
 
-        foreach (var documentMapper in ResolveDocumentMappers(options)) {
-            BsonClassMap.RegisterClassMap(documentMapper.CreateMap());
+        foreach (var documentMapping in ResolveDocumentMappings(options)) {
+            BsonClassMap.RegisterClassMap(documentMapping.CreateMap());
         }
 
         return mongoDatabase;
     }
 
-    private static IEnumerable<IDocumentMapper> ResolveDocumentMappers(MongoOptions options) {
-        var documentMappers = options.Assemblies
-                                     .GetImplementations(typeof(IDocumentMapper))
-                                     .Where(type => !type.IsGenericTypeDefinition);
+    private static IEnumerable<IDocumentMapping> ResolveDocumentMappings(MongoOptions options) {
+        var documentMappings = options.Assemblies
+                                      .GetImplementations(typeof(IDocumentMapping))
+                                      .Where(type => !type.IsGenericTypeDefinition);
 
-        foreach (var documentMapper in documentMappers) {
-            var result = Activator.CreateInstance(documentMapper)
-                      ?? throw new InvalidOperationException($"Couldn't initialize a new instance of the document mapper '{documentMapper.Name}'.");
+        foreach (var documentMapping in documentMappings) {
+            var result = Activator.CreateInstance(documentMapping)
+                      ?? throw new InvalidOperationException($"Couldn't initialize a new instance of the document mapping '{documentMapping.Name}'.");
 
-            yield return (IDocumentMapper)result;
+            yield return (IDocumentMapping)result;
         }
     }
 

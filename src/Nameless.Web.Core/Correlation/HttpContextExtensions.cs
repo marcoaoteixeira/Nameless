@@ -2,8 +2,12 @@
 
 namespace Nameless.Web.Correlation;
 
-internal static class HttpContextExtensions {
-    internal static bool HasCorrelationID(this HttpContext self, string key, bool useHeader = true) {
+public static class HttpContextExtensions {
+    private const string CORRELATION_ID_KEY = "X-Correlation-ID";
+
+    public static bool HasCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
         Prevent.Argument.NullOrWhiteSpace(key);
 
         return useHeader
@@ -11,7 +15,9 @@ internal static class HttpContextExtensions {
             : GetFromHttpContextItems(self, key) is not null;
     }
 
-    internal static string? GetCorrelationID(this HttpContext self, string key, bool useHeader = true) {
+    public static string? GetCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
         Prevent.Argument.NullOrWhiteSpace(key);
 
         return useHeader
@@ -19,7 +25,9 @@ internal static class HttpContextExtensions {
             : GetFromHttpContextItems(self, key);
     }
 
-    internal static void SetCorrelationID(this HttpContext self, string value, string key, bool useHeader = true) {
+    public static void SetCorrelationID(this HttpContext self, string value, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
         Prevent.Argument.NullOrWhiteSpace(key);
         Prevent.Argument.NullOrWhiteSpace(value);
 

@@ -19,10 +19,10 @@ public static class EntryPoint {
                })
                .AddAuthorization()
                .AddOpenApi("v1", options => {
-                   options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+                   options.AddDocumentTransformer<BearerSecuritySchemeDocumentTransformer>();
                })
                .AddOpenApi("v2", options => {
-                   options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+                   options.AddDocumentTransformer<BearerSecuritySchemeDocumentTransformer>();
                })
                .AddAuthentication(options => {
                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

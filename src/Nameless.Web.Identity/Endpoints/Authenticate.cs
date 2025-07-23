@@ -6,9 +6,8 @@ using Microsoft.Extensions.Logging;
 using Nameless.Web.Endpoints;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Entities;
+using Nameless.Web.Identity.Infrastructure;
 using Nameless.Web.Identity.Responses;
-using Nameless.Web.Identity.Security;
-using Nameless.Web.IdentityModel;
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Nameless.Web.Identity.Endpoints;
@@ -37,18 +36,21 @@ public record AuthenticateResponse {
 
 public class Authenticate : IEndpoint {
     private readonly SignInManager<User> _signInManager;
-    private readonly IJsonWebTokenProvider _jsonWebTokenProvider;
-    private readonly IUserRefreshTokenService _userRefreshTokenService;
+    private readonly IJsonWebTokenService _jsonWebTokenService;
     private readonly ILogger<Authenticate> _logger;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Authenticate"/> class.
+    /// </summary>
+    /// <param name="signInManager"></param>
+    /// <param name="jsonWebTokenService"></param>
+    /// <param name="logger"></param>
     public Authenticate(
         SignInManager<User> signInManager,
-        IJsonWebTokenProvider jsonWebTokenProvider,
-        IUserRefreshTokenService userRefreshTokenService,
+        IJsonWebTokenService jsonWebTokenService,
         ILogger<Authenticate> logger) {
         _signInManager = Prevent.Argument.Null(signInManager);
-        _jsonWebTokenProvider = Prevent.Argument.Null(jsonWebTokenProvider);
-        _userRefreshTokenService = Prevent.Argument.Null(userRefreshTokenService);
+        _jsonWebTokenService = Prevent.Argument.Null(jsonWebTokenService);
         _logger = Prevent.Argument.Null(logger);
     }
 
@@ -93,7 +95,7 @@ public class Authenticate : IEndpoint {
 
         var principal = await _signInManager.CreateUserPrincipalAsync(user)
                                             .ConfigureAwait(continueOnCapturedContext: false);
-        var jwt = _jsonWebTokenProvider.Create(new JsonWebTokenRequest {
+        var jwt = _jsonWebTokenService.Generate(new JsonWebTokenRequest {
             Claims = principal.Claims
         });
 
@@ -103,7 +105,7 @@ public class Authenticate : IEndpoint {
             return InternalServerError("Unable to create access token.");
         }
 
-        var refreshToken = await _userRefreshTokenService.CreateAsync(user.Id, cancellationToken)
+        var refreshToken = await _userRefreshTokenManager.CreateAsync(user.Id, cancellationToken)
                                                          .ConfigureAwait(continueOnCapturedContext: false);
         var response = new AuthenticateResponse {
             AccessToken = jwt.Token,

@@ -1,7 +1,7 @@
 ﻿namespace Nameless.NHibernate.Options;
 
 public sealed record SchemaExportSettings {
-    public const string DefaultOutputFolderName = "NHibernate";
+    public const string DEFAULT_OUTPUT_FOLDER_NAME = "NHibernate";
 
     private string? _outputFolderName;
 
@@ -16,7 +16,7 @@ public sealed record SchemaExportSettings {
     public bool JustDrop { get; set; }
 
     public string OutputFolderName {
-        get => _outputFolderName.WithFallback(DefaultOutputFolderName);
+        get => _outputFolderName.WithFallback(DEFAULT_OUTPUT_FOLDER_NAME);
         set => _outputFolderName = value;
     }
 }

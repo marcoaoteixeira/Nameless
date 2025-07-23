@@ -38,7 +38,7 @@ public sealed record CryptoOptions {
     ///     Passphrase can be any string. Passphrase value must be kept in
     ///     secret.
     /// </remarks>
-    public string Passphrase { get; set; } = Defaults.RijndaelPassPhrase;
+    public string Passphrase { get; set; } = Defaults.RIJNDAEL_PASS_PHRASE;
 
     /// <summary>
     ///     Gets or sets the initialization vector.
@@ -49,7 +49,7 @@ public sealed record CryptoOptions {
     ///     exactly 16 ASCII characters long. IV value does not have to be kept
     ///     in secret.
     /// </remarks>
-    public string Iv { get; set; } = Defaults.RijndaelIv;
+    public string Iv { get; set; } = Defaults.RIJNDAEL_IV;
 
     /// <summary>
     ///     Gets or sets the salt.
@@ -59,7 +59,7 @@ public sealed record CryptoOptions {
     ///     not the same as the salt we will use during encryption. This parameter
     ///     can be any string.
     /// </remarks>
-    public string Salt { get; set; } = Defaults.RijndaelIv;
+    public string Salt { get; set; } = Defaults.RIJNDAEL_IV;
 
     /// <summary>
     ///     Gets or sets the key size.

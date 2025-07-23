@@ -60,8 +60,8 @@ public static class EntryPoint {
                    .RegisterMinimalEndpoints(options => {
                        options.Assemblies = Assemblies;
                        options.ConfigureOpenApi = openApiOpts => {
-                           openApiOpts.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-                           openApiOpts.AddOperationTransformer<DeprecateOpenApiOperationTransformer>();
+                           openApiOpts.AddDocumentTransformer<BearerSecuritySchemeDocumentTransformer>();
+                           openApiOpts.AddOperationTransformer<DeprecatedOperationTransformer>();
                        };
                    });
     }
@@ -74,7 +74,7 @@ public static class EntryPoint {
         self.UseHsts(self.Environment);
         self.UseSerilogRequestLogging();
         self.UseHttpsRedirection();
-        self.UseCorrelation();
+        self.UseHttpContextCorrelation();
         self.UseOpenApi();
         self.UseRouting();
         self.UseCors();
