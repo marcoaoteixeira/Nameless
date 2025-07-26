@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 
 namespace Nameless.Web.OpenApi;
 

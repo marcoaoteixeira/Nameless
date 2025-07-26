@@ -132,7 +132,7 @@ public static class ServiceCollectionExtensions {
             // if the pipeline is not an open generic, we need to find all
             // interfaces that closes and register them.
             if (!pipelineBehavior.IsOpenGeneric()) {
-                var interfaces = pipelineBehavior.GetInterfacesThatClose(service);
+                var interfaces = pipelineBehavior.GetTypesThatClose(service);
                 foreach (var @interface in interfaces) {
                     self.TryAddTransient(@interface, pipelineBehavior);
                 }

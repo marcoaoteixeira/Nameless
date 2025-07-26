@@ -1,4 +1,4 @@
-﻿namespace Nameless.Web.Endpoints;
+﻿namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
 /// Indicates the endpoint stability.

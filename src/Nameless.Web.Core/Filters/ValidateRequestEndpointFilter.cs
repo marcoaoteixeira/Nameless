@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Validation;
+
 using HttpResults = Microsoft.AspNetCore.Http.Results;
 
 namespace Nameless.Web.Filters;
 
 /// <summary>
-///     Endpoint filter that provides validation capabilities to endpointBase execution.
+///     Endpoint filter that provides validation capabilities.
 /// </summary>
 public sealed class ValidateRequestEndpointFilter : IEndpointFilter {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {

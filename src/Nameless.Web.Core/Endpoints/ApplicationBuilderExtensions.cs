@@ -4,6 +4,8 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Web.Endpoints.Definitions;
+using Nameless.Web.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Endpoints;
 
@@ -28,14 +30,9 @@ public static class ApplicationBuilderExtensions {
     public static TApplicationBuilder UseMinimalEndpoints<TApplicationBuilder>(this TApplicationBuilder self)
         where TApplicationBuilder : IApplicationBuilder {
         self.UseEndpoints(builder => {
-            using var scope = builder.ServiceProvider.CreateScope();
-
-            // resolve all our endpoints so we can configure them.
-            var endpoints = scope.ServiceProvider.GetServices<IEndpoint>();
-
-            // create all endpoint builders and configure them.
-            var endpointDescriptors = endpoints.Select(CreateEndpointDescriptor)
-                                               .ToArray();
+            // Creates all endpoints descriptors.
+            var endpointDescriptors = builder.ServiceProvider
+                                             .CreateEndpointDescriptors();
 
             // create the root group
             builder.MapGroup(ROOT_GROUP_ROUTE_PREFIX)
@@ -46,17 +43,11 @@ public static class ApplicationBuilderExtensions {
         });
 
         return self;
-
-        static EndpointDescriptor CreateEndpointDescriptor(IEndpoint endpoint) {
-            var config = new EndpointDescriptor(endpoint.GetType());
-            endpoint.Configure(config);
-            return config;
-        }
     }
 
-    private static RouteGroupBuilder WithVersionSetFrom(this RouteGroupBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
+    private static RouteGroupBuilder WithVersionSetFrom(this RouteGroupBuilder self, IEnumerable<IEndpointDescriptor> endpointDefinitions) {
         // extract all available versions from the groups.
-        var availableVersions = endpointDescriptors.Select(endpoint => endpoint.Version)
+        var availableVersions = endpointDefinitions.Select(endpoint => endpoint.Version.Number)
                                                    .Distinct()
                                                    .ToArray();
 
@@ -76,20 +67,44 @@ public static class ApplicationBuilderExtensions {
         return self;
     }
 
-    private static void WithEndpoints(this RouteGroupBuilder self, IEnumerable<EndpointDescriptor> endpointDescriptors) {
+    private static void WithEndpoints(this RouteGroupBuilder self, IEnumerable<IEndpointDescriptor> endpointDefinitions) {
         // groups all endpoint descriptors by group name
-        var groups = endpointDescriptors.GroupBy(item => item.GroupName);
+        var groups = endpointDefinitions.GroupBy(item => item.GroupName);
 
         foreach (var group in groups) {
             // with the group name, we create a new group builder for the
             // similar endpoints.
-            var endpointGroup = self.MapGroup(group.Key);
+            var routeGroupBuilder = self.MapGroup(group.Key);
 
             // finally, we apply all endpoint descriptors to the group
             // builder.
-            foreach (var endpointDescriptor in group) {
-                endpointDescriptor.Apply(endpointGroup);
+            foreach (var descriptor in group) {
+                routeGroupBuilder.MapEndpoint(descriptor);
             }
         }
+    }
+
+    private static IEndpointDescriptor[] CreateEndpointDescriptors(this IServiceProvider self) {
+        // We need this "ServiceResolver" to be available
+        var serviceResolver = self.GetRequiredService<IServiceResolver>();
+
+        // Gets all the endpoint types from the service collection.
+        var endpointTypeCollection = self.GetRequiredService<EndpointTypeCollection>();
+
+        // Creates the endpoints descriptors.
+        var endpointDescriptors = new List<IEndpointDescriptor>();
+
+        foreach (var endpointType in endpointTypeCollection) {
+            if (serviceResolver.CreateInstance(endpointType) is not IEndpoint instance) {
+                throw new InvalidOperationException($"Unable to create instance of '{endpointType.FullName}'.");
+            }
+
+            var descriptor = instance.Describe()
+                                     .SetEndpointType(endpointType);
+
+            endpointDescriptors.Add(descriptor);
+        }
+
+        return [.. endpointDescriptors];
     }
 }

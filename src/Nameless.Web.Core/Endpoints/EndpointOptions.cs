@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.OpenApi;
 
 namespace Nameless.Web.Endpoints;
 
@@ -28,9 +27,4 @@ public sealed record EndpointOptions {
     /// Gets or sets the action to configure API explorer options.
     /// </summary>
     public Action<ApiExplorerOptions>? ConfigureApiExplorer { get; set; }
-}
-
-public record OpenApiDescriptor {
-    public required string DocumentName { get; init; }
-    public Action<OpenApiOptions>? Options { get; init; }
 }

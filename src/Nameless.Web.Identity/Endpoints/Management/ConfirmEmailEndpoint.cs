@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Entities;
 using Nameless.Web.Identity.Requests;
@@ -10,7 +11,7 @@ using Nameless.Web.Identity.Responses;
 
 namespace Nameless.Web.Identity.Endpoints.Management;
 
-public class ConfirmEmailEndpoint : EndpointBase {
+public class ConfirmEmailEndpoint : Endpoint<> {
     private readonly UserManager<User> _userManager;
 
     public ConfirmEmailEndpoint(UserManager<User> userManager) {

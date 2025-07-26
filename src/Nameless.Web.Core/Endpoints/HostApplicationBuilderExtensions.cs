@@ -3,6 +3,7 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Nameless.Web.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Endpoints;
 
@@ -52,14 +53,14 @@ public static class HostApplicationBuilderExtensions {
             .AddApiVersioning(options.ConfigureApiVersioning ?? DefaultConfigureApiVersioningOptions)
             .AddApiExplorer(options.ConfigureApiExplorer ?? DefaultConfigureApiExplorerOptions);
 
-        // Register all endpoints that implement IEndpoint interface
         var service = typeof(IEndpoint);
         var endpoints = options.Assemblies
                                .GetImplementations(service)
-                               .Where(type => !type.IsGenericTypeDefinition)
-                               .Select(endpoint => new ServiceDescriptor(service, endpoint, ServiceLifetime.Transient));
+                               .Where(type => !type.IsGenericTypeDefinition);
 
-        self.Services.TryAddEnumerable(endpoints);
+        self.Services.TryAddSingleton(new EndpointTypeCollection(endpoints));
+        self.Services.TryAddSingleton<IServiceResolver, ServiceResolver>();
+        self.Services.TryAddSingleton<IEndpointFactory, EndpointFactory>();
 
         return self;
     }

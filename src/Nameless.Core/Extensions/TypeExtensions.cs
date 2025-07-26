@@ -188,11 +188,11 @@ public static class TypeExtensions {
     /// <returns>
     /// A collection of <see cref="Type"/> that closes the type.
     /// </returns>
-    public static IEnumerable<Type> GetInterfacesThatClose(this Type self, Type template) {
-        return GetInterfacesThatCloseCore(self, template);
+    public static IEnumerable<Type> GetTypesThatClose(this Type self, Type template) {
+        return GetTypesThatCloseCore(self, template);
     }
 
-    private static IEnumerable<Type> GetInterfacesThatCloseCore(Type? service, Type template) {
+    private static IEnumerable<Type> GetTypesThatCloseCore(Type? service, Type template) {
         if (service is null || service.IsAbstract || service.IsInterface) { yield break; }
 
         if (template.IsInterface) {
@@ -211,7 +211,7 @@ public static class TypeExtensions {
             yield break;
         }
 
-        foreach (var @interface in GetInterfacesThatCloseCore(service.BaseType, template)) {
+        foreach (var @interface in GetTypesThatCloseCore(service.BaseType, template)) {
             yield return @interface;
         }
     }

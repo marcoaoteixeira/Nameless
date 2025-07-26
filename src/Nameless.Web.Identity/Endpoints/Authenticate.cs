@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Filters;
 using Nameless.Web.Identity.Entities;
 using Nameless.Web.Identity.Infrastructure;

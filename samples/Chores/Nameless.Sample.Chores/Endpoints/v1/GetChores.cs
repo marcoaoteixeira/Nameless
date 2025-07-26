@@ -1,7 +1,7 @@
 ﻿using Nameless.Sample.Chores.Dtos;
 using Nameless.Sample.Chores.Inputs;
 using Nameless.Sample.Chores.Services;
-using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 
 namespace Nameless.Sample.Chores.Endpoints.v1;
 

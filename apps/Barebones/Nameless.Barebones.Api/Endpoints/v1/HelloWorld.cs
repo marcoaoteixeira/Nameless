@@ -1,10 +1,11 @@
 ﻿using Nameless.Barebones.Application;
 using Nameless.Web.Correlation;
 using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 
 namespace Nameless.Barebones.Api.Endpoints.v1;
 
-public class HelloWorld : EndpointBase {
+public class HelloWorld : Endpoint<> {
     private readonly ICorrelationAccessor _correlationAccessor;
     private readonly ILogger<HelloWorld> _logger;
 

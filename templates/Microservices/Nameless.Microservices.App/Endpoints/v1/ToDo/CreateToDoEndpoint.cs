@@ -1,34 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Nameless.Mediator;
+﻿using Nameless.Mediator;
 using Nameless.Microservices.App.Domains.UseCases;
 using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Filters;
 
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Nameless.Microservices.App.Endpoints.v1.ToDo;
 
-public class CreateToDoEndpoint : IEndpoint {
+public class CreateToDoEndpoint : IEndpoint<CreateToDoInput> {
     private readonly IMediator _mediator;
 
     public CreateToDoEndpoint(IMediator mediator) {
         _mediator = Prevent.Argument.Null(mediator);
     }
 
-    public void Configure(IEndpointDescriptor descriptor) {
-        descriptor
-            .Post("/", HandleAsync)
-            .WithGroupName("todo")
-            .AllowAnonymous()
-            .WithFilter<ValidateRequestEndpointFilter>()
-            .WithDescription("Creates a new ToDo entry in the database.")
-            .WithSummary("Create ToDo v1")
-            .Produces<CreateToDoOutput>()
-            .ProducesValidationProblem()
-            .WithRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW);
-    }
-
-    public async Task<IResult> HandleAsync([FromBody] CreateToDoInput input, CancellationToken cancellationToken) {
+    public async Task<IResult> ExecuteAsync(CreateToDoInput input, CancellationToken cancellationToken) {
         var request = new CreateToDoRequest {
             Summary = input.Summary ?? throw new ArgumentNullException(nameof(input)),
             DueDate = input.DueDate ?? throw new ArgumentNullException(nameof(input))
@@ -43,5 +30,20 @@ public class CreateToDoEndpoint : IEndpoint {
         };
 
         return Ok(output);
+    }
+
+    public IEndpointDescriptor Describe() {
+        return EndpointDescriptorBuilder.Create()
+                                        .Post("/")
+                                        .WithGroupName("todo")
+                                        .AllowAnonymous()
+                                        //.Accepts<CreateToDoInput>()
+                                        .WithFilter<ValidateRequestEndpointFilter>()
+                                        .WithDescription("Creates a new ToDo entry in the database.")
+                                        .WithSummary("Create ToDo v1")
+                                        .Produces<CreateToDoOutput>()
+                                        .ProducesValidationProblem()
+                                        .WithRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW)
+                                        .Build();
     }
 }

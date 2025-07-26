@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nameless.Sample.WeatherForecast.Services;
-using Nameless.Web.Endpoints;
+using Nameless.Web.Endpoints.Definitions;
 
 namespace Nameless.Sample.WeatherForecast.Endpoints.v2;
 
