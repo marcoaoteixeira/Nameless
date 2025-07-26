@@ -2,13 +2,12 @@
 using Nameless.Microservices.App.Domains.UseCases;
 using Nameless.Web.Endpoints;
 using Nameless.Web.Endpoints.Definitions;
-using Nameless.Web.Filters;
 
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Nameless.Microservices.App.Endpoints.v1.ToDo;
 
-public class CreateToDoEndpoint : IEndpoint<CreateToDoInput> {
+public class CreateToDoEndpoint : IEndpoint {
     private readonly IMediator _mediator;
 
     public CreateToDoEndpoint(IMediator mediator) {
@@ -33,17 +32,15 @@ public class CreateToDoEndpoint : IEndpoint<CreateToDoInput> {
     }
 
     public IEndpointDescriptor Describe() {
-        return EndpointDescriptorBuilder.Create()
-                                        .Post("/")
+        return EndpointDescriptorBuilder.Create<CreateToDoEndpoint>()
+                                        .Post("/", nameof(ExecuteAsync))
                                         .WithGroupName("todo")
                                         .AllowAnonymous()
-                                        //.Accepts<CreateToDoInput>()
-                                        .WithFilter<ValidateRequestEndpointFilter>()
                                         .WithDescription("Creates a new ToDo entry in the database.")
                                         .WithSummary("Create ToDo v1")
                                         .Produces<CreateToDoOutput>()
                                         .ProducesValidationProblem()
-                                        .WithRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW)
+                                        .UseRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW)
                                         .Build();
     }
 }

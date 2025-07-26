@@ -15,6 +15,7 @@ public class EntryPoint {
     // here to ensure they are loaded and available for discovery.
     private static readonly Assembly[] SupportAssemblies = [
         typeof(EntryPoint).Assembly,
+        typeof(IEndpoint).Assembly,
     ];
 
     /// <summary>

@@ -26,21 +26,13 @@ internal static class EndpointRouteBuilderExtensions {
     ///     if the anti-forgery middleware is not available.
     /// </exception>
     internal static void MapEndpoint(this IEndpointRouteBuilder self, IEndpointDescriptor descriptor) {
-        if (string.IsNullOrWhiteSpace(descriptor.RoutePattern)) {
-            self.ServiceProvider
-                   .GetLogger<EndpointDescriptor>()
-                   .MissingEndpointRoute(descriptor);
-
-            throw new InvalidOperationException("Endpoint route pattern is not defined.");
-        }
-
         var routeHandlerBuilder = self.MapMethods(
             pattern: descriptor.RoutePattern,
             httpMethods: [descriptor.HttpMethod],
             handler: (HttpContext httpContext, [FromServices] IEndpointFactory factory) => EndpointInvoker.InvokeAsync(httpContext, factory)
         );
 
-        routeHandlerBuilder.WithRequestMetadata(descriptor);
+        // EndpointDescriptor.Action: used when invoking the endpoint.
 
         routeHandlerBuilder.WithName(descriptor.EnsureName());
 
@@ -58,8 +50,44 @@ internal static class EndpointRouteBuilderExtensions {
 
         routeHandlerBuilder.WithTags(descriptor.Tags);
 
+        routeHandlerBuilder.MapToApiVersion(descriptor.Version.Number);
+
+        routeHandlerBuilder.WithMetadata(descriptor.Version);
+
         if (!string.IsNullOrWhiteSpace(descriptor.RequestTimeoutPolicy)) {
             routeHandlerBuilder.WithRequestTimeout(descriptor.RequestTimeoutPolicy);
+        }
+
+        if (!string.IsNullOrWhiteSpace(descriptor.RateLimitingPolicy)) {
+            routeHandlerBuilder.RequireRateLimiting(descriptor.RateLimitingPolicy);
+        }
+
+        routeHandlerBuilder.RequireAuthorization([.. descriptor.AuthorizationPolicies]);
+
+        if (!string.IsNullOrWhiteSpace(descriptor.CorsPolicy)) {
+            routeHandlerBuilder.RequireCors(descriptor.CorsPolicy);
+        }
+
+        if (!string.IsNullOrWhiteSpace(descriptor.OutputCachePolicy)) {
+            routeHandlerBuilder.CacheOutput(descriptor.OutputCachePolicy);
+        }
+
+        if (descriptor.AllowAnonymous) {
+            routeHandlerBuilder.AllowAnonymous();
+        }
+
+        switch (descriptor.UseAntiforgery) {
+            case true when self.ServiceProvider.GetService<IAntiforgery>() is null:
+                throw new InvalidOperationException("Anti-forgery middleware not available.");
+            case false:
+                routeHandlerBuilder.DisableAntiforgery();
+                break;
+        }
+
+        // EndpointDescriptor.UseRequestValidation: used when invoking the endpoint.
+
+        if (descriptor.DisableHttpMetrics) {
+            routeHandlerBuilder.DisableHttpMetrics();
         }
 
         foreach (var accepts in descriptor.Accepts) {
@@ -75,34 +103,7 @@ internal static class EndpointRouteBuilderExtensions {
             filter(endpointFilterBuilder);
         }
 
-        if (descriptor.UseAntiforgery && self.ServiceProvider.GetService<IAntiforgery>() is null) {
-            throw new InvalidOperationException("Anti-forgery middleware not available.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(descriptor.RateLimitingPolicy)) {
-            routeHandlerBuilder.RequireRateLimiting(descriptor.RateLimitingPolicy);
-        }
-
-        if (descriptor.AllowAnonymous) {
-            routeHandlerBuilder.AllowAnonymous();
-        }
-
-        routeHandlerBuilder.RequireAuthorization([.. descriptor.AuthorizationPolicies]);
-
-        if (!string.IsNullOrWhiteSpace(descriptor.CorsPolicy)) {
-            routeHandlerBuilder.RequireCors(descriptor.CorsPolicy);
-        }
-
-        routeHandlerBuilder.MapToApiVersion(descriptor.Version.Number);
-        routeHandlerBuilder.WithMetadata(descriptor.Version.Stability);
-
-        if (!string.IsNullOrWhiteSpace(descriptor.OutputCachePolicy)) {
-            routeHandlerBuilder.CacheOutput(descriptor.OutputCachePolicy);
-        }
-
-        if (descriptor.DisableHttpMetrics) {
-            routeHandlerBuilder.DisableHttpMetrics();
-        }
+        routeHandlerBuilder.WithRequestMetadata(descriptor);
 
         // finally, add the custom metadata for the endpoint
         routeHandlerBuilder.WithMetadata(new EndpointDescriptorMetadata(descriptor));

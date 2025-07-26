@@ -99,10 +99,7 @@ public static class ApplicationBuilderExtensions {
                 throw new InvalidOperationException($"Unable to create instance of '{endpointType.FullName}'.");
             }
 
-            var descriptor = instance.Describe()
-                                     .SetEndpointType(endpointType);
-
-            endpointDescriptors.Add(descriptor);
+            endpointDescriptors.Add(instance.Describe());
         }
 
         return [.. endpointDescriptors];

@@ -1,4 +1,6 @@
-﻿namespace Nameless.Web.Endpoints.Infrastructure;
+﻿using Nameless.Web.Endpoints.Definitions;
+
+namespace Nameless.Web.Endpoints.Infrastructure;
 
 /// <summary>
 ///     Endpoint factory interface.
@@ -7,12 +9,11 @@ public interface IEndpointFactory {
     /// <summary>
     ///     Creates an instance of the specified endpoint type.
     /// </summary>
-    /// <param name="endpointType">
-    ///     The endpoint type.
+    /// <param name="descriptor">
+    ///     The endpoint descriptor.
     /// </param>
     /// <returns>
-    ///     An instance of the specified endpoint type,
-    ///     cast to <see cref="IEndpoint"/>.
+    ///     An instance of the endpoint given by the descriptor.
     /// </returns>
-    IEndpoint Create(Type endpointType);
+    IEndpoint Create(IEndpointDescriptor descriptor);
 }

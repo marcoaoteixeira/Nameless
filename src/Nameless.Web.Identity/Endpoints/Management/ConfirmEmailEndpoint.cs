@@ -11,7 +11,7 @@ using Nameless.Web.Identity.Responses;
 
 namespace Nameless.Web.Identity.Endpoints.Management;
 
-public class ConfirmEmailEndpoint : Endpoint<> {
+public class ConfirmEmailEndpoint : Endpoint {
     private readonly UserManager<User> _userManager;
 
     public ConfirmEmailEndpoint(UserManager<User> userManager) {

@@ -8,62 +8,14 @@ using static Nameless.Web.Constants;
 namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
-///     A builder for creating endpoint descriptors.
+///     A base class for endpoint mappings.
 /// </summary>
-public sealed class EndpointDescriptorBuilder {
-    private readonly EndpointDescriptor _descriptor;
-
-    /// <summary>
-    ///     Private constructor so that instances can only be created
-    ///     by the <see cref="Create{TEndpoint}"/> method.
-    /// </summary>
-    /// <param name="endpointType">
-    ///     The endpoint type.
-    /// </param>
-    private EndpointDescriptorBuilder(Type endpointType) {
-        _descriptor = new EndpointDescriptor(endpointType);
-    }
-
-    /// <summary>
-    ///     Creates a new instance of the
-    ///     <see cref="EndpointDescriptorBuilder"/> class.
-    /// </summary>
-    /// <typeparam name="TEndpoint">
-    ///     Type of the endpoint to create a descriptor for.
-    /// </typeparam>
-    /// <returns>
-    ///     A new instance of the <see cref="EndpointDescriptorBuilder"/>
-    ///     class.
-    /// </returns>
-    public static EndpointDescriptorBuilder Create<TEndpoint>()
-        where TEndpoint : IEndpoint {
-        return new EndpointDescriptorBuilder(typeof(TEndpoint));
-    }
-
-    /// <summary>
-    ///     Creates a new instance of the
-    ///     <see cref="EndpointDescriptorBuilder"/> class.
-    /// </summary>
-    /// <param name="endpointType">
-    ///     Type of the endpoint to create a descriptor for.
-    /// </param>
-    /// <returns>
-    ///     A new instance of the <see cref="EndpointDescriptorBuilder"/>
-    ///     class.
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    ///     if the <paramref name="endpointType"/> does not
-    ///     implement the <see cref="IEndpoint"/> interface.
-    /// </exception>
-    public static EndpointDescriptorBuilder Create(Type endpointType) {
-        if (!typeof(IEndpoint).IsAssignableFrom(endpointType)) {
-            throw new InvalidOperationException(
-                $"The type '{endpointType.Name}' does not implement the {nameof(IEndpoint)} interface."
-            );
-        }
-
-        return new EndpointDescriptorBuilder(endpointType);
-    }
+/// <typeparam name="TEndpoint">
+///     Type of the endpoint.
+/// </typeparam>
+public abstract class EndpointMapping<TEndpoint>
+    where TEndpoint : class {
+    private readonly EndpointDescriptor _descriptor = new(typeof(TEndpoint));
 
     /// <summary>
     ///     Defines GET HTTP method and route pattern for the endpoint.
@@ -71,18 +23,15 @@ public sealed class EndpointDescriptorBuilder {
     /// <param name="routePattern">
     ///     The route pattern for the endpoint.
     /// </param>
-    /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
-    /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
     /// <remarks>
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Get([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointMapping<TEndpoint> Get([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Get, routePattern, actionName);
     }
 
@@ -92,18 +41,15 @@ public sealed class EndpointDescriptorBuilder {
     /// <param name="routePattern">
     ///     The route pattern for the endpoint.
     /// </param>
-    /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
-    /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
     /// <remarks>
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Post([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointMapping<TEndpoint> Post([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Post, routePattern, actionName);
     }
 
@@ -113,18 +59,15 @@ public sealed class EndpointDescriptorBuilder {
     /// <param name="routePattern">
     ///     The route pattern for the endpoint.
     /// </param>
-    /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
-    /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
     /// <remarks>
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Put([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointMapping<TEndpoint> Put([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Put, routePattern, actionName);
     }
 
@@ -134,18 +77,15 @@ public sealed class EndpointDescriptorBuilder {
     /// <param name="routePattern">
     ///     The route pattern for the endpoint.
     /// </param>
-    /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
-    /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
     /// <remarks>
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Delete([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointMapping<TEndpoint> Delete([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Delete, routePattern, actionName);
     }
 
@@ -156,10 +96,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The endpoint name.
     /// </param> 
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithName(string name) {
+    public EndpointMapping<TEndpoint> WithName(string name) {
         _descriptor.Name = Prevent.Argument.NullOrWhiteSpace(name);
 
         return this;
@@ -172,10 +112,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The group name for the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithGroupName(string groupName) {
+    public EndpointMapping<TEndpoint> WithGroupName(string groupName) {
         _descriptor.GroupName = Prevent.Argument.NullOrWhiteSpace(groupName);
 
         return this;
@@ -188,10 +128,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The display name for the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithDisplayName(string displayName) {
+    public EndpointMapping<TEndpoint> WithDisplayName(string displayName) {
         _descriptor.DisplayName = Prevent.Argument.NullOrWhiteSpace(displayName);
 
         return this;
@@ -204,10 +144,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The description for the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithDescription(string description) {
+    public EndpointMapping<TEndpoint> WithDescription(string description) {
         _descriptor.Description = Prevent.Argument.NullOrWhiteSpace(description);
 
         return this;
@@ -220,10 +160,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The summary for the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithSummary(string summary) {
+    public EndpointMapping<TEndpoint> WithSummary(string summary) {
         _descriptor.Summary = Prevent.Argument.NullOrWhiteSpace(summary);
 
         return this;
@@ -236,10 +176,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The tags for the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithTags(params string[] tags) {
+    public EndpointMapping<TEndpoint> WithTags(params string[] tags) {
         _descriptor.Tags = Prevent.Argument.Null(tags);
 
         return this;
@@ -257,10 +197,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     Defaults to <see cref="Stability.Stable"/>.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder WithVersion(int number, Stability stability = Stability.Stable) {
+    public EndpointMapping<TEndpoint> WithVersion(int number, Stability stability = Stability.Stable) {
         _descriptor.Version = new VersionMetadata {
             Number = Prevent.Argument.LowerThan(number, minValue: 0, nameof(number)),
             Stability = stability
@@ -276,10 +216,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The request timeout policy name.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseRequestTimeout(string policyName) {
+    public EndpointMapping<TEndpoint> UseRequestTimeout(string policyName) {
         _descriptor.RequestTimeoutPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
 
         return this;
@@ -292,10 +232,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The name of the rate limiting policy to apply to the
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseRateLimiting(string policyName) {
+    public EndpointMapping<TEndpoint> UseRateLimiting(string policyName) {
         _descriptor.RateLimitingPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
 
         return this;
@@ -308,10 +248,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The names of the authorization policies to apply to the
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseAuthorization(params string[] policyNames) {
+    public EndpointMapping<TEndpoint> UseAuthorization(params string[] policyNames) {
         _descriptor.AuthorizationPolicies = Prevent.Argument.Null(policyNames);
 
         return this;
@@ -324,10 +264,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The name of the CORS policy to apply to the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseCors(string policyName) {
+    public EndpointMapping<TEndpoint> UseCors(string policyName) {
         _descriptor.CorsPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
 
         return this;
@@ -340,10 +280,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The name of the output cache policy to apply to the endpoint.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseOutputCache(string policyName) {
+    public EndpointMapping<TEndpoint> UseOutputCache(string policyName) {
         _descriptor.OutputCachePolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
 
         return this;
@@ -353,10 +293,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     Sets whether the endpoint allows anonymous access.
     /// </summary>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder AllowAnonymous() {
+    public EndpointMapping<TEndpoint> AllowAnonymous() {
         _descriptor.AllowAnonymous = true;
 
         return this;
@@ -367,10 +307,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     middleware.
     /// </summary>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseAntiForgery() {
+    public EndpointMapping<TEndpoint> UseAntiForgery() {
         _descriptor.UseAntiforgery = true;
 
         return this;
@@ -380,10 +320,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     Sets whether to validate the request object for the endpoint.
     /// </summary>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseRequestValidation() {
+    public EndpointMapping<TEndpoint> UseRequestValidation() {
         _descriptor.UseRequestValidation = true;
 
         return this;
@@ -393,10 +333,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     Sets whether to disable HTTP metrics for the endpoint.
     /// </summary>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder DisableHttpMetrics() {
+    public EndpointMapping<TEndpoint> DisableHttpMetrics() {
         _descriptor.DisableHttpMetrics = true;
 
         return this;
@@ -415,10 +355,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The content types that the endpoint accepts.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Accepts<TRequestType>(bool isOptional = false, params string[] contentTypes)
+    public EndpointMapping<TEndpoint> Accepts<TRequestType>(bool isOptional = false, params string[] contentTypes)
         where TRequestType : notnull {
         return Accepts(typeof(TRequestType), isOptional, contentTypes);
     }
@@ -436,10 +376,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The content types that the endpoint accepts.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Accepts(Type requestType, bool isOptional = false, params string[] contentTypes) {
+    public EndpointMapping<TEndpoint> Accepts(Type requestType, bool isOptional = false, params string[] contentTypes) {
         Prevent.Argument.Null(requestType);
         Prevent.Argument.Null(contentTypes);
 
@@ -469,10 +409,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The content types that the endpoint produces.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Produces<TResponse>(int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
+    public EndpointMapping<TEndpoint> Produces<TResponse>(int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
         return Produces(typeof(TResponse), statusCode, contentTypes);
     }
 
@@ -490,10 +430,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     The content types that the endpoint produces.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Produces(Type? responseType = null, int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
+    public EndpointMapping<TEndpoint> Produces(Type? responseType = null, int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
         Prevent.Argument.Null(contentTypes);
         Prevent.Argument.OutOfRange(
             paramValue: statusCode,
@@ -522,7 +462,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     The HTTP status code that the endpoint produces.
     /// </param>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
     /// <remarks>
@@ -530,7 +470,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     the valid range values for server error responses. Which
     ///     are values from <c>500</c> to <c>599</c>.
     /// </remarks>
-    public EndpointDescriptorBuilder ProducesProblem(int statusCode = StatusCodes.Status500InternalServerError) {
+    public EndpointMapping<TEndpoint> ProducesProblem(int statusCode = StatusCodes.Status500InternalServerError) {
         Prevent.Argument.OutOfRange(
             paramValue: statusCode,
             min: 500, // Status codes "Internal Server Error"
@@ -552,10 +492,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     produces.
     /// </summary>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder ProducesValidationProblem() {
+    public EndpointMapping<TEndpoint> ProducesValidationProblem() {
         return Produces<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, ContentTypes.PROBLEM_DETAILS);
     }
 
@@ -566,10 +506,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     Type of the endpoint filter to use.
     /// </typeparam>
     /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
+    ///     The current <see cref="EndpointMapping{TEndpoint}"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseFilter<TEndpointFilter>()
+    public EndpointMapping<TEndpoint> UseFilter<TEndpointFilter>()
         where TEndpointFilter : IEndpointFilter {
         _descriptor.UseFilter<TEndpointFilter>();
 
@@ -598,17 +538,16 @@ public sealed class EndpointDescriptorBuilder {
         return _descriptor;
     }
 
-    private EndpointDescriptorBuilder SetRouteHandler(string httpMethod, string routePattern, string actionName) {
+    private EndpointMapping<TEndpoint> SetRouteHandler(string httpMethod, string routePattern, string actionName) {
         _descriptor.HttpMethod = Prevent.Argument.NullOrWhiteSpace(httpMethod);
         _descriptor.RoutePattern = Prevent.Argument.NullOrWhiteSpace(routePattern);
 
-        var invocation = _descriptor.EndpointType
-                                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                                    .SingleOrDefault(member => member.Name == actionName &&
-                                                               typeof(Task).IsAssignableFrom(member.ReturnType));
+        var invocation = typeof(TEndpoint).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                                          .SingleOrDefault(member => member.Name == actionName &&
+                                                                     typeof(Task).IsAssignableFrom(member.ReturnType));
 
         if (invocation is null) {
-            throw new InvalidOperationException($"Endpoint action method not available for endpoint type '{_descriptor.EndpointType.Name}'");
+            throw new InvalidOperationException($"Endpoint action method not available for endpoint type '{typeof(TEndpoint).Name}'");
         }
 
         _descriptor.Action = invocation;

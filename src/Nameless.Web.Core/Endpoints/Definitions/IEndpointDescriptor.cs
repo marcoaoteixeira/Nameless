@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Metadata;
+﻿using System.Reflection;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
-/// Defines the contract for building minimal endpoints.
+///     Defines the contract for building minimal endpoints.
 /// </summary>
 public interface IEndpointDescriptor {
     /// <summary>
@@ -21,6 +20,11 @@ public interface IEndpointDescriptor {
     ///     Gets the route pattern for the endpoint.
     /// </summary>
     string RoutePattern { get; }
+
+    /// <summary>
+    ///     Gets the action to invoke on the endpoint.
+    /// </summary>
+    MethodInfo? Action { get; }
 
     /// <summary>
     ///     Gets the name of the endpoint.
@@ -54,39 +58,19 @@ public interface IEndpointDescriptor {
     string[] Tags { get; }
 
     /// <summary>
+    ///     Gets the metadata for the version of the endpoint.
+    /// </summary>
+    VersionMetadata Version { get; }
+
+    /// <summary>
     ///     Gets the request timeout policy for the endpoint.
     /// </summary>
     string? RequestTimeoutPolicy { get; }
 
     /// <summary>
-    ///     Gets the endpoint accept metadata.
-    /// </summary>
-    AcceptsMetadata[] Accepts { get; }
-
-    /// <summary>
-    ///     Gets the endpoint produce metadata.
-    /// </summary>
-    ProducesResponseTypeMetadata[] Produces { get; }
-
-    /// <summary>
-    ///     Gets the filters to apply to the endpoint.
-    /// </summary>
-    Action<IEndpointFilterBuilder>[] Filters { get; }
-
-    /// <summary>
-    ///     Whether the endpoint should use anti-forgery protection.
-    /// </summary>
-    bool UseAntiforgery { get; }
-
-    /// <summary>
     ///     Gets the name of the rate limiting policy to apply to the endpoint.
     /// </summary>
     string? RateLimitingPolicy { get; }
-
-    /// <summary>
-    ///     Whether the endpoint allows anonymous access.
-    /// </summary>
-    bool AllowAnonymous { get; }
 
     /// <summary>
     ///     Gets the names of the authorization policies to apply to the endpoint.
@@ -99,14 +83,25 @@ public interface IEndpointDescriptor {
     string? CorsPolicy { get; }
 
     /// <summary>
-    ///     Gets the metadata for the version of the endpoint.
-    /// </summary>
-    VersionMetadata Version { get; }
-
-    /// <summary>
     ///     Gets the name of the output cache policy to apply to the endpoint.
     /// </summary>
     string? OutputCachePolicy { get; }
+
+    /// <summary>
+    ///     Whether the endpoint allows anonymous access.
+    /// </summary>
+    bool AllowAnonymous { get; }
+
+    /// <summary>
+    ///     Whether the endpoint should use anti-forgery protection.
+    /// </summary>
+    bool UseAntiforgery { get; }
+
+    /// <summary>
+    ///     Whether it should use the validation service
+    ///     to validate the request object.
+    /// </summary>
+    bool UseRequestValidation { get; }
 
     /// <summary>
     ///     Whether the HTTP metrics are disabled for the endpoint.
@@ -114,19 +109,17 @@ public interface IEndpointDescriptor {
     bool DisableHttpMetrics { get; }
 
     /// <summary>
-    ///     Gets the endpoint descriptor data context.
+    ///     Gets the endpoint accept metadata.
     /// </summary>
-    IDictionary<string, object> DataContext { get; }
+    AcceptMetadata[] Accepts { get; }
 
     /// <summary>
-    ///     Sets the endpoint type for the descriptor.
+    ///     Gets the endpoint produce metadata.
     /// </summary>
-    /// <param name="endpointType">
-    ///     Type of the endpoint to set.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IEndpointDescriptor"/> instance so
-    ///     other actions can be chained.
-    /// </returns>
-    IEndpointDescriptor SetEndpointType(Type endpointType);
+    ProduceMetadata[] Produces { get; }
+
+    /// <summary>
+    ///     Gets the filters to apply to the endpoint.
+    /// </summary>
+    Action<IEndpointFilterBuilder>[] Filters { get; }
 }

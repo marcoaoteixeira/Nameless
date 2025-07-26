@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -61,6 +62,16 @@ public static class HostApplicationBuilderExtensions {
         self.Services.TryAddSingleton(new EndpointTypeCollection(endpoints));
         self.Services.TryAddSingleton<IServiceResolver, ServiceResolver>();
         self.Services.TryAddSingleton<IEndpointFactory, EndpointFactory>();
+
+        // Experimental
+        self.Services.TryAddSingleton<IProxyGenerator, ProxyGenerator>();
+        self.Services.TryAddScoped<IEndpointProxyFactory, EndpointProxyFactory>();
+        var interceptors = options.Assemblies
+                                  .GetImplementations(typeof(IEndpointInterceptor))
+                                  .Where(type => !type.IsGenericTypeDefinition)
+                                  .Select(interceptor => new ServiceDescriptor(typeof(IEndpointInterceptor), interceptor, ServiceLifetime.Scoped));
+        self.Services.TryAddEnumerable(interceptors);
+        //
 
         return self;
     }

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Metadata;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Http;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
@@ -7,18 +7,21 @@ namespace Nameless.Web.Endpoints.Definitions;
 ///     Default implementation of <see cref="IEndpointDescriptor" />.
 /// </summary>
 public class EndpointDescriptor : IEndpointDescriptor {
-    private readonly Dictionary<Type, AcceptsMetadata> _accepts = [];
-    private readonly Dictionary<int, ProducesResponseTypeMetadata> _produces = [];
+    private readonly Dictionary<Type, AcceptMetadata> _accepts = [];
+    private readonly Dictionary<int, ProduceMetadata> _produces = [];
     private readonly Dictionary<Type, Action<IEndpointFilterBuilder>> _filters = [];
 
     /// <inheritdoc />
-    public Type EndpointType { get; private set; } = typeof(Nothing);
+    public Type EndpointType { get; }
 
     /// <inheritdoc />
     public string HttpMethod { get; set; } = string.Empty;
 
     /// <inheritdoc />
     public string RoutePattern { get; set; } = string.Empty;
+
+    /// <inheritdoc />
+    public MethodInfo? Action { get; set; }
 
     /// <inheritdoc />
     public string? Name { get; set; }
@@ -39,25 +42,13 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public string[] Tags { get; set; } = [];
 
     /// <inheritdoc />
+    public VersionMetadata Version { get; set; } = new(1, Stability.Stable);
+
+    /// <inheritdoc />
     public string? RequestTimeoutPolicy { get; set; }
 
     /// <inheritdoc />
-    public AcceptsMetadata[] Accepts => [.. _accepts.Values];
-
-    /// <inheritdoc />
-    public ProducesResponseTypeMetadata[] Produces => [.. _produces.Values];
-
-    /// <inheritdoc />
-    public Action<IEndpointFilterBuilder>[] Filters => [.. _filters.Values];
-
-    /// <inheritdoc />
-    public bool UseAntiforgery { get; set; }
-
-    /// <inheritdoc />
     public string? RateLimitingPolicy { get; set; }
-
-    /// <inheritdoc />
-    public bool AllowAnonymous { get; set; }
 
     /// <inheritdoc />
     public string[] AuthorizationPolicies { get; set; } = [];
@@ -66,16 +57,39 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public string? CorsPolicy { get; set; }
 
     /// <inheritdoc />
-    public VersionMetadata Version { get; set; } = new(1, Stability.Stable);
+    public string? OutputCachePolicy { get; set; }
 
     /// <inheritdoc />
-    public string? OutputCachePolicy { get; set; }
+    public bool AllowAnonymous { get; set; }
+
+    /// <inheritdoc />
+    public bool UseAntiforgery { get; set; }
+
+    /// <inheritdoc />
+    public bool UseRequestValidation { get; set; }
 
     /// <inheritdoc />
     public bool DisableHttpMetrics { get; set; }
 
     /// <inheritdoc />
-    public IDictionary<string, object> DataContext { get; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+    public AcceptMetadata[] Accepts => [.. _accepts.Values];
+
+    /// <inheritdoc />
+    public ProduceMetadata[] Produces => [.. _produces.Values];
+
+    /// <inheritdoc />
+    public Action<IEndpointFilterBuilder>[] Filters => [.. _filters.Values];
+
+    /// <summary>
+    ///     Initializes a new instance of the
+    ///     <see cref="EndpointDescriptor" /> class.
+    /// </summary>
+    /// <param name="endpointType">
+    ///     Type of the endpoint.
+    /// </param>
+    public EndpointDescriptor(Type endpointType) {
+        EndpointType = Prevent.Argument.Null(endpointType);
+    }
 
     /// <summary>
     ///     Adds an accepts metadata to the endpoint.
@@ -87,10 +101,10 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     When adding an accepts metadata, the request type is used
     ///     to differentiate between different accepts.
     /// </remarks>
-    public void AddAccepts(AcceptsMetadata accepts) {
+    public void AddAccepts(AcceptMetadata accepts) {
         Prevent.Argument.Null(accepts);
 
-        _accepts[accepts.RequestType ?? typeof(object)] = accepts;
+        _accepts[accepts.RequestType] = accepts;
     }
 
     /// <summary>
@@ -103,7 +117,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     When adding a produce metadata, the status code is used
     ///     to differentiate between different responses.
     /// </remarks>
-    public void AddProduce(ProducesResponseTypeMetadata produce) {
+    public void AddProduce(ProduceMetadata produce) {
         Prevent.Argument.Null(produce);
 
         _produces[produce.StatusCode] = produce;
@@ -124,27 +138,5 @@ public class EndpointDescriptor : IEndpointDescriptor {
         _filters[typeof(TEndpointFilter)] = builder => {
             builder.Use<TEndpointFilter>();
         };
-    }
-
-    /// <summary>
-    ///     Sets the endpoint type for this descriptor.
-    /// </summary>
-    /// <param name="endpointType">
-    ///     The type of the endpoint to set.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IEndpointDescriptor" /> so other actions
-    ///     can be chained.
-    /// </returns>
-    public IEndpointDescriptor SetEndpointType(Type endpointType) {
-        Prevent.Argument.Null(endpointType);
-
-        if (!typeof(IEndpoint).IsAssignableFrom(endpointType)) {
-            throw new InvalidOperationException($"'{endpointType.Name}' do not implement '{nameof(IEndpoint)}'.");
-        }
-
-        EndpointType = endpointType;
-
-        return this;
     }
 }

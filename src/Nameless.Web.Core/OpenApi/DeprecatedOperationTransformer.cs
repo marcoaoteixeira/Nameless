@@ -14,15 +14,15 @@ public sealed class DeprecatedOperationTransformer : IOpenApiOperationTransforme
     ///     It tries to simulate the behavior of the `StabilityOpenApiOperationFilter` from the `Scalar.AspNetCore` package,
     /// </remarks>
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken) {
-        var stability = context.Description
-                               .ActionDescriptor
-                               .EndpointMetadata
-                               .OfType<Stability>()
-                               .LastOrDefault();
+        var version = context.Description
+                             .ActionDescriptor
+                             .EndpointMetadata
+                             .OfType<VersionMetadata>()
+                             .LastOrDefault();
 
-        operation.Deprecated = stability == Stability.Deprecated;
+        operation.Deprecated = version.Stability == Stability.Deprecated;
 
-        var value = new OpenApiString(stability.ToString());
+        var value = new OpenApiString(version.Stability.ToString());
         var keys = new[] { "x-stability", "x-scalar-stability" };
 
         foreach (var key in keys) {

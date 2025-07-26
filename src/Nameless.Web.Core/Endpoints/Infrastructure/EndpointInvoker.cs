@@ -27,23 +27,18 @@ internal static class EndpointInvoker {
     ///     the <see cref="EndpointDescriptorMetadata"/> is not available in the feature.
     /// </exception>
     internal static Task InvokeAsync(HttpContext httpContext, IEndpointFactory factory) {
-        if (httpContext.Features[typeof(IEndpointFeature)] is not IEndpointFeature feature) {
-            throw new InvalidOperationException("Endpoint feature is not available in the current HttpContext.");
-        }
+        var descriptor = httpContext.GetEndpointDescriptor();
 
-        var metadata = feature.Endpoint?.Metadata.GetMetadata<EndpointDescriptorMetadata>();
-        if (metadata is null) {
-            throw new InvalidOperationException("Endpoint descriptor metadata is not available.");
+        if (descriptor.Action is null) {
+            throw new InvalidOperationException("Endpoint descriptor missing endpoint action configuration.");
         }
-
-        var options = new RequestDelegateFactoryOptions {
-            RouteParameterNames = RouteHelper.GetRouteParameters(metadata.Descriptor.RoutePattern)
-        };
 
         var requestDelegate = RequestDelegateFactory.Create(
-            methodInfo: metadata.Descriptor.GetEndpointHandler(),
-            targetFactory: _ => factory.Create(metadata.Descriptor.EndpointType),
-            options: options
+            methodInfo: descriptor.Action,
+            targetFactory: _ => factory.Create(descriptor),
+            options: new RequestDelegateFactoryOptions {
+                RouteParameterNames = RouteHelper.GetRouteParameters(descriptor.RoutePattern)
+            }
         );
 
         return requestDelegate.RequestDelegate.Invoke(httpContext);

@@ -4,11 +4,11 @@ using Nameless.Web.Endpoints.Definitions;
 namespace Nameless.Web.Endpoints;
 
 /// <summary>
-///     Represents a minimal endpoint in the application.
+///     Defines a minimal endpoint that can be used in the application.
 /// </summary>
 public interface IEndpoint {
     /// <summary>
-    ///     Creates the endpoint descriptor for this endpoint.
+    ///     Describes the endpoint.
     /// </summary>
     /// <returns>
     ///     An <see cref="IEndpointDescriptor"/> that describes the endpoint.
@@ -16,14 +16,27 @@ public interface IEndpoint {
     IEndpointDescriptor Describe();
 }
 
-/// <summary>
-///     A base class for defining a minimal endpoint with a request type.
-/// </summary>
-/// <typeparam name="TRequest">
-///     Type of the request that this endpoint handles.
-/// </typeparam>
-public interface IEndpoint<in TRequest> : IEndpoint
+public abstract class EndpointBase<TRequest> : IEndpoint
     where TRequest : notnull {
+    /// <inheritdoc />
+    public virtual IEndpointDescriptor Describe() {
+        return EndpointDescriptorBuilder.Create(GetType())
+                                        .Get($"/{GetType().Name.ToSnakeCase('-')}", nameof(ExecuteAsync))
+                                        .Build();
+    }
 
-    Task<IResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken);
+    /// <summary>
+    ///     Executes the endpoint with the given request and cancellation token.
+    /// </summary>
+    /// <param name="request">
+    ///     The request to execute the endpoint with.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token to use for the execution of the endpoint.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation, where the result
+    ///     is an <see cref="IResult"/>.
+    /// </returns>
+    public abstract Task<IResult> ExecuteAsync(TRequest request, CancellationToken cancellationToken);
 }

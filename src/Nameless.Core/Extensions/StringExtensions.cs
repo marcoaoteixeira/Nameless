@@ -486,7 +486,7 @@ public static class StringExtensions {
         return string.IsNullOrWhiteSpace(self) ? fallback : self;
     }
 
-    public static string ToSnakeCase(this string? self) {
+    public static string ToSnakeCase(this string? self, char separator = '_') {
         if (self is null) { return string.Empty; }
 
         return string
@@ -495,9 +495,9 @@ public static class StringExtensions {
                        (@char, index) => index > 0 &&
                                          index < self.Length - 1 &&
                                          char.IsUpper(@char) &&
-                                         self[index - 1] != '_' &&
+                                         self[index - 1] != separator &&
                                          !char.IsUpper(self[index - 1])
-                           ? $"_{@char}"
+                           ? $"{separator}{@char}"
                            : @char.ToString()
                 ))
                .ToLower();

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Helpers;
@@ -13,13 +12,12 @@ internal static class RouteHandlerBuilderExtensions {
     // This method will infer the metadata for the endpoint request type.
     // So we can get a nice OpenApi documentation for the endpoint.
     internal static void WithRequestMetadata(this RouteHandlerBuilder self, IEndpointDescriptor descriptor) {
-        var handler = descriptor.EndpointType.GetMethod(nameof(IEndpoint<object>.ExecuteAsync), BindingFlags.Instance | BindingFlags.Public);
-        if (handler is null) {
+        if (descriptor.Action is null) {
             throw new InvalidOperationException("Endpoint handler not found.");
         }
 
         var metadata = RequestDelegateFactory.InferMetadata(
-            methodInfo: handler,
+            methodInfo: descriptor.Action,
             options: new RequestDelegateFactoryOptions {
                 RouteParameterNames = RouteHelper.GetRouteParameters(descriptor.RoutePattern)
             }
