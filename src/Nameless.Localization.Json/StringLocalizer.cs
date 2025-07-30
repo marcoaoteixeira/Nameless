@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Nameless.Localization.Json.Internals;
 using Nameless.Localization.Json.Objects;
 
 namespace Nameless.Localization.Json;

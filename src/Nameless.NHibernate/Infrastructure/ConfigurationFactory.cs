@@ -3,7 +3,7 @@ using Nameless.NHibernate.Options;
 using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate;
+namespace Nameless.NHibernate.Infrastructure;
 
 /// <summary>
 /// Default implementation of <see cref="IConfigurationFactory"/>.

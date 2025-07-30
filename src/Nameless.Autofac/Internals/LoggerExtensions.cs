@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Nameless.Autofac;
+namespace Nameless.Autofac.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, Exception?> HostApplicationLifetimeUnavailableDelegate

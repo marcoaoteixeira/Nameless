@@ -8,6 +8,25 @@ namespace Nameless;
 /// </summary>
 public static class TypeExtensions {
     /// <summary>
+    ///     Checks if the <see cref="Type" /> is a concrete class.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="Type" /> instance.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true"/> if the type is a concrete class;
+    ///     otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsConcrete(this Type self) {
+        return self is {
+            IsClass: true,
+            IsAbstract: false,
+            IsInterface: false,
+            IsGenericTypeDefinition: false
+        };
+    }
+
+    /// <summary>
     ///     Verifies if the <see cref="Type" /> is an instance of <see cref="Nullable" />.
     /// </summary>
     /// <param name="self">The self type.</param>

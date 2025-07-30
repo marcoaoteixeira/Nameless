@@ -30,10 +30,6 @@ public class EndpointTypeCollection : IEnumerable<Type> {
     }
 
     private static Type ThrowOnNonEndpointType(Type type) {
-        if (!typeof(IEndpoint).IsAssignableFrom(type)) {
-            throw new InvalidOperationException($"'{nameof(EndpointTypeCollection)}' cannot contain types that do not implement '{nameof(IEndpoint)}'. Fault type: '{type.Name}'.");
-        }
-
-        return type;
+        return Prevent.Argument.NotAssignableFrom<IEndpoint>(type);
     }
 }

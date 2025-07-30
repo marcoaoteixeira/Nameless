@@ -1,4 +1,5 @@
-﻿using Nameless.Mediator;
+﻿using Microsoft.AspNetCore.Mvc;
+using Nameless.Mediator;
 using Nameless.Microservices.App.Domains.UseCases;
 using Nameless.Web.Endpoints;
 using Nameless.Web.Endpoints.Definitions;
@@ -14,7 +15,7 @@ public class CreateToDoEndpoint : IEndpoint {
         _mediator = Prevent.Argument.Null(mediator);
     }
 
-    public async Task<IResult> ExecuteAsync(CreateToDoInput input, CancellationToken cancellationToken) {
+    public async Task<IResult> ExecuteAsync([FromBody] CreateToDoInput input, CancellationToken cancellationToken) {
         var request = new CreateToDoRequest {
             Summary = input.Summary ?? throw new ArgumentNullException(nameof(input)),
             DueDate = input.DueDate ?? throw new ArgumentNullException(nameof(input))

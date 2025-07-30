@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Nameless.Web.Endpoints.Infrastructure;
 
 using static Nameless.Web.Constants;
 
@@ -56,12 +56,6 @@ public sealed class EndpointDescriptorBuilder {
     ///     implement the <see cref="IEndpoint"/> interface.
     /// </exception>
     public static EndpointDescriptorBuilder Create(Type endpointType) {
-        if (!typeof(IEndpoint).IsAssignableFrom(endpointType)) {
-            throw new InvalidOperationException(
-                $"The type '{endpointType.Name}' does not implement the {nameof(IEndpoint)} interface."
-            );
-        }
-
         return new EndpointDescriptorBuilder(endpointType);
     }
 
@@ -72,7 +66,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The route pattern for the endpoint.
     /// </param>
     /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
+    ///     The name of the action to invoke when the endpoint is
+    ///     called.
     /// </param>
     /// <returns>
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
@@ -93,7 +88,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The route pattern for the endpoint.
     /// </param>
     /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
+    ///     The name of the action to invoke when the endpoint is
+    ///     called.
     /// </param>
     /// <returns>
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
@@ -114,7 +110,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The route pattern for the endpoint.
     /// </param>
     /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
+    ///     The name of the action to invoke when the endpoint is
+    ///     called.
     /// </param>
     /// <returns>
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
@@ -135,7 +132,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The route pattern for the endpoint.
     /// </param>
     /// <param name="actionName">
-    ///     The action name to invoke when the endpoint is called.
+    ///     The name of the action to invoke when the endpoint is
+    ///     called.
     /// </param>
     /// <returns>
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
@@ -377,14 +375,17 @@ public sealed class EndpointDescriptorBuilder {
     }
 
     /// <summary>
-    ///     Sets whether to validate the request object for the endpoint.
+    ///     Sets whether the endpoint's action should be intercepted.
     /// </summary>
     /// <returns>
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseRequestValidation() {
-        _descriptor.UseRequestValidation = true;
+    /// <remarks>
+    ///     Works with <see cref="IEndpointInterceptor"/>
+    /// </remarks>
+    public EndpointDescriptorBuilder UseInterceptors() {
+        _descriptor.UseInterceptors = true;
 
         return this;
     }
@@ -571,7 +572,7 @@ public sealed class EndpointDescriptorBuilder {
     /// </returns>
     public EndpointDescriptorBuilder UseFilter<TEndpointFilter>()
         where TEndpointFilter : IEndpointFilter {
-        _descriptor.UseFilter<TEndpointFilter>();
+        _descriptor.AddFilter<TEndpointFilter>();
 
         return this;
     }
@@ -591,27 +592,15 @@ public sealed class EndpointDescriptorBuilder {
             throw new InvalidOperationException("Route pattern must be specified.");
         }
 
-        if (_descriptor.Action is null) {
-            throw new InvalidOperationException("Invoke action must be specified.");
-        }
-
         return _descriptor;
     }
 
     private EndpointDescriptorBuilder SetRouteHandler(string httpMethod, string routePattern, string actionName) {
         _descriptor.HttpMethod = Prevent.Argument.NullOrWhiteSpace(httpMethod);
         _descriptor.RoutePattern = Prevent.Argument.NullOrWhiteSpace(routePattern);
+        _descriptor.Action = Prevent.Argument.NullOrWhiteSpace(actionName);
 
-        var invocation = _descriptor.EndpointType
-                                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                                    .SingleOrDefault(member => member.Name == actionName &&
-                                                               typeof(Task).IsAssignableFrom(member.ReturnType));
-
-        if (invocation is null) {
-            throw new InvalidOperationException($"Endpoint action method not available for endpoint type '{_descriptor.EndpointType.Name}'");
-        }
-
-        _descriptor.Action = invocation;
+        _descriptor.EnsureAction();
 
         return this;
     }

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Logging;
 
-namespace Nameless.Data;
+namespace Nameless.Data.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, IDataParameterCollection, Exception?> OutputDbCommandDelegate

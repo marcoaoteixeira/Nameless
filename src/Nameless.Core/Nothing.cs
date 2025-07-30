@@ -35,7 +35,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns true.</returns>
-    public static bool operator ==(Nothing left, Nothing right) => true;
+    public static bool operator ==(Nothing left, Nothing right) {
+        return true;
+    }
 
     /// <summary>
     /// Determines whether two Nothing instances are not equal.
@@ -43,7 +45,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns false.</returns>
-    public static bool operator !=(Nothing left, Nothing right) => false;
+    public static bool operator !=(Nothing left, Nothing right) {
+        return false;
+    }
 
     /// <summary>
     /// Determines whether one Nothing instance is less than another.
@@ -51,7 +55,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns false, as all Nothing instances are equal.</returns>
-    public static bool operator <(Nothing left, Nothing right) => false;
+    public static bool operator <(Nothing left, Nothing right) {
+        return false;
+    }
 
     /// <summary>
     /// Determines whether one Nothing instance is greater than another.
@@ -59,7 +65,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns false, as all Nothing instances are equal.</returns>
-    public static bool operator >(Nothing left, Nothing right) => false;
+    public static bool operator >(Nothing left, Nothing right) {
+        return false;
+    }
 
     /// <summary>
     /// Determines whether one Nothing instance is less than or equal to another.
@@ -67,7 +75,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns true, as all Nothing instances are equal.</returns>
-    public static bool operator <=(Nothing left, Nothing right) => true;
+    public static bool operator <=(Nothing left, Nothing right) {
+        return true;
+    }
 
     /// <summary>
     /// Determines whether one Nothing instance is greater than or equal to another.
@@ -75,7 +85,9 @@ public readonly struct Nothing : IEquatable<Nothing>,
     /// <param name="left">The first Nothing instance to compare.</param>
     /// <param name="right">The second Nothing instance to compare.</param>
     /// <returns>Always returns true, as all Nothing instances are equal.</returns>
-    public static bool operator >=(Nothing left, Nothing right) => true;
+    public static bool operator >=(Nothing left, Nothing right) {
+        return true;
+    }
 
     /// <summary>
     /// Executes an action and returns Nothing, useful for chaining operations.

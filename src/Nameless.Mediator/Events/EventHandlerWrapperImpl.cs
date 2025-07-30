@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Mediator.Internals;
 
 namespace Nameless.Mediator.Events;
 

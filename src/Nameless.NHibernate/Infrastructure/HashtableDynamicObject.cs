@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Dynamic;
 
-namespace Nameless.NHibernate;
+namespace Nameless.NHibernate.Infrastructure;
 
 /// <summary>
 ///     Class to add support for dynamic fields with NHibernate.

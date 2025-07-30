@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Nameless.Web;
+namespace Nameless.Web.Internals;
 
 internal static partial class RegexCache {
     [GeneratedRegex(@"{([^}]+)}", RegexOptions.IgnoreCase)]

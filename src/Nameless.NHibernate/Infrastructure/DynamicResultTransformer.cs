@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using NHibernate.Transform;
 
-namespace Nameless.NHibernate;
+namespace Nameless.NHibernate.Infrastructure;
 
 /// <summary>
 /// Dynamic result transformer.

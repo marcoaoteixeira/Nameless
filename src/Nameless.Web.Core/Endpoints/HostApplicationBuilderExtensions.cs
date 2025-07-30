@@ -61,15 +61,15 @@ public static class HostApplicationBuilderExtensions {
 
         self.Services.TryAddSingleton(new EndpointTypeCollection(endpoints));
         self.Services.TryAddSingleton<IServiceResolver, ServiceResolver>();
-        self.Services.TryAddSingleton<IEndpointFactory, EndpointFactory>();
 
         // Experimental
+        self.Services.TryAddSingleton<IEndpointWrapperGenerator, EndpointWrapperGenerator>();
         self.Services.TryAddSingleton<IProxyGenerator, ProxyGenerator>();
-        self.Services.TryAddScoped<IEndpointProxyFactory, EndpointProxyFactory>();
+        self.Services.TryAddTransient<IEndpointFactory, EndpointFactory>();
         var interceptors = options.Assemblies
                                   .GetImplementations(typeof(IEndpointInterceptor))
                                   .Where(type => !type.IsGenericTypeDefinition)
-                                  .Select(interceptor => new ServiceDescriptor(typeof(IEndpointInterceptor), interceptor, ServiceLifetime.Scoped));
+                                  .Select(interceptor => new ServiceDescriptor(typeof(IEndpointInterceptor), interceptor, ServiceLifetime.Transient));
         self.Services.TryAddEnumerable(interceptors);
         //
 

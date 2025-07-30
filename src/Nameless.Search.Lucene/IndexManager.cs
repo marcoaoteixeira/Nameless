@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using Nameless.Infrastructure;
+using Nameless.Search.Lucene.Internals;
 
 namespace Nameless.Search.Lucene;
 

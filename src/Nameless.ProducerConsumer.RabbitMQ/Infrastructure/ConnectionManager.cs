@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;

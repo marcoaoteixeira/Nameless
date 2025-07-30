@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nameless.Web.Internals;
 
 namespace Nameless.Web.Infrastructure;
 

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
@@ -21,7 +20,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public string RoutePattern { get; set; } = string.Empty;
 
     /// <inheritdoc />
-    public MethodInfo? Action { get; set; }
+    public string Action { get; set; } = string.Empty;
 
     /// <inheritdoc />
     public string? Name { get; set; }
@@ -66,7 +65,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public bool UseAntiforgery { get; set; }
 
     /// <inheritdoc />
-    public bool UseRequestValidation { get; set; }
+    public bool UseInterceptors { get; set; }
 
     /// <inheritdoc />
     public bool DisableHttpMetrics { get; set; }
@@ -88,7 +87,9 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     Type of the endpoint.
     /// </param>
     public EndpointDescriptor(Type endpointType) {
-        EndpointType = Prevent.Argument.Null(endpointType);
+        Prevent.Argument.NotAssignableFrom<IEndpoint>(endpointType);
+
+        EndpointType = endpointType;
     }
 
     /// <summary>
@@ -133,7 +134,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     When adding an endpoint filter, the filter type is used
     ///     to differentiate between different filters.
     /// </remarks>
-    public void UseFilter<TEndpointFilter>()
+    public void AddFilter<TEndpointFilter>()
         where TEndpointFilter : IEndpointFilter {
         _filters[typeof(TEndpointFilter)] = builder => {
             builder.Use<TEndpointFilter>();

@@ -13,7 +13,8 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// </summary>
 internal static class EndpointRouteBuilderExtensions {
     /// <summary>
-    ///     Maps an endpoint using the provided <see cref="IEndpointDescriptor"/>.
+    ///     Maps an endpoint using the provided
+    ///     <see cref="IEndpointDescriptor"/>.
     /// </summary>
     /// <param name="self">
     ///     The current <see cref="IEndpointRouteBuilder"/> instance.
@@ -32,9 +33,7 @@ internal static class EndpointRouteBuilderExtensions {
             handler: (HttpContext httpContext, [FromServices] IEndpointFactory factory) => EndpointInvoker.InvokeAsync(httpContext, factory)
         );
 
-        // EndpointDescriptor.Action: used when invoking the endpoint.
-
-        routeHandlerBuilder.WithName(descriptor.EnsureName());
+        routeHandlerBuilder.WithName(descriptor.GetName());
 
         if (!string.IsNullOrWhiteSpace(descriptor.DisplayName)) {
             routeHandlerBuilder.WithDisplayName(descriptor.DisplayName);
@@ -84,8 +83,6 @@ internal static class EndpointRouteBuilderExtensions {
                 break;
         }
 
-        // EndpointDescriptor.UseRequestValidation: used when invoking the endpoint.
-
         if (descriptor.DisableHttpMetrics) {
             routeHandlerBuilder.DisableHttpMetrics();
         }
@@ -103,9 +100,6 @@ internal static class EndpointRouteBuilderExtensions {
             filter(endpointFilterBuilder);
         }
 
-        routeHandlerBuilder.WithRequestMetadata(descriptor);
-
-        // finally, add the custom metadata for the endpoint
-        routeHandlerBuilder.WithMetadata(new EndpointDescriptorMetadata(descriptor));
+        routeHandlerBuilder.WithEndpointDescriptorMetadata(descriptor);
     }
 }

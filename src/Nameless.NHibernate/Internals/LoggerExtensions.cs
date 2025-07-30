@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NHibernate.Tool.hbm2ddl;
 
-namespace Nameless.NHibernate;
+namespace Nameless.NHibernate.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, Exception> ErrorOnSchemaExportExecutionDelegate

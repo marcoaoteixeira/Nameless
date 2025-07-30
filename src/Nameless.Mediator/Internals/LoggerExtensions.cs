@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.Mediator.Events;
 
-namespace Nameless.Mediator.Events;
+namespace Nameless.Mediator.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, Exception?> MissingEventHandlerDelegate

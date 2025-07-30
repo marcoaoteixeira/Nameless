@@ -39,8 +39,10 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
         Prevent.Argument.Null(next);
 
         context.ChangeParameters(context.Parameters.Union([
-            new ResolvedParameter((param, _) => param.ParameterType == _serviceType,
-                (param, ctx) => _factory(param.Member, ctx))
+            new ResolvedParameter(
+                predicate: (param, _) => param.ParameterType == _serviceType,
+                valueAccessor: (param, ctx) => _factory(param.Member, ctx)
+            )
         ]));
 
         next(context);

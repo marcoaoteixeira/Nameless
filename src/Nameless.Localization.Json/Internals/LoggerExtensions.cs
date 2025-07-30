@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
+using Nameless.Localization.Json.Infrastructure;
 
-namespace Nameless.Localization.Json.Infrastructure;
+namespace Nameless.Localization.Json.Internals;
 
 /// <summary>
 /// <see cref="ILogger"/> extensions.
@@ -54,6 +55,24 @@ internal static class LoggerExtensions {
             eventId: Events.GettingCurrentCultureFromContextEvent,
             formatString: "Getting current culture information from context. Context: '{Context}', Culture retrieved: '{CultureName}'");
 
+    private static readonly Action<ILogger, string, Exception?> GettingResourceDelegate
+        = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Debug,
+            eventId: Events.GettingResourceEvent,
+            formatString: "Getting resource '{ResourceName}'");
+
+    private static readonly Action<ILogger, string, Exception?> ResourceNotAvailableDelegate
+        = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Warning,
+            eventId: Events.ResourceNotAvailableEvent,
+            formatString: "Resource not available. Resource name: {ResourceName}");
+
+    private static readonly Action<ILogger, string, Exception?> MessageNotFoundDelegate
+        = LoggerMessage.Define<string>(
+            logLevel: LogLevel.Warning,
+            eventId: Events.MessageNotFoundEvent,
+            formatString: "Message with id '{MessageId}' not found.");
+
     internal static void GettingResourceForCulture(this ILogger<ResourceManager> self, string cultureName) {
         GettingResourceForCultureDelegate(self, cultureName, null /* exception */);
     }
@@ -79,13 +98,25 @@ internal static class LoggerExtensions {
     }
 
     internal static void ResourceDeserializationFailed(this ILogger<ResourceManager> self, string resourcePath,
-                                                       Exception exception) {
+        Exception exception) {
         ResourceDeserializationFailedDelegate(self, resourcePath, exception);
     }
 
     internal static void GettingCurrentCultureFromContext(this ILogger<CultureProvider> self, string context,
-                                                          string cultureName) {
+        string cultureName) {
         GettingCurrentCultureFromContextDelegate(self, context, cultureName, null /* exception */);
+    }
+
+    internal static void GettingResource(this ILogger<StringLocalizerFactory> self, string resourceName) {
+        GettingResourceDelegate(self, resourceName, null /* exception */);
+    }
+
+    internal static void ResourceNotAvailable(this ILogger<StringLocalizerFactory> self, string resourceName) {
+        ResourceNotAvailableDelegate(self, resourceName, null /* exception */);
+    }
+
+    internal static void MessageNotFound(this ILogger<StringLocalizer> self, string messageId) {
+        MessageNotFoundDelegate(self, messageId, null /* exception */);
     }
 
     internal static class Events {
@@ -97,5 +128,8 @@ internal static class LoggerExtensions {
         internal static readonly EventId ErrorReadingResourceFileEvent = new(4006, nameof(ErrorReadingResourceFile));
         internal static readonly EventId ResourceDeserializationFailedEvent = new(4007, nameof(ResourceDeserializationFailed));
         internal static readonly EventId GettingCurrentCultureFromContextEvent = new(4008, nameof(GettingCurrentCultureFromContext));
+        internal static readonly EventId GettingResourceEvent = new(4009, nameof(GettingResource));
+        internal static readonly EventId ResourceNotAvailableEvent = new(4010, nameof(ResourceNotAvailable));
+        internal static readonly EventId MessageNotFoundEvent = new(4011, nameof(MessageNotFound));
     }
 }

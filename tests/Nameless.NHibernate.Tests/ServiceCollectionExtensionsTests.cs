@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.NHibernate.Infrastructure;
 using Nameless.Testing.Tools.Mockers;
 using NHibernate;
 using NHibernate.Impl;

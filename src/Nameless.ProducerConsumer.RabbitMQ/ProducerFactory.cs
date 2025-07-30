@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;

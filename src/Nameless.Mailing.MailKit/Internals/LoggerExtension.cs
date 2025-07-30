@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Nameless.Mailing.MailKit;
+namespace Nameless.Mailing.MailKit.Internals;
 
 /// <summary>
 /// <see cref="ILogger"/> extension methods.

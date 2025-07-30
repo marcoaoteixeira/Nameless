@@ -37,22 +37,20 @@ public static class HostApplicationBuilderExtensions {
         // To add gRPC instrumentation for OpenTelemetry
         // Check: https://learn.microsoft.com/en-us/aspnet/core/grpc/diagnostics?view=aspnetcore-9.0
         string[] activitySources = [self.Environment.ApplicationName, .. options.ActivitySources];
-        self.Services
-            .AddOpenTelemetry()
-            .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
-                                           .AddHttpClientInstrumentation()
-                                           .AddRuntimeInstrumentation())
-            .WithTracing(tracing => tracing.AddSource(activitySources)
-                                           .AddAspNetCoreInstrumentation(options.ConfigureAspNetCoreTraceInstrumentation)
-                                           .AddHttpClientInstrumentation(options.ConfigureHttpClientTraceInstrumentation));
+        var openTelemetryBuilder = self.Services
+                                       .AddOpenTelemetry()
+                                       .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
+                                                                      .AddHttpClientInstrumentation()
+                                                                      .AddRuntimeInstrumentation())
+                                       .WithTracing(tracing => tracing.AddSource(activitySources)
+                                                                      .AddAspNetCoreInstrumentation(options.ConfigureAspNetCoreTraceInstrumentation)
+                                                                      .AddHttpClientInstrumentation(options.ConfigureHttpClientTraceInstrumentation));
 
         var configValue = self.Configuration[OpenTelemetryConstants.OPEN_TELEMETRY_EXPORTER_ENDPOINT];
         var useOpenTelemetryExporters = !string.IsNullOrWhiteSpace(configValue);
 
         if (useOpenTelemetryExporters) {
-            self.Services
-                .AddOpenTelemetry()
-                .UseOtlpExporter();
+            openTelemetryBuilder.UseOtlpExporter();
         }
 
         return self;

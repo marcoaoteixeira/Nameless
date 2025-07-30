@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions {
     /// </returns>
     public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<JsonLocalizationOptions>? configure = null) {
         self.Configure(configure ?? (_ => { }));
+
         self.TryAddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY);
         self.TryAddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY);
         self.TryAddSingleton(ResolveStringLocalizerFactory);

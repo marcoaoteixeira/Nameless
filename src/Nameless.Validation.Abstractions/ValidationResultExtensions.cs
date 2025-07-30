@@ -21,4 +21,16 @@ public static class ValidationResultExtensions {
                         elementSelector: group => group.Select(item => item.Message)
                                                        .ToArray());
     }
+
+    public static ValidationResult Aggregate(this IEnumerable<ValidationResult> self) {
+        var errors = new List<ValidationError>();
+
+        foreach (var validationResult in self) {
+            errors.AddRange(validationResult.Errors);
+        }
+
+        return errors.Count == 0
+            ? ValidationResult.Success()
+            : ValidationResult.Failure(errors);
+    }
 }

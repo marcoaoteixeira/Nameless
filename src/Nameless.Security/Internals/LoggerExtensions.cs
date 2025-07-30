@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Nameless.Security;
+namespace Nameless.Security.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, Exception> EncryptionExceptionHandler

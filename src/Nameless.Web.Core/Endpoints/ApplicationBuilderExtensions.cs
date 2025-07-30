@@ -1,6 +1,4 @@
-﻿// ReSharper disable SeparateLocalFunctionsWithJumpStatement
-
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,11 +32,11 @@ public static class ApplicationBuilderExtensions {
             var endpointDescriptors = builder.ServiceProvider
                                              .CreateEndpointDescriptors();
 
-            // create the root group
+            // Create the root group
             builder.MapGroup(ROOT_GROUP_ROUTE_PREFIX)
-                   // define the version set for all endpoints.
+                   // Define the version set for all endpoints.
                    .WithVersionSetFrom(endpointDescriptors)
-                   // map all endpoints to the root group
+                   // Map all endpoints to the root group
                    .WithEndpoints(endpointDescriptors);
         });
 
@@ -85,7 +83,12 @@ public static class ApplicationBuilderExtensions {
     }
 
     private static IEndpointDescriptor[] CreateEndpointDescriptors(this IServiceProvider self) {
-        // We need this "ServiceResolver" to be available
+        // We need this "ServiceResolver" because we need to create
+        // instances of the endpoints on-the-fly. We cannot register
+        // them into the service collection because they might need
+        // services that are registered as transient or scoped, and
+        // we need to create them dynamically based on the request
+        // context.
         var serviceResolver = self.GetRequiredService<IServiceResolver>();
 
         // Gets all the endpoint types from the service collection.

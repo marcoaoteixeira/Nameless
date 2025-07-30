@@ -5,6 +5,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
+using Nameless.Search.Lucene.Internals;
 using Nameless.Search.Lucene.Null;
 
 namespace Nameless.Search.Lucene;

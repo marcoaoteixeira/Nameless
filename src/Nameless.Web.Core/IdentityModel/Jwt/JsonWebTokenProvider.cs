@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Nameless.Web.Internals;
 
 namespace Nameless.Web.IdentityModel.Jwt;
 
@@ -72,7 +74,9 @@ public class JsonWebTokenProvider : IJsonWebTokenProvider {
             Claims = new Dictionary<string, object>(),
             SigningCredentials = new SigningCredentials(
                 key: new SymmetricSecurityKey(options.Secret.GetBytes()),
-                algorithm: options.SecurityAlgorithm ?? SecurityAlgorithms.HmacSha256
+                algorithm: string.IsNullOrWhiteSpace(options.SecurityAlgorithm)
+                    ? SecurityAlgorithms.HmacSha256
+                    : options.SecurityAlgorithm
             ),
         };
 
@@ -86,12 +90,12 @@ public class JsonWebTokenProvider : IJsonWebTokenProvider {
             }
         }
 
-        foreach (var additionalClaim in options.AdditionalClaims) {
-            result.Claims[additionalClaim.Type] = additionalClaim.Value;
+        foreach (var additionalClaimGroup in options.AdditionalClaims.GroupBy(claim => claim.Type)) {
+            result.Claims[additionalClaimGroup.Key] = JsonSerializer.Serialize(additionalClaimGroup.Select(claim => claim.Value));
         }
 
-        foreach (var claim in innerClaims) {
-            result.Claims[claim.Type] = claim.Value;
+        foreach (var claimGroup in innerClaims.GroupBy(claim => claim.Type)) {
+            result.Claims[claimGroup.Key] = JsonSerializer.Serialize(claimGroup.Select(claim => claim.Value));
         }
 
         var now = _timeProvider.GetUtcNow();

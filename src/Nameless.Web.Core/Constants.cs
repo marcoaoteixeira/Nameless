@@ -33,10 +33,10 @@ public static class Constants {
     /// <summary>
     ///     A collection of constants to use as SyntaxAttribute syntax.
     /// </summary>
-    internal static class Syntaxes {
+    public static class Syntaxes {
         /// <summary>
         ///     Route syntax.
         /// </summary>
-        internal const string ROUTE = "Route";
+        public const string ROUTE = "Route";
     }
 }

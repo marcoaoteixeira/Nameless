@@ -16,13 +16,14 @@ public class HelloWorldEndpoint : IEndpoint {
         return EndpointDescriptorBuilder.Create<HelloWorldEndpoint>()
                                         .Get("/", nameof(ExecuteAsync))
                                         .AllowAnonymous()
-                                        .UseRequestValidation()
+                                        .UseInterceptors()
                                         .WithDescription("Greetings endpoint for the application.")
                                         .WithSummary("Hello World v1")
                                         .UseRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW)
                                         .Produces<HelloWorldOutput>()
                                         .Produces(statusCode: StatusCodes.Status429TooManyRequests)
                                         .ProducesValidationProblem()
+
                                         .Build();
     }
 }

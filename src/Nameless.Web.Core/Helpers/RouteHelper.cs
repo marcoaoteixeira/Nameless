@@ -19,7 +19,7 @@ public static class RouteHelper {
     public static IEnumerable<string> GetRouteParameters([StringSyntax(Constants.Syntaxes.ROUTE)] string routePattern) {
         Prevent.Argument.NullOrWhiteSpace(routePattern);
 
-        var matches = RegexCache.RoutePattern().Matches(routePattern);
+        var matches = Internals.RegexCache.RoutePattern().Matches(routePattern);
 
         foreach (var match in matches.OfType<Match>()) {
             // Strip constraints, e.g., {id:int} -> id

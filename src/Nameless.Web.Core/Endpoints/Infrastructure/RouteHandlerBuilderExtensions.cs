@@ -11,20 +11,18 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 internal static class RouteHandlerBuilderExtensions {
     // This method will infer the metadata for the endpoint request type.
     // So we can get a nice OpenApi documentation for the endpoint.
-    internal static void WithRequestMetadata(this RouteHandlerBuilder self, IEndpointDescriptor descriptor) {
-        if (descriptor.Action is null) {
-            throw new InvalidOperationException("Endpoint handler not found.");
-        }
-
-        var metadata = RequestDelegateFactory.InferMetadata(
-            methodInfo: descriptor.Action,
+    internal static void WithEndpointDescriptorMetadata(this RouteHandlerBuilder self, IEndpointDescriptor descriptor) {
+        var result = RequestDelegateFactory.InferMetadata(
+            methodInfo: descriptor.GetAction(),
             options: new RequestDelegateFactoryOptions {
                 RouteParameterNames = RouteHelper.GetRouteParameters(descriptor.RoutePattern)
             }
         );
 
-        foreach (var obj in metadata.EndpointMetadata) {
-            self.WithMetadata(obj);
+        foreach (var metadata in result.EndpointMetadata) {
+            self.WithMetadata(metadata);
         }
+
+        self.WithMetadata(new EndpointDescriptorMetadata(descriptor));
     }
 }

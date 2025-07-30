@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Nameless.Web.Endpoints.Definitions;
+﻿namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
 ///     Defines the contract for building minimal endpoints.
@@ -24,7 +22,7 @@ public interface IEndpointDescriptor {
     /// <summary>
     ///     Gets the action to invoke on the endpoint.
     /// </summary>
-    MethodInfo? Action { get; }
+    string Action { get; }
 
     /// <summary>
     ///     Gets the name of the endpoint.
@@ -98,10 +96,10 @@ public interface IEndpointDescriptor {
     bool UseAntiforgery { get; }
 
     /// <summary>
-    ///     Whether it should use the validation service
-    ///     to validate the request object.
+    ///     Whether it should use interceptors to intercept the
+    ///     endpoint action call before it occur.
     /// </summary>
-    bool UseRequestValidation { get; }
+    bool UseInterceptors { get; }
 
     /// <summary>
     ///     Whether the HTTP metrics are disabled for the endpoint.

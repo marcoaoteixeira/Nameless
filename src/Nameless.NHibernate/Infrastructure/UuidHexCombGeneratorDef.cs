@@ -1,6 +1,6 @@
 ﻿using NHibernate.Mapping.ByCode;
 
-namespace Nameless.NHibernate;
+namespace Nameless.NHibernate.Infrastructure;
 
 /// <summary>
 ///     UUID hex comb implementation for <see cref="IGeneratorDef" />.

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.Infrastructure;
 
-namespace Nameless.Infrastructure;
+namespace Nameless.Internals;
 
 internal static class LoggerExtension {
     private static readonly Action<ILogger, Exception> ErrorOnAppDataFolderCreationDelegate

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Nameless.Search.Lucene;
+namespace Nameless.Search.Lucene.Internals;
 
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, Exception> DeleteIndexDirectoryErrorDelegate
