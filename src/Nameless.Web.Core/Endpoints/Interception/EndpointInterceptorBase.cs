@@ -27,7 +27,7 @@ public abstract class EndpointInterceptorBase : IInterceptor {
         return typeof(IEndpoint).IsAssignableFrom(descriptor.EndpointType);
     }
 
-    public abstract Task<IResult> InterceptAsync(HttpContext httpContext, object[] arguments, CancellationToken cancellationToken);
+    public abstract Task<IResult> InterceptAsync(HttpContext httpContext, object?[] arguments, CancellationToken cancellationToken);
 
     void IInterceptor.Intercept(IInvocation invocation) {
         var httpContext = HttpContextAccessor.HttpContext;

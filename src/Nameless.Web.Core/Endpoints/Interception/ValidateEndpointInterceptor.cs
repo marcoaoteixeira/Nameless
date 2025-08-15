@@ -20,13 +20,15 @@ public class ValidateEndpointInterceptor : EndpointInterceptorBase {
     public ValidateEndpointInterceptor(IHttpContextAccessor httpContextAccessor)
         : base(httpContextAccessor) { }
 
-    public override async Task<IResult> InterceptAsync(HttpContext httpContext, object[] arguments, CancellationToken cancellationToken) {
+    public override async Task<IResult> InterceptAsync(HttpContext httpContext, object?[] arguments, CancellationToken cancellationToken) {
         var args = arguments.Where(ValidateAttribute.IsPresent);
 
         var validationService = httpContext.RequestServices.GetRequiredService<IValidationService>();
         var validations = new List<ValidationResult>();
 
         foreach (var arg in args) {
+            if (arg is null) { continue; }
+
             validations.Add(await validationService.ValidateAsync(arg, cancellationToken));
         }
 
