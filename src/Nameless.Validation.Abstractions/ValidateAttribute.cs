@@ -12,7 +12,7 @@ public sealed class ValidateAttribute : Attribute {
     /// <returns>
     ///     <see langword="true"/> if <paramref name="obj" /> is annotated; otherwise <see langword="false"/>
     /// </returns>
-    public static bool IsPresent(object obj) {
-        return obj.GetType().HasAttribute<ValidateAttribute>();
+    public static bool IsPresent(object? obj) {
+        return obj is not null && obj.GetType().HasAttribute<ValidateAttribute>();
     }
 }
