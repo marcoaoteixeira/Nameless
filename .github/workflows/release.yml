@@ -55,6 +55,7 @@ jobs:
       - name: Create NuGet Packages
         run: >-
           dotnet pack
+          --force
           --configuration Release
           --include-symbols
           --nologo
