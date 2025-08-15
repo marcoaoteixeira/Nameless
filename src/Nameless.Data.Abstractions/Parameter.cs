@@ -38,7 +38,7 @@ public readonly record struct Parameter {
     ///     Thrown when <paramref name="name"/> is empty or white spaces.
     /// </exception>
     public Parameter(string name, object? value = null, DbType type = DbType.String) {
-        Name = Prevent.Argument.NullOrWhiteSpace(name);
+        Name = Guard.Against.NullOrWhiteSpace(name);
         Value = value;
         Type = type;
     }

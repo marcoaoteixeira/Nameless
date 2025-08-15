@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Search.Lucene;
@@ -21,9 +22,7 @@ public class DependencyInjectionTests {
                            .Build();
         services.AddSingleton(loggerFactory);
 
-        var options = new OptionsMocker<SearchOptions>()
-                     .WithValue(new SearchOptions())
-                     .Build();
+        var options = OptionsHelper.Create<SearchOptions>();
         services.AddSingleton(options);
 
         services.RegisterSearch(_ => { });

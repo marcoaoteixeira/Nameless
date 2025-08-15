@@ -31,11 +31,11 @@ public sealed class IndexManager : IIndexManager, IDisposable {
         IApplicationContext applicationContext,
         ILoggerFactory loggerFactory,
         IOptions<SearchOptions> options) {
-        Prevent.Argument.Null(applicationContext);
-        Prevent.Argument.Null(loggerFactory);
-        Prevent.Argument.Null(options);
+        Guard.Against.Null(applicationContext);
+        Guard.Against.Null(loggerFactory);
+        Guard.Against.Null(options);
 
-        _analyzerProvider = Prevent.Argument.Null(analyzerProvider);
+        _analyzerProvider = Guard.Against.Null(analyzerProvider);
         _logger = loggerFactory.CreateLogger<IndexManager>();
         _loggerForIndex = loggerFactory.CreateLogger<Index>();
 
@@ -60,7 +60,7 @@ public sealed class IndexManager : IIndexManager, IDisposable {
     public bool DeleteIndex(string name) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(name);
+        Guard.Against.NullOrWhiteSpace(name);
 
         RemoveIndexFromCache(name);
 
@@ -77,7 +77,7 @@ public sealed class IndexManager : IIndexManager, IDisposable {
     public bool IndexExists(string name) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(name);
+        Guard.Against.NullOrWhiteSpace(name);
 
         var indexDirectoryPath = GetIndexDirectoryPath(name);
 
@@ -94,7 +94,7 @@ public sealed class IndexManager : IIndexManager, IDisposable {
     public IIndex CreateIndex(string name) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(name);
+        Guard.Against.NullOrWhiteSpace(name);
 
         return Cache.GetOrAdd(name, Create);
     }

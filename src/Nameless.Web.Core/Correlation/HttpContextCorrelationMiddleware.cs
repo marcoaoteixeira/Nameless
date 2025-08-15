@@ -19,8 +19,8 @@ public class HttpContextCorrelationMiddleware {
     ///     The correlation options that configure the middleware behavior.
     /// </param>
     public HttpContextCorrelationMiddleware(RequestDelegate next, HttpContextCorrelationOptions options) {
-        _next = Prevent.Argument.Null(next);
-        _options = Prevent.Argument.Null(options);
+        _next = Guard.Against.Null(next);
+        _options = Guard.Against.Null(options);
     }
 
     /// <summary>

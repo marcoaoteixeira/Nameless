@@ -27,8 +27,8 @@ public sealed class DynamicResultTransformer : IResultTransformer {
     /// The transformed <see cref="object"/>.
     /// </returns>
     public object TransformTuple(object[] tuple, string[] aliases) {
-        Prevent.Argument.Null(tuple);
-        Prevent.Argument.Null(aliases);
+        Guard.Against.Null(tuple);
+        Guard.Against.Null(aliases);
 
         var result = new Dictionary<string, object>();
         tuple.Each((current, idx) => {

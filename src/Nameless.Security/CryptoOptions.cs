@@ -83,7 +83,7 @@ public sealed record CryptoOptions {
     /// </exception>
     public int MinimumSaltSize {
         get => _minimumSaltSize;
-        set => _minimumSaltSize = Prevent.Argument.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+        set => _minimumSaltSize = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public sealed record CryptoOptions {
     /// </exception>
     public int MaximumSaltSize {
         get => _maximumSaltSize;
-        set => _maximumSaltSize = Prevent.Argument.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+        set => _maximumSaltSize = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
     }
 
     /// <summary>
@@ -111,6 +111,6 @@ public sealed record CryptoOptions {
     /// </exception>
     public int PasswordIterations {
         get => _passwordIterations;
-        set => _passwordIterations = Prevent.Argument.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
+        set => _passwordIterations = Guard.Against.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
     }
 }

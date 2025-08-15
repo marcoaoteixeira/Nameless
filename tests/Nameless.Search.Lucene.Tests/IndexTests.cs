@@ -5,7 +5,7 @@ using Nameless.Testing.Tools.Mockers;
 namespace Nameless.Search.Lucene;
 
 public class IndexTests {
-    private static readonly string IndexDirectoryPath = typeof(IndexTests).Assembly.GetDirectoryPath("Output");
+    private static readonly string IndexDirectoryPath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Output");
 
     public IndexTests(ITestOutputHelper output) {
         try { Directory.Delete(IndexDirectoryPath, true); }
@@ -56,7 +56,7 @@ public class IndexTests {
         var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
-        var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
+        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
@@ -86,7 +86,7 @@ public class IndexTests {
         var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
-        var loremIpsumFilePath = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "LoremIpsum.txt");
+        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
         var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
@@ -141,7 +141,7 @@ public class IndexTests {
         var index = indexManager.CreateIndex(IndexName);
 
         // act 1
-        var filePathForText001 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_001.txt");
+        var filePathForText001 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "text_001.txt");
         var contentText001 = await File.ReadAllTextAsync(filePathForText001, CancellationToken.None);
 
         var documentText001 = index
@@ -160,7 +160,7 @@ public class IndexTests {
                            .ToArray();
 
         // act 2
-        var filePathForText002 = typeof(IndexTests).Assembly.GetDirectoryPath("Resources", "text_002.txt");
+        var filePathForText002 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "text_002.txt");
         var contentText002 = await File.ReadAllTextAsync(filePathForText002, CancellationToken.None);
 
         var documentText002 = index

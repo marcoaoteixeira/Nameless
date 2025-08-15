@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Nameless.Web.IdentityModel.Jwt;
+using Nameless.Web.Identity.Jwt;
 
 namespace Nameless.Microservices.App.Configs;
 
@@ -25,7 +25,8 @@ public static class AuthConfig {
                     ValidateIssuer = jsonWebTokenOptions.ValidateIssuer,
                     IssuerSigningKey = securityKey,
                     ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
-                    ValidAlgorithms = [jsonWebTokenOptions.SecurityAlgorithm],
+
+                    // ValidAlgorithms = [jsonWebTokenOptions],
 
                     ValidAudiences = jsonWebTokenOptions.Audiences,
                     ValidateAudience = jsonWebTokenOptions.ValidateAudience,

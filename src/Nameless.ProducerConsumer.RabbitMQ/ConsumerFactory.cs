@@ -21,9 +21,9 @@ public sealed class ConsumerFactory : IConsumerFactory {
     /// <param name="channelConfigurator">The channel configurator.</param>
     /// <param name="loggerFactory">The logger factory.</param>
     public ConsumerFactory(IChannelFactory channelFactory, IChannelConfigurator channelConfigurator, ILoggerFactory loggerFactory) {
-        _channelFactory = Prevent.Argument.Null(channelFactory);
-        _channelConfigurator = Prevent.Argument.Null(channelConfigurator);
-        _loggerFactory = Prevent.Argument.Null(loggerFactory);
+        _channelFactory = Guard.Against.Null(channelFactory);
+        _channelConfigurator = Guard.Against.Null(channelConfigurator);
+        _loggerFactory = Guard.Against.Null(loggerFactory);
         _logger = loggerFactory.CreateLogger<ConsumerFactory>();
     }
 

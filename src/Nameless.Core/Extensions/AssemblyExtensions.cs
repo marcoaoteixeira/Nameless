@@ -1,5 +1,4 @@
 using System.Reflection;
-using Nameless.Helpers;
 
 namespace Nameless;
 
@@ -11,23 +10,12 @@ public static class AssemblyExtensions {
     ///     Retrieves the assembly directory path.
     /// </summary>
     /// <param name="self">The current assembly.</param>
-    /// <param name="combineWith">Parts to concatenate with the result directory path.</param>
-    /// <returns>The path to the assembly folder.</returns>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> or
-    ///     <paramref name="combineWith" /> is <see langword="null"/>.
-    /// </exception>
-    public static string GetDirectoryPath(this Assembly self, params IEnumerable<string> combineWith) {
+    public static string GetDirectoryPath(this Assembly self) {
         var location = $"file://{self.Location}";
         var uri = new UriBuilder(location);
         var filePath = Uri.UnescapeDataString(uri.Path);
-        var directoryPath = Path.GetDirectoryName(filePath);
 
-        if (directoryPath is null) { return string.Empty; }
-
-        var result = Path.Combine([.. combineWith.Prepend(directoryPath)]);
-
-        return PathHelper.Normalize(result);
+        return Path.GetDirectoryName(filePath) ?? string.Empty;
     }
 
     /// <summary>

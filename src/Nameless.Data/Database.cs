@@ -20,8 +20,8 @@ public sealed class Database : IDatabase, IDisposable {
     /// <param name="dbConnectionFactory">The database connection factory.</param>
     /// <param name="logger">The logger.</param>
     public Database(IDbConnectionFactory dbConnectionFactory, ILogger<Database> logger) {
-        _dbConnectionFactory = Prevent.Argument.Null(dbConnectionFactory);
-        _logger = Prevent.Argument.Null(logger);
+        _dbConnectionFactory = Guard.Against.Null(dbConnectionFactory);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />
@@ -35,7 +35,7 @@ public sealed class Database : IDatabase, IDisposable {
     public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text);
+        Guard.Against.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
@@ -51,7 +51,7 @@ public sealed class Database : IDatabase, IDisposable {
                                                        params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text);
+        Guard.Against.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
@@ -73,7 +73,7 @@ public sealed class Database : IDatabase, IDisposable {
     public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(text);
+        Guard.Against.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 

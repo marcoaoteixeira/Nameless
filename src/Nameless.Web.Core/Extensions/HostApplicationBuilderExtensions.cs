@@ -8,11 +8,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Nameless.Web.IdentityModel.Jwt;
 
 namespace Nameless.Web;
 
@@ -59,33 +56,9 @@ public static class HostApplicationBuilderExtensions {
                 opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(configure ?? DefaultConfigureJwtBearer);
+            .AddJwtBearer(configure ?? (_ => { }));
 
         return self;
-
-        void DefaultConfigureJwtBearer(JwtBearerOptions options) {
-            var jsonWebTokenOptions = self.Configuration
-                                          .GetSection(nameof(JsonWebTokenOptions))
-                                          .Get<JsonWebTokenOptions>() ?? new JsonWebTokenOptions();
-
-            if (string.IsNullOrWhiteSpace(jsonWebTokenOptions.Secret)) {
-                throw new MissingSecretConfigurationException();
-            }
-
-            var securityKey = new SymmetricSecurityKey(jsonWebTokenOptions.Secret.GetBytes());
-
-            options.TokenValidationParameters = new TokenValidationParameters {
-                ValidAudiences = jsonWebTokenOptions.Audiences,
-                ValidateAudience = jsonWebTokenOptions.ValidateAudience,
-                ValidIssuer = jsonWebTokenOptions.Issuer,
-                ValidateIssuer = jsonWebTokenOptions.ValidateIssuer,
-                ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
-                IssuerSigningKey = securityKey,
-                ValidAlgorithms = [jsonWebTokenOptions.SecurityAlgorithm ?? SecurityAlgorithms.HmacSha256],
-                ValidateLifetime = jsonWebTokenOptions.ValidateLifetime,
-                ClockSkew = jsonWebTokenOptions.ClockSkew,
-            };
-        }
     }
 
     public static THostApplicationBuilder RegisterRateLimiter<THostApplicationBuilder>(this THostApplicationBuilder self, Action<RateLimiterOptions>? configure = null)

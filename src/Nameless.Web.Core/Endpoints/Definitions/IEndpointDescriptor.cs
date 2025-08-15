@@ -1,4 +1,6 @@
-﻿namespace Nameless.Web.Endpoints.Definitions;
+﻿using Nameless.Web.Endpoints.Definitions.Metadata;
+
+namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
 ///     Defines the contract for building minimal endpoints.
@@ -22,7 +24,7 @@ public interface IEndpointDescriptor {
     /// <summary>
     ///     Gets the action to invoke on the endpoint.
     /// </summary>
-    string Action { get; }
+    string ActionName { get; }
 
     /// <summary>
     ///     Gets the name of the endpoint.
@@ -96,12 +98,6 @@ public interface IEndpointDescriptor {
     bool UseAntiforgery { get; }
 
     /// <summary>
-    ///     Whether it should use interceptors to intercept the
-    ///     endpoint action call before it occur.
-    /// </summary>
-    bool UseInterceptors { get; }
-
-    /// <summary>
     ///     Whether the HTTP metrics are disabled for the endpoint.
     /// </summary>
     bool DisableHttpMetrics { get; }
@@ -120,4 +116,10 @@ public interface IEndpointDescriptor {
     ///     Gets the filters to apply to the endpoint.
     /// </summary>
     Action<IEndpointFilterBuilder>[] Filters { get; }
+
+    /// <summary>
+    ///     Gets the additional metadata associated with the
+    ///     endpoint.
+    /// </summary>
+    object[] AdditionalMetadata { get; }
 }

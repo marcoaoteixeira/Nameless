@@ -30,6 +30,6 @@ public class EndpointTypeCollection : IEnumerable<Type> {
     }
 
     private static Type ThrowOnNonEndpointType(Type type) {
-        return Prevent.Argument.NotAssignableFrom<IEndpoint>(type);
+        return Guard.Against.NotAssignableFrom<IEndpoint>(type);
     }
 }

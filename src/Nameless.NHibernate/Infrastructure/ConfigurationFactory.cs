@@ -16,7 +16,7 @@ public sealed class ConfigurationFactory : IConfigurationFactory {
     /// </summary>
     /// <param name="options"> The NHibernate options to configure the factory with.</param>
     public ConfigurationFactory(IOptions<NHibernateOptions> options) {
-        _options = Prevent.Argument.Null(options);
+        _options = Guard.Against.Null(options);
     }
 
     /// <inheritdoc />

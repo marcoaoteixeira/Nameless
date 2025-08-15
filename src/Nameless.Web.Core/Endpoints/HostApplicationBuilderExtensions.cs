@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +32,7 @@ public static class HostApplicationBuilderExtensions {
     /// <param name="self">
     ///     The current <typeparamref name="THostApplicationBuilder"/>.
     /// </param>
+    /// <param name="useInterception"></param>
     /// <param name="configure">
     ///     An optional delegate to configure <see cref="EndpointOptions"/> for
     ///     customizing endpoint behavior. If not provided, default options are
@@ -60,23 +60,13 @@ public static class HostApplicationBuilderExtensions {
                                .Where(type => !type.IsGenericTypeDefinition);
 
         self.Services.TryAddSingleton(new EndpointTypeCollection(endpoints));
-        self.Services.TryAddSingleton<IServiceResolver, ServiceResolver>();
-
-        // Experimental
-        self.Services.TryAddSingleton<IEndpointWrapperGenerator, EndpointWrapperGenerator>();
-        self.Services.TryAddSingleton<IProxyGenerator, ProxyGenerator>();
-        self.Services.TryAddTransient<IEndpointFactory, EndpointFactory>();
-        var interceptors = options.Assemblies
-                                  .GetImplementations(typeof(IEndpointInterceptor))
-                                  .Where(type => !type.IsGenericTypeDefinition)
-                                  .Select(interceptor => new ServiceDescriptor(typeof(IEndpointInterceptor), interceptor, ServiceLifetime.Transient));
-        self.Services.TryAddEnumerable(interceptors);
-        //
+        self.Services.TryAddSingleton<IServiceFactory, ServiceFactory>();
+        self.Services.TryAddSingleton<IEndpointFactory, EndpointFactory>();
 
         return self;
     }
 
-    private static IServiceCollection AddOpenApi(this IServiceCollection self, Func<IEnumerable<OpenApiDescriptor>>? configure) {
+    private static IServiceCollection AddOpenApi(this IServiceCollection self, Func<IEnumerable<OpenApiDocumentOptions>>? configure) {
         var descriptors = (configure?.Invoke() ?? []).ToArray();
 
         if (descriptors.Length == 0) {

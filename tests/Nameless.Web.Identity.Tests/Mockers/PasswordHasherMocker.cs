@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Nameless.Testing.Tools.Mockers;
+using Nameless.Web.Identity.Entities;
 
 namespace Nameless.Web.Identity.Mockers;
 
-public class PasswordHasherMocker : MockerBase<IPasswordHasher<User>>;
+public class PasswordHasherMocker : Mocker<IPasswordHasher<User>>;

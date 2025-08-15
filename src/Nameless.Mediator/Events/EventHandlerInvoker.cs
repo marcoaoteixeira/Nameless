@@ -17,7 +17,7 @@ public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public EventHandlerInvoker(IServiceProvider provider) {
-        _provider = Prevent.Argument.Null(provider);
+        _provider = Guard.Against.Null(provider);
     }
 
     /// <inheritdoc />

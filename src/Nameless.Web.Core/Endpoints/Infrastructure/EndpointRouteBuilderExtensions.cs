@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,7 @@ internal static class EndpointRouteBuilderExtensions {
             handler: (HttpContext httpContext, [FromServices] IEndpointFactory factory) => EndpointInvoker.InvokeAsync(httpContext, factory)
         );
 
-        routeHandlerBuilder.WithName(descriptor.GetName());
+        routeHandlerBuilder.WithName(descriptor.GetNameOrDefault());
 
         if (!string.IsNullOrWhiteSpace(descriptor.DisplayName)) {
             routeHandlerBuilder.WithDisplayName(descriptor.DisplayName);
@@ -61,7 +62,14 @@ internal static class EndpointRouteBuilderExtensions {
             routeHandlerBuilder.RequireRateLimiting(descriptor.RateLimitingPolicy);
         }
 
-        routeHandlerBuilder.RequireAuthorization([.. descriptor.AuthorizationPolicies]);
+        switch (descriptor.AllowAnonymous) {
+            case true:
+                routeHandlerBuilder.AllowAnonymous();
+                break;
+            case false:
+                routeHandlerBuilder.RequireAuthorization([.. descriptor.AuthorizationPolicies]);
+                break;
+        }
 
         if (!string.IsNullOrWhiteSpace(descriptor.CorsPolicy)) {
             routeHandlerBuilder.RequireCors(descriptor.CorsPolicy);
@@ -69,10 +77,6 @@ internal static class EndpointRouteBuilderExtensions {
 
         if (!string.IsNullOrWhiteSpace(descriptor.OutputCachePolicy)) {
             routeHandlerBuilder.CacheOutput(descriptor.OutputCachePolicy);
-        }
-
-        if (descriptor.AllowAnonymous) {
-            routeHandlerBuilder.AllowAnonymous();
         }
 
         switch (descriptor.UseAntiforgery) {
@@ -87,12 +91,20 @@ internal static class EndpointRouteBuilderExtensions {
             routeHandlerBuilder.DisableHttpMetrics();
         }
 
-        foreach (var accepts in descriptor.Accepts) {
-            routeHandlerBuilder.WithMetadata(accepts);
+        foreach (var accept in descriptor.Accepts) {
+            routeHandlerBuilder.WithMetadata(new AcceptsMetadata(
+                contentTypes: accept.ContentTypes,
+                type: accept.RequestType,
+                isOptional: accept.IsOptional
+            ));
         }
 
-        foreach (var produces in descriptor.Produces) {
-            routeHandlerBuilder.WithMetadata(produces);
+        foreach (var produce in descriptor.Produces) {
+            routeHandlerBuilder.WithMetadata(new ProducesResponseTypeMetadata(
+                statusCode: produce.StatusCode,
+                type: produce.ResponseType,
+                contentTypes: produce.ContentTypes
+            ));
         }
 
         var endpointFilterBuilder = new EndpointFilterBuilder(routeHandlerBuilder);
@@ -100,6 +112,8 @@ internal static class EndpointRouteBuilderExtensions {
             filter(endpointFilterBuilder);
         }
 
-        routeHandlerBuilder.WithEndpointDescriptorMetadata(descriptor);
+        foreach (var additionalMetadata in descriptor.AdditionalMetadata) {
+            routeHandlerBuilder.WithMetadata(additionalMetadata);
+        }
     }
 }

@@ -5,7 +5,7 @@ public class PageTests {
     public void When_Creating_New_Instance_Then_Return_New_Object_With_Given_Queryable() {
         // arrange
         // 100 items
-        var items = Enumerable.Range(0, Page<int>.DEFAULT_SIZE * 10).AsQueryable();
+        var items = Enumerable.Range(0, 100).AsQueryable();
 
         // act
         var page = new Page<int>(items); // page 1, size 10
@@ -28,7 +28,7 @@ public class PageTests {
         const int PageSize = 15;
         const int ExpectedTotalPages = 7;
         // 100 items
-        var items = Enumerable.Range(0, Page<int>.DEFAULT_SIZE * 10)
+        var items = Enumerable.Range(0, 100)
                               .AsQueryable();
         var expectedItems = items.Take(PageSize)
                                  .ToArray();
@@ -54,7 +54,7 @@ public class PageTests {
         const int PageSize = 100;
         const int ExpectedTotalPages = 1;
         // 100 items
-        var items = Enumerable.Range(0, Page<int>.DEFAULT_SIZE * 10)
+        var items = Enumerable.Range(0, 100)
                               .AsQueryable();
         var expectedItems = items.Take(PageSize)
                                  .ToArray();

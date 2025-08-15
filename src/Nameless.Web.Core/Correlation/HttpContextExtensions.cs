@@ -8,7 +8,7 @@ public static class HttpContextExtensions {
     public static bool HasCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
         key ??= CORRELATION_ID_KEY;
 
-        Prevent.Argument.NullOrWhiteSpace(key);
+        Guard.Against.NullOrWhiteSpace(key);
 
         return useHeader
             ? GetFromHttpContextHeaders(self, key) is not null
@@ -18,7 +18,7 @@ public static class HttpContextExtensions {
     public static string? GetCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
         key ??= CORRELATION_ID_KEY;
 
-        Prevent.Argument.NullOrWhiteSpace(key);
+        Guard.Against.NullOrWhiteSpace(key);
 
         return useHeader
             ? GetFromHttpContextHeaders(self, key)
@@ -28,8 +28,8 @@ public static class HttpContextExtensions {
     public static void SetCorrelationID(this HttpContext self, string value, string? key = null, bool useHeader = true) {
         key ??= CORRELATION_ID_KEY;
 
-        Prevent.Argument.NullOrWhiteSpace(key);
-        Prevent.Argument.NullOrWhiteSpace(value);
+        Guard.Against.NullOrWhiteSpace(key);
+        Guard.Against.NullOrWhiteSpace(value);
 
         if (useHeader) { self.Response.Headers[key] = value; }
         else { self.Items[key] = value; }

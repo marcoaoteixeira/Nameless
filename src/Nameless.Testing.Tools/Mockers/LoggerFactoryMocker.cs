@@ -11,8 +11,8 @@ public sealed class LoggerFactoryMocker : Mocker<ILoggerFactory> {
         return this;
     }
 
-    public LoggerFactoryMocker WithCreateLogger(string category, ILogger returnValue) {
-        MockInstance.Setup(mock => mock.CreateLogger(category))
+    public LoggerFactoryMocker WithCreateLogger(string categoryName, ILogger returnValue) {
+        MockInstance.Setup(mock => mock.CreateLogger(categoryName))
                     .Returns(returnValue);
 
         return this;
@@ -20,6 +20,13 @@ public sealed class LoggerFactoryMocker : Mocker<ILoggerFactory> {
 
     public LoggerFactoryMocker WithCreateLogger<TCategoryName>(ILogger<TCategoryName> returnValue) {
         MockInstance.Setup(mock => mock.CreateLogger(typeof(TCategoryName).FullName ?? typeof(TCategoryName).Name))
+                    .Returns(returnValue);
+
+        return this;
+    }
+
+    public LoggerFactoryMocker WithCreateLogger(Type category, ILogger returnValue) {
+        MockInstance.Setup(mock => mock.CreateLogger(category.FullName ?? category.Name))
                     .Returns(returnValue);
 
         return this;

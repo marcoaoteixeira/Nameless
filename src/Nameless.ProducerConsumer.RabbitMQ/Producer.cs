@@ -27,11 +27,11 @@ public sealed class Producer : IProducer {
     /// <param name="timeProvider">The time provider.</param>
     /// <param name="logger">The logger.</param>
     public Producer(string topic, IChannel channel, TimeProvider timeProvider, ILogger<Producer> logger) {
-        Topic = Prevent.Argument.Null(topic);
+        Topic = Guard.Against.Null(topic);
 
-        _channel = Prevent.Argument.Null(channel);
-        _timeProvider = Prevent.Argument.Null(timeProvider);
-        _logger = Prevent.Argument.Null(logger);
+        _channel = Guard.Against.Null(channel);
+        _timeProvider = Guard.Against.Null(timeProvider);
+        _logger = Guard.Against.Null(logger);
     }
 
     ~Producer() {

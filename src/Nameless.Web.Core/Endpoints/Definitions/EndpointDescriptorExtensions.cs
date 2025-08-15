@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Nameless.Web.Endpoints.Definitions.Metadata;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
@@ -8,15 +9,17 @@ namespace Nameless.Web.Endpoints.Definitions;
 /// </summary>
 public static class EndpointDescriptorExtensions {
     /// <summary>
-    ///     Ensures that the endpoint descriptor has a valid name.
+    ///     Retrieves the name for the endpoint or the default value for
+    ///     the name. The default value is a composition between the endpoint
+    ///     type name and the version number.
     /// </summary>
     /// <param name="self">
     ///     The current <see cref="IEndpointDescriptor"/> instance.
     /// </param>
     /// <returns>
-    ///     The name of the endpoint, ensuring it is valid.
+    ///     The name of the endpoint, or the default value.
     /// </returns>
-    public static string GetName(this IEndpointDescriptor self) {
+    public static string GetNameOrDefault(this IEndpointDescriptor self) {
         return string.IsNullOrWhiteSpace(self.Name)
             ? $"{self.EndpointType.Name}_v{self.Version.Number}"
             : self.Name;
@@ -34,11 +37,11 @@ public static class EndpointDescriptorExtensions {
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="self"/> or;
     ///     if <see cref="IEndpointDescriptor.EndpointType"/> or
-    ///     <see cref="IEndpointDescriptor.Action"/> inside
+    ///     <see cref="IEndpointDescriptor.ActionName"/> inside
     ///     <paramref name="self"/> is <see langword="null"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    ///     if <see cref="IEndpointDescriptor.Action"/> inside
+    ///     if <see cref="IEndpointDescriptor.ActionName"/> inside
     ///     <paramref name="self"/> is empty or only whitespace.
     /// </exception>
     /// <exception cref="InvalidOperationException">
@@ -47,30 +50,33 @@ public static class EndpointDescriptorExtensions {
     ///     from <see cref="Task{TResult}"/> where TResult
     ///     is <see cref="IResult"/>.
     /// </exception>
-    internal static MethodInfo GetAction(this IEndpointDescriptor self) {
-        Prevent.Argument.Null(self);
-        Prevent.Argument.Null(self.EndpointType, message: $"Endpoint descriptor is missing '{nameof(IEndpointDescriptor.EndpointType)}' property.");
-        Prevent.Argument.NullOrWhiteSpace(self.Action, message: $"Endpoint descriptor is missing '{nameof(IEndpointDescriptor.Action)}' property.");
+    public static MethodInfo GetEndpointHandler(this IEndpointDescriptor self) {
+        Guard.Against.Null(self);
 
-        var handler = self.EndpointType
-                          .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                          .SingleOrDefault(method => method.Name == self.Action);
-
-        if (handler is null) {
-            throw new InvalidOperationException($"Action '{self.Action}' not found in endpoint '{self.EndpointType.Name}'.");
+        var metadata = self.GetAdditionalMetadata<EndpointHandlerMetadata>()
+                           .SingleOrDefault();
+        if (metadata is null) {
+            throw new InvalidOperationException("Endpoint descriptor missing handler metadata.");
         }
 
-        var returnType = typeof(Task<IResult>);
-        if (!returnType.IsAssignableFrom(handler.ReturnType)) {
-            throw new InvalidOperationException($"Action '{self.Action}' must return type '{returnType.GetPrettyName()}'.");
-        }
-
-        return handler;
+        return metadata.Handler;
     }
 
-    internal static void EnsureAction(this IEndpointDescriptor self) {
-        // This will ensure that we have a valid
-        // endpoint handler to work with.
-        _ = self.GetAction();
+    /// <summary>
+    ///     Retrieves a metadata from the endpoint descriptor.
+    /// </summary>
+    /// <typeparam name="TMetadata">
+    ///     Type of the metadata.
+    /// </typeparam>
+    /// <param name="self">
+    ///     The current <see cref="IEndpointDescriptor"/>.
+    /// </param>
+    /// <returns>
+    ///     A collection of metadata.
+    /// </returns>
+    public static IEnumerable<TMetadata> GetAdditionalMetadata<TMetadata>(this IEndpointDescriptor self) {
+        return self.AdditionalMetadata
+                   .Where(metadata => metadata is TMetadata)
+                   .Cast<TMetadata>();
     }
 }

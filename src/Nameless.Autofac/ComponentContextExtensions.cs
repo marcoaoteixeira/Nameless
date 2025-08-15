@@ -21,11 +21,7 @@ public static class ComponentContextExtensions {
     ///     is available, otherwise; <see cref="NullLogger{T}" />.
     /// </returns>
     public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IComponentContext self) {
-        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
-
-        return loggerFactory is not null
-            ? loggerFactory.CreateLogger<TCategoryName>()
-            : NullLogger<TCategoryName>.Instance;
+        return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName> ?? NullLogger<TCategoryName>.Instance;
     }
 
     /// <summary>
@@ -42,13 +38,7 @@ public static class ComponentContextExtensions {
     ///     if <paramref name="categoryType" /> is <see langword="null"/>.
     /// </exception>
     public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
-        Prevent.Argument.Null(categoryType);
-
-        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
-
-        return loggerFactory is not null
-            ? loggerFactory.CreateLogger(categoryType)
-            : NullLogger.Instance;
+        return self.GetLoggerCore(categoryType) ?? NullLogger.Instance;
     }
 
     /// <summary>
@@ -107,5 +97,13 @@ public static class ComponentContextExtensions {
         var optionsFromFactory = fallback();
 
         return Options.Create(optionsFromFactory);
+    }
+
+    private static ILogger? GetLoggerCore(this IComponentContext self, Type type) {
+        Guard.Against.Null(type);
+
+        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
+
+        return loggerFactory?.CreateLogger(type.FullName ?? type.Name);
     }
 }

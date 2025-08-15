@@ -12,7 +12,7 @@ public class CreateToDoEndpoint : IEndpoint {
     private readonly IMediator _mediator;
 
     public CreateToDoEndpoint(IMediator mediator) {
-        _mediator = Prevent.Argument.Null(mediator);
+        _mediator = Guard.Against.Null(mediator);
     }
 
     public async Task<IResult> ExecuteAsync([FromBody] CreateToDoInput input, CancellationToken cancellationToken) {

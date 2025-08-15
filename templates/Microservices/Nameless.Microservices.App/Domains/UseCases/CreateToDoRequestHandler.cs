@@ -8,7 +8,7 @@ public class CreateToDoRequestHandler : IRequestHandler<CreateToDoRequest, ToDo>
     private readonly ApplicationDbContext _dbContext;
 
     public CreateToDoRequestHandler(ApplicationDbContext dbContext) {
-        _dbContext = Prevent.Argument.Null(dbContext);
+        _dbContext = Guard.Against.Null(dbContext);
     }
 
     public async Task<ToDo> HandleAsync(CreateToDoRequest request, CancellationToken cancellationToken) {

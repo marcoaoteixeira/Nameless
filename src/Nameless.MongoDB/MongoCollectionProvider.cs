@@ -20,8 +20,8 @@ public sealed class MongoCollectionProvider : IMongoCollectionProvider {
     ///     <paramref name="collectionNamingStrategy"/> is <see langword="null"/>.
     /// </exception>
     public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
-        _database = Prevent.Argument.Null(database);
-        _collectionNamingStrategy = Prevent.Argument.Null(collectionNamingStrategy);
+        _database = Guard.Against.Null(database);
+        _collectionNamingStrategy = Guard.Against.Null(collectionNamingStrategy);
     }
 
     /// <inheritdoc />

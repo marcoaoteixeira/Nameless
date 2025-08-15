@@ -22,8 +22,8 @@ public class GlobalExceptionHandler : IExceptionHandler {
     ///     The logger to use for logging exceptions.
     /// </param>
     public GlobalExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<GlobalExceptionHandler> logger) {
-        _problemDetailsService = Prevent.Argument.Null(problemDetailsService);
-        _logger = Prevent.Argument.Null(logger);
+        _problemDetailsService = Guard.Against.Null(problemDetailsService);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />

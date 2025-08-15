@@ -13,7 +13,7 @@ public sealed class SearchBit : ISearchBit {
     /// </summary>
     /// <param name="openBitSet">The open bit set.</param>
     public SearchBit(OpenBitSet openBitSet) {
-        _openBitSet = Prevent.Argument.Null(openBitSet);
+        _openBitSet = Guard.Against.Null(openBitSet);
     }
 
     /// <inheritdoc />

@@ -14,7 +14,7 @@ public static class DocumentExtensions {
     // logic when retrieving it.
 
     public static LuceneDocument ToDocument(this IDocument self) {
-        Prevent.Argument.Null(self);
+        Guard.Against.Null(self);
 
         var result = new LuceneDocument();
 

@@ -35,7 +35,7 @@ public sealed class BugAttribute : Attribute, ITraitAttribute {
     ///     contains only whitespace.
     /// </exception>
     public BugAttribute(string issue) {
-        Issue = Prevent.Argument.NullOrWhiteSpace(issue);
+        Issue = Guard.Against.NullOrWhiteSpace(issue);
     }
 
     /// <inheritdoc />

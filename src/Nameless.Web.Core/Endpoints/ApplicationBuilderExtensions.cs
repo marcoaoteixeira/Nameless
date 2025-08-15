@@ -1,4 +1,6 @@
-﻿using Asp.Versioning;
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +10,7 @@ using Nameless.Web.Endpoints.Infrastructure;
 namespace Nameless.Web.Endpoints;
 
 /// <summary>
-/// Extension methods for <see cref="IApplicationBuilder"/> to register endpoints.
+///     Extension methods for <see cref="IApplicationBuilder"/>.
 /// </summary>
 public static class ApplicationBuilderExtensions {
     private const string ROOT_GROUP_ROUTE_PREFIX = "api/v{version:apiVersion}";
@@ -16,14 +18,19 @@ public static class ApplicationBuilderExtensions {
     /// <summary>
     ///     Registers endpoints in the application options.
     /// </summary>
-    /// <typeparam name="TApplicationBuilder">Type of the application builder.</typeparam>
+    /// <typeparam name="TApplicationBuilder">
+    ///     Type of the application builder.
+    /// </typeparam>
     /// <param name="self">The application options.</param>
     /// <returns>
-    ///     The current <typeparamref name="TApplicationBuilder"/> instance so other actions can be chained.
+    ///     The current <typeparamref name="TApplicationBuilder"/> instance so
+    ///     other actions can be chained.
     /// </returns>
     /// <remarks>
-    ///     It's necessary to call <c>UseRouting</c> before calling <c>UseMinimalEndpoints</c>.
-    ///     If you are using authorization, you also need to call <c>UseAuthorization</c> before this method.
+    ///     It's necessary to call <c>UseRouting</c> before
+    ///     calling <c>UseMinimalEndpoints</c>. If you are using
+    ///     authorization, you also need to call <c>UseAuthorization</c>
+    ///     before this method.
     /// </remarks>
     public static TApplicationBuilder UseMinimalEndpoints<TApplicationBuilder>(this TApplicationBuilder self)
         where TApplicationBuilder : IApplicationBuilder {
@@ -89,7 +96,7 @@ public static class ApplicationBuilderExtensions {
         // services that are registered as transient or scoped, and
         // we need to create them dynamically based on the request
         // context.
-        var serviceResolver = self.GetRequiredService<IServiceResolver>();
+        var serviceResolver = self.GetRequiredService<IServiceFactory>();
 
         // Gets all the endpoint types from the service collection.
         var endpointTypeCollection = self.GetRequiredService<EndpointTypeCollection>();
@@ -98,11 +105,15 @@ public static class ApplicationBuilderExtensions {
         var endpointDescriptors = new List<IEndpointDescriptor>();
 
         foreach (var endpointType in endpointTypeCollection) {
-            if (serviceResolver.CreateInstance(endpointType) is not IEndpoint instance) {
+            if (serviceResolver.Create(endpointType) is not IEndpoint endpoint) {
                 throw new InvalidOperationException($"Unable to create instance of '{endpointType.FullName}'.");
             }
 
-            endpointDescriptors.Add(instance.Describe());
+            endpointDescriptors.Add(endpoint.Describe());
+
+            if (endpoint is IDisposable disposable) {
+                disposable.Dispose();
+            }
         }
 
         return [.. endpointDescriptors];

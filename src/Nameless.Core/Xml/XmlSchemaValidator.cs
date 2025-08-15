@@ -6,8 +6,8 @@ namespace Nameless.Xml;
 public sealed class XmlSchemaValidator : IXmlSchemaValidator {
     /// <inheritdoc />
     public bool Validate(Stream xml, Stream schema) {
-        Prevent.Argument.Null(xml);
-        Prevent.Argument.Null(schema);
+        Guard.Against.Null(xml);
+        Guard.Against.Null(schema);
 
         var success = false;
         var settings = new XmlReaderSettings();

@@ -19,8 +19,8 @@ public class ValidateRequestPipelineBehavior<TRequest, TResponse> : IRequestPipe
     /// <param name="validationService">The validation service.</param>
     /// <param name="logger">The logger.</param>
     public ValidateRequestPipelineBehavior(IValidationService validationService, ILogger<ValidateRequestPipelineBehavior<TRequest, TResponse>> logger) {
-        _validationService = Prevent.Argument.Null(validationService);
-        _logger = Prevent.Argument.Null(logger);
+        _validationService = Guard.Against.Null(validationService);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />

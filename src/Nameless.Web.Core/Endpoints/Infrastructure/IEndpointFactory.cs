@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Nameless.Web.Endpoints.Definitions;
+﻿using Nameless.Web.Endpoints.Definitions;
 
 namespace Nameless.Web.Endpoints.Infrastructure;
 
@@ -16,7 +15,5 @@ public interface IEndpointFactory {
     /// <returns>
     ///     An instance <see cref="IEndpoint"/>.
     /// </returns>
-    EndpointInfo Create(IEndpointDescriptor descriptor);
+    EndpointCall Create(IEndpointDescriptor descriptor);
 }
-
-public record EndpointInfo(IEndpoint Instance, MethodInfo Handler);

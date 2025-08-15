@@ -18,7 +18,7 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
     /// converting them to lower case separated by underline, e.g.: UsersInRoles => users_in_roles,
     /// </remarks>
     public string GetCollectionName(Type type) {
-        Prevent.Argument.Null(type);
+        Guard.Against.Null(type);
 
         var attr = type.GetCustomAttribute<CollectionNameAttribute>(false);
         if (attr is not null) {

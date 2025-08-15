@@ -14,6 +14,6 @@ public sealed class DisposeIndexEventArgs : EventArgs {
     /// </summary>
     /// <param name="indexName">The index name.</param>
     public DisposeIndexEventArgs(string indexName) {
-        IndexName = Prevent.Argument.NullOrWhiteSpace(indexName);
+        IndexName = Guard.Against.NullOrWhiteSpace(indexName);
     }
 }

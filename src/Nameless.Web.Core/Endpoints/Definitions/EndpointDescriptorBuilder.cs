@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Nameless.Web.Endpoints.Infrastructure;
-
+using Nameless.Web.Endpoints.Definitions.Metadata;
+using Nameless.Web.Helpers;
 using static Nameless.Web.Constants;
 
 namespace Nameless.Web.Endpoints.Definitions;
@@ -158,7 +159,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithName(string name) {
-        _descriptor.Name = Prevent.Argument.NullOrWhiteSpace(name);
+        _descriptor.Name = Guard.Against.NullOrWhiteSpace(name);
 
         return this;
     }
@@ -174,7 +175,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithGroupName(string groupName) {
-        _descriptor.GroupName = Prevent.Argument.NullOrWhiteSpace(groupName);
+        _descriptor.GroupName = Guard.Against.NullOrWhiteSpace(groupName);
 
         return this;
     }
@@ -190,7 +191,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithDisplayName(string displayName) {
-        _descriptor.DisplayName = Prevent.Argument.NullOrWhiteSpace(displayName);
+        _descriptor.DisplayName = Guard.Against.NullOrWhiteSpace(displayName);
 
         return this;
     }
@@ -206,7 +207,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithDescription(string description) {
-        _descriptor.Description = Prevent.Argument.NullOrWhiteSpace(description);
+        _descriptor.Description = Guard.Against.NullOrWhiteSpace(description);
 
         return this;
     }
@@ -222,7 +223,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithSummary(string summary) {
-        _descriptor.Summary = Prevent.Argument.NullOrWhiteSpace(summary);
+        _descriptor.Summary = Guard.Against.NullOrWhiteSpace(summary);
 
         return this;
     }
@@ -238,7 +239,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder WithTags(params string[] tags) {
-        _descriptor.Tags = Prevent.Argument.Null(tags);
+        _descriptor.Tags = Guard.Against.Null(tags);
 
         return this;
     }
@@ -260,7 +261,7 @@ public sealed class EndpointDescriptorBuilder {
     /// </returns>
     public EndpointDescriptorBuilder WithVersion(int number, Stability stability = Stability.Stable) {
         _descriptor.Version = new VersionMetadata {
-            Number = Prevent.Argument.LowerThan(number, minValue: 0, nameof(number)),
+            Number = Guard.Against.LowerThan(number, compare: 0, nameof(number)),
             Stability = stability
         };
 
@@ -278,7 +279,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder UseRequestTimeout(string policyName) {
-        _descriptor.RequestTimeoutPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
+        _descriptor.RequestTimeoutPolicy = Guard.Against.NullOrWhiteSpace(policyName);
 
         return this;
     }
@@ -294,7 +295,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder UseRateLimiting(string policyName) {
-        _descriptor.RateLimitingPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
+        _descriptor.RateLimitingPolicy = Guard.Against.NullOrWhiteSpace(policyName);
 
         return this;
     }
@@ -310,7 +311,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder UseAuthorization(params string[] policyNames) {
-        _descriptor.AuthorizationPolicies = Prevent.Argument.Null(policyNames);
+        _descriptor.AuthorizationPolicies = Guard.Against.Null(policyNames);
 
         return this;
     }
@@ -326,7 +327,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder UseCors(string policyName) {
-        _descriptor.CorsPolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
+        _descriptor.CorsPolicy = Guard.Against.NullOrWhiteSpace(policyName);
 
         return this;
     }
@@ -342,7 +343,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder UseOutputCache(string policyName) {
-        _descriptor.OutputCachePolicy = Prevent.Argument.NullOrWhiteSpace(policyName);
+        _descriptor.OutputCachePolicy = Guard.Against.NullOrWhiteSpace(policyName);
 
         return this;
     }
@@ -368,24 +369,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder UseAntiForgery() {
+    public EndpointDescriptorBuilder UseAntiforgery() {
         _descriptor.UseAntiforgery = true;
-
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets whether the endpoint's action should be intercepted.
-    /// </summary>
-    /// <returns>
-    ///     The current <see cref="EndpointDescriptorBuilder"/> so other
-    ///     actions can be chained.
-    /// </returns>
-    /// <remarks>
-    ///     Works with <see cref="IEndpointInterceptor"/>
-    /// </remarks>
-    public EndpointDescriptorBuilder UseInterceptors() {
-        _descriptor.UseInterceptors = true;
 
         return this;
     }
@@ -441,14 +426,14 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder Accepts(Type requestType, bool isOptional = false, params string[] contentTypes) {
-        Prevent.Argument.Null(requestType);
-        Prevent.Argument.Null(contentTypes);
+        Guard.Against.Null(requestType);
+        Guard.Against.Null(contentTypes);
 
         var innerContentTypes = contentTypes.Length == 0
             ? [ContentTypes.JSON]
             : contentTypes;
 
-        _descriptor.AddAccepts(new AcceptMetadata(
+        _descriptor.AddAccept(new AcceptMetadata(
             requestType,
             isOptional,
             innerContentTypes
@@ -495,11 +480,11 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder Produces(Type? responseType = null, int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
-        Prevent.Argument.Null(contentTypes);
-        Prevent.Argument.OutOfRange(
+        Guard.Against.Null(contentTypes);
+        Guard.Against.OutOfRange(
             paramValue: statusCode,
-            min: 100, // Status code "Continue"
-            max: 499, // Max value for responses that are not server errors
+            minimumValue: 100, // Status code "Continue"
+            maximumValue: 499, // Max value for responses that are not server errors
             message: "The status code must be a value inside the range 100 (informational responses) to 499 (client error responses)."
         );
 
@@ -532,10 +517,10 @@ public sealed class EndpointDescriptorBuilder {
     ///     are values from <c>500</c> to <c>599</c>.
     /// </remarks>
     public EndpointDescriptorBuilder ProducesProblem(int statusCode = StatusCodes.Status500InternalServerError) {
-        Prevent.Argument.OutOfRange(
+        Guard.Against.OutOfRange(
             paramValue: statusCode,
-            min: 500, // Status codes "Internal Server Error"
-            max: 599, // Max value for server error responses
+            minimumValue: 500, // Status codes "Internal Server Error"
+            maximumValue: 599, // Max value for server error responses
             message: "The status code must be a value inside the range 500 to 599 (server error responses)."
         );
 
@@ -577,6 +562,14 @@ public sealed class EndpointDescriptorBuilder {
         return this;
     }
 
+    public EndpointDescriptorBuilder WithAdditionalMetadata(object value) {
+        Guard.Against.Null(value);
+
+        _descriptor.AddAdditionalMetadata(value);
+
+        return this;
+    }
+
     /// <summary>
     ///     Builds the endpoint descriptor for the endpoint mapping.
     /// </summary>
@@ -584,6 +577,22 @@ public sealed class EndpointDescriptorBuilder {
     ///     The endpoint descriptor for the endpoint mapping.
     /// </returns>
     public IEndpointDescriptor Build() {
+        EnsureRoute();
+        EnsureHandler();
+        EnsureDescriptorMetadata();
+
+        return _descriptor;
+    }
+
+    private EndpointDescriptorBuilder SetRouteHandler(string httpMethod, string routePattern, string actionName) {
+        _descriptor.HttpMethod = Guard.Against.NullOrWhiteSpace(httpMethod);
+        _descriptor.RoutePattern = Guard.Against.NullOrWhiteSpace(routePattern);
+        _descriptor.ActionName = Guard.Against.NullOrWhiteSpace(actionName);
+
+        return this;
+    }
+
+    private void EnsureRoute() {
         if (string.IsNullOrWhiteSpace(_descriptor.HttpMethod)) {
             throw new InvalidOperationException("HTTP method must be specified.");
         }
@@ -592,16 +601,44 @@ public sealed class EndpointDescriptorBuilder {
             throw new InvalidOperationException("Route pattern must be specified.");
         }
 
-        return _descriptor;
+        if (string.IsNullOrWhiteSpace(_descriptor.ActionName)) {
+            throw new InvalidOperationException("Action name must be specified.");
+        }
     }
 
-    private EndpointDescriptorBuilder SetRouteHandler(string httpMethod, string routePattern, string actionName) {
-        _descriptor.HttpMethod = Prevent.Argument.NullOrWhiteSpace(httpMethod);
-        _descriptor.RoutePattern = Prevent.Argument.NullOrWhiteSpace(routePattern);
-        _descriptor.Action = Prevent.Argument.NullOrWhiteSpace(actionName);
+    private void EnsureHandler() {
+        var handler = _descriptor.EndpointType
+                                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                                 .SingleOrDefault(method => method.Name == _descriptor.ActionName);
 
-        _descriptor.EnsureAction();
+        if (handler is null) {
+            throw new InvalidOperationException($"Action '{_descriptor.ActionName}' not found in endpoint '{_descriptor.EndpointType.Name}'.");
+        }
 
-        return this;
+        var returnType = typeof(Task<IResult>);
+        if (!returnType.IsAssignableFrom(handler.ReturnType)) {
+            throw new InvalidOperationException($"The return type of the endpoint action must be assignable from '{returnType.GetPrettyName()}'.");
+        }
+
+        var delegateMetadataResult = RequestDelegateFactory.InferMetadata(
+            methodInfo: handler,
+            options: new RequestDelegateFactoryOptions {
+                RouteParameterNames = RouteHelper.GetRouteParameters(_descriptor.RoutePattern)
+            }
+        );
+
+        foreach (var delegateMetadata in delegateMetadataResult.EndpointMetadata) {
+            if (delegateMetadata is ProducesResponseTypeMetadata produces && produces.Type == typeof(IResult)) {
+                continue;
+            }
+
+            WithAdditionalMetadata(delegateMetadata);
+        }
+
+        WithAdditionalMetadata(new EndpointHandlerMetadata(handler));
+    }
+
+    private void EnsureDescriptorMetadata() {
+        WithAdditionalMetadata(new EndpointDescriptorMetadata(_descriptor));
     }
 }

@@ -11,7 +11,7 @@ public sealed class PeriodicTimerWrapper : IPeriodicTimer {
     }
 
     public PeriodicTimerWrapper(TimeSpan interval) {
-        Prevent.Argument.LowerOrEqual(interval, TimeSpan.Zero);
+        Guard.Against.LowerOrEqual(interval, TimeSpan.Zero);
 
         _timer = new PeriodicTimer(interval);
     }
@@ -55,7 +55,7 @@ public sealed class PeriodicTimerWrapper : IPeriodicTimer {
     private void SetPeriod(TimeSpan value) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.LowerOrEqual(value, TimeSpan.Zero);
+        Guard.Against.LowerOrEqual(value, TimeSpan.Zero);
 
         _timer.Period = value;
     }

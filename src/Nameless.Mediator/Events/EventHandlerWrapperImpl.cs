@@ -16,7 +16,7 @@ public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     public override Task HandleAsync(IEvent evt,
                                      IServiceProvider serviceProvider,
                                      CancellationToken cancellationToken) {
-        Prevent.Argument.Null(serviceProvider);
+        Guard.Against.Null(serviceProvider);
 
         var logger = serviceProvider.GetLogger<EventHandlerWrapper>();
         var handlers = serviceProvider.GetServices<IEventHandler<TEvent>>()

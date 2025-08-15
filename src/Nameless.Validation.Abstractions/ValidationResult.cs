@@ -34,6 +34,6 @@ public sealed record ValidationResult {
     public static ValidationResult Failure(IEnumerable<ValidationError> errors) {
         var array = errors.ToArray();
 
-        return new ValidationResult(Prevent.Argument.NullOrEmpty(array));
+        return new ValidationResult(Guard.Against.NullOrEmpty(array));
     }
 }

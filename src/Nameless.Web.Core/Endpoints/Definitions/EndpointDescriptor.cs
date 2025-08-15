@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Nameless.Web.Endpoints.Definitions.Metadata;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
@@ -9,6 +10,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     private readonly Dictionary<Type, AcceptMetadata> _accepts = [];
     private readonly Dictionary<int, ProduceMetadata> _produces = [];
     private readonly Dictionary<Type, Action<IEndpointFilterBuilder>> _filters = [];
+    private readonly List<object> _additionalMetadata = [];
 
     /// <inheritdoc />
     public Type EndpointType { get; }
@@ -20,7 +22,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public string RoutePattern { get; set; } = string.Empty;
 
     /// <inheritdoc />
-    public string Action { get; set; } = string.Empty;
+    public string ActionName { get; set; } = string.Empty;
 
     /// <inheritdoc />
     public string? Name { get; set; }
@@ -65,9 +67,6 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public bool UseAntiforgery { get; set; }
 
     /// <inheritdoc />
-    public bool UseInterceptors { get; set; }
-
-    /// <inheritdoc />
     public bool DisableHttpMetrics { get; set; }
 
     /// <inheritdoc />
@@ -79,6 +78,9 @@ public class EndpointDescriptor : IEndpointDescriptor {
     /// <inheritdoc />
     public Action<IEndpointFilterBuilder>[] Filters => [.. _filters.Values];
 
+    /// <inheritdoc />
+    public object[] AdditionalMetadata => [.. _additionalMetadata];
+
     /// <summary>
     ///     Initializes a new instance of the
     ///     <see cref="EndpointDescriptor" /> class.
@@ -87,7 +89,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     Type of the endpoint.
     /// </param>
     public EndpointDescriptor(Type endpointType) {
-        Prevent.Argument.NotAssignableFrom<IEndpoint>(endpointType);
+        Guard.Against.NotAssignableFrom<IEndpoint>(endpointType);
 
         EndpointType = endpointType;
     }
@@ -95,33 +97,33 @@ public class EndpointDescriptor : IEndpointDescriptor {
     /// <summary>
     ///     Adds an accepts metadata to the endpoint.
     /// </summary>
-    /// <param name="accepts">
+    /// <param name="metadata">
     ///     The accepts metadata.
     /// </param>
     /// <remarks>
     ///     When adding an accepts metadata, the request type is used
     ///     to differentiate between different accepts.
     /// </remarks>
-    public void AddAccepts(AcceptMetadata accepts) {
-        Prevent.Argument.Null(accepts);
+    public void AddAccept(AcceptMetadata metadata) {
+        Guard.Against.Null(metadata);
 
-        _accepts[accepts.RequestType] = accepts;
+        _accepts[metadata.RequestType] = metadata;
     }
 
     /// <summary>
     ///     Adds a produce metadata to the endpoint.
     /// </summary>
-    /// <param name="produce">
+    /// <param name="metadata">
     ///     The produce metadata.
     /// </param>
     /// <remarks>
     ///     When adding a produce metadata, the status code is used
     ///     to differentiate between different responses.
     /// </remarks>
-    public void AddProduce(ProduceMetadata produce) {
-        Prevent.Argument.Null(produce);
+    public void AddProduce(ProduceMetadata metadata) {
+        Guard.Against.Null(metadata);
 
-        _produces[produce.StatusCode] = produce;
+        _produces[metadata.StatusCode] = metadata;
     }
 
     /// <summary>
@@ -139,5 +141,15 @@ public class EndpointDescriptor : IEndpointDescriptor {
         _filters[typeof(TEndpointFilter)] = builder => {
             builder.Use<TEndpointFilter>();
         };
+    }
+
+    /// <summary>
+    ///     Adds a metadata to the endpoint.
+    /// </summary>
+    /// <param name="metadata">
+    ///     The metadata object.
+    /// </param>
+    public void AddAdditionalMetadata(object metadata) {
+        _additionalMetadata.Add(Guard.Against.Null(metadata));
     }
 }

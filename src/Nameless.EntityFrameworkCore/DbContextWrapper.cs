@@ -16,7 +16,7 @@ public class DbContextWrapper : IDbContext {
     ///     The current <see cref="DbContext"/>.
     /// </param>
     public DbContextWrapper(DbContext dbContext) {
-        _dbContext = Prevent.Argument.Null(dbContext);
+        _dbContext = Guard.Against.Null(dbContext);
     }
 
     /// <inheritdoc />

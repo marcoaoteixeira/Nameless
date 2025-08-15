@@ -16,7 +16,7 @@ public sealed class BearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTr
     /// </summary>
     /// <param name="authenticationSchemeProvider">The authentication scheme provider.</param>
     public BearerSecuritySchemeDocumentTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider) {
-        _authenticationSchemeProvider = Prevent.Argument.Null(authenticationSchemeProvider);
+        _authenticationSchemeProvider = Guard.Against.Null(authenticationSchemeProvider);
     }
 
     /// <inheritdoc />
@@ -24,7 +24,7 @@ public sealed class BearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTr
     /// This will add the option to pass a JSON Web Token to all available operations.
     /// </remarks>
     public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(document);
+        Guard.Against.Null(document);
 
         var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
         if (authenticationSchemes.All(authScheme => authScheme.Name != JwtBearerDefaults.AuthenticationScheme)) {

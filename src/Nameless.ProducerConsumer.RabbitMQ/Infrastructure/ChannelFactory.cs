@@ -13,7 +13,7 @@ public sealed class ChannelFactory : IChannelFactory {
     /// </summary>
     /// <param name="connectionManager">The connection manager.</param>
     public ChannelFactory(IConnectionManager connectionManager) {
-        _connectionManager = Prevent.Argument.Null(connectionManager);
+        _connectionManager = Guard.Against.Null(connectionManager);
     }
 
     /// <inheritdoc />

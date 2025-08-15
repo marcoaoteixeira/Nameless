@@ -17,14 +17,8 @@ public abstract class Mocker<TService> where TService : class {
         }
     }
 
-    protected Mocker()
-        : this(MockBehavior.Default, useSequence: false) { }
-
-    protected Mocker(bool useSequence)
-        : this(MockBehavior.Default, useSequence) { }
-
-    protected Mocker(MockBehavior behavior, bool useSequence) {
-        _mockInstance = new Mock<TService>(behavior);
+    protected Mocker(MockBehavior behavior = MockBehavior.Default, bool useSequence = false, params object[] args) {
+        _mockInstance = new Mock<TService>(behavior, args);
         _sequence = useSequence ? new MockSequence() : null;
     }
 

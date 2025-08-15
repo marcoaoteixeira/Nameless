@@ -21,8 +21,8 @@ public sealed class MailingImpl : IMailing {
     ///     <paramref name="logger"/> is <see langword="null"/>.
     /// </exception>
     public MailingImpl(ISmtpClientFactory smtpClientFactory, ILogger<MailingImpl> logger) {
-        _smtpClientFactory = Prevent.Argument.Null(smtpClientFactory);
-        _logger = Prevent.Argument.Null(logger);
+        _smtpClientFactory = Guard.Against.Null(smtpClientFactory);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />
@@ -34,7 +34,7 @@ public sealed class MailingImpl : IMailing {
     ///     <see cref="Message.To"/> is empty.
     /// </exception>
     public async Task DeliverAsync(Message message, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(message);
+        Guard.Against.Null(message);
 
         var mail = CreateMimeMessage(message);
 

@@ -15,7 +15,7 @@ public sealed class SearchHit : ISearchHit {
     /// <param name="document">A Lucene.NET document object.</param>
     /// <param name="score">The score.</param>
     public SearchHit(LuceneDocument document, float score) {
-        _document = Prevent.Argument.Null(document);
+        _document = Guard.Against.Null(document);
 
         Score = score;
     }
@@ -94,7 +94,7 @@ public sealed class SearchHit : ISearchHit {
 
         var id = GetString(FieldName);
 
-        return Prevent.Argument.Null(id, FieldName);
+        return Guard.Against.Null(id, FieldName);
     }
 
     private IIndexableField? GetField(string name) {

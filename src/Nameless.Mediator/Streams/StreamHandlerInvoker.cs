@@ -18,7 +18,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public StreamHandlerInvoker(IServiceProvider provider) {
-        _provider = Prevent.Argument.Null(provider);
+        _provider = Guard.Against.Null(provider);
     }
 
     /// <inheritdoc />
@@ -27,7 +27,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     /// </exception>
     public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
                                                               CancellationToken cancellationToken) {
-        Prevent.Argument.Null(request);
+        Guard.Against.Null(request);
 
         var handler = _cache.GetOrAdd(request.GetType(), CreateStreamHandlerWrapper);
 

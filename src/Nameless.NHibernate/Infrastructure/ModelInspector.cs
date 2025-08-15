@@ -13,7 +13,7 @@ public sealed class ModelInspector : ExplicitlyDeclaredModel {
     ///     Initializes a new instance of <see cref="ModelInspector" />
     /// </summary>
     public ModelInspector(Type[] entityTypes) {
-        _entityTypes = Prevent.Argument.Null(entityTypes);
+        _entityTypes = Guard.Against.Null(entityTypes);
     }
 
     /// <inheritdoc />

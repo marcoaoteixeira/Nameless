@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// ReSharper disable SuspiciousTypeConversion.Global
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Nameless.Web.Endpoints.Definitions;
+using Nameless.Web.Endpoints.Definitions.Metadata;
 using Nameless.Web.Helpers;
 
 namespace Nameless.Web.Endpoints.Infrastructure;
@@ -28,15 +30,23 @@ internal static class EndpointInvoker {
     /// </exception>
     internal static Task InvokeAsync(HttpContext httpContext, IEndpointFactory factory) {
         var descriptor = httpContext.GetEndpointDescriptorMetadata().Descriptor;
-        var endpointInfo = factory.Create(descriptor);
+        var endpointCall = factory.Create(descriptor);
 
         var requestDelegate = RequestDelegateFactory.Create(
-            methodInfo: endpointInfo.Handler,
-            targetFactory: _ => endpointInfo.Instance,
+            methodInfo: endpointCall.Handler,
+            targetFactory: _ => endpointCall.Target,
             options: new RequestDelegateFactoryOptions {
                 RouteParameterNames = RouteHelper.GetRouteParameters(descriptor.RoutePattern)
             }
         );
+
+        if (endpointCall.Target is IDisposable disposable) {
+            httpContext.Response.RegisterForDispose(disposable);
+        }
+
+        if (endpointCall.Target is IAsyncDisposable asyncDisposable) {
+            httpContext.Response.RegisterForDisposeAsync(asyncDisposable);
+        }
 
         return requestDelegate.RequestDelegate.Invoke(httpContext);
     }

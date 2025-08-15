@@ -18,7 +18,7 @@ public class EndpointFilterBuilder : IEndpointFilterBuilder {
     ///     The route handler builder.
     /// </param>
     public EndpointFilterBuilder(RouteHandlerBuilder routeHandlerBuilder) {
-        _routeHandlerBuilder = Prevent.Argument.Null(routeHandlerBuilder);
+        _routeHandlerBuilder = Guard.Against.Null(routeHandlerBuilder);
     }
 
     /// <inheritdoc />

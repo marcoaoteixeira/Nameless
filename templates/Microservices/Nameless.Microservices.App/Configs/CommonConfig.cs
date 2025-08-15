@@ -1,6 +1,6 @@
 ﻿using Nameless.Microservices.App.Infrastructure;
 using Nameless.Web.Correlation;
-using Nameless.Web.IdentityModel.Jwt;
+using Nameless.Web.Identity.Jwt;
 
 namespace Nameless.Microservices.App.Configs;
 

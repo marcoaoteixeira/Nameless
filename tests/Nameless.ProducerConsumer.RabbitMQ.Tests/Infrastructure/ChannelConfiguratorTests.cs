@@ -12,15 +12,17 @@ public class ChannelConfiguratorTests {
     public async Task WhenConfiguring_WithQueueSettings_ThenConfigureChannelWithQueue() {
         // arrange
         const string QueueName = "test-queue";
-        var options = new OptionsMocker<RabbitMQOptions>().WithValue(new RabbitMQOptions {
-            Queues = [new QueueSettings {
-                Name = QueueName,
-                Durable = true,
-                Exclusive = false,
-                AutoDelete = false,
-                Bindings = []
-            }]
-        }).Build();
+        var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
+            opts.Queues = [
+                new QueueSettings {
+                    Name = QueueName,
+                    Durable = true,
+                    Exclusive = false,
+                    AutoDelete = false,
+                    Bindings = []
+                }
+            ];
+        });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
         var sut = new ChannelConfigurator(options, Quick.Mock<ILogger<ChannelConfigurator>>());
@@ -42,23 +44,27 @@ public class ChannelConfiguratorTests {
         // arrange
         const string QueueName = "test-queue";
         const string ExchangeName = "test-exchange";
-        var options = new OptionsMocker<RabbitMQOptions>().WithValue(new RabbitMQOptions {
-            Exchanges = [new ExchangeSettings {
-                Name = ExchangeName,
-                Type = ExchangeType.Direct,
-                Durable = true,
-                AutoDelete = false
-            }],
+        var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
+            opts.Exchanges = [
+                new ExchangeSettings {
+                    Name = ExchangeName,
+                    Type = ExchangeType.Direct,
+                    Durable = true,
+                    AutoDelete = false
+                }
+            ];
 
-            Queues = [new QueueSettings {
-                Name = QueueName,
-                ExchangeName = ExchangeName,
-                Durable = true,
-                Exclusive = false,
-                AutoDelete = false,
-                Bindings = []
-            }]
-        }).Build();
+            opts.Queues = [
+                new QueueSettings {
+                    Name = QueueName,
+                    ExchangeName = ExchangeName,
+                    Durable = true,
+                    Exclusive = false,
+                    AutoDelete = false,
+                    Bindings = []
+                }
+            ];
+        });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
         var sut = new ChannelConfigurator(options, Quick.Mock<ILogger<ChannelConfigurator>>());
@@ -80,17 +86,17 @@ public class ChannelConfiguratorTests {
         // arrange
         const string QueueName = "test-queue";
         const string RoutingKey = "test-routing-key";
-        var options = new OptionsMocker<RabbitMQOptions>().WithValue(new RabbitMQOptions {
-            Queues = [new QueueSettings {
-                Name = QueueName,
-                Durable = true,
-                Exclusive = false,
-                AutoDelete = false,
-                Bindings = [new BindingSettings {
-                    RoutingKey = RoutingKey
-                }]
-            }]
-        }).Build();
+        var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
+            opts.Queues = [
+                new QueueSettings {
+                    Name = QueueName,
+                    Durable = true,
+                    Exclusive = false,
+                    AutoDelete = false,
+                    Bindings = [new BindingSettings { RoutingKey = RoutingKey }]
+                }
+            ];
+        });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
         var sut = new ChannelConfigurator(options, Quick.Mock<ILogger<ChannelConfigurator>>());
@@ -112,11 +118,9 @@ public class ChannelConfiguratorTests {
         // arrange
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
-        var options = new OptionsMocker<RabbitMQOptions>().WithValue(new RabbitMQOptions {
-            Queues = [new QueueSettings {
-                Name = QueueName,
-            }]
-        }).Build();
+        var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
+            opts.Queues = [new QueueSettings { Name = QueueName, }];
+        });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
         var sut = new ChannelConfigurator(options, Quick.Mock<ILogger<ChannelConfigurator>>());
@@ -138,11 +142,9 @@ public class ChannelConfiguratorTests {
         // arrange
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
-        var options = new OptionsMocker<RabbitMQOptions>().WithValue(new RabbitMQOptions {
-            Queues = [new QueueSettings {
-                Name = QueueName,
-            }]
-        }).Build();
+        var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
+            opts.Queues = [new QueueSettings { Name = QueueName, }];
+        });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
         var loggerMocker = new LoggerMocker<ChannelConfigurator>().WithAnyLogLevel();
 

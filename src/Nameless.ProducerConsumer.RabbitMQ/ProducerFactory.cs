@@ -19,9 +19,9 @@ public sealed class ProducerFactory : IProducerFactory {
                            IChannelConfigurator channelConfigurator,
                            TimeProvider timeProvider,
                            ILoggerFactory loggerFactory) {
-        _channelFactory = Prevent.Argument.Null(channelFactory);
-        _channelConfigurator = Prevent.Argument.Null(channelConfigurator);
-        _timeProvider = Prevent.Argument.Null(timeProvider);
+        _channelFactory = Guard.Against.Null(channelFactory);
+        _channelConfigurator = Guard.Against.Null(channelConfigurator);
+        _timeProvider = Guard.Against.Null(timeProvider);
         _logger = loggerFactory.CreateLogger<ProducerFactory>();
         _producerLogger = loggerFactory.CreateLogger<Producer>();
     }

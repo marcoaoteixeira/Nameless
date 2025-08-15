@@ -30,7 +30,7 @@ public static class HttpContextExtensions {
     }
 
     private static IPAddress GetIpAddress(HttpContext httpContext) {
-        return Prevent.Argument
+        return Guard.Against
                       .Null(httpContext)
                       .Request
                       .Headers

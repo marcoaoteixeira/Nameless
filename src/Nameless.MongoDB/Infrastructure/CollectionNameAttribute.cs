@@ -21,6 +21,6 @@ public sealed class CollectionNameAttribute : Attribute {
     ///     Thrown when <paramref name="name"/> is empty or white space.
     /// </exception>
     public CollectionNameAttribute(string name) {
-        Name = Prevent.Argument.NullOrWhiteSpace(name);
+        Name = Guard.Against.NullOrWhiteSpace(name);
     }
 }

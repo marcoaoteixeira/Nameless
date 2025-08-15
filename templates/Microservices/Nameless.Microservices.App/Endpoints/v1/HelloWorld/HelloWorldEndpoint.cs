@@ -1,5 +1,6 @@
 ﻿using Nameless.Web.Endpoints;
 using Nameless.Web.Endpoints.Definitions;
+using Nameless.Web.Endpoints.Interception;
 
 namespace Nameless.Microservices.App.Endpoints.v1.HelloWorld;
 
@@ -16,14 +17,13 @@ public class HelloWorldEndpoint : IEndpoint {
         return EndpointDescriptorBuilder.Create<HelloWorldEndpoint>()
                                         .Get("/", nameof(ExecuteAsync))
                                         .AllowAnonymous()
-                                        .UseInterceptors()
                                         .WithDescription("Greetings endpoint for the application.")
                                         .WithSummary("Hello World v1")
                                         .UseRateLimiting(Constants.RateLimitPolicies.SLIDING_WINDOW)
                                         .Produces<HelloWorldOutput>()
                                         .Produces(statusCode: StatusCodes.Status429TooManyRequests)
                                         .ProducesValidationProblem()
-
+                                        .WithInterceptor<ValidateEndpointInterceptor>()
                                         .Build();
     }
 }

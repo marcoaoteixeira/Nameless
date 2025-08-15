@@ -49,8 +49,8 @@ public sealed record Field {
     ///     by <paramref name="type" />.
     /// </exception>
     public Field(string name, object value, IndexableType type, FieldOptions options) {
-        Name = Prevent.Argument.NullOrWhiteSpace(name);
-        Value = Prevent.Argument.NullOrNonMatchingType(value, type, nameof(value));
+        Name = Guard.Against.NullOrWhiteSpace(name);
+        Value = Guard.Against.NullOrNonMatchingType(value, type, nameof(value));
         Type = type;
         Options = options;
     }

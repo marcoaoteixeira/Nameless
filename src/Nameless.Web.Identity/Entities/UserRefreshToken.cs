@@ -22,12 +22,12 @@ public class UserRefreshToken {
     /// <summary>
     ///     Gets or sets the token expiration date and time.
     /// </summary>
-    public virtual DateTime ExpiresAt { get; set; }
+    public virtual DateTimeOffset ExpiresAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the date and time when the refresh token was created.
     /// </summary>
-    public virtual DateTime CreatedAt { get; set; }
+    public virtual DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the IP address from which the refresh token was created.
@@ -37,7 +37,7 @@ public class UserRefreshToken {
     /// <summary>
     ///     Gets or sets the date and time when the refresh token was revoked.
     /// </summary>
-    public virtual DateTime? RevokedAt { get; set; }
+    public virtual DateTimeOffset? RevokedAt { get; set; }
 
     /// <summary>
     ///     Gets or sets the IP address from which the refresh token was revoked.
@@ -68,11 +68,11 @@ public static class UserRefreshTokenExtensions {
         return self.RevokedAt is not null;
     }
 
-    public static bool IsExpired(this UserRefreshToken self, DateTime? now = null) {
-        return (now ?? DateTime.UtcNow) >= self.ExpiresAt;
+    public static bool IsExpired(this UserRefreshToken self, DateTimeOffset? now = null) {
+        return (now ?? DateTimeOffset.UtcNow) >= self.ExpiresAt;
     }
 
-    public static bool IsActive(this UserRefreshToken self, DateTime? now = null) {
+    public static bool IsActive(this UserRefreshToken self, DateTimeOffset? now = null) {
         return !self.IsRevoked() && !self.IsExpired(now);
     }
 }

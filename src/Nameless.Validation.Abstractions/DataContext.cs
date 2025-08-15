@@ -17,7 +17,7 @@ public sealed record DataContext : IEnumerable<KeyValuePair<string, object?>> {
     /// </returns>
     public object? this[string key] {
         get => _data.GetValueOrDefault(key);
-        set => _data[Prevent.Argument.NullOrWhiteSpace(key)] = value;
+        set => _data[Guard.Against.NullOrWhiteSpace(key)] = value;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public sealed record DataContext : IEnumerable<KeyValuePair<string, object?>> {
     /// </summary>
     /// <param name="kvp">The key/value pair.</param>
     public void Add(KeyValuePair<string, object?> kvp) {
-        _data[Prevent.Argument.NullOrWhiteSpace(kvp.Key)] = kvp.Value;
+        _data[Guard.Against.NullOrWhiteSpace(kvp.Key)] = kvp.Value;
     }
 
     /// <inheritdoc />

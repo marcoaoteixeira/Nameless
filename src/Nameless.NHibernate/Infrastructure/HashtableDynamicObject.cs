@@ -35,7 +35,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
     ///     if <paramref name="binder" /> is <see langword="null"/>.
     /// </exception>
     public override bool TryGetMember(GetMemberBinder binder, out object? result) {
-        Prevent.Argument.Null(binder);
+        Guard.Against.Null(binder);
 
         result = _storage[binder.Name];
         return _storage.Contains(binder.Name);
@@ -46,7 +46,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
     ///     if <paramref name="binder" /> is <see langword="null"/>.
     /// </exception>
     public override bool TrySetMember(SetMemberBinder binder, object? value) {
-        Prevent.Argument.Null(binder);
+        Guard.Against.Null(binder);
 
         _storage[binder.Name] = value;
 
@@ -62,8 +62,8 @@ public sealed class HashtableDynamicObject : DynamicObject {
     ///     if <paramref name="indexes" /> contains 0 (zero) or more than one element.
     /// </exception>
     public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result) {
-        Prevent.Argument.Null(binder);
-        Prevent.Argument.Null(indexes);
+        Guard.Against.Null(binder);
+        Guard.Against.Null(indexes);
 
         if (indexes.Length != 1) {
             throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));
@@ -82,8 +82,8 @@ public sealed class HashtableDynamicObject : DynamicObject {
     ///     if <paramref name="indexes" /> contains 0 (zero) or more than one element.
     /// </exception>
     public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value) {
-        Prevent.Argument.Null(binder);
-        Prevent.Argument.Null(indexes);
+        Guard.Against.Null(binder);
+        Guard.Against.Null(indexes);
 
         if (indexes.Length != 1) {
             throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));

@@ -13,7 +13,7 @@ public sealed class Document : IDocument {
     /// </summary>
     /// <param name="id">The document ID.</param>
     public Document(string id) {
-        ID = Prevent.Argument.NullOrWhiteSpace(id);
+        ID = Guard.Against.NullOrWhiteSpace(id);
 
         _fields[nameof(ISearchHit.DocumentID)] = new Field(nameof(ISearchHit.DocumentID),
             ID,
