@@ -7,12 +7,12 @@ namespace Nameless.Web.HealthChecks;
 ///     Options for health checks.
 /// </summary>
 public sealed record HealthChecksOptions {
-    private readonly HashSet<Action<IHealthChecksBuilder>> _healthChecks = [];
+    private readonly Dictionary<Type, Action<IHealthChecksBuilder>> _healthChecks = [];
 
     /// <summary>
     ///     Gets the registered health checks.
     /// </summary>
-    public IEnumerable<Action<IHealthChecksBuilder>> HealthChecks => _healthChecks;
+    public IEnumerable<Action<IHealthChecksBuilder>> HealthChecks => _healthChecks.Values;
 
     /// <summary>
     ///     Registers a health check with the specified options.
@@ -31,11 +31,13 @@ public sealed record HealthChecksOptions {
         TimeSpan? timeout = null)
         where THealthCheck : class, IHealthCheck {
 
-        _healthChecks.Add(builder => builder.AddCheck<THealthCheck>(
-            name ?? typeof(THealthCheck).Name,
-            failureStatus,
-            tags,
-            timeout));
+        _healthChecks[typeof(THealthCheck)] = builder
+            => builder.AddCheck<THealthCheck>(
+                name ?? typeof(THealthCheck).Name,
+                failureStatus,
+                tags,
+                timeout
+            );
 
         return this;
     }

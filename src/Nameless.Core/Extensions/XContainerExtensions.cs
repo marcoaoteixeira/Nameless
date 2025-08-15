@@ -7,7 +7,7 @@ namespace Nameless;
 ///     <see cref="XContainer" /> extension methods.
 /// </summary>
 public static class XContainerExtensions {
-    private const string ElementPathPattern = "./{0}[@{1}='{2}']";
+    private const string ELEMENT_PATH_PATTERN = "./{0}[@{1}='{2}']";
 
     /// <summary>
     ///     Verifies if the <paramref name="elementName" /> is present into the <paramref name="self" />
@@ -32,7 +32,7 @@ public static class XContainerExtensions {
     /// <returns><see langword="true"/> if it has the attribute; otherwise <see langword="false"/>.</returns>
     public static bool HasElement(this XContainer self, string elementName, string attributeName,
                                   string attributeValue) {
-        var expression = string.Format(ElementPathPattern, elementName, attributeName, attributeValue);
+        var expression = string.Format(ELEMENT_PATH_PATTERN, elementName, attributeName, attributeValue);
 
         return self.XPathSelectElement(expression) is not null;
     }

@@ -48,5 +48,4 @@ The `QueryableExtensions` class provides extension methods for `IQueryable<T>` r
 
 ### Available Extension Methods
 
-- `ToPage<TItem>(this IQueryable<TItem> self, int number, int size)`: Converts an `IQueryable<TItem>` to a `Page<TItem>`, allowing for pagination of the results.
-- `Paginate<TItem>(this IQueryable<TItem> self, int size, int initialNumber = 1)`: Converts an `IQueryable<TItem>` to an `IEnumerable<IPage<TItem>>` allowing for iteraction over all possible pages for the query.
+- `CreatePage<TItem>(this IQueryable<TItem> self, int number, int size)`: Creates a `IPage<TItem>` from a `IQueryable<TItem>`, allowing for pagination of the results.

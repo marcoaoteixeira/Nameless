@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Dynamic;
+using Nameless.NHibernate.Infrastructure;
 
 namespace Nameless.NHibernate;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nameless.Web.Internals;
 
 namespace Nameless.Web.Infrastructure;
 
@@ -12,8 +13,8 @@ public abstract class RecurringHostService : IHostedService, IDisposable {
     private bool _disposed;
 
     protected RecurringHostService(IPeriodicTimer timer, ILogger<RecurringHostService> logger) {
-        _timer = Prevent.Argument.Null(timer);
-        _logger = Prevent.Argument.Null(logger);
+        _timer = Guard.Against.Null(timer);
+        _logger = Guard.Against.Null(logger);
     }
 
     ~RecurringHostService() {
@@ -61,7 +62,7 @@ public abstract class RecurringHostService : IHostedService, IDisposable {
     public void SetInterval(TimeSpan interval) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.LowerOrEqual(interval, TimeSpan.Zero);
+        Guard.Against.LowerOrEqual(interval, TimeSpan.Zero);
 
         _timer?.Dispose();
         _timer = new PeriodicTimerWrapper(interval);

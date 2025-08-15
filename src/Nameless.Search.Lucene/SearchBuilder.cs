@@ -43,8 +43,8 @@ public sealed class SearchBuilder : ISearchBuilder {
     /// <param name="indexReader">An instance of <see cref="IndexReader" />.</param>
     /// <param name="analyzer">The analyzer provider.</param>
     public SearchBuilder(Analyzer analyzer, IndexReader indexReader) {
-        _analyzer = Prevent.Argument.Null(analyzer);
-        Prevent.Argument.Null(indexReader);
+        _analyzer = Guard.Against.Null(analyzer);
+        Guard.Against.Null(indexReader);
 
         _indexSearcher = new IndexSearcher(indexReader);
         _count = MAX_RESULTS;
@@ -63,8 +63,8 @@ public sealed class SearchBuilder : ISearchBuilder {
     ///     value will be set to <see cref="MAXIMUM_FUZZINESS" />.
     /// </remarks>
     public ISearchBuilder Parse(string query, bool escape, float fuzziness, string[] fields) {
-        Prevent.Argument.NullOrWhiteSpace(query);
-        Prevent.Argument.NullOrEmpty(fields);
+        Guard.Against.NullOrWhiteSpace(query);
+        Guard.Against.NullOrEmpty(fields);
 
         if (escape) { query = QueryParserBase.Escape(query); }
 
@@ -384,10 +384,10 @@ public sealed class SearchBuilder : ISearchBuilder {
         var filter = new QueryWrapperFilter(query);
         var context = (AtomicReaderContext)_indexSearcher.IndexReader.Context;
         var bits = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-        var documentOpenBitSetDISI = new OpenBitSetDISI(bits.GetIterator(),
+        var documentOpenBitSetDisi = new OpenBitSetDISI(bits.GetIterator(),
             _indexSearcher.IndexReader.MaxDoc);
 
-        return new SearchBit(documentOpenBitSetDISI);
+        return new SearchBit(documentOpenBitSetDisi);
     }
 
     /// <inheritdoc />

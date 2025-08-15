@@ -21,7 +21,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
     ///     Thrown when <paramref name="options"/> is <see langword="null"/>.
     /// </exception>
     public DbConnectionFactory(IOptions<SqlServerOptions> options) {
-        _options = Prevent.Argument.Null(options);
+        _options = Guard.Against.Null(options);
     }
 
     /// <inheritdoc />

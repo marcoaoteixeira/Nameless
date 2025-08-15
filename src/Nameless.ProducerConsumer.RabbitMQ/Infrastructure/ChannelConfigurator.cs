@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 
@@ -19,14 +20,14 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
     /// <param name="options">The RabbitMQ options.</param>
     /// <param name="logger">The logger.</param>
     public ChannelConfigurator(IOptions<RabbitMQOptions> options, ILogger<ChannelConfigurator> logger) {
-        _options = Prevent.Argument.Null(options);
-        _logger = Prevent.Argument.Null(logger);
+        _options = Guard.Against.Null(options);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />
     public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(channel);
-        Prevent.Argument.NullOrWhiteSpace(queueName);
+        Guard.Against.Null(channel);
+        Guard.Against.NullOrWhiteSpace(queueName);
 
         if (!TryGetQueueSettings(queueName, out var queueSettings)) {
             _logger.QueueSettingsNotFound(queueName);

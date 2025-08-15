@@ -1,20 +1,49 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace Nameless.Web.Identity;
+namespace Nameless.Web.Identity.Entities;
 
 public class User : IdentityUser<Guid> {
-    [MaxLength(256)] public string? FirstName { get; set; }
+    /// <summary>
+    ///     Gets or sets the first name of the user.
+    /// </summary>
+    [MaxLength(256)]
+    public string? FirstName { get; set; }
 
-    [MaxLength(256)] public string? LastName { get; set; }
+    /// <summary>
+    ///     Get or sets the last name of the user.
+    /// </summary>
+    [MaxLength(256)]
+    public string? LastName { get; set; }
 
-    [MaxLength(1024)] public string? AvatarUrl { get; set; }
+    /// <summary>
+    ///     Gets or sets the URL to the user avatar.
+    /// </summary>
+    [MaxLength(1024)]
+    public string? AvatarUrl { get; set; }
 
-    public virtual ICollection<UserClaim> Claims { get; set; } = [];
+    /// <summary>
+    ///     Gets or sets the claims associated with the user.
+    /// </summary>
+    public virtual ICollection<UserClaim> Claims { get; internal set; } = [];
 
-    public virtual ICollection<UserLogin> Logins { get; set; } = [];
+    /// <summary>
+    ///     Gets or sets the logins associated with the user.
+    /// </summary>
+    public virtual ICollection<UserLogin> Logins { get; internal set; } = [];
 
-    public virtual ICollection<UserToken> Tokens { get; set; } = [];
+    /// <summary>
+    ///     Gets or sets the tokens associated with the user.
+    /// </summary>
+    public virtual ICollection<UserToken> Tokens { get; internal set; } = [];
 
-    public virtual ICollection<UserRole> UserRoles { get; set; } = [];
+    /// <summary>
+    ///     Gets or sets the roles associated with the user.
+    /// </summary>
+    public virtual ICollection<UserRole> UserRoles { get; internal set; } = [];
+
+    /// <summary>
+    ///     Gets or sets the refresh tokens associated with the user.
+    /// </summary>
+    public virtual ICollection<UserRefreshToken> RefreshTokens { get; internal set; } = [];
 }

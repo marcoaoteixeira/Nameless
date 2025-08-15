@@ -41,7 +41,7 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
     ///     On failure will return a <see cref="string.Empty" /> value.
     /// </remarks>
     public Task<string> GenerateAsync(PasswordParameters parameters, CancellationToken cancellationToken) {
-        Prevent.Argument.Null(parameters);
+        Guard.Against.Null(parameters);
 
         // Make sure that input parameters are valid.
         var minLength = parameters.MinLength;

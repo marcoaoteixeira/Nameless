@@ -4,7 +4,7 @@ namespace Nameless.Search;
 
 public static class PreventExtensions {
     [DebuggerStepThrough]
-    public static object NullOrNonMatchingType(this Prevent self, object paramValue, IndexableType type, string paramName) {
+    public static object NullOrNonMatchingType(this Guard self, object paramValue, IndexableType type, string paramName) {
         self.Null(paramValue, paramName);
 
         var valueType = paramValue.GetType();

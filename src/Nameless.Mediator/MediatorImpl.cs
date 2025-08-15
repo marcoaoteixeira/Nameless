@@ -26,9 +26,9 @@ public sealed class MediatorImpl : IMediator {
     public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker,
                         IRequestHandlerInvoker requestHandlerInvoker,
                         IStreamHandlerInvoker streamHandlerInvoker) {
-        _eventHandlerInvoker = Prevent.Argument.Null(eventHandlerInvoker);
-        _requestHandlerInvoker = Prevent.Argument.Null(requestHandlerInvoker);
-        _streamHandlerInvoker = Prevent.Argument.Null(streamHandlerInvoker);
+        _eventHandlerInvoker = Guard.Against.Null(eventHandlerInvoker);
+        _requestHandlerInvoker = Guard.Against.Null(requestHandlerInvoker);
+        _streamHandlerInvoker = Guard.Against.Null(streamHandlerInvoker);
     }
 
     /// <inheritdoc />

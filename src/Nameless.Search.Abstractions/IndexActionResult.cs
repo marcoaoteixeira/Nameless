@@ -20,7 +20,7 @@ public sealed record IndexActionResult {
     public string? Error { get; }
 
     private IndexActionResult(int totalDocumentsAffected = 0, string? error = null) {
-        TotalDocumentsAffected = Prevent.Argument.LowerThan(totalDocumentsAffected, minValue: 0);
+        TotalDocumentsAffected = Guard.Against.LowerThan(totalDocumentsAffected, compare: 0);
         Error = error;
     }
 
@@ -52,6 +52,6 @@ public sealed record IndexActionResult {
     /// If <paramref name="error"/> is <see langword="null"/>.
     /// </exception>
     public static IndexActionResult Failure(string error) {
-        return new IndexActionResult(totalDocumentsAffected: 0, Prevent.Argument.NullOrWhiteSpace(error));
+        return new IndexActionResult(totalDocumentsAffected: 0, Guard.Against.NullOrWhiteSpace(error));
     }
 }

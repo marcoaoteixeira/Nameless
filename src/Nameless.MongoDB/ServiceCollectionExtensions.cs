@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -18,15 +19,19 @@ public static class ServiceCollectionExtensions {
     /// <param name="configure">An action to configure MongoDb options.</param>
     /// <returns>The current <see cref="IServiceCollection" /> instance so other actions can be chained.</returns>
     public static IServiceCollection RegisterMongo(this IServiceCollection self, Action<MongoOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   // From the documentation: Because each MongoClient represents a pool
-                   // of connections to the database, most applications require only a
-                   // single instance of MongoClient
-                   // See more at https://www.mongodb.com/docs/drivers/csharp/current/fundamentals/connection/connect/#std-label-csharp-connect-to-mongodb
-                   .AddKeyedSingleton(MONGO_CLIENT_KEY, ResolveMongoClient)
-                   .AddKeyedSingleton(MONGO_DATABASE_KEY, ResolveMongoDatabase)
-                   .AddKeyedSingleton(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy)
-                   .AddSingleton(ResolveMongoCollectionProvider);
+        self.Configure(configure ?? (_ => { }));
+
+        // From the documentation: Because each MongoClient represents a pool
+        // of connections to the database, most applications require only a
+        // single instance of MongoClient
+        // See more at https://www.mongodb.com/docs/drivers/csharp/current/fundamentals/connection/connect/#std-label-csharp-connect-to-mongodb
+        self.TryAddKeyedSingleton(MONGO_CLIENT_KEY, ResolveMongoClient);
+
+        self.TryAddKeyedSingleton(MONGO_DATABASE_KEY, ResolveMongoDatabase);
+        self.TryAddKeyedSingleton(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy);
+        self.TryAddSingleton(ResolveMongoCollectionProvider);
+
+        return self;
     }
 
     private static IMongoClient ResolveMongoClient(IServiceProvider provider, object? _) {
@@ -41,23 +46,23 @@ public static class ServiceCollectionExtensions {
         var mongoClient = provider.GetRequiredKeyedService<IMongoClient>(MONGO_CLIENT_KEY);
         var mongoDatabase = mongoClient.GetDatabase(options.DatabaseName);
 
-        foreach (var documentMapper in ResolveDocumentMappers(options)) {
-            BsonClassMap.RegisterClassMap(documentMapper.CreateMap());
+        foreach (var documentMapping in ResolveDocumentMappings(options)) {
+            BsonClassMap.RegisterClassMap(documentMapping.CreateMap());
         }
 
         return mongoDatabase;
     }
 
-    private static IEnumerable<IDocumentMapper> ResolveDocumentMappers(MongoOptions options) {
-        var documentMappers = options.Assemblies
-                                     .GetImplementations(typeof(IDocumentMapper))
-                                     .Where(type => !type.IsGenericTypeDefinition);
+    private static IEnumerable<IDocumentMapping> ResolveDocumentMappings(MongoOptions options) {
+        var documentMappings = options.Assemblies
+                                      .GetImplementations(typeof(IDocumentMapping))
+                                      .Where(type => !type.IsGenericTypeDefinition);
 
-        foreach (var documentMapper in documentMappers) {
-            var result = Activator.CreateInstance(documentMapper)
-                      ?? throw new InvalidOperationException($"Couldn't initialize a new instance of the document mapper '{documentMapper.Name}'.");
+        foreach (var documentMapping in documentMappings) {
+            var result = Activator.CreateInstance(documentMapping)
+                      ?? throw new InvalidOperationException($"Couldn't initialize a new instance of the document mapping '{documentMapping.Name}'.");
 
-            yield return (IDocumentMapper)result;
+            yield return (IDocumentMapping)result;
         }
     }
 

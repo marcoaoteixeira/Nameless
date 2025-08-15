@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
@@ -44,7 +45,7 @@ public static class ServiceCollectionExtensions {
 
         var service = typeof(IEventHandler<>);
         var implementations = options.Assemblies
-                                     .GetImplementations([service])
+                                     .GetImplementations(service)
                                      .ToArray();
 
         return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
@@ -73,7 +74,7 @@ public static class ServiceCollectionExtensions {
 
         var service = typeof(IStreamHandler<,>);
         var implementations = options.Assemblies
-                                     .GetImplementations([service])
+                                     .GetImplementations(service)
                                      .ToArray();
 
         return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
@@ -86,10 +87,12 @@ public static class ServiceCollectionExtensions {
     }
 
     private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
-        return self.AddScoped<IEventHandlerInvoker, EventHandlerInvoker>()
-                   .AddScoped<IRequestHandlerInvoker, RequestHandlerInvoker>()
-                   .AddScoped<IStreamHandlerInvoker, StreamHandlerInvoker>()
-                   .AddScoped<IMediator, MediatorImpl>();
+        self.TryAddTransient<IEventHandlerInvoker, EventHandlerInvoker>();
+        self.TryAddTransient<IRequestHandlerInvoker, RequestHandlerInvoker>();
+        self.TryAddTransient<IStreamHandlerInvoker, StreamHandlerInvoker>();
+        self.TryAddTransient<IMediator, MediatorImpl>();
+
+        return self;
     }
 
     private static IServiceCollection RegisterHandlerImplementations(this IServiceCollection self, Type service, Type[] implementations, Assembly[] assemblies) {
@@ -118,7 +121,7 @@ public static class ServiceCollectionExtensions {
                 continue;
             }
 
-            self.AddScoped(@interface, implementation);
+            self.TryAddTransient(@interface, implementation);
         }
     }
 
@@ -129,9 +132,9 @@ public static class ServiceCollectionExtensions {
             // if the pipeline is not an open generic, we need to find all
             // interfaces that closes and register them.
             if (!pipelineBehavior.IsOpenGeneric()) {
-                var interfaces = pipelineBehavior.GetInterfacesThatClose(service);
+                var interfaces = pipelineBehavior.GetTypesThatClose(service);
                 foreach (var @interface in interfaces) {
-                    self.AddScoped(@interface, pipelineBehavior);
+                    self.TryAddTransient(@interface, pipelineBehavior);
                 }
 
                 continue;
@@ -142,7 +145,7 @@ public static class ServiceCollectionExtensions {
                                                      .Where(service.IsAssignableFromGenericType)
                                                      .Select(type => type.GetGenericTypeDefinition());
             foreach (var genericDefinition in genericDefinitions) {
-                self.AddScoped(genericDefinition, pipelineBehavior);
+                self.TryAddTransient(genericDefinition, pipelineBehavior);
             }
         }
 

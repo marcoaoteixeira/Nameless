@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Nameless.Localization.Json.Internals;
 using Nameless.Localization.Json.Objects;
 
 namespace Nameless.Localization.Json;
@@ -48,12 +49,12 @@ public sealed class StringLocalizer : IStringLocalizer {
                            Resource resource,
                            Func<string, string, CultureInfo, IStringLocalizer> factory,
                            ILogger<StringLocalizer> logger) {
-        _baseName = Prevent.Argument.NullOrWhiteSpace(baseName);
-        _location = Prevent.Argument.NullOrWhiteSpace(location);
-        _culture = Prevent.Argument.Null(culture);
-        _resource = Prevent.Argument.Null(resource);
-        _factory = Prevent.Argument.Null(factory);
-        _logger = Prevent.Argument.Null(logger);
+        _baseName = Guard.Against.NullOrWhiteSpace(baseName);
+        _location = Guard.Against.NullOrWhiteSpace(location);
+        _culture = Guard.Against.Null(culture);
+        _resource = Guard.Against.Null(resource);
+        _factory = Guard.Against.Null(factory);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />

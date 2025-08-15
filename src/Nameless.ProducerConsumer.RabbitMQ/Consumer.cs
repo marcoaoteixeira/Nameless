@@ -35,10 +35,10 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
     /// <param name="channel">The channel.</param>
     /// <param name="logger">The logger.</param>
     public Consumer(string topic, IChannel channel, ILogger<Consumer<TMessage>> logger) {
-        Topic = Prevent.Argument.Null(topic);
+        Topic = Guard.Against.Null(topic);
 
-        _channel = Prevent.Argument.Null(channel);
-        _logger = Prevent.Argument.Null(logger);
+        _channel = Guard.Against.Null(channel);
+        _logger = Guard.Against.Null(logger);
     }
 
     ~Consumer() {
@@ -54,7 +54,7 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
             return;
         }
 
-        _handler = Prevent.Argument.Null(handler);
+        _handler = Guard.Against.Null(handler);
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         var channel = GetChannel();

@@ -10,7 +10,7 @@ public class PreventExtensionsTests {
         object value = DayOfWeek.Monday;
 
         // act
-        var exception = Record.Exception(() => Prevent.Argument.NullOrNonMatchingType(value, indexableType, nameof(value)));
+        var exception = Record.Exception(() => Guard.Against.NullOrNonMatchingType(value, indexableType, nameof(value)));
 
         // assert
         Assert.IsType<InvalidOperationException>(exception);
@@ -22,7 +22,7 @@ public class PreventExtensionsTests {
         // arrange
 
         // act
-        var actual = Prevent.Argument.NullOrNonMatchingType(value, indexableType, nameof(value));
+        var actual = Guard.Against.NullOrNonMatchingType(value, indexableType, nameof(value));
 
         // assert
         Assert.NotNull(actual);
@@ -34,7 +34,7 @@ public class PreventExtensionsTests {
         object value = null;
 
         // act
-        var exception = Record.Exception(() => Prevent.Argument.NullOrNonMatchingType(value, IndexableType.Boolean, nameof(value)));
+        var exception = Record.Exception(() => Guard.Against.NullOrNonMatchingType(value, IndexableType.Boolean, nameof(value)));
 
         // assert
         Assert.IsType<ArgumentNullException>(exception);

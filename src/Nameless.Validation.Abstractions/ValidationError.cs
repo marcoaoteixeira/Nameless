@@ -26,7 +26,7 @@ public sealed record ValidationError {
     /// <param name="errorCode">The error code.</param>
     /// <param name="memberName">The member name.</param>
     public ValidationError(string message, string? errorCode = null, string? memberName = null) {
-        Message = Prevent.Argument.NullOrWhiteSpace(message);
+        Message = Guard.Against.NullOrWhiteSpace(message);
         ErrorCode = errorCode ?? string.Empty;
         MemberName = memberName ?? string.Empty;
     }

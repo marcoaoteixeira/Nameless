@@ -20,7 +20,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
 	  <ProjectReference Include="..\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Endpoints\v1\Management\" />
+	  <Folder Include="UseCases\Users\" />
 	</ItemGroup>
 
 </Project>

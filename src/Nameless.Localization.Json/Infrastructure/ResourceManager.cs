@@ -31,9 +31,9 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="logger" /> is <see langword="null"/>.
     /// </exception>
     public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options, ILogger<ResourceManager> logger) {
-        _fileProvider = Prevent.Argument.Null(fileProvider);
-        _options = Prevent.Argument.Null(options);
-        _logger = Prevent.Argument.Null(logger);
+        _fileProvider = Guard.Against.Null(fileProvider);
+        _options = Guard.Against.Null(options);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />
@@ -47,9 +47,9 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="location"/> is empty or white spaces.
     /// </exception>
     public Resource GetResource(string baseName, string location, string culture) {
-        Prevent.Argument.NullOrWhiteSpace(baseName);
-        Prevent.Argument.NullOrWhiteSpace(location);
-        Prevent.Argument.Null(culture);
+        Guard.Against.NullOrWhiteSpace(baseName);
+        Guard.Against.NullOrWhiteSpace(location);
+        Guard.Against.Null(culture);
 
         _logger.GettingResourceForCulture(culture);
 

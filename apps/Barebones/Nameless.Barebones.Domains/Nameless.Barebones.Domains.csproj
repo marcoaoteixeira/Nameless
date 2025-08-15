@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
-	</ItemGroup>
-
-</Project>

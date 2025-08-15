@@ -13,7 +13,7 @@ public static class ObjectExtensions {
     /// <param name="self">The source object.</param>
     /// <returns><see langword="true"/> if anonymous object (or type), otherwise, <see langword="false"/>.</returns>
     public static bool IsAnonymous(this object self) {
-        Prevent.Argument.Null(self);
+        Guard.Against.Null(self);
 
         var type = self as Type ?? self.GetType();
 
@@ -37,7 +37,7 @@ public static class ObjectExtensions {
     /// </exception>
     public static bool HasAttribute<TAttribute>(this object self, bool inherit = false)
         where TAttribute : Attribute {
-        return Prevent.Argument
+        return Guard.Against
                       .Null(self)
                       .GetType()
                       .GetCustomAttribute<TAttribute>(inherit) is not null;

@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Nameless.Infrastructure;
+using Nameless.NHibernate.Infrastructure;
+using Nameless.NHibernate.Internals;
 using Nameless.NHibernate.Options;
 using NHibernate;
 using NHibernate.Cfg;
@@ -28,10 +31,13 @@ public static class ServiceCollectionExtensions {
     ///     The current <see cref="IServiceCollection"/> so other actions can be chained. 
     /// </returns>
     public static IServiceCollection RegisterNHibernate(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<IConfigurationFactory, ConfigurationFactory>(CONFIGURATION_FACTORY_KEY)
-                   .AddKeyedSingleton(SESSION_FACTORY_KEY, SessionFactoryResolver)
-                   .AddScoped(SessionResolver);
+        self.Configure(configure ?? (_ => { }));
+
+        self.TryAddKeyedSingleton<IConfigurationFactory, ConfigurationFactory>(CONFIGURATION_FACTORY_KEY);
+        self.TryAddKeyedSingleton(SESSION_FACTORY_KEY, SessionFactoryResolver);
+        self.TryAddTransient(SessionResolver);
+
+        return self;
     }
 
     private static ISessionFactory SessionFactoryResolver(this IServiceProvider self, object? key) {
@@ -41,11 +47,13 @@ public static class ServiceCollectionExtensions {
         var sessionFactory = configuration.BuildSessionFactory();
 
         if (options.Value.SchemaExport.ExecuteSchemaExport) {
-            StartUp(sessionFactory,
+            StartUp(
+                sessionFactory,
                 configuration,
                 self.GetRequiredService<IApplicationContext>(),
                 options.Value.SchemaExport,
-                self.GetLogger<SchemaExport>());
+                self.GetLogger<SchemaExport>()
+            );
         }
 
         return sessionFactory;
@@ -60,9 +68,11 @@ public static class ServiceCollectionExtensions {
                                 IApplicationContext applicationContext,
                                 SchemaExportSettings schemaExportSettings,
                                 ILogger<SchemaExport> logger) {
-        var outputFilePath = Path.Combine(applicationContext.ApplicationDataFolderPath,
+        var outputFilePath = Path.Combine(
+            applicationContext.ApplicationDataFolderPath,
             schemaExportSettings.OutputFolderName,
-            $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.dat");
+            $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.dat"
+        );
 
         try {
             using var writer = schemaExportSettings.FileOutput
@@ -75,7 +85,8 @@ public static class ServiceCollectionExtensions {
                 schemaExportSettings.Execute,
                 schemaExportSettings.JustDrop,
                 session.Connection,
-                writer);
+                writer
+            );
         }
         catch (Exception ex) { logger.ErrorOnSchemaExportExecution(ex); }
     }

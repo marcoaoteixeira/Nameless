@@ -11,11 +11,15 @@ namespace Nameless.Testing.Tools.Attributes;
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 public sealed class BugAttribute : Attribute, ITraitAttribute {
+    /// <summary>
+    ///     Gets the issue identifier.
+    /// </summary>
     public string Issue { get; }
+
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>
-    public string Author { get; set; } = string.Empty;
+    public string? Author { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BugAttribute"/> class.
@@ -31,17 +35,15 @@ public sealed class BugAttribute : Attribute, ITraitAttribute {
     ///     contains only whitespace.
     /// </exception>
     public BugAttribute(string issue) {
-        Prevent.Argument.NullOrWhiteSpace(issue);
-
-        Issue = issue;
+        Issue = Guard.Against.NullOrWhiteSpace(issue);
     }
 
     /// <inheritdoc />
     public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits() {
         return [
-            new KeyValuePair<string, string>("Category", "Bug"),
-            new KeyValuePair<string, string>(nameof(Author), Author),
+            new KeyValuePair<string, string>(nameof(Category), nameof(Category.Bug)),
             new KeyValuePair<string, string>(nameof(Issue), Issue),
+            new KeyValuePair<string, string>(nameof(Author), Author ?? string.Empty),
         ];
     }
 }

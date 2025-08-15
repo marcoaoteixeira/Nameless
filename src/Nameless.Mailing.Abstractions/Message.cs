@@ -91,10 +91,10 @@ public sealed record Message {
                    string? language = null,
                    bool isBodyHtml = false,
                    Priority priority = Priority.Normal) {
-        Subject = Prevent.Argument.NullOrWhiteSpace(subject);
-        From = Prevent.Argument.NullOrEmpty(from);
-        To = Prevent.Argument.NullOrEmpty(to);
-        Content = Prevent.Argument.NullOrWhiteSpace(content);
+        Subject = Guard.Against.NullOrWhiteSpace(subject);
+        From = Guard.Against.NullOrEmpty(from);
+        To = Guard.Against.NullOrEmpty(to);
+        Content = Guard.Against.NullOrWhiteSpace(content);
         Cc = cc ?? [];
         Bcc = bcc ?? [];
         Encoding = encoding ?? Defaults.Encoding;

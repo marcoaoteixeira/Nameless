@@ -4,7 +4,7 @@ namespace Nameless;
 
 public class EnumExtensionsTests {
     public enum Status {
-        [Description("Okey-Dokey")] OK,
+        [Description("Okey-Dokey")] Ok,
         [Description("Oh No")] Error,
         Fatal
     }
@@ -12,7 +12,7 @@ public class EnumExtensionsTests {
     [Fact]
     public void GetAttribute_Returns_Attribute_If_Exists() {
         // arrange
-        var status = Status.OK;
+        var status = Status.Ok;
 
         // act
         var attr = status.GetAttribute<DescriptionAttribute>();
@@ -36,7 +36,7 @@ public class EnumExtensionsTests {
     [Fact]
     public void GetAttribute_Returns_Null_If_Attributes_Does_Not_Exists() {
         // arrange
-        var status = Status.OK;
+        var status = Status.Ok;
 
         // act
         var attr = status.GetAttribute<AttributeUsageAttribute>();
@@ -48,7 +48,7 @@ public class EnumExtensionsTests {
     [Fact]
     public void GetDescription_Returns_Value_From_DescriptionAttribute() {
         // arrange
-        var status = Status.OK;
+        var status = Status.Ok;
         var expected = "Okey-Dokey";
 
         // act

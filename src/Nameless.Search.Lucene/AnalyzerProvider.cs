@@ -19,7 +19,7 @@ public sealed class AnalyzerProvider : IAnalyzerProvider {
     ///     if <paramref name="options" /> is <see langword="null"/>
     /// </exception>
     public AnalyzerProvider(IOptions<SearchOptions> options) {
-        _options = Prevent.Argument.Null(options);
+        _options = Guard.Against.Null(options);
     }
 
     /// <inheritdoc />

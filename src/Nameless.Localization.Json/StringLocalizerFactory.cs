@@ -36,11 +36,11 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
                                   IResourceManager resourceManager,
                                   IOptions<JsonLocalizationOptions> options,
                                   ILoggerFactory loggerFactory) {
-        _cultureContext = Prevent.Argument.Null(cultureContext);
-        _resourceManager = Prevent.Argument.Null(resourceManager);
-        _options = Prevent.Argument.Null(options);
+        _cultureContext = Guard.Against.Null(cultureContext);
+        _resourceManager = Guard.Against.Null(resourceManager);
+        _options = Guard.Against.Null(options);
 
-        Prevent.Argument.Null(loggerFactory);
+        Guard.Against.Null(loggerFactory);
 
         _stringLocalizerFactoryLogger = loggerFactory.CreateLogger<StringLocalizerFactory>();
         _stringLocalizerLogger = loggerFactory.CreateLogger<StringLocalizer>();
@@ -51,9 +51,9 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     Thrown when <paramref name="resourceSource"/> is <see langword="null"/>.
     /// </exception>
     public IStringLocalizer Create(Type resourceSource) {
-        Prevent.Argument.Null(resourceSource);
+        Guard.Against.Null(resourceSource);
 
-        var baseName = Prevent.Argument.NullOrWhiteSpace(resourceSource.Namespace);
+        var baseName = Guard.Against.NullOrWhiteSpace(resourceSource.Namespace);
         var location = _options.Value.RemoveArityFromGenerics
             ? resourceSource.GetNameWithoutArity()
             : resourceSource.Name;
@@ -71,8 +71,8 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     <paramref name="location"/> is empty or white spaces.
     /// </exception>
     public IStringLocalizer Create(string baseName, string location) {
-        return GetLocalizer(Prevent.Argument.NullOrWhiteSpace(baseName),
-            Prevent.Argument.NullOrWhiteSpace(location),
+        return GetLocalizer(Guard.Against.NullOrWhiteSpace(baseName),
+            Guard.Against.NullOrWhiteSpace(location),
             _cultureContext.GetCurrentCulture());
     }
 

@@ -79,7 +79,7 @@ public class StreamExtensionsTests {
     [Fact]
     public void WhenGettingContentAsByteArray_WhenStreamIsNotMemoryStream_WhenCanRead_ThenReturnsStreamAsByteArray() {
         // arrange
-        var stream = FileUtils.GetResourceFile("ThisIsATest.txt");
+        var stream = ResourcesUtils.GetResourceFile("ThisIsATest.txt");
         var expected = "This Is A Test"u8.ToArray();
 
         // act

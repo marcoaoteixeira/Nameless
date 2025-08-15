@@ -141,30 +141,30 @@ public static class SequentialGuid {
 
                 // For string and byte-array version, we copy the timestamp first, followed
                 // by the random data.
-                Buffer.BlockCopy(timeStampBytes,
-                    2,
-                    buffer,
-                    0,
-                    6);
+                Buffer.BlockCopy(src: timeStampBytes,
+                    srcOffset: 2,
+                    dst: buffer,
+                    dstOffset: 0,
+                    count: 6);
 
-                Buffer.BlockCopy(randomBytes,
-                    0,
-                    buffer,
-                    6,
-                    10);
+                Buffer.BlockCopy(src: randomBytes,
+                    srcOffset: 0,
+                    dst: buffer,
+                    dstOffset: 6,
+                    count: 10);
 
                 // If formatting as a string, we have to compensate for the fact
                 // that .NET regards the Data1 and Data2 block as an Int32 and an Int16,
                 // respectively.  That means that it switches the order on little-endian
                 // systems.  So again, we have to reverse.
                 if (type == SequentialType.AsString && BitConverter.IsLittleEndian) {
-                    Array.Reverse(buffer,
-                        0,
-                        4);
+                    Array.Reverse(array: buffer,
+                        index: 0,
+                        length: 4);
 
-                    Array.Reverse(buffer,
-                        4,
-                        2
+                    Array.Reverse(array: buffer,
+                        index: 4,
+                        length: 2
                     );
                 }
 
@@ -174,17 +174,17 @@ public static class SequentialGuid {
 
                 // For sequential-at-the-end versions, we copy the random data first,
                 // followed by the timestamp.
-                Buffer.BlockCopy(randomBytes,
-                    0,
-                    buffer,
-                    0,
-                    10);
+                Buffer.BlockCopy(src: randomBytes,
+                    srcOffset: 0,
+                    dst: buffer,
+                    dstOffset: 0,
+                    count: 10);
 
-                Buffer.BlockCopy(timeStampBytes,
-                    2,
-                    buffer,
-                    10,
-                    6);
+                Buffer.BlockCopy(src: timeStampBytes,
+                    srcOffset: 2,
+                    dst: buffer,
+                    dstOffset: 10,
+                    count: 6);
                 break;
         }
 

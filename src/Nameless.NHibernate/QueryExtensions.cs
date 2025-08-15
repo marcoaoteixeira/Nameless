@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Nameless.NHibernate.Infrastructure;
+using NHibernate;
 
 namespace Nameless.NHibernate;
 

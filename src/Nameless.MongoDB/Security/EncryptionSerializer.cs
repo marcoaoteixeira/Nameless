@@ -41,8 +41,8 @@ public sealed class EncryptionSerializer : SerializerBase<string?> {
     ///     <paramref name="iv"/> length is not exactly 8 positions.
     /// </exception>
     public EncryptionSerializer(byte[] key, byte[] iv) {
-        Prevent.Argument.NullOrEmpty(key);
-        Prevent.Argument.NullOrEmpty(iv);
+        Guard.Against.NullOrEmpty(key);
+        Guard.Against.NullOrEmpty(iv);
 
         if (key.Length != 8) {
             throw new ArgumentException("Parameter must be an array of 8 positions.", nameof(key));

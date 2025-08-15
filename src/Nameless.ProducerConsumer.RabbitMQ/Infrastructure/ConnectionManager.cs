@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.ProducerConsumer.RabbitMQ.Internals;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -24,8 +25,8 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     /// <param name="options">The RabbitMQ options.</param>
     /// <param name="logger">The logger.</param>
     public ConnectionManager(IOptions<RabbitMQOptions> options, ILogger<ConnectionManager> logger) {
-        _options = Prevent.Argument.Null(options);
-        _logger = Prevent.Argument.Null(logger);
+        _options = Guard.Against.Null(options);
+        _logger = Guard.Against.Null(logger);
     }
 
     /// <inheritdoc />

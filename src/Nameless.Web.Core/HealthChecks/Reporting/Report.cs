@@ -8,7 +8,7 @@ public sealed record Report {
     public Dictionary<string, ReportEntry> Entries { get; private set; } = [];
 
     public static Report Create(HealthReport report) {
-        Prevent.Argument.Null(report);
+        Guard.Against.Null(report);
 
         var entries = report.Entries.ToDictionary(
             entry => entry.Key,

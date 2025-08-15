@@ -5,7 +5,7 @@ public class CircularBufferTests {
     [InlineData(1, new object[] { 1 })]
     [InlineData(10, new object[] { })]
     [InlineData(10, new object[] { 1 })]
-    public void When_Creating_A_New_Instance_Then_Capacity_Should_Be_Greater_Or_Equal_To_Initial_Items_Length(int capacity, object[] items) {
+    public void WhenInitializingNewInstance_WithCapacityEqualOrLowerArraySize_ThenShouldNotThrowException(int capacity, object[] items) {
         var exception = Record.Exception(() => new CircularBuffer<object>(capacity, items));
 
         Assert.Null(exception);
@@ -14,11 +14,9 @@ public class CircularBufferTests {
     [Theory]
     [InlineData(1, new object[] { 1, 2, 3 })]
     [InlineData(0, new object[] { 1 })]
-    public void When_Creating_A_New_Instance_Then_Throws_ArgumentOutOfRangeException_If_Capacity_Is_Less_Than_Initial_Items_Length(int capacity, object[] items) {
+    public void WhenInitializingNewInstance_WithCapacityLowerThanTheArraySize_ThenShouldThrowException(int capacity, object[] items) {
         // act & assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => {
-            _ = new CircularBuffer<object>(capacity, items);
-        });
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CircularBuffer<object>(capacity, items));
     }
 
     [Fact]

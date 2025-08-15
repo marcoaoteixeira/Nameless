@@ -485,4 +485,21 @@ public static class StringExtensions {
     public static string WithFallback(this string? self, string fallback) {
         return string.IsNullOrWhiteSpace(self) ? fallback : self;
     }
+
+    public static string ToSnakeCase(this string? self, char separator = '_') {
+        if (self is null) { return string.Empty; }
+
+        return string
+               .Concat(
+                   self.Select(
+                       (@char, index) => index > 0 &&
+                                         index < self.Length - 1 &&
+                                         char.IsUpper(@char) &&
+                                         self[index - 1] != separator &&
+                                         !char.IsUpper(self[index - 1])
+                           ? $"{separator}{@char}"
+                           : @char.ToString()
+                ))
+               .ToLower();
+    }
 }

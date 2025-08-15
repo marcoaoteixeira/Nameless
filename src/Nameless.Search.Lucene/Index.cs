@@ -5,6 +5,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
+using Nameless.Search.Lucene.Internals;
 using Nameless.Search.Lucene.Null;
 
 namespace Nameless.Search.Lucene;
@@ -41,14 +42,14 @@ public sealed class Index : IIndex {
                  string indexDirectoryPath,
                  string indexName,
                  ILogger<Index> logger) {
-        Prevent.Argument.NullOrWhiteSpace(indexDirectoryPath);
+        Guard.Against.NullOrWhiteSpace(indexDirectoryPath);
 
-        _analyzer = Prevent.Argument.Null(analyzer);
-        _logger = Prevent.Argument.Null(logger);
+        _analyzer = Guard.Against.Null(analyzer);
+        _logger = Guard.Against.Null(logger);
         _indexWriterConfig = new IndexWriterConfig(Defaults.Version, _analyzer);
         _fsDirectory = FSDirectory.Open(new DirectoryInfo(indexDirectoryPath));
 
-        Name = Prevent.Argument.NullOrWhiteSpace(indexName);
+        Name = Guard.Against.NullOrWhiteSpace(indexName);
     }
 
     ~Index() {
@@ -79,7 +80,7 @@ public sealed class Index : IIndex {
     public IDocument NewDocument(string documentID) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.NullOrWhiteSpace(documentID);
+        Guard.Against.NullOrWhiteSpace(documentID);
 
         return new Document(documentID);
     }
@@ -91,7 +92,7 @@ public sealed class Index : IIndex {
     public async Task<IndexActionResult> StoreDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.Null(documents);
+        Guard.Against.Null(documents);
 
         if (documents.Length == 0) {
             return IndexActionResult.Success(totalDocumentsAffected: 0);
@@ -116,7 +117,7 @@ public sealed class Index : IIndex {
     public async Task<IndexActionResult> DeleteDocumentsAsync(IDocument[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        Prevent.Argument.Null(documents);
+        Guard.Against.Null(documents);
 
         if (documents.Length == 0) {
             return IndexActionResult.Success(0);

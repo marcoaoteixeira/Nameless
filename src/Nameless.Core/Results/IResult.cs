@@ -5,12 +5,12 @@
 /// </summary>
 public interface IResult {
     /// <summary>
-    /// Gets the result of the operation.
+    ///     Gets the result of the operation.
     /// </summary>
     object? Value { get; }
 
     /// <summary>
-    /// Gets the index of the result.
+    ///     Gets the index of the result.
     /// </summary>
     int Index { get; }
 }

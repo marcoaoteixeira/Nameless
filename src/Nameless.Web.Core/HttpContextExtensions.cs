@@ -16,7 +16,7 @@ public static class HttpContextExtensions {
     /// <returns>A <see cref="string" /> representation of the IPv4.</returns>
     /// <remarks>If the IP address could not be parsed, a <see cref="IPAddress.None" /> will be returned instead.</remarks>
     public static string GetIPv4(this HttpContext self) {
-        return GetIPAddress(self).MapToIPv4().ToString();
+        return GetIpAddress(self).MapToIPv4().ToString();
     }
 
     /// <summary>
@@ -26,11 +26,11 @@ public static class HttpContextExtensions {
     /// <returns>A <see cref="string" /> representation of the IPv6.</returns>
     /// <remarks>If the IP address could not be parsed, a <see cref="IPAddress.None" /> will be returned instead.</remarks>
     public static string GetIPv6(this HttpContext self) {
-        return GetIPAddress(self).MapToIPv6().ToString();
+        return GetIpAddress(self).MapToIPv6().ToString();
     }
 
-    private static IPAddress GetIPAddress(HttpContext httpContext) {
-        return Prevent.Argument
+    private static IPAddress GetIpAddress(HttpContext httpContext) {
+        return Guard.Against
                       .Null(httpContext)
                       .Request
                       .Headers

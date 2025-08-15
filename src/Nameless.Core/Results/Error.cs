@@ -1,9 +1,14 @@
 ﻿namespace Nameless.Results;
 
 /// <summary>
-/// Represents an error.
+///     Represents an error.
 /// </summary>
 public readonly record struct Error {
+    /// <summary>
+    ///     Gets the error summary.
+    /// </summary>
+    public string? Summary { get; }
+
     /// <summary>
     /// Gets the description of the error.
     /// </summary>
@@ -24,62 +29,141 @@ public readonly record struct Error {
         throw new InvalidOperationException("Do not use type constructor.");
     }
 
-    private Error(string description, ErrorType type) {
-        Description = Prevent.Argument.NullOrWhiteSpace(description);
+    private Error(string? summary, string description, ErrorType type) {
+        Summary = summary;
+        Description = Guard.Against.NullOrWhiteSpace(description);
         Type = type;
     }
 
     /// <summary>
-    /// Creates a validation error with the specified description.
+    ///     Creates a validation error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the validation error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the validation error.</returns>
-    public static Error Validation(string description) {
-        return new Error(description, ErrorType.Validation);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the validation error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Validation(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Validation);
     }
 
     /// <summary>
     /// Creates a missing error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the missing error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the validation error.</returns>
-    public static Error Missing(string description) {
-        return new Error(description, ErrorType.Missing);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the validation error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Missing(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Missing);
     }
 
     /// <summary>
     /// Creates a conflict error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the conflict error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the conflict error.</returns>
-    public static Error Conflict(string description) {
-        return new Error(description, ErrorType.Conflict);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the conflict error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Conflict(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Conflict);
     }
 
     /// <summary>
     /// Creates a failure error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the failure error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the failure error.</returns>
-    public static Error Failure(string description) {
-        return new Error(description, ErrorType.Failure);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the failure error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Failure(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Failure);
     }
 
     /// <summary>
     /// Creates a forbidden error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the forbidden error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the forbidden error.</returns>
-    public static Error Forbidden(string description) {
-        return new Error(description, ErrorType.Forbidden);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the forbidden error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Forbidden(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Forbidden);
     }
 
     /// <summary>
     /// Creates an unauthorized error with the specified description.
     /// </summary>
-    /// <param name="description">The description of the unauthorized error. Cannot be null or empty.</param>
-    /// <returns>An <see cref="Error"/> object representing the unauthorized error.</returns>
-    public static Error Unauthorized(string description) {
-        return new Error(description, ErrorType.Unauthorized);
+    /// <param name="description">
+    ///     The error description.
+    /// </param>
+    /// <param name="summary">
+    ///     The error summary.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="Error"/> object representing the unauthorized error.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="description"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="description"/> is empty or only whitespaces.
+    /// </exception>
+    public static Error Unauthorized(string description, string? summary = null) {
+        return new Error(summary, description, ErrorType.Unauthorized);
     }
 }

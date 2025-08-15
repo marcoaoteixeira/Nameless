@@ -25,7 +25,7 @@ public sealed record AnalyzerSelectorResult {
     ///     if <paramref name="analyzer" /> is <see langword="null"/>
     /// </exception>
     public AnalyzerSelectorResult(Analyzer analyzer, int priority = 0) {
-        Analyzer = Prevent.Argument.Null(analyzer);
+        Analyzer = Guard.Against.Null(analyzer);
         Priority = priority;
     }
 }

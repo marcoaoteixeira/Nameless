@@ -2,26 +2,34 @@
 
 namespace Nameless.Web.Correlation;
 
-internal static class HttpContextExtensions {
-    internal static bool HasCorrelationID(this HttpContext self, string key, bool useHeader = true) {
-        Prevent.Argument.NullOrWhiteSpace(key);
+public static class HttpContextExtensions {
+    private const string CORRELATION_ID_KEY = "X-Correlation-ID";
+
+    public static bool HasCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
+        Guard.Against.NullOrWhiteSpace(key);
 
         return useHeader
             ? GetFromHttpContextHeaders(self, key) is not null
             : GetFromHttpContextItems(self, key) is not null;
     }
 
-    internal static string? GetCorrelationID(this HttpContext self, string key, bool useHeader = true) {
-        Prevent.Argument.NullOrWhiteSpace(key);
+    public static string? GetCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
+        Guard.Against.NullOrWhiteSpace(key);
 
         return useHeader
             ? GetFromHttpContextHeaders(self, key)
             : GetFromHttpContextItems(self, key);
     }
 
-    internal static void SetCorrelationID(this HttpContext self, string value, string key, bool useHeader = true) {
-        Prevent.Argument.NullOrWhiteSpace(key);
-        Prevent.Argument.NullOrWhiteSpace(value);
+    public static void SetCorrelationID(this HttpContext self, string value, string? key = null, bool useHeader = true) {
+        key ??= CORRELATION_ID_KEY;
+
+        Guard.Against.NullOrWhiteSpace(key);
+        Guard.Against.NullOrWhiteSpace(value);
 
         if (useHeader) { self.Response.Headers[key] = value; }
         else { self.Items[key] = value; }

@@ -22,7 +22,7 @@ public sealed class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrapper
     public override Task<Nothing> HandleAsync(IRequest request,
                                               IServiceProvider serviceProvider,
                                               CancellationToken cancellationToken) {
-        Prevent.Argument.Null(serviceProvider);
+        Guard.Against.Null(serviceProvider);
 
         return serviceProvider.GetServices<IRequestPipelineBehavior<TRequest, Nothing>>()
                               .Reverse()
@@ -59,7 +59,7 @@ public sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHand
     public override Task<TResponse> HandleAsync(IRequest<TResponse> request,
                                                 IServiceProvider serviceProvider,
                                                 CancellationToken cancellationToken) {
-        Prevent.Argument.Null(serviceProvider);
+        Guard.Against.Null(serviceProvider);
 
         return serviceProvider.GetServices<IRequestPipelineBehavior<TRequest, TResponse>>()
                               .Reverse()

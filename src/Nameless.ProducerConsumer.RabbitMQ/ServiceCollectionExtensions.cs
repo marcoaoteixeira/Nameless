@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
@@ -22,14 +23,16 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     /// The current <see cref="IServiceCollection"/> so other actions ca be chained.
     /// </returns>
-    public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self,
-        Action<RabbitMQOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .AddKeyedSingleton<IConnectionManager, ConnectionManager>(CONNECTION_MANAGER_KEY)
-                   .AddKeyedSingleton<IChannelConfigurator, ChannelConfigurator>(CHANNEL_CONFIGURATOR_KEY)
-                   .AddKeyedSingleton(CHANNEL_FACTORY_KEY, ResolveChannelFactory)
-                   .AddSingleton(ResolveProducerFactory)
-                   .AddSingleton(ResolveConsumerFactory);
+    public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self, Action<RabbitMQOptions>? configure = null) {
+        self.Configure(configure ?? (_ => { }));
+
+        self.TryAddKeyedSingleton<IConnectionManager, ConnectionManager>(CONNECTION_MANAGER_KEY);
+        self.TryAddKeyedSingleton<IChannelConfigurator, ChannelConfigurator>(CHANNEL_CONFIGURATOR_KEY);
+        self.TryAddKeyedSingleton(CHANNEL_FACTORY_KEY, ResolveChannelFactory);
+        self.TryAddSingleton(ResolveProducerFactory);
+        self.TryAddSingleton(ResolveConsumerFactory);
+
+        return self;
     }
 
     private static IChannelFactory ResolveChannelFactory(IServiceProvider provider) {

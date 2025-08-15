@@ -12,7 +12,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(result.HasErrors);
+            Assert.False(result.IsError);
             Assert.Equal(Expected, result.Value);
         });
     }
@@ -28,8 +28,8 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(result.HasErrors);
-            Assert.Single(result.AsErrors);
+            Assert.True(result.IsError);
+            Assert.Single(result.AsError);
         });
     }
 
@@ -44,8 +44,8 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(result.HasErrors);
-            Assert.Equal(2, result.AsErrors.Length);
+            Assert.True(result.IsError);
+            Assert.Equal(2, result.AsError.Length);
         });
     }
 
@@ -60,8 +60,8 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(result.HasErrors);
-            Assert.Throws<InvalidOperationException>(() => _ = result.AsErrors);
+            Assert.False(result.IsError);
+            Assert.Throws<InvalidOperationException>(() => _ = result.AsError);
         });
     }
 
@@ -75,7 +75,7 @@ public class ResultTests {
         result = expected;
 
         // assert
-        Assert.True(result.HasErrors);
+        Assert.True(result.IsError);
     }
 
     [Fact]
@@ -355,7 +355,7 @@ public class ResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(result.HasErrors);
+            Assert.False(result.IsError);
             Assert.Null(result.Value);
         });
     }

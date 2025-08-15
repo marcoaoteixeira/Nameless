@@ -10,7 +10,7 @@ public class PropertyResolveMiddlewareTests {
     [Fact]
     public void WhenResolvingTypeWithInjectedProperty_ThenGetPropertyInjected() {
         // arrange
-        const string text = "This is a Test";
+        const string Text = "This is a Test";
         var printServiceMocker = new PrintServiceMocker();
         var builder = new ContainerBuilder();
         builder.RegisterInstance(printServiceMocker.Build())
@@ -27,12 +27,12 @@ public class PropertyResolveMiddlewareTests {
         var classWithPrintServiceProperty = container.Resolve<ClassWithPrintServiceProperty>();
 
         // act
-        classWithPrintServiceProperty.Write(text);
+        classWithPrintServiceProperty.Write(Text);
 
         // assert
         Assert.Multiple(() => {
             Assert.NotNull(classWithPrintServiceProperty.PrintService);
-            printServiceMocker.Verify(mock => mock.Print(text), Times.Once());
+            printServiceMocker.Verify(mock => mock.Print(Text), Times.Once());
         });
     }
 }

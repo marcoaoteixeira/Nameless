@@ -2,14 +2,14 @@
 
 public class GuidHelperTests {
     private const string STRING_VALUE = "ykBtEknUGE_Pw0Pshkajag";
-    private readonly Guid GuidValue = Guid.Parse("126d40ca-d449-4f18-8fc3-43ec8646a36a");
+    private readonly Guid _guidValue = Guid.Parse("126d40ca-d449-4f18-8fc3-43ec8646a36a");
 
     [Fact]
     public void Encode_WhenPassGuidValue_ThenReturnStringEncoded() {
         // arrange
 
         // act
-        var actual = GuidHelper.Encode(GuidValue);
+        var actual = GuidHelper.Encode(_guidValue);
 
         // assert
         Assert.Multiple(() => {
@@ -26,6 +26,6 @@ public class GuidHelperTests {
         var actual = GuidHelper.Decode(STRING_VALUE);
 
         // assert
-        Assert.Equal(GuidValue, actual);
+        Assert.Equal(_guidValue, actual);
     }
 }

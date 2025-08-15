@@ -11,7 +11,7 @@ public class CustomResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(result.HasErrors);
+            Assert.False(result.IsError);
             Assert.Equal(Expected, result.Value);
         });
     }
@@ -26,8 +26,8 @@ public class CustomResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(result.HasErrors);
-            Assert.Single(result.AsErrors);
+            Assert.True(result.IsError);
+            Assert.Single(result.AsError);
         });
     }
 
@@ -41,8 +41,8 @@ public class CustomResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(result.HasErrors);
-            Assert.Equal(2, result.AsErrors.Length);
+            Assert.True(result.IsError);
+            Assert.Equal(2, result.AsError.Length);
         });
     }
 
@@ -56,8 +56,8 @@ public class CustomResultTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(result.HasErrors);
-            Assert.Throws<InvalidOperationException>(() => _ = result.AsErrors);
+            Assert.False(result.IsError);
+            Assert.Throws<InvalidOperationException>(() => _ = result.AsError);
         });
     }
 
@@ -70,7 +70,7 @@ public class CustomResultTests {
         CustomResult result = expected;
 
         // assert
-        Assert.True(result.HasErrors);
+        Assert.True(result.IsError);
     }
 
     [Fact]
@@ -341,21 +341,25 @@ public class CustomResultTests {
     public class CustomResult : ResultBase<int> {
         public CustomResult() { }
 
-        private CustomResult(int index, int? arg0 = null, Error[] errors = null)
-            : base(index, arg0.GetValueOrDefault(), errors) {
+        private CustomResult(int index, int? result = null, Error[] errors = null)
+            : base(index, result.GetValueOrDefault(), errors) {
         }
 
-        public static implicit operator CustomResult(int arg0)
-            => new(0, arg0);
+        public static implicit operator CustomResult(int result) {
+            return new CustomResult(0, result);
+        }
 
-        public static implicit operator CustomResult(Error error)
-            => new(1, errors: [error]);
+        public static implicit operator CustomResult(Error error) {
+            return new CustomResult(1, errors: [error]);
+        }
 
-        public static implicit operator CustomResult(Error[] errors)
-            => new(1, errors: errors);
+        public static implicit operator CustomResult(Error[] errors) {
+            return new CustomResult(1, errors: errors);
+        }
 
         // Implementation error, index is out of bounds
-        public static implicit operator CustomResult(string error)
-            => new(2, errors: [Error.Failure(error)]);
+        public static implicit operator CustomResult(string error) {
+            return new CustomResult(2, errors: [Error.Failure(error)]);
+        }
     }
 }
