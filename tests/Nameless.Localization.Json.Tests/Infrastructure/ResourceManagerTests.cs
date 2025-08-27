@@ -17,7 +17,7 @@ public class ResourceManagerTests {
                                            .Build();
         var changeToken = new ChangeTokenMocker().WithRegisterChangeCallback(NullDisposable.Instance)
                                                  .Build();
-        var fileProvider = new FileProviderMocker().WithFileInfo(fileInfo)
+        var fileProvider = new FileProviderMocker().WithGetFileInfo(fileInfo)
                                                    .WithWatch(changeToken)
                                                    .Build();
 

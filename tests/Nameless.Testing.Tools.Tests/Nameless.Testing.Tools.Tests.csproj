@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Testing.Tools</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Sample.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\Samples\Sample.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
+	</ItemGroup>
+
+</Project>

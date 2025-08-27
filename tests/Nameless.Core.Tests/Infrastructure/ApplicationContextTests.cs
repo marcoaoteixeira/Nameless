@@ -7,18 +7,17 @@ public class ApplicationContextTests {
     [Theory]
     [InlineData(Environment.SpecialFolder.CommonApplicationData)]
     [InlineData(Environment.SpecialFolder.LocalApplicationData)]
-    public void WhenBuildingApplicationContext_ThenReturnCorrectValuesForProperties(
-        Environment.SpecialFolder specialFolder) {
+    public void WhenBuildingApplicationContext_ThenReturnCorrectValuesForProperties(Environment.SpecialFolder specialFolder) {
         // arrange
-        const string Environment = "Development";
-        const string AppName = "Test App";
+        const string EnvironmentName = "Development";
+        const string ApplicationName = "Test App";
         var appVersion = new Version(1, 2, 3);
-        var baseAppFolder = AppDomain.CurrentDomain.BaseDirectory;
-        var appDataFolder = Path.Combine(System.Environment.GetFolderPath(specialFolder), AppName);
+        var baseDirectoryPath = AppDomain.CurrentDomain.BaseDirectory;
+        var dataDirectoryPath = Path.Combine(Environment.GetFolderPath(specialFolder), ApplicationName);
         var options = Options.Create(new ApplicationContextOptions {
-            EnvironmentName = Environment,
-            ApplicationName = AppName,
-            UseCommonAppDataFolder = specialFolder == System.Environment.SpecialFolder.CommonApplicationData,
+            EnvironmentName = EnvironmentName,
+            ApplicationName = ApplicationName,
+            UseLocalApplicationData = specialFolder == Environment.SpecialFolder.LocalApplicationData,
             Version = appVersion
         });
         // act
@@ -27,10 +26,10 @@ public class ApplicationContextTests {
         // assert
         Assert.Multiple(() => {
             Assert.Equal($"v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}", sut.Version);
-            Assert.Equal(appDataFolder, sut.ApplicationDataFolderPath);
-            Assert.Equal(baseAppFolder, sut.ApplicationFolderPath);
-            Assert.Equal(AppName, sut.ApplicationName);
-            Assert.Equal(Environment, sut.EnvironmentName);
+            Assert.Equal(dataDirectoryPath, sut.DataDirectoryPath);
+            Assert.Equal(baseDirectoryPath, sut.BaseDirectoryPath);
+            Assert.Equal(ApplicationName, sut.ApplicationName);
+            Assert.Equal(EnvironmentName, sut.EnvironmentName);
         });
     }
 }

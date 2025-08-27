@@ -69,8 +69,8 @@ public static class ServiceCollectionExtensions {
                                 SchemaExportSettings schemaExportSettings,
                                 ILogger<SchemaExport> logger) {
         var outputFilePath = Path.Combine(
-            applicationContext.ApplicationDataFolderPath,
-            schemaExportSettings.OutputFolderName,
+            applicationContext.DataDirectoryPath,
+            schemaExportSettings.OutputDirectoryName,
             $"{DateTime.Now:yyyyMMdd_hhmmss_fff}_db_schema.dat"
         );
 

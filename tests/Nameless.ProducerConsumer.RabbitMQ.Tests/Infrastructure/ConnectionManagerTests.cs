@@ -30,7 +30,7 @@ public class ConnectionManagerTests {
         // arrange
         var errorMessage = string.Empty;
         var loggerMocker = new LoggerMocker<ConnectionManager>().WithAnyLogLevel()
-                                                                .WithLogCallback(LogLevel.Error, message => errorMessage = message);
+                                                                .WithLogCallback(message => errorMessage = message, LogLevel.Error);
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
             opts.Server = new ServerSettings { Port = 5000 };
         });

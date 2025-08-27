@@ -11,7 +11,7 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
         return this;
     }
 
-    public LoggerMocker<T> WithLogLevel(params LogLevel[] levels) {
+    public LoggerMocker<T> WithIsEnabled(params LogLevel[] levels) {
         foreach (var level in levels) {
             MockInstance.Setup(mock => mock.IsEnabled(level))
                         .Returns(true);
@@ -20,7 +20,7 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
         return this;
     }
 
-    public LoggerMocker<T> WithLogCallback(LogLevel level, Action<string> callback) {
+    public LoggerMocker<T> WithLogCallback(Action<string> callback, LogLevel level = LogLevel.Information) {
         MockInstance
            .Setup(mock => mock.Log(
                 level,

@@ -10,30 +10,30 @@ public sealed class ApplicationContextMocker : Mocker<IApplicationContext> {
         return this;
     }
 
-    public ApplicationContextMocker WithAppName(string returnValue) {
+    public ApplicationContextMocker WithApplicationName(string returnValue) {
         MockInstance.Setup(mock => mock.ApplicationName)
                     .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithAppBasePath(string returnValue) {
-        MockInstance.Setup(mock => mock.ApplicationFolderPath)
+    public ApplicationContextMocker WithBaseDirectoryPath(string returnValue) {
+        MockInstance.Setup(mock => mock.BaseDirectoryPath)
                     .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithAppDataFolderPath(string returnValue) {
-        MockInstance.Setup(mock => mock.ApplicationDataFolderPath)
+    public ApplicationContextMocker WithDataDirectoryPath(string returnValue) {
+        MockInstance.Setup(mock => mock.DataDirectoryPath)
                     .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithSemVer(string resul) {
+    public ApplicationContextMocker WithVersion(string returnValue) {
         MockInstance.Setup(mock => mock.Version)
-                    .Returns(resul);
+                    .Returns(returnValue);
 
         return this;
     }

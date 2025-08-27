@@ -9,9 +9,8 @@ public class DbContextMocker : Mocker<DbContext> {
         returnValue ??= new DbSetMocker<TEntity>().With(Enumerable.Empty<TEntity>().AsQueryable())
                                                   .Build();
 
-        MockInstance
-            .Setup(mock => mock.Set<TEntity>())
-            .Returns(returnValue);
+        MockInstance.Setup(mock => mock.Set<TEntity>())
+                    .Returns(returnValue);
 
         return this;
     }
@@ -21,17 +20,15 @@ public class DbContextMocker : Mocker<DbContext> {
         var dbSet = new DbSetMocker<TEntity>().With((returnValue ?? []).AsQueryable())
                                               .Build();
 
-        MockInstance
-            .Setup(mock => mock.Set<TEntity>())
-            .Returns(dbSet);
+        MockInstance.Setup(mock => mock.Set<TEntity>())
+                    .Returns(dbSet);
 
         return this;
     }
 
     public DbContextMocker WithSaveChangesAsync(int returnValue = 1) {
-        MockInstance
-            .Setup(mock => mock.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.FromResult(returnValue));
+        MockInstance.Setup(mock => mock.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(returnValue));
 
         return this;
     }

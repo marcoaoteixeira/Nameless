@@ -39,7 +39,11 @@ if (string.IsNullOrEmpty(solutionPath)) {
 var configuration = Argument("configuration", "Release");
 var verbosity = Argument("verbosity", DotNetVerbosity.Normal);
 var codeCoverageDir = Argument<DirectoryPath>("code-coverage-dir", "code_coverage");
+
+// NUGET VARIABLES
 var nupkgOutputDir = Argument<DirectoryPath>("nupkg-output-dir", "nupkgs");
+var nugetApiKey = Argument("nuget-api-key", string.Empty);
+var nugetSource = Argument("nuget-source", "https://api.nuget.org/v3/index.json");
 
 var releaseVersion = Argument("release-version", "1.0.0");
 if (!SemVersion.TryParse(releaseVersion, out var _)) {
@@ -61,6 +65,10 @@ Task("Clean")
             NoLogo = true,
             Verbosity = verbosity
         });
+
+        // Delete previous NuGet packages files
+        DeleteFiles(nupkgOutputDir + "/**/*.nupkg");
+        DeleteFiles(nupkgOutputDir + "/**/*.snupkg");
     });
 
 // Restores the solution
@@ -98,7 +106,6 @@ Task("Test")
     .Does(() =>
     {
         var filter = Argument("test-filter", string.Empty);
-        //var logger = Argument("test-logger", $"Html;LogFileName={codeCoverageDir.Combine("code_coverage_log.html")}");
         var logger = Argument("test-logger", "console;verbosity=normal");
         var collector = Argument("test-collector", "XPlat Code Coverage");
 
@@ -172,6 +179,30 @@ Task("NuGetPack")
             NoBuild = true,
             NoRestore = true,
         });
+    });
+
+Task("NuGetPublish")
+    .IsDependentOn("Clean")
+    .IsDependentOn("NuGetPack")
+    .Does(() =>
+    {
+        if (!HasArgument("nuget-api-key")) {
+            Error("Missing NuGet API Key.");
+
+            return;
+        }
+
+        var settings = new DotNetNuGetPushSettings {
+            ApiKey = nugetApiKey,
+            Source = nugetSource,
+            SkipDuplicate = true,
+        };
+
+        var packages = GetFiles(nupkgOutputDir + "/**/*.nupkg");
+        
+        foreach (var package in packages) {
+            DotNetNuGetPush(package, settings);
+        }
     });
 
 //////////////////////////////////////////////////////////////////////

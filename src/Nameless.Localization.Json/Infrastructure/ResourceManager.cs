@@ -65,7 +65,7 @@ public sealed class ResourceManager : IResourceManager {
             : ".json";
 
         var parts = cacheKey.Path.Split(Separators.DOT)[..^1]
-                            .Prepend(_options.Value.ResourcesFolderName)
+                            .Prepend(_options.Value.ResourcesDirectoryName)
                             .Append($"{cacheKey.Location}{extension}")
                             .ToArray();
 

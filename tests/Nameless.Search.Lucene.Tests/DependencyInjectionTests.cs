@@ -10,7 +10,7 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
 
-        var applicationContext = new ApplicationContextMocker().WithAppDataFolderPath("\\Temp")
+        var applicationContext = new ApplicationContextMocker().WithDataDirectoryPath("\\Temp")
                                                                .Build();
         services.AddSingleton(applicationContext);
 

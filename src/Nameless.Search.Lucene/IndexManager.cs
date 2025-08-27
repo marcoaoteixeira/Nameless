@@ -40,8 +40,8 @@ public sealed class IndexManager : IIndexManager, IDisposable {
         _loggerForIndex = loggerFactory.CreateLogger<Index>();
 
         var rootPath = Path.Combine(
-            applicationContext.ApplicationDataFolderPath,
-            options.Value.IndexesFolderName);
+            applicationContext.DataDirectoryPath,
+            options.Value.IndexesDirectoryName);
 
         _rootPath = PathHelper.Normalize(rootPath);
     }

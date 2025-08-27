@@ -1,4 +1,6 @@
-﻿namespace Nameless.Results;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless.Results;
 
 /// <summary>
 ///     Base class for results.
@@ -13,6 +15,7 @@ public abstract class ResultBase<TResult> : IResult {
     /// <summary>
     ///     Whether the result is an actual result and not an error.
     /// </summary>
+    [MemberNotNullWhen(returnValue: true, nameof(AsResult))]
     public bool IsResult => Index == 0;
 
     /// <summary>
@@ -89,7 +92,7 @@ public abstract class ResultBase<TResult> : IResult {
     /// <param name="onError">
     ///     Action that will be executed if the result is <see cref="Error"/>.
     /// </param>
-    public void Switch(Action<TResult?> onResult, Action<Error[]> onError) {
+    public void Switch(Action<TResult> onResult, Action<Error[]> onError) {
         if (IsResult) {
             onResult(AsResult);
 
@@ -115,7 +118,7 @@ public abstract class ResultBase<TResult> : IResult {
     /// <returns>
     ///     An asynchronous task representing the execution.
     /// </returns>
-    public Task Switch(Func<TResult?, Task> onResult, Func<Error[], Task> onError) {
+    public Task Switch(Func<TResult, Task> onResult, Func<Error[], Task> onError) {
         if (IsResult) {
             return onResult(AsResult);
         }
@@ -144,7 +147,7 @@ public abstract class ResultBase<TResult> : IResult {
     ///     An asynchronous task representing the execution, where the result
     ///     of the function is <see cref="TResult"/>.
     /// </returns>
-    public TReturnValue Match<TReturnValue>(Func<TResult?, TReturnValue> onResult, Func<Error[], TReturnValue> onError) {
+    public TReturnValue Match<TReturnValue>(Func<TResult, TReturnValue> onResult, Func<Error[], TReturnValue> onError) {
         if (IsResult) {
             return onResult(AsResult);
         }
