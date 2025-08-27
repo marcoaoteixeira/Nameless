@@ -11,7 +11,7 @@ services.AddJsonLocalization(new LocalizationOptions {
     // The folder where the translation files should be looked for.
     // Will be combined with the current Microsoft.Extensions.FileProviders.IFileProvider
     // instance root path. So, make sure to add it to your services.
-    TranslationFolderName = "Localization",
+    ResourcesDirectoryName = "Localization",
 
     // Whether it will watch the translation files for changes
     // and reload if necessary.

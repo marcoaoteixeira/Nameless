@@ -5,14 +5,14 @@ using Moq;
 namespace Nameless.Testing.Tools.Mockers;
 
 public sealed class FileProviderMocker : Mocker<IFileProvider> {
-    public FileProviderMocker WithFileInfo(IFileInfo returnValue) {
+    public FileProviderMocker WithGetFileInfo(IFileInfo returnValue) {
         MockInstance.Setup(mock => mock.GetFileInfo(It.IsAny<string>()))
                     .Returns(returnValue);
 
         return this;
     }
 
-    public FileProviderMocker WithFileInfo(string subPath, IFileInfo returnValue) {
+    public FileProviderMocker WithGetFileInfo(string subPath, IFileInfo returnValue) {
         MockInstance.Setup(mock => mock.GetFileInfo(subPath))
                     .Returns(returnValue);
 

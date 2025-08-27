@@ -12,7 +12,7 @@ public sealed class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilde
         return this;
     }
 
-    public HostApplicationBuilderMocker WithConfigurationManager(IConfigurationManager returnValue) {
+    public HostApplicationBuilderMocker WithConfiguration(IConfigurationManager returnValue) {
         MockInstance.Setup(mock => mock.Configuration)
                     .Returns(returnValue);
 

@@ -46,7 +46,7 @@ public class DatabaseTests {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery<InvalidOperationException>();
-        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act & assert
@@ -81,7 +81,7 @@ public class DatabaseTests {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar<InvalidOperationException>();
-        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act
@@ -128,7 +128,7 @@ public class DatabaseTests {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
         var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader<InvalidOperationException>();
-        var loggerMocker = new LoggerMocker<Database>().WithLogLevel(LogLevel.Error);
+        var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act

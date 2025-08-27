@@ -15,14 +15,16 @@ public interface IApplicationContext {
     string ApplicationName { get; }
 
     /// <summary>
-    ///     Gets the path to the application folder.
+    ///     Gets the path to the application files and folders directory,
+    ///     which is the directory where the application is running from.
     /// </summary>
-    string ApplicationFolderPath { get; }
+    string BaseDirectoryPath { get; }
 
     /// <summary>
-    ///     Gets the path to the application data folder.
+    ///     Gets the path to the application data directory,
+    ///     which is used to store application data files.
     /// </summary>
-    string ApplicationDataFolderPath { get; }
+    string DataDirectoryPath { get; }
 
     /// <summary>
     ///     Gets the application version.

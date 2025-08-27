@@ -9,7 +9,7 @@ public sealed record SearchOptions {
     /// <summary>
     ///     Gets or sets the folder name that will store Lucene.NET indexes.
     /// </summary>
-    public string IndexesFolderName { get; set; } = "Indexes";
+    public string IndexesDirectoryName { get; set; } = "Indexes";
 
     /// <summary>
     ///     Gets the types of analyzers that will be used for indexing and searching.

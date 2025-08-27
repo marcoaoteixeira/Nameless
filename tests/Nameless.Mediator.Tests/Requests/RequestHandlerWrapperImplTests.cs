@@ -30,7 +30,7 @@ public class RequestHandlerWrapperImplTests {
     public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineBeforeRequestHandler() {
         // arrange
         var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(LogLevel.Debug, logMessages.Add);
+        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
         var logger = loggerMocker.Build();
 
         var request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };
@@ -59,7 +59,7 @@ public class RequestHandlerWrapperImplTests {
     public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineInOrderBeforeRequestHandler() {
         // arrange
         var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(LogLevel.Debug, logMessages.Add);
+        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
         var logger = loggerMocker.Build();
 
         var request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };

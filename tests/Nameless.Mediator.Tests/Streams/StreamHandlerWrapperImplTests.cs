@@ -88,7 +88,7 @@ public class StreamHandlerWrapperImplTests {
     public async Task WhenHandlingStream_WhenThereAreStreamPipelineBehavior_ThenExecutePipelineBeforeStreamHandler() {
         // arrange
         var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(LogLevel.Debug, logMessages.Add);
+        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
         var logger = loggerMocker.Build();
 
         var stream = new SimpleStream { Messages = [nameof(StreamHandlerWrapperImplTests)] };
@@ -119,7 +119,7 @@ public class StreamHandlerWrapperImplTests {
     public async Task WhenHandlingStream_WhenThereAreStreamPipelineBehavior_ThenExecutePipelineInOrderBeforeStreamHandler() {
         // arrange
         var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(LogLevel.Debug, logMessages.Add);
+        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
         var logger = loggerMocker.Build();
 
         var stream = new SimpleStream { Messages = [nameof(StreamHandlerWrapperImplTests)] };

@@ -12,7 +12,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<ConfigurationFactory>().Build());
-        services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(Path.GetTempPath())
+        services.AddSingleton(new ApplicationContextMocker().WithDataDirectoryPath(Path.GetTempPath())
                                                             .Build());
         services.RegisterNHibernate(_ => { });
 

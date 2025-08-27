@@ -5,10 +5,10 @@
 /// </summary>
 public sealed class JsonLocalizationOptions {
     /// <summary>
-    ///     Gets or sets the name of the folder where the JSON resources files
-    ///     will be located.
+    ///     Gets or sets the name of the directory where the
+    ///     JSON resources files are stored.
     /// </summary>
-    public string ResourcesFolderName { get; set; } = "Localization";
+    public string ResourcesDirectoryName { get; set; } = "Localization";
 
     /// <summary>
     ///     Whether it will watch the JSON resource files for changes

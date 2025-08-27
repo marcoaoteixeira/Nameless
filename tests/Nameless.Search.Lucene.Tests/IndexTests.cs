@@ -22,7 +22,7 @@ public class IndexTests {
 
         services.AddSingleton(loggerFactory);
         services.AddSingleton(new LoggerMocker<Index>().Build());
-        services.AddSingleton(new ApplicationContextMocker().WithAppDataFolderPath(IndexDirectoryPath)
+        services.AddSingleton(new ApplicationContextMocker().WithDataDirectoryPath(IndexDirectoryPath)
                                                             .Build());
 
         services.RegisterSearch(_ => { });
