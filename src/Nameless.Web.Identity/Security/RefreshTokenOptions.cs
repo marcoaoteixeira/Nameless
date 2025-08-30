@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Web.Identity.Security;
 
-public record RefreshTokenOptions {
+public sealed class RefreshTokenOptions {
     /// <summary>
     ///     Gets or sets the refresh token time-to-live.
     /// </summary>

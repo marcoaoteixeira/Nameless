@@ -13,8 +13,8 @@ public class ValidationErrorTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Equal(Message, sut.Message);
-            Assert.Equal(ErrorCode, sut.ErrorCode);
+            Assert.Equal(Message, sut.Error);
+            Assert.Equal(ErrorCode, sut.Code);
             Assert.Equal(MemberName, sut.MemberName);
         });
     }

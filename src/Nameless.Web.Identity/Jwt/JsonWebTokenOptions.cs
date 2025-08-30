@@ -5,7 +5,7 @@ namespace Nameless.Web.Identity.Jwt;
 /// <summary>
 ///     JSON Web Token options.
 /// </summary>
-public record JsonWebTokenOptions {
+public sealed class JsonWebTokenOptions {
     /// <summary>
     ///     Gets or sets the secret used to encrypt/validate the token.
     /// </summary>

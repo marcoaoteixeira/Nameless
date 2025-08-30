@@ -12,7 +12,9 @@ public class ValidationException : Exception {
     /// <summary>
     ///     Initializes a new instance of <see cref="ValidationException" />
     /// </summary>
-    /// <param name="result">The validation result.</param>
+    /// <param name="result">
+    ///     The validation result.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="result" /> is <see langword="null"/>.
     /// </exception>
@@ -23,8 +25,12 @@ public class ValidationException : Exception {
     /// <summary>
     ///     Initializes a new instance of <see cref="ValidationException" />
     /// </summary>
-    /// <param name="result">The validation result.</param>
-    /// <param name="message">The exception message.</param>
+    /// <param name="result">
+    ///     The validation result.
+    /// </param>
+    /// <param name="message">
+    ///     The exception message.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="result" /> is <see langword="null"/>.
     /// </exception>
@@ -36,9 +42,15 @@ public class ValidationException : Exception {
     /// <summary>
     ///     Initializes a new instance of <see cref="ValidationException" />
     /// </summary>
-    /// <param name="result">The validation result.</param>
-    /// <param name="message">The exception message.</param>
-    /// <param name="inner">The inner exception.</param>
+    /// <param name="result">
+    ///     The validation result.
+    /// </param>
+    /// <param name="message">
+    ///     The exception message.
+    /// </param>
+    /// <param name="inner">
+    ///     The inner exception.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="result" /> is <see langword="null"/>.
     /// </exception>

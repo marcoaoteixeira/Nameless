@@ -5,7 +5,7 @@ namespace Nameless.Data.Sqlite;
 /// <summary>
 /// Sqlite options.
 /// </summary>
-public sealed record SqliteOptions {
+public sealed class SqliteOptions {
     /// <summary>
     ///     Whether database will be set as "in-memory".
     /// </summary>

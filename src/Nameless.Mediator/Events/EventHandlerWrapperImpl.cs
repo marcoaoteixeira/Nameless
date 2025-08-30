@@ -6,21 +6,22 @@ namespace Nameless.Mediator.Events;
 /// <summary>
 ///     The default implementation of <see cref="EventHandlerWrapper" />.
 /// </summary>
-/// <typeparam name="TEvent">Type of the event.</typeparam>
+/// <typeparam name="TEvent">
+///     Type of the event.
+/// </typeparam>
 public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     where TEvent : IEvent {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="serviceProvider"/> is <see langword="null"/>.
+    ///     if <paramref name="evt"/> or
+    ///     <paramref name="provider"/>is <see langword="null"/>.
     /// </exception>
-    public override Task HandleAsync(IEvent evt,
-                                     IServiceProvider serviceProvider,
-                                     CancellationToken cancellationToken) {
-        Guard.Against.Null(serviceProvider);
+    public override Task HandleAsync(IEvent evt, IServiceProvider provider, CancellationToken cancellationToken) {
+        Guard.Against.Null(evt);
+        Guard.Against.Null(provider);
 
-        var logger = serviceProvider.GetLogger<EventHandlerWrapper>();
-        var handlers = serviceProvider.GetServices<IEventHandler<TEvent>>()
-                                      .ToArray();
+        var logger = provider.GetLogger<EventHandlerWrapper>();
+        var handlers = provider.GetServices<IEventHandler<TEvent>>().ToArray();
 
         if (handlers.Length == 0) {
             logger.MissingEventHandler(evt);

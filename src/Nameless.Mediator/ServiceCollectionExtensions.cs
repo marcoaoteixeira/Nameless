@@ -9,16 +9,23 @@ using Nameless.Mediator.Streams;
 namespace Nameless.Mediator;
 
 /// <summary>
-/// Extension methods for <see cref="IServiceCollection"/> to register mediator services.
+///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
 public static class ServiceCollectionExtensions {
+    // NOTE: Open Generic => Generic Type Definition
+
     /// <summary>
-    /// Registers the mediator services.
+    ///     Registers the mediator services.
     /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <param name="configure">The configuration action.</param>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configure">
+    ///     The configuration action.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IServiceCollection"/> so other actions can be chained.
+    ///     The current <see cref="IServiceCollection"/> so other
+    ///     actions can be chained.
     /// </returns>
     public static IServiceCollection RegisterMediator(this IServiceCollection self, Action<MediatorOptions>? configure = null) {
         // We are not going to register the configuration
@@ -29,64 +36,14 @@ public static class ServiceCollectionExtensions {
 
         innerConfigure(options);
 
-        return self.RegisterEventHandlers(options)
+        self.RegisterEventHandlers(options);
 
-                   .RegisterRequestHandlers(options)
-                   .RegisterRequestPipelineBehaviors(options)
+        self.RegisterRequestHandlers(options)
+            .RegisterRequestPipelineBehaviors(options);
 
-                   .RegisterStreamHandlers(options)
-                   .RegisterStreamPipelineBehaviors(options)
+        self.RegisterStreamHandlers(options)
+            .RegisterStreamPipelineBehaviors(options);
 
-                   .RegisterMainServices();
-    }
-
-    private static IServiceCollection RegisterEventHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseEventHandlers) { return self; }
-
-        var service = typeof(IEventHandler<>);
-        var implementations = options.Assemblies
-                                     .GetImplementations(service)
-                                     .ToArray();
-
-        return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
-    }
-
-    private static IServiceCollection RegisterRequestHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseRequestHandlers) { return self; }
-
-        var services = new[] { typeof(IRequestHandler<>), typeof(IRequestHandler<,>) };
-        var implementations = options.Assemblies
-                                     .GetImplementations(services)
-                                     .ToArray();
-
-        return self.RegisterHandlerImplementations(services[0], implementations, options.Assemblies)
-                   .RegisterHandlerImplementations(services[1], implementations, options.Assemblies);
-    }
-
-    private static IServiceCollection RegisterRequestPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        return options.UseRequestHandlers
-            ? self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<,>), options.RequestPipelineBehaviors)
-            : self;
-    }
-
-    private static IServiceCollection RegisterStreamHandlers(this IServiceCollection self, MediatorOptions options) {
-        if (!options.UseStreamHandlers) { return self; }
-
-        var service = typeof(IStreamHandler<,>);
-        var implementations = options.Assemblies
-                                     .GetImplementations(service)
-                                     .ToArray();
-
-        return self.RegisterHandlerImplementations(service, implementations, options.Assemblies);
-    }
-
-    private static IServiceCollection RegisterStreamPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
-        return options.UseStreamHandlers
-            ? self.RegisterPipelineBehaviors(typeof(IStreamPipelineBehavior<,>), options.StreamPipelineBehaviors)
-            : self;
-    }
-
-    private static IServiceCollection RegisterMainServices(this IServiceCollection self) {
         self.TryAddTransient<IEventHandlerInvoker, EventHandlerInvoker>();
         self.TryAddTransient<IRequestHandlerInvoker, RequestHandlerInvoker>();
         self.TryAddTransient<IStreamHandlerInvoker, StreamHandlerInvoker>();
@@ -95,60 +52,107 @@ public static class ServiceCollectionExtensions {
         return self;
     }
 
-    private static IServiceCollection RegisterHandlerImplementations(this IServiceCollection self, Type service, Type[] implementations, Assembly[] assemblies) {
-        // This will expand the registrations with closed generic types
+    private static void RegisterEventHandlers(this IServiceCollection self, MediatorOptions options) {
+        if (!options.UseEventHandlers) { return; }
+
+        var service = typeof(IEventHandler<>);
+        var implementations = options.Assemblies.GetImplementations(service);
+
+        self.RegisterImplementations(service, implementations, options.Assemblies);
+    }
+
+    private static IServiceCollection RegisterRequestHandlers(this IServiceCollection self, MediatorOptions options) {
+        if (!options.UseRequestHandlers) { return self; }
+
+        var service = typeof(IRequestHandler<,>);
+        var implementations = options.Assemblies.GetImplementations(service).ToArray();
+
+        self.RegisterImplementations(service, implementations, options.Assemblies);
+
+        return self;
+    }
+
+    private static void RegisterRequestPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
+        if (!options.UseRequestHandlers) { return; }
+
+        var service = typeof(IRequestPipelineBehavior<,>);
+        var implementations = options.RequestPipelineBehaviors;
+
+        self.RegisterImplementations(service, implementations, options.Assemblies);
+    }
+
+    private static IServiceCollection RegisterStreamHandlers(this IServiceCollection self, MediatorOptions options) {
+        if (!options.UseStreamHandlers) { return self; }
+
+        var service = typeof(IStreamHandler<,>);
+        var implementations = options.Assemblies.GetImplementations(service);
+
+        self.RegisterImplementations(service, implementations, options.Assemblies);
+
+        return self;
+    }
+
+    private static void RegisterStreamPipelineBehaviors(this IServiceCollection self, MediatorOptions options) {
+        if (!options.UseStreamHandlers) { return; }
+
+        var service = typeof(IStreamPipelineBehavior<,>);
+        var implementations = options.StreamPipelineBehaviors;
+
+        self.RegisterImplementations(service, implementations, options.Assemblies);
+    }
+
+    private static void RegisterImplementations(this IServiceCollection self, Type genericDefinition, IEnumerable<Type> implementations, Assembly[] assemblies) {
+        var descriptors = new List<ServiceDescriptor>();
+
         foreach (var implementation in implementations) {
-            if (!implementation.IsOpenGeneric()) {
-                self.RegisterHandlerImplementationCore(service, implementation);
-                continue;
-            }
+            var items = implementation.IsOpenGeneric()
+                ? CreateServiceDescriptorsForOpenGeneric(genericDefinition, implementation, assemblies)
+                : CreateServiceDescriptorsForConcrete(genericDefinition, implementation);
 
-            // If the implementation is an open generic type,
-            // we need to close it in order to be able to resolve it later.
-            var typesThatCloseGroup = GenericTypeHelper.GetTypesThatClose(implementation, assemblies);
-            foreach (var typesThatClose in typesThatCloseGroup) {
-                var concrete = implementation.MakeGenericType(typesThatClose);
-                self.RegisterHandlerImplementationCore(service, concrete);
-            }
+            descriptors.AddRange(items);
         }
 
-        return self;
-    }
-
-    private static void RegisterHandlerImplementationCore(this IServiceCollection self, Type service, Type implementation) {
-        foreach (var @interface in implementation.GetInterfaces()) {
-            if (!service.IsAssignableFromGenericType(@interface)) {
-                continue;
-            }
-
-            self.TryAddTransient(@interface, implementation);
+        // We might have multiple implementations for the same service type.
+        // So, in order to be able to resolve all similar services at once
+        // we're going to register them using TryAddEnumerable method.
+        foreach (var descriptorGroup in descriptors.GroupBy(descriptor => descriptor.ServiceType)) {
+            self.TryAddEnumerable(descriptorGroup);
         }
     }
 
-    private static IServiceCollection RegisterPipelineBehaviors(this IServiceCollection self, Type service, Type[] implementations) {
-        // Pipelines need a slightly different way to be registered.
-        foreach (var pipelineBehavior in implementations) {
-
-            // if the pipeline is not an open generic, we need to find all
-            // interfaces that closes and register them.
-            if (!pipelineBehavior.IsOpenGeneric()) {
-                var interfaces = pipelineBehavior.GetTypesThatClose(service);
-                foreach (var @interface in interfaces) {
-                    self.TryAddTransient(@interface, pipelineBehavior);
-                }
-
-                continue;
-            }
-
-            // if we reach here, means that the pipeline behavior is an open generic type.
-            var genericDefinitions = pipelineBehavior.GetInterfaces()
-                                                     .Where(service.IsAssignableFromGenericType)
-                                                     .Select(type => type.GetGenericTypeDefinition());
-            foreach (var genericDefinition in genericDefinitions) {
-                self.TryAddTransient(genericDefinition, pipelineBehavior);
-            }
+    private static IEnumerable<ServiceDescriptor> CreateServiceDescriptorsForConcrete(Type genericDefinition, Type implementation) {
+        // If the implementation is an open generic, then skip it.
+        // We only want concrete types here.
+        if (implementation.IsOpenGeneric()) {
+            yield break;
         }
 
-        return self;
+        // We need to find all closed interfaces or abstract classes for
+        // the implementation.
+        var types = implementation.GetTypesThatClose(genericDefinition);
+
+        foreach (var type in types) {
+            yield return ServiceDescriptor.Transient(type, implementation);
+        }
+    }
+
+    private static IEnumerable<ServiceDescriptor> CreateServiceDescriptorsForOpenGeneric(Type genericDefinition, Type implementation, Assembly[] assemblies) {
+        // If the implementation is not an open generic, then skip it.
+        // We only want generic type definitions here.
+        if (!implementation.IsOpenGeneric()) {
+            yield break;
+        }
+
+        // We need to close the generic definition in order to be able
+        // to resolve it later.
+        var argumentsThatCloseGroup = GenericTypeHelper.GetArgumentsThatClose(implementation, assemblies);
+        foreach (var argumentsThatClose in argumentsThatCloseGroup) {
+            var concrete = implementation.MakeGenericType(argumentsThatClose);
+            var descriptors = CreateServiceDescriptorsForConcrete(genericDefinition, concrete);
+
+            foreach (var descriptor in descriptors) {
+                yield return descriptor;
+            }
+        }
     }
 }

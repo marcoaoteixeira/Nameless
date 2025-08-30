@@ -1,24 +1,36 @@
 ﻿namespace Nameless.Mediator.Requests;
 
 /// <summary>
-///     Pipeline behavior to surround the inner handler.
-///     Implementations add additional behavior and await the next delegate.
+///     Defines a pipeline behavior to surround the request handler and
+///     adds additional behavior.
 /// </summary>
-/// <typeparam name="TRequest">Request type</typeparam>
-/// <typeparam name="TResponse">Response type</typeparam>
+/// <typeparam name="TRequest">
+///     Type of the request.
+/// </typeparam>
+/// <typeparam name="TResponse">
+///     Type of the response.
+/// </typeparam>
 public interface IRequestPipelineBehavior<in TRequest, TResponse>
     where TRequest : notnull {
     /// <summary>
-    ///     Pipeline handler. Perform any additional behavior and await the <paramref name="next" /> delegate as necessary
+    ///     Executes the pipeline handler performing any additional
+    ///     behavior, then executes the <paramref name="next" /> delegate,
+    ///     if necessary
     /// </summary>
-    /// <param name="request">Incoming request</param>
-    /// <param name="next">
-    ///     Awaitable delegate for the next action in the pipeline. Eventually this delegate represents the
-    ///     handler.
+    /// <param name="request">
+    ///     Incoming request
     /// </param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Awaitable task returning the <typeparamref name="TResponse" /></returns>
-    Task<TResponse> HandleAsync(TRequest request,
-                                RequestHandlerDelegate<TResponse> next,
-                                CancellationToken cancellationToken);
+    /// <param name="next">
+    ///     Awaitable delegate for the next action in the pipeline.
+    ///     Eventually this delegate represents the handler.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the action
+    ///     asynchronous operation, where <typeparamref name="TResponse"/>
+    ///     is the task result.
+    /// </returns>
+    Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
 }

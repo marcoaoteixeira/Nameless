@@ -3,7 +3,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nameless;
+namespace Nameless.Mediator;
 
 /// <summary>
 ///     Represents a void type, since <see cref="Void" /> is not a valid return type in C#.

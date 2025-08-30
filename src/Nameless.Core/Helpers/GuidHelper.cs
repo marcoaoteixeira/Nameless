@@ -29,16 +29,14 @@ public static class GuidHelper {
         }
 
         // The only place that we allocate memory
-        var status = Base64.EncodeToUtf8(valueBuffer,
-            base64Buffer,
-            out _,
-            out _);
+        var status = Base64.EncodeToUtf8(valueBuffer, base64Buffer, out _, out _);
 
         if (status != OperationStatus.Done) {
             throw new InvalidOperationException($"Couldn't encode {nameof(valueBuffer)}.");
         }
 
         Span<char> chars = stackalloc char[22];
+
         for (var idx = 0; idx < chars.Length; idx++) {
             chars[idx] = base64Buffer[idx] switch {
                 (byte)FORWARD_SLASH => HYPHEN,

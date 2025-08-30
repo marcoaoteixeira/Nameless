@@ -1,40 +1,33 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Mediator.Events;
+using Nameless.Mediator.Events.Fixtures;
+using Nameless.Mediator.Fixtures;
 using Nameless.Mediator.Requests;
+using Nameless.Mediator.Requests.Fixtures;
 using Nameless.Mediator.Streams;
+using Nameless.Mediator.Streams.Fixtures;
 
 namespace Nameless.Mediator;
 
 public class ServiceCollectionExtensionsTests {
     [Fact]
-    public void WhenRegisteringMediatorServices_ThenResolveMainServices() {
-        // arrange
+    public void WhenRegisteringMediatorServices_ThenResolveServices() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterMediator(configure: _ => { });
-        using var provider = services.BuildServiceProvider();
+        services.TryAddSingleton(new PrintServiceMocker().Build());
+        services.RegisterMediator(opts => {
+            opts.Assemblies = [typeof(ServiceCollectionExtensionsTests).Assembly];
 
-        // act
-        var mediator = provider.GetService<IMediator>();
-        var eventHandlerInvoker = provider.GetService<IEventHandlerInvoker>();
-        var requestHandlerInvoker = provider.GetService<IRequestHandlerInvoker>();
-        var streamHandlerInvoker = provider.GetService<IStreamHandlerInvoker>();
+            opts
+                .RegisterRequestPipelineBehavior(typeof(MessageRequestPipelineBehavior))
+                .RegisterRequestPipelineBehavior(typeof(YetAnotherMessageRequestPipelineBehavior))
+                .RegisterRequestPipelineBehavior(typeof(OpenGenericRequestPipelineBehavior<,>));
 
-        // assert
-        Assert.Multiple(() => {
-            Assert.NotNull(mediator);
-            Assert.NotNull(eventHandlerInvoker);
-            Assert.NotNull(requestHandlerInvoker);
-            Assert.NotNull(streamHandlerInvoker);
+            opts
+                .RegisterStreamPipelineBehavior(typeof(MessageStreamPipelineBehavior))
+                .RegisterStreamPipelineBehavior(typeof(YetAnotherMessageStreamPipelineBehavior));
         });
-    }
-
-    [Fact]
-    public void WhenRegisteringMediatorServices_WhenConfigureActionIsNull_ThenResolveMainServices() {
-        // arrange
-        // arrange
-        var services = new ServiceCollection();
-        services.RegisterMediator(configure: null);
         using var provider = services.BuildServiceProvider();
 
         // act
@@ -43,12 +36,37 @@ public class ServiceCollectionExtensionsTests {
         var requestHandlerInvoker = provider.GetService<IRequestHandlerInvoker>();
         var streamHandlerInvoker = provider.GetService<IStreamHandlerInvoker>();
 
+        var messageEventHandlers = provider.GetServices<IEventHandler<MessageEvent>>().ToArray();
+        var multipleMessageEventHandler = provider.GetService<IEventHandler<MessageOneEvent>>();
+
+        var messageRequestHandlers = provider.GetServices<IRequestHandler<MessageRequest, MessageResponse>>().ToArray();
+        var messageRequestPipelineBehaviors = provider.GetServices<IRequestPipelineBehavior<MessageRequest, MessageResponse>>().ToArray();
+        var openGenericRequestPipelineBehavior = provider.GetService<IRequestPipelineBehavior<MessageEvent, MessageEvent>>();
+
+        var messageStreamHandlers = provider.GetServices<IStreamHandler<MessageStream, string>>().ToArray();
+        var messageStreamPipelineBehaviors = provider.GetServices<IStreamPipelineBehavior<MessageStream, string>>().ToArray();
+
         // assert
         Assert.Multiple(() => {
             Assert.NotNull(mediator);
             Assert.NotNull(eventHandlerInvoker);
             Assert.NotNull(requestHandlerInvoker);
             Assert.NotNull(streamHandlerInvoker);
+
+            Assert.NotEmpty(messageEventHandlers);
+            Assert.Equal(2, messageEventHandlers.Length);
+            Assert.NotNull(multipleMessageEventHandler);
+
+            Assert.NotEmpty(messageRequestHandlers);
+            Assert.Single(messageRequestHandlers);
+            Assert.NotEmpty(messageRequestPipelineBehaviors);
+            Assert.Equal(3, messageRequestPipelineBehaviors.Length);
+            Assert.NotNull(openGenericRequestPipelineBehavior);
+
+            Assert.NotEmpty(messageStreamHandlers);
+            Assert.Single(messageStreamHandlers);
+            Assert.NotEmpty(messageStreamPipelineBehaviors);
+            Assert.Equal(2, messageStreamPipelineBehaviors.Length);
         });
     }
 }
