@@ -22,10 +22,7 @@ public interface IDirectory {
     /// <summary>
     ///     Creates the directory if it does not exist.
     /// </summary>
-    /// <returns>
-    ///     The full path of the created directory.
-    /// </returns>
-    string Create();
+    void Create();
 
     /// <summary>
     ///     Retrieves files in the directory matching the

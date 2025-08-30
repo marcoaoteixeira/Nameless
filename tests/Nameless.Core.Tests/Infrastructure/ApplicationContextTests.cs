@@ -10,7 +10,7 @@ public class ApplicationContextTests {
     public void WhenBuildingApplicationContext_ThenReturnCorrectValuesForProperties(Environment.SpecialFolder specialFolder) {
         // arrange
         const string EnvironmentName = "Development";
-        const string ApplicationName = "Test App";
+        const string ApplicationName = "Test_App";
         var appVersion = new Version(1, 2, 3);
         var baseDirectoryPath = AppDomain.CurrentDomain.BaseDirectory;
         var dataDirectoryPath = Path.Combine(Environment.GetFolderPath(specialFolder), ApplicationName);

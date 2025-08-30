@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using Nameless.Helpers;
 using SysPath = System.IO.Path;
 
 namespace Nameless.IO.FileSystem;
@@ -21,7 +22,7 @@ public class FileWrapper : IFile {
     public string Name => _file.Name;
 
     /// <inheritdoc />
-    public string Path => _file.FullName;
+    public string Path => _file.GetFullPath();
 
     /// <inheritdoc />
     public bool Exists => _file.Exists;
@@ -43,9 +44,9 @@ public class FileWrapper : IFile {
         _file = Guard.Against.Null(file);
         _options = Guard.Against.Null(options);
 
-        _options.Value.EnsureRootDirectory(_file.FullName);
+        _options.Value.EnsureRootDirectory(Path);
 
-        _relativePath = SysPath.GetRelativePath(_options.Value.Root, file.FullName);
+        _relativePath = SysPath.GetRelativePath(Options.Root, Path);
     }
 
     /// <inheritdoc />
@@ -63,6 +64,8 @@ public class FileWrapper : IFile {
         Guard.Against.NullOrWhiteSpace(destinationRelativePath);
 
         var destinationFullPath = SysPath.GetFullPath(destinationRelativePath, Options.Root);
+
+        destinationFullPath = PathHelper.Normalize(destinationFullPath);
 
         Options.EnsureRootDirectory(destinationFullPath);
 

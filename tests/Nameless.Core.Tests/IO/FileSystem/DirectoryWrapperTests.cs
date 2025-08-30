@@ -70,17 +70,22 @@ public class DirectoryWrapperTests {
     }
 
     [Fact]
-    public void WhenCreatingDirectory_ThenReturnsNewDirectoryFullPath() {
+    public void WhenCreatingDirectory_ThenExistsMustReturnTrue() {
         // arrange
         var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
         // act
-        var actual = sut.Create();
+        var before = sut.Exists;
+        sut.Create();
+        var after = sut.Exists;
 
         // assert
-        Assert.Equal(directoryPath, actual);
+        Assert.Multiple(() => {
+            Assert.False(before);
+            Assert.True(after);
+        });
     }
 
     [Fact]

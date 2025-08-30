@@ -21,7 +21,7 @@ public class DirectoryWrapper : IDirectory {
     public string Name => _directory.Name;
 
     /// <inheritdoc />
-    public string Path => _directory.FullName;
+    public string Path => _directory.GetFullPath();
 
     /// <inheritdoc />
     public bool Exists => _directory.Exists;
@@ -40,14 +40,14 @@ public class DirectoryWrapper : IDirectory {
         _directory = Guard.Against.Null(directory);
         _options = Guard.Against.Null(options);
 
-        _options.Value.EnsureRootDirectory(_directory.FullName);
+        _options.Value.EnsureRootDirectory(Path);
 
-        _relativePath = SysPath.GetRelativePath(Options.Root, directory.FullName);
+        _relativePath = SysPath.GetRelativePath(Options.Root, Path);
     }
 
     /// <inheritdoc />
-    public string Create() {
-        return Directory.CreateDirectory(_directory.FullName).FullName;
+    public void Create() {
+        _directory.Create();
     }
 
     /// <inheritdoc />
