@@ -1,4 +1,5 @@
-﻿using Nameless.Testing.Tools.Attributes;
+﻿using Nameless.Helpers;
+using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Testing.Tools;
 
@@ -8,17 +9,17 @@ public class ResourceHelperTests {
     public void WhenCreatingCopy_ThenReturnsFilePathToTemporaryFile() {
         // arrange
         var assemblyDirectoryPath = typeof(ResourceHelperTests).Assembly.GetDirectoryPath();
-        const string TemporaryRelativeFilePath = @"Temporary\Samples\Sample.txt";
-        const string RelativeFilePath = @"\Samples\Sample.txt";
-        var expected = Path.Combine(assemblyDirectoryPath, TemporaryRelativeFilePath);
+        var temporaryRelativeFilePath = PathHelper.Normalize(@"Temporary\Samples\Sample.txt");
+        var relativeFilePath = PathHelper.Normalize(@"\Samples\Sample.txt");
+        var expected = Path.Combine(assemblyDirectoryPath, temporaryRelativeFilePath);
 
         // act
-        var actual = ResourceHelper.CreateCopy(RelativeFilePath);
+        var actual = ResourceHelper.CreateCopy(relativeFilePath);
 
 
         // assert
         Assert.Multiple(() => {
-            Assert.EndsWith(TemporaryRelativeFilePath, actual);
+            Assert.EndsWith(temporaryRelativeFilePath, actual);
             Assert.Equal(expected, actual);
             Assert.True(File.Exists(expected));
         });
@@ -29,17 +30,17 @@ public class ResourceHelperTests {
         // arrange
         const string NewFileName = "NewSample.txt";
         var assemblyDirectoryPath = typeof(ResourceHelperTests).Assembly.GetDirectoryPath();
-        const string TemporaryRelativeFilePath = $@"Temporary\Samples\{NewFileName}";
-        const string RelativeFilePath = @"\Samples\Sample.txt";
-        var expected = Path.Combine(assemblyDirectoryPath, TemporaryRelativeFilePath);
+        var temporaryRelativeFilePath = PathHelper.Normalize($@"Temporary\Samples\{NewFileName}");
+        var relativeFilePath = PathHelper.Normalize(@"\Samples\Sample.txt");
+        var expected = Path.Combine(assemblyDirectoryPath, temporaryRelativeFilePath);
 
         // act
-        var actual = ResourceHelper.CreateCopy(RelativeFilePath, "NewSample");
+        var actual = ResourceHelper.CreateCopy(relativeFilePath, "NewSample");
 
 
         // assert
         Assert.Multiple(() => {
-            Assert.EndsWith(TemporaryRelativeFilePath, actual);
+            Assert.EndsWith(temporaryRelativeFilePath, actual);
             Assert.Equal(expected, actual);
             Assert.True(File.Exists(expected));
         });

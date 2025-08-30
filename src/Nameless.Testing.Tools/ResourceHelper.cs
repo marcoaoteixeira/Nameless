@@ -74,11 +74,7 @@ public static class ResourceHelper {
     private static string GetResourceFilePath(Assembly assembly, string relativeFilePath) {
         relativeFilePath = relativeFilePath.RemoveRoot();
 
-        var filePath = Path.Combine(
-            assembly.GetDirectoryPath(),
-            "Resources",
-            relativeFilePath
-        );
+        var filePath = Path.Combine(assembly.GetDirectoryPath(), "Resources", relativeFilePath);
 
         filePath = PathHelper.Normalize(filePath);
 
@@ -90,11 +86,7 @@ public static class ResourceHelper {
     }
 
     private static string GetTemporaryDirectoryPath(Assembly assembly, string relativeDirectoryPath) {
-        var temporaryDirectoryPath = Path.Combine(
-            assembly.GetDirectoryPath(),
-            "Temporary",
-            relativeDirectoryPath.RemoveRoot()
-        );
+        var temporaryDirectoryPath = Path.Combine(assembly.GetDirectoryPath(), "Temporary", relativeDirectoryPath.RemoveRoot());
 
         temporaryDirectoryPath = PathHelper.Normalize(temporaryDirectoryPath);
 
