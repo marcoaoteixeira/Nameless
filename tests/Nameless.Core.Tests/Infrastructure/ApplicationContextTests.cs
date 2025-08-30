@@ -8,6 +8,11 @@ public class ApplicationContextTests {
     [InlineData(Environment.SpecialFolder.CommonApplicationData)]
     [InlineData(Environment.SpecialFolder.LocalApplicationData)]
     public void WhenBuildingApplicationContext_ThenReturnCorrectValuesForProperties(Environment.SpecialFolder specialFolder) {
+        // Due to restrictions on Linux systems, we'll not test the CommonApplicationData folder.
+        if (OperatingSystem.IsLinux() && specialFolder == Environment.SpecialFolder.CommonApplicationData) {
+            return;
+        }
+
         // arrange
         const string EnvironmentName = "Development";
         const string ApplicationName = "Test_App";
