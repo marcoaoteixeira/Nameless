@@ -5,7 +5,7 @@ namespace Nameless.Web.Endpoints;
 /// <summary>
 ///     Represents the OpenAPI document options.
 /// </summary>
-public record OpenApiDocumentOptions {
+public sealed record OpenApiDocumentOptions {
     /// <summary>
     ///     Gets or init the OpenAPI document name.
     /// </summary>

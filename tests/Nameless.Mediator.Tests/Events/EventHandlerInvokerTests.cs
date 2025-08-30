@@ -1,45 +1,49 @@
-﻿using Moq;
-using Nameless.Mediator.Events.Fixtures;
+﻿using Nameless.Mediator.Events.Fixtures;
+using Nameless.Mediator.Fixtures;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Mediator.Events;
 
+[UnitTest]
 public class EventHandlerInvokerTests {
     [Fact]
-    public void WhenPublishingEvent_WhenEventHandlersAreRegistered_ThenPublishEvent() {
+    public async Task WhenPublishingEvent_ThenExecutesEventHandler() {
         // arrange
-        var loggerMocker = new LoggerMocker<object>();
-        var evt = new SimpleEvent { Message = "This is a test." };
-        var eventHandler = new SimpleEventHandler(loggerMocker.Build());
-        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<SimpleEvent>>>([eventHandler])
+        var printServiceMock = new PrintServiceMocker();
+        var evt = new MessageEvent();
+        var evtHandler = new MessageEventHandler(printServiceMock.Build());
+        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([evtHandler])
                                                   .Build();
         var sut = new EventHandlerInvoker(provider);
 
         // act
-        sut.PublishAsync(evt, CancellationToken.None);
+        await sut.PublishAsync(evt, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains(evt.Message), Times.Once());
+        printServiceMock.VerifyPrintCall();
     }
 
     [Fact]
-    public void WhenPublishingEvent_WhenThereAreMultipleEventHandlersRegistered_ThenPublishEventUsingAllHandlers() {
+    public async Task WhenPublishingEvent_WhenThereAreMultipleEventHandlerForEvent_ThenExecutesAllEventHandlers() {
         // arrange
-        var loggerMocker = new LoggerMocker<object>();
-        var logger = loggerMocker.Build();
-        var evt = new SimpleEvent { Message = "This is a test." };
-        IEventHandler<SimpleEvent>[] eventHandlers = [
-            new SimpleEventHandler(logger),
-            new YetAnotherSimpleEventHandler(logger)
+        var printServiceMock = new PrintServiceMocker();
+        var evt = new MessageEvent();
+        var printService = printServiceMock.Build();
+        var messageEventHandler = new MessageEventHandler(printService);
+        var yetAnotherMessageEventHandler = new YetAnotherMessageEventHandler(printService);
+        IEventHandler<MessageEvent>[] eventHandlers = [
+            messageEventHandler,
+            yetAnotherMessageEventHandler
         ];
-        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<SimpleEvent>>>(eventHandlers)
+        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>(eventHandlers)
                                                   .Build();
         var sut = new EventHandlerInvoker(provider);
 
         // act
-        sut.PublishAsync(evt, CancellationToken.None);
+        await sut.PublishAsync(evt, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains(evt.Message), Times.Exactly(2));
+        printServiceMock.VerifyPrintCall(times: 2);
     }
 }

@@ -3,7 +3,7 @@
 /// <summary>
 ///     Lucene Options
 /// </summary>
-public sealed record SearchOptions {
+public sealed class SearchOptions {
     private readonly HashSet<IAnalyzerSelector> _analyzerSelectors = [];
 
     /// <summary>

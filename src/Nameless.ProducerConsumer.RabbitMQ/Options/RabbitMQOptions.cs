@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the settings for RabbitMQ.
 /// </summary>
-public sealed record RabbitMQOptions {
+public sealed class RabbitMQOptions {
     public TimeSpan ConsumerStartupTimeout { get; set; } = TimeSpan.FromSeconds(1);
 
     /// <summary>

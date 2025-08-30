@@ -7,7 +7,7 @@ namespace Nameless.NHibernate.Options;
 /// <summary>
 /// NHibernate options
 /// </summary>
-public sealed record NHibernateOptions {
+public sealed class NHibernateOptions {
     private readonly HashSet<Type> _entities = [];
     private readonly HashSet<Type> _mappings = [];
 

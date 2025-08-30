@@ -15,7 +15,7 @@ public sealed class ValidationService : IValidationService {
     public ValidationService(IEnumerable<IValidator> validators) {
         // we might need to iterate over it multiple times,
         // so we convert it to an array
-        _validators = validators.ToArray();
+        _validators = [.. validators];
     }
 
     /// <inheritdoc />
@@ -23,6 +23,7 @@ public sealed class ValidationService : IValidationService {
         return ValidateAsync(value, dataContext: [], cancellationToken);
     }
 
+    /// <inheritdoc />
     public async Task<ValidationResult> ValidateAsync(object value, DataContext dataContext, CancellationToken cancellationToken) {
         var validationContext = CreateValidationContext(value, dataContext);
         var tasks = _validators.Where(validator => validator.CanValidateInstancesOfType(value.GetType()))

@@ -6,7 +6,7 @@ namespace Nameless.Mailing.MailKit;
 /// <summary>
 ///     The configuration for mailing client.
 /// </summary>
-public sealed record MailingOptions {
+public sealed class MailingOptions {
     /// <summary>
     ///     Gets or sets the SMTP server address. Default value is "localhost".
     /// </summary>

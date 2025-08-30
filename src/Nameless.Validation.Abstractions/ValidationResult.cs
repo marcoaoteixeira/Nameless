@@ -19,21 +19,27 @@ public sealed record ValidationResult {
     }
 
     /// <summary>
-    /// Creates a new <see cref="ValidationResult"/> with success status.
+    ///     Creates a new <see cref="ValidationResult"/> with success status.
     /// </summary>
-    /// <returns>The validation result instance.</returns>
+    /// <returns>
+    ///     The validation result instance.
+    /// </returns>
     public static ValidationResult Success() {
         return new ValidationResult([]);
     }
 
     /// <summary>
-    /// Creates a new <see cref="ValidationResult"/> with failure status.
+    ///     Creates a new <see cref="ValidationResult"/> with failure status.
     /// </summary>
-    /// <param name="errors">The errors.</param>
-    /// <returns>The validation result instance.</returns>
+    /// <param name="errors">
+    ///     The errors.
+    /// </param>
+    /// <returns>
+    ///     The validation result instance.
+    /// </returns>
     public static ValidationResult Failure(IEnumerable<ValidationError> errors) {
-        var array = errors.ToArray();
+        var array = Guard.Against.NullOrEmpty(errors).ToArray();
 
-        return new ValidationResult(Guard.Against.NullOrEmpty(array));
+        return new ValidationResult(array);
     }
 }

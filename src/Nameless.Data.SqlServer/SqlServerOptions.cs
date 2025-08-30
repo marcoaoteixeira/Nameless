@@ -5,7 +5,7 @@ namespace Nameless.Data.SqlServer;
 /// <summary>
 /// MS SQL Server options.
 /// </summary>
-public sealed record SqlServerOptions {
+public sealed class SqlServerOptions {
     /// <summary>
     /// Gets or sets the server address.
     /// </summary>

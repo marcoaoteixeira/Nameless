@@ -1,4 +1,6 @@
-﻿namespace Nameless;
+﻿using Nameless.Mediator;
+
+namespace Nameless;
 
 public class NothingTests {
     [Fact]

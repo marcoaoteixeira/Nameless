@@ -1,17 +1,20 @@
-﻿using Nameless.Mediator.Requests.Fixtures;
+﻿using Nameless.Mediator.Fixtures;
+using Nameless.Mediator.Requests.Fixtures;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Mediator.Requests;
+
+[UnitTest]
 public class RequestHandlerInvokerTests {
     [Fact]
-    public async Task WhenExecutingRequest_ThenRelatedRequestHandlerShouldBeExecuted() {
+    public async Task WhenExecutingRequest_ThenRequestHandlerAssociatedWithRequestShouldBeExecuted() {
         // arrange
-        var loggerMocker = new LoggerMocker<object>();
-
-        var request = new SimpleRequest { Message = nameof(RequestHandlerInvokerTests) };
-        var requestHandler = new SimpleRequestHandler(loggerMocker.Build());
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequest>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequest, Nothing>>>([])
+        var printServiceMock = new PrintServiceMocker();
+        var requestHandler = new MessageRequestHandler(printServiceMock.Build());
+        var request = new MessageRequest(Message: nameof(RequestHandlerInvokerTests));
+        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>([])
                                                          .Build();
 
         var sut = new RequestHandlerInvoker(serviceProvider);
@@ -20,29 +23,6 @@ public class RequestHandlerInvokerTests {
         await sut.ExecuteAsync(request, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains(request.Message));
-    }
-
-    [Fact]
-    public async Task WhenExecutingRequestWithResponse_ThenRelatedRequestHandlerShouldBeExecuted() {
-        // arrange
-        var loggerMocker = new LoggerMocker<object>();
-
-        var request = new SimpleRequestResponse { Message = nameof(RequestHandlerInvokerTests) };
-        var requestHandler = new SimpleRequestResponseHandler(loggerMocker.Build());
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequestResponse, string>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequestResponse, string>>>([])
-                                                         .Build();
-
-        var sut = new RequestHandlerInvoker(serviceProvider);
-
-        // act
-        var actual = await sut.ExecuteAsync(request, CancellationToken.None);
-
-        // assert
-        Assert.Multiple(() => {
-            Assert.Equal(request.Message, actual);
-            loggerMocker.VerifyDebugCall(message => message.Contains(request.Message));
-        });
+        printServiceMock.VerifyPrintCall(message => message.Contains(request.Message));
     }
 }

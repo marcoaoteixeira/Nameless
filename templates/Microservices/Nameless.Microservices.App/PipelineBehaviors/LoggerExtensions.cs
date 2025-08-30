@@ -11,11 +11,11 @@ internal static class LoggerExtensions {
             formatString: "Validation for request '{RequestType}' with response '{ResponseType}' failed. Validation result: {@ValidationResult}");
 
     internal static void ValidateRequestFailure<TRequest, TResponse>(this ILogger<ValidateRequestPipelineBehavior<TRequest, TResponse>> logger, ValidationResult result)
-        where TRequest : IRequestBase {
+        where TRequest : IRequest<TResponse> {
         ValidateRequestFailureDelegate(logger, typeof(TRequest).GetPrettyName(), typeof(TResponse).GetPrettyName(), result, null /* exception */);
     }
 
     internal static class Events {
-        internal static readonly EventId ValidateRequestFailureEvent = new EventId(20002, nameof(ValidateRequestFailure));
+        internal static readonly EventId ValidateRequestFailureEvent = new(20002, nameof(ValidateRequestFailure));
     }
 }

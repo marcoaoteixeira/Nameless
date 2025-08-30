@@ -1,46 +1,47 @@
-﻿using Moq;
-using Nameless.Mediator.Events.Fixtures;
+﻿using Nameless.Mediator.Events.Fixtures;
+using Nameless.Mediator.Fixtures;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Mediator.Events;
+
+[UnitTest]
 public class EventHandlerWrapperImplTests {
     [Fact]
-    public async Task WhenHandle_WhenThereAreEventHandlersRegistered_ThenExecuteEventHandlers() {
+    public async Task WhenHandlingEvent_WhenThereAreEventHandlers_ThenExecuteEventHandlers() {
         // arrange
-        var loggerMocker = new LoggerMocker<object>();
-
-        var evt = new SimpleEvent { Message = nameof(EventHandlerWrapperImplTests) };
-        var eventHandler = new SimpleEventHandler(loggerMocker.Build());
-
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<SimpleEvent>>>([eventHandler])
+        var printServiceMocker = new PrintServiceMocker();
+        var eventHandler = new MessageEventHandler(printServiceMocker.Build());
+        var evt = new MessageEvent { Message = nameof(EventHandlerWrapperImplTests) };
+        var serviceProvider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([eventHandler])
                                                          .Build();
-        var sut = new EventHandlerWrapperImpl<SimpleEvent>();
+        var sut = new EventHandlerWrapperImpl<MessageEvent>();
 
         // act
         await sut.HandleAsync(evt, serviceProvider, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains(evt.Message), Times.Once());
+        printServiceMocker.VerifyPrintCall(message => message.Contains(evt.Message));
     }
 
     [Fact]
-    public async Task WhenHandle_WhenThereAreNoEventHandlersRegistered_ThenLogMissingEventHandlers() {
+    public async Task WhenHandle_WhenThereAreNoEventHandlers_ThenLogMissingEventHandlers() {
         // arrange
         var loggerMocker = new LoggerMocker<EventHandlerWrapper>().WithAnyLogLevel();
         var loggerFactory = new LoggerFactoryMocker().WithCreateLogger(loggerMocker.Build())
                                                      .Build();
 
-        var evt = new SimpleEvent { Message = nameof(EventHandlerWrapperImplTests) };
+        var evt = new MessageEvent { Message = nameof(EventHandlerWrapperImplTests) };
         var serviceProvider = new ServiceProviderMocker().WithGetService(loggerFactory)
-                                                         .WithGetService<IEnumerable<IEventHandler<SimpleEvent>>>([])
+                                                         .WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([])
                                                          .Build();
 
-        var sut = new EventHandlerWrapperImpl<SimpleEvent>();
+        var sut = new EventHandlerWrapperImpl<MessageEvent>();
 
         // act
         await sut.HandleAsync(evt, serviceProvider, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains("Event handler not found"), Times.Once());
+        loggerMocker.VerifyDebugCall(message => message.Contains("Event handler not found"));
     }
 }

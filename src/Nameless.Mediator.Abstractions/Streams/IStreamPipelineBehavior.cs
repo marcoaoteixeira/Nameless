@@ -1,30 +1,33 @@
 ﻿namespace Nameless.Mediator.Streams;
 
 /// <summary>
-///     Represents an async enumerable continuation for the next task to execute in the pipeline
+///     Defines a pipeline behavior to surround the stream handler and
+///     adds additional behavior.
 /// </summary>
-/// <typeparam name="TResponse">Response type</typeparam>
-/// <returns>Async Enumerable returning a <typeparamref name="TResponse" /></returns>
-public delegate IAsyncEnumerable<TResponse> StreamHandlerDelegate<out TResponse>();
-
-/// <summary>
-///     Stream Pipeline behavior to surround the inner handler.
-///     Implementations add additional behavior and await the next delegate.
-/// </summary>
-/// <typeparam name="TRequest">Request type</typeparam>
-/// <typeparam name="TResponse">Response type</typeparam>
+/// <typeparam name="TRequest">
+///     Type of the request.
+/// </typeparam>
+/// <typeparam name="TResponse">
+///     Type of the response.
+/// </typeparam>
 public interface IStreamPipelineBehavior<in TRequest, TResponse> where TRequest : notnull {
     /// <summary>
-    ///     Stream Pipeline handler. Perform any additional behavior and iterate the <paramref name="next" /> delegate as
-    ///     necessary
+    ///     Executes the pipeline handler performing any additional
+    ///     behavior, then executes the <paramref name="next" /> delegate,
+    ///     if necessary
     /// </summary>
-    /// <param name="request">Incoming request</param>
-    /// <param name="next">
-    ///     Awaitable delegate for the next action in the pipeline. Eventually this delegate represents the
-    ///     handler.
+    /// <param name="request">
+    ///     Incoming request.
     /// </param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Awaitable task returning the <typeparamref name="TResponse" /></returns>
-    IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next,
-                                            CancellationToken cancellationToken);
+    /// <param name="next">
+    ///     Awaitable delegate for the next action in the pipeline.
+    ///     Eventually this delegate represents the handler.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     Cancellation token
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IAsyncEnumerable{T}" /> representing the stream of data.
+    /// </returns>
+    IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
 }

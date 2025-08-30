@@ -6,7 +6,7 @@ namespace Nameless.Mediator.Streams;
 ///     The default implementation of <see cref="IStreamHandlerInvoker" />.
 /// </summary>
 public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
-    private readonly ConcurrentDictionary<Type, StreamHandlerWrapperBase> _cache = new();
+    private readonly ConcurrentDictionary<Type, StreamHandlerWrapper> _cache = new();
 
     private readonly IServiceProvider _provider;
 
@@ -15,7 +15,7 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     /// </summary>
     /// <param name="provider">The service provider.</param>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
+    ///     if <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public StreamHandlerInvoker(IServiceProvider provider) {
         _provider = Guard.Against.Null(provider);
@@ -23,21 +23,20 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="request"/> is <see langword="null"/>.
+    ///     if <paramref name="request"/> is <see langword="null"/>.
     /// </exception>
-    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
-                                                              CancellationToken cancellationToken) {
+    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request, CancellationToken cancellationToken) {
         Guard.Against.Null(request);
 
         var handler = _cache.GetOrAdd(request.GetType(), CreateStreamHandlerWrapper);
 
         return ((StreamHandlerWrapper<TResponse>)handler).HandleAsync(request, _provider, cancellationToken);
 
-        static StreamHandlerWrapperBase CreateStreamHandlerWrapper(Type requestType) {
+        static StreamHandlerWrapper CreateStreamHandlerWrapper(Type requestType) {
             var wrapperType = typeof(StreamHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType)
-                       ?? throw new InvalidOperationException($"Couldn't create stream handler wrapper for request: {requestType}");
-            return (StreamHandlerWrapperBase)wrapper;
+                       ?? throw new InvalidOperationException($"Couldn't create stream handler wrapper for stream '{requestType.GetPrettyName()}'.");
+            return (StreamHandlerWrapper)wrapper;
         }
     }
 }

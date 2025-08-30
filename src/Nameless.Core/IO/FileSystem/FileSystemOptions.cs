@@ -7,7 +7,7 @@ namespace Nameless.IO.FileSystem;
 /// </summary>
 public sealed class FileSystemOptions {
     private string? _root;
-
+  
     /// <summary>
     ///     Gets or sets the root directory for file system operations.
     /// </summary>

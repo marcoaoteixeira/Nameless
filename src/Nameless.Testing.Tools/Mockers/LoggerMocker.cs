@@ -40,23 +40,23 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
         return this;
     }
 
-    public Mocker<ILogger<T>> VerifyDebugCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyDebugCall(Func<string, bool>? assertMessage = null, int times = 1) {
         return VerifyCallFor(assertMessage, LogLevel.Debug, times);
     }
 
-    public Mocker<ILogger<T>> VerifyErrorCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyErrorCall(Func<string, bool>? assertMessage = null, int times = 1) {
         return VerifyCallFor(assertMessage, LogLevel.Error, times);
     }
 
-    public Mocker<ILogger<T>> VerifyInformationCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyInformationCall(Func<string, bool>? assertMessage = null, int times = 1) {
         return VerifyCallFor(assertMessage, LogLevel.Information, times);
     }
 
-    public Mocker<ILogger<T>> VerifyWarningCall(Func<string, bool>? assertMessage = null, Times times = default) {
+    public Mocker<ILogger<T>> VerifyWarningCall(Func<string, bool>? assertMessage = null, int times = 1) {
         return VerifyCallFor(assertMessage, LogLevel.Warning, times);
     }
 
-    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, Times times = default) {
+    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, int times = 1) {
         Func<object, Type, bool> state = (value, type)
             => (assertMessage ?? (_ => true)).Invoke(value.ToString() ?? string.Empty) &&
                type.Name.Contains("LogValues", StringComparison.OrdinalIgnoreCase);
@@ -66,7 +66,7 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
             It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((value, type) => state(value, type)),
             It.IsAny<Exception?>(),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()), times);
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.AtLeast(times));
 
         return this;
     }
