@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Nameless.Helpers;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
 
@@ -243,7 +244,8 @@ public class FileWrapperTests {
 
         // act
         // Attempt to copy outside the root
-        var actual = sut.Copy($@"..\..\..\{NewFileName}", overwrite: true);
+        var destinationRelativePath = PathHelper.Normalize($@"..\..\..\{NewFileName}");
+        var actual = sut.Copy(destinationRelativePath, overwrite: true);
 
         // assert
         Assert.Multiple(() => {

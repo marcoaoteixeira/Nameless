@@ -1,4 +1,6 @@
-﻿namespace Nameless.IO.FileSystem;
+﻿using Nameless.Helpers;
+
+namespace Nameless.IO.FileSystem;
 
 /// <summary>
 ///     <see cref="FileSystemOptions"/> extension methods.
@@ -22,6 +24,8 @@ public static class FileSystemOptionsExtensions {
     /// </exception>
     public static void EnsureRootDirectory(this FileSystemOptions self, string path) {
         if (self.AllowOperationOutsideRoot) { return; }
+
+        path = PathHelper.Normalize(path);
 
         if (!path.StartsWith(self.Root, StringComparison.Ordinal)) {
             throw new UnauthorizedAccessException("The specified path is outside the root directory.");
