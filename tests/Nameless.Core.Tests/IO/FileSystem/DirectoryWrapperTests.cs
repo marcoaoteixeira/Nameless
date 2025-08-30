@@ -72,7 +72,7 @@ public class DirectoryWrapperTests {
     [Fact]
     public void WhenCreatingDirectory_ThenExistsMustReturnTrue() {
         // arrange
-        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
+        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), $"{Guid.NewGuid():N}");
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
