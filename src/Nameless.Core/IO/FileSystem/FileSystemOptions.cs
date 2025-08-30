@@ -3,7 +3,7 @@
 /// <summary>
 ///     The options for configuring the <see cref="IFileSystem"/>.
 /// </summary>
-public class FileSystemOptions {
+public sealed class FileSystemOptions {
     /// <summary>
     ///     Gets or sets the root directory for file system operations.
     /// </summary>

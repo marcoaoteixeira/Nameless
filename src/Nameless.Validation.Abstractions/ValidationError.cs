@@ -5,29 +5,35 @@
 /// </summary>
 public sealed record ValidationError {
     /// <summary>
-    ///     Gets the validation error message.
+    ///     Gets the error message.
     /// </summary>
-    public string Message { get; }
+    public string Error { get; }
 
     /// <summary>
-    ///     Gets the validation error code.
+    ///     Gets the error code.
     /// </summary>
-    public string ErrorCode { get; }
+    public string Code { get; }
 
     /// <summary>
-    /// Gets the member responsible for the validation error.
+    ///     Gets the member responsible for the validation error.
     /// </summary>
     public string MemberName { get; }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="ValidationError"/>.
+    ///     Initializes a new instance of <see cref="ValidationError"/> class.
     /// </summary>
-    /// <param name="message">The message.</param>
-    /// <param name="errorCode">The error code.</param>
-    /// <param name="memberName">The member name.</param>
-    public ValidationError(string message, string? errorCode = null, string? memberName = null) {
-        Message = Guard.Against.NullOrWhiteSpace(message);
-        ErrorCode = errorCode ?? string.Empty;
+    /// <param name="error">
+    ///     The error message.
+    /// </param>
+    /// <param name="code">
+    ///     The error code.
+    /// </param>
+    /// <param name="memberName">
+    ///     The member name.
+    /// </param>
+    public ValidationError(string error, string? code = null, string? memberName = null) {
+        Error = Guard.Against.NullOrWhiteSpace(error);
+        Code = code ?? string.Empty;
         MemberName = memberName ?? string.Empty;
     }
 }

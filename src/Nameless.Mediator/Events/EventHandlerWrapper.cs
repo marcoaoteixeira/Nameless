@@ -8,12 +8,11 @@ public abstract class EventHandlerWrapper {
     ///     Handles the event asynchronously.
     /// </summary>
     /// <param name="evt">The event.</param>
-    /// <param name="serviceProvider">The service provider.</param>
+    /// <param name="provider">The service provider.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the handler execution.
+    ///     A <see cref="Task" /> representing the action
+    ///     asynchronous operation.
     /// </returns>
-    public abstract Task HandleAsync(IEvent evt,
-                                     IServiceProvider serviceProvider,
-                                     CancellationToken cancellationToken);
+    public abstract Task HandleAsync(IEvent evt, IServiceProvider provider, CancellationToken cancellationToken);
 }

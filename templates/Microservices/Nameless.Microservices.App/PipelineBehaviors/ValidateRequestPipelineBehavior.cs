@@ -9,7 +9,7 @@ namespace Nameless.Microservices.App.PipelineBehaviors;
 /// <typeparam name="TRequest">Type of the request.</typeparam>
 /// <typeparam name="TResponse">Type of the response.</typeparam>
 public class ValidateRequestPipelineBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequestBase {
+    where TRequest : IRequest<TResponse> {
     private readonly IValidationService _validationService;
     private readonly ILogger<ValidateRequestPipelineBehavior<TRequest, TResponse>> _logger;
 

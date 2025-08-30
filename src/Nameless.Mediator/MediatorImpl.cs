@@ -32,12 +32,6 @@ public sealed class MediatorImpl : IMediator {
     }
 
     /// <inheritdoc />
-    public Task ExecuteAsync<TRequest>(TRequest request, CancellationToken cancellationToken)
-        where TRequest : IRequest {
-        return _requestHandlerInvoker.ExecuteAsync(request, cancellationToken);
-    }
-
-    /// <inheritdoc />
     public Task<TResponse> ExecuteAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken) {
         return _requestHandlerInvoker.ExecuteAsync(request, cancellationToken);
     }

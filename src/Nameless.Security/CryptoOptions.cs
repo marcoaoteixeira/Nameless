@@ -3,7 +3,7 @@
 /// <summary>
 /// Options for configuring security features.
 /// </summary>
-public sealed record CryptoOptions {
+public sealed class CryptoOptions {
     public const int MINIMUM_ALLOWED_SALT_SIZE = 4;
     public const int MAXIMUM_ALLOWED_SALT_SIZE = 255;
     public const int MINIMUM_PASSWORD_ITERATIONS = 1;

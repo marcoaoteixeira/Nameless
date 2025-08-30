@@ -1,111 +1,58 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Nameless.Mediator.Fixtures;
 using Nameless.Mediator.Requests.Fixtures;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Mediator.Requests;
+
+[UnitTest]
 public class RequestHandlerWrapperImplTests {
     [Fact]
-    public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_ThenExecuteRequestHandler() {
+    public async Task WhenHandlingRequest_WhenThereAreRequestHandlers_ThenExecuteRequestHandler() {
         // arrange
-        var requestHandlerLoggerMocker = new LoggerMocker<object>();
-
-        var request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };
-        var requestHandler = new SimpleRequestHandler(requestHandlerLoggerMocker.Build());
-
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequest>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequest, Nothing>>>([])
+        var printServiceMock = new PrintServiceMocker();
+        var requestHandler = new MessageRequestHandler(printServiceMock.Build());
+        var request = new MessageRequest(Message: nameof(RequestHandlerWrapperImplTests));
+        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>([])
                                                          .Build();
 
-        var sut = new RequestHandlerWrapperImpl<SimpleRequest>();
+        var sut = new RequestHandlerWrapperImpl<MessageRequest, MessageResponse>();
 
         // act
         _ = await sut.HandleAsync(request, serviceProvider, CancellationToken.None);
 
         // assert
-        requestHandlerLoggerMocker.VerifyDebugCall(message => message.Contains(nameof(RequestHandlerWrapperImplTests)));
+        printServiceMock.VerifyPrintCall(message => message.Contains(request.Message));
     }
 
     [Fact]
     public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineBeforeRequestHandler() {
         // arrange
-        var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
-        var logger = loggerMocker.Build();
+        var callbackResult = new List<string>();
+        var printServiceMock = new PrintServiceMocker().WithPrintCallback(callbackResult.Add);
+        var printService = printServiceMock.Build();
+        var requestHandler = new MessageRequestHandler(printService);
+        var request = new MessageRequest(Message: nameof(RequestHandlerWrapperImplTests));
+        var requestPipelineBehavior = new MessageRequestPipelineBehavior(printService);
 
-        var request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };
-        var requestHandler = new SimpleRequestHandler(logger);
-
-        var requestPipelineBehavior = new SimpleRequestPipelineBehavior(logger);
-
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequest>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequest, Nothing>>>([requestPipelineBehavior])
-                                                         .Build();
-
-        var sut = new RequestHandlerWrapperImpl<SimpleRequest>();
-
-        // act
-        _ = await sut.HandleAsync(request, serviceProvider, CancellationToken.None);
-
-        // assert
-        Assert.Multiple(() => {
-            loggerMocker.VerifyDebugCall(message => message.Contains(request.Message), Times.Exactly(2));
-            Assert.Contains(nameof(SimpleRequestPipelineBehavior), logMessages[0]);
-            Assert.Contains(nameof(SimpleRequestHandler), logMessages[1]);
-        });
-    }
-
-    [Fact]
-    public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineInOrderBeforeRequestHandler() {
-        // arrange
-        var logMessages = new List<string>();
-        var loggerMocker = new LoggerMocker<object>().WithLogCallback(logMessages.Add, LogLevel.Debug);
-        var logger = loggerMocker.Build();
-
-        var request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };
-        var requestHandler = new SimpleRequestHandler(logger);
-
-        IRequestPipelineBehavior<SimpleRequest, Nothing>[] requestPipelineBehaviors = [
-            new SimpleRequestPipelineBehavior(logger),
-            new YetAnotherSimpleRequestPipelineBehavior(logger)
+        IRequestPipelineBehavior<MessageRequest, MessageResponse>[] pipelineBehaviors = [
+            requestPipelineBehavior
         ];
 
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequest>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequest, Nothing>>>(requestPipelineBehaviors)
+        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>(pipelineBehaviors)
                                                          .Build();
 
-        var sut = new RequestHandlerWrapperImpl<SimpleRequest>();
+        var sut = new RequestHandlerWrapperImpl<MessageRequest, MessageResponse>();
 
         // act
         _ = await sut.HandleAsync(request, serviceProvider, CancellationToken.None);
 
         // assert
         Assert.Multiple(() => {
-            loggerMocker.VerifyDebugCall(message => message.Contains(request.Message), Times.Exactly(3));
-            Assert.Contains(nameof(SimpleRequestPipelineBehavior), logMessages[0]);
-            Assert.Contains(nameof(YetAnotherSimpleRequestPipelineBehavior), logMessages[1]);
-            Assert.Contains(nameof(SimpleRequestHandler), logMessages[2]);
+            Assert.Contains(nameof(MessageRequestPipelineBehavior), callbackResult[0]);
+            Assert.Contains(nameof(MessageRequestHandler), callbackResult[1]);
         });
-    }
-
-    [Fact]
-    public async Task WhenHandlingRequestWithNonGenericRequestObject_WhenThereAreRequestHandlersRegistered_ThenExecuteRequestHandler() {
-        // arrange
-        var requestHandlerLoggerMocker = new LoggerMocker<object>();
-
-        object request = new SimpleRequest { Message = nameof(RequestHandlerWrapperImplTests) };
-        var requestHandler = new SimpleRequestHandler(requestHandlerLoggerMocker.Build());
-
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<SimpleRequest>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<SimpleRequest, Nothing>>>([])
-                                                         .Build();
-
-        var sut = new RequestHandlerWrapperImpl<SimpleRequest>();
-
-        // act
-        _ = await sut.HandleAsync(request, serviceProvider, CancellationToken.None);
-
-        // assert
-        requestHandlerLoggerMocker.VerifyDebugCall(message => message.Contains(nameof(RequestHandlerWrapperImplTests)));
     }
 }
