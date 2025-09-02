@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the settings for a RabbitMQ queue.
 /// </summary>
-public sealed record QueueSettings {
+public sealed class QueueSettings {
     /// <summary>
     ///     Gets or sets the name of the queue.
     /// </summary>

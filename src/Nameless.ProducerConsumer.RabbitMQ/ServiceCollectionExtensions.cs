@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -16,16 +17,46 @@ public static class ServiceCollectionExtensions {
     private const string CHANNEL_FACTORY_KEY = $"{nameof(IChannelFactory)} :: 910a347c-da4a-43c5-b795-ecd5cc2f3d96";
 
     /// <summary>
-    /// Register the Producer/Consumer services for RabbitMQ.
+    ///     Register the Producer/Consumer services for RabbitMQ.
     /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
-    /// <param name="configure">The configuration action.</param>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configure">
+    ///     The configuration action.
+    /// </param>
     /// <returns>
-    /// The current <see cref="IServiceCollection"/> so other actions ca be chained.
+    ///     The current <see cref="IServiceCollection"/> so other actions
+    ///     ca be chained.
     /// </returns>
     public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self, Action<RabbitMQOptions>? configure = null) {
         self.Configure(configure ?? (_ => { }));
 
+        return self.InnerRegisterProducerConsumer();
+    }
+
+    /// <summary>
+    ///     Register the Producer/Consumer services for RabbitMQ.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configuration">
+    ///     The configuration.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection"/> so other actions
+    ///     ca be chained.
+    /// </returns>
+    public static IServiceCollection RegisterProducerConsumer(this IServiceCollection self, IConfiguration configuration) {
+        var section = configuration.GetSection(nameof(RabbitMQOptions));
+
+        self.Configure<RabbitMQOptions>(section);
+
+        return self.InnerRegisterProducerConsumer();
+    }
+
+    private static IServiceCollection InnerRegisterProducerConsumer(this IServiceCollection self) {
         self.TryAddKeyedSingleton<IConnectionManager, ConnectionManager>(CONNECTION_MANAGER_KEY);
         self.TryAddKeyedSingleton<IChannelConfigurator, ChannelConfigurator>(CHANNEL_CONFIGURATOR_KEY);
         self.TryAddKeyedSingleton(CHANNEL_FACTORY_KEY, ResolveChannelFactory);

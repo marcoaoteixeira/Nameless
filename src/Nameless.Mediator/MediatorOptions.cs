@@ -8,8 +8,18 @@ namespace Nameless.Mediator;
 ///     Mediator options for configuring the mediator services.
 /// </summary>
 public sealed class MediatorOptions {
-    private readonly List<Type> _requestPipelineBehaviorCollection = [];
-    private readonly List<Type> _streamPipelineBehaviorCollection = [];
+    private readonly List<Type> _requestPipelineBehaviors = [];
+    private readonly List<Type> _streamPipelineBehaviors = [];
+
+    /// <summary>
+    ///     Gets the registered request pipeline behaviors.
+    /// </summary>
+    internal IEnumerable<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
+
+    /// <summary>
+    ///     Gets the registered stream pipeline behaviors.
+    /// </summary>
+    internal IEnumerable<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
 
     /// <summary>
     ///     Gets or sets the assemblies to scan for handlers.
@@ -17,37 +27,9 @@ public sealed class MediatorOptions {
     public Assembly[] Assemblies { get; set; } = [];
 
     /// <summary>
-    ///     Whether to use event handlers in the mediator.
-    ///     Default is <see langword="true"/>.
-    /// </summary>
-    public bool UseEventHandlers { get; set; } = true;
-
-    /// <summary>
-    ///     Whether to use request handlers in the mediator.
-    ///     Default is <see langword="true"/>.
-    /// </summary>
-    public bool UseRequestHandlers { get; set; } = true;
-
-    /// <summary>
-    ///     Whether to use stream handlers in the mediator.
-    ///     Default is <see langword="true"/>.
-    /// </summary>
-    public bool UseStreamHandlers { get; set; } = true;
-
-    /// <summary>
-    ///     Gets the registered request pipeline behaviors.
-    /// </summary>
-    public Type[] RequestPipelineBehaviors => [.. _requestPipelineBehaviorCollection];
-
-    /// <summary>
-    ///     Gets the registered stream pipeline behaviors.
-    /// </summary>
-    public Type[] StreamPipelineBehaviors => [.. _streamPipelineBehaviorCollection];
-
-    /// <summary>
     ///     Registers a request pipeline behavior type.
     /// </summary>
-    /// <param name="pipelineBehavior">
+    /// <param name="behavior">
     ///     The pipeline behavior type.
     /// </param>
     /// <returns>
@@ -55,7 +37,7 @@ public sealed class MediatorOptions {
     ///     actions can be chained.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     if <paramref name="pipelineBehavior"/> is not assignable from
+    ///     if <paramref name="behavior"/> is not assignable from
     ///     <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/>.
     /// </exception>
     /// <remarks>
@@ -63,15 +45,15 @@ public sealed class MediatorOptions {
     ///     service collection, that's because the pipeline behaviors need to
     ///     be registered in order so the execution of the pipeline is correct.
     /// </remarks>
-    public MediatorOptions RegisterRequestPipelineBehavior(Type pipelineBehavior) {
+    public MediatorOptions RegisterRequestPipelineBehavior(Type behavior) {
         var service = typeof(IRequestPipelineBehavior<,>);
 
-        if (!service.IsAssignableFromGenericType(pipelineBehavior)) {
-            throw new InvalidOperationException($"Type '{pipelineBehavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
+        if (!service.IsAssignableFromGenericType(behavior)) {
+            throw new InvalidOperationException($"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
         }
 
-        if (!_requestPipelineBehaviorCollection.Contains(pipelineBehavior)) {
-            _requestPipelineBehaviorCollection.Add(pipelineBehavior);
+        if (!_requestPipelineBehaviors.Contains(behavior)) {
+            _requestPipelineBehaviors.Add(behavior);
         }
 
         return this;
@@ -80,7 +62,7 @@ public sealed class MediatorOptions {
     /// <summary>
     ///     Registers a stream pipeline behavior type.
     /// </summary>
-    /// <param name="pipelineBehavior">
+    /// <param name="behavior">
     ///     The pipeline behavior type.
     /// </param>
     /// <returns>
@@ -88,7 +70,7 @@ public sealed class MediatorOptions {
     ///     actions can be chained.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     if <paramref name="pipelineBehavior"/> is not assignable from
+    ///     if <paramref name="behavior"/> is not assignable from
     ///     <see cref="IStreamPipelineBehavior{TRequest,TResponse}"/>.
     /// </exception>
     /// <remarks>
@@ -97,15 +79,15 @@ public sealed class MediatorOptions {
     ///     need to be registered in order so the execution of the pipeline
     ///     is correct.
     /// </remarks>
-    public MediatorOptions RegisterStreamPipelineBehavior(Type pipelineBehavior) {
+    public MediatorOptions RegisterStreamPipelineBehavior(Type behavior) {
         var service = typeof(IStreamPipelineBehavior<,>);
 
-        if (!service.IsAssignableFromGenericType(pipelineBehavior)) {
-            throw new InvalidOperationException($"Type '{pipelineBehavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
+        if (!service.IsAssignableFromGenericType(behavior)) {
+            throw new InvalidOperationException($"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
         }
 
-        if (!_streamPipelineBehaviorCollection.Contains(pipelineBehavior)) {
-            _streamPipelineBehaviorCollection.Add(pipelineBehavior);
+        if (!_streamPipelineBehaviors.Contains(behavior)) {
+            _streamPipelineBehaviors.Add(behavior);
         }
 
         return this;

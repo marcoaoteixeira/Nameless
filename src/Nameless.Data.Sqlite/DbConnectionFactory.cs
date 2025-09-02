@@ -26,9 +26,21 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
 
     /// <inheritdoc />
     public IDbConnection CreateDbConnection() {
-        var connectionString = _options.Value.GetConnectionString();
+        var connectionString = GetConnectionString();
         var result = new SQLiteConnection(connectionString);
 
         return result;
+    }
+
+    private string GetConnectionString() {
+        var options = _options.Value;
+        var connStr = string.Empty;
+
+        connStr += $"Data Source={(options.UseInMemory ? ":memory:" : options.DatabaseFilePath)};";
+        connStr += options is { UseCredentials: true, UseInMemory: false }
+            ? $"Password={options.Password};"
+            : string.Empty;
+
+        return connStr;
     }
 }

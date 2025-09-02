@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the settings for a RabbitMQ binding.
 /// </summary>
-public sealed record BindingSettings {
+public sealed class BindingSettings {
     /// <summary>
     ///     Gets or sets the routing key for the binding.
     /// </summary>

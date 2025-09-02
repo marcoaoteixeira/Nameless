@@ -4,11 +4,19 @@ using System.Diagnostics.CodeAnalysis;
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
-public sealed record ServerSettings {
+public sealed class ServerSettings {
     private string DebuggerDisplayValue
         => UseCredentials
             ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"
             : $"{Protocol}://{Hostname}:{Port}{VirtualHost}";
+
+    /// <summary>
+    ///     Whether to use credentials for the RabbitMQ connection.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    internal bool UseCredentials
+        => !string.IsNullOrWhiteSpace(Username) &&
+           !string.IsNullOrWhiteSpace(Password);
 
     /// <summary>
     ///     Gets or sets the protocol to use. Default value is <c>amqp</c>.
@@ -49,12 +57,4 @@ public sealed record ServerSettings {
     ///     Gets or sets the certificate settings for the RabbitMQ connection.
     /// </summary>
     public CertificateSettings Certificate { get; set; } = new();
-
-    /// <summary>
-    ///     Whether to use credentials for the RabbitMQ connection.
-    /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
-    public bool UseCredentials
-        => !string.IsNullOrWhiteSpace(Username) &&
-           !string.IsNullOrWhiteSpace(Password);
 }

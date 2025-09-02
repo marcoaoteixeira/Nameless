@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -17,14 +18,44 @@ public static class ServiceCollectionExtensions {
     /// <summary>
     ///     Registers localization services that uses JSON files.
     /// </summary>
-    /// <param name="self">The current <see cref="IServiceCollection" />.</param>
-    /// <param name="configure">The configuration action.</param>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection" />.
+    /// </param>
+    /// <param name="configure">
+    ///     The configuration action.
+    /// </param>
     /// <returns>
-    ///     The current <see cref="IServiceCollection" /> so other actions can be chained.
+    ///     The current <see cref="IServiceCollection" /> so other actions
+    ///     can be chained.
     /// </returns>
     public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<JsonLocalizationOptions>? configure = null) {
         self.Configure(configure ?? (_ => { }));
 
+        return self.InnerRegisterJsonLocalization();
+    }
+
+    /// <summary>
+    ///     Registers localization services that uses JSON files.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection" />.
+    /// </param>
+    /// <param name="configuration">
+    ///     The configuration.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, IConfiguration configuration) {
+        var section = configuration.GetSection(nameof(JsonLocalizationOptions));
+
+        self.Configure<JsonLocalizationOptions>(section);
+
+        return self.InnerRegisterJsonLocalization();
+    }
+
+    private static IServiceCollection InnerRegisterJsonLocalization(this IServiceCollection self) {
         self.TryAddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY);
         self.TryAddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY);
         self.TryAddSingleton(ResolveStringLocalizerFactory);

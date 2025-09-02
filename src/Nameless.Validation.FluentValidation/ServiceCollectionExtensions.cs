@@ -62,12 +62,12 @@ public static class ServiceCollectionExtensions {
             self.TryAddTransient(implementation, implementation);
 
             // Register for the generic IValidator<T> interface
-            foreach (var interfaceImpl in implementation.GetTypesThatClose(typeof(IValidator<>))) {
+            foreach (var interfaceImpl in implementation.GetInterfacesThatCloses(typeof(IValidator<>))) {
                 self.TryAddTransient(interfaceImpl, implementation);
             }
 
             // Register for the generic AbstractValidator<T> interface
-            foreach (var abstractImpl in implementation.GetTypesThatClose(typeof(AbstractValidator<>))) {
+            foreach (var abstractImpl in implementation.GetInterfacesThatCloses(typeof(AbstractValidator<>))) {
                 self.TryAddTransient(abstractImpl, implementation);
             }
         }

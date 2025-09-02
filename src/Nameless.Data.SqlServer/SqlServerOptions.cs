@@ -7,6 +7,15 @@ namespace Nameless.Data.SqlServer;
 /// </summary>
 public sealed class SqlServerOptions {
     /// <summary>
+    /// Whether it will use credentials to access the database.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    internal bool UseCredentials
+        => !string.IsNullOrWhiteSpace(Username) &&
+           !string.IsNullOrWhiteSpace(Password) &&
+           !UseIntegratedSecurity;
+
+    /// <summary>
     /// Gets or sets the server address.
     /// </summary>
     public string Server { get; set; } = "(localdb)\\MSSQLLocalDB";
@@ -35,39 +44,4 @@ public sealed class SqlServerOptions {
     /// Whether it should use integrated security.
     /// </summary>
     public bool UseIntegratedSecurity { get; set; }
-
-    /// <summary>
-    /// Whether it will use credentials to access the database.
-    /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
-    public bool UseCredentials
-        => !string.IsNullOrWhiteSpace(Username) &&
-           !string.IsNullOrWhiteSpace(Password) &&
-           !UseIntegratedSecurity;
-
-    /// <summary>
-    /// Retrieves the connection string given the parameters of the option.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="string"/> represeting the connection string.
-    /// </returns>
-    public string GetConnectionString() {
-        var connStr = string.Empty;
-
-        connStr += $"Server={Server};";
-
-        connStr += UseAttachedDb
-            ? $"AttachDbFilename={Database};"
-            : $"Database={Database};";
-
-        connStr += UseCredentials
-            ? $"User Id={Username};Password={Password};"
-            : string.Empty;
-
-        connStr += UseIntegratedSecurity
-            ? "Integrated Security=true;"
-            : string.Empty;
-
-        return connStr;
-    }
 }

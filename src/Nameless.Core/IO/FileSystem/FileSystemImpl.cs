@@ -22,6 +22,8 @@ public class FileSystemImpl : IFileSystem {
     /// </param>
     public FileSystemImpl(IOptions<FileSystemOptions> options) {
         _options = Guard.Against.Null(options);
+
+        Initialize();
     }
 
     /// <inheritdoc />
@@ -47,5 +49,15 @@ public class FileSystemImpl : IFileSystem {
         Options.EnsureRootDirectory(path);
 
         return path;
+    }
+
+    private void Initialize() {
+        if (string.IsNullOrWhiteSpace(Options.Root)) {
+            throw new InvalidOperationException("Root directory not provided.");
+        }
+
+        if (!Directory.Exists(Options.Root)) {
+            throw new DirectoryNotFoundException("Root directory was not found.");
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using NHibernate.Cfg;
-
-namespace Nameless.NHibernate.Infrastructure;
+﻿namespace Nameless.NHibernate.Infrastructure;
 
 /// <summary>
 /// Defines methods to create a configuration factory for NHibernate.
@@ -13,5 +11,5 @@ public interface IConfigurationFactory {
     /// A <see cref="Configuration"/> object representing the newly created
     /// configuration.
     /// </returns>
-    Configuration CreateConfiguration();
+    NHConfiguration CreateConfiguration();
 }

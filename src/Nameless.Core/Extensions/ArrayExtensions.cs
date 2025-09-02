@@ -15,12 +15,13 @@ public static class ArrayExtensions {
     public static bool TryGetElementAt<T>(this T?[] self, int index, out T? output) {
         output = default;
 
-        if (IsInRange(self, index)) {
-            output = self[index];
-            return true;
+        if (!IsInRange(self, index)) {
+            return false;
         }
 
-        return false;
+        output = self[index];
+        return true;
+
     }
 
     /// <summary>
