@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the settings for a RabbitMQ exchange.
 /// </summary>
-public sealed record ExchangeSettings {
+public sealed class ExchangeSettings {
     /// <summary>
     ///     Gets or sets the name of the exchange.
     /// </summary>

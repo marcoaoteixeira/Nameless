@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the settings for RabbitMQ prefetch.
 /// </summary>
-public sealed record PrefetchSettings {
+public sealed class PrefetchSettings {
     /// <summary>
     ///     Gets or sets the prefetch size.
     /// </summary>

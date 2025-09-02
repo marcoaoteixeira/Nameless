@@ -199,48 +199,59 @@ public static class TypeExtensions {
     }
 
     /// <summary>
-    /// Retrieves all interfaces that are "closed" (concrete)
-    /// versions of a generic template type.
+    ///     Retrieves all interfaces/classes that "closes" the
+    ///     current <see cref="Type"/> given the generic definition.
     /// </summary>
-    /// <param name="self">The current type.</param>
-    /// <param name="template">The template type.</param>
+    /// <param name="self">
+    ///     The current <see cref="Type"/>.
+    /// </param>
+    /// <param name="genericDefinition">
+    ///     The generic definition type.
+    /// </param>
     /// <returns>
-    /// A collection of <see cref="Type"/> that closes the type.
+    ///     A collection of <see cref="Type"/> that closes
+    ///     the current <see cref="Type"/>.
     /// </returns>
-    public static IEnumerable<Type> GetTypesThatClose(this Type self, Type template) {
-        return GetTypesThatCloseCore(self, template);
+    public static IEnumerable<Type> GetInterfacesThatCloses(this Type self, Type genericDefinition) {
+        return genericDefinition.IsGenericTypeDefinition
+            ? GetInterfacesThatClosesCore(self, genericDefinition)
+            : [];
     }
 
-    private static IEnumerable<Type> GetTypesThatCloseCore(Type? service, Type template) {
-        if (service is null || service.IsAbstract || service.IsInterface) { yield break; }
+    private static IEnumerable<Type> GetInterfacesThatClosesCore(Type? current, Type genericDefinition) {
+        if (current is null || current.IsAbstract || current.IsInterface) { yield break; }
 
-        if (template.IsInterface) {
-            var interfaces = service.GetInterfaces()
+        if (genericDefinition.IsInterface) {
+            var interfaces = current.GetInterfaces()
                                     .Where(type => type.IsGenericType &&
-                                                   type.GetGenericTypeDefinition() == template);
+                                                   type.GetGenericTypeDefinition() == genericDefinition);
             foreach (var @interface in interfaces) {
                 yield return @interface;
             }
         }
-        else if (service.BaseType is { IsGenericType: true } && service.BaseType.GetGenericTypeDefinition() == template) {
-            yield return service.BaseType;
+        else if (current.BaseType is { IsGenericType: true } && current.BaseType.GetGenericTypeDefinition() == genericDefinition) {
+            yield return current.BaseType;
         }
 
-        if (service.BaseType == typeof(object)) {
+        if (current.BaseType == typeof(object)) {
             yield break;
         }
 
-        foreach (var @interface in GetTypesThatCloseCore(service.BaseType, template)) {
+        foreach (var @interface in GetInterfacesThatClosesCore(current.BaseType, genericDefinition)) {
             yield return @interface;
         }
     }
 
     /// <summary>
-    /// Checks if a type is an open generic.
+    ///     Whether the type is an open generic, meaning that it is
+    ///     a generic type definition or it has generic parameters.
     /// </summary>
-    /// <param name="self">The current type.</param>
+    /// <param name="self">
+    ///     The current <see cref="Type"/>.
+    /// </param>
     /// <returns>
-    /// <see langword="true"/> if the type is an open generic; otherwise <see langword="false"/>.
+    ///     <see langword="true"/> if the type is an open generic;
+    ///     otherwise, <see langword="false"/>.
     /// </returns>
     public static bool IsOpenGeneric(this Type self) {
         return self.IsGenericTypeDefinition || self.ContainsGenericParameters;

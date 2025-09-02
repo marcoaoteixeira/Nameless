@@ -18,11 +18,7 @@ public static class ServiceProviderExtensions {
     ///     is available, otherwise; <see cref="NullLogger{T}" />.
     /// </returns>
     public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IServiceProvider self) {
-        var loggerFactory = self.GetService<ILoggerFactory>();
-
-        return loggerFactory is not null
-            ? loggerFactory.CreateLogger<TCategoryName>()
-            : NullLogger<TCategoryName>.Instance;
+        return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName> ?? NullLogger<TCategoryName>.Instance;
     }
 
     /// <summary>
@@ -36,19 +32,7 @@ public static class ServiceProviderExtensions {
     ///     is available, otherwise; <see cref="NullLogger" />.
     /// </returns>
     public static ILogger GetLogger(this IServiceProvider self, Type categoryType) {
-        var loggerFactory = self.GetService<ILoggerFactory>();
-
-        return loggerFactory is not null
-            ? loggerFactory.CreateLogger(categoryType)
-            : NullLogger.Instance;
-    }
-
-    public static ILogger GetLogger(this IServiceProvider self, string categoryName) {
-        var loggerFactory = self.GetService<ILoggerFactory>();
-
-        return loggerFactory is not null
-            ? loggerFactory.CreateLogger(categoryName)
-            : NullLogger.Instance;
+        return self.GetLoggerCore(categoryType) ?? NullLogger.Instance;
     }
 
     /// <summary>
@@ -103,5 +87,13 @@ public static class ServiceProviderExtensions {
         var factoryOptions = optionsFactory.Invoke();
 
         return Options.Create(factoryOptions);
+    }
+
+    private static ILogger? GetLoggerCore(this IServiceProvider self, Type type) {
+        Guard.Against.Null(type);
+
+        var loggerFactory = self.GetService<ILoggerFactory>();
+
+        return loggerFactory?.CreateLogger(type.FullName ?? type.Name);
     }
 }

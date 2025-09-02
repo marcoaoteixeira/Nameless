@@ -1,0 +1,1 @@
+﻿global using NHConfiguration = global::NHibernate.Cfg.Configuration;

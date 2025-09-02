@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Nameless.NHibernate.Options;
-using NHibernate.Cfg;
 using NHibernate.Mapping.ByCode;
 
 namespace Nameless.NHibernate.Infrastructure;
@@ -20,10 +19,10 @@ public sealed class ConfigurationFactory : IConfigurationFactory {
     }
 
     /// <inheritdoc />
-    public Configuration CreateConfiguration() {
+    public NHConfiguration CreateConfiguration() {
         var options = _options.Value;
-        var configuration = new Configuration().SetProperties(options.ToDictionary());
-        var modelInspector = new ModelInspector(options.Entities.ToArray());
+        var configuration = new NHConfiguration().SetProperties(options.ToDictionary());
+        var modelInspector = new ModelInspector(options.Entities);
         var modelMapper = new ModelMapper(modelInspector);
 
         modelMapper.AddMappings(options.Mappings);

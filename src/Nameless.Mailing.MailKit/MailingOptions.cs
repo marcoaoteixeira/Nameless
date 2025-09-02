@@ -8,6 +8,14 @@ namespace Nameless.Mailing.MailKit;
 /// </summary>
 public sealed class MailingOptions {
     /// <summary>
+    ///     Whether to use credentials for SMTP authentication.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    internal bool UseCredentials
+        => !string.IsNullOrWhiteSpace(Username) &&
+           !string.IsNullOrWhiteSpace(Password);
+
+    /// <summary>
     ///     Gets or sets the SMTP server address. Default value is "localhost".
     /// </summary>
     public string Host { get; set; } = "localhost";
@@ -31,12 +39,4 @@ public sealed class MailingOptions {
     ///     Gets or sets secure socket option to use if connection is SSL.
     /// </summary>
     public SecureSocketOptions SecureSocket { get; set; }
-
-    /// <summary>
-    ///     Whether to use credentials for SMTP authentication.
-    /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
-    public bool UseCredentials
-        => !string.IsNullOrWhiteSpace(Username) &&
-           !string.IsNullOrWhiteSpace(Password);
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
@@ -15,12 +16,44 @@ public static class ServiceCollectionExtensions {
     /// <summary>
     ///     Registers MongoDb configuration.
     /// </summary>
-    /// <param name="self">The service collection instance.</param>
-    /// <param name="configure">An action to configure MongoDb options.</param>
-    /// <returns>The current <see cref="IServiceCollection" /> instance so other actions can be chained.</returns>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configure">
+    ///     An action to configure MongoDb options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection" /> so other actions
+    ///     can be chained.
+    /// </returns>
     public static IServiceCollection RegisterMongo(this IServiceCollection self, Action<MongoOptions>? configure = null) {
         self.Configure(configure ?? (_ => { }));
 
+        return self.InnerRegisterMongo();
+    }
+
+    /// <summary>
+    ///     Registers MongoDb configuration.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="IServiceCollection"/>.
+    /// </param>
+    /// <param name="configuration">
+    ///     The configuration.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IServiceCollection" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public static IServiceCollection RegisterMongo(this IServiceCollection self, IConfiguration configuration) {
+        var section = configuration.GetSection(nameof(MongoOptions));
+
+        self.Configure<MongoOptions>(section);
+
+        return self.InnerRegisterMongo();
+    }
+
+    private static IServiceCollection InnerRegisterMongo(this IServiceCollection self) {
         // From the documentation: Because each MongoClient represents a pool
         // of connections to the database, most applications require only a
         // single instance of MongoClient

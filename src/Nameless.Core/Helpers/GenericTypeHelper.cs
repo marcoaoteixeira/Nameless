@@ -8,21 +8,38 @@ namespace Nameless.Helpers;
 /// </summary>
 public static class GenericTypeHelper {
     /// <summary>
-    /// Finds all types that can close a given open generic type.
+    ///     Finds all types that can close a given generic definition type.
     /// </summary>
-    /// <param name="genericDefinition">The open generic type.</param>
-    /// <param name="assemblies">A list of assemblies to search in. If empty, uses default assemblies.</param>
+    /// <param name="genericDefinition">
+    ///     The generic definition type.
+    /// </param>
+    /// <param name="assemblies">
+    ///     A list of assemblies to search in. If empty, uses default
+    ///     assemblies.
+    /// </param>
     /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of <see cref="Type"/> arrays, where each array contains types that can close the open generic type.
+    ///     An <see cref="IEnumerable{T}"/> of <see cref="Type"/> arrays,
+    ///     where each array contains types that can close the generic
+    ///     definition type.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     if
+    ///         <paramref name="genericDefinition"/> or
+    ///         <paramref name="assemblies"/>
+    ///     is <see langword="null"/>.
+    /// </exception>
     /// <exception cref="ArgumentException">
-    ///     Thrown when <paramref name="genericDefinition"/> is not a generic type definition.
+    ///     if <paramref name="genericDefinition"/> is not a generic type
+    ///     definition.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    ///     Thrown when a generic parameter has no discoverable constraints, making it
-    ///     impossible to find closing types.
+    ///     if the <paramref name="genericDefinition"/> has no discoverable
+    ///     constraints, making it impossible to find closing types.
     /// </exception>
-    public static IEnumerable<Type[]> GetArgumentsThatClose(Type genericDefinition, params Assembly[] assemblies) {
+    public static IEnumerable<Type[]> GetArgumentsThatCloses(Type genericDefinition, params Assembly[] assemblies) {
+        Guard.Against.Null(genericDefinition);
+        Guard.Against.Null(assemblies);
+
         if (!genericDefinition.IsGenericTypeDefinition) {
             throw new ArgumentException("The type must be a generic type definition.", nameof(genericDefinition));
         }

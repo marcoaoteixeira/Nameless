@@ -26,9 +26,30 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
 
     /// <inheritdoc />
     public IDbConnection CreateDbConnection() {
-        var connectionString = _options.Value.GetConnectionString();
+        var connectionString = GetConnectionString();
         var result = new SqlConnection(connectionString);
 
         return result;
+    }
+
+    private string GetConnectionString() {
+        var options = _options.Value;
+        var connStr = string.Empty;
+
+        connStr += $"Server={options.Server};";
+
+        connStr += options.UseAttachedDb
+            ? $"AttachDbFilename={options.Database};"
+            : $"Database={options.Database};";
+
+        connStr += options.UseCredentials
+            ? $"User Id={options.Username};Password={options.Password};"
+            : string.Empty;
+
+        connStr += options.UseIntegratedSecurity
+            ? "Integrated Security=true;"
+            : string.Empty;
+
+        return connStr;
     }
 }

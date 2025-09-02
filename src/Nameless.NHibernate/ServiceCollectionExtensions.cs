@@ -6,7 +6,6 @@ using Nameless.NHibernate.Infrastructure;
 using Nameless.NHibernate.Internals;
 using Nameless.NHibernate.Options;
 using NHibernate;
-using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 
 namespace Nameless.NHibernate;
@@ -64,7 +63,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static void StartUp(ISessionFactory sessionFactory,
-                                Configuration configuration,
+                                NHConfiguration configuration,
                                 IApplicationContext applicationContext,
                                 SchemaExportSettings schemaExportSettings,
                                 ILogger<SchemaExport> logger) {

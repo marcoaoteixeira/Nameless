@@ -7,6 +7,16 @@ namespace Nameless.MongoDB;
 /// </summary>
 public sealed record CredentialsSettings {
     /// <summary>
+    /// Whether to use credentials for MongoDB connection.
+    /// </summary>
+
+    [MemberNotNullWhen(returnValue: true, nameof(Database), nameof(Mechanism), nameof(Username), nameof(Password))]
+    internal bool UseCredentials => !string.IsNullOrWhiteSpace(Database) &&
+                                    !string.IsNullOrWhiteSpace(Mechanism) &&
+                                    !string.IsNullOrWhiteSpace(Username) &&
+                                    !string.IsNullOrWhiteSpace(Password);
+
+    /// <summary>
     /// Gets or sets the name of the database to authenticate against.
     /// Default is "admin".
     /// </summary>
@@ -27,14 +37,4 @@ public sealed record CredentialsSettings {
     /// Gets or sets the password for authentication.
     /// </summary>
     public string? Password { get; set; }
-
-    /// <summary>
-    /// Whether to use credentials for MongoDB connection.
-    /// </summary>
-
-    [MemberNotNullWhen(returnValue: true, nameof(Database), nameof(Mechanism), nameof(Username), nameof(Password))]
-    internal bool UseCredentials => !string.IsNullOrWhiteSpace(Database) &&
-                                    !string.IsNullOrWhiteSpace(Mechanism) &&
-                                    !string.IsNullOrWhiteSpace(Username) &&
-                                    !string.IsNullOrWhiteSpace(Password);
 }
