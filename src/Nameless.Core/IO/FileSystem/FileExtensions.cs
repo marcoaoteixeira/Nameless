@@ -23,7 +23,7 @@ public static class FileExtensions {
     /// <returns>
     ///     A <see cref="Stream"/> representing the opened file.
     /// </returns>
-    public static Stream Open(this IFile self, FileMode mode = FileMode.Open, FileAccess access = FileAccess.Read, FileShare share = FileShare.None) {
+    public static Stream Open(this IFile self, FileMode mode = FileMode.Open, FileAccess access = FileAccess.Read, FileShare share = FileShare.ReadWrite) {
         return self.Open(mode, access, share);
     }
 

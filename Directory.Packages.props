@@ -36,13 +36,13 @@
     <PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
     <PackageVersion Include="MongoDB.Driver" Version="3.4.3" />
     <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="NHibernate" Version="5.5.2" />
+    <PackageVersion Include="NHibernate" Version="5.5.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
@@ -51,7 +51,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.4" />
-    <PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.7.0" />
+    <PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.7.2" />
     <PackageVersion Include="Serilog" Version="4.3.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
@@ -59,7 +59,7 @@
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
     <PackageVersion Include="System.Text.Json" Version="9.0.5" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageVersion Include="Testcontainers" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers" Version="4.7.0" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.5.0" />
     <PackageVersion Include="xunit.analyzers" Version="1.24.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
