@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Nameless.Helpers;
 
 namespace Nameless.IO.FileSystem;
 
@@ -43,10 +44,19 @@ public class FileSystemImpl : IFileSystem {
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    ///     If the <paramref name="relativePath"/> is rooted, then it will
+    ///     return the full path given its root. Otherwise, the path root
+    ///     will be related to the current <see cref="IFileSystem"/>.
+    /// </remarks>
     public string GetFullPath(string relativePath) {
-        var path = Path.GetFullPath(relativePath, Options.Root);
+        var normalizeRelativePath = PathHelper.Normalize(relativePath);
 
-        Options.EnsureRootDirectory(path);
+        var path = Path.IsPathRooted(normalizeRelativePath)
+            ? Path.GetFullPath(normalizeRelativePath)
+            : Path.GetFullPath(normalizeRelativePath, Options.Root);
+
+        _options.Value.EnsureRootDirectory(path);
 
         return path;
     }
