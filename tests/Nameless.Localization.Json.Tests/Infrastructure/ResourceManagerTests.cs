@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Null;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.FileProvider;
+using Nameless.Testing.Tools.Mockers.Threading;
 
 namespace Nameless.Localization.Json.Infrastructure;
 
@@ -12,8 +13,8 @@ public class ResourceManagerTests {
     [Fact]
     public void WhenGettingResource_ShouldReturnResourceForGivenParameters() {
         // arrange
-        var fileInfo = new FileInfoMocker().WithExists(true)
-                                           .WithCreateReadStream("[]")
+        var fileInfo = new FileInfoMocker().WithExists(returnValue: true)
+                                           .WithCreateReadStream(returnValue: "[]")
                                            .Build();
         var changeToken = new ChangeTokenMocker().WithRegisterChangeCallback(NullDisposable.Instance)
                                                  .Build();

@@ -31,20 +31,20 @@ public class DocumentTests {
     [Fact]
     public void WhenSettingField_WithValidInformation_ThenFieldMustBePresent() {
         // arrange
-        var sut = new Document("e4bc7536-339f-4632-96d8-87c98325bcd9");
+        var sut = new Document(id: "e4bc7536-339f-4632-96d8-87c98325bcd9");
 
         // Total of 10 field types, see IndexableType.
         var fields = new Tuple<string, object, IndexableType>[] {
-            new ("BoolValue", true, IndexableType.Boolean),
-            new ("StringValue", "StringValue", IndexableType.String),
-            new ("ByteValue", (byte)123, IndexableType.Byte),
-            new ("ShortValue", (short)456, IndexableType.Short),
-            new ("IntValue", 789, IndexableType.Integer),
-            new ("LongValue", 987L, IndexableType.Long),
-            new ("FloatValue", 654F, IndexableType.Float),
-            new ("DoubleValue", 321D, IndexableType.Double),
-            new ("DateTimeOffset", DateTimeOffset.Now, IndexableType.DateTimeOffset),
-            new ("DateTime", DateTime.Now, IndexableType.DateTime),
+            new(item1: "BoolValue", item2: true, IndexableType.Boolean),
+            new(item1: "StringValue", item2: "StringValue", IndexableType.String),
+            new(item1: "ByteValue", (byte)123, IndexableType.Byte),
+            new(item1: "ShortValue", (short)456, IndexableType.Short),
+            new(item1: "IntValue", item2: 789, IndexableType.Integer),
+            new(item1: "LongValue", item2: 987L, IndexableType.Long),
+            new(item1: "FloatValue", item2: 654F, IndexableType.Float),
+            new(item1: "DoubleValue", item2: 321D, IndexableType.Double),
+            new(item1: "DateTimeOffset", DateTimeOffset.Now, IndexableType.DateTimeOffset),
+            new(item1: "DateTime", DateTime.Now, IndexableType.DateTime)
         };
 
         // act

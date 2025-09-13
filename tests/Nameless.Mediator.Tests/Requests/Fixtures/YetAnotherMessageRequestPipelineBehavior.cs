@@ -9,8 +9,10 @@ public class YetAnotherMessageRequestPipelineBehavior : IRequestPipelineBehavior
         _printService = printService;
     }
 
-    public Task<MessageResponse> HandleAsync(MessageRequest request, RequestHandlerDelegate<MessageResponse> next, CancellationToken cancellationToken) {
-        _printService.Print($"RequestPipelineBehavior: {GetType().Name} | Request: {request.GetType().Name} | Message: {request.Message}");
+    public Task<MessageResponse> HandleAsync(MessageRequest request, RequestHandlerDelegate<MessageResponse> next,
+        CancellationToken cancellationToken) {
+        _printService.Print(
+            $"RequestPipelineBehavior: {GetType().Name} | Request: {request.GetType().Name} | Message: {request.Message}");
 
         return next(cancellationToken);
     }

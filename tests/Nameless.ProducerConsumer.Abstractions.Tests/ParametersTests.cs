@@ -19,12 +19,13 @@ public class ParametersTests {
 
     [Theory]
     [ClassData(typeof(StringNullEmptyWhiteSpaceExceptionInlineData))]
-    public void WhenInitializingUsingCollectionInitializer_WhenKeyIsNullEmptyOrWhitespace_ThenThrowsException(string key, Type exceptionType) {
+    public void WhenInitializingUsingCollectionInitializer_WhenKeyIsNullEmptyOrWhitespace_ThenThrowsException(
+        string key, Type exceptionType) {
         // arrange
 
         // act
         var actual = Record.Exception(() => {
-            Parameters _ = [new KeyValuePair<string, object>(key, 123)];
+            Parameters _ = [new KeyValuePair<string, object>(key, value: 123)];
         });
 
         // assert
@@ -37,7 +38,7 @@ public class ParametersTests {
         // arrange
 
         // act
-        var actual = Record.Exception(() => new Parameters().Add(new KeyValuePair<string, object>(key, 123)));
+        var actual = Record.Exception(() => new Parameters().Add(new KeyValuePair<string, object>(key, value: 123)));
 
         // assert
         Assert.IsType(exceptionType, actual);
@@ -75,11 +76,7 @@ public class ParametersTests {
     [Fact]
     public void WhenEnumerating_WhenThereAreItems_ThenCanMoveNext() {
         // arrange
-        var sut = new Parameters {
-            ["X"] = 1,
-            ["Y"] = 2,
-            ["Z"] = 3,
-        };
+        var sut = new Parameters { [name: "X"] = 1, [name: "Y"] = 2, [name: "Z"] = 3 };
 
         // act
         using var actual = sut.GetEnumerator();
@@ -91,11 +88,7 @@ public class ParametersTests {
     [Fact]
     public void WhenEnumeratingWithNonGenericEnumerator_WhenThereAreItems_ThenCanMoveNext() {
         // arrange
-        var sut = new Parameters {
-            ["X"] = 1,
-            ["Y"] = 2,
-            ["Z"] = 3,
-        };
+        var sut = new Parameters { [name: "X"] = 1, [name: "Y"] = 2, [name: "Z"] = 3 };
 
         // act
         var actual = ((IEnumerable)sut).GetEnumerator();

@@ -11,17 +11,17 @@ public class EmptySearchHitTests {
         // assert
         Assert.Multiple(() => {
             Assert.Empty(sut.DocumentID);
-            Assert.Equal(0F, sut.Score);
-            Assert.Null(sut.GetBoolean("boolean_field"));
-            Assert.Null(sut.GetString("string_field"));
-            Assert.Null(sut.GetByte("byte_field"));
-            Assert.Null(sut.GetShort("short_field"));
-            Assert.Null(sut.GetInteger("integer_field"));
-            Assert.Null(sut.GetLong("long_field"));
-            Assert.Null(sut.GetFloat("float_field"));
-            Assert.Null(sut.GetDouble("double_field"));
-            Assert.Null(sut.GetDateTimeOffset("datetimeoffset_field"));
-            Assert.Null(sut.GetDateTime("datetime_field"));
+            Assert.Equal(expected: 0F, sut.Score);
+            Assert.Null(sut.GetBoolean(fieldName: "boolean_field"));
+            Assert.Null(sut.GetString(fieldName: "string_field"));
+            Assert.Null(sut.GetByte(fieldName: "byte_field"));
+            Assert.Null(sut.GetShort(fieldName: "short_field"));
+            Assert.Null(sut.GetInteger(fieldName: "integer_field"));
+            Assert.Null(sut.GetLong(fieldName: "long_field"));
+            Assert.Null(sut.GetFloat(fieldName: "float_field"));
+            Assert.Null(sut.GetDouble(fieldName: "double_field"));
+            Assert.Null(sut.GetDateTimeOffset(fieldName: "datetimeoffset_field"));
+            Assert.Null(sut.GetDateTime(fieldName: "datetime_field"));
         });
     }
 }

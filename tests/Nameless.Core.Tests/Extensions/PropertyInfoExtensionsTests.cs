@@ -50,7 +50,7 @@ public class PropertyInfoExtensionsTests {
         var instance = new PropertyAnnotatedClass();
 
         // act
-        var actual = instance.GetPropertyWithEmptyDescriptionAttribute().GetDescription(false);
+        var actual = instance.GetPropertyWithEmptyDescriptionAttribute().GetDescription(fallbackToName: false);
 
         // assert
         Assert.Equal(string.Empty, actual);
@@ -63,7 +63,7 @@ public class PropertyInfoExtensionsTests {
         var instance = new PropertyAnnotatedClass();
 
         // act
-        var actual = instance.GetPropertyWithoutDescriptionAttribute().GetDescription(false);
+        var actual = instance.GetPropertyWithoutDescriptionAttribute().GetDescription(fallbackToName: false);
 
         // assert
         Assert.Equal(string.Empty, actual);

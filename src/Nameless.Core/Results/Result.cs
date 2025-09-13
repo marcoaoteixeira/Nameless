@@ -8,8 +8,8 @@
 ///     Type of the result.
 /// </typeparam>
 public sealed class Result<TResult> : ResultBase<TResult> {
-    private Result(int index, TResult? result = default, Error[]? errors = null)
-        : base(index, result, errors) {
+    private Result(int index, TResult? result = default, Error error = default)
+        : base(index, result, error) {
     }
 
     /// <summary>
@@ -29,16 +29,6 @@ public sealed class Result<TResult> : ResultBase<TResult> {
     ///     The error.
     /// </param>
     public static implicit operator Result<TResult>(Error error) {
-        return new Result<TResult>(index: 1, errors: [error]);
-    }
-
-    /// <summary>
-    ///     Creates a failure result with the specified errors.
-    /// </summary>
-    /// <param name="errors">
-    ///     The error collection.
-    /// </param>
-    public static implicit operator Result<TResult>(Error[] errors) {
-        return new Result<TResult>(index: 1, errors: errors);
+        return new Result<TResult>(index: 1, error: error);
     }
 }

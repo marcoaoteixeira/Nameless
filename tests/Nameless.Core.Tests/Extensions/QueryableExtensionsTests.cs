@@ -18,8 +18,8 @@ public class QueryableExtensionsTests {
 
         // act
         var actual = array
-                    .AsQueryable()
-                    .OrderBy(nameof(Student.Name));
+                     .AsQueryable()
+                     .OrderBy(nameof(Student.Name));
 
         // assert
         Assert.Equivalent(expected, actual);
@@ -40,8 +40,8 @@ public class QueryableExtensionsTests {
 
         // act
         var actual = array
-                    .AsQueryable()
-                    .OrderByDescending(nameof(Student.Name));
+                     .AsQueryable()
+                     .OrderByDescending(nameof(Student.Name));
 
         // assert
         Assert.Equivalent(expected, actual);
@@ -55,8 +55,7 @@ public class QueryableExtensionsTests {
         // act
 
         // assert
-        Assert.Throws<MissingMemberException>(
-            () => array.AsQueryable().OrderBy("Address")
+        Assert.Throws<MissingMemberException>(() => array.AsQueryable().OrderBy(propertyName: "Address")
         );
     }
 }

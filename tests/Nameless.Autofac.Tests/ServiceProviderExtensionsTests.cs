@@ -10,11 +10,11 @@ public class ServiceProviderExtensionsTests {
         // arrange
         var cts = new CancellationTokenSource();
         var hostApplicationLifetime = new HostApplicationLifetimeMocker()
-                                     .WithApplicationStopped(cts.Token)
-                                     .Build();
+                                      .WithApplicationStopped(cts.Token)
+                                      .Build();
 
         var lifetimeScopeMocker = new LifetimeScopeMocker()
-           .WithResolve(hostApplicationLifetime);
+            .WithResolve(hostApplicationLifetime);
 
         var serviceProvider = new AutofacServiceProvider(lifetimeScopeMocker.Build());
 

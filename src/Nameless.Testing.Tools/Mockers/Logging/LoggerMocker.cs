@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.Logging;
 
 public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
     public LoggerMocker<T> WithAnyLogLevel() {
@@ -20,22 +20,24 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
         return this;
     }
 
-    public LoggerMocker<T> WithLogCallback(Action<string> callback, LogLevel level = LogLevel.Information) {
-        MockInstance
-           .Setup(mock => mock.Log(
-                level,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception?>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()))
-           .Callback(new InvocationAction(invocation => {
-               var state = invocation.Arguments[2];
-               var formatter = invocation.Arguments[4];
-               var invoker = formatter.GetType().GetMethod("Invoke");
-               var message = (string)invoker!.Invoke(formatter, [state, null])!;
+    public LoggerMocker<T> WithLog(LogLevel level = LogLevel.Information, Action<string>? callback = null) {
+        var flow = MockInstance.Setup(mock => mock.Log(level,
+            It.IsAny<EventId>(),
+            It.IsAny<It.IsAnyType>(),
+            It.IsAny<Exception?>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>())
+        );
 
-               callback(message);
-           }));
+        if (callback is not null) {
+            flow.Callback(new InvocationAction(invocation => {
+                var state = invocation.Arguments[2];
+                var formatter = invocation.Arguments[4];
+                var invoker = formatter.GetType().GetMethod("Invoke");
+                var message = (string)invoker!.Invoke(formatter, [state, null])!;
+
+                callback(message);
+            }));
+        }
 
         return this;
     }

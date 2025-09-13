@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.Configuration;
 
 public sealed class ConfigurationSectionMocker : Mocker<IConfigurationSection> {
     public ConfigurationSectionMocker WithKey(string returnValue) {

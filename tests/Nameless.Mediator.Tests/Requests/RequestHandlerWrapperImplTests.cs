@@ -1,7 +1,7 @@
 ﻿using Nameless.Mediator.Fixtures;
 using Nameless.Mediator.Requests.Fixtures;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
 
 namespace Nameless.Mediator.Requests;
 
@@ -12,10 +12,12 @@ public class RequestHandlerWrapperImplTests {
         // arrange
         var printServiceMock = new PrintServiceMocker();
         var requestHandler = new MessageRequestHandler(printServiceMock.Build());
-        var request = new MessageRequest(Message: nameof(RequestHandlerWrapperImplTests));
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>([])
-                                                         .Build();
+        var request = new MessageRequest(nameof(RequestHandlerWrapperImplTests));
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                              .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>(
+                                  [])
+                              .Build();
 
         var sut = new RequestHandlerWrapperImpl<MessageRequest, MessageResponse>();
 
@@ -27,22 +29,25 @@ public class RequestHandlerWrapperImplTests {
     }
 
     [Fact]
-    public async Task WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineBeforeRequestHandler() {
+    public async Task
+        WhenHandlingRequest_WhenThereAreRequestHandlersRegistered_WhenThereAreRequestPipelineBehavior_ThenExecutePipelineBeforeRequestHandler() {
         // arrange
         var callbackResult = new List<string>();
         var printServiceMock = new PrintServiceMocker().WithPrintCallback(callbackResult.Add);
         var printService = printServiceMock.Build();
         var requestHandler = new MessageRequestHandler(printService);
-        var request = new MessageRequest(Message: nameof(RequestHandlerWrapperImplTests));
+        var request = new MessageRequest(nameof(RequestHandlerWrapperImplTests));
         var requestPipelineBehavior = new MessageRequestPipelineBehavior(printService);
 
         IRequestPipelineBehavior<MessageRequest, MessageResponse>[] pipelineBehaviors = [
             requestPipelineBehavior
         ];
 
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>(pipelineBehaviors)
-                                                         .Build();
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                              .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>(
+                                  pipelineBehaviors)
+                              .Build();
 
         var sut = new RequestHandlerWrapperImpl<MessageRequest, MessageResponse>();
 
@@ -51,8 +56,8 @@ public class RequestHandlerWrapperImplTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Contains(nameof(MessageRequestPipelineBehavior), callbackResult[0]);
-            Assert.Contains(nameof(MessageRequestHandler), callbackResult[1]);
+            Assert.Contains(nameof(MessageRequestPipelineBehavior), callbackResult[index: 0]);
+            Assert.Contains(nameof(MessageRequestHandler), callbackResult[index: 1]);
         });
     }
 }

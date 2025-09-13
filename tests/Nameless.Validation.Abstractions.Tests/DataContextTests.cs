@@ -19,12 +19,13 @@ public class DataContextTests {
 
     [Theory]
     [ClassData(typeof(StringNullEmptyWhiteSpaceExceptionInlineData))]
-    public void WhenInitializingUsingCollectionInitializer_WhenKeyIsNullEmptyOrWhitespace_ThenThrowsException(string key, Type exceptionType) {
+    public void WhenInitializingUsingCollectionInitializer_WhenKeyIsNullEmptyOrWhitespace_ThenThrowsException(
+        string key, Type exceptionType) {
         // arrange
 
         // act
         var actual = Record.Exception(() => {
-            DataContext _ = [new KeyValuePair<string, object>(key, 123)];
+            DataContext _ = [new KeyValuePair<string, object>(key, value: 123)];
         });
 
         // assert
@@ -37,7 +38,7 @@ public class DataContextTests {
         // arrange
 
         // act
-        var actual = Record.Exception(() => new DataContext().Add(new KeyValuePair<string, object>(key, 123)));
+        var actual = Record.Exception(() => new DataContext().Add(new KeyValuePair<string, object>(key, value: 123)));
 
         // assert
         Assert.IsType(exceptionType, actual);
@@ -75,11 +76,7 @@ public class DataContextTests {
     [Fact]
     public void WhenEnumerating_WhenThereAreItems_ThenCanMoveNext() {
         // arrange
-        var sut = new DataContext {
-            ["X"] = 1,
-            ["Y"] = 2,
-            ["Z"] = 3,
-        };
+        var sut = new DataContext { [key: "X"] = 1, [key: "Y"] = 2, [key: "Z"] = 3 };
 
         // act
         using var actual = sut.GetEnumerator();
@@ -91,11 +88,7 @@ public class DataContextTests {
     [Fact]
     public void WhenEnumeratingWithNonGenericEnumerator_WhenThereAreItems_ThenCanMoveNext() {
         // arrange
-        var sut = new DataContext {
-            ["X"] = 1,
-            ["Y"] = 2,
-            ["Z"] = 3,
-        };
+        var sut = new DataContext { [key: "X"] = 1, [key: "Y"] = 2, [key: "Z"] = 3 };
 
         // act
         var actual = ((IEnumerable)sut).GetEnumerator();

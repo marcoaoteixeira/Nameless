@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Microsoft.Extensions.FileProviders;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.FileProvider;
 
 public sealed class FileInfoMocker : Mocker<IFileInfo> {
     public FileInfoMocker WithExists(bool returnValue) {

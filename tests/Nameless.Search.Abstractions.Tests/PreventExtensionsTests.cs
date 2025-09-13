@@ -1,8 +1,10 @@
 ﻿namespace Nameless.Search;
+
 public class PreventExtensionsTests {
     [Theory]
     [ClassData(typeof(IndexableTypeInlineData))]
-    public void NullOrNonMatchingType_ShouldThrowException_WhenValueTypeDoNotMatchIndexableType(IndexableType indexableType) {
+    public void NullOrNonMatchingType_ShouldThrowException_WhenValueTypeDoNotMatchIndexableType(
+        IndexableType indexableType) {
         // arrange
 
         // we do not have a type for enums.
@@ -10,7 +12,8 @@ public class PreventExtensionsTests {
         object value = DayOfWeek.Monday;
 
         // act
-        var exception = Record.Exception(() => Guard.Against.NullOrNonMatchingType(value, indexableType, nameof(value)));
+        var exception =
+            Record.Exception(() => Guard.Against.NullOrNonMatchingType(value, indexableType, nameof(value)));
 
         // assert
         Assert.IsType<InvalidOperationException>(exception);
@@ -18,7 +21,8 @@ public class PreventExtensionsTests {
 
     [Theory]
     [ClassData(typeof(SampleValueIndexableTypeInlineData))]
-    public void NullOrNonMatchingType_ShouldNotThrowException_WhenValueTypeIsIndexableType(object value, IndexableType indexableType) {
+    public void NullOrNonMatchingType_ShouldNotThrowException_WhenValueTypeIsIndexableType(object value,
+        IndexableType indexableType) {
         // arrange
 
         // act
@@ -34,7 +38,8 @@ public class PreventExtensionsTests {
         object value = null;
 
         // act
-        var exception = Record.Exception(() => Guard.Against.NullOrNonMatchingType(value, IndexableType.Boolean, nameof(value)));
+        var exception = Record.Exception(() =>
+            Guard.Against.NullOrNonMatchingType(value, IndexableType.Boolean, nameof(value)));
 
         // assert
         Assert.IsType<ArgumentNullException>(exception);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Infrastructure;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Search.Lucene;
 
@@ -10,16 +11,16 @@ public class DependencyInjectionTests {
         // arrange
         var services = new ServiceCollection();
 
-        var applicationContext = new ApplicationContextMocker().WithDataDirectoryPath("\\Temp")
+        var applicationContext = new ApplicationContextMocker().WithDataDirectoryPath(returnValue: "\\Temp")
                                                                .Build();
         services.AddSingleton(applicationContext);
 
         var loggerForIndexProvider = new LoggerMocker<IndexManager>().Build();
         var loggerForIndex = new LoggerMocker<Index>().Build();
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(loggerForIndexProvider)
-                           .WithCreateLogger(loggerForIndex)
-                           .Build();
+                            .WithCreateLogger(loggerForIndexProvider)
+                            .WithCreateLogger(loggerForIndex)
+                            .Build();
         services.AddSingleton(loggerFactory);
 
         var options = OptionsHelper.Create<SearchOptions>();

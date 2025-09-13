@@ -1,7 +1,7 @@
 ﻿using Nameless.Mediator.Fixtures;
 using Nameless.Mediator.Streams.Fixtures;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
 
 namespace Nameless.Mediator.Streams;
 
@@ -21,12 +21,13 @@ public class StreamHandlerWrapperTests {
         string[] messages = [
             "Message A",
             "Message B",
-            "Message C",
+            "Message C"
         ];
-        var stream = new MessageStream(Messages: messages);
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
-                                                         .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>([])
-                                                         .Build();
+        var stream = new MessageStream(messages);
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
+                              .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>([])
+                              .Build();
 
         var sut = new StreamHandlerWrapperImpl<MessageStream, string>();
 
@@ -42,7 +43,8 @@ public class StreamHandlerWrapperTests {
     }
 
     [Fact]
-    public async Task WhenCreatingStream_WhenThereAreStreamHandlers_WhenThereIsOnePipeline_ThenExecutePipelineFirst_ThenExecuteStreamHandler() {
+    public async Task
+        WhenCreatingStream_WhenThereAreStreamHandlers_WhenThereIsOnePipeline_ThenExecutePipelineFirst_ThenExecuteStreamHandler() {
         // arrange
         var printServiceMock = new PrintServiceMocker();
         var printService = printServiceMock.Build();
@@ -50,16 +52,17 @@ public class StreamHandlerWrapperTests {
         string[] messages = [
             "Message A",
             "Message B",
-            "Message C",
+            "Message C"
         ];
-        var stream = new MessageStream(Messages: messages);
+        var stream = new MessageStream(messages);
         var pipeline = new MessageStreamPipelineBehavior(printService);
         IStreamPipelineBehavior<MessageStream, string>[] pipelines = [
             pipeline
         ];
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
-                                                         .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>(pipelines)
-                                                         .Build();
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
+                              .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>(pipelines)
+                              .Build();
 
         var sut = new StreamHandlerWrapperImpl<MessageStream, string>();
 
@@ -79,7 +82,8 @@ public class StreamHandlerWrapperTests {
     }
 
     [Fact]
-    public async Task WhenCreatingStream_WhenThereAreStreamHandlers_WhenThereArePipelines_ThenExecutePipelinesInOrderFirst_ThenExecuteStreamHandler() {
+    public async Task
+        WhenCreatingStream_WhenThereAreStreamHandlers_WhenThereArePipelines_ThenExecutePipelinesInOrderFirst_ThenExecuteStreamHandler() {
         // arrange
         var printCallback = new List<string>();
         var printServiceMock = new PrintServiceMocker().WithPrintCallback(printCallback.Add);
@@ -88,18 +92,19 @@ public class StreamHandlerWrapperTests {
         string[] messages = [
             "Message A",
             "Message B",
-            "Message C",
+            "Message C"
         ];
-        var stream = new MessageStream(Messages: messages);
+        var stream = new MessageStream(messages);
         var pipeline = new MessageStreamPipelineBehavior(printService);
         var yetAnotherPipeline = new YetAnotherMessageStreamPipelineBehavior(printService);
         IStreamPipelineBehavior<MessageStream, string>[] pipelines = [
             pipeline,
             yetAnotherPipeline
         ];
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
-                                                         .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>(pipelines)
-                                                         .Build();
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IStreamHandler<MessageStream, string>>(streamHandler)
+                              .WithGetService<IEnumerable<IStreamPipelineBehavior<MessageStream, string>>>(pipelines)
+                              .Build();
 
         var sut = new StreamHandlerWrapperImpl<MessageStream, string>();
 
@@ -112,17 +117,17 @@ public class StreamHandlerWrapperTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[0]);
-            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[1]);
-            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[2]);
+            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[index: 0]);
+            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[index: 1]);
+            Assert.Contains(nameof(MessageStreamPipelineBehavior), printCallback[index: 2]);
 
-            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[3]);
-            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[4]);
-            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[5]);
+            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[index: 3]);
+            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[index: 4]);
+            Assert.Contains(nameof(YetAnotherMessageStreamPipelineBehavior), printCallback[index: 5]);
 
-            Assert.Contains(nameof(MessageStreamHandler), printCallback[6]);
-            Assert.Contains(nameof(MessageStreamHandler), printCallback[7]);
-            Assert.Contains(nameof(MessageStreamHandler), printCallback[8]);
+            Assert.Contains(nameof(MessageStreamHandler), printCallback[index: 6]);
+            Assert.Contains(nameof(MessageStreamHandler), printCallback[index: 7]);
+            Assert.Contains(nameof(MessageStreamHandler), printCallback[index: 8]);
 
             printServiceMock.VerifyPrintCall(times: 9);
             // Execute printService.Print

@@ -174,13 +174,13 @@ public class EnumerableExtensionsTests {
     public void DistinctBy_Should_Filter_Distinct_By_Property_Of_Object() {
         // arrange
         var array = new[] {
-            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(-20).Date },
-            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(-20).Date },
-            new Student { Name = "Chris", Age = 21, Birthday = DateTime.Now.AddYears(-21).Date }
+            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(value: -20).Date },
+            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(value: -20).Date },
+            new Student { Name = "Chris", Age = 21, Birthday = DateTime.Now.AddYears(value: -21).Date }
         };
         var expected = new[] {
-            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(-20).Date },
-            new Student { Name = "Chris", Age = 21, Birthday = DateTime.Now.AddYears(-21).Date }
+            new Student { Name = "John", Age = 20, Birthday = DateTime.Now.AddYears(value: -20).Date },
+            new Student { Name = "Chris", Age = 21, Birthday = DateTime.Now.AddYears(value: -21).Date }
         };
 
         // act

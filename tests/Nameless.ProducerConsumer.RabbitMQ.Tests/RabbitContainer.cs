@@ -14,14 +14,13 @@ public sealed class RabbitContainer : IAsyncLifetime {
     public const int HOST_PORT = 15672;
 
     private static readonly ReadOnlyDictionary<string, string> Parameter = new(new Dictionary<string, string> {
-        { "RABBITMQ_DEFAULT_USER", USERNAME },
-        { "RABBITMQ_DEFAULT_PASS", PASSWORD }
+        { "RABBITMQ_DEFAULT_USER", USERNAME }, { "RABBITMQ_DEFAULT_PASS", PASSWORD }
     });
 
-    private readonly IContainer _container = new ContainerBuilder().WithImage("rabbitmq:4.1.0-alpine")
-                                                                   .WithName("rabbitmq-test-container")
+    private readonly IContainer _container = new ContainerBuilder().WithImage(image: "rabbitmq:4.1.0-alpine")
+                                                                   .WithName(name: "rabbitmq-test-container")
                                                                    .WithPortBinding(HOST_PORT, CONTAINER_PORT)
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(CONTAINER_PORT))
+                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_PORT))
                                                                    .WithHostname(HOST_NAME)
                                                                    .WithCleanUp(cleanUp: true)
                                                                    .WithEnvironment(Parameter)

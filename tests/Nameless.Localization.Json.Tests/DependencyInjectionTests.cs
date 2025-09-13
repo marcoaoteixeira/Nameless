@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Nameless.Localization.Json.Infrastructure;
 using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Localization.Json;
 
@@ -19,13 +19,13 @@ public class DependencyInjectionTests {
         // We need an IFileProvider
         var fileProviderMock = new Mock<IFileProvider>();
         fileProviderMock
-           .Setup(mock => mock.GetFileInfo(It.IsAny<string>()))
-           .Returns(Mock.Of<IFileInfo>());
+            .Setup(mock => mock.GetFileInfo(It.IsAny<string>()))
+            .Returns(Mock.Of<IFileInfo>());
 
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
-                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
-                           .Build();
+                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
+                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
+                            .Build();
 
         services.AddSingleton(fileProviderMock.Object);
         services.AddSingleton(new LoggerMocker<CultureProvider>().Build());

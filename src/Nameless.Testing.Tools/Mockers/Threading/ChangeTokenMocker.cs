@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Primitives;
 using Moq;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.Threading;
 
 public sealed class ChangeTokenMocker : Mocker<IChangeToken> {
     public ChangeTokenMocker WithHasChanged(bool returnValue) {

@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Security;
 

@@ -9,15 +9,15 @@ public class AnimalClassMapping : IDocumentMapping {
     public BsonClassMap CreateMap() {
         return new BsonClassMap<Animal>(mapper => {
             mapper
-               .MapIdProperty(animal => animal.ID)
-               .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                .MapIdProperty(animal => animal.ID)
+                .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
             mapper
-               .MapProperty(animal => animal.Name)
-               .SetElementName("name");
+                .MapProperty(animal => animal.Name)
+                .SetElementName(elementName: "name");
             mapper
-               .MapProperty(animal => animal.Species)
-               .SetElementName("blablabla");
+                .MapProperty(animal => animal.Species)
+                .SetElementName(elementName: "blablabla");
         });
     }
 }

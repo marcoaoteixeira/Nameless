@@ -1,22 +1,24 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Infrastructure;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Search.Lucene;
 
 public class IndexTests {
-    private static readonly string IndexDirectoryPath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Output");
+    private static readonly string IndexDirectoryPath =
+        Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), path2: "Output");
 
     public IndexTests(ITestOutputHelper output) {
-        try { Directory.Delete(IndexDirectoryPath, true); }
+        try { Directory.Delete(IndexDirectoryPath, recursive: true); }
         catch (Exception ex) { output.WriteLine(ex.Message); }
     }
 
     private static ServiceProvider CreateServiceProvider() {
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(new LoggerMocker<IndexManager>().WithAnyLogLevel().Build())
-                           .WithCreateLogger(new LoggerMocker<Index>().WithAnyLogLevel().Build())
-                           .Build();
+                            .WithCreateLogger(new LoggerMocker<IndexManager>().WithAnyLogLevel().Build())
+                            .WithCreateLogger(new LoggerMocker<Index>().WithAnyLogLevel().Build())
+                            .Build();
 
         var services = new ServiceCollection();
 
@@ -56,24 +58,25 @@ public class IndexTests {
         var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
-        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "LoremIpsum.txt");
+        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), path2: "Resources",
+            path3: "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
-        var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
-                      .Set("Name", "Test User")
-                      .Set("Email", "test_user@test.com", FieldOptions.Store)
-                      .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
-                      .Set("Weight", 75d, FieldOptions.Store)
-                      .Set("Married", true, FieldOptions.Store)
-                      .Set("Age", 50, FieldOptions.Store)
-                      .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
+        var document = new Document(id: "146ef344-ae25-4346-b07a-7da8f418a26f")
+                       .Set(field: "Name", value: "Test User")
+                       .Set(field: "Email", value: "test_user@test.com", FieldOptions.Store)
+                       .Set(field: "Birthday", DateTime.Now.Date, FieldOptions.Store)
+                       .Set(field: "Weight", value: 75d, FieldOptions.Store)
+                       .Set(field: "Married", value: true, FieldOptions.Store)
+                       .Set(field: "Age", value: 50, FieldOptions.Store)
+                       .Set(field: "Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
         var result = await index.StoreDocumentsAsync([document], CancellationToken.None);
 
         Assert.Multiple(() => {
             Assert.NotNull(index);
             Assert.True(result.Succeeded);
-            Assert.Equal(1, result.TotalDocumentsAffected);
+            Assert.Equal(expected: 1, result.TotalDocumentsAffected);
         });
     }
 
@@ -86,17 +89,18 @@ public class IndexTests {
         var indexManager = provider.GetRequiredService<IIndexManager>();
         var index = indexManager.CreateIndex(IndexName);
 
-        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "LoremIpsum.txt");
+        var loremIpsumFilePath = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), path2: "Resources",
+            path3: "LoremIpsum.txt");
         var loremIpsum = await File.ReadAllTextAsync(loremIpsumFilePath, CancellationToken.None);
 
-        var document = new Document("146ef344-ae25-4346-b07a-7da8f418a26f")
-                      .Set("Name", "Test User")
-                      .Set("Email", "test_user@test.com", FieldOptions.Store)
-                      .Set("Birthday", DateTime.Now.Date, FieldOptions.Store)
-                      .Set("Weight", 75d, FieldOptions.Store)
-                      .Set("Married", true, FieldOptions.Store)
-                      .Set("Age", 50, FieldOptions.Store)
-                      .Set("Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
+        var document = new Document(id: "146ef344-ae25-4346-b07a-7da8f418a26f")
+                       .Set(field: "Name", value: "Test User")
+                       .Set(field: "Email", value: "test_user@test.com", FieldOptions.Store)
+                       .Set(field: "Birthday", DateTime.Now.Date, FieldOptions.Store)
+                       .Set(field: "Weight", value: 75d, FieldOptions.Store)
+                       .Set(field: "Married", value: true, FieldOptions.Store)
+                       .Set(field: "Age", value: 50, FieldOptions.Store)
+                       .Set(field: "Content", loremIpsum, FieldOptions.Analyze | FieldOptions.Store);
 
         await index.StoreDocumentsAsync([document], CancellationToken.None);
 
@@ -104,21 +108,21 @@ public class IndexTests {
         var tokens = new[] { "ullamcorper", "ultrices", "Morbi", "Sbrubles" };
 
         searcher
-           .WithField("Content", tokens[0], false)
-           .Mandatory();
+            .WithField(field: "Content", tokens[0], useWildcard: false)
+            .Mandatory();
         searcher
-           .WithField("Content", tokens[1], false)
-           .Mandatory();
+            .WithField(field: "Content", tokens[1], useWildcard: false)
+            .Mandatory();
         searcher
-           .WithField("Content", tokens[2], false)
-           .ExactMatch();
+            .WithField(field: "Content", tokens[2], useWildcard: false)
+            .ExactMatch();
         searcher
-           .WithField("Content", tokens[3], false)
-           .ExactMatch();
+            .WithField(field: "Content", tokens[3], useWildcard: false)
+            .ExactMatch();
 
         searcher
-           .WithField("Content", "and", false)
-           .ExactMatch();
+            .WithField(field: "Content", value: "and", useWildcard: false)
+            .ExactMatch();
 
         var result = searcher.Search();
 
@@ -141,42 +145,44 @@ public class IndexTests {
         var index = indexManager.CreateIndex(IndexName);
 
         // act 1
-        var filePathForText001 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "text_001.txt");
+        var filePathForText001 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), path2: "Resources",
+            path3: "text_001.txt");
         var contentText001 = await File.ReadAllTextAsync(filePathForText001, CancellationToken.None);
 
         var documentText001 = index
-                             .NewDocument(Guid.NewGuid()
-                                              .ToString("N"))
-                             .Set(FieldName, contentText001, FieldOptions.Analyze | FieldOptions.Store);
+                              .NewDocument(Guid.NewGuid()
+                                               .ToString(format: "N"))
+                              .Set(FieldName, contentText001, FieldOptions.Analyze | FieldOptions.Store);
         var resultDocumentText001 = await index.StoreDocumentsAsync([documentText001], CancellationToken.None);
 
         var searchBuilderText001 = index.CreateSearchBuilder();
 
-        searchBuilderText001.WithField(FieldName, "vibrant", false);
+        searchBuilderText001.WithField(FieldName, value: "vibrant", useWildcard: false);
 
         var resultText001 = searchBuilderText001
-                           .Search()
-                           .Select(hit => hit.GetString(FieldName))
-                           .ToArray();
+                            .Search()
+                            .Select(hit => hit.GetString(FieldName))
+                            .ToArray();
 
         // act 2
-        var filePathForText002 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), "Resources", "text_002.txt");
+        var filePathForText002 = Path.Combine(typeof(IndexTests).Assembly.GetDirectoryPath(), path2: "Resources",
+            path3: "text_002.txt");
         var contentText002 = await File.ReadAllTextAsync(filePathForText002, CancellationToken.None);
 
         var documentText002 = index
-                             .NewDocument(Guid.NewGuid()
-                                              .ToString("N"))
-                             .Set(FieldName, contentText002, FieldOptions.Analyze | FieldOptions.Store);
+                              .NewDocument(Guid.NewGuid()
+                                               .ToString(format: "N"))
+                              .Set(FieldName, contentText002, FieldOptions.Analyze | FieldOptions.Store);
         var resultDocumentText002 = await index.StoreDocumentsAsync([documentText002], CancellationToken.None);
 
         var searchBuilderText002 = index.CreateSearchBuilder();
 
-        searchBuilderText002.WithField(FieldName, "ideas", false);
+        searchBuilderText002.WithField(FieldName, value: "ideas", useWildcard: false);
 
         var resultText002 = searchBuilderText002
-                           .Search()
-                           .Select(hit => hit.GetString(FieldName))
-                           .ToArray();
+                            .Search()
+                            .Select(hit => hit.GetString(FieldName))
+                            .ToArray();
 
         Assert.Multiple(() => {
             Assert.NotEmpty(resultText001);

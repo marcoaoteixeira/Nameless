@@ -12,11 +12,11 @@ public class ValidatorServiceTests {
         where T : class {
         var validatorMock = new Mock<IValidator>();
         validatorMock
-           .Setup(mock => mock.ValidateAsync(It.IsAny<IValidationContext>(), It.IsAny<CancellationToken>()))
-           .Returns(Task.FromResult(result ?? new FluentValidationResult()));
+            .Setup(mock => mock.ValidateAsync(It.IsAny<IValidationContext>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult(result ?? new FluentValidationResult()));
         validatorMock
-           .Setup(mock => mock.CanValidateInstancesOfType(typeof(T)))
-           .Returns(true);
+            .Setup(mock => mock.CanValidateInstancesOfType(typeof(T)))
+            .Returns(value: true);
 
         return validatorMock;
     }
@@ -28,8 +28,8 @@ public class ValidatorServiceTests {
 
         var services = new ServiceCollection();
         services
-           .AddSingleton(animalValidatorMock.Object)
-           .AddSingleton(animalValidatorMock.Object);
+            .AddSingleton(animalValidatorMock.Object)
+            .AddSingleton(animalValidatorMock.Object);
 
         var provider = services.BuildServiceProvider();
         var sut = new ValidationService(provider.GetServices<IValidator>());
@@ -83,8 +83,8 @@ public class ValidatorServiceTests {
     public async Task WhenValidateAsync_WhenNotProvideDataContext_WhenObjectIsValid_ThenReturnsSuccessfulResult() {
         // arrange
         var validator = new ValidatorMocker<Animal>()
-                       .WithSuccessfulValidateAsync()
-                       .Build();
+                        .WithSuccessfulValidateAsync()
+                        .Build();
         var sut = new ValidationService([validator]);
         var dog = new Animal { Name = "Dog" };
 
@@ -99,7 +99,7 @@ public class ValidatorServiceTests {
     public async Task WhenValidateAsync_WhenProvidingDataContextWithValues_ThenDataContextShouldBeConsumed() {
         // arrange
         DataContext dataContext = [
-            new KeyValuePair<string, object>("Value", 123)
+            new KeyValuePair<string, object>(key: "Value", value: 123)
         ];
         var validatorMocker = new ValidatorMocker<Animal>().WithSuccessfulValidateAsync();
         var sut = new ValidationService([validatorMocker.Build()]);

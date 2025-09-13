@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Primitives;
 using Moq;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.FileProvider;
 
 public sealed class FileProviderMocker : Mocker<IFileProvider> {
     public FileProviderMocker WithGetFileInfo(IFileInfo returnValue) {

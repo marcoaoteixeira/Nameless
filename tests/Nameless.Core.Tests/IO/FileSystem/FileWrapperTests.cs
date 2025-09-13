@@ -7,7 +7,8 @@ namespace Nameless.IO.FileSystem;
 
 [UnitTest]
 public class FileWrapperTests {
-    private static IOptions<FileSystemOptions> CreateOptions(string root = null, bool allowOperationOutsideRoot = false) {
+    private static IOptions<FileSystemOptions>
+        CreateOptions(string root = null, bool allowOperationOutsideRoot = false) {
         return OptionsHelper.Create<FileSystemOptions>(opts => {
             opts.Root = root ?? typeof(FileWrapperTests).Assembly.GetDirectoryPath();
             opts.AllowOperationOutsideRoot = allowOperationOutsideRoot;
@@ -18,7 +19,7 @@ public class FileWrapperTests {
     public void WhenGettingName_ThenReturnsFileNameFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -33,7 +34,7 @@ public class FileWrapperTests {
     public void WhenGettingPath_ThenReturnsFullPathFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -48,7 +49,7 @@ public class FileWrapperTests {
     public void WhenCheckingFileExistence_WhenUnderlyingFileExists_ThenReturnsTrue() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -63,7 +64,7 @@ public class FileWrapperTests {
     public void WhenCheckingFileExistence_WhenUnderlyingFileDoesNotExist_ThenReturnsFalse() {
         // arrange
         var options = CreateOptions();
-        var path = Path.Combine(options.Value.Root, "ThisFileDoesNotExist.txt");
+        var path = Path.Combine(options.Value.Root, path2: "ThisFileDoesNotExist.txt");
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, options);
 
@@ -78,7 +79,7 @@ public class FileWrapperTests {
     public void WhenGettingLastWriteTime_ThenReturnsFileLastWriteTime() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -93,7 +94,7 @@ public class FileWrapperTests {
     public void WhenOpeningTheFile_ThenReturnsStreamToTheFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -109,7 +110,7 @@ public class FileWrapperTests {
         // arrange
         const string Expected = "This Is A Test";
         const string FileName = "ThisIsATest.txt";
-        var path = ResourceHelper.GetFilePath(FileName);
+        var path = ResourcesHelper.GetFilePath(FileName);
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -124,7 +125,8 @@ public class FileWrapperTests {
     [Fact]
     public void WhenDeletingFile_ThenFileShouldBeDeleted() {
         // arrange
-        var path = ResourceHelper.CreateCopy("ThisIsATest.txt", "0d8c7a52-11fb-4306-928c-98214d778666");
+        var path = ResourcesHelper.CreateCopy(relativeFilePath: "ThisIsATest.txt",
+            newFileName: "0d8c7a52-11fb-4306-928c-98214d778666");
         var file = new FileInfo(path);
         var sut = new FileWrapper(file, CreateOptions());
 
@@ -149,8 +151,8 @@ public class FileWrapperTests {
         const string Content = nameof(WhenCopyingFile_ThenANewFileShouldBeCreated);
 
         // Define a root directory for the test files
-        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), "FileSystem");
-        var fileWrapperDirectoryPath = Path.Combine(root, "FileWrapper");
+        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), path2: "FileSystem");
+        var fileWrapperDirectoryPath = Path.Combine(root, path2: "FileWrapper");
 
         // Ensure the directory exists
         Directory.CreateDirectory(fileWrapperDirectoryPath);
@@ -187,8 +189,8 @@ public class FileWrapperTests {
         const string Content = nameof(WhenCopyingFile_WhenNotAllowOperationOutsideRootPath_ThenThrowsException);
 
         // Define a root directory for the test files
-        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), "FileSystem");
-        var fileWrapperDirectoryPath = Path.Combine(root, "FileWrapper");
+        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), path2: "FileSystem");
+        var fileWrapperDirectoryPath = Path.Combine(root, path2: "FileWrapper");
 
         // Ensure the directory exists
         Directory.CreateDirectory(fileWrapperDirectoryPath);
@@ -223,8 +225,8 @@ public class FileWrapperTests {
         const string Content = nameof(WhenCopyingFile_WhenAllowOperationOutsideRootPath_ThenCopyFileOutsideRoot);
 
         // Define a root directory for the test files
-        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), "FileSystem");
-        var fileWrapperDirectoryPath = Path.Combine(root, "FileWrapper");
+        var root = Path.Combine(typeof(FileWrapperTests).Assembly.GetDirectoryPath(), path2: "FileSystem");
+        var fileWrapperDirectoryPath = Path.Combine(root, path2: "FileWrapper");
 
         // Ensure the directory exists
         Directory.CreateDirectory(fileWrapperDirectoryPath);

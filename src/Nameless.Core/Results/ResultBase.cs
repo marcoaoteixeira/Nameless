@@ -10,7 +10,7 @@ namespace Nameless.Results;
 /// </typeparam>
 public abstract class ResultBase<TResult> : IResult {
     private readonly TResult? _result;
-    private readonly Error[]? _errors;
+    private readonly Error _error;
 
     /// <summary>
     ///     Whether the result is an actual result and not an error.
@@ -34,13 +34,13 @@ public abstract class ResultBase<TResult> : IResult {
         : throw new InvalidOperationException("Result is not available");
 
     /// <summary>
-    ///     Gets the errors.
+    ///     Gets the error.
     /// </summary>
     /// <exception cref="InvalidOperationException">
     ///     When error is not available.
     /// </exception>
-    public Error[] AsError => IsError
-        ? _errors ?? []
+    public Error AsError => IsError
+        ? _error
         : throw new InvalidOperationException("Error is not available");
 
     /// <summary>
@@ -63,20 +63,20 @@ public abstract class ResultBase<TResult> : IResult {
     /// <param name="result">
     ///     The result.
     /// </param>
-    /// <param name="errors">
-    ///     The errors.
+    /// <param name="error">
+    ///     The error.
     /// </param>
-    protected ResultBase(int index, TResult? result = default, Error[]? errors = null) {
+    protected ResultBase(int index, TResult? result = default, Error error = default) {
         Index = index;
 
         _result = result;
-        _errors = errors;
+        _error = error;
     }
 
     /// <inheritdoc />
     public object? Value => Index switch {
         0 => _result,
-        1 => _errors,
+        1 => _error,
         _ => throw new InvalidOperationException("Invalid index for value.")
     };
 
@@ -92,7 +92,7 @@ public abstract class ResultBase<TResult> : IResult {
     /// <param name="onError">
     ///     Action that will be executed if the result is <see cref="Error"/>.
     /// </param>
-    public void Switch(Action<TResult> onResult, Action<Error[]> onError) {
+    public void Switch(Action<TResult> onResult, Action<Error> onError) {
         if (IsResult) {
             onResult(AsResult);
 
@@ -118,14 +118,16 @@ public abstract class ResultBase<TResult> : IResult {
     /// <returns>
     ///     An asynchronous task representing the execution.
     /// </returns>
-    public Task Switch(Func<TResult, Task> onResult, Func<Error[], Task> onError) {
+    public Task Switch(Func<TResult, Task> onResult, Func<Error, Task> onError) {
         if (IsResult) {
             return onResult(AsResult);
         }
 
-        return IsError
-            ? onError(AsError)
-            : Task.CompletedTask;
+        if (IsError) {
+            return onError(AsError);
+        }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -147,13 +149,15 @@ public abstract class ResultBase<TResult> : IResult {
     ///     An asynchronous task representing the execution, where the result
     ///     of the function is <see cref="TResult"/>.
     /// </returns>
-    public TReturnValue Match<TReturnValue>(Func<TResult, TReturnValue> onResult, Func<Error[], TReturnValue> onError) {
+    public TReturnValue Match<TReturnValue>(Func<TResult, TReturnValue> onResult, Func<Error, TReturnValue> onError) {
         if (IsResult) {
             return onResult(AsResult);
         }
 
-        return IsError
-            ? onError(AsError)
-            : default!;
+        if (IsError) {
+            return onError(AsError!);
+        }
+
+        return default!;
     }
 }

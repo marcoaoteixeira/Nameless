@@ -11,8 +11,8 @@ public sealed class LifetimeScopeMocker : Mocker<ILifetimeScope> {
         var serviceRegistration = new ServiceRegistration();
 
         componentRegistryMock
-           .Setup(mock => mock.TryGetServiceRegistration(It.IsAny<Service>(), out serviceRegistration))
-           .Returns(true);
+            .Setup(mock => mock.TryGetServiceRegistration(It.IsAny<Service>(), out serviceRegistration))
+            .Returns(value: true);
 
         MockInstance.Setup(mock => mock.ComponentRegistry)
                     .Returns(componentRegistryMock.Object);

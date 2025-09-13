@@ -40,11 +40,14 @@ public class ServiceCollectionExtensionsTests {
         var multipleMessageEventHandler = provider.GetService<IEventHandler<MessageOneEvent>>();
 
         var messageRequestHandlers = provider.GetServices<IRequestHandler<MessageRequest, MessageResponse>>().ToArray();
-        var messageRequestPipelineBehaviors = provider.GetServices<IRequestPipelineBehavior<MessageRequest, MessageResponse>>().ToArray();
-        var openGenericRequestPipelineBehavior = provider.GetService<IRequestPipelineBehavior<MessageEvent, MessageEvent>>();
+        var messageRequestPipelineBehaviors =
+            provider.GetServices<IRequestPipelineBehavior<MessageRequest, MessageResponse>>().ToArray();
+        var openGenericRequestPipelineBehavior =
+            provider.GetService<IRequestPipelineBehavior<MessageEvent, MessageEvent>>();
 
         var messageStreamHandlers = provider.GetServices<IStreamHandler<MessageStream, string>>().ToArray();
-        var messageStreamPipelineBehaviors = provider.GetServices<IStreamPipelineBehavior<MessageStream, string>>().ToArray();
+        var messageStreamPipelineBehaviors =
+            provider.GetServices<IStreamPipelineBehavior<MessageStream, string>>().ToArray();
 
         // assert
         Assert.Multiple(() => {
@@ -54,19 +57,19 @@ public class ServiceCollectionExtensionsTests {
             Assert.NotNull(streamHandlerInvoker);
 
             Assert.NotEmpty(messageEventHandlers);
-            Assert.Equal(2, messageEventHandlers.Length);
+            Assert.Equal(expected: 2, messageEventHandlers.Length);
             Assert.NotNull(multipleMessageEventHandler);
 
             Assert.NotEmpty(messageRequestHandlers);
             Assert.Single(messageRequestHandlers);
             Assert.NotEmpty(messageRequestPipelineBehaviors);
-            Assert.Equal(3, messageRequestPipelineBehaviors.Length);
+            Assert.Equal(expected: 3, messageRequestPipelineBehaviors.Length);
             Assert.NotNull(openGenericRequestPipelineBehavior);
 
             Assert.NotEmpty(messageStreamHandlers);
             Assert.Single(messageStreamHandlers);
             Assert.NotEmpty(messageStreamPipelineBehaviors);
-            Assert.Equal(2, messageStreamPipelineBehaviors.Length);
+            Assert.Equal(expected: 2, messageStreamPipelineBehaviors.Length);
         });
     }
 }

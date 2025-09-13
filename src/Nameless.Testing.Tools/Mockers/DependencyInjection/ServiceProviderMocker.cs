@@ -1,4 +1,4 @@
-﻿namespace Nameless.Testing.Tools.Mockers;
+﻿namespace Nameless.Testing.Tools.Mockers.DependencyInjection;
 
 public sealed class ServiceProviderMocker : Mocker<IServiceProvider> {
     public ServiceProviderMocker WithGetService(Type serviceType, object returnValue) {

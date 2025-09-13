@@ -28,7 +28,7 @@ public class DocumentTests {
         // arrange
         const string ID = "123";
         const string FieldName = "Field";
-        var value = new DateTimeOffset(2000, 1, 1, 12, 30, 0, TimeSpan.Zero);
+        var value = new DateTimeOffset(year: 2000, month: 1, day: 1, hour: 12, minute: 30, second: 0, TimeSpan.Zero);
 
         var sut = new Document(ID);
 

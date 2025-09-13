@@ -4,7 +4,7 @@ using Moq;
 using Nameless.Data.Fixtures;
 using Nameless.Data.Mockers;
 using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Data;
 
@@ -29,11 +29,13 @@ public class DatabaseTests {
     public void ExecuteNonQuery_Should_Query_Against_Database() {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery(result: 1);
+        var dbCommandMocker =
+            CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery(result: 1);
         var sut = CreateSut(dbCommandMocker.Build());
 
         // act
-        var actual = sut.ExecuteNonQuery("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
+        var actual = sut.ExecuteNonQuery(text: "STATEMENT", CommandType.Text,
+            new Parameter(name: "Param", value: 1, DbType.Int32));
 
         // assert
         Assert.Equal(expected: 1, actual);
@@ -45,13 +47,15 @@ public class DatabaseTests {
     public void ExecuteNonQuery_On_Error_Should_Log() {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteNonQuery<InvalidOperationException>();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build())
+            .WithExecuteNonQuery<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
         // act & assert
         Assert.Multiple(() => {
-            Assert.Throws<InvalidOperationException>(() => sut.ExecuteNonQuery("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32)));
+            Assert.Throws<InvalidOperationException>(() => sut.ExecuteNonQuery(text: "STATEMENT", CommandType.Text,
+                new Parameter(name: "Param", value: 1, DbType.Int32)));
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
             loggerMocker.VerifyErrorCall();
@@ -62,11 +66,13 @@ public class DatabaseTests {
     public void ExecuteScalar_Should_Query_Against_Database() {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar("Field");
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build())
+            .WithExecuteScalar(result: "Field");
         var sut = CreateSut(dbCommandMocker.Build());
 
         // act
-        var actual = sut.ExecuteScalar<string>("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32));
+        var actual = sut.ExecuteScalar<string>(text: "STATEMENT", CommandType.Text,
+            new Parameter(name: "Param", value: 1, DbType.Int32));
 
         // assert
         Assert.Multiple(() => {
@@ -80,7 +86,8 @@ public class DatabaseTests {
     public void ExecuteScalar_On_Error_Should_Log() {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteScalar<InvalidOperationException>();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build())
+            .WithExecuteScalar<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
@@ -88,8 +95,8 @@ public class DatabaseTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Throws<InvalidOperationException>(
-                () => sut.ExecuteScalar<object>("STATEMENT", CommandType.Text, new Parameter("Param", 1, DbType.Int32))
+            Assert.Throws<InvalidOperationException>(() => sut.ExecuteScalar<object>(text: "STATEMENT",
+                CommandType.Text, new Parameter(name: "Param", value: 1, DbType.Int32))
             );
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
@@ -102,17 +109,18 @@ public class DatabaseTests {
         // arrange
         var dataReader = new DataReaderMocker().WithReadSequence(true, false).Build();
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader(dataReader);
+        var dbCommandMocker =
+            CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader(dataReader);
         var sut = CreateSut(dbCommandMocker.Build());
 
         var expected = new Animal { Name = "Dog" };
 
         // act
         var actual = sut.ExecuteReader(
-                             "STATEMENT",
-                             CommandType.Text,
-                             _ => new Animal { Name = "Dog" },
-                             new Parameter("Param", 1, DbType.Int32))
+                            text: "STATEMENT",
+                            CommandType.Text,
+                            _ => new Animal { Name = "Dog" },
+                            new Parameter(name: "Param", value: 1, DbType.Int32))
                         .ToArray();
 
         // assert
@@ -127,7 +135,8 @@ public class DatabaseTests {
     public void ExecuteReader_On_Error_Should_Log() {
         // arrange
         var dataParameterCollectionMocker = CreateDataParameterCollectionMocker();
-        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build()).WithExecuteReader<InvalidOperationException>();
+        var dbCommandMocker = CreateDbCommandMocker(dataParameterCollectionMocker.Build())
+            .WithExecuteReader<InvalidOperationException>();
         var loggerMocker = new LoggerMocker<Database>().WithIsEnabled(LogLevel.Error);
         var sut = CreateSut(dbCommandMocker.Build(), loggerMocker.Build());
 
@@ -135,11 +144,10 @@ public class DatabaseTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Throws<InvalidOperationException>(
-                () => _ = sut.ExecuteReader("STATEMENT",
+            Assert.Throws<InvalidOperationException>(() => _ = sut.ExecuteReader(text: "STATEMENT",
                     CommandType.Text,
                     _ => new Animal { Name = "ERROR" },
-                    new Parameter("Param", 1, DbType.Int32)).ToArray()
+                    new Parameter(name: "Param", value: 1, DbType.Int32)).ToArray()
             );
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
@@ -151,11 +159,11 @@ public class DatabaseTests {
     public void StartTransaction_Should_Start_A_New_Transaction() {
         // arrange
         var dbConnectionMocker = new DbConnectionMocker()
-                                .WithBeginTransaction(Quick.Mock<IDbTransaction>());
+            .WithBeginTransaction(Quick.Mock<IDbTransaction>());
 
         var dbConnectionFactory = new DbConnectionFactoryMocker()
-                                 .WithCreateDbConnection(dbConnectionMocker.Build())
-                                 .Build();
+                                  .WithCreateDbConnection(dbConnectionMocker.Build())
+                                  .Build();
 
         var sut = new Database(dbConnectionFactory, Quick.Mock<ILogger<Database>>());
 

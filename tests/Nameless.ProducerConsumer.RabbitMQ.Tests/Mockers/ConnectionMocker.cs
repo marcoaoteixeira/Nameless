@@ -8,7 +8,8 @@ public sealed class ConnectionMocker : Mocker<IConnection> {
     public ConnectionMocker WithCreateChannelAsync(IChannel result = null) {
         result ??= Mock.Of<IChannel>();
 
-        MockInstance.Setup(mock => mock.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()))
+        MockInstance.Setup(mock =>
+                        mock.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(result);
 
         return this;

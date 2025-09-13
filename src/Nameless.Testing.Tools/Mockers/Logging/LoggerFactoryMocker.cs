@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.Logging;
 
 public sealed class LoggerFactoryMocker : Mocker<ILoggerFactory> {
     public LoggerFactoryMocker WithCreateLogger(ILogger returnValue) {

@@ -9,9 +9,7 @@ public class ValidationOptionsTests {
         Assembly[] assemblies = [typeof(ValidationOptionsTests).Assembly];
 
         // act
-        var sut = new ValidationOptions {
-            Assemblies = assemblies
-        };
+        var sut = new ValidationOptions { Assemblies = assemblies };
 
         // assert
         Assert.NotEmpty(sut.Assemblies);

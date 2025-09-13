@@ -1,6 +1,6 @@
 ﻿using Moq;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.IO;
 public class StreamMocker : Mocker<Stream> {
     public StreamMocker WithCanRead(bool returnValue = true) {
         MockInstance

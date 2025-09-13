@@ -12,7 +12,7 @@ public class ErrorTests {
                 ErrorType.Failure => Error.Failure(type.ToString()),
                 ErrorType.Forbidden => Error.Forbidden(type.ToString()),
                 ErrorType.Unauthorized => Error.Unauthorized(type.ToString()),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Missing ErrorType case")
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, message: "Missing ErrorType case")
             };
 
             // assert

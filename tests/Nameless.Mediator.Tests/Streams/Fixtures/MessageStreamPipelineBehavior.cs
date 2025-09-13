@@ -9,9 +9,11 @@ public class MessageStreamPipelineBehavior : IStreamPipelineBehavior<MessageStre
         _printService = printService;
     }
 
-    public IAsyncEnumerable<string> HandleAsync(MessageStream request, StreamHandlerDelegate<string> next, CancellationToken cancellationToken) {
+    public IAsyncEnumerable<string> HandleAsync(MessageStream request, StreamHandlerDelegate<string> next,
+        CancellationToken cancellationToken) {
         foreach (var message in request.Messages) {
-            _printService.Print($"StreamPipelineBehavior: {GetType().Name} | Request: {request.GetType().Name} | Message: {message}");
+            _printService.Print(
+                $"StreamPipelineBehavior: {GetType().Name} | Request: {request.GetType().Name} | Message: {message}");
         }
 
         return next();

@@ -1,7 +1,7 @@
 ﻿using Nameless.Mediator.Fixtures;
 using Nameless.Mediator.Requests.Fixtures;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
 
 namespace Nameless.Mediator.Requests;
 
@@ -12,10 +12,12 @@ public class RequestHandlerInvokerTests {
         // arrange
         var printServiceMock = new PrintServiceMocker();
         var requestHandler = new MessageRequestHandler(printServiceMock.Build());
-        var request = new MessageRequest(Message: nameof(RequestHandlerInvokerTests));
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
-                                                         .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>([])
-                                                         .Build();
+        var request = new MessageRequest(nameof(RequestHandlerInvokerTests));
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IRequestHandler<MessageRequest, MessageResponse>>(requestHandler)
+                              .WithGetService<IEnumerable<IRequestPipelineBehavior<MessageRequest, MessageResponse>>>(
+                                  [])
+                              .Build();
 
         var sut = new RequestHandlerInvoker(serviceProvider);
 

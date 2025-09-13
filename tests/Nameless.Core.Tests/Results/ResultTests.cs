@@ -20,7 +20,8 @@ public class ResultTests {
     [Fact]
     public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsAtLeastOneError() {
         // arrange
-        var expected = Error.Failure("Error");
+        const string Message = "Error";
+        var expected = Error.Failure(Message);
         Result<int> result;
 
         // act
@@ -29,23 +30,7 @@ public class ResultTests {
         // assert
         Assert.Multiple(() => {
             Assert.True(result.IsError);
-            Assert.Single(result.AsError);
-        });
-    }
-
-    [Fact]
-    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsMoreThanOneError() {
-        // arrange
-        var expected = new[] { Error.Failure("Error"), Error.Conflict("Error") };
-        Result<int> result;
-
-        // act
-        result = expected;
-
-        // assert
-        Assert.Multiple(() => {
-            Assert.True(result.IsError);
-            Assert.Equal(2, result.AsError.Length);
+            Assert.Equal(Message, result.AsError.Description);
         });
     }
 
@@ -68,7 +53,7 @@ public class ResultTests {
     [Fact]
     public void WhenResultIsError_ThenAccessValueThrowsInvalidOperationException() {
         // arrange
-        var expected = Error.Failure("Error");
+        var expected = Error.Failure(description: "Error");
         Result<int> result;
 
         // act
@@ -95,7 +80,7 @@ public class ResultTests {
             return true;
         }
 
-        bool FailureAction(Error[] errors) {
+        bool FailureAction(Error error) {
             return false;
         }
     }
@@ -114,18 +99,18 @@ public class ResultTests {
         return;
 
         Task<bool> SuccessActionAsync(int value) {
-            return Task.FromResult(true);
+            return Task.FromResult(result: true);
         }
 
-        Task<bool> FailureActionAsync(Error[] errors) {
-            return Task.FromResult(false);
+        Task<bool> FailureActionAsync(Error error) {
+            return Task.FromResult(result: false);
         }
     }
 
     [Fact]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithReturningValue() {
         // arrange
-        Result<int> result = Error.Failure("Error");
+        Result<int> result = Error.Failure(description: "Error");
 
         // act
         var match = result.Match(SuccessAction, FailureAction);
@@ -139,7 +124,7 @@ public class ResultTests {
             return true;
         }
 
-        bool FailureAction(Error[] errors) {
+        bool FailureAction(Error error) {
             return false;
         }
     }
@@ -147,7 +132,7 @@ public class ResultTests {
     [Fact]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithReturningValue() {
         // arrange
-        Result<int> result = Error.Failure("Error");
+        Result<int> result = Error.Failure(description: "Error");
 
         // act
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
@@ -158,11 +143,11 @@ public class ResultTests {
         return;
 
         Task<bool> SuccessActionAsync(int value) {
-            return Task.FromResult(true);
+            return Task.FromResult(result: true);
         }
 
-        Task<bool> FailureActionAsync(Error[] errors) {
-            return Task.FromResult(false);
+        Task<bool> FailureActionAsync(Error error) {
+            return Task.FromResult(result: false);
         }
     }
 
@@ -184,7 +169,7 @@ public class ResultTests {
             captured = true;
         }
 
-        void FailureAction(Error[] errors) {
+        void FailureAction(Error error) {
             captured = false;
         }
     }
@@ -209,7 +194,7 @@ public class ResultTests {
             return Task.CompletedTask;
         }
 
-        Task FailureActionAsync(Error[] errors) {
+        Task FailureActionAsync(Error error) {
             captured = false;
 
             return Task.CompletedTask;
@@ -219,7 +204,7 @@ public class ResultTests {
     [Fact]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithoutReturningValue() {
         // arrange
-        Result<int> result = Error.Failure("Error");
+        Result<int> result = Error.Failure(description: "Error");
         object captured = null;
 
         // act
@@ -234,7 +219,7 @@ public class ResultTests {
             captured = true;
         }
 
-        void FailureAction(Error[] errors) {
+        void FailureAction(Error error) {
             captured = false;
         }
     }
@@ -242,7 +227,7 @@ public class ResultTests {
     [Fact]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithoutReturningValue() {
         // arrange
-        Result<int> result = Error.Failure("Error");
+        Result<int> result = Error.Failure(description: "Error");
         object captured = null;
 
         // act
@@ -259,7 +244,7 @@ public class ResultTests {
             return Task.CompletedTask;
         }
 
-        Task FailureActionAsync(Error[] errors) {
+        Task FailureActionAsync(Error error) {
             captured = false;
 
             return Task.CompletedTask;
@@ -284,19 +269,15 @@ public class ResultTests {
             return value % 2 == 0;
         }
 
-        Result<bool> FailureAction(Error[] errors) {
-            if (errors.Length is > 1 and < 3) {
-                return true;
-            }
-
-            return Error.Failure("Error should be exactly 2");
+        Result<bool> FailureAction(Error error) {
+            return true;
         }
 
         bool FinalSuccessAction(bool value) {
             return value;
         }
 
-        bool FinalFailureAction(Error[] errors) {
+        bool FinalFailureAction(Error error) {
             return false;
         }
     }
@@ -317,31 +298,27 @@ public class ResultTests {
         return;
 
         Result<bool> FirstSuccessAction(int value) {
-            return Error.Conflict("Conflict");
+            return Error.Conflict(description: "Conflict");
         }
 
-        Result<bool> FirstFailureAction(Error[] errors) {
-            if (errors.Length is > 1 and < 3) {
-                return true;
-            }
-
-            return Error.Failure("Error should be exactly 2");
+        Result<bool> FirstFailureAction(Error error) {
+            return true;
         }
 
         Result<string> SecondSuccessAction(bool value) {
             return value.ToString();
         }
 
-        Result<string> SecondFailureAction(Error[] errors) {
-            return errors;
+        Result<string> SecondFailureAction(Error error) {
+            return error;
         }
 
         bool FinalSuccessAction(string value) {
             return value == "Hello world";
         }
 
-        bool FinalFailureAction(Error[] errors) {
-            return errors.Length > 0;
+        bool FinalFailureAction(Error error) {
+            return true;
         }
     }
 

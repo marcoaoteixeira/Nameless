@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.AspNetCore.Http;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
 using Nameless.Web.Identity.Entities;
 using Nameless.Web.Identity.Mockers;
 
@@ -34,7 +35,8 @@ public static class IdentityHelpers {
         services ??= new ServiceProviderMocker().Build();
         logger ??= NullLogger<UserManager<User>>.Instance;
 
-        return new UserManager<User>(store, options, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger);
+        return new UserManager<User>(store, options, passwordHasher, userValidators, passwordValidators, keyNormalizer,
+            errors, services, logger);
     }
 
     public static SignInManager<User> CreateSignInManager(
@@ -59,7 +61,8 @@ public static class IdentityHelpers {
 
         confirmation ??= new UserConfirmationMocker().Build();
 
-        return new SignInManager<User>(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation);
+        return new SignInManager<User>(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes,
+            confirmation);
     }
 
     public static IOptions<TOptions> CreateOptions<TOptions>(Action<TOptions> configure = null)
@@ -78,7 +81,7 @@ public static class IdentityHelpers {
 
     public static User CreateJohnDoeUser() {
         return new User {
-            Id = Guid.Parse("a39ca82e-c1e0-4b55-8aac-a0497265a178"),
+            Id = Guid.Parse(input: "a39ca82e-c1e0-4b55-8aac-a0497265a178"),
             UserName = "JohnDoe",
             NormalizedUserName = "JOHNDOE",
             Email = "johndoe@nobody.com",
@@ -93,7 +96,6 @@ public static class IdentityHelpers {
             LockoutEnd = null,
             LockoutEnabled = true,
             AccessFailedCount = 0,
-
             FirstName = "John",
             LastName = "Doe",
             AvatarUrl = null

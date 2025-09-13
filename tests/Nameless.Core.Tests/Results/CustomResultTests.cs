@@ -19,7 +19,8 @@ public class CustomResultTests {
     [Fact]
     public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsAtLeastOneError() {
         // arrange
-        var expected = Error.Failure("Error");
+        const string Message = "Error";
+        var expected = Error.Failure(Message);
 
         // act
         CustomResult result = expected;
@@ -27,22 +28,7 @@ public class CustomResultTests {
         // assert
         Assert.Multiple(() => {
             Assert.True(result.IsError);
-            Assert.Single(result.AsError);
-        });
-    }
-
-    [Fact]
-    public void WhenResultIsError_ThenHasErrorMustBeTrue_WhenErrorsContainsMoreThanOneError() {
-        // arrange
-        var expected = new[] { Error.Failure("Error"), Error.Conflict("Error") };
-
-        // act
-        CustomResult result = expected;
-
-        // assert
-        Assert.Multiple(() => {
-            Assert.True(result.IsError);
-            Assert.Equal(2, result.AsError.Length);
+            Assert.Equal(Message, result.AsError.Description);
         });
     }
 
@@ -64,7 +50,7 @@ public class CustomResultTests {
     [Fact]
     public void WhenResultIsError_ThenAccessValueThrowsInvalidOperationException() {
         // arrange
-        var expected = Error.Failure("Error");
+        var expected = Error.Failure(description: "Error");
 
         // act
         CustomResult result = expected;
@@ -90,7 +76,7 @@ public class CustomResultTests {
             return true;
         }
 
-        bool FailureAction(Error[] errors) {
+        bool FailureAction(Error error) {
             return false;
         }
     }
@@ -109,18 +95,18 @@ public class CustomResultTests {
         return;
 
         Task<bool> SuccessActionAsync(int value) {
-            return Task.FromResult(true);
+            return Task.FromResult(result: true);
         }
 
-        Task<bool> FailureActionAsync(Error[] errors) {
-            return Task.FromResult(false);
+        Task<bool> FailureActionAsync(Error error) {
+            return Task.FromResult(result: false);
         }
     }
 
     [Fact]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithReturningValue() {
         // arrange
-        CustomResult result = Error.Failure("Error");
+        CustomResult result = Error.Failure(description: "Error");
 
         // act
         var match = result.Match(SuccessAction, FailureAction);
@@ -134,7 +120,7 @@ public class CustomResultTests {
             return true;
         }
 
-        bool FailureAction(Error[] errors) {
+        bool FailureAction(Error error) {
             return false;
         }
     }
@@ -142,7 +128,7 @@ public class CustomResultTests {
     [Fact]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithReturningValue() {
         // arrange
-        CustomResult result = Error.Failure("Error");
+        CustomResult result = Error.Failure(description: "Error");
 
         // act
         var match = await result.Match(SuccessActionAsync, FailureActionAsync);
@@ -153,11 +139,11 @@ public class CustomResultTests {
         return;
 
         Task<bool> SuccessActionAsync(int value) {
-            return Task.FromResult(true);
+            return Task.FromResult(result: true);
         }
 
-        Task<bool> FailureActionAsync(Error[] errors) {
-            return Task.FromResult(false);
+        Task<bool> FailureActionAsync(Error error) {
+            return Task.FromResult(result: false);
         }
     }
 
@@ -179,7 +165,7 @@ public class CustomResultTests {
             captured = true;
         }
 
-        void FailureAction(Error[] errors) {
+        void FailureAction(Error error) {
             captured = false;
         }
     }
@@ -204,7 +190,7 @@ public class CustomResultTests {
             return Task.CompletedTask;
         }
 
-        Task FailureActionAsync(Error[] errors) {
+        Task FailureActionAsync(Error error) {
             captured = false;
 
             return Task.CompletedTask;
@@ -214,7 +200,7 @@ public class CustomResultTests {
     [Fact]
     public void WhenResultIsError_ThenMatchShouldAccessFailureActionWithoutReturningValue() {
         // arrange
-        CustomResult result = Error.Failure("Error");
+        CustomResult result = Error.Failure(description: "Error");
         object captured = null;
 
         // act
@@ -229,7 +215,7 @@ public class CustomResultTests {
             captured = true;
         }
 
-        void FailureAction(Error[] errors) {
+        void FailureAction(Error error) {
             captured = false;
         }
     }
@@ -237,7 +223,7 @@ public class CustomResultTests {
     [Fact]
     public async Task WhenResultIsError_ThenMatchAsyncShouldAccessFailureActionAsyncWithoutReturningValue() {
         // arrange
-        CustomResult result = Error.Failure("Error");
+        CustomResult result = Error.Failure(description: "Error");
         object captured = null;
 
         // act
@@ -254,7 +240,7 @@ public class CustomResultTests {
             return Task.CompletedTask;
         }
 
-        Task FailureActionAsync(Error[] errors) {
+        Task FailureActionAsync(Error error) {
             captured = false;
 
             return Task.CompletedTask;
@@ -279,19 +265,15 @@ public class CustomResultTests {
             return value % 2 == 0;
         }
 
-        Result<bool> FailureAction(Error[] errors) {
-            if (errors.Length is > 1 and < 3) {
-                return true;
-            }
-
-            return Error.Failure("Error should be exactly 2");
+        Result<bool> FailureAction(Error error) {
+            return true;
         }
 
         bool FinalSuccessAction(bool value) {
             return value;
         }
 
-        bool FinalFailureAction(Error[] errors) {
+        bool FinalFailureAction(Error error) {
             return false;
         }
     }
@@ -317,13 +299,13 @@ public class CustomResultTests {
     [Fact]
     public void WhenErrorIsPresent_ThenValueReturnsError() {
         // arrange
-        var error = Error.Failure("Failure");
+        var error = Error.Failure(description: "Failure");
 
         // act
         CustomResult actual = error;
 
         // assert
-        Assert.IsType<Error[]>(actual.Value);
+        Assert.IsType<Error>(actual.Value);
     }
 
     [Fact]
@@ -341,25 +323,21 @@ public class CustomResultTests {
     public class CustomResult : ResultBase<int> {
         public CustomResult() { }
 
-        private CustomResult(int index, int? result = null, Error[] errors = null)
-            : base(index, result.GetValueOrDefault(), errors) {
+        private CustomResult(int index, int? result = null, Error error = default)
+            : base(index, result.GetValueOrDefault(), error) {
         }
 
         public static implicit operator CustomResult(int result) {
-            return new CustomResult(0, result);
+            return new CustomResult(index: 0, result);
         }
 
         public static implicit operator CustomResult(Error error) {
-            return new CustomResult(1, errors: [error]);
-        }
-
-        public static implicit operator CustomResult(Error[] errors) {
-            return new CustomResult(1, errors: errors);
+            return new CustomResult(index: 1, error: error);
         }
 
         // Implementation error, index is out of bounds
         public static implicit operator CustomResult(string error) {
-            return new CustomResult(2, errors: [Error.Failure(error)]);
+            return new CustomResult(index: 2, error: Error.Failure(error));
         }
     }
 }

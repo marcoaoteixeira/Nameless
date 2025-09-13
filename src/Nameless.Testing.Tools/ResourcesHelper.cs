@@ -3,7 +3,10 @@ using Nameless.Helpers;
 
 namespace Nameless.Testing.Tools;
 
-public static class ResourceHelper {
+public static class ResourcesHelper {
+    public const string RESOURCES_DIRECTORY_NAME = "Resources";
+    public const string TEMPORARY_DIRECTORY_NAME = "VGVtcG9yYXJ5";
+
     /// <summary>
     ///     Retrieves the resource file full path.
     /// </summary>
@@ -44,7 +47,7 @@ public static class ResourceHelper {
     ///     If the <paramref name="relativeFilePath"/> do not point to any
     ///     file inside the "Resources" folder.
     /// </exception>
-    public static FileStream GetStream(string relativeFilePath) {
+    public static Stream GetStream(string relativeFilePath) {
         var assembly = Assembly.GetCallingAssembly();
         var filePath = GetResourceFilePath(assembly, relativeFilePath);
 
@@ -52,50 +55,70 @@ public static class ResourceHelper {
     }
 
     public static string CreateCopy(string relativeFilePath, string? newFileName = null) {
+        relativeFilePath = PathHelper.Normalize(relativeFilePath);
+
         var assembly = Assembly.GetCallingAssembly();
         var resourceFilePath = GetResourceFilePath(assembly, relativeFilePath);
-        var resourceFileName = Path.GetFileNameWithoutExtension(resourceFilePath);
-        var resourceFileExtension = Path.GetExtension(resourceFilePath);
 
         var relativeDirectoryPath = Path.GetDirectoryName(relativeFilePath) ?? string.Empty;
-        var temporaryDirectoryPath = GetTemporaryDirectoryPath(assembly, relativeDirectoryPath);
-
         var fileName = string.IsNullOrWhiteSpace(newFileName)
-            ? $"{resourceFileName}{resourceFileExtension}"
-            : $"{newFileName}{resourceFileExtension}";
+            ? Path.GetFileName(relativeFilePath)
+            : newFileName;
 
-        var destinationFilePath = Path.Combine(temporaryDirectoryPath, fileName);
+        // Copy will be created in the temporary folder.
+        var directoryPath = Path.Combine(
+            GetTemporaryDirectoryPath(assembly),
+            relativeDirectoryPath
+        );
 
-        File.Copy(resourceFilePath, destinationFilePath, overwrite: true);
+        // Ensure directory existence
+        Directory.CreateDirectory(directoryPath);
+
+        var destinationFilePath = Path.Combine(
+            directoryPath,
+            fileName
+        );
+
+        File.Copy(
+            resourceFilePath,
+            destinationFilePath,
+            overwrite: true
+        );
 
         return destinationFilePath;
     }
 
     private static string GetResourceFilePath(Assembly assembly, string relativeFilePath) {
-        relativeFilePath = relativeFilePath.RemoveRoot();
-
-        var filePath = Path.Combine(assembly.GetDirectoryPath(), "Resources", relativeFilePath);
+        var rootDirectoryPath = Path.Combine(
+            assembly.GetDirectoryPath(),
+            RESOURCES_DIRECTORY_NAME
+        );
+        var filePath = Path.IsPathRooted(relativeFilePath)
+            ? Path.GetFullPath(relativeFilePath)
+            : Path.GetFullPath(relativeFilePath, rootDirectoryPath);
 
         filePath = PathHelper.Normalize(filePath);
 
+        if (!filePath.StartsWith(rootDirectoryPath)) {
+            throw new UnauthorizedAccessException("The specified path is outside the root directory.");
+        }
+
         if (!File.Exists(filePath)) {
-            throw new FileNotFoundException("File not found.", relativeFilePath);
+            throw new FileNotFoundException("Couldn't locate the specified file.", relativeFilePath);
         }
 
         return filePath;
     }
 
-    private static string GetTemporaryDirectoryPath(Assembly assembly, string relativeDirectoryPath) {
-        var temporaryDirectoryPath = Path.Combine(assembly.GetDirectoryPath(), "Temporary", relativeDirectoryPath.RemoveRoot());
+    private static string GetTemporaryDirectoryPath(Assembly assembly) {
+        var directoryPath = Path.Combine(
+            assembly.GetDirectoryPath(),
+            TEMPORARY_DIRECTORY_NAME
+        );
 
-        temporaryDirectoryPath = PathHelper.Normalize(temporaryDirectoryPath);
+        // Ensure directory existence.
+        Directory.CreateDirectory(directoryPath);
 
-        return Directory.CreateDirectory(temporaryDirectoryPath).FullName;
-    }
-
-    private static string RemoveRoot(this string self) {
-        return Path.IsPathRooted(self)
-            ? self.RemoveHead([Path.GetPathRoot(self) ?? string.Empty])
-            : self;
+        return directoryPath;
     }
 }

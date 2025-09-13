@@ -86,7 +86,7 @@ public class StringExtensionsTests {
         const int Count = 8;
 
         // act
-        var actual = Value.Ellipsize(Count, Ellipsis, false);
+        var actual = Value.Ellipsize(Count, Ellipsis, wordBoundary: false);
 
         // arrange
         Assert.Equal(Expected, actual);
@@ -97,7 +97,7 @@ public class StringExtensionsTests {
         // arrange
         const string Expected = "Test Is A Test";
         var array = Expected.ToCharArray()
-                            .Select(item => ((int)item).ToString("X2"));
+                            .Select(item => ((int)item).ToString(format: "X2"));
         var value = string.Join(string.Empty, array);
 
         // act

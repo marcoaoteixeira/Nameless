@@ -11,7 +11,7 @@ public class CultureProviderTests {
     [Fact]
     public void GetCurrentCulture_Returns_CultureInfo_From_CurrentUICulture() {
         // arrange
-        Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-ES");
+        Thread.CurrentThread.CurrentUICulture = new CultureInfo(name: "es-ES");
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         var sut = CreateSut();
 
@@ -21,14 +21,14 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.Equal("es-ES", actual.Name);
+        Assert.Equal(expected: "es-ES", actual.Name);
     }
 
     [Fact]
     public void GetCurrentCulture_Returns_CultureInfo_From_CurrentCulture() {
         // arrange
         Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-        Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
+        Thread.CurrentThread.CurrentCulture = new CultureInfo(name: "fr-FR");
         var sut = CreateSut();
 
         // act
@@ -37,7 +37,7 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.Equal("fr-FR", actual.Name);
+        Assert.Equal(expected: "fr-FR", actual.Name);
     }
 
     [Fact]
@@ -52,6 +52,6 @@ public class CultureProviderTests {
         var actual = sut.GetCurrentCulture();
 
         // assert
-        Assert.Equal("en-US", actual.Name);
+        Assert.Equal(expected: "en-US", actual.Name);
     }
 }

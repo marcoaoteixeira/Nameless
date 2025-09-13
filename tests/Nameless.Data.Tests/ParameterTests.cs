@@ -6,6 +6,6 @@ public class ParameterTests {
     [Theory]
     [ClassData(typeof(StringNullEmptyWhiteSpaceExceptionInlineData))]
     public void WhenConstructing_WhenNameIsNullEmptyOrWhitespace_ThenThrowsException(string value, Type exceptionType) {
-        Assert.Throws(exceptionType, () => new Parameter(name: value));
+        Assert.Throws(exceptionType, () => new Parameter(value));
     }
 }

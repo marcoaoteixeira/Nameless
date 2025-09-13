@@ -1,6 +1,8 @@
-﻿using Autofac;
+﻿#pragma warning disable IDE0079 // Shut up you fucker...
+
+using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Autofac;
 
@@ -12,7 +14,9 @@ public class ComponentContextExtensionsTests {
         using var container = builder.Build();
 
         // act
+#pragma warning disable CA2263
         var sut = container.GetLogger(typeof(ComponentContextExtensionsTests));
+#pragma warning restore CA2263
 
         // assert
         Assert.IsType<NullLogger>(sut);
@@ -44,7 +48,9 @@ public class ComponentContextExtensionsTests {
         using var container = builder.Build();
 
         // act
+#pragma warning disable CA2263
         var sut = container.GetLogger(typeof(ComponentContextExtensionsTests));
+#pragma warning restore CA2263
 
         // assert
         Assert.IsNotType<NullLogger<ComponentContextExtensionsTests>>(sut);

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Nameless.Testing.Tools.Mockers;
+namespace Nameless.Testing.Tools.Mockers.Hosting;
 
 public sealed class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilder> {
     public HostApplicationBuilderMocker WithServices(IServiceCollection returnValue) {
