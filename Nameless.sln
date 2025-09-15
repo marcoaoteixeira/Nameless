@@ -80,7 +80,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9DF9C3AC-D4E3-4178-9109-09F4B77F1CBF}"
 	ProjectSection(SolutionItems) = preProject
 		build\build.cake = build\build.cake
-		build\instruments.sh = build\instruments.sh
+		build\tools.sh = build\tools.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nameless.Data.Abstractions", "src\Nameless.Data.Abstractions\Nameless.Data.Abstractions.csproj", "{7175CD8E-0219-416B-891B-80C9582355E8}"
