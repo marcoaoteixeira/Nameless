@@ -28,10 +28,8 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection RegisterFileSystem(this IServiceCollection self, Action<FileSystemOptions>? configure = null) {
         Guard.Against.Null(self);
 
-        self.Configure(configure ?? (_ => { }));
-        self.TryAddSingleton<IFileSystem>(ResolveFileSystem);
-
-        return self;
+        return self.Configure(configure ?? (_ => { }))
+                   .InnerRegisterFileSystem();
     }
 
     /// <summary>
@@ -59,7 +57,11 @@ public static class ServiceCollectionExtensions {
 
         var section = configuration.GetSection(nameof(FileSystemOptions));
 
-        self.Configure<FileSystemOptions>(section);
+        return self.Configure<FileSystemOptions>(section)
+                   .InnerRegisterFileSystem();
+    }
+
+    private static IServiceCollection InnerRegisterFileSystem(this IServiceCollection self) {
         self.TryAddSingleton<IFileSystem>(ResolveFileSystem);
 
         return self;
@@ -74,8 +76,11 @@ public static class ServiceCollectionExtensions {
 
         var applicationContext = provider.GetService<IApplicationContext>();
 
-        options.Value.Root = applicationContext?.DataDirectoryPath ??
-                             AppDomain.CurrentDomain.BaseDirectory;
+        var rootDirectoryPath = applicationContext is not null
+            ? applicationContext.DataDirectoryPath
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+
+        options.Value.Root = Directory.CreateDirectory(rootDirectoryPath).FullName;
 
         return new FileSystemImpl(options);
     }

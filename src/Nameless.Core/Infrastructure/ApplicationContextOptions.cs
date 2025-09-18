@@ -15,22 +15,30 @@ public sealed class ApplicationContextOptions {
     public string ApplicationName { get; set; } = AppDomain.CurrentDomain.FriendlyName;
 
     /// <summary>
-    ///     Whether the application should use the
-    ///     local application data directory.
+    ///     Gets or sets where the application should store its data.
+    /// </summary>
+    public ApplicationDataLocation ApplicationDataLocation { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the custom application data directory.
+    /// </summary>
+    public string? CustomApplicationDataDirectoryPath { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the version of the application.
+    /// </summary>
+    public Version Version { get; set; } = new(1, 0, 0);
+}
+
+/// <summary>
+///     Defines where the application data directory will be located.
+/// </summary>
+public enum ApplicationDataLocation {
+    /// <summary>
+    ///     Directory location that is common to all users in the current
+    ///     machine.
     /// </summary>
     /// <remarks>
-    ///     When <see cref="UseLocalApplicationData"/> is <see langword="true"/>, then
-    ///     <list type="bullet">
-    ///         <item>
-    ///             <term>On Windows</term>
-    ///             <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
-    ///         </item>
-    ///         <item>
-    ///             <term>On Linux</term>
-    ///             <description>/home/CURRENT_USER/.local/share/APPLICATION_NAME</description>
-    ///         </item>
-    ///     </list>
-    ///     Otherwise,
     ///     <list type="bullet">
     ///         <item>
     ///             <term>On Windows</term>
@@ -41,13 +49,31 @@ public sealed class ApplicationContextOptions {
     ///             <description>/usr/share/APPLICATION_NAME</description>
     ///         </item>
     ///     </list>
-    ///     Also, it will try to create the application data directory if it does
-    ///     not exist. On failure, the exception will be thrown.
     /// </remarks>
-    public bool UseLocalApplicationData { get; set; }
+    Machine,
 
     /// <summary>
-    ///     Gets or sets the version of the application.
+    ///     Directory location that is specific to the current user,
+    ///     means non-roaming user.
     /// </summary>
-    public Version Version { get; set; } = new(1, 0, 0);
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             <term>On Windows</term>
+    ///             <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>On Linux</term>
+    ///             <description>/home/CURRENT_USER/.local/share/APPLICATION_NAME</description>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    User,
+
+    /// <summary>
+    ///     When using <see cref="Custom"/>, it's necessary to provide a valid
+    ///     directory path using the property
+    ///     <see cref="ApplicationContextOptions.CustomApplicationDataDirectoryPath"/>.
+    /// </summary>
+    Custom
 }

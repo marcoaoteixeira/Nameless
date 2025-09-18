@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.Helpers;
 using Nameless.Internals;
 
 namespace Nameless.Infrastructure;
@@ -42,17 +43,28 @@ public sealed class ApplicationContext : IApplicationContext {
     private string GetDataDirectoryPath() {
         var options = _options.Value;
 
-        var specialFolder = options.UseLocalApplicationData
-            ? Environment.SpecialFolder.LocalApplicationData
-            : Environment.SpecialFolder.CommonApplicationData;
+        var directoryPath = options.ApplicationDataLocation switch {
+            ApplicationDataLocation.Machine => Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            ApplicationDataLocation.User => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            _ => options.CustomApplicationDataDirectoryPath,
+        };
 
-        var specialDirectoryPath = Environment.GetFolderPath(specialFolder);
-        var result = Path.Combine(specialDirectoryPath, options.ApplicationName);
-
-        try {
-            // Ensure directory exists
-            return Directory.CreateDirectory(result).FullName;
+        if (string.IsNullOrWhiteSpace(directoryPath)) {
+            throw new InvalidOperationException("Must provide application data directory path.");
         }
+
+        directoryPath = PathHelper.Normalize(directoryPath);
+
+        directoryPath = Path.IsPathRooted(directoryPath)
+            ? Path.GetFullPath(directoryPath)
+            : Path.GetFullPath(directoryPath, BaseDirectoryPath);
+
+        if (options.ApplicationDataLocation != ApplicationDataLocation.Custom) {
+            directoryPath = Path.Combine(directoryPath, ApplicationName);
+        }
+
+        // Ensure directory existence
+        try { return Directory.CreateDirectory(directoryPath).FullName; }
         catch (Exception ex) {
             _logger.CreateDataDirectoryPathFailure(ex);
 

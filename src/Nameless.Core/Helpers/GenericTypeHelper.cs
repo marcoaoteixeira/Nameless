@@ -105,7 +105,7 @@ public static class GenericTypeHelper {
 
         // If no constraints at all, we can't discover types
         if (attrs == GenericParameterAttributes.None && typeConstraints.Length == 0) {
-            return discoveredTypes;
+            return [];
         }
 
         // Get all types from the specified assemblies

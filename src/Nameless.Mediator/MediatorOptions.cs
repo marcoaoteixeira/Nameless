@@ -14,12 +14,12 @@ public sealed class MediatorOptions {
     /// <summary>
     ///     Gets the registered request pipeline behaviors.
     /// </summary>
-    internal IEnumerable<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
+    internal IReadOnlyList<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
 
     /// <summary>
     ///     Gets the registered stream pipeline behaviors.
     /// </summary>
-    internal IEnumerable<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
+    internal IReadOnlyList<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
 
     /// <summary>
     ///     Gets or sets the assemblies to scan for handlers.

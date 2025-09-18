@@ -25,10 +25,8 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, Action<ApplicationContextOptions>? configure = null) {
         Guard.Against.Null(self);
 
-        self.Configure(configure ?? (_ => { }));
-        self.TryAddSingleton<IApplicationContext, ApplicationContext>();
-
-        return self;
+        return self.Configure(configure ?? (_ => { }))
+                   .InnerRegisterApplicationContext();
     }
 
     /// <summary>
@@ -57,7 +55,11 @@ public static class ServiceCollectionExtensions {
 
         var section = configuration.GetSection(nameof(ApplicationContextOptions));
 
-        self.Configure<ApplicationContextOptions>(section);
+        return self.Configure<ApplicationContextOptions>(section)
+                   .InnerRegisterApplicationContext();
+    }
+
+    private static IServiceCollection InnerRegisterApplicationContext(this IServiceCollection self) {
         self.TryAddSingleton<IApplicationContext, ApplicationContext>();
 
         return self;

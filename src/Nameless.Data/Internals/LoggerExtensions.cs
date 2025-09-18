@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Nameless.Data.Internals;
 
-internal static class LoggerExtensions {
+internal static class DatabaseLoggerExtensions {
     private static readonly Action<ILogger, string, IDataParameterCollection, Exception?> OutputDbCommandDelegate
         = LoggerMessage.Define<string, IDataParameterCollection>(
             logLevel: LogLevel.Debug,
