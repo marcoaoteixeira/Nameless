@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Lucene Library</Title>
+		<Description>Current implementation of Lucene Search Engine.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Lucene.Net.Analysis.Common" />
+		<PackageReference Include="Lucene.Net.QueryParser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
+
+</Project>
