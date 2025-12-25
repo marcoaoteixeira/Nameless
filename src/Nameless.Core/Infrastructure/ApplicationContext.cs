@@ -17,8 +17,8 @@ public sealed class ApplicationContext : IApplicationContext {
     /// <param name="options">The application context options.</param>
     /// <param name="logger">The logger.</param>
     public ApplicationContext(IOptions<ApplicationContextOptions> options, ILogger<ApplicationContext> logger) {
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _options = options;
+        _logger = logger;
 
         _dataDirectoryPath = new Lazy<string>(GetDataDirectoryPath);
         _version = new Lazy<string>(GetVersion);

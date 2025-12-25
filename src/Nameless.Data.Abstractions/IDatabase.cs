@@ -30,8 +30,7 @@ public interface IDatabase {
     /// <param name="mapper">The mapper for result projection.</param>
     /// <param name="parameters">The command parameters.</param>
     /// <returns>A <see cref="IEnumerable{TResult}" /> implementation instance, representing a collection of results.</returns>
-    IEnumerable<TResult> ExecuteReader<TResult>(string text, CommandType type, Func<IDataRecord, TResult> mapper,
-                                                params Parameter[] parameters);
+    IEnumerable<TResult> ExecuteReader<TResult>(string text, CommandType type, Func<IDataRecord, TResult> mapper, params Parameter[] parameters);
 
     /// <summary>
     ///     Executes a scalar command against the database.

@@ -24,9 +24,8 @@ public static class ServiceCollectionExtensions {
     ///     can be chained.
     /// </returns>
     public static IServiceCollection RegisterDataServices(this IServiceCollection self, Action<SqlServerOptions>? configure = null) {
-        self.Configure(configure ?? (_ => { }));
-
-        return self.InnerRegisterDataServices();
+        return self.Configure(configure ?? (_ => { }))
+                   .InnerRegisterDataServices();
     }
 
     /// <summary>
@@ -45,9 +44,8 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection RegisterDataServices(this IServiceCollection self, IConfiguration configuration) {
         var section = configuration.GetSection(nameof(SqlServerOptions));
 
-        self.Configure<SqlServerOptions>(section);
-
-        return self.InnerRegisterDataServices();
+        return self.Configure<SqlServerOptions>(section)
+                   .InnerRegisterDataServices();
     }
 
     private static IServiceCollection InnerRegisterDataServices(this IServiceCollection self) {

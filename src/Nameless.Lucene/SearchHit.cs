@@ -25,50 +25,50 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public bool? GetBoolean(string fieldName) {
+    public bool? GetBoolean(string name) {
         // Boolean values are stored as integer (1 = true, 0 = false)
-        return GetInteger(fieldName) is 1;
+        return GetInteger(name) is 1;
     }
 
     /// <inheritdoc />
-    public string? GetString(string fieldName) {
-        return GetField(fieldName).GetStringValue();
+    public string? GetString(string name) {
+        return GetField(name).GetStringValue();
     }
 
     /// <inheritdoc />
-    public byte? GetByte(string fieldName) {
-        return GetField(fieldName).GetByteValue();
+    public byte? GetByte(string name) {
+        return GetField(name).GetByteValue();
     }
 
     /// <inheritdoc />
-    public short? GetShort(string fieldName) {
-        return GetField(fieldName).GetInt16Value();
+    public short? GetShort(string name) {
+        return GetField(name).GetInt16Value();
     }
 
     /// <inheritdoc />
-    public int? GetInteger(string fieldName) {
-        return GetField(fieldName).GetInt32Value();
+    public int? GetInteger(string name) {
+        return GetField(name).GetInt32Value();
     }
 
     /// <inheritdoc />
-    public long? GetLong(string fieldName) {
-        return GetField(fieldName).GetInt64Value();
+    public long? GetLong(string name) {
+        return GetField(name).GetInt64Value();
     }
 
     /// <inheritdoc />
-    public float? GetFloat(string fieldName) {
-        return GetField(fieldName).GetSingleValue();
+    public float? GetFloat(string name) {
+        return GetField(name).GetSingleValue();
     }
 
     /// <inheritdoc />
-    public double? GetDouble(string fieldName) {
-        return GetField(fieldName).GetDoubleValue();
+    public double? GetDouble(string name) {
+        return GetField(name).GetDoubleValue();
     }
 
     /// <inheritdoc />
-    public DateTimeOffset? GetDateTimeOffset(string fieldName) {
+    public DateTimeOffset? GetDateTimeOffset(string name) {
         // DateTimeOffset values are stored as ticks
-        var value = GetLong(fieldName);
+        var value = GetLong(name);
 
         return value.HasValue
             ? new DateTimeOffset(value.Value, TimeSpan.Zero)
@@ -76,9 +76,9 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public DateTime? GetDateTime(string fieldName) {
+    public DateTime? GetDateTime(string name) {
         // DateTime values are stored as ticks
-        var value = GetLong(fieldName);
+        var value = GetLong(name);
 
         return value.HasValue
             ? new DateTime(value.Value, DateTimeKind.Utc)
@@ -86,9 +86,9 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public DateOnly? GetDateOnly(string fieldName) {
+    public DateOnly? GetDateOnly(string name) {
         // DateOnly values are stored as ticks
-        var value = GetLong(fieldName);
+        var value = GetLong(name);
 
         if (!value.HasValue) { return null; }
 
@@ -98,9 +98,9 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public TimeOnly? GetTimeOnly(string fieldName) {
+    public TimeOnly? GetTimeOnly(string name) {
         // TimeOnly values are stored as ticks
-        var value = GetLong(fieldName);
+        var value = GetLong(name);
 
         if (!value.HasValue) { return null; }
 
@@ -110,9 +110,9 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public TimeSpan? GetTimeSpan(string fieldName) {
+    public TimeSpan? GetTimeSpan(string name) {
         // TimeSpan values are stored as ticks
-        var value = GetLong(fieldName);
+        var value = GetLong(name);
 
         return value.HasValue
             ? TimeSpan.FromTicks(value.Value)
@@ -120,10 +120,10 @@ public sealed class SearchHit : ISearchHit {
     }
 
     /// <inheritdoc />
-    public TEnum? GetEnum<TEnum>(string fieldName)
+    public TEnum? GetEnum<TEnum>(string name)
         where TEnum : struct, Enum {
         // Enum values are stored as strings
-        var value = GetString(fieldName);
+        var value = GetString(name);
 
         return value is not null && Enum.TryParse<TEnum>(value, out var result)
             ? result

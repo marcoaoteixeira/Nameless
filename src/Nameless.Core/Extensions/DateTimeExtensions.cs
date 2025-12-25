@@ -4,8 +4,6 @@
 ///     <see cref="DateTime" /> extension methods.
 /// </summary>
 public static class DateTimeExtensions {
-    private static readonly DateTime UnixStartDate = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
     /// <summary>
     ///     Retrieves the difference, in years, between the <paramref name="self" />
     ///     and the <paramref name="date" />. Note: Gregorian calendar.

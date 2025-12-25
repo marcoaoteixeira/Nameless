@@ -22,11 +22,9 @@ public static class XmlSchemaValidatorExtension {
     ///     if <paramref name="schemaFilePath" /> is empty or white spaces.
     /// </exception>
     public static bool Validate(this IXmlSchemaValidator self, string xmlFilePath, string schemaFilePath) {
-        Guard.Against.NullOrWhiteSpace(schemaFilePath);
-        Guard.Against.NullOrWhiteSpace(xmlFilePath);
-
         using var xml = new FileStream(xmlFilePath, FileMode.Open, FileAccess.Read);
         using var schema = new FileStream(schemaFilePath, FileMode.Open, FileAccess.Read);
+
         return self.Validate(xml, schema);
     }
 
@@ -42,9 +40,6 @@ public static class XmlSchemaValidatorExtension {
     ///     <paramref name="schemaBuffer" /> is <see langword="null"/>.
     /// </exception>
     public static bool Validate(this IXmlSchemaValidator self, byte[] xmlBuffer, byte[] schemaBuffer) {
-        Guard.Against.Null(schemaBuffer);
-        Guard.Against.Null(xmlBuffer);
-
         using var xml = new MemoryStream();
         xml.Write(xmlBuffer, OFFSET_ZERO, xmlBuffer.Length);
         xml.Seek(OFFSET_ZERO, SeekOrigin.Begin);

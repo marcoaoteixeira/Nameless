@@ -24,8 +24,9 @@ public class AssemblyTypeConverter : TypeConverter {
 
         try { return Assembly.Load(assembly); }
         catch (Exception ex) {
-            context?.GetLogger<AssemblyTypeConverter>()
-                   .LogError(ex, "Couldn't load assembly '{Assembly}'", assembly);
+            context?
+                .GetLogger<AssemblyTypeConverter>()
+                .LogError(ex, "Couldn't load assembly '{Assembly}'", assembly);
         }
 
         return null;

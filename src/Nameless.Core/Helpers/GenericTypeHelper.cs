@@ -37,9 +37,6 @@ public static class GenericTypeHelper {
     ///     constraints, making it impossible to find closing types.
     /// </exception>
     public static IEnumerable<Type[]> GetArgumentsThatCloses(Type genericDefinition, params Assembly[] assemblies) {
-        Guard.Against.Null(genericDefinition);
-        Guard.Against.Null(assemblies);
-
         if (!genericDefinition.IsGenericTypeDefinition) {
             throw new ArgumentException("The type must be a generic type definition.", nameof(genericDefinition));
         }
@@ -214,9 +211,13 @@ public static class GenericTypeHelper {
             return true;
         }
 
-        // Handle regular type constraints
-        if (constraint is { IsGenericType: false, ContainsGenericParameters: false }) {
-            return constraint.IsAssignableFrom(candidateType);
+        switch (constraint) {
+            // Handle regular type constraints
+            case { IsGenericType: false, ContainsGenericParameters: false }:
+                return constraint.IsAssignableFrom(candidateType);
+            // Handle generic type constraints
+            case { IsGenericType: true, ContainsGenericParameters: true }:
+                return constraint.IsAssignableFromGenericType(candidateType);
         }
 
         // Handle open generic constraints

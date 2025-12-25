@@ -23,7 +23,9 @@ public class ApplicationContextTests {
         var options = Options.Create(new ApplicationContextOptions {
             EnvironmentName = EnvironmentName,
             ApplicationName = ApplicationName,
-            UseLocalApplicationData = specialFolder == Environment.SpecialFolder.LocalApplicationData,
+            ApplicationDataLocation = specialFolder == Environment.SpecialFolder.CommonApplicationData
+                ? ApplicationDataLocation.Machine
+                : ApplicationDataLocation.User,
             Version = appVersion
         });
         // act

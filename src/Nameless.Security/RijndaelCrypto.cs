@@ -183,17 +183,19 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
         // Get bytes of salt (used in hashing).
         var saltValueBytes = Encoding.ASCII.GetBytes(options.Salt);
 
-        // Generate password, which will be used to derive the key.
-        using var password = new Rfc2898DeriveBytes(options.Passphrase,
-            saltValueBytes,
-            options.PasswordIterations,
-            HashAlgorithmName.SHA256);
         // Convert key to a byte array adjusting the size from bits to bytes.
         var keySize = options.KeySize == KeySize.None
             ? KeySize.Large
             : options.KeySize;
 
-        return password.GetBytes((int)keySize / 8);
+        // Generate password, which will be used to derive the key.
+        return Rfc2898DeriveBytes.Pbkdf2(
+            password: options.Passphrase,
+            salt: saltValueBytes,
+            iterations: options.PasswordIterations,
+            hashAlgorithm: HashAlgorithmName.SHA256,
+            outputLength: (int)keySize / 8
+        );
     }
 
     /// <summary>

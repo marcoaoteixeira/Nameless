@@ -38,7 +38,8 @@ public static class StreamExtensions {
             stream: self,
             encoding: encoding ?? Defaults.Encoding,
             detectEncodingFromByteOrderMarks: true,
-            bufferSize: (int)bufferSize).ReadToEnd();
+            bufferSize: (int)bufferSize
+        ).ReadToEnd();
 
         // again, if we can seek let's put the cursor in the
         // original position

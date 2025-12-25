@@ -43,15 +43,15 @@ public sealed class Index : IIndex {
     private IndexWriterConfig IndexWriterConfig => _indexWriterConfig?.Value ?? throw new InvalidOperationException($"{nameof(IndexWriterConfig)} not available.");
 
     public Index(Analyzer analyzer, IFileSystem fileSystem, string name, IOptions<LuceneOptions> options, ILogger<Index> logger) {
-        _analyzer = Guard.Against.Null(analyzer);
-        _fileSystem = Guard.Against.Null(fileSystem);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _analyzer = analyzer;
+        _fileSystem = fileSystem;
+        _options = options;
+        _logger = logger;
 
         _indexWriterConfig = new Lazy<IndexWriterConfig>(CreateIndexWriterConfig);
         _fsDirectory = new Lazy<FSDirectory>(CreateFSDirectory);
 
-        Name = Guard.Against.NullOrWhiteSpace(name);
+        Name = name;
     }
 
     ~Index() {
@@ -66,7 +66,7 @@ public sealed class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<InsertDocumentsResult> InsertAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    public Task<InsertDocumentsResult> InsertAsync(Document[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Guard.Against.NullOrEmpty(documents);
@@ -85,7 +85,7 @@ public sealed class Index : IIndex {
 
                 count += chunk.Length;
 
-                var docs = chunk.Select(document => document.ToDocument());
+                var docs = chunk.Select(document => document.ToIndexableFields());
 
                 indexWriter.AddDocuments(docs);
                 indexWriter.Commit();
@@ -113,7 +113,7 @@ public sealed class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<RemoveDocumentsResult> RemoveAsync(IDocument[] documents, CancellationToken cancellationToken) {
+    public Task<RemoveDocumentsResult> RemoveAsync(Document[] documents, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Guard.Against.NullOrEmpty(documents);
@@ -165,8 +165,8 @@ public sealed class Index : IIndex {
 
         return Task.FromResult(result);
 
-        static BooleanClause CreateDeleteClause(IDocument doc) {
-            var term = new Term(nameof(IDocument.ID), doc.ID);
+        static BooleanClause CreateDeleteClause(Document doc) {
+            var term = new Term(nameof(Document.ID), doc.ID);
             var termQuery = new TermQuery(term);
 
             return new BooleanClause(termQuery, Occur.SHOULD);

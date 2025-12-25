@@ -17,7 +17,7 @@ public static class EnumExtensions {
         where TAttribute : Attribute {
         return self.GetType()
                    .GetField(self.ToString())?
-                   .GetCustomAttribute<TAttribute>(false);
+                   .GetCustomAttribute<TAttribute>(inherit: false);
     }
 
     /// <summary>

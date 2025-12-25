@@ -17,13 +17,9 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     /// </summary>
     /// <param name="serviceType">The service type.</param>
     /// <param name="factory">The factory function that will resolve the component.</param>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="serviceType" /> or
-    ///     <paramref name="factory" /> is <see langword="null"/>.
-    /// </exception>
     public PropertyResolveMiddleware(Type serviceType, Func<MemberInfo, IComponentContext, object> factory) {
-        _serviceType = Guard.Against.Null(serviceType);
-        _factory = Guard.Against.Null(factory);
+        _serviceType = serviceType;
+        _factory = factory;
     }
 
     /// <inheritdoc />
@@ -35,9 +31,6 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     ///     <paramref name="next" /> is <see langword="null"/>.
     /// </exception>
     public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
-        Guard.Against.Null(context);
-        Guard.Against.Null(next);
-
         context.ChangeParameters(context.Parameters.Union([
             new ResolvedParameter(
                 predicate: (param, _) => param.ParameterType == _serviceType,
@@ -54,9 +47,11 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
         var implementationType = context.Instance.GetType();
         var properties = GetProperties(implementationType, _serviceType);
         foreach (var property in properties) {
-            property.SetValue(context.Instance,
-                _factory(property, context),
-                null);
+            property.SetValue(
+                obj: context.Instance,
+                value: _factory(property, context),
+                index: null
+            );
         }
     }
 

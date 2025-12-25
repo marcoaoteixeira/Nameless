@@ -31,7 +31,7 @@ public readonly record struct Error {
 
     private Error(string? summary, string description, ErrorType type) {
         Summary = summary;
-        Description = Guard.Against.NullOrWhiteSpace(description);
+        Description = description;
         Type = type;
     }
 

@@ -4,7 +4,7 @@ public interface IQueryBuilder {
     /// <summary>
     ///     Includes the specified fields and value to the search query.
     /// </summary>
-    /// <param name="fieldNames">
+    /// <param name="names">
     ///     The fields name.
     /// </param>
     /// <param name="value">
@@ -17,12 +17,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithFields(string[] fieldNames, string value, float fuzziness);
+    IQueryBuilder WithFields(string[] names, string value, float fuzziness);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -32,12 +32,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, bool value);
+    IQueryBuilder WithField(string name, bool value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -50,12 +50,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, string value, bool useWildcard);
+    IQueryBuilder WithField(string name, string value, bool useWildcard);
 
     /// <summary>
     ///     Includes the specified field and values to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="values">
@@ -65,12 +65,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, string[] values);
+    IQueryBuilder WithField(string name, string[] values);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">The value.</param>
@@ -78,12 +78,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, int value);
+    IQueryBuilder WithField(string name, int value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -93,12 +93,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, long value);
+    IQueryBuilder WithField(string name, long value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -108,12 +108,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, float value);
+    IQueryBuilder WithField(string name, float value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -123,12 +123,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, double value);
+    IQueryBuilder WithField(string name, double value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -138,12 +138,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, DateTimeOffset value);
+    IQueryBuilder WithField(string name, DateTimeOffset value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -153,12 +153,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, DateTime value);
+    IQueryBuilder WithField(string name, DateTime value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -168,12 +168,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, DateOnly value);
+    IQueryBuilder WithField(string name, DateOnly value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -183,12 +183,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, TimeOnly value);
+    IQueryBuilder WithField(string name, TimeOnly value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -198,12 +198,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, TimeSpan value);
+    IQueryBuilder WithField(string name, TimeSpan value);
 
     /// <summary>
     ///     Includes the specified field and value to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="value">
@@ -213,12 +213,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithField(string fieldName, Enum value);
+    IQueryBuilder WithField(string name, Enum value);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -237,12 +237,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -261,12 +261,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -285,12 +285,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, long? minimum, long? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, long? minimum, long? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -309,12 +309,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, float? minimum, float? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, float? minimum, float? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -333,12 +333,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -357,12 +357,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -381,12 +381,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -405,12 +405,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -429,12 +429,12 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <param name="minimum">
@@ -453,7 +453,7 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string fieldName, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum);
 
     /// <summary>
     ///     Marks the search as mandatory.
@@ -520,158 +520,158 @@ public interface IQueryBuilder {
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortBy(string fieldName);
+    IQueryBuilder SortBy(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByBoolean(string fieldName);
+    IQueryBuilder SortByBoolean(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByString(string fieldName);
+    IQueryBuilder SortByString(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByInteger(string fieldName);
+    IQueryBuilder SortByInteger(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByLong(string fieldName);
+    IQueryBuilder SortByLong(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByFloat(string fieldName);
+    IQueryBuilder SortByFloat(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByDouble(string fieldName);
+    IQueryBuilder SortByDouble(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByDateTimeOffset(string fieldName);
+    IQueryBuilder SortByDateTimeOffset(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByDateTime(string fieldName);
+    IQueryBuilder SortByDateTime(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByDateOnly(string fieldName);
+    IQueryBuilder SortByDateOnly(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByTimeOnly(string fieldName);
+    IQueryBuilder SortByTimeOnly(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByTimeSpan(string fieldName);
+    IQueryBuilder SortByTimeSpan(string name);
 
     /// <summary>
     ///     Sort by field.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The field name.
     /// </param>
     /// <returns>
     /// 	The current <see cref="IQueryBuilder" /> so other actions
     /// 	can be chained.
     /// </returns>
-    IQueryBuilder SortByEnum(string fieldName);
+    IQueryBuilder SortByEnum(string name);
 
     /// <summary>
     ///     Orders ascending.

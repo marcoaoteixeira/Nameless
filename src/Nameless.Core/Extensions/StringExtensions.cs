@@ -280,8 +280,7 @@ public static class StringExtensions {
     /// <param name="contains">The text that should look for.</param>
     /// <param name="stringComparison">Comparison style.</param>
     /// <returns><see langword="true"/> if contains, otherwise, <see langword="false"/>.</returns>
-    public static bool Contains(this string self, string contains,
-                                StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
+    public static bool Contains(this string self, string contains, StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
         return self.IndexOf(contains, stringComparison) > 0;
     }
 
@@ -304,8 +303,7 @@ public static class StringExtensions {
     /// <param name="replacement">The replacement value..</param>
     /// <param name="regexOptions">The regexp options</param>
     /// <returns>A <see cref="string" /> representing the new value.</returns>
-    public static string Replace(this string self, string regExp, string replacement,
-                                 RegexOptions regexOptions = RegexOptions.None) {
+    public static string Replace(this string self, string regExp, string replacement, RegexOptions regexOptions = RegexOptions.None) {
         return Regex.Replace(self, regExp, replacement, regexOptions);
     }
 
@@ -433,8 +431,7 @@ public static class StringExtensions {
     /// <param name="values">A collection of values to match.</param>
     /// <param name="comparison">The comparison type.</param>
     /// <returns>The current <see cref="string" /> without the matching start, if exists.</returns>
-    public static string RemoveHead(this string self, string[] values,
-                                    StringComparison comparison = StringComparison.OrdinalIgnoreCase) {
+    public static string RemoveHead(this string self, string[] values, StringComparison comparison = StringComparison.OrdinalIgnoreCase) {
         foreach (var value in values) {
             if (string.IsNullOrWhiteSpace(value)) {
                 continue;
@@ -456,8 +453,7 @@ public static class StringExtensions {
     /// <param name="values">A collection of values to match.</param>
     /// <param name="comparison">The comparison type.</param>
     /// <returns>The current <see cref="string" /> without the matching end, if exists.</returns>
-    public static string RemoveTail(this string self, string[] values,
-                                    StringComparison comparison = StringComparison.Ordinal) {
+    public static string RemoveTail(this string self, string[] values, StringComparison comparison = StringComparison.Ordinal) {
         foreach (var value in values) {
             if (string.IsNullOrWhiteSpace(value)) {
                 continue;
@@ -486,6 +482,24 @@ public static class StringExtensions {
         return string.IsNullOrWhiteSpace(self) ? fallback : self;
     }
 
+    /// <summary>
+    ///     Converts the current <see cref="string" /> to snake_case format.
+    /// </summary>
+    /// <param name="self">
+    ///     The current <see cref="string" /> to convert.
+    /// </param>
+    /// <param name="separator">
+    ///     The character used as the separator. Default is '_'.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="string" /> in snake_case format. If the input is
+    ///     <see langword="null" />, returns an empty string.
+    /// </returns>
+    /// <remarks>
+    ///     This method inserts the specified separator before uppercase letters
+    ///     that are not at the start or end of the string, and converts all
+    ///     characters to lowercase.
+    /// </remarks>
     public static string ToSnakeCase(this string? self, char separator = '_') {
         if (self is null) { return string.Empty; }
 

@@ -35,7 +35,7 @@ public class PerformanceRequestPipelineBehavior<TRequest, TResponse> : IRequestP
 
         _logger.LogInformation("Starting...");
 
-        try { return await next(cancellationToken).SuppressContext(); }
+        try { return await next(cancellationToken).SkipContextSync(); }
         finally { _logger.LogInformation("Finished! Time {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds); }
     }
 }

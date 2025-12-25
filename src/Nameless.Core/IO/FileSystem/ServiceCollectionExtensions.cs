@@ -26,8 +26,6 @@ public static class ServiceCollectionExtensions {
     ///     if <paramref name="self"/> is <see langword="null"/>.
     /// </exception>
     public static IServiceCollection RegisterFileSystem(this IServiceCollection self, Action<FileSystemOptions>? configure = null) {
-        Guard.Against.Null(self);
-
         return self.Configure(configure ?? (_ => { }))
                    .InnerRegisterFileSystem();
     }
@@ -52,9 +50,6 @@ public static class ServiceCollectionExtensions {
     ///     is <see langword="null"/>.
     /// </exception>
     public static IServiceCollection RegisterFileSystem(this IServiceCollection self, IConfiguration configuration) {
-        Guard.Against.Null(self);
-        Guard.Against.Null(configuration);
-
         var section = configuration.GetSection(nameof(FileSystemOptions));
 
         return self.Configure<FileSystemOptions>(section)

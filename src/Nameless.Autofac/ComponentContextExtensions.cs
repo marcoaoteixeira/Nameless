@@ -21,7 +21,8 @@ public static class ComponentContextExtensions {
     ///     is available, otherwise; <see cref="NullLogger{T}" />.
     /// </returns>
     public static ILogger<TCategoryName> GetLogger<TCategoryName>(this IComponentContext self) {
-        return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName> ?? NullLogger<TCategoryName>.Instance;
+        return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName>
+               ?? NullLogger<TCategoryName>.Instance;
     }
 
     /// <summary>
@@ -38,7 +39,8 @@ public static class ComponentContextExtensions {
     ///     if <paramref name="categoryType" /> is <see langword="null"/>.
     /// </exception>
     public static ILogger GetLogger(this IComponentContext self, Type categoryType) {
-        return self.GetLoggerCore(categoryType) ?? NullLogger.Instance;
+        return self.GetLoggerCore(categoryType)
+               ?? NullLogger.Instance;
     }
 
     /// <summary>
@@ -100,10 +102,8 @@ public static class ComponentContextExtensions {
     }
 
     private static ILogger? GetLoggerCore(this IComponentContext self, Type type) {
-        Guard.Against.Null(type);
-
-        var loggerFactory = self.ResolveOptional<ILoggerFactory>();
-
-        return loggerFactory?.CreateLogger(type.FullName ?? type.Name);
+        return self
+               .ResolveOptional<ILoggerFactory>()?
+               .CreateLogger(type.FullName ?? type.Name);
     }
 }

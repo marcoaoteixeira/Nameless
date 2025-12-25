@@ -35,7 +35,7 @@ public static class TaskExtensions {
     ///     the attempt to marshal the continuation back to the original context
     ///     captured should not occur.
     /// </remarks>
-    public static ConfiguredTaskAwaitable<TResult> SuppressContext<TResult>(this Task<TResult> self) {
+    public static ConfiguredTaskAwaitable<TResult> SkipContextSync<TResult>(this Task<TResult> self) {
         return self.ConfigureAwait(continueOnCapturedContext: false);
     }
 
@@ -56,7 +56,7 @@ public static class TaskExtensions {
     ///     the attempt to marshal the continuation back to the original context
     ///     captured should not occur.
     /// </remarks>
-    public static ConfiguredTaskAwaitable SuppressContext(this Task self) {
+    public static ConfiguredTaskAwaitable SkipContextSync(this Task self) {
         return self.ConfigureAwait(continueOnCapturedContext: false);
     }
 
@@ -81,7 +81,7 @@ public static class TaskExtensions {
     ///     the attempt to marshal the continuation back to the original context
     ///     captured should not occur.
     /// </remarks>
-    public static ConfiguredValueTaskAwaitable<TResult> SuppressContext<TResult>(this ValueTask<TResult> self) {
+    public static ConfiguredValueTaskAwaitable<TResult> SkipContextSync<TResult>(this ValueTask<TResult> self) {
         return self.ConfigureAwait(continueOnCapturedContext: false);
     }
 
@@ -102,7 +102,7 @@ public static class TaskExtensions {
     ///     the attempt to marshal the continuation back to the original context
     ///     captured should not occur.
     /// </remarks>
-    public static ConfiguredValueTaskAwaitable SuppressContext(this ValueTask self) {
+    public static ConfiguredValueTaskAwaitable SkipContextSync(this ValueTask self) {
         return self.ConfigureAwait(continueOnCapturedContext: false);
     }
 }

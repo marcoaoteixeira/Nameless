@@ -49,9 +49,9 @@ public sealed record Resource {
     ///     <paramref name="messages"/> is <see langword="null"/>.
     /// </exception>
     public Resource(string path, string culture, IEnumerable<Message> messages, bool isAvailable) {
-        Path = Guard.Against.Null(path);
-        Culture = Guard.Against.Null(culture);
-        Messages = Guard.Against.Null(messages).ToArray();
+        Path = path;
+        Culture = culture;
+        Messages = [.. messages];
         IsAvailable = isAvailable;
     }
 

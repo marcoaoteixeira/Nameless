@@ -9,27 +9,6 @@ public sealed class CryptoOptions {
     public const int MINIMUM_PASSWORD_ITERATIONS = 1;
 
     /// <summary>
-    ///     Gets or sets the maximum salt size.
-    ///     This value should not be longer than 255 bytes,
-    ///     because we have only 1 byte to store its length.
-    /// </summary>
-    private int _maximumSaltSize = 128;
-
-    /// <summary>
-    ///     Gets or sets the minimum salt size.
-    ///     This value should not be smaller than 4 bytes,
-    ///     because we use the first 4 bytes of salt to store its length.
-    /// </summary>
-    private int _minimumSaltSize = 16;
-
-    /// <summary>
-    ///     Gets or sets the password iterations.
-    ///     Number of iterations used to hash password. More iterations are
-    ///     considered more secure but may take longer. Minimum of 1.
-    /// </summary>
-    private int _passwordIterations = 1;
-
-    /// <summary>
     ///     Gets or sets the pass phrase.
     /// </summary>
     /// <remarks>
@@ -70,7 +49,9 @@ public sealed class CryptoOptions {
     public KeySize KeySize { get; set; }
 
     /// <summary>
-    ///     Gets or sets the minimum salt size.
+    ///     Gets or sets the minimum salt size. This value should not be
+    ///     smaller than 4 bytes, because we use the first 4 bytes of salt
+    ///     to store its length.
     /// </summary>
     /// <remarks>
     ///     This value should not be smaller than
@@ -82,12 +63,14 @@ public sealed class CryptoOptions {
     ///     greater than <see cref="MAXIMUM_ALLOWED_SALT_SIZE"/>.
     /// </exception>
     public int MinimumSaltSize {
-        get => _minimumSaltSize;
-        set => _minimumSaltSize = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
-    }
+        get;
+        set => field = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+    } = 16;
 
     /// <summary>
-    ///     Gets or sets the maximum salt size.
+    ///     Gets or sets the maximum salt size. This value should not be
+    ///     longer than 255 bytes, because we have only 1 byte to store
+    ///     its length.
     /// </summary>
     /// <remarks>
     ///     This value should not be greater than
@@ -99,18 +82,20 @@ public sealed class CryptoOptions {
     ///     greater than <see cref="MAXIMUM_ALLOWED_SALT_SIZE"/>.
     /// </exception>
     public int MaximumSaltSize {
-        get => _maximumSaltSize;
-        set => _maximumSaltSize = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
-    }
+        get;
+        set => field = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+    } = 128;
 
     /// <summary>
-    ///     Gets or sets the password iterations.
+    ///     Gets or sets the password iterations. Number of iterations used
+    ///     to hash password. More iterations are considered more secure but
+    ///     may take longer. Minimum of 1.
     /// </summary>
     /// <exception cref="ArgumentException">
     ///     if the value is less than <see cref="MINIMUM_PASSWORD_ITERATIONS"/>.
     /// </exception>
     public int PasswordIterations {
-        get => _passwordIterations;
-        set => _passwordIterations = Guard.Against.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
-    }
+        get;
+        set => field = Guard.Against.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
+    } = 1;
 }

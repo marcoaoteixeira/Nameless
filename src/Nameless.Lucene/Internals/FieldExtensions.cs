@@ -19,7 +19,7 @@ internal static class FieldExtensions {
     /// <exception cref="InvalidOperationException">
     ///     If the <see cref="Field.Type"/> is not supported.
     /// </exception>
-    internal static IIndexableField ToIndexable(this Field self) {
+    internal static IIndexableField ToIndexableField(this Field self) {
         return self.Type switch {
             IndexableType.Boolean => self.CreateBoolean(),
             IndexableType.String => self.CreateString(),

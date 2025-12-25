@@ -49,12 +49,12 @@ public sealed class StringLocalizer : IStringLocalizer {
                            Resource resource,
                            Func<string, string, CultureInfo, IStringLocalizer> factory,
                            ILogger<StringLocalizer> logger) {
-        _baseName = Guard.Against.NullOrWhiteSpace(baseName);
-        _location = Guard.Against.NullOrWhiteSpace(location);
-        _culture = Guard.Against.Null(culture);
-        _resource = Guard.Against.Null(resource);
-        _factory = Guard.Against.Null(factory);
-        _logger = Guard.Against.Null(logger);
+        _baseName = baseName;
+        _location = location;
+        _culture = culture;
+        _resource = resource;
+        _factory = factory;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -96,6 +96,7 @@ public sealed class StringLocalizer : IStringLocalizer {
         return new LocalizedString(message.GetId(args),
             message.GetText(args),
             !found,
-            Location);
+            Location
+        );
     }
 }

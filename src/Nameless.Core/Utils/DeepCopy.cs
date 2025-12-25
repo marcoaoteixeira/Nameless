@@ -23,8 +23,6 @@ public static class DeepCopy {
     ///     Can't clone abstract, interface or pointer.
     /// </exception>
     public static object Clone(object value) {
-        Guard.Against.Null(value);
-
         var type = value.GetType();
 
         if (value is Type) {

@@ -18,7 +18,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory {
     ///     Thrown when <paramref name="options"/> is <see langword="null"/>.
     /// </exception>
     public DbConnectionFactory(IOptions<SqliteOptions> options) {
-        _options = Guard.Against.Null(options);
+        _options = options;
     }
 
     /// <inheritdoc />

@@ -29,7 +29,7 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="InsertDocumentsResult" />.
     /// </returns>
-    Task<InsertDocumentsResult> InsertAsync(IDocument[] documents, CancellationToken cancellationToken);
+    Task<InsertDocumentsResult> InsertAsync(Document[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes the documents asynchronously from the index.
@@ -45,7 +45,7 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="RemoveDocumentsResult" />.
     /// </returns>
-    Task<RemoveDocumentsResult> RemoveAsync(IDocument[] documents, CancellationToken cancellationToken);
+    Task<RemoveDocumentsResult> RemoveAsync(Document[] documents, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes documents asynchronously from the index given the

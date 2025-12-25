@@ -56,7 +56,7 @@ public sealed class Page<TItem> : IPage<TItem> {
         Number = number >= 1 ? number : 1;
         Size = size >= 1 ? size : 10;
 
-        _query = Guard.Against.Null(query);
+        _query = query;
         _items = new Lazy<TItem[]>(GetItems);
         _totalItems = new Lazy<int>(GetTotalItems);
         _totalPages = new Lazy<int>(GetTotalPages);

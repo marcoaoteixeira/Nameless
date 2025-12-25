@@ -38,8 +38,8 @@ public sealed record Message {
     ///     <paramref name="text"/> is <see langword="null"/>.
     /// </exception>
     public Message(string id, string text) {
-        Id = Guard.Against.Null(id);
-        Text = Guard.Against.Null(text);
+        Id = id;
+        Text = text;
     }
 
     /// <summary>

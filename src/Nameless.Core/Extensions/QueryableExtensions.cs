@@ -38,7 +38,8 @@ public static class QueryableExtensions {
     private static IOrderedQueryable<T> InnerOrderBy<T>(this IQueryable<T> queryable, string propertyName, bool ascending = true)
         where T : class {
         var type = typeof(T);
-        var property = type.GetProperty(propertyName) ?? throw new MissingMemberException($"Property '{propertyName}' not found in type {typeof(T).Name}.");
+        var property = type.GetProperty(propertyName)
+                       ?? throw new MissingMemberException($"Property '{propertyName}' not found in type {typeof(T).Name}.");
         var parameter = Expression.Parameter(type, Separators.UNDERSCORE);
         var propertyAccess = Expression.MakeMemberAccess(parameter, property);
         var propertyExpression = Expression.Lambda(propertyAccess, parameter);

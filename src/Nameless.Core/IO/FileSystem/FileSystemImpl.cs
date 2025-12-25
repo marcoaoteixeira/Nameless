@@ -22,7 +22,7 @@ public class FileSystemImpl : IFileSystem {
     ///     The options for configuring the file system.
     /// </param>
     public FileSystemImpl(IOptions<FileSystemOptions> options) {
-        _options = Guard.Against.Null(options);
+        _options = options;
 
         Initialize();
     }

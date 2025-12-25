@@ -29,9 +29,8 @@ public static class ServiceCollectionExtensions {
     ///     can be chained.
     /// </returns>
     public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, Action<JsonLocalizationOptions>? configure = null) {
-        self.Configure(configure ?? (_ => { }));
-
-        return self.InnerRegisterJsonLocalization();
+        return self.Configure(configure ?? (_ => { }))
+                   .InnerRegisterJsonLocalization();
     }
 
     /// <summary>
@@ -50,16 +49,16 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection RegisterJsonLocalization(this IServiceCollection self, IConfiguration configuration) {
         var section = configuration.GetSection(nameof(JsonLocalizationOptions));
 
-        self.Configure<JsonLocalizationOptions>(section);
-
-        return self.InnerRegisterJsonLocalization();
+        return self.Configure<JsonLocalizationOptions>(section)
+                   .InnerRegisterJsonLocalization();
     }
 
     private static IServiceCollection InnerRegisterJsonLocalization(this IServiceCollection self) {
         self.TryAddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY);
         self.TryAddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY);
-        self.TryAddSingleton(ResolveStringLocalizerFactory);
-        self.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
+
+        self.Replace(ServiceDescriptor.Singleton(ResolveStringLocalizerFactory));
+        self.Replace(ServiceDescriptor.Transient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>)));
 
         return self;
     }

@@ -23,8 +23,6 @@ public static class ServiceCollectionExtensions {
     ///     if <paramref name="self"/> is <see langword="null"/>.
     /// </exception>
     public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, Action<ApplicationContextOptions>? configure = null) {
-        Guard.Against.Null(self);
-
         return self.Configure(configure ?? (_ => { }))
                    .InnerRegisterApplicationContext();
     }
@@ -50,9 +48,6 @@ public static class ServiceCollectionExtensions {
     ///     is <see langword="null"/>.
     /// </exception>
     public static IServiceCollection RegisterApplicationContext(this IServiceCollection self, IConfiguration configuration) {
-        Guard.Against.Null(self);
-        Guard.Against.Null(configuration);
-
         var section = configuration.GetSection(nameof(ApplicationContextOptions));
 
         return self.Configure<ApplicationContextOptions>(section)

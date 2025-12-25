@@ -24,9 +24,8 @@ public static class ServiceCollectionExtensions {
     ///     can be chained.
     /// </returns>
     public static IServiceCollection RegisterDatabaseServices(this IServiceCollection self, Action<SqliteOptions>? configure = null) {
-        self.Configure(configure ?? (_ => { }));
-
-        return self.InnerRegisterDataServices();
+        return self.Configure(configure ?? (_ => { }))
+                   .InnerRegisterDataServices();
     }
 
     /// <summary>
@@ -45,9 +44,8 @@ public static class ServiceCollectionExtensions {
     public static IServiceCollection RegisterDatabaseServices(this IServiceCollection self, IConfiguration configuration) {
         var section = configuration.GetSection(nameof(SqliteOptions));
 
-        self.Configure<SqliteOptions>(section);
-
-        return self.InnerRegisterDataServices();
+        return self.Configure<SqliteOptions>(section)
+                   .InnerRegisterDataServices();
     }
 
     private static IServiceCollection InnerRegisterDataServices(this IServiceCollection self) {

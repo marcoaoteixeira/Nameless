@@ -17,155 +17,155 @@ public interface ISearchHit {
     /// <summary>
     ///     Retrieves a <see cref="bool" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="bool" /> value.
     /// </returns>
-    bool? GetBoolean(string fieldName);
+    bool? GetBoolean(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="string" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="string" /> value.
     /// </returns>
-    string? GetString(string fieldName);
+    string? GetString(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="byte" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="byte" /> value.
     /// </returns>
-    byte? GetByte(string fieldName);
+    byte? GetByte(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="short" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="short" /> value.
     /// </returns>
-    short? GetShort(string fieldName);
+    short? GetShort(string name);
 
     /// <summary>
     ///     Retrieves the <see cref="int" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="int" /> value.
     /// </returns>
-    int? GetInteger(string fieldName);
+    int? GetInteger(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="long" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="long" /> value.
     /// </returns>
-    long? GetLong(string fieldName);
+    long? GetLong(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="float" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="float" /> value.
     /// </returns>
-    float? GetFloat(string fieldName);
+    float? GetFloat(string name);
 
     /// <summary>
     ///     Retrieves the <see cref="double" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="double" /> value.
     /// </returns>
-    double? GetDouble(string fieldName);
+    double? GetDouble(string name);
 
     /// <summary>
     ///     Retrieves the <see cref="DateTime" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="DateTime" /> value.
     /// </returns>
-    DateTimeOffset? GetDateTimeOffset(string fieldName);
+    DateTimeOffset? GetDateTimeOffset(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="DateTime" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="DateTime" /> value.
     /// </returns>
-    DateTime? GetDateTime(string fieldName);
+    DateTime? GetDateTime(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="DateTime" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="DateTime" /> value.
     /// </returns>
-    DateOnly? GetDateOnly(string fieldName);
+    DateOnly? GetDateOnly(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="DateTime" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="DateTime" /> value.
     /// </returns>
-    TimeOnly? GetTimeOnly(string fieldName);
+    TimeOnly? GetTimeOnly(string name);
 
     /// <summary>
     ///     Retrieves a <see cref="DateTime" /> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name of the field.
     /// </param>
     /// <returns>
     ///     The <see cref="DateTime" /> value.
     /// </returns>
-    TimeSpan? GetTimeSpan(string fieldName);
+    TimeSpan? GetTimeSpan(string name);
 
     /// <summary>
     ///     Retrieves a <typeparamref name="TEnum"/> value.
     /// </summary>
-    /// <param name="fieldName">
+    /// <param name="name">
     ///     The name.
     /// </param>
     /// <returns>
     ///     The <typeparamref name="TEnum"/> value.
     /// </returns>
-    TEnum? GetEnum<TEnum>(string fieldName)
+    TEnum? GetEnum<TEnum>(string name)
         where TEnum : struct, Enum;
 }

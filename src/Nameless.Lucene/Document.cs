@@ -3,9 +3,9 @@
 namespace Nameless.Lucene;
 
 /// <summary>
-///     Default implementation of <see cref="IDocument" />.
+///     Represents a document to be indexed in Lucene.
 /// </summary>
-public sealed class Document : IDocument {
+public sealed class Document : IEnumerable<Field> {
     /// <summary>
     ///     Gets the reserved name for the document ID field.
     /// </summary>
@@ -33,73 +33,283 @@ public sealed class Document : IDocument {
     /// </summary>
     public string ID { get; }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, bool value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="bool" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, bool value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Boolean);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, string value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="string" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, string value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.String);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, byte value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="byte" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, byte value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Byte);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, short value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="short" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, short value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Short);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, int value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="int" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, int value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Integer);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, long value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="long" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, long value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Long);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, float value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="float" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, float value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Float);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, double value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="double" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, double value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Double);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, DateTimeOffset value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="DateTimeOffset" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, DateTimeOffset value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.DateTimeOffset);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, DateTime value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="DateTime" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, DateTime value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.DateTime);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, DateOnly value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="DateOnly" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, DateOnly value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.DateOnly);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, TimeOnly value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="TimeOnly" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, TimeOnly value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.TimeOnly);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, TimeSpan value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="TimeSpan" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, TimeSpan value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.TimeSpan);
     }
 
-    /// <inheritdoc />
-    public IDocument Set(string name, Enum value, FieldOptions options = FieldOptions.Store) {
+    /// <summary>
+    ///     Adds a new <see cref="Enum" /> field to the document.
+    /// </summary>
+    /// <param name="name">
+    ///     The name.
+    /// </param>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <param name="options">
+    ///     The options.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="Document" /> so other actions
+    ///     can be chained.
+    /// </returns>
+    public Document Set(string name, Enum value, FieldOptions options = FieldOptions.Store) {
         return Set(name, value, options, IndexableType.Enum);
     }
 
@@ -114,9 +324,9 @@ public sealed class Document : IDocument {
     }
 
     private Document Set(string name, object? value, FieldOptions options, IndexableType type) {
-        Guard.Against.NullOrWhiteSpace(name);
-
         if (value is null) { return this; }
+
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (string.Equals(name, RESERVED_ID_NAME, StringComparison.InvariantCultureIgnoreCase)) {
             throw new InvalidOperationException($"Field name '{RESERVED_ID_NAME}' is reserved.");

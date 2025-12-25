@@ -51,18 +51,18 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithFields(string[] fieldNames, string value, float fuzziness) {
-        Guard.Against.Null(fieldNames);
+    public IQueryBuilder WithFields(string[] names, string value, float fuzziness) {
+        Guard.Against.Null(names);
         Guard.Against.NullOrWhiteSpace(value);
 
         value = QueryParserBase.Escape(value);
 
-        foreach (var fieldName in fieldNames) {
+        foreach (var name in names) {
             CreatePendingClause();
 
             var parser = new QueryParser(
                 matchVersion: Constants.CURRENT_VERSION,
-                f: fieldName,
+                f: name,
                 a: _analyzer
             ) { FuzzyMinSim = EnsureFuzzinessRange(fuzziness) };
 
@@ -79,13 +79,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, bool value) {
-        return WithField(fieldName, value ? 1 : 0);
+    public IQueryBuilder WithField(string name, bool value) {
+        return WithField(name, value ? 1 : 0);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, string value, bool useWildcard) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithField(string name, string value, bool useWildcard) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         if (string.IsNullOrWhiteSpace(value)) {
             return this;
@@ -93,10 +93,15 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         CreatePendingClause();
 
+        if (useWildcard) {
+            _query = new WildcardQuery(new Term(name, value));
+
+            return this;
+        }
+
         value = QueryParserBase.Escape(value);
 
-        if (useWildcard) { _query = new WildcardQuery(new Term(fieldName, value)); }
-        else { _query = new TermQuery(new Term(fieldName, value)); }
+        _query = new TermQuery(new Term(name, value));
 
         return this;
     }
@@ -106,8 +111,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     ///     It executes a phrase query, meaning that all values must be present
     ///     in the field.
     /// </remarks>
-    public IQueryBuilder WithField(string fieldName, string[] values) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithField(string name, string[] values) {
+        Guard.Against.NullOrWhiteSpace(name);
         Guard.Against.Null(values);
 
         if (values.Length == 0 || values.All(string.IsNullOrWhiteSpace)) {
@@ -118,7 +123,7 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         var phraseQuery = new PhraseQuery();
         var terms = values.Select(value => new Term(
-            fld: fieldName,
+            fld: name,
             text: QueryParserBase.Escape(value)
         ));
 
@@ -132,9 +137,9 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, int value) {
+    public IQueryBuilder WithField(string name, int value) {
         return WithinRange(
-            fieldName,
+            name,
             minimum: value,
             maximum: value,
             includeMinimum: true,
@@ -143,9 +148,9 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, long value) {
+    public IQueryBuilder WithField(string name, long value) {
         return WithinRange(
-            fieldName,
+            name,
             minimum: value,
             maximum: value,
             includeMinimum: true,
@@ -154,9 +159,9 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, float value) {
+    public IQueryBuilder WithField(string name, float value) {
         return WithinRange(
-            fieldName: fieldName,
+            name: name,
             minimum: value,
             maximum: value,
             includeMinimum: true,
@@ -165,12 +170,12 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, double value) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithField(string name, double value) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
-        _query = NumericRangeQuery.NewDoubleRange(field: fieldName,
+        _query = NumericRangeQuery.NewDoubleRange(field: name,
             min: value,
             max: value,
             minInclusive: true,
@@ -181,11 +186,11 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, DateTimeOffset value) {
+    public IQueryBuilder WithField(string name, DateTimeOffset value) {
         var number = value.ToUniversalTime().ToUnixTimeMilliseconds();
 
         return WithinRange(
-            fieldName,
+            name,
             minimum: number,
             maximum: number,
             includeMinimum: true,
@@ -194,11 +199,11 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, DateTime value) {
+    public IQueryBuilder WithField(string name, DateTime value) {
         var number = value.ToUnixTimeMilliseconds();
 
         return WithinRange(
-            fieldName,
+            name,
             minimum: number,
             maximum: number,
             includeMinimum: true,
@@ -207,11 +212,11 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, DateOnly value) {
+    public IQueryBuilder WithField(string name, DateOnly value) {
         var number = value.ToUnixTimeMilliseconds();
 
         return WithinRange(
-            fieldName,
+            name,
             minimum: number,
             maximum: number,
             includeMinimum: true,
@@ -220,11 +225,11 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, TimeOnly value) {
+    public IQueryBuilder WithField(string name, TimeOnly value) {
         var number = value.Ticks;
 
         return WithinRange(
-            fieldName,
+            name,
             minimum: number,
             maximum: number,
             includeMinimum: true,
@@ -233,11 +238,11 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, TimeSpan value) {
+    public IQueryBuilder WithField(string name, TimeSpan value) {
         var number = value.Ticks;
 
         return WithinRange(
-            fieldName,
+            name,
             minimum: number,
             maximum: number,
             includeMinimum: true,
@@ -246,13 +251,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithField(string fieldName, Enum value) {
-        return WithField(fieldName, value.ToString(), useWildcard: false);
+    public IQueryBuilder WithField(string name, Enum value) {
+        return WithField(name, value.ToString(), useWildcard: false);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithinRange(string name, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
@@ -265,7 +270,7 @@ public sealed class QueryBuilder : IQueryBuilder {
             : null;
 
         _query = new TermRangeQuery(
-            fieldName,
+            name,
             minimumBytesRef,
             maximumBytesRef,
             includeMinimum,
@@ -276,13 +281,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithinRange(string name, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
         _query = NumericRangeQuery.NewInt32Range(
-            fieldName,
+            name,
             minimum,
             maximum,
             includeMinimum,
@@ -293,13 +298,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, long? minimum, long? maximum, bool includeMinimum, bool includeMaximum) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithinRange(string name, long? minimum, long? maximum, bool includeMinimum, bool includeMaximum) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
         _query = NumericRangeQuery.NewInt64Range(
-            fieldName,
+            name,
             minimum,
             maximum,
             includeMinimum,
@@ -310,13 +315,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, float? minimum, float? maximum, bool includeMinimum, bool includeMaximum) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithinRange(string name, float? minimum, float? maximum, bool includeMinimum, bool includeMaximum) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
         _query = NumericRangeQuery.NewSingleRange(
-            fieldName,
+            name,
             minimum,
             maximum,
             includeMinimum,
@@ -327,13 +332,13 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder WithinRange(string name, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum) {
+        Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
 
         _query = NumericRangeQuery.NewDoubleRange(
-            fieldName,
+            name,
             minimum,
             maximum,
             includeMinimum,
@@ -344,42 +349,42 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum) {
         return WithinRange(
-            fieldName,
-            minimum?.ToUniversalTime().ToUnixTimeMilliseconds(),
-            maximum?.ToUniversalTime().ToUnixTimeMilliseconds(),
+            name,
+            minimum?.ToUniversalTime().Ticks,
+            maximum?.ToUniversalTime().Ticks,
             includeMinimum,
             includeMaximum
         );
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum) {
         return WithinRange(
-            fieldName,
-            minimum?.ToUnixTimeMilliseconds(),
-            maximum?.ToUnixTimeMilliseconds(),
+            name,
+            minimum?.ToUniversalTime().Ticks,
+            maximum?.ToUniversalTime().Ticks,
             includeMinimum,
             includeMaximum
         );
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum) {
         return WithinRange(
-            fieldName,
-            minimum?.ToUnixTimeMilliseconds(),
-            maximum?.ToUnixTimeMilliseconds(),
+            name,
+            minimum?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).Ticks,
+            maximum?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).Ticks,
             includeMinimum,
             includeMaximum
         );
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum) {
         return WithinRange(
-            fieldName,
+            name,
             minimum?.Ticks,
             maximum?.Ticks,
             includeMinimum,
@@ -388,9 +393,9 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string fieldName, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum) {
         return WithinRange(
-            fieldName,
+            name,
             minimum?.Ticks,
             maximum?.Ticks,
             includeMinimum,
@@ -441,98 +446,98 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortBy(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortBy(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = 0;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByBoolean(string fieldName) {
-        return SortByInteger(fieldName);
+    public IQueryBuilder SortByBoolean(string name) {
+        return SortByInteger(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByString(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortByString(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = SortFieldType.STRING;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByInteger(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortByInteger(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = SortFieldType.INT32;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByLong(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortByLong(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = SortFieldType.INT64;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByFloat(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortByFloat(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = SortFieldType.SINGLE;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByDouble(string fieldName) {
-        Guard.Against.NullOrWhiteSpace(fieldName);
+    public IQueryBuilder SortByDouble(string name) {
+        Guard.Against.NullOrWhiteSpace(name);
 
-        _sort = fieldName;
+        _sort = name;
         _comparer = SortFieldType.DOUBLE;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByDateTimeOffset(string fieldName) {
-        return SortByLong(fieldName);
+    public IQueryBuilder SortByDateTimeOffset(string name) {
+        return SortByLong(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByDateTime(string fieldName) {
-        return SortByLong(fieldName);
+    public IQueryBuilder SortByDateTime(string name) {
+        return SortByLong(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByDateOnly(string fieldName) {
-        return SortByLong(fieldName);
+    public IQueryBuilder SortByDateOnly(string name) {
+        return SortByLong(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByTimeOnly(string fieldName) {
-        return SortByLong(fieldName);
+    public IQueryBuilder SortByTimeOnly(string name) {
+        return SortByLong(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByTimeSpan(string fieldName) {
-        return SortByLong(fieldName);
+    public IQueryBuilder SortByTimeSpan(string name) {
+        return SortByLong(name);
     }
 
     /// <inheritdoc />
-    public IQueryBuilder SortByEnum(string fieldName) {
-        return SortByString(fieldName);
+    public IQueryBuilder SortByEnum(string name) {
+        return SortByString(name);
     }
 
     /// <inheritdoc />

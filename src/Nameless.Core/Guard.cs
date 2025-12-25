@@ -423,6 +423,66 @@ public sealed class Guard {
     }
 
     /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> matches
+    ///     the specified <paramref name="regex"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="regex">
+    ///     The regex object.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     If <paramref name="paramValue"/> or
+    ///     <paramref name="regex"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     If a regular expression parsing error occurred, or
+    ///     if the <paramref name="paramValue"/> do not match
+    ///     the <paramref name="regex"/>.
+    /// </exception>
+    /// <exception cref="RegexMatchTimeoutException">
+    ///     If a time-out occurred.
+    /// </exception>
+    [DebuggerStepThrough]
+    public string NoMatchingPattern(string paramValue,
+        Regex regex,
+        [CallerArgumentExpression(nameof(paramValue))]
+        string? paramName = null,
+        string? message = null,
+        Func<Exception>? exceptionCreator = null) {
+
+        Null(regex);
+
+        var comparison = regex.Options.HasFlag(RegexOptions.IgnoreCase)
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        var match = regex.Match(paramValue);
+        if (match.Success && string.Equals(match.Value, paramValue, comparison)) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentException(string.IsNullOrWhiteSpace(message)
+                      ? string.Format(PARAM_NO_MATCHING_PATTERN_MESSAGE, regex)
+                      : message,
+                  paramName);
+    }
+
+    /// <summary>
     ///     Ensure that the <paramref name="paramValue"/> is not empty.
     /// </summary>
     /// <param name="paramValue">

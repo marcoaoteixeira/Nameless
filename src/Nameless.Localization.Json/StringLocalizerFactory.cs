@@ -36,11 +36,9 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
                                   IResourceManager resourceManager,
                                   IOptions<JsonLocalizationOptions> options,
                                   ILoggerFactory loggerFactory) {
-        _cultureContext = Guard.Against.Null(cultureContext);
-        _resourceManager = Guard.Against.Null(resourceManager);
-        _options = Guard.Against.Null(options);
-
-        Guard.Against.Null(loggerFactory);
+        _cultureContext = cultureContext;
+        _resourceManager = resourceManager;
+        _options = options;
 
         _stringLocalizerFactoryLogger = loggerFactory.CreateLogger<StringLocalizerFactory>();
         _stringLocalizerLogger = loggerFactory.CreateLogger<StringLocalizer>();
@@ -51,9 +49,7 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     Thrown when <paramref name="resourceSource"/> is <see langword="null"/>.
     /// </exception>
     public IStringLocalizer Create(Type resourceSource) {
-        Guard.Against.Null(resourceSource);
-
-        var baseName = Guard.Against.NullOrWhiteSpace(resourceSource.Namespace);
+        var baseName = resourceSource.Namespace ?? string.Empty;
         var location = _options.Value.RemoveArityFromGenerics
             ? resourceSource.GetNameWithoutArity()
             : resourceSource.Name;
@@ -71,9 +67,7 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     <paramref name="location"/> is empty or white spaces.
     /// </exception>
     public IStringLocalizer Create(string baseName, string location) {
-        return GetLocalizer(Guard.Against.NullOrWhiteSpace(baseName),
-            Guard.Against.NullOrWhiteSpace(location),
-            _cultureContext.GetCurrentCulture());
+        return GetLocalizer(baseName, location, _cultureContext.GetCurrentCulture());
     }
 
     private Resource GetResource(string baseName, string location, CultureInfo culture) {

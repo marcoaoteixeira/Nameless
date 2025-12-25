@@ -9,8 +9,7 @@ namespace Nameless.Lucene;
 ///     Default implementation of <see cref="IIndexProvider" />.
 /// </summary>
 public sealed class IndexProvider : IIndexProvider {
-    private static readonly ConcurrentDictionary<string, Index> Cache = new();
-
+    private readonly ConcurrentDictionary<string, Index> _cache = new();
     private readonly IAnalyzerProvider _analyzerProvider;
     private readonly IFileSystem _fileSystem;
     private readonly IOptions<LuceneOptions> _options;
@@ -53,7 +52,12 @@ public sealed class IndexProvider : IIndexProvider {
     public IIndex Get(string indexName) {
         BlockAccessAfterDispose();
 
-        return Cache.GetOrAdd(indexName, Create);
+        Guard.Against.NoMatchingPattern(indexName, RegexCache.IndexNamePattern());
+
+        indexName = indexName.Replace(Separators.SPACE, string.Empty)
+                             .ToSnakeCase();
+
+        return _cache.GetOrAdd(indexName, Create);
     }
 
     /// <inheritdoc />
@@ -70,7 +74,7 @@ public sealed class IndexProvider : IIndexProvider {
         if (_disposed) { return; }
 
         if (disposing) {
-            var repositories = Cache.Values.ToArray();
+            var repositories = _cache.Values.ToArray();
 
             foreach (var repository in repositories) {
                 repository.Dispose();
@@ -90,6 +94,6 @@ public sealed class IndexProvider : IIndexProvider {
     }
 
     private void RemoveFromCache(Index index) {
-        Cache.TryRemove(index.Name, out _);
+        _cache.TryRemove(index.Name, out _);
     }
 }

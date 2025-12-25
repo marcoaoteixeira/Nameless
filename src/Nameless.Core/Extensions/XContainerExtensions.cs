@@ -30,8 +30,7 @@ public static class XContainerExtensions {
     /// <param name="attributeName">The attribute name.</param>
     /// <param name="attributeValue">The attribute value.</param>
     /// <returns><see langword="true"/> if it has the attribute; otherwise <see langword="false"/>.</returns>
-    public static bool HasElement(this XContainer self, string elementName, string attributeName,
-                                  string attributeValue) {
+    public static bool HasElement(this XContainer self, string elementName, string attributeName, string attributeValue) {
         var expression = string.Format(ELEMENT_PATH_PATTERN, elementName, attributeName, attributeValue);
 
         return self.XPathSelectElement(expression) is not null;

@@ -31,14 +31,8 @@ public readonly record struct Parameter {
     /// <param name="name">The name of the parameter.</param>
     /// <param name="value">The value of the parameter.</param>
     /// <param name="type">The type of the parameter.</param>
-    /// <exception cref="ArgumentNullException">
-    ///     Thrown when <paramref name="name"/> is <see langword="null"/>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    ///     Thrown when <paramref name="name"/> is empty or white spaces.
-    /// </exception>
     public Parameter(string name, object? value = null, DbType type = DbType.String) {
-        Name = Guard.Against.NullOrWhiteSpace(name);
+        Name = name;
         Value = value;
         Type = type;
     }
