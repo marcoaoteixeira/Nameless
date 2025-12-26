@@ -9,8 +9,8 @@
 <Project>
 	<!-- Boolean variables -->
 	<PropertyGroup>
-		<IsSrcProject>$(MSBuildProjectFullPath.Contains('\src\'))</IsSrcProject>
-		<IsTestingProject>$(MSBuildProjectName.EndsWith('.Tests'))</IsTestingProject>
+		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
+		<IsTestingProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestingProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
 		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
