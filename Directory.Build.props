@@ -10,7 +10,7 @@
 	<!-- Boolean variables -->
 	<PropertyGroup>
 		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
-		<IsTestingProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestingProject>
+		<IsTestsProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestsProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
 		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
@@ -73,14 +73,14 @@
 	</ItemGroup>
 
 	<!-- For test projects, use these properties -->
-	<PropertyGroup Condition="$(IsTestingProject)">
+	<PropertyGroup Condition="$(IsTestsProject)">
 		<Nullable>disable</Nullable>
 		<IsPackable>False</IsPackable>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!-- Test projects must include these properties -->
-	<ItemGroup Condition="$(IsTestingProject)">
+	<ItemGroup Condition="$(IsTestsProject)">
 		<Using Include="Xunit" />
 	</ItemGroup>
 </Project>

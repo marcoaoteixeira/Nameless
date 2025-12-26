@@ -1,17 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<Target Name="Messages" BeforeTargets="Build">
-		<Message Text="IsSrcProject: $(IsSrcProject)" Importance="High"></Message>
-		<Message Text="IsTestingProject: $(IsTestingProject)" Importance="High"></Message>
-
-		<Message Text="EnableCodeAnalysis: $(EnableCodeAnalysis)" Importance="High"></Message>
-		<Message Text="IncludeNuGetPackageInfo: $(IncludeNuGetPackageInfo)" Importance="High"></Message>
-
-		<Message Text="MSBuildProjectFullPath: $(MSBuildProjectFullPath)" Importance="High"></Message>
-		<Message Text="MSBuildProjectFile: $(MSBuildProjectFile)" Importance="High"></Message>
-		<Message Text="MSBuildProjectName: $(MSBuildProjectName)" Importance="High"></Message>
-	</Target>
-
 	<PropertyGroup>
 		<RootNamespace>Nameless.Autofac</RootNamespace>
 	</PropertyGroup>
