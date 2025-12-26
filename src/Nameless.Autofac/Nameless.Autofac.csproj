@@ -1,5 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<Target Name="Messages" BeforeTargets="Build">
+		<Message Text="IsSrcProject: $(IsSrcProject)" Importance="High"></Message>
+		<Message Text="IsTestingProject: $(IsTestingProject)" Importance="High"></Message>
+
+		<Message Text="EnableCodeAnalysis: $(EnableCodeAnalysis)" Importance="High"></Message>
+		<Message Text="IncludeNuGetPackageInfo: $(IncludeNuGetPackageInfo)" Importance="High"></Message>
+	</Target>
+
 	<PropertyGroup>
 		<Title>Nameless Autofac Library</Title>
 		<Description>This library contains some utilities classes to use in conjunction with Autofac.</Description>

@@ -1,5 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<Target Name="Messages" BeforeTargets="Build">
+		<Message Text="IsSrcProject: $(IsSrcProject)" Importance="High"></Message>
+		<Message Text="IsTestingProject: $(IsTestingProject)" Importance="High"></Message>
+
+		<Message Text="EnableCodeAnalysis: $(EnableCodeAnalysis)" Importance="High"></Message>
+		<Message Text="IncludeNuGetPackageInfo: $(IncludeNuGetPackageInfo)" Importance="High"></Message>
+	</Target>
+
 	<PropertyGroup>
 		<RootNamespace>Nameless.Autofac</RootNamespace>
 	</PropertyGroup>
@@ -10,12 +18,12 @@
 		<PackageReference Include="Moq" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.analyzers">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="xunit.runner.visualstudio">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 

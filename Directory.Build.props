@@ -9,15 +9,15 @@
 <Project>
 	<!-- Boolean variables -->
 	<PropertyGroup>
-		<IsAspireHost>$(MSBuildProjectFullPath.EndsWith('.Aspire'))</IsAspireHost>
-		<IsTestProject>$(MSBuildProjectFullPath.Contains('\tests\'))</IsTestProject>
-		<IsAppsProject>$(MSBuildProjectFullPath.Contains('\apps\'))</IsAppsProject>
+		<IsSrcProject>$(MSBuildProjectFullPath.Contains('\src\'))</IsSrcProject>
+		<IsTestingProject>$(MSBuildProjectFullPath.Contains('\tests\'))</IsTestingProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
-		<EnableCodeAnalysis Condition="$(IsTestProject) == 'False'">True</EnableCodeAnalysis>
+		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
 
 		<!-- Pack only projects in "src" folder. -->
-		<IncludeNuGetPackageInfo>$(MSBuildProjectFullPath.Contains('\src\'))</IncludeNuGetPackageInfo>
+		<IncludeNuGetPackageInfo>False</IncludeNuGetPackageInfo>
+		<IncludeNuGetPackageInfo Condition="$(IsSrcProject) == 'True'">True</IncludeNuGetPackageInfo>
 	</PropertyGroup>
 
 	<!-- All projects must include these properties. -->
@@ -30,19 +30,13 @@
 		<IsPackable>False</IsPackable>
 	</PropertyGroup>
 
-	<!-- All projects, except tests, must include these properties -->
-	<PropertyGroup Condition="$(IsTestProject) == 'False'">
+	<PropertyGroup>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
-	</PropertyGroup>
-
-	<!-- Only Aspire projects must include these properties -->
-	<PropertyGroup Condition="$(IsAspireHost)">
-		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!--
@@ -79,14 +73,14 @@
 	</ItemGroup>
 
 	<!-- For test projects, use these properties -->
-	<PropertyGroup Condition="$(IsTestProject)">
+	<PropertyGroup Condition="$(IsTestingProject)">
 		<Nullable>disable</Nullable>
 		<IsPackable>False</IsPackable>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!-- Test projects must include these properties -->
-	<ItemGroup Condition="$(IsTestProject)">
+	<ItemGroup Condition="$(IsTestingProject)">
 		<Using Include="Xunit" />
 	</ItemGroup>
 </Project>
