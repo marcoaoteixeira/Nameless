@@ -13,9 +13,12 @@ namespace Nameless.NHibernate.Objects;
 /// <see cref="AutoQuote"/>.
 /// </remarks>
 public enum HbmToDdlKeyword {
-    [Description("none")] None,
+    [Description(description: "none")]
+    None,
 
-    [Description("keywords")] Keywords,
+    [Description(description: "keywords")]
+    Keywords,
 
-    [Description("auto-quote")] AutoQuote
+    [Description(description: "auto-quote")]
+    AutoQuote
 }

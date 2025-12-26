@@ -11,9 +11,12 @@ namespace Nameless.NHibernate.Objects;
 /// desired timing of resource cleanup.
 /// </remarks>
 public enum ReleaseMode {
-    [Description("auto")] Auto,
+    [Description(description: "auto")]
+    Auto,
 
-    [Description("on_close")] OnClose,
+    [Description(description: "on_close")]
+    OnClose,
 
-    [Description("after_transaction")] AfterTransaction
+    [Description(description: "after_transaction")]
+    AfterTransaction
 }

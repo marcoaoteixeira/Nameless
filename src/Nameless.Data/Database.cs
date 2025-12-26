@@ -45,7 +45,8 @@ public sealed class Database : IDatabase, IDisposable {
     }
 
     /// <inheritdoc />
-    public IEnumerable<TResult> ExecuteReader<TResult>(string text, CommandType type, Func<IDataRecord, TResult> mapper, params Parameter[] parameters) {
+    public IEnumerable<TResult> ExecuteReader<TResult>(string text, CommandType type, Func<IDataRecord, TResult> mapper,
+        params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
         using var command = CreateCommand(text, type, parameters);

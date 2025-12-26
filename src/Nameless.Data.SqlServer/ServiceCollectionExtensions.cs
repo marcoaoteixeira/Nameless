@@ -8,51 +8,51 @@ namespace Nameless.Data.SqlServer;
 ///     Extension methods for <see cref="IServiceCollection" />.
 /// </summary>
 public static class ServiceCollectionExtensions {
-    private const string DB_CONNECTION_FACTORY_KEY = $"{nameof(IDbConnectionFactory)} :: 23ea5d7a-e750-4aa1-a3c7-c95a0978c707";
+    private const string DB_CONNECTION_FACTORY_KEY =
+        $"{nameof(IDbConnectionFactory)} :: 23ea5d7a-e750-4aa1-a3c7-c95a0978c707";
 
-    /// <summary>
-    ///     Registers the data services.
-    /// </summary>
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
     /// </param>
-    /// <param name="configure">
-    ///     The configuration action.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IServiceCollection"/> so other actions
-    ///     can be chained.
-    /// </returns>
-    public static IServiceCollection RegisterDataServices(this IServiceCollection self, Action<SqlServerOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .InnerRegisterDataServices();
-    }
+    extension(IServiceCollection self) {
+        /// <summary>
+        ///     Registers the data services.
+        /// </summary>
+        /// <param name="configure">
+        ///     The configuration action.
+        /// </param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions
+        ///     can be chained.
+        /// </returns>
+        public IServiceCollection RegisterDataServices(Action<SqlServerOptions>? configure = null) {
+            return self.Configure(configure ?? (_ => { }))
+                       .InnerRegisterDataServices();
+        }
 
-    /// <summary>
-    ///     Registers the data services.
-    /// </summary>
-    /// <param name="self">
-    ///     The current <see cref="IServiceCollection"/>.
-    /// </param>
-    /// <param name="configuration">
-    ///     The configuration.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IServiceCollection"/> so other actions
-    ///     can be chained.
-    /// </returns>
-    public static IServiceCollection RegisterDataServices(this IServiceCollection self, IConfiguration configuration) {
-        var section = configuration.GetSection(nameof(SqlServerOptions));
+        /// <summary>
+        ///     Registers the data services.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions
+        ///     can be chained.
+        /// </returns>
+        public IServiceCollection RegisterDataServices(IConfiguration configuration) {
+            var section = configuration.GetSection(nameof(SqlServerOptions));
 
-        return self.Configure<SqlServerOptions>(section)
-                   .InnerRegisterDataServices();
-    }
+            return self.Configure<SqlServerOptions>(section)
+                       .InnerRegisterDataServices();
+        }
 
-    private static IServiceCollection InnerRegisterDataServices(this IServiceCollection self) {
-        self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
-        self.TryAddTransient(ResolveDatabase);
+        private IServiceCollection InnerRegisterDataServices() {
+            self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
+            self.TryAddTransient(ResolveDatabase);
 
-        return self;
+            return self;
+        }
     }
 
     private static IDatabase ResolveDatabase(IServiceProvider provider) {

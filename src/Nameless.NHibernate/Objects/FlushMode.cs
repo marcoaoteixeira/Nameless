@@ -12,11 +12,15 @@ namespace Nameless.NHibernate.Objects;
 /// application's requirements.
 /// </remarks>
 public enum FlushMode {
-    [Description("Auto")] Auto,
+    [Description(description: "Auto")]
+    Auto,
 
-    [Description("Manual")] Manual,
+    [Description(description: "Manual")]
+    Manual,
 
-    [Description("Commit")] Commit,
+    [Description(description: "Commit")]
+    Commit,
 
-    [Description("Always")] Always
+    [Description(description: "Always")]
+    Always
 }

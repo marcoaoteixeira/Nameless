@@ -46,10 +46,7 @@ public class SignInRequestHandler : IRequestHandler<SignInRequest, SignInRespons
         if (user is null) {
             _logger.SignInUserNotFound(request.Email);
 
-            return new SignInResponse {
-                Error = "Email or Password invalid.",
-                ErrorType = SignInErrorType.Invalid
-            };
+            return new SignInResponse { Error = "Email or Password invalid.", ErrorType = SignInErrorType.Invalid };
         }
 
         var signinResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true)
@@ -58,27 +55,24 @@ public class SignInRequestHandler : IRequestHandler<SignInRequest, SignInRespons
         if (signinResult.IsLockedOut) {
             _logger.SignInUserIsLockedOut(request.Email);
 
-            return new SignInResponse {
-                Error = "User is locked out.",
-                ErrorType = SignInErrorType.LockedOut
-            };
+            return new SignInResponse { Error = "User is locked out.", ErrorType = SignInErrorType.LockedOut };
         }
 
         if (signinResult.IsNotAllowed) {
             _logger.SignInUserIsNotAllowed(request.Email);
 
             return new SignInResponse {
-                Error = "User is not allowed to sign-in.",
-                ErrorType = SignInErrorType.NotAllowed
+                Error = "User is not allowed to sign-in.", ErrorType = SignInErrorType.NotAllowed
             };
         }
 
-        var accessTokenResponse = await _mediator.ExecuteAsync(new CreateAccessTokenRequest { UserID = user.Id }, cancellationToken);
-        var refreshTokenResponse = await _mediator.ExecuteAsync(new CreateRefreshTokenRequest { UserID = user.Id }, cancellationToken);
+        var accessTokenResponse =
+            await _mediator.ExecuteAsync(new CreateAccessTokenRequest { UserID = user.Id }, cancellationToken);
+        var refreshTokenResponse =
+            await _mediator.ExecuteAsync(new CreateRefreshTokenRequest { UserID = user.Id }, cancellationToken);
 
         var response = new SignInResponse {
-            AccessToken = accessTokenResponse.Token,
-            RefreshToken = refreshTokenResponse.Token
+            AccessToken = accessTokenResponse.Token, RefreshToken = refreshTokenResponse.Token
         };
 
         return response;

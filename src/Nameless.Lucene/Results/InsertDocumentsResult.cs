@@ -8,6 +8,7 @@ public sealed record InsertDocumentsResult : Result {
     ///     Gets the number of documents that were successfully inserted.
     /// </summary>
     public int Count { get; }
+
     /// <summary>
     ///     Whether the operation was cancelled.
     /// </summary>
@@ -50,7 +51,7 @@ public sealed record InsertDocumentsResult : Result {
         return new InsertDocumentsResult(
             count: 0,
             cancelled: false,
-            error: Guard.Against.NullOrWhiteSpace(error)
+            Guard.Against.NullOrWhiteSpace(error)
         );
     }
 }

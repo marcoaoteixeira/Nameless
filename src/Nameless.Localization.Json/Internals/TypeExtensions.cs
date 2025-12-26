@@ -13,7 +13,7 @@ internal static class TypeExtensions {
     /// </returns>
     internal static string GetNameWithoutArity(this Type self) {
         return self.IsGenericType
-            ? self.Name[..self.Name.IndexOf('`')]
+            ? self.Name[..self.Name.IndexOf(value: '`')]
             : self.Name;
     }
 }

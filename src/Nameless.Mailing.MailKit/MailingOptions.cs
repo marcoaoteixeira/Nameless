@@ -10,7 +10,7 @@ public sealed class MailingOptions {
     /// <summary>
     ///     Whether to use credentials for SMTP authentication.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
     internal bool UseCredentials
         => !string.IsNullOrWhiteSpace(Username) &&
            !string.IsNullOrWhiteSpace(Password);

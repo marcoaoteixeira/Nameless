@@ -33,9 +33,9 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
     ///     <paramref name="loggerFactory"/> is <see langword="null"/>.
     /// </exception>
     public StringLocalizerFactory(ICultureProvider cultureContext,
-                                  IResourceManager resourceManager,
-                                  IOptions<JsonLocalizationOptions> options,
-                                  ILoggerFactory loggerFactory) {
+        IResourceManager resourceManager,
+        IOptions<JsonLocalizationOptions> options,
+        ILoggerFactory loggerFactory) {
         _cultureContext = cultureContext;
         _resourceManager = resourceManager;
         _options = options;
@@ -78,8 +78,8 @@ public sealed class StringLocalizerFactory : IStringLocalizerFactory {
         var resource = _resourceManager.GetResource(baseName, location, culture.Name);
 
         _stringLocalizerFactoryLogger
-           .OnCondition(!resource.IsAvailable)
-           .ResourceNotAvailable(resourceName);
+            .OnCondition(!resource.IsAvailable)
+            .ResourceNotAvailable(resourceName);
 
         return resource;
     }

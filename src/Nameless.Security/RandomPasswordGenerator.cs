@@ -128,7 +128,7 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
             // first position, increment the second parameter of the Next
             // function call by one, i.e. lastLeftGroupsOrderIdx + 1.
             var nextLeftGroupsOrderIdx = lastLeftGroupsOrderIdx != 0
-                ? random.Next(0, lastLeftGroupsOrderIdx)
+                ? random.Next(minValue: 0, lastLeftGroupsOrderIdx)
                 : 0;
 
             // Index of the next character group to be processed.
@@ -144,7 +144,7 @@ public sealed class RandomPasswordGenerator : IPasswordGenerator {
             // If only one unprocessed character is left, pick it; otherwise,
             // get a random character from the unused character list.
             var nextCharIdx = lastCharIdx != 0
-                ? random.Next(0, lastCharIdx + 1)
+                ? random.Next(minValue: 0, lastCharIdx + 1)
                 : 0;
 
             // Add this character to the password.

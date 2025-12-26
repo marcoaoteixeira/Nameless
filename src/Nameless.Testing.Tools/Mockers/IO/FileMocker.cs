@@ -45,7 +45,7 @@ public class FileMocker : Mocker<IFile> {
     }
 
     public FileMocker ThrowOnOpen() {
-        return ThrowOnOpen(() => new Exception("Throw error on Open call."));
+        return ThrowOnOpen(() => new Exception(message: "Throw error on Open call."));
     }
 
     public FileMocker ThrowOnOpen<TException>(Func<TException> factory)
@@ -58,7 +58,7 @@ public class FileMocker : Mocker<IFile> {
     }
 
     public FileMocker ThrowOnDelete() {
-        return ThrowOnDelete(() => new Exception("Throw error on Delete call."));
+        return ThrowOnDelete(() => new Exception(message: "Throw error on Delete call."));
     }
 
     public FileMocker ThrowOnDelete<TException>(Func<TException> factory)
@@ -79,7 +79,7 @@ public class FileMocker : Mocker<IFile> {
     }
 
     public FileMocker ThrowOnCopy() {
-        return ThrowOnCopy(() => new Exception("Throw error on Copy call."));
+        return ThrowOnCopy(() => new Exception(message: "Throw error on Copy call."));
     }
 
     public FileMocker ThrowOnCopy<TException>(Func<TException> factory)

@@ -100,11 +100,11 @@ public static class ResourcesHelper {
         filePath = PathHelper.Normalize(filePath);
 
         if (!filePath.StartsWith(rootDirectoryPath)) {
-            throw new UnauthorizedAccessException("The specified path is outside the root directory.");
+            throw new UnauthorizedAccessException(message: "The specified path is outside the root directory.");
         }
 
         if (!File.Exists(filePath)) {
-            throw new FileNotFoundException("Couldn't locate the specified file.", relativeFilePath);
+            throw new FileNotFoundException(message: "Couldn't locate the specified file.", relativeFilePath);
         }
 
         return filePath;

@@ -24,9 +24,14 @@ public sealed class Guard {
     private const string PARAM_GREATER_OR_EQUAL_MESSAGE = "Parameter cannot be greater or equal to '{0}'.";
     private const string PARAM_LOWER_THAN_MESSAGE = "Parameter cannot be lower than '{0}'.";
     private const string PARAM_GREATER_THAN_MESSAGE = "Parameter cannot be greater than '{0}'.";
-    private const string PARAM_OUT_OF_RANGE_MESSAGE = "Parameter must be between minimum value of '{0}' and maximum value of '{1}'.";
+
+    private const string PARAM_OUT_OF_RANGE_MESSAGE =
+        "Parameter must be between minimum value of '{0}' and maximum value of '{1}'.";
+
     private const string PARAM_ZERO_MESSAGE = "Parameter cannot be zero value.";
-    private const string PARAM_NOT_ASSIGNABLE_FROM_MESSAGE = "Parameter '{0}' of type '{1}' is not assignable to '{2}'.";
+
+    private const string PARAM_NOT_ASSIGNABLE_FROM_MESSAGE =
+        "Parameter '{0}' of type '{1}' is not assignable to '{2}'.";
 
     /// <summary>
     ///     Gets the unique instance of <see cref="Guard" />.
@@ -350,7 +355,6 @@ public sealed class Guard {
         string? paramName = null,
         string? message = null,
         Func<Exception>? exceptionCreator = null) {
-
         if (!EqualityComparer<TValue?>.Default.Equals(paramValue, y: default) && paramValue is not null) {
             return paramValue;
         }
@@ -407,7 +411,6 @@ public sealed class Guard {
         string? paramName = null,
         string? message = null,
         Func<Exception>? exceptionCreator = null) {
-
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var match = Regex.Match(paramValue, regexPattern, options);
@@ -463,7 +466,6 @@ public sealed class Guard {
         string? paramName = null,
         string? message = null,
         Func<Exception>? exceptionCreator = null) {
-
         Null(regex);
 
         var comparison = regex.Options.HasFlag(RegexOptions.IgnoreCase)
@@ -648,7 +650,6 @@ public sealed class Guard {
                 : message,
             paramName: paramName,
             actualValue: paramValue);
-
     }
 
     /// <summary>
@@ -833,7 +834,6 @@ public sealed class Guard {
                   string.IsNullOrWhiteSpace(message)
                       ? string.Format(PARAM_GREATER_THAN_MESSAGE, compare)
                       : message);
-
     }
 
     /// <summary>

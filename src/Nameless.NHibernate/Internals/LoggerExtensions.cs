@@ -6,8 +6,8 @@ namespace Nameless.NHibernate.Internals;
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, Exception> ErrorOnSchemaExportExecutionDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
-            eventId: Events.ErrorOnSchemaExportExecutionEvent,
+            LogLevel.Error,
+            Events.ErrorOnSchemaExportExecutionEvent,
             formatString: "An error occurs while initializing NHibernate.");
 
     internal static void ErrorOnSchemaExportExecution(this ILogger<SchemaExport> self, Exception exception) {
@@ -15,6 +15,7 @@ internal static class LoggerExtensions {
     }
 
     internal static class Events {
-        internal static readonly EventId ErrorOnSchemaExportExecutionEvent = new(7001, nameof(ErrorOnSchemaExportExecution));
+        internal static readonly EventId ErrorOnSchemaExportExecutionEvent =
+            new(id: 7001, nameof(ErrorOnSchemaExportExecution));
     }
 }

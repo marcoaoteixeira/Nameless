@@ -7,19 +7,19 @@ public class User : IdentityUser<Guid> {
     /// <summary>
     ///     Gets or sets the first name of the user.
     /// </summary>
-    [MaxLength(256)]
+    [MaxLength(length: 256)]
     public string? FirstName { get; set; }
 
     /// <summary>
     ///     Get or sets the last name of the user.
     /// </summary>
-    [MaxLength(256)]
+    [MaxLength(length: 256)]
     public string? LastName { get; set; }
 
     /// <summary>
     ///     Gets or sets the URL to the user avatar.
     /// </summary>
-    [MaxLength(1024)]
+    [MaxLength(length: 1024)]
     public string? AvatarUrl { get; set; }
 
     /// <summary>

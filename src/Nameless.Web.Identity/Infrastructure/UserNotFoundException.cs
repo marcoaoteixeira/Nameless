@@ -8,7 +8,8 @@ public class UserNotFoundException : Exception {
     ///     Initializes a new instance of the <see cref="UserNotFoundException"/> class
     /// </summary>
     public UserNotFoundException()
-        : this("User not found.") { }
+        : this(message: "User not found.") {
+    }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="UserNotFoundException"/> class
@@ -17,7 +18,8 @@ public class UserNotFoundException : Exception {
     ///     The error message that explains the reason for the exception.
     /// </param>
     public UserNotFoundException(string message)
-        : base(message) { }
+        : base(message) {
+    }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="UserNotFoundException"/> class
@@ -29,5 +31,6 @@ public class UserNotFoundException : Exception {
     ///     The exception that is the cause of the current exception.
     /// </param>
     public UserNotFoundException(string message, Exception inner)
-        : base(message, inner) { }
+        : base(message, inner) {
+    }
 }

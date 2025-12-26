@@ -22,15 +22,15 @@ public sealed class RoleClaimEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(entity => entity.ClaimType)
                .HasColumnName(RoleClaims.Fields.CLAIM_TYPE)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.ClaimValue)
                .HasColumnName(RoleClaims.Fields.CLAIM_VALUE)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.RoleId)
                .HasColumnName(RoleClaims.Fields.ROLE_ID);
 
-        builder.HasIndex(entity => entity.RoleId, name: RoleClaims.Indexes.ROLE_ID);
+        builder.HasIndex(entity => entity.RoleId, RoleClaims.Indexes.ROLE_ID);
     }
 }

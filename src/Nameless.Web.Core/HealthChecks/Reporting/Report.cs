@@ -15,10 +15,6 @@ public sealed record Report {
             entry => ReportEntry.Create(entry.Value)
         );
 
-        return new Report {
-            Status = report.Status,
-            Duration = report.TotalDuration,
-            Entries = entries
-        };
+        return new Report { Status = report.Status, Duration = report.TotalDuration, Entries = entries };
     }
 }

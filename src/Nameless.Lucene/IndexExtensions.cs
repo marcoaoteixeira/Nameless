@@ -35,7 +35,8 @@ public static class IndexExtensions {
     ///     operation, where the result contains an instance of
     ///     <see cref="SearchDocumentsResult" />.
     /// </returns>
-    public static Task<SearchDocumentsResult> SearchAsync(this IIndex self, Query query, Sort? sort = null, int start = 0, int limit = Defaults.QUERY_MAXIMUM_RESULTS, CancellationToken cancellationToken = default) {
+    public static Task<SearchDocumentsResult> SearchAsync(this IIndex self, Query query, Sort? sort = null,
+        int start = 0, int limit = Defaults.QUERY_MAXIMUM_RESULTS, CancellationToken cancellationToken = default) {
         return Guard.Against
                     .Null(self)
                     .SearchAsync(query, sort ?? Defaults.Sort, start, limit, cancellationToken);

@@ -33,8 +33,8 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
     public void Execute(ResolveRequestContext context, Action<ResolveRequestContext> next) {
         context.ChangeParameters(context.Parameters.Union([
             new ResolvedParameter(
-                predicate: (param, _) => param.ParameterType == _serviceType,
-                valueAccessor: (param, ctx) => _factory(param.Member, ctx)
+                (param, _) => param.ParameterType == _serviceType,
+                (param, ctx) => _factory(param.Member, ctx)
             )
         ]));
 
@@ -48,8 +48,8 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
         var properties = GetProperties(implementationType, _serviceType);
         foreach (var property in properties) {
             property.SetValue(
-                obj: context.Instance,
-                value: _factory(property, context),
+                context.Instance,
+                _factory(property, context),
                 index: null
             );
         }
@@ -57,9 +57,9 @@ public sealed class PropertyResolveMiddleware : IResolveMiddleware {
 
     private static IEnumerable<PropertyInfo> GetProperties(Type implementationType, Type serviceType) {
         return implementationType
-              .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-              .Where(prop => serviceType.IsAssignableFrom(prop.PropertyType) &&
-                             prop.CanWrite &&
-                             prop.GetIndexParameters().Length == 0);
+               .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+               .Where(prop => serviceType.IsAssignableFrom(prop.PropertyType) &&
+                              prop.CanWrite &&
+                              prop.GetIndexParameters().Length == 0);
     }
 }

@@ -35,7 +35,7 @@ public sealed class Producer : IProducer {
     }
 
     ~Producer() {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 
     /// <inheritdoc />
@@ -55,32 +55,32 @@ public sealed class Producer : IProducer {
 
             foreach (var routingKey in routingKeys) {
                 await GetChannel().BasicPublishAsync(parameters.GetExchangeName(),
-                                       routingKey,
-                                       parameters.GetMandatory(),
-                                       properties,
-                                       buffer,
-                                       cancellationToken)
-                                  .ConfigureAwait(false);
+                                      routingKey,
+                                      parameters.GetMandatory(),
+                                      properties,
+                                      buffer,
+                                      cancellationToken)
+                                  .ConfigureAwait(continueOnCapturedContext: false);
             }
         }
         catch (Exception ex) { _logger.UnhandledErrorWhileProducingMessage(ex); }
     }
 
     public void Dispose() {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
     public async ValueTask DisposeAsync() {
-        await DisposeAsyncCore().ConfigureAwait(false);
+        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
 
-        Dispose(false);
+        Dispose(disposing: false);
         GC.SuppressFinalize(this);
     }
 
     private IChannel GetChannel() {
         if (_channel is null) {
-            throw new InvalidOperationException("Channel is not available.");
+            throw new InvalidOperationException(message: "Channel is not available.");
         }
 
         return _channel;
@@ -99,6 +99,7 @@ public sealed class Producer : IProducer {
 
     private void Dispose(bool disposing) {
         if (_disposed) { return; }
+
         if (disposing) {
             _channel?.Dispose();
         }
@@ -109,11 +110,11 @@ public sealed class Producer : IProducer {
 
     private async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
-            await _channel.CloseAsync(Constants.ReplySuccess, "Publisher finished work.")
-                          .ConfigureAwait(false);
+            await _channel.CloseAsync(Constants.ReplySuccess, replyText: "Publisher finished work.")
+                          .ConfigureAwait(continueOnCapturedContext: false);
 
             await _channel.DisposeAsync()
-                          .ConfigureAwait(false);
+                          .ConfigureAwait(continueOnCapturedContext: false);
         }
     }
 }

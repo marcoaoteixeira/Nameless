@@ -6,7 +6,7 @@ namespace Nameless.Testing.Tools.Mockers.Logging;
 public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
     public LoggerMocker<T> WithAnyLogLevel() {
         MockInstance.Setup(mock => mock.IsEnabled(It.IsAny<LogLevel>()))
-                    .Returns(true);
+                    .Returns(value: true);
 
         return this;
     }
@@ -14,7 +14,7 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
     public LoggerMocker<T> WithIsEnabled(params LogLevel[] levels) {
         foreach (var level in levels) {
             MockInstance.Setup(mock => mock.IsEnabled(level))
-                        .Returns(true);
+                        .Returns(value: true);
         }
 
         return this;
@@ -30,9 +30,9 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
 
         if (callback is not null) {
             flow.Callback(new InvocationAction(invocation => {
-                var state = invocation.Arguments[2];
-                var formatter = invocation.Arguments[4];
-                var invoker = formatter.GetType().GetMethod("Invoke");
+                var state = invocation.Arguments[index: 2];
+                var formatter = invocation.Arguments[index: 4];
+                var invoker = formatter.GetType().GetMethod(name: "Invoke");
                 var message = (string)invoker!.Invoke(formatter, [state, null])!;
 
                 callback(message);
@@ -58,10 +58,11 @@ public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
         return VerifyCallFor(assertMessage, LogLevel.Warning, times);
     }
 
-    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug, int times = 1) {
+    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug,
+        int times = 1) {
         Func<object, Type, bool> state = (value, type)
             => (assertMessage ?? (_ => true)).Invoke(value.ToString() ?? string.Empty) &&
-               type.Name.Contains("LogValues", StringComparison.OrdinalIgnoreCase);
+               type.Name.Contains(value: "LogValues", StringComparison.OrdinalIgnoreCase);
 
         MockInstance.Verify(mock => mock.Log(
             It.Is<LogLevel>(currentLogLevel => currentLogLevel == level),

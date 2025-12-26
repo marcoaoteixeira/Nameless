@@ -63,11 +63,11 @@ public class FileSystemImpl : IFileSystem {
 
     private void Initialize() {
         if (string.IsNullOrWhiteSpace(Options.Root)) {
-            throw new InvalidOperationException("Root directory not provided.");
+            throw new InvalidOperationException(message: "Root directory not provided.");
         }
 
         if (!Directory.Exists(Options.Root)) {
-            throw new DirectoryNotFoundException("Root directory was not found.");
+            throw new DirectoryNotFoundException(message: "Root directory was not found.");
         }
     }
 }

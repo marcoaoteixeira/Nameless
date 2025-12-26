@@ -7,7 +7,7 @@ namespace Nameless.Data;
 /// <summary>
 ///     Represents a parameter for database commands, encapsulating its name, value, and type.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public readonly record struct Parameter {
     [ExcludeFromCodeCoverage]
     private string DebuggerDisplayValue => $"[{Type}] {Name} => {Value ?? "NULL"}";
@@ -16,10 +16,12 @@ public readonly record struct Parameter {
     ///     Gets the name of the parameter.
     /// </summary>
     public string Name { get; }
+
     /// <summary>
     ///     Gets the value of the parameter.
     /// </summary>
     public object? Value { get; }
+
     /// <summary>
     ///     Gets the type of the parameter.
     /// </summary>

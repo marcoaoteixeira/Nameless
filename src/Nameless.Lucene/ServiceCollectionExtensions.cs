@@ -20,7 +20,8 @@ public static class ServiceCollectionExtensions {
     ///     The current <see cref="IServiceCollection"/> so other actions
     ///     can be chained.
     /// </returns>
-    public static IServiceCollection RegisterLucene(this IServiceCollection self, Action<LuceneOptions>? configure = null) {
+    public static IServiceCollection RegisterLucene(this IServiceCollection self,
+        Action<LuceneOptions>? configure = null) {
         Guard.Against.Null(self);
 
         self.AddOptions<LuceneOptions>()

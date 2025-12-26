@@ -11,7 +11,7 @@ public sealed class MessageJsonConverter : JsonConverter<Message> {
     /// <inheritdoc />
     public override Message Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         if (reader.TokenType != JsonTokenType.StartObject) {
-            throw new JsonException("Invalid start object token.");
+            throw new JsonException(message: "Invalid start object token.");
         }
 
         var id = string.Empty;

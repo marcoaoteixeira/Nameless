@@ -29,5 +29,6 @@ public interface IStreamPipelineBehavior<in TRequest, TResponse> where TRequest 
     /// <returns>
     ///     An <see cref="IAsyncEnumerable{T}" /> representing the stream of data.
     /// </returns>
-    IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
+    IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken);
 }

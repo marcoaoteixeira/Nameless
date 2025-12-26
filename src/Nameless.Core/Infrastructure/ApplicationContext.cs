@@ -44,13 +44,14 @@ public sealed class ApplicationContext : IApplicationContext {
         var options = _options.Value;
 
         var directoryPath = options.ApplicationDataLocation switch {
-            ApplicationDataLocation.Machine => Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            ApplicationDataLocation.Machine => Environment.GetFolderPath(
+                Environment.SpecialFolder.CommonApplicationData),
             ApplicationDataLocation.User => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            _ => options.CustomApplicationDataDirectoryPath,
+            _ => options.CustomApplicationDataDirectoryPath
         };
 
         if (string.IsNullOrWhiteSpace(directoryPath)) {
-            throw new InvalidOperationException("Must provide application data directory path.");
+            throw new InvalidOperationException(message: "Must provide application data directory path.");
         }
 
         directoryPath = PathHelper.Normalize(directoryPath);

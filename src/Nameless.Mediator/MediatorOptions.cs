@@ -83,7 +83,8 @@ public sealed class MediatorOptions {
         var service = typeof(IStreamPipelineBehavior<,>);
 
         if (!service.IsAssignableFromGenericType(behavior)) {
-            throw new InvalidOperationException($"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
+            throw new InvalidOperationException(
+                $"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
         }
 
         if (!_streamPipelineBehaviors.Contains(behavior)) {

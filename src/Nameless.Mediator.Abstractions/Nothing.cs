@@ -8,10 +8,10 @@ namespace Nameless.Mediator;
 /// <summary>
 ///     Represents a void type, since <see cref="Void" /> is not a valid return type in C#.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public readonly struct Nothing : IEquatable<Nothing>,
-                                 IComparable<Nothing>,
-                                 IComparable {
+    IComparable<Nothing>,
+    IComparable {
     private static readonly Nothing InnerValue = new();
 
     /// <summary>

@@ -43,10 +43,11 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     public CircularBuffer(int capacity, TElement[] items) {
         Guard.Against.LowerThan(capacity, compare: 1);
         Guard.Against.GreaterThan(
-            paramValue: items.Length,
+            items.Length,
             paramName: nameof(items),
             compare: capacity,
-            message: $"Too many items. Maximum number of items must be less or equal to {nameof(capacity)} => {capacity}"
+            message:
+            $"Too many items. Maximum number of items must be less or equal to {nameof(capacity)} => {capacity}"
         );
 
         // let's create a copy of the current buffer.
@@ -55,9 +56,9 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
         // copy all items to our inner buffer.
         if (items.Length > 0) {
             Array.Copy(
-                sourceArray: items,
-                destinationArray: _buffer,
-                length: items.Length
+                items,
+                _buffer,
+                items.Length
             );
             Count = items.Length;
         }
@@ -127,7 +128,7 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     /// </exception>
     public void CopyTo(TElement[] array, int startIndex) {
         if (array.Length - startIndex < Count) {
-            throw new InvalidOperationException("Array does not contain enough space for items");
+            throw new InvalidOperationException(message: "Array does not contain enough space for items");
         }
 
         for (var index = 0; index < Count; ++index) {

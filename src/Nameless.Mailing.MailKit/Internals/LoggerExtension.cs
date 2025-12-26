@@ -8,26 +8,28 @@ namespace Nameless.Mailing.MailKit.Internals;
 internal static class LoggerExtension {
     private static readonly Action<ILogger, Exception> SendMessageErrorDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
-            eventId: Events.SendMessageErrorEvent,
+            LogLevel.Error,
+            Events.SendMessageErrorEvent,
             formatString: "An error occurred while sending the email.");
 
     private static readonly Action<ILogger, string, Exception?> EmailSentResultDelegate
         = LoggerMessage.Define<string>(
-            logLevel: LogLevel.Information,
-            eventId: Events.EmailSentResultEvent,
+            LogLevel.Information,
+            Events.EmailSentResultEvent,
             formatString: "The message was sent and the result is: {Result}");
 
-    internal static void SendMessageError(this ILogger self, Exception exception) {
-        SendMessageErrorDelegate(self, exception);
-    }
+    extension(ILogger self) {
+        internal void SendMessageError(Exception exception) {
+            SendMessageErrorDelegate(self, exception);
+        }
 
-    internal static void EmailSentResult(this ILogger self, string result) {
-        EmailSentResultDelegate(self, result, null /* exception */);
+        internal void EmailSentResult(string result) {
+            EmailSentResultDelegate(self, result, arg3: null /* exception */);
+        }
     }
 
     internal static class Events {
-        internal static readonly EventId SendMessageErrorEvent = new(5001, nameof(SendMessageError));
-        internal static readonly EventId EmailSentResultEvent = new(5002, nameof(EmailSentResult));
+        internal static readonly EventId SendMessageErrorEvent = new(id: 5001, nameof(SendMessageError));
+        internal static readonly EventId EmailSentResultEvent = new(id: 5002, nameof(EmailSentResult));
     }
 }

@@ -19,9 +19,7 @@ public class MongoClientFactory : IMongoClientFactory {
     /// <inheritdoc />
     public IMongoClient CreateClient() {
         var options = _options.Value;
-        var settings = new MongoClientSettings {
-            Server = new MongoServerAddress(options.Host, options.Port)
-        };
+        var settings = new MongoClientSettings { Server = new MongoServerAddress(options.Host, options.Port) };
 
         ConfigureCredentials(settings, options);
 

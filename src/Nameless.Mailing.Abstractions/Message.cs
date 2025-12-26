@@ -82,15 +82,15 @@ public sealed record Message {
     ///     <paramref name="to" /> is empty array.
     /// </exception>
     public Message(string subject,
-                   string[] from,
-                   string[] to,
-                   string content,
-                   string[]? cc = null,
-                   string[]? bcc = null,
-                   Encoding? encoding = null,
-                   string? language = null,
-                   bool isBodyHtml = false,
-                   Priority priority = Priority.Normal) {
+        string[] from,
+        string[] to,
+        string content,
+        string[]? cc = null,
+        string[]? bcc = null,
+        Encoding? encoding = null,
+        string? language = null,
+        bool isBodyHtml = false,
+        Priority priority = Priority.Normal) {
         Subject = Guard.Against.NullOrWhiteSpace(subject);
         From = Guard.Against.NullOrEmpty(from);
         To = Guard.Against.NullOrEmpty(to);

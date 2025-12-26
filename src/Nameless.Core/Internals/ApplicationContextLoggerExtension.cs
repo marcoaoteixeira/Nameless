@@ -6,11 +6,13 @@ namespace Nameless.Internals;
 internal static class ApplicationContextLoggerExtension {
     private static readonly Action<ILogger, Exception> CreateDataDirectoryPathFailureDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
+            LogLevel.Error,
             eventId: default,
             formatString: "An error occured while creating the application data directory.");
 
-    internal static void CreateDataDirectoryPathFailure(this ILogger<ApplicationContext> self, Exception exception) {
-        CreateDataDirectoryPathFailureDelegate(self, exception);
+    extension(ILogger<ApplicationContext> self) {
+        internal void CreateDataDirectoryPathFailure(Exception exception) {
+            CreateDataDirectoryPathFailureDelegate(self, exception);
+        }
     }
 }

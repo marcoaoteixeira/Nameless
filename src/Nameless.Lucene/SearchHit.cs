@@ -132,7 +132,7 @@ public sealed class SearchHit : ISearchHit {
 
     private string GetDocumentID() {
         return GetString(Document.RESERVED_ID_NAME)
-               ?? throw new InvalidOperationException("Missing document ID.");
+               ?? throw new InvalidOperationException(message: "Missing document ID.");
     }
 
     private IIndexableField GetField(string name) {

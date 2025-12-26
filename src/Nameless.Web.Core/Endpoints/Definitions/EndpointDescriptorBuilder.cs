@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Web.Endpoints.Definitions.Metadata;
 using Nameless.Web.Helpers;
-using static Nameless.Web.Constants;
+using Nameless.Web.OpenApi;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
@@ -12,6 +12,8 @@ namespace Nameless.Web.Endpoints.Definitions;
 ///     A builder for creating endpoint descriptors.
 /// </summary>
 public sealed class EndpointDescriptorBuilder {
+    private const string ROUTE_SYNTAX = "Route";
+
     private readonly EndpointDescriptor _descriptor;
 
     /// <summary>
@@ -78,7 +80,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Get([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointDescriptorBuilder Get([StringSyntax(ROUTE_SYNTAX)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Get, routePattern, actionName);
     }
 
@@ -100,7 +102,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Post([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointDescriptorBuilder Post([StringSyntax(ROUTE_SYNTAX)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Post, routePattern, actionName);
     }
 
@@ -122,7 +124,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Put([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointDescriptorBuilder Put([StringSyntax(ROUTE_SYNTAX)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Put, routePattern, actionName);
     }
 
@@ -144,7 +146,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     A second call to any method that defines a route will
     ///     replace the previous route definition.
     /// </remarks>
-    public EndpointDescriptorBuilder Delete([StringSyntax(Syntaxes.ROUTE)] string routePattern, string actionName) {
+    public EndpointDescriptorBuilder Delete([StringSyntax(ROUTE_SYNTAX)] string routePattern, string actionName) {
         return SetRouteHandler(HttpMethods.Delete, routePattern, actionName);
     }
 
@@ -261,8 +263,7 @@ public sealed class EndpointDescriptorBuilder {
     /// </returns>
     public EndpointDescriptorBuilder WithVersion(int number, Stability stability = Stability.Stable) {
         _descriptor.Version = new VersionMetadata {
-            Number = Guard.Against.LowerThan(number, compare: 0, nameof(number)),
-            Stability = stability
+            Number = Guard.Against.LowerThan(number, compare: 0, nameof(number)), Stability = stability
         };
 
         return this;
@@ -430,7 +431,7 @@ public sealed class EndpointDescriptorBuilder {
         Guard.Against.Null(contentTypes);
 
         var innerContentTypes = contentTypes.Length == 0
-            ? [ContentTypes.JSON]
+            ? ["application/json"]
             : contentTypes;
 
         _descriptor.AddAccept(new AcceptMetadata(
@@ -458,7 +459,8 @@ public sealed class EndpointDescriptorBuilder {
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Produces<TResponse>(int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
+    public EndpointDescriptorBuilder Produces<TResponse>(int statusCode = StatusCodes.Status200OK,
+        params string[] contentTypes) {
         return Produces(typeof(TResponse), statusCode, contentTypes);
     }
 
@@ -479,17 +481,19 @@ public sealed class EndpointDescriptorBuilder {
     ///     The current <see cref="EndpointDescriptorBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public EndpointDescriptorBuilder Produces(Type? responseType = null, int statusCode = StatusCodes.Status200OK, params string[] contentTypes) {
+    public EndpointDescriptorBuilder Produces(Type? responseType = null, int statusCode = StatusCodes.Status200OK,
+        params string[] contentTypes) {
         Guard.Against.Null(contentTypes);
         Guard.Against.OutOfRange(
-            paramValue: statusCode,
+            statusCode,
             minimumValue: 100, // Status code "Continue"
             maximumValue: 499, // Max value for responses that are not server errors
-            message: "The status code must be a value inside the range 100 (informational responses) to 499 (client error responses)."
+            message:
+            "The status code must be a value inside the range 100 (informational responses) to 499 (client error responses)."
         );
 
         var innerContentTypes = contentTypes.Length == 0
-            ? [ContentTypes.JSON]
+            ? ["application/json"]
             : contentTypes;
 
         _descriptor.AddProduce(new ProduceMetadata(
@@ -518,7 +522,7 @@ public sealed class EndpointDescriptorBuilder {
     /// </remarks>
     public EndpointDescriptorBuilder ProducesProblem(int statusCode = StatusCodes.Status500InternalServerError) {
         Guard.Against.OutOfRange(
-            paramValue: statusCode,
+            statusCode,
             minimumValue: 500, // Status codes "Internal Server Error"
             maximumValue: 599, // Max value for server error responses
             message: "The status code must be a value inside the range 500 to 599 (server error responses)."
@@ -527,7 +531,7 @@ public sealed class EndpointDescriptorBuilder {
         _descriptor.AddProduce(new ProduceMetadata(
             typeof(ProblemDetails),
             statusCode,
-            [ContentTypes.PROBLEM_DETAILS]
+            ["application/problem+json"]
         ));
 
         return this;
@@ -542,7 +546,7 @@ public sealed class EndpointDescriptorBuilder {
     ///     actions can be chained.
     /// </returns>
     public EndpointDescriptorBuilder ProducesValidationProblem() {
-        return Produces<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, ContentTypes.PROBLEM_DETAILS);
+        return Produces<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json");
     }
 
     /// <summary>
@@ -579,7 +583,7 @@ public sealed class EndpointDescriptorBuilder {
     public IEndpointDescriptor Build() {
         EnsureRoute();
         EnsureHandler();
-        EnsureDescriptorMetadata();
+        EnsureDescriptor();
 
         return _descriptor;
     }
@@ -594,35 +598,34 @@ public sealed class EndpointDescriptorBuilder {
 
     private void EnsureRoute() {
         if (string.IsNullOrWhiteSpace(_descriptor.HttpMethod)) {
-            throw new InvalidOperationException("HTTP method must be specified.");
+            throw new InvalidOperationException(message: "HTTP method must be specified.");
         }
 
         if (string.IsNullOrWhiteSpace(_descriptor.RoutePattern)) {
-            throw new InvalidOperationException("Route pattern must be specified.");
+            throw new InvalidOperationException(message: "Route pattern must be specified.");
         }
 
         if (string.IsNullOrWhiteSpace(_descriptor.ActionName)) {
-            throw new InvalidOperationException("Action name must be specified.");
+            throw new InvalidOperationException(message: "Action name must be specified.");
         }
     }
 
     private void EnsureHandler() {
         var handler = _descriptor.EndpointType
                                  .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                 .SingleOrDefault(method => method.Name == _descriptor.ActionName);
-
-        if (handler is null) {
-            throw new InvalidOperationException($"Action '{_descriptor.ActionName}' not found in endpoint '{_descriptor.EndpointType.Name}'.");
-        }
+                                 .SingleOrDefault(method => method.Name == _descriptor.ActionName)
+                      ?? throw new InvalidOperationException(
+                          $"Action '{_descriptor.ActionName}' not found in endpoint '{_descriptor.EndpointType.Name}'.");
 
         var returnType = typeof(Task<IResult>);
         if (!returnType.IsAssignableFrom(handler.ReturnType)) {
-            throw new InvalidOperationException($"The return type of the endpoint action must be assignable from '{returnType.GetPrettyName()}'.");
+            throw new InvalidOperationException(
+                $"The return type of the endpoint action must be assignable from '{returnType.GetPrettyName()}'.");
         }
 
         var delegateMetadataResult = RequestDelegateFactory.InferMetadata(
-            methodInfo: handler,
-            options: new RequestDelegateFactoryOptions {
+            handler,
+            new RequestDelegateFactoryOptions {
                 RouteParameterNames = RouteHelper.GetRouteParameters(_descriptor.RoutePattern)
             }
         );
@@ -638,7 +641,7 @@ public sealed class EndpointDescriptorBuilder {
         WithAdditionalMetadata(new EndpointHandlerMetadata(handler));
     }
 
-    private void EnsureDescriptorMetadata() {
+    private void EnsureDescriptor() {
         WithAdditionalMetadata(new EndpointDescriptorMetadata(_descriptor));
     }
 }

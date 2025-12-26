@@ -18,19 +18,19 @@ public sealed class UserLoginEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(entity => entity.LoginProvider)
                .HasColumnName(UserLogins.Fields.LOGIN_PROVIDER)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
         builder.Property(entity => entity.ProviderKey)
                .HasColumnName(UserLogins.Fields.PROVIDER_KEY)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
         builder.Property(entity => entity.ProviderDisplayName)
                .HasColumnName(UserLogins.Fields.PROVIDER_DISPLAY_NAME)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.UserId)
                .HasColumnName(UserLogins.Fields.USER_ID);
 
-        builder.HasIndex(entity => entity.UserId, name: UserLogins.Indexes.USER_ID);
+        builder.HasIndex(entity => entity.UserId, UserLogins.Indexes.USER_ID);
     }
 }

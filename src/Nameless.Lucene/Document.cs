@@ -21,10 +21,10 @@ public sealed class Document : IEnumerable<Field> {
         ID = Guard.Against.NullOrWhiteSpace(id);
 
         _fields[RESERVED_ID_NAME] = new Field(
-            name: RESERVED_ID_NAME,
-            value: ID,
-            type: IndexableType.String,
-            options: FieldOptions.Store
+            RESERVED_ID_NAME,
+            ID,
+            IndexableType.String,
+            FieldOptions.Store
         );
     }
 

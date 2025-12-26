@@ -25,10 +25,10 @@ public class Defaults {
     ///     <see cref="StandardAnalyzer"/>.
     /// </summary>
     public static Analyzer Analyzer => new StandardAnalyzer(
-        matchVersion: Constants.CURRENT_VERSION,
-        stopWords: new CharArraySet(
-            matchVersion: Constants.CURRENT_VERSION,
-            collection: Enumerable.Empty<string>(),
+        Constants.CURRENT_VERSION,
+        new CharArraySet(
+            Constants.CURRENT_VERSION,
+            Enumerable.Empty<string>(),
             ignoreCase: true
         )
     );

@@ -36,7 +36,7 @@ public static class DeepCopy {
         var json = JsonSerializer.Serialize(value);
         var result = JsonSerializer.Deserialize(json, type);
 
-        return result ?? throw new InvalidOperationException("Unable to clone object.");
+        return result ?? throw new InvalidOperationException(message: "Unable to clone object.");
     }
 
     /// <summary>

@@ -20,11 +20,12 @@ public sealed class ValidationService : IValidationService {
 
     /// <inheritdoc />
     public Task<ValidationResult> ValidateAsync(object value, CancellationToken cancellationToken) {
-        return ValidateAsync(value, dataContext: [], cancellationToken);
+        return ValidateAsync(value, [], cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<ValidationResult> ValidateAsync(object value, DataContext dataContext, CancellationToken cancellationToken) {
+    public async Task<ValidationResult> ValidateAsync(object value, DataContext dataContext,
+        CancellationToken cancellationToken) {
         var validationContext = CreateValidationContext(value, dataContext);
         var tasks = _validators.Where(validator => validator.CanValidateInstancesOfType(value.GetType()))
                                .Select(validator => validator.ValidateAsync(validationContext, cancellationToken));
@@ -37,6 +38,7 @@ public sealed class ValidationService : IValidationService {
             foreach (var key in dataContext.Keys) {
                 context.RootContextData[key] = dataContext[key];
             }
+
             return context;
         }
     }

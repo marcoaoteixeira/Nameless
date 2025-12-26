@@ -24,56 +24,56 @@ public sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         // Fields
         builder.Property(entity => entity.FirstName)
                .HasColumnName(Users.Fields.FIRST_NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.LastName)
                .HasColumnName(Users.Fields.LAST_NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.UserName)
                .HasColumnName(Users.Fields.USER_NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.NormalizedUserName)
                .HasColumnName(Users.Fields.NORMALIZED_USER_NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.Email)
                .HasColumnName(Users.Fields.EMAIL)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.NormalizedEmail)
                .HasColumnName(Users.Fields.NORMALIZED_EMAIL)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.EmailConfirmed)
                .HasColumnName(Users.Fields.EMAIL_CONFIRMED);
 
         builder.Property(entity => entity.PhoneNumber)
                .HasColumnName(Users.Fields.PHONE_NUMBER)
-               .HasMaxLength(64);
+               .HasMaxLength(maxLength: 64);
 
         builder.Property(entity => entity.PhoneNumberConfirmed)
                .HasColumnName(Users.Fields.PHONE_NUMBER_CONFIRMED);
 
         builder.Property(entity => entity.AvatarUrl)
                .HasColumnName(Users.Fields.AVATAR_URL)
-               .HasMaxLength(1024);
+               .HasMaxLength(maxLength: 1024);
 
         builder.Property(entity => entity.LockoutEnabled)
                .HasColumnName(Users.Fields.LOCKOUT_ENABLED);
 
         builder.Property(entity => entity.LockoutEnd)
                .HasColumnName(Users.Fields.LOCKOUT_END)
-               .IsRequired(false);
+               .IsRequired(required: false);
 
         builder.Property(entity => entity.PasswordHash)
                .HasColumnName(Users.Fields.PASSWORD_HASH)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.SecurityStamp)
                .HasColumnName(Users.Fields.SECURITY_STAMP)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.TwoFactorEnabled)
                .HasColumnName(Users.Fields.TWO_FACTOR_ENABLED);
@@ -86,11 +86,11 @@ public sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
                .HasMaxLength(int.MaxValue);
 
         // Indexes
-        builder.HasIndex(entity => entity.NormalizedUserName, name: Users.Indexes.NORMALIZED_USER_NAME)
+        builder.HasIndex(entity => entity.NormalizedUserName, Users.Indexes.NORMALIZED_USER_NAME)
                .IsUnique()
                .HasFilter(Users.Indexes.Filters.NORMALIZED_USER_NAME_NOT_NULL);
 
-        builder.HasIndex(entity => entity.NormalizedEmail, name: Users.Indexes.NORMALIZED_EMAIL)
+        builder.HasIndex(entity => entity.NormalizedEmail, Users.Indexes.NORMALIZED_EMAIL)
                .IsUnique()
                .HasFilter(Users.Indexes.Filters.NORMALIZED_EMAIL_NOT_NULL);
 

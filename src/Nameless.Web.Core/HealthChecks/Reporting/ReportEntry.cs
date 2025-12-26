@@ -17,7 +17,7 @@ public sealed record ReportEntry {
             Duration = report.Duration,
             Tags = report.Tags,
             Exception = report.Exception?.Message,
-            Data = report.Data,
+            Data = report.Data
         };
     }
 }

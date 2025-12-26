@@ -3,7 +3,9 @@
 namespace Nameless.IO.FileSystem;
 
 internal static class DirectoryInfoExtensions {
-    internal static string GetFullPath(this DirectoryInfo self) {
-        return PathHelper.Normalize(self.FullName);
+    extension(DirectoryInfo self) {
+        internal string GetFullPath() {
+            return PathHelper.Normalize(self.FullName);
+        }
     }
 }

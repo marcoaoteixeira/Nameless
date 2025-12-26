@@ -9,13 +9,15 @@ namespace Nameless.NHibernate;
 public static class QueryExtensions {
     private static readonly DynamicResultTransformer DynamicTransformer = new();
 
-    /// <summary>
-    ///     Converts an <see cref="T:NHibernate.IQuery" /> to a dynamic list.
-    /// </summary>
-    /// <param name="self">The source <see cref="T:NHibernate.IQuery" />.</param>
-    /// <returns>A collection of dynamics, representing the query result.</returns>
-    public static IList<dynamic> ToDynamicList(this IQuery self) {
-        return self.SetResultTransformer(DynamicTransformer)
-                   .List<dynamic>();
+    /// <param name="self">The source <see cref="global::NHibernate.IQuery" />.</param>
+    extension(IQuery self) {
+        /// <summary>
+        ///     Converts an <see cref="global::NHibernate.IQuery" /> to a dynamic list.
+        /// </summary>
+        /// <returns>A collection of dynamics, representing the query result.</returns>
+        public IList<dynamic> ToDynamicList() {
+            return self.SetResultTransformer(DynamicTransformer)
+                       .List<dynamic>();
+        }
     }
 }

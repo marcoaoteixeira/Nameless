@@ -1,4 +1,4 @@
-﻿namespace Nameless.Web.IdentityModel.Jwt;
+﻿namespace Nameless.Web.Identity.Infrastructure;
 
 /// <summary>
 ///     Exception thrown when the 'sub' claim is missing.
@@ -9,7 +9,8 @@ public class MissingClaimSubException : Exception {
     ///     <see cref="MissingClaimSubException"/> class.
     /// </summary>
     public MissingClaimSubException()
-        : this($"The required claim '{MS_JwtRegisteredClaimNames.Sub}' is missing.") { }
+        : this($"The required claim '{MS_JwtRegisteredClaimNames.Sub}' is missing.") {
+    }
 
     /// <summary>
     ///     Initializes a new instance

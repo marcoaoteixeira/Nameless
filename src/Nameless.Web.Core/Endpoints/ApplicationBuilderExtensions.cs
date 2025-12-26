@@ -50,47 +50,49 @@ public static class ApplicationBuilderExtensions {
         return self;
     }
 
-    private static RouteGroupBuilder WithVersionSetFrom(this RouteGroupBuilder self, IEnumerable<IEndpointDescriptor> endpointDefinitions) {
-        // extract all available versions from the groups.
-        var availableVersions = endpointDefinitions.Select(endpoint => endpoint.Version.Number)
-                                                   .Distinct()
-                                                   .ToArray();
+    extension(RouteGroupBuilder self) {
+        private RouteGroupBuilder WithVersionSetFrom(IEnumerable<IEndpointDescriptor> endpointDefinitions) {
+            // extract all available versions from the groups.
+            var availableVersions = endpointDefinitions.Select(endpoint => endpoint.Version.Number)
+                                                       .Distinct()
+                                                       .ToArray();
 
-        // creates the version set builder.
-        var versionSetBuilder = self.NewApiVersionSet();
+            // creates the version set builder.
+            var versionSetBuilder = self.NewApiVersionSet();
 
-        foreach (var version in availableVersions) {
-            versionSetBuilder.HasApiVersion(new ApiVersion(version));
+            foreach (var version in availableVersions) {
+                versionSetBuilder.HasApiVersion(new ApiVersion(version));
+            }
+
+            // creates the version set.
+            var versionSet = versionSetBuilder.ReportApiVersions().Build();
+
+            // set the version set to the endpoint route builder.
+            self.WithApiVersionSet(versionSet);
+
+            return self;
         }
 
-        // creates the version set.
-        var versionSet = versionSetBuilder.ReportApiVersions().Build();
+        private void WithEndpoints(IEnumerable<IEndpointDescriptor> endpointDefinitions) {
+            // groups all endpoint descriptors by group name
+            var groups = endpointDefinitions.GroupBy(item => item.GroupName);
 
-        // set the version set to the endpoint route builder.
-        self.WithApiVersionSet(versionSet);
+            foreach (var group in groups) {
+                // with the group name, we create a new group builder for the
+                // similar endpoints.
+                var routeGroupBuilder = self.MapGroup(group.Key);
 
-        return self;
-    }
-
-    private static void WithEndpoints(this RouteGroupBuilder self, IEnumerable<IEndpointDescriptor> endpointDefinitions) {
-        // groups all endpoint descriptors by group name
-        var groups = endpointDefinitions.GroupBy(item => item.GroupName);
-
-        foreach (var group in groups) {
-            // with the group name, we create a new group builder for the
-            // similar endpoints.
-            var routeGroupBuilder = self.MapGroup(group.Key);
-
-            // finally, we apply all endpoint descriptors to the group
-            // builder.
-            foreach (var descriptor in group) {
-                routeGroupBuilder.MapEndpoint(descriptor);
+                // finally, we apply all endpoint descriptors to the group
+                // builder.
+                foreach (var descriptor in group) {
+                    routeGroupBuilder.MapEndpoint(descriptor);
+                }
             }
         }
     }
 
     private static IEndpointDescriptor[] CreateEndpointDescriptors(this IServiceProvider self) {
-        // We need this "ServiceResolver" because we need to create
+        // We need this "ServiceFactory" because we need to create
         // instances of the endpoints on-the-fly. We cannot register
         // them into the service collection because they might need
         // services that are registered as transient or scoped, and

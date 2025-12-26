@@ -23,7 +23,8 @@ public static class ApplicationBuilderExtensions {
     ///     The current <typeparamref name="TApplicationBuilder"/> so other
     ///     actions can be chained.
     /// </returns>
-    public static TApplicationBuilder UseHttpContextCorrelation<TApplicationBuilder>(this TApplicationBuilder self, Action<HttpContextCorrelationOptions>? configure = null)
+    public static TApplicationBuilder UseHttpContextCorrelation<TApplicationBuilder>(this TApplicationBuilder self,
+        Action<HttpContextCorrelationOptions>? configure = null)
         where TApplicationBuilder : IApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new HttpContextCorrelationOptions();

@@ -7,7 +7,7 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     Default implementation of <see cref="IDirectory"/>.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public class DirectoryWrapper : IDirectory {
     private readonly DirectoryInfo _directory;
     private readonly IOptions<FileSystemOptions> _options;

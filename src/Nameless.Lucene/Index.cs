@@ -38,11 +38,15 @@ public sealed class Index : IIndex {
     /// </summary>
     public string Name { get; }
 
-    private FSDirectory FSDirectory => _fsDirectory?.Value ?? throw new InvalidOperationException($"{nameof(FSDirectory)} not available.");
+    private FSDirectory FSDirectory => _fsDirectory?.Value ??
+                                       throw new InvalidOperationException($"{nameof(FSDirectory)} not available.");
 
-    private IndexWriterConfig IndexWriterConfig => _indexWriterConfig?.Value ?? throw new InvalidOperationException($"{nameof(IndexWriterConfig)} not available.");
+    private IndexWriterConfig IndexWriterConfig => _indexWriterConfig?.Value ??
+                                                   throw new InvalidOperationException(
+                                                       $"{nameof(IndexWriterConfig)} not available.");
 
-    public Index(Analyzer analyzer, IFileSystem fileSystem, string name, IOptions<LuceneOptions> options, ILogger<Index> logger) {
+    public Index(Analyzer analyzer, IFileSystem fileSystem, string name, IOptions<LuceneOptions> options,
+        ILogger<Index> logger) {
         _analyzer = analyzer;
         _fileSystem = fileSystem;
         _options = options;
@@ -210,7 +214,8 @@ public sealed class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit, CancellationToken cancellationToken) {
+    public Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit,
+        CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         Guard.Against.Null(query);
@@ -225,7 +230,7 @@ public sealed class Index : IIndex {
 
             var collector = TopFieldCollector.Create(
                 sort,
-                numHits: start + limit,
+                start + limit,
                 fillFields: false,
                 trackDocScores: true,
                 trackMaxScore: false,
@@ -331,7 +336,6 @@ public sealed class Index : IIndex {
     }
 
     private IndexReader GetIndexReader() {
-
         if (_indexReader is DirectoryReader currentDirectoryReader) {
             var newIndexReader = DirectoryReader.OpenIfChanged(currentDirectoryReader);
             if (newIndexReader is not null) {
@@ -363,7 +367,9 @@ public sealed class Index : IIndex {
             _indexWriter?.Dispose();
             _indexWriter = null;
         }
-        catch { /* swallow */ }
+        catch {
+            /* swallow */
+        }
     }
 
     private int GetQueryCount(Query query) {

@@ -29,7 +29,7 @@ public class DirectoryMocker : Mocker<IDirectory> {
     }
 
     public DirectoryMocker ThrowOnCreate() {
-        return ThrowOnCreate(() => new Exception("Throw error on Create call."));
+        return ThrowOnCreate(() => new Exception(message: "Throw error on Create call."));
     }
 
     public DirectoryMocker ThrowOnCreate<TException>(Func<TException> factory)
@@ -50,7 +50,7 @@ public class DirectoryMocker : Mocker<IDirectory> {
     }
 
     public DirectoryMocker ThrowOnDelete() {
-        return ThrowOnDelete(() => new Exception("Throw error on Delete call."));
+        return ThrowOnDelete(() => new Exception(message: "Throw error on Delete call."));
     }
 
     public DirectoryMocker ThrowOnDelete<TException>(Func<TException> factory)

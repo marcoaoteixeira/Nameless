@@ -43,7 +43,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
     }
 
     ~RijndaelCrypto() {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 
     /// <inheritdoc />
@@ -52,7 +52,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
         BlockAccessAfterDispose();
 
-        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
+        if (!stream.CanRead) { throw new InvalidOperationException(message: "Can't read the stream."); }
 
         if (stream.Length == 0) { return []; }
 
@@ -67,7 +67,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
                 // Start encrypting data.
                 cryptoStream.Write(valueWithSalt,
-                    0,
+                    offset: 0,
                     valueWithSalt.Length);
                 // Finish the encryption operation.
                 cryptoStream.FlushFinalBlock();
@@ -94,7 +94,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
         var options = _options.Value;
 
-        if (!stream.CanRead) { throw new InvalidOperationException("Can't read the stream."); }
+        if (!stream.CanRead) { throw new InvalidOperationException(message: "Can't read the stream."); }
 
         if (stream.Length == 0) { return []; }
 
@@ -121,7 +121,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
                 // Decrypting data and get the count of plain text bytes.
                 decryptedByteCount = cryptoStream.Read(decryptedBytes,
-                    0,
+                    offset: 0,
                     decryptedBytes.Length);
             }
             catch (Exception ex) {
@@ -152,7 +152,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
         Array.Copy(decryptedBytes,
             saltLength,
             plainTextBytes,
-            0,
+            destinationIndex: 0,
             decryptedByteCount - saltLength);
 
         // Return original plain text value.
@@ -161,7 +161,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
     /// <inheritdoc />
     public void Dispose() {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
@@ -169,7 +169,7 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
     // Get bytes of initialization vector.
     private byte[] CreateIvBuffer() {
         if (string.IsNullOrWhiteSpace(_options.Value.Iv)) {
-            throw new InvalidOperationException("Must provide initialization vector.");
+            throw new InvalidOperationException(message: "Must provide initialization vector.");
         }
 
         return Encoding.ASCII.GetBytes(_options.Value.Iv);
@@ -190,11 +190,11 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
 
         // Generate password, which will be used to derive the key.
         return Rfc2898DeriveBytes.Pbkdf2(
-            password: options.Passphrase,
-            salt: saltValueBytes,
-            iterations: options.PasswordIterations,
-            hashAlgorithm: HashAlgorithmName.SHA256,
-            outputLength: (int)keySize / 8
+            options.Passphrase,
+            saltValueBytes,
+            options.PasswordIterations,
+            HashAlgorithmName.SHA256,
+            (int)keySize / 8
         );
     }
 
@@ -256,11 +256,11 @@ public sealed class RijndaelCrypto : ICrypto, IDisposable {
     }
 
     private ICryptoTransform GetEncryptor() {
-        return _encryptor ?? throw new InvalidOperationException("Encryptor is not available.");
+        return _encryptor ?? throw new InvalidOperationException(message: "Encryptor is not available.");
     }
 
     private ICryptoTransform GetDecryptor() {
-        return _decryptor ?? throw new InvalidOperationException("Decryptor is not available.");
+        return _decryptor ?? throw new InvalidOperationException(message: "Decryptor is not available.");
     }
 
     /// <summary>

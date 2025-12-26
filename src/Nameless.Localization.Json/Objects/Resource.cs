@@ -6,12 +6,12 @@ namespace Nameless.Localization.Json.Objects;
 /// <summary>
 /// Represents a resource containing localized messages for a specific culture.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public sealed record Resource {
     /// <summary>
     /// Gets an empty resource with no path, culture, and messages.
     /// </summary>
-    public static Resource Empty => new(string.Empty, string.Empty, [], false);
+    public static Resource Empty => new(string.Empty, string.Empty, [], isAvailable: false);
 
     /// <summary>
     /// Gets the path of the resource.
@@ -63,7 +63,7 @@ public sealed record Resource {
     /// <returns>
     /// <see langword="true"/> if the message was found; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool TryGetMessage(string id, [NotNullWhen(true)] out Message? output) {
+    public bool TryGetMessage(string id, [NotNullWhen(returnValue: true)] out Message? output) {
         var current = Messages.SingleOrDefault(item => string.Equals(id, item.Id, StringComparison.Ordinal));
 
         output = current;

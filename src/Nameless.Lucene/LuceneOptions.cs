@@ -14,7 +14,7 @@ public sealed class LuceneOptions {
     /// </summary>
     internal IReadOnlyCollection<IAnalyzerSelector> AnalyzerSelectors => _analyzerSelectors;
 
-    internal string DirectoryName => _directoryName ?? "indexes";
+    internal string DirectoryName => field ?? "indexes";
 
     /// <summary>
     ///     Registers an analyzer selector.

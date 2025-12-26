@@ -49,10 +49,10 @@ public sealed class JsonWebTokenOptions {
     /// <summary>
     ///     Gets or sets the access token time-to-live.
     /// </summary>
-    public TimeSpan TokenExpiresIn { get; set; } = TimeSpan.FromMinutes(45);
+    public TimeSpan TokenExpiresIn { get; set; } = TimeSpan.FromMinutes(minutes: 45);
 
     /// <summary>
     ///     Gets or sets the clock skew.
     /// </summary>
-    public TimeSpan ClockSkew { get; set; } = TimeSpan.FromMinutes(5);
+    public TimeSpan ClockSkew { get; set; } = TimeSpan.FromMinutes(minutes: 5);
 }

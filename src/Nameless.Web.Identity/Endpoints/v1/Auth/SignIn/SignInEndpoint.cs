@@ -5,7 +5,6 @@ using Nameless.Validation;
 using Nameless.Web.Endpoints;
 using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Identity.UseCases.Authentication.SignIn;
-
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Nameless.Web.Identity.Endpoints.v1.Auth.SignIn;
@@ -29,14 +28,14 @@ public class SignInEndpoint : IEndpoint {
         var builder = EndpointDescriptorBuilder.Create<SignInEndpoint>();
 
         builder
-            .Post("signin", nameof(ExecuteAsync))
+            .Post(routePattern: "signin", nameof(ExecuteAsync))
             .AllowAnonymous()
-            .WithDescription("Authenticates a user using the provided information.")
-            .WithDisplayName("SignIn")
-            .WithGroupName("auth")
+            .WithDescription(description: "Authenticates a user using the provided information.")
+            .WithDisplayName(displayName: "SignIn")
+            .WithGroupName(groupName: "auth")
             .Produces<SignInOutput>()
-            .ProducesProblem(statusCode: StatusCodes.Status401Unauthorized)
-            .ProducesProblem(statusCode: StatusCodes.Status500InternalServerError)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesValidationProblem();
 
         return builder.Build();
@@ -50,10 +49,7 @@ public class SignInEndpoint : IEndpoint {
             return ValidationProblem(validationResult.ToDictionary());
         }
 
-        var request = new SignInRequest {
-            Email = input.Email,
-            Password = input.Password
-        };
+        var request = new SignInRequest { Email = input.Email, Password = input.Password };
         var signInResponse = await _mediator.ExecuteAsync(request, cancellationToken);
 
         return signInResponse.Succeeded

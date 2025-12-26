@@ -7,7 +7,7 @@ namespace Nameless.Localization.Json.Objects;
 /// <summary>
 /// Represents a localized message with an identifier and text.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 [JsonConverter(typeof(MessageJsonConverter))]
 public sealed record Message {
     /// <summary>

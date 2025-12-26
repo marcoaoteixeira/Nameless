@@ -3,6 +3,6 @@
 namespace Nameless.Web.Internals;
 
 internal static partial class RegexCache {
-    [GeneratedRegex(@"{([^}]+)}", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(pattern: @"{([^}]+)}", RegexOptions.IgnoreCase)]
     internal static partial Regex RoutePattern();
 }

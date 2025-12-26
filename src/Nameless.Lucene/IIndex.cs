@@ -87,5 +87,6 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="SearchDocumentsResult" />.
     /// </returns>
-    Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit, CancellationToken cancellationToken);
+    Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit,
+        CancellationToken cancellationToken);
 }

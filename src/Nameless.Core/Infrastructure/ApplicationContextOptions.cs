@@ -27,5 +27,5 @@ public sealed class ApplicationContextOptions {
     /// <summary>
     ///     Gets or sets the version of the application.
     /// </summary>
-    public Version Version { get; set; } = new(1, 0, 0);
+    public Version Version { get; set; } = new(major: 1, minor: 0, build: 0);
 }

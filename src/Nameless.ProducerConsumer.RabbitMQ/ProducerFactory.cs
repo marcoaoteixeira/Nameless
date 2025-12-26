@@ -16,9 +16,9 @@ public sealed class ProducerFactory : IProducerFactory {
     private readonly ILogger<Producer> _producerLogger;
 
     public ProducerFactory(IChannelFactory channelFactory,
-                           IChannelConfigurator channelConfigurator,
-                           TimeProvider timeProvider,
-                           ILoggerFactory loggerFactory) {
+        IChannelConfigurator channelConfigurator,
+        TimeProvider timeProvider,
+        ILoggerFactory loggerFactory) {
         _channelFactory = Guard.Against.Null(channelFactory);
         _channelConfigurator = Guard.Against.Null(channelConfigurator);
         _timeProvider = Guard.Against.Null(timeProvider);
@@ -32,13 +32,13 @@ public sealed class ProducerFactory : IProducerFactory {
 
         try {
             channel = await _channelFactory.CreateAsync(cancellationToken)
-                                           .ConfigureAwait(false);
+                                           .ConfigureAwait(continueOnCapturedContext: false);
 
             await _channelConfigurator.ConfigureAsync(channel,
-                                           topic,
-                                           usePrefetch: false,
-                                           cancellationToken)
-                                      .ConfigureAwait(false);
+                                          topic,
+                                          usePrefetch: false,
+                                          cancellationToken)
+                                      .ConfigureAwait(continueOnCapturedContext: false);
 
             return new Producer(topic, channel, _timeProvider, _producerLogger);
         }
@@ -48,7 +48,7 @@ public sealed class ProducerFactory : IProducerFactory {
             // if the channel was created, then dispose it.
             if (channel is not null) {
                 await channel.DisposeAsync()
-                             .ConfigureAwait(false);
+                             .ConfigureAwait(continueOnCapturedContext: false);
             }
 
             throw;

@@ -39,19 +39,19 @@ public sealed class MailingImpl : IMailing {
         var mail = CreateMimeMessage(message);
 
         if (mail.From.Count == 0) {
-            throw new InvalidOperationException("Sender address not found.");
+            throw new InvalidOperationException(message: "Sender address not found.");
         }
 
         if (mail.To.Count == 0) {
-            throw new InvalidOperationException("Recipient address not found.");
+            throw new InvalidOperationException(message: "Recipient address not found.");
         }
 
         using var client = await _smtpClientFactory.CreateAsync(cancellationToken)
-                                                   .ConfigureAwait(false);
+                                                   .ConfigureAwait(continueOnCapturedContext: false);
 
         try {
             var result = await client.SendAsync(mail, cancellationToken)
-                                     .ConfigureAwait(false);
+                                     .ConfigureAwait(continueOnCapturedContext: false);
 
             _logger.EmailSentResult(result);
         }

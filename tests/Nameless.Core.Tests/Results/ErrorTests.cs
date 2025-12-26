@@ -1,3 +1,5 @@
+using Nameless.ObjectModel;
+
 namespace Nameless.Results;
 
 public class ErrorTests {
@@ -17,7 +19,7 @@ public class ErrorTests {
 
             // assert
             Assert.Multiple(() => {
-                Assert.Equal(type.ToString(), error.Description);
+                Assert.Equal(type.ToString(), error.Message);
                 Assert.Equal(type, error.Type);
             });
         }

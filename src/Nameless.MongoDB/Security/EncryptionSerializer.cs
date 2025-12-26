@@ -45,11 +45,11 @@ public sealed class EncryptionSerializer : SerializerBase<string?> {
         Guard.Against.NullOrEmpty(iv);
 
         if (key.Length != 8) {
-            throw new ArgumentException("Parameter must be an array of 8 positions.", nameof(key));
+            throw new ArgumentException(message: "Parameter must be an array of 8 positions.", nameof(key));
         }
 
         if (iv.Length != 8) {
-            throw new ArgumentException("Parameter must be an array of 8 positions.", nameof(iv));
+            throw new ArgumentException(message: "Parameter must be an array of 8 positions.", nameof(iv));
         }
 
         _key = key;
@@ -86,7 +86,7 @@ public sealed class EncryptionSerializer : SerializerBase<string?> {
         using var transform = algorithm.CreateEncryptor(key, iv);
 
         var input = Encoding.Unicode.GetBytes(value);
-        var output = transform.TransformFinalBlock(input, 0, input.Length);
+        var output = transform.TransformFinalBlock(input, inputOffset: 0, input.Length);
 
         return Convert.ToBase64String(output);
     }
@@ -96,7 +96,7 @@ public sealed class EncryptionSerializer : SerializerBase<string?> {
         using var transform = algorithm.CreateDecryptor(key, iv);
 
         var input = Convert.FromBase64String(value);
-        var output = transform.TransformFinalBlock(input, 0, input.Length);
+        var output = transform.TransformFinalBlock(input, inputOffset: 0, input.Length);
 
         return Encoding.Unicode.GetString(output);
     }

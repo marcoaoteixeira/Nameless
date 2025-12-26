@@ -34,7 +34,8 @@ internal static class GuardExtensions {
     ///     if <paramref name="paramValue"/> is <see langword="null"/>.
     /// </exception>
     [DebuggerStepThrough]
-    internal static object NullOrNonMatchingType(this Guard self, object paramValue, IndexableType type, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null) {
+    internal static object NullOrNonMatchingType(this Guard self, object paramValue, IndexableType type,
+        [CallerArgumentExpression(nameof(paramValue))] string? paramName = null) {
         self.Null(paramValue, paramName);
 
         var paramValueType = paramValue.GetType();
@@ -57,7 +58,8 @@ internal static class GuardExtensions {
         };
 
         if (!matchIndexableType) {
-            throw new InvalidOperationException($"{nameof(IndexableType)} '{type}' does not match underlying type of parameter '{paramName}'");
+            throw new InvalidOperationException(
+                $"{nameof(IndexableType)} '{type}' does not match underlying type of parameter '{paramName}'");
         }
 
         return paramValue;

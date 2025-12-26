@@ -1,4 +1,6 @@
-﻿namespace Nameless.Web.Endpoints.Definitions.Metadata;
+﻿using Nameless.Web.OpenApi;
+
+namespace Nameless.Web.Endpoints.Definitions.Metadata;
 
 /// <summary>
 ///     Represents metadata about the version of an endpoint.

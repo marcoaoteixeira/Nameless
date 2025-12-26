@@ -9,7 +9,7 @@ public sealed class XmlSchemaValidator : IXmlSchemaValidator {
         var success = false;
         var settings = new XmlReaderSettings();
         var xmlSchema = XmlSchema.Read(schema, validationEventHandler: null)
-                     ?? throw new InvalidOperationException("XmlSchema is null.");
+                        ?? throw new InvalidOperationException(message: "XmlSchema is null.");
 
         settings.Schemas.Add(xmlSchema);
         settings.ValidationType = ValidationType.Schema;

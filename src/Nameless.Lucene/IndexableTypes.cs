@@ -72,5 +72,5 @@ public enum IndexableType {
     /// <summary>
     ///     For <see cref="System.Enum" /> values.
     /// </summary>
-    Enum,
+    Enum
 }

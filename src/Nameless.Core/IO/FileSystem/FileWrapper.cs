@@ -8,7 +8,7 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public class FileWrapper : IFile {
     private readonly FileInfo _file;
     private readonly IOptions<FileSystemOptions> _options;

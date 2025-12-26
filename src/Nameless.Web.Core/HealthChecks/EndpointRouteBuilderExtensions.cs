@@ -28,7 +28,8 @@ public static class EndpointRouteBuilderExtensions {
     /// <remarks>
     ///     Call this method after <c>UseRouting</c>.
     /// </remarks>
-    public static TEndpointRouteBuilder UseHealthChecks<TEndpointRouteBuilder>(this TEndpointRouteBuilder self, IHostEnvironment environment)
+    public static TEndpointRouteBuilder UseHealthChecks<TEndpointRouteBuilder>(this TEndpointRouteBuilder self,
+        IHostEnvironment environment)
         where TEndpointRouteBuilder : IEndpointRouteBuilder {
         // Adding health checks endpoints to applications in non-development
         // environments has security implications.
@@ -40,15 +41,13 @@ public static class EndpointRouteBuilderExtensions {
 
         // All health checks must pass for app to be considered ready
         // to accept traffic after starting
-        self.MapHealthChecks("/health", new HealthCheckOptions {
-            ResponseWriter = JsonReportWriter.WriteAsync
-        });
+        self.MapHealthChecks(pattern: "/health",
+            new HealthCheckOptions { ResponseWriter = JsonReportWriter.WriteAsync });
 
         // Only health checks tagged with the "live" tag must pass for
         // app to be considered alive
-        self.MapHealthChecks("/alive", new HealthCheckOptions {
-            Predicate = registration => registration.Tags.Contains("live")
-        });
+        self.MapHealthChecks(pattern: "/alive",
+            new HealthCheckOptions { Predicate = registration => registration.Tags.Contains(item: "live") });
 
         return self;
     }

@@ -48,14 +48,14 @@ public abstract class RecurringHostService : IHostedService, IDisposable {
             // Wait until the task completes or the stop token triggers
             var tcs = new TaskCompletionSource<object>();
             await using var registration = cancellationToken.Register(
-                callback: state => HandleStopCancellation(state, cancellationToken),
-                state: tcs
+                state => HandleStopCancellation(state, cancellationToken),
+                tcs
             );
 
             // Do not await the _executeTask because cancelling it will throw
             // an OperationCanceledException which we are explicitly ignoring
             await Task.WhenAny(_executeTask, tcs.Task)
-                      .ConfigureAwait(false);
+                      .ConfigureAwait(continueOnCapturedContext: false);
         }
     }
 

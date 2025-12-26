@@ -9,57 +9,56 @@ namespace Nameless.IO.FileSystem;
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
 public static class ServiceCollectionExtensions {
-    /// <summary>
-    ///     Registers the file system services.
-    /// </summary>
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
     /// </param>
-    /// <param name="configure">
-    ///     The action used to configure the <see cref="FileSystemOptions"/>.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IServiceCollection"/> so other actions
-    ///     can be chained.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self"/> is <see langword="null"/>.
-    /// </exception>
-    public static IServiceCollection RegisterFileSystem(this IServiceCollection self, Action<FileSystemOptions>? configure = null) {
-        return self.Configure(configure ?? (_ => { }))
-                   .InnerRegisterFileSystem();
-    }
+    extension(IServiceCollection self) {
+        /// <summary>
+        ///     Registers the file system services.
+        /// </summary>
+        /// <param name="configure">
+        ///     The action used to configure the <see cref="FileSystemOptions"/>.
+        /// </param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions
+        ///     can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     if <paramref name="self"/> is <see langword="null"/>.
+        /// </exception>
+        public IServiceCollection RegisterFileSystem(Action<FileSystemOptions>? configure = null) {
+            return self.Configure(configure ?? (_ => { }))
+                       .InnerRegisterFileSystem();
+        }
 
-    /// <summary>
-    ///     Registers the file system services.
-    /// </summary>
-    /// <param name="self">
-    ///     The current <see cref="IServiceCollection"/>.
-    /// </param>
-    /// <param name="configuration">
-    ///     The configuration.
-    /// </param>
-    /// <returns>
-    ///     The current <see cref="IServiceCollection"/> so other actions
-    ///     can be chained.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    ///     if
-    ///         <paramref name="self"/> or
-    ///         <paramref name="configuration"/>
-    ///     is <see langword="null"/>.
-    /// </exception>
-    public static IServiceCollection RegisterFileSystem(this IServiceCollection self, IConfiguration configuration) {
-        var section = configuration.GetSection(nameof(FileSystemOptions));
+        /// <summary>
+        ///     Registers the file system services.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions
+        ///     can be chained.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     if
+        ///         <paramref name="self"/> or
+        ///         <paramref name="configuration"/>
+        ///     is <see langword="null"/>.
+        /// </exception>
+        public IServiceCollection RegisterFileSystem(IConfiguration configuration) {
+            var section = configuration.GetSection(nameof(FileSystemOptions));
 
-        return self.Configure<FileSystemOptions>(section)
-                   .InnerRegisterFileSystem();
-    }
+            return self.Configure<FileSystemOptions>(section)
+                       .InnerRegisterFileSystem();
+        }
 
-    private static IServiceCollection InnerRegisterFileSystem(this IServiceCollection self) {
-        self.TryAddSingleton<IFileSystem>(ResolveFileSystem);
+        private IServiceCollection InnerRegisterFileSystem() {
+            self.TryAddSingleton<IFileSystem>(ResolveFileSystem);
 
-        return self;
+            return self;
+        }
     }
 
     private static FileSystemImpl ResolveFileSystem(IServiceProvider provider) {
@@ -73,7 +72,7 @@ public static class ServiceCollectionExtensions {
 
         var rootDirectoryPath = applicationContext is not null
             ? applicationContext.DataDirectoryPath
-            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path2: "App_Data");
 
         options.Value.Root = Directory.CreateDirectory(rootDirectoryPath).FullName;
 

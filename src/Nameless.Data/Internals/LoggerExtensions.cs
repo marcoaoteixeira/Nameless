@@ -6,48 +6,50 @@ namespace Nameless.Data.Internals;
 internal static class DatabaseLoggerExtensions {
     private static readonly Action<ILogger, string, IDataParameterCollection, Exception?> OutputDbCommandDelegate
         = LoggerMessage.Define<string, IDataParameterCollection>(
-            logLevel: LogLevel.Debug,
-            eventId: Events.OutputDbCommandEvent,
+            LogLevel.Debug,
+            Events.OutputDbCommandEvent,
             formatString: "Command text: {CommandText} | Parameters: {@Params}");
 
     private static readonly Action<ILogger, Exception> ExecuteNonQueryFailureDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
-            eventId: Events.ExecuteNonQueryFailureEvent,
+            LogLevel.Error,
+            Events.ExecuteNonQueryFailureEvent,
             formatString: "An error occurs while executing non-query command.");
 
     private static readonly Action<ILogger, Exception> ExecuteScalarFailureDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
-            eventId: Events.ExecuteScalarFailureEvent,
+            LogLevel.Error,
+            Events.ExecuteScalarFailureEvent,
             formatString: "An error occurs while executing scalar command.");
 
     private static readonly Action<ILogger, Exception> ExecuteReaderFailureDelegate
         = LoggerMessage.Define(
-            logLevel: LogLevel.Error,
-            eventId: Events.ExecuteReaderFailureEvent,
+            LogLevel.Error,
+            Events.ExecuteReaderFailureEvent,
             formatString: "An error occurs while executing reader command.");
 
-    internal static void OutputDbCommand(this ILogger<Database> self, IDbCommand dbCommand) {
-        OutputDbCommandDelegate(self, dbCommand.CommandText, dbCommand.Parameters, null /* exception */);
-    }
+    extension(ILogger<Database> self) {
+        internal void OutputDbCommand(IDbCommand dbCommand) {
+            OutputDbCommandDelegate(self, dbCommand.CommandText, dbCommand.Parameters, arg4: null /* exception */);
+        }
 
-    internal static void ExecuteNonQueryFailure(this ILogger<Database> self, Exception exception) {
-        ExecuteNonQueryFailureDelegate(self, exception);
-    }
+        internal void ExecuteNonQueryFailure(Exception exception) {
+            ExecuteNonQueryFailureDelegate(self, exception);
+        }
 
-    internal static void ExecuteScalarFailure(this ILogger<Database> self, Exception exception) {
-        ExecuteScalarFailureDelegate(self, exception);
-    }
+        internal void ExecuteScalarFailure(Exception exception) {
+            ExecuteScalarFailureDelegate(self, exception);
+        }
 
-    internal static void ExecuteReaderFailure(this ILogger<Database> self, Exception exception) {
-        ExecuteReaderFailureDelegate(self, exception);
+        internal void ExecuteReaderFailure(Exception exception) {
+            ExecuteReaderFailureDelegate(self, exception);
+        }
     }
 
     internal static class Events {
-        internal static readonly EventId OutputDbCommandEvent = new(3001, nameof(OutputDbCommand));
-        internal static readonly EventId ExecuteNonQueryFailureEvent = new(3002, nameof(ExecuteNonQueryFailure));
-        internal static readonly EventId ExecuteScalarFailureEvent = new(3003, nameof(ExecuteScalarFailure));
-        internal static readonly EventId ExecuteReaderFailureEvent = new(3004, nameof(ExecuteReaderFailure));
+        internal static readonly EventId OutputDbCommandEvent = new(id: 3001, nameof(OutputDbCommand));
+        internal static readonly EventId ExecuteNonQueryFailureEvent = new(id: 3002, nameof(ExecuteNonQueryFailure));
+        internal static readonly EventId ExecuteScalarFailureEvent = new(id: 3003, nameof(ExecuteScalarFailure));
+        internal static readonly EventId ExecuteReaderFailureEvent = new(id: 3004, nameof(ExecuteReaderFailure));
     }
 }

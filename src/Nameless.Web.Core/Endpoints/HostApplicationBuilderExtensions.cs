@@ -32,7 +32,6 @@ public static class HostApplicationBuilderExtensions {
     /// <param name="self">
     ///     The current <typeparamref name="THostApplicationBuilder"/>.
     /// </param>
-    /// <param name="useInterception"></param>
     /// <param name="configure">
     ///     An optional delegate to configure <see cref="EndpointOptions"/> for
     ///     customizing endpoint behavior. If not provided, default options are
@@ -42,7 +41,8 @@ public static class HostApplicationBuilderExtensions {
     ///     The current <typeparamref name="THostApplicationBuilder"/>
     ///     so other actions can be chained.
     /// </returns>
-    public static THostApplicationBuilder RegisterMinimalEndpoints<THostApplicationBuilder>(this THostApplicationBuilder self, Action<EndpointOptions>? configure = null)
+    public static THostApplicationBuilder RegisterMinimalEndpoints<THostApplicationBuilder>(
+        this THostApplicationBuilder self, Action<EndpointOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new EndpointOptions();
@@ -66,7 +66,8 @@ public static class HostApplicationBuilderExtensions {
         return self;
     }
 
-    private static IServiceCollection AddOpenApi(this IServiceCollection self, Func<IEnumerable<OpenApiDocumentOptions>>? configure) {
+    private static IServiceCollection AddOpenApi(this IServiceCollection self,
+        Func<IEnumerable<OpenApiDocumentOptions>>? configure) {
         var descriptors = (configure?.Invoke() ?? []).ToArray();
 
         if (descriptors.Length == 0) {
@@ -93,7 +94,7 @@ public static class HostApplicationBuilderExtensions {
         // version of a service, but they don't know what it is and never
         // explicit request it.
         options.AssumeDefaultVersionWhenUnspecified = true;
-        options.DefaultApiVersion = new ApiVersion(1);
+        options.DefaultApiVersion = new ApiVersion(majorVersion: 1);
 
         // Defines how an API version is read from the current HTTP request
         options.ApiVersionReader = ApiVersionReader.Combine(

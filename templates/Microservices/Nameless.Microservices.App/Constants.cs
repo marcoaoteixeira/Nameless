@@ -1,6 +1,10 @@
 ﻿namespace Nameless.Microservices.App;
 
 internal static class Constants {
+    internal static class Database {
+        internal const string CONN_STR_NAME = "Sqlite";
+    }
+
     internal static class CorsPolicies {
         internal const string ALLOW_EVERYTHING = "AllowEverything";
     }

@@ -3,27 +3,27 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record QuerySettings : SettingsBase {
-    [Description("query.substitutions")]
+    [Description(description: "query.substitutions")]
     public string? Substitutions { get; set; } = "true=1;false=0";
 
-    [Description("query.default_cast_length")]
+    [Description(description: "query.default_cast_length")]
     public int? DefaultCastLength { get; set; }
 
-    [Description("query.default_cast_precision")]
+    [Description(description: "query.default_cast_precision")]
     public int? DefaultCastPrecision { get; set; }
 
-    [Description("query.default_cast_scale")]
+    [Description(description: "query.default_cast_scale")]
     public int? DefaultCastScale { get; set; }
 
-    [Description("query.startup_check")]
+    [Description(description: "query.startup_check")]
     public bool? StartupCheck { get; set; }
 
-    [Description("query.factory_class")]
+    [Description(description: "query.factory_class")]
     public string? FactoryClass { get; set; }
 
-    [Description("query.linq_provider_class")]
+    [Description(description: "query.linq_provider_class")]
     public string? LinqProviderClass { get; set; }
 
-    [Description("query.query_model_rewriter_factory")]
+    [Description(description: "query.query_model_rewriter_factory")]
     public string? QueryModelRewriterFactory { get; set; }
 }

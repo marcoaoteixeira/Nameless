@@ -9,23 +9,27 @@ namespace Nameless.Autofac;
 ///     <see cref="IServiceProvider" /> extensions methods.
 /// </summary>
 public static class ServiceProviderExtensions {
-    /// <summary>
-    ///     Adds Autofac dispose action to the application lifecycle stop event.
-    ///     Tear down the composition root and free all resources
-    ///     when the application stops.
-    /// </summary>
-    /// <param name="self">The current <see cref="IServiceProvider" /> instance.</param>
-    public static void UseAutofacDisposeHandler(this IServiceProvider self) {
-        var lifetime = self.GetService<IHostApplicationLifetime>();
+    /// <param name="self">
+    ///     The current <see cref="IServiceProvider" /> instance.
+    /// </param>
+    extension(IServiceProvider self) {
+        /// <summary>
+        ///     Adds Autofac dispose action to the application lifecycle stop event.
+        ///     Tear down the composition root and free all resources
+        ///     when the application stops.
+        /// </summary>
+        public void UseAutofacDisposeHandler() {
+            var lifetime = self.GetService<IHostApplicationLifetime>();
 
-        if (lifetime is null) {
-            self.GetLogger(typeof(ServiceProviderExtensions))
-                .HostApplicationLifetimeUnavailable(nameof(IHostApplicationLifetime));
+            if (lifetime is null) {
+                self.GetLogger(typeof(ServiceProviderExtensions))
+                    .HostApplicationLifetimeUnavailable(nameof(IHostApplicationLifetime));
 
-            return;
+                return;
+            }
+
+            var container = self.GetAutofacRoot();
+            lifetime.ApplicationStopped.Register(container.Dispose);
         }
-
-        var container = self.GetAutofacRoot();
-        lifetime.ApplicationStopped.Register(container.Dispose);
     }
 }

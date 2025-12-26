@@ -20,7 +20,8 @@ public sealed class ConsumerFactory : IConsumerFactory {
     /// <param name="channelFactory">The channel factory.</param>
     /// <param name="channelConfigurator">The channel configurator.</param>
     /// <param name="loggerFactory">The logger factory.</param>
-    public ConsumerFactory(IChannelFactory channelFactory, IChannelConfigurator channelConfigurator, ILoggerFactory loggerFactory) {
+    public ConsumerFactory(IChannelFactory channelFactory, IChannelConfigurator channelConfigurator,
+        ILoggerFactory loggerFactory) {
         _channelFactory = Guard.Against.Null(channelFactory);
         _channelConfigurator = Guard.Against.Null(channelConfigurator);
         _loggerFactory = Guard.Against.Null(loggerFactory);
@@ -28,19 +29,20 @@ public sealed class ConsumerFactory : IConsumerFactory {
     }
 
     /// <inheritdoc />
-    public async Task<IConsumer<TMessage>> CreateAsync<TMessage>(string topic, Parameters parameters, CancellationToken cancellationToken)
+    public async Task<IConsumer<TMessage>> CreateAsync<TMessage>(string topic, Parameters parameters,
+        CancellationToken cancellationToken)
         where TMessage : notnull {
         IChannel? channel = null;
 
         try {
             channel = await _channelFactory.CreateAsync(cancellationToken)
-                                           .ConfigureAwait(false);
+                                           .ConfigureAwait(continueOnCapturedContext: false);
 
             await _channelConfigurator.ConfigureAsync(channel,
-                                           topic,
-                                           parameters.GetUsePrefetch(),
-                                           cancellationToken)
-                                      .ConfigureAwait(false);
+                                          topic,
+                                          parameters.GetUsePrefetch(),
+                                          cancellationToken)
+                                      .ConfigureAwait(continueOnCapturedContext: false);
 
             var consumerLogger = _loggerFactory.CreateLogger<Consumer<TMessage>>();
 
@@ -52,7 +54,7 @@ public sealed class ConsumerFactory : IConsumerFactory {
             // if we have a channel, we probably should dispose it.
             if (channel is not null) {
                 await channel.DisposeAsync()
-                             .ConfigureAwait(false);
+                             .ConfigureAwait(continueOnCapturedContext: false);
             }
 
             throw;

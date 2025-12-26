@@ -66,7 +66,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
         Guard.Against.Null(indexes);
 
         if (indexes.Length != 1) {
-            throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));
+            throw new ArgumentException(message: "Only support a single indexer parameter", nameof(indexes));
         }
 
         result = _storage[indexes[0]];
@@ -86,7 +86,7 @@ public sealed class HashtableDynamicObject : DynamicObject {
         Guard.Against.Null(indexes);
 
         if (indexes.Length != 1) {
-            throw new ArgumentException("Only support a single indexer parameter", nameof(indexes));
+            throw new ArgumentException(message: "Only support a single indexer parameter", nameof(indexes));
         }
 
         _storage[indexes[0]] = value;

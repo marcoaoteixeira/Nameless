@@ -8,7 +8,7 @@ namespace Nameless.Localization.Json.Infrastructure;
 ///     Default implementation of <see cref="ICultureProvider" />.
 /// </summary>
 public sealed class CultureProvider : ICultureProvider {
-    private static readonly CultureInfo DefaultCulture = new("en-US");
+    private static readonly CultureInfo DefaultCulture = new(name: "en-US");
 
     private readonly ILogger<CultureProvider> _logger;
 
@@ -27,7 +27,7 @@ public sealed class CultureProvider : ICultureProvider {
     public CultureInfo GetCurrentCulture() {
         var culture = Thread.CurrentThread.CurrentUICulture;
         if (!string.IsNullOrWhiteSpace(culture.Name)) {
-            _logger.GettingCurrentCultureFromContext("Thread.CurrentThread.CurrentUICulture",
+            _logger.GettingCurrentCultureFromContext(context: "Thread.CurrentThread.CurrentUICulture",
                 culture.Name);
 
             return culture;
@@ -35,13 +35,13 @@ public sealed class CultureProvider : ICultureProvider {
 
         culture = Thread.CurrentThread.CurrentCulture;
         if (!string.IsNullOrWhiteSpace(culture.Name)) {
-            _logger.GettingCurrentCultureFromContext("Thread.CurrentThread.CurrentCulture",
+            _logger.GettingCurrentCultureFromContext(context: "Thread.CurrentThread.CurrentCulture",
                 culture.Name);
 
             return culture;
         }
 
-        _logger.GettingCurrentCultureFromContext("Default",
+        _logger.GettingCurrentCultureFromContext(context: "Default",
             DefaultCulture.Name);
 
         return DefaultCulture;

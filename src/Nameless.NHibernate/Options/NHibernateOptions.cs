@@ -93,15 +93,19 @@ public sealed class NHibernateOptions {
     /// Thrown when <typeparamref name="TEntity"/> or
     /// <typeparamref name="TMapping"/> is not instantiable.
     /// </exception>
-    public NHibernateOptions RegisterMapping<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapping, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TEntity>()
+    public NHibernateOptions RegisterMapping<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapping,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TEntity>()
         where TEntity : class
         where TMapping : PropertyContainerCustomizer<TEntity> {
         if (!typeof(TEntity).CanInstantiate()) {
-            throw new InvalidOperationException($"Entity type '{typeof(TEntity).GetPrettyName()}' must be instantiable.");
+            throw new InvalidOperationException(
+                $"Entity type '{typeof(TEntity).GetPrettyName()}' must be instantiable.");
         }
 
         if (!typeof(TMapping).CanInstantiate()) {
-            throw new InvalidOperationException($"Mapping type '{typeof(TMapping).GetPrettyName()}' must be instantiable.");
+            throw new InvalidOperationException(
+                $"Mapping type '{typeof(TMapping).GetPrettyName()}' must be instantiable.");
         }
 
         _entities.Add(typeof(TEntity));

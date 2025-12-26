@@ -128,6 +128,7 @@ internal static class Naming {
     internal static class UserLogins {
         internal const string TABLE_NAME = "user_logins";
         internal const string PK = "pk_user_logins";
+
         internal static class Fields {
             internal const string ID = "id";
             internal const string LOGIN_PROVIDER = "login_provider";
@@ -135,6 +136,7 @@ internal static class Naming {
             internal const string PROVIDER_DISPLAY_NAME = "provider_display_name";
             internal const string USER_ID = "user_id";
         }
+
         internal static class Indexes {
             internal const string USER_ID = "idx_user_logins_user_id";
         }

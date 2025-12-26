@@ -357,7 +357,8 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum,
+        bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
@@ -381,7 +382,8 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum,
+        bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
@@ -405,7 +407,8 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum,
+        bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
@@ -429,7 +432,8 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum,
+        bool includeMaximum);
 
     /// <summary>
     ///     Includes the specified field and value range to the search query.
@@ -453,7 +457,8 @@ public interface IQueryBuilder {
     ///     The current <see cref="IQueryBuilder" /> so other actions
     ///     can be chained.
     /// </returns>
-    IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum);
+    IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum,
+        bool includeMaximum);
 
     /// <summary>
     ///     Marks the search as mandatory.

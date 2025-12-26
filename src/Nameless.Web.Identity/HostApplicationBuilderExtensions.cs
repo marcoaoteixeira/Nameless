@@ -6,7 +6,8 @@ using Nameless.Web.Identity.Entities;
 namespace Nameless.Web.Identity;
 
 public static class HostApplicationBuilderExtensions {
-    public static THostApplicationBuilder RegisterIdentityServices<THostApplicationBuilder>(this THostApplicationBuilder self, Action<IdentityOptions>? configure = null)
+    public static THostApplicationBuilder RegisterIdentityServices<THostApplicationBuilder>(
+        this THostApplicationBuilder self, Action<IdentityOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         self.Services
             .AddIdentityCore<User>(configure ?? (_ => { }))

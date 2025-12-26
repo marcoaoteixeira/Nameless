@@ -9,7 +9,7 @@ public sealed class SqliteOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(Password))]
+    [MemberNotNullWhen(returnValue: true, nameof(Password))]
     internal bool UseCredentials
         => !string.IsNullOrWhiteSpace(Password);
 
@@ -21,7 +21,7 @@ public sealed class SqliteOptions {
     /// <summary>
     /// Gets or sets the database path.
     /// </summary>
-    public string DatabaseFilePath { get; set; } = Path.Combine(".", "database.db");
+    public string DatabaseFilePath { get; set; } = Path.Combine(path1: ".", path2: "database.db");
 
     /// <summary>
     /// Gets or sets the database password.

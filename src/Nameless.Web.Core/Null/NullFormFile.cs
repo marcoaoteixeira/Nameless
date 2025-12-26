@@ -39,7 +39,7 @@ public sealed class NullFormFile : IFormFile {
     public void CopyTo(Stream target) { }
 
     /// <inheritdoc />
-    public Task CopyToAsync(Stream target, CancellationToken cancellationToken = new CancellationToken()) {
+    public Task CopyToAsync(Stream target, CancellationToken cancellationToken = new()) {
         return Task.CompletedTask;
     }
 }

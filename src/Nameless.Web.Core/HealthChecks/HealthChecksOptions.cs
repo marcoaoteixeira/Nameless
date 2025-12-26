@@ -30,7 +30,6 @@ public sealed class HealthChecksOptions {
         IEnumerable<string>? tags = null,
         TimeSpan? timeout = null)
         where THealthCheck : class, IHealthCheck {
-
         _healthChecks[typeof(THealthCheck)] = builder
             => builder.AddCheck<THealthCheck>(
                 name ?? typeof(THealthCheck).Name,

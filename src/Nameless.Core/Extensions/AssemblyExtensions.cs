@@ -6,29 +6,32 @@ namespace Nameless;
 ///     <see cref="Assembly" /> extension methods.
 /// </summary>
 public static class AssemblyExtensions {
-    /// <summary>
-    ///     Retrieves the assembly directory path.
-    /// </summary>
-    /// <param name="self">The current assembly.</param>
-    public static string GetDirectoryPath(this Assembly self) {
-        var location = $"file://{self.Location}";
-        var uri = new UriBuilder(location);
-        var filePath = Uri.UnescapeDataString(uri.Path);
+    /// <param name="self">
+    ///     The current assembly.
+    /// </param>
+    extension(Assembly self) {
+        /// <summary>
+        ///     Retrieves the assembly directory path.
+        /// </summary>
+        public string GetDirectoryPath() {
+            var location = $"file://{self.Location}";
+            var uri = new UriBuilder(location);
+            var filePath = Uri.UnescapeDataString(uri.Path);
 
-        return Path.GetDirectoryName(filePath) ?? string.Empty;
-    }
+            return Path.GetDirectoryName(filePath) ?? string.Empty;
+        }
 
-    /// <summary>
-    ///     Retrieves the semantic version for the current assembly.
-    ///     See <a href="https://semver.org/">Semantic Versioning</a>.
-    /// </summary>
-    /// <param name="self">The current assembly.</param>
-    /// <returns>The semantic version.</returns>
-    public static string GetSemanticVersion(this Assembly self) {
-        var version = self.GetName()
-                          .Version ?? new Version(0, 0, 0);
+        /// <summary>
+        ///     Retrieves the semantic version for the current assembly.
+        ///     See <a href="https://semver.org/">Semantic Versioning</a>.
+        /// </summary>
+        /// <returns>The semantic version.</returns>
+        public string GetSemanticVersion() {
+            var version = self.GetName()
+                              .Version ?? new Version(major: 0, minor: 0, build: 0);
 
-        return $"v{version.Major}.{version.Minor}.{version.Build}";
+            return $"v{version.Major}.{version.Minor}.{version.Build}";
+        }
     }
 
     /// <summary>
@@ -45,11 +48,12 @@ public static class AssemblyExtensions {
     ///     A collection of types that implements any of
     ///     <paramref name="services" />.
     /// </returns>
-    public static IEnumerable<Type> GetImplementations(this IEnumerable<Assembly> self, params IEnumerable<Type> services) {
+    public static IEnumerable<Type> GetImplementations(this IEnumerable<Assembly> self,
+        params IEnumerable<Type> services) {
         return from assembly in self
-               from service in services
-               from implementation in assembly.GetImplementations(service)
-               select implementation;
+            from service in services
+            from implementation in assembly.GetImplementations(service)
+            select implementation;
     }
 
     /// <summary>

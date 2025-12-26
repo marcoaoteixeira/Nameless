@@ -1,4 +1,5 @@
 ﻿// ReSharper disable SeparateLocalFunctionsWithJumpStatement
+
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,8 @@ namespace Nameless.Mediator.Streams;
 public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrapper<TResponse>
     where TRequest : IStream<TResponse> {
     /// <inheritdoc />
-    public override async IAsyncEnumerable<object?> HandleAsync(object request, IServiceProvider provider, [EnumeratorCancellation] CancellationToken cancellationToken) {
+    public override async IAsyncEnumerable<object?> HandleAsync(object request, IServiceProvider provider,
+        [EnumeratorCancellation] CancellationToken cancellationToken) {
         var stream = HandleAsync((IStream<TResponse>)request, provider, cancellationToken);
 
         await foreach (var item in stream) {
@@ -28,12 +30,14 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
-    public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider, [EnumeratorCancellation] CancellationToken cancellationToken) {
+    public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider,
+        [EnumeratorCancellation] CancellationToken cancellationToken) {
         var items = provider.GetServices<IStreamPipelineBehavior<TRequest, TResponse>>()
                             .Reverse()
                             .Aggregate(
-                                seed: (StreamHandlerDelegate<TResponse>)InnerHandlerAsync,
-                                func: (next, pipeline) => () => pipeline.HandleAsync((TRequest)request, () => NextWrapper(next(), cancellationToken), cancellationToken))
+                                (StreamHandlerDelegate<TResponse>)InnerHandlerAsync,
+                                (next, pipeline) => () => pipeline.HandleAsync((TRequest)request,
+                                    () => NextWrapper(next(), cancellationToken), cancellationToken))
                             .Invoke();
 
         await foreach (var item in items.WithCancellation(cancellationToken)) {
@@ -46,8 +50,9 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
         }
     }
 
-    private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items, [EnumeratorCancellation] CancellationToken cancellationToken) {
-        var stream = items.WithCancellation(cancellationToken).ConfigureAwait(false);
+    private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items,
+        [EnumeratorCancellation] CancellationToken cancellationToken) {
+        var stream = items.WithCancellation(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         await foreach (var item in stream) {
             yield return item;

@@ -16,7 +16,7 @@ public sealed class EndpointOptions {
     /// <summary>
     ///     Gets or sets the action to configure OpenAPI options.
     /// </summary>
-    public Func<IEnumerable<OpenApiDocumentOptions>>? ConfigureOpenApi { get; set; }
+    public Func<OpenApiDocumentOptions[]>? ConfigureOpenApi { get; set; }
 
     /// <summary>
     ///     Gets or sets the action to configure API versioning options.

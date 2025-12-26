@@ -33,9 +33,9 @@ internal static class EndpointInvoker {
         var endpointCall = factory.Create(descriptor);
 
         var requestDelegate = RequestDelegateFactory.Create(
-            methodInfo: endpointCall.Handler,
-            targetFactory: _ => endpointCall.Target,
-            options: new RequestDelegateFactoryOptions {
+            endpointCall.Handler,
+            _ => endpointCall.Target,
+            new RequestDelegateFactoryOptions {
                 RouteParameterNames = RouteHelper.GetRouteParameters(descriptor.RoutePattern)
             }
         );

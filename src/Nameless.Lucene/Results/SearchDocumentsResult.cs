@@ -50,8 +50,8 @@ public sealed record SearchDocumentsResult : Result {
     public static SearchDocumentsResult Failure(string error) {
         return new SearchDocumentsResult(
             count: 0,
-            results: [],
-            error: Guard.Against.NullOrWhiteSpace(error)
+            [],
+            Guard.Against.NullOrWhiteSpace(error)
         );
     }
 }

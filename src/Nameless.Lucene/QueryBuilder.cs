@@ -61,9 +61,9 @@ public sealed class QueryBuilder : IQueryBuilder {
             CreatePendingClause();
 
             var parser = new QueryParser(
-                matchVersion: Constants.CURRENT_VERSION,
-                f: name,
-                a: _analyzer
+                Constants.CURRENT_VERSION,
+                name,
+                _analyzer
             ) { FuzzyMinSim = EnsureFuzzinessRange(fuzziness) };
 
             _query = parser.Parse(value);
@@ -123,8 +123,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         var phraseQuery = new PhraseQuery();
         var terms = values.Select(value => new Term(
-            fld: name,
-            text: QueryParserBase.Escape(value)
+            name,
+            QueryParserBase.Escape(value)
         ));
 
         foreach (var term in terms) {
@@ -140,8 +140,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     public IQueryBuilder WithField(string name, int value) {
         return WithinRange(
             name,
-            minimum: value,
-            maximum: value,
+            value,
+            value,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -151,8 +151,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     public IQueryBuilder WithField(string name, long value) {
         return WithinRange(
             name,
-            minimum: value,
-            maximum: value,
+            value,
+            value,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -161,9 +161,9 @@ public sealed class QueryBuilder : IQueryBuilder {
     /// <inheritdoc />
     public IQueryBuilder WithField(string name, float value) {
         return WithinRange(
-            name: name,
-            minimum: value,
-            maximum: value,
+            name,
+            value,
+            value,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -175,9 +175,9 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         CreatePendingClause();
 
-        _query = NumericRangeQuery.NewDoubleRange(field: name,
-            min: value,
-            max: value,
+        _query = NumericRangeQuery.NewDoubleRange(name,
+            value,
+            value,
             minInclusive: true,
             maxInclusive: true
         );
@@ -191,8 +191,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         return WithinRange(
             name,
-            minimum: number,
-            maximum: number,
+            number,
+            number,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -204,8 +204,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         return WithinRange(
             name,
-            minimum: number,
-            maximum: number,
+            number,
+            number,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -217,8 +217,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         return WithinRange(
             name,
-            minimum: number,
-            maximum: number,
+            number,
+            number,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -230,8 +230,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         return WithinRange(
             name,
-            minimum: number,
-            maximum: number,
+            number,
+            number,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -243,8 +243,8 @@ public sealed class QueryBuilder : IQueryBuilder {
 
         return WithinRange(
             name,
-            minimum: number,
-            maximum: number,
+            number,
+            number,
             includeMinimum: true,
             includeMaximum: true
         );
@@ -256,7 +256,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, string? minimum, string? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, string? minimum, string? maximum, bool includeMinimum,
+        bool includeMaximum) {
         Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
@@ -281,7 +282,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, int? minimum, int? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, int? minimum, int? maximum, bool includeMinimum,
+        bool includeMaximum) {
         Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
@@ -298,7 +300,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, long? minimum, long? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, long? minimum, long? maximum, bool includeMinimum,
+        bool includeMaximum) {
         Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
@@ -315,7 +318,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, float? minimum, float? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, float? minimum, float? maximum, bool includeMinimum,
+        bool includeMaximum) {
         Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
@@ -332,7 +336,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, double? minimum, double? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, double? minimum, double? maximum, bool includeMinimum,
+        bool includeMaximum) {
         Guard.Against.NullOrWhiteSpace(name);
 
         CreatePendingClause();
@@ -349,7 +354,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateTimeOffset? minimum, DateTimeOffset? maximum, bool includeMinimum,
+        bool includeMaximum) {
         return WithinRange(
             name,
             minimum?.ToUniversalTime().Ticks,
@@ -360,7 +366,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateTime? minimum, DateTime? maximum, bool includeMinimum,
+        bool includeMaximum) {
         return WithinRange(
             name,
             minimum?.ToUniversalTime().Ticks,
@@ -371,7 +378,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, DateOnly? minimum, DateOnly? maximum, bool includeMinimum,
+        bool includeMaximum) {
         return WithinRange(
             name,
             minimum?.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).Ticks,
@@ -382,7 +390,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, TimeOnly? minimum, TimeOnly? maximum, bool includeMinimum,
+        bool includeMaximum) {
         return WithinRange(
             name,
             minimum?.Ticks,
@@ -393,7 +402,8 @@ public sealed class QueryBuilder : IQueryBuilder {
     }
 
     /// <inheritdoc />
-    public IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum, bool includeMaximum) {
+    public IQueryBuilder WithinRange(string name, TimeSpan? minimum, TimeSpan? maximum, bool includeMinimum,
+        bool includeMaximum) {
         return WithinRange(
             name,
             minimum?.Ticks,
@@ -584,9 +594,9 @@ public sealed class QueryBuilder : IQueryBuilder {
             if (_query is TermQuery termQuery) {
                 var term = termQuery.Term;
                 var analyzedText = AnalyzeText(
-                    analyzer: _analyzer,
-                    field: term.Field,
-                    text: term.Text
+                    _analyzer,
+                    term.Field,
+                    term.Text
                 ).FirstOrDefault();
 
                 _query = new TermQuery(new Term(term.Field, analyzedText));
@@ -594,23 +604,23 @@ public sealed class QueryBuilder : IQueryBuilder {
 
             if (_query is TermRangeQuery termRangeQuery) {
                 var lowerTerm = AnalyzeText(
-                    analyzer: _analyzer,
-                    field: termRangeQuery.Field,
-                    text: termRangeQuery.LowerTerm.Utf8ToString()
+                    _analyzer,
+                    termRangeQuery.Field,
+                    termRangeQuery.LowerTerm.Utf8ToString()
                 ).FirstOrDefault();
 
                 var upperTerm = AnalyzeText(
-                    analyzer: _analyzer,
-                    field: termRangeQuery.Field,
-                    text: termRangeQuery.UpperTerm.Utf8ToString()
+                    _analyzer,
+                    termRangeQuery.Field,
+                    termRangeQuery.UpperTerm.Utf8ToString()
                 ).FirstOrDefault();
 
                 _query = new TermRangeQuery(
-                    field: termRangeQuery.Field,
-                    lowerTerm: new BytesRef(lowerTerm),
-                    upperTerm: new BytesRef(upperTerm),
-                    includeLower: termRangeQuery.IncludesLower,
-                    includeUpper: termRangeQuery.IncludesUpper
+                    termRangeQuery.Field,
+                    new BytesRef(lowerTerm),
+                    new BytesRef(upperTerm),
+                    termRangeQuery.IncludesLower,
+                    termRangeQuery.IncludesUpper
                 );
             }
         }
@@ -649,7 +659,9 @@ public sealed class QueryBuilder : IQueryBuilder {
                     result.Add(attr.ToString());
                 }
             }
-            catch { /* swallow */ }
+            catch {
+                /* swallow */
+            }
         }
 
         return result;
