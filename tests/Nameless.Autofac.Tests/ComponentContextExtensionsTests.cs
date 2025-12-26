@@ -3,6 +3,7 @@
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Testing.Tools.Mockers.Logging;
+using Xunit;
 
 namespace Nameless.Autofac;
 

@@ -1,6 +1,7 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Moq;
 using Nameless.Autofac.Mockers;
+using Xunit;
 
 namespace Nameless.Autofac;
 

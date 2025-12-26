@@ -10,7 +10,7 @@
 	<!-- Boolean variables -->
 	<PropertyGroup>
 		<IsSrcProject>$(MSBuildProjectFullPath.Contains('\src\'))</IsSrcProject>
-		<IsTestingProject>$(MSBuildProjectFullPath.Contains('\tests\'))</IsTestingProject>
+		<IsTestingProject>$(MSBuildProjectName.EndsWith('.Tests'))</IsTestingProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
 		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>

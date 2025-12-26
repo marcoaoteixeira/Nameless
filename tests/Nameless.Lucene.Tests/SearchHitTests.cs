@@ -172,7 +172,6 @@ public class SearchHitTests {
         var max = sut.GetEnum<DayOfWeek>(inlineData[1].Data.Item1);
         var flag = sut.GetEnum<FieldOptions>(inlineData[2].Data.Item1);
 
-
         // assert
         Assert.Multiple(() => {
             Assert.Equal(inlineData[0].Data.Item2, min);

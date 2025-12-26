@@ -17,7 +17,6 @@ public class ResourcesHelperTests {
         // act
         var actual = ResourcesHelper.CreateCopy(relativeFilePath);
 
-
         // assert
         Assert.Multiple(() => {
             Assert.EndsWith(temporaryRelativeFilePath, actual);
@@ -38,7 +37,6 @@ public class ResourcesHelperTests {
 
         // act
         var actual = ResourcesHelper.CreateCopy(relativeFilePath, NewFileName);
-
 
         // assert
         Assert.Multiple(() => {
