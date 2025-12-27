@@ -67,7 +67,7 @@ jobs:
           -p:Version=${{ env.VERSION }}
 
       - name: Print NuGet Package Directory
-        uses: jaywcjlove/github-action-folder-tree@1.2.0
+        uses: jaywcjlove/github-action-folder-tree@main
         with:
           path: ${{ env.NUPKG_OUTPUT_PATH }}
           depth: 2 
