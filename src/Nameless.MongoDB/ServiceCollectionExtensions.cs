@@ -30,9 +30,8 @@ public static class ServiceCollectionExtensions {
         ///     can be chained.
         /// </returns>
         public IServiceCollection RegisterMongo(Action<MongoOptions>? configure = null) {
-            self.Configure(configure ?? (_ => { }));
-
-            return self.InnerRegisterMongo();
+            return self.Configure(configure ?? (_ => { }))
+                       .InnerRegisterMongo();
         }
 
         /// <summary>
@@ -48,9 +47,8 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterMongo(IConfiguration configuration) {
             var section = configuration.GetSection(nameof(MongoOptions));
 
-            self.Configure<MongoOptions>(section);
-
-            return self.InnerRegisterMongo();
+            return self.Configure<MongoOptions>(section)
+                       .InnerRegisterMongo();
         }
 
         private IServiceCollection InnerRegisterMongo() {
@@ -61,8 +59,8 @@ public static class ServiceCollectionExtensions {
             self.TryAddKeyedSingleton(MONGO_CLIENT_KEY, ResolveMongoClient);
 
             self.TryAddKeyedSingleton(MONGO_DATABASE_KEY, ResolveMongoDatabase);
-            self.TryAddKeyedSingleton(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy);
-            self.TryAddSingleton(ResolveMongoCollectionProvider);
+            self.TryAddKeyedSingleton<ICollectionNamingStrategy>(COLLECTION_NAMING_STRATEGY_KEY, ResolveCollectionNamingStrategy);
+            self.TryAddSingleton<IMongoCollectionProvider>(ResolveMongoCollectionProvider);
 
             return self;
         }
@@ -107,8 +105,7 @@ public static class ServiceCollectionExtensions {
 
     private static MongoCollectionProvider ResolveMongoCollectionProvider(IServiceProvider provider) {
         var database = provider.GetRequiredKeyedService<IMongoDatabase>(MONGO_DATABASE_KEY);
-        var collectionNamingStrategy =
-            provider.GetRequiredKeyedService<ICollectionNamingStrategy>(COLLECTION_NAMING_STRATEGY_KEY);
+        var collectionNamingStrategy = provider.GetRequiredKeyedService<ICollectionNamingStrategy>(COLLECTION_NAMING_STRATEGY_KEY);
 
         return new MongoCollectionProvider(database, collectionNamingStrategy);
     }

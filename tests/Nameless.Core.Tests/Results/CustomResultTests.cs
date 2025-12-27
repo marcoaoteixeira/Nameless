@@ -193,15 +193,17 @@ public class CustomResultTests {
     }
 
     [Fact]
-    public void WhenErrorIsPresent_ThenValueReturnsError() {
+    public void WhenErrorIsPresent_ThenValueThrowInvalidOperationException() {
         // arrange
         var error = Error.Failure(message: "Failure");
 
         // act
         CustomResult actual = error;
 
+        var exception = Record.Exception(() => actual.Value);
+
         // assert
-        Assert.IsType<Error>(actual.Value);
+        Assert.IsType<InvalidOperationException>(exception);
     }
 
     public class CustomResult : Result<int> {

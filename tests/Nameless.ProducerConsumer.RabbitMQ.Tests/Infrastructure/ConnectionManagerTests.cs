@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools;
+using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 using RabbitMQ.Client.Exceptions;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
+[IntegrationTest]
 [Collection(nameof(RabbitContainerCollection))]
 public class ConnectionManagerTests {
     [Fact]

@@ -33,8 +33,8 @@ public readonly record struct Parameter {
     /// <param name="name">The name of the parameter.</param>
     /// <param name="value">The value of the parameter.</param>
     /// <param name="type">The type of the parameter.</param>
-    public Parameter(string name, object? value = null, DbType type = DbType.String) {
-        Name = name;
+    public Parameter(string? name, object? value = null, DbType type = DbType.String) {
+        Name = name ?? string.Empty;
         Value = value;
         Type = type;
     }

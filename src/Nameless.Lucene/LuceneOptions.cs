@@ -7,14 +7,16 @@ namespace Nameless.Lucene;
 /// </summary>
 public sealed class LuceneOptions {
     private readonly HashSet<IAnalyzerSelector> _analyzerSelectors = [];
-    private string? _directoryName;
 
     /// <summary>
     ///     Gets the types of analyzers that will be used for indexing and searching.
     /// </summary>
     internal IReadOnlyCollection<IAnalyzerSelector> AnalyzerSelectors => _analyzerSelectors;
 
-    internal string DirectoryName => field ?? "indexes";
+    internal string DirectoryName {
+        get => field ?? "Indexes";
+        set;
+    }
 
     /// <summary>
     ///     Registers an analyzer selector.
@@ -51,7 +53,7 @@ public sealed class LuceneOptions {
     ///     The default value is <c>indexes</c>.
     /// </remarks>
     public LuceneOptions SetDirectoryName(string directoryName) {
-        _directoryName = Guard.Against.NullOrWhiteSpace(directoryName);
+        DirectoryName = Guard.Against.NullOrWhiteSpace(directoryName);
 
         return this;
     }
