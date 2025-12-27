@@ -57,7 +57,8 @@ public class CreateRefreshTokenRequestHandler : IRequestHandler<CreateRefreshTok
     }
 
     /// <inheritdoc />
-    public async Task<CreateRefreshTokenResponse> HandleAsync(CreateRefreshTokenRequest request, CancellationToken cancellationToken) {
+    public async Task<CreateRefreshTokenResponse> HandleAsync(CreateRefreshTokenRequest request,
+        CancellationToken cancellationToken) {
         var options = _options.Value;
 
         if (!options.UseRefreshToken) {
@@ -80,15 +81,13 @@ public class CreateRefreshTokenRequestHandler : IRequestHandler<CreateRefreshTok
         var cleanUpCount = await _userRefreshTokenManager.CleanUpAsync(user, cancellationToken)
                                                          .ConfigureAwait(continueOnCapturedContext: false);
 
-        var revokeMetadata = new RevokeUserRefreshTokenMetadata(ExpiresAt: _timeProvider.GetUtcNow(),
-            RevokedByIp: _httpContextAccessor.HttpContext?.GetIPv4(), RevokeReason: "Creating new user refresh token.",
-            ReplacedByToken: userRefreshToken.Id.ToString());
+        var revokeMetadata = new RevokeUserRefreshTokenMetadata(_timeProvider.GetUtcNow(),
+            _httpContextAccessor.HttpContext?.GetIPv4(), RevokeReason: "Creating new user refresh token.",
+            userRefreshToken.Id.ToString());
 
         var revokeCount = await _userRefreshTokenManager.RevokeAsync(user, revokeMetadata, cancellationToken)
                                                         .ConfigureAwait(continueOnCapturedContext: false);
 
-        return new CreateRefreshTokenResponse {
-            Token = userRefreshToken.Token
-        };
+        return new CreateRefreshTokenResponse { Token = userRefreshToken.Token };
     }
 }

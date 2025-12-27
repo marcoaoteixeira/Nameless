@@ -1,0 +1,20 @@
+﻿using Nameless.Lucene.Results;
+
+namespace Nameless.Lucene.Fixtures;
+
+public sealed class FakeAnalyzerSelector : IAnalyzerSelector {
+    private readonly string _indexName;
+
+    public FakeAnalyzerSelector(string indexName) {
+        _indexName = indexName;
+    }
+
+    public AnalyzerSelectorResult GetAnalyzer(string indexName) {
+        return new AnalyzerSelectorResult(
+            analyzer: string.Equals(indexName, _indexName)
+                ? new FakeAnalyzer()
+                : null,
+            priority: 0
+        );
+    }
+}

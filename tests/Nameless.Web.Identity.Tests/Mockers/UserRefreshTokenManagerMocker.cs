@@ -24,7 +24,8 @@ public class UserRefreshTokenManagerMocker : Mocker<IUserRefreshTokenManager> {
 
     public UserRefreshTokenManagerMocker WithRevokeAsync(int returnValue) {
         MockInstance
-            .Setup(mock => mock.RevokeAsync(It.IsAny<User>(), It.IsAny<RevokeUserRefreshTokenMetadata>(), It.IsAny<CancellationToken>()))
+            .Setup(mock => mock.RevokeAsync(It.IsAny<User>(), It.IsAny<RevokeUserRefreshTokenMetadata>(),
+                It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(returnValue));
 
         return this;

@@ -5,7 +5,7 @@ namespace Nameless.Localization.Json.Internals;
 /// <summary>
 /// Represents a cache key for a resource.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 internal readonly record struct CacheKey {
     /// <summary>
     /// Gets the base name of the resource.

@@ -3,6 +3,6 @@
 namespace Nameless.NHibernate.Options;
 
 public sealed record LinqToHqlSettings : SettingsBase {
-    [Description("linqtohql.generatorsregistry")]
+    [Description(description: "linqtohql.generatorsregistry")]
     public string? GeneratorsRegistry { get; set; }
 }

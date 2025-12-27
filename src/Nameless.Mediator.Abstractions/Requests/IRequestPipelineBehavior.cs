@@ -32,5 +32,6 @@ public interface IRequestPipelineBehavior<in TRequest, TResponse>
     ///     asynchronous operation, where <typeparamref name="TResponse"/>
     ///     is the task result.
     /// </returns>
-    Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
+    Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken);
 }

@@ -30,10 +30,11 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="options" /> or
     ///     <paramref name="logger" /> is <see langword="null"/>.
     /// </exception>
-    public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options, ILogger<ResourceManager> logger) {
-        _fileProvider = Guard.Against.Null(fileProvider);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+    public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options,
+        ILogger<ResourceManager> logger) {
+        _fileProvider = fileProvider;
+        _options = options;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -47,10 +48,6 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="location"/> is empty or white spaces.
     /// </exception>
     public Resource GetResource(string baseName, string location, string culture) {
-        Guard.Against.NullOrWhiteSpace(baseName);
-        Guard.Against.NullOrWhiteSpace(location);
-        Guard.Against.Null(culture);
-
         _logger.GettingResourceForCulture(culture);
 
         var cacheKey = CacheKey.Create(baseName, location, culture);
@@ -60,9 +57,9 @@ public sealed class ResourceManager : IResourceManager {
     }
 
     private string GetResourcePathFromCacheKey(CacheKey cacheKey) {
-        var extension = !string.IsNullOrWhiteSpace(cacheKey.Culture)
-            ? $".{cacheKey.Culture}.json"
-            : ".json";
+        var extension = string.IsNullOrWhiteSpace(cacheKey.Culture)
+            ? ".json"
+            : $".{cacheKey.Culture}.json";
 
         var parts = cacheKey.Path.Split(Separators.DOT)[..^1]
                             .Prepend(_options.Value.ResourcesDirectoryName)
@@ -88,7 +85,7 @@ public sealed class ResourceManager : IResourceManager {
         return new CacheEntry(resource, fileChangeCallback);
     }
 
-    private bool TryGetResourceFile(string path, [NotNullWhen(true)] out IFileInfo? file) {
+    private bool TryGetResourceFile(string path, [NotNullWhen(returnValue: true)] out IFileInfo? file) {
         file = _fileProvider.GetFileInfo(path);
 
         _logger.OnCondition(!file.Exists)
@@ -97,7 +94,7 @@ public sealed class ResourceManager : IResourceManager {
         return file.Exists;
     }
 
-    private bool TryExtractResourceFileContent(IFileInfo file, [NotNullWhen(true)] out string? content) {
+    private bool TryExtractResourceFileContent(IFileInfo file, [NotNullWhen(returnValue: true)] out string? content) {
         content = null;
 
         try {
@@ -120,13 +117,13 @@ public sealed class ResourceManager : IResourceManager {
     }
 
     private bool TryDeserializeFileResourceContent(string fileContent, string path, string culture,
-                                                   [NotNullWhen(true)] out Resource? resource) {
+        [NotNullWhen(returnValue: true)] out Resource? resource) {
         resource = null;
 
         try {
             var message = JsonSerializer.Deserialize<Message[]>(fileContent) ?? [];
 
-            resource = new Resource(path, culture, message, true);
+            resource = new Resource(path, culture, message, isAvailable: true);
         }
         catch (Exception ex) {
             _logger.ResourceDeserializationFailed(path, ex);

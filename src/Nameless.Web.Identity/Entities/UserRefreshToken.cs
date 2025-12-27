@@ -64,15 +64,17 @@ public class UserRefreshToken {
 }
 
 public static class UserRefreshTokenExtensions {
-    public static bool IsRevoked(this UserRefreshToken self) {
-        return self.RevokedAt is not null;
-    }
+    extension(UserRefreshToken self) {
+        public bool IsRevoked() {
+            return self.RevokedAt is not null;
+        }
 
-    public static bool IsExpired(this UserRefreshToken self, DateTimeOffset? now = null) {
-        return (now ?? DateTimeOffset.UtcNow) >= self.ExpiresAt;
-    }
+        public bool IsExpired(DateTimeOffset? now = null) {
+            return (now ?? DateTimeOffset.UtcNow) >= self.ExpiresAt;
+        }
 
-    public static bool IsActive(this UserRefreshToken self, DateTimeOffset? now = null) {
-        return !self.IsRevoked() && !self.IsExpired(now);
+        public bool IsActive(DateTimeOffset? now = null) {
+            return !self.IsRevoked() && !self.IsExpired(now);
+        }
     }
 }

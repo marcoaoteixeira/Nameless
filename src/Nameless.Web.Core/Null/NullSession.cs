@@ -33,7 +33,7 @@ public sealed class NullSession : ISession {
     }
 
     /// <inheritdoc />
-    public bool TryGetValue(string key, [NotNullWhen(true)] out byte[]? value) {
+    public bool TryGetValue(string key, [NotNullWhen(returnValue: true)] out byte[]? value) {
         value = null;
 
         return false;

@@ -21,7 +21,8 @@ public class ChannelFactoryTests {
             Assert.NotNull(actual);
 
             connectionManagerMocker.Verify(mock => mock.GetConnectionAsync(It.IsAny<CancellationToken>()));
-            connectionMocker.Verify(mock => mock.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()));
+            connectionMocker.Verify(mock =>
+                mock.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()));
         });
     }
 

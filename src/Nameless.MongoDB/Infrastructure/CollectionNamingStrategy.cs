@@ -20,12 +20,12 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
     public string GetCollectionName(Type type) {
         Guard.Against.Null(type);
 
-        var attr = type.GetCustomAttribute<CollectionNameAttribute>(false);
+        var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
         if (attr is not null) {
             return attr.Name;
         }
 
-        return string.Join("_", type.Name.SplitUpperCase())
+        return string.Join(separator: "_", type.Name.SplitUpperCase())
                      .ToLowerInvariant();
     }
 }

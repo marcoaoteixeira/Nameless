@@ -21,17 +21,17 @@ public sealed class UserTokenEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(entity => entity.LoginProvider)
                .HasColumnName(UserTokens.Fields.LOGIN_PROVIDER)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
         builder.Property(entity => entity.Name)
                .HasColumnName(UserTokens.Fields.NAME)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
         builder.Property(entity => entity.Value)
                .HasColumnName(UserTokens.Fields.VALUE)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
-        builder.HasIndex(entity => entity.UserId, name: UserTokens.Indexes.USER_ID)
+        builder.HasIndex(entity => entity.UserId, UserTokens.Indexes.USER_ID)
                .IsUnique();
     }
 }

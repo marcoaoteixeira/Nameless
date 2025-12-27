@@ -7,13 +7,12 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     Default implementation of <see cref="IDirectory"/>.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public class DirectoryWrapper : IDirectory {
     private readonly DirectoryInfo _directory;
-    private readonly string _relativePath;
     private readonly IOptions<FileSystemOptions> _options;
 
-    private string DebuggerDisplayValue => $"Path: {_relativePath}";
+    private string DebuggerDisplayValue => $"Path: {field}";
 
     private FileSystemOptions Options => _options.Value;
 
@@ -37,12 +36,12 @@ public class DirectoryWrapper : IDirectory {
     ///     The options for configuring the file system.
     /// </param>
     public DirectoryWrapper(DirectoryInfo directory, IOptions<FileSystemOptions> options) {
-        _directory = Guard.Against.Null(directory);
-        _options = Guard.Against.Null(options);
+        _directory = directory;
+        _options = options;
 
         _options.Value.EnsureRootDirectory(Path);
 
-        _relativePath = SysPath.GetRelativePath(Options.Root, Path);
+        DebuggerDisplayValue = SysPath.GetRelativePath(Options.Root, Path);
     }
 
     /// <inheritdoc />

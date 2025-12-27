@@ -45,7 +45,8 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
         Dispose(disposing: false);
     }
 
-    public async Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters, CancellationToken cancellationToken) {
+    public async Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters,
+        CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         if (_started) {
@@ -71,11 +72,11 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
         // startup the consumer
         _consumerTag = Guid.NewGuid().ToString(format: "N");
         var startupStatus = await channel.BasicConsumeAsync(Topic,
-                                              parameters.GetAutoAck(),
-                                              _consumerTag,
-                                              _consumer,
-                                              cancellationToken)
-                                         .ConfigureAwait(false);
+                                             parameters.GetAutoAck(),
+                                             _consumerTag,
+                                             _consumer,
+                                             cancellationToken)
+                                         .ConfigureAwait(continueOnCapturedContext: false);
 
         _logger.ConsumerStarted(startupStatus, _consumerTag, parameters);
         _started = true;
@@ -87,7 +88,7 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
     }
 
     public async ValueTask DisposeAsync() {
-        await DisposeAsyncCore().ConfigureAwait(false);
+        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
 
         Dispose(disposing: false);
         GC.SuppressFinalize(this);
@@ -95,7 +96,7 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
 
     private MessageHandlerDelegate<TMessage> GetMessageHandler() {
         if (_handler is null) {
-            throw new InvalidOperationException(message: $"Consumer '{_consumerTag}' output handler is not available.");
+            throw new InvalidOperationException($"Consumer '{_consumerTag}' output handler is not available.");
         }
 
         return _handler;
@@ -103,7 +104,7 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
 
     private IChannel GetChannel() {
         if (_channel is null) {
-            throw new InvalidOperationException(message: $"Consumer '{_consumerTag}' channel is not available.");
+            throw new InvalidOperationException($"Consumer '{_consumerTag}' channel is not available.");
         }
 
         return _channel;
@@ -141,11 +142,11 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
     private async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
             await _channel.CloseAsync(Constants.ReplySuccess, replyText: "Consumer work finished.",
-                               CancellationToken.None)
-                          .ConfigureAwait(false);
+                              CancellationToken.None)
+                          .ConfigureAwait(continueOnCapturedContext: false);
 
             await _channel.DisposeAsync()
-                          .ConfigureAwait(false);
+                          .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         _cancellationTokenSource?.Dispose();
@@ -174,7 +175,8 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
         return Task.CompletedTask;
     }
 
-    private bool TryDeserializeEnvelope(BasicDeliverEventArgs basicDeliverEventArgs, [NotNullWhen(returnValue: true)] out Envelope? output) {
+    private bool TryDeserializeEnvelope(BasicDeliverEventArgs basicDeliverEventArgs,
+        [NotNullWhen(returnValue: true)] out Envelope? output) {
         output = null;
 
         // Our "Envelope" is an array of bytes that contains

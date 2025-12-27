@@ -7,10 +7,10 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3 };
 
         // act
-        array.TryGetElementAt(1, out var item);
+        array.TryGetElementAt(index: 1, out var item);
 
         // assert
-        Assert.Equal(2, item);
+        Assert.Equal(expected: 2, item);
     }
 
     [Fact]
@@ -19,11 +19,11 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3 };
 
         // act
-        var exists = array.TryGetElementAt(1, out var item);
+        var exists = array.TryGetElementAt(index: 1, out var item);
 
         // assert
         Assert.Multiple(() => {
-            Assert.Equal(2, item);
+            Assert.Equal(expected: 2, item);
             Assert.True(exists);
         });
     }
@@ -34,7 +34,7 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3 };
 
         // act
-        var exists = array.TryGetElementAt(5, out var item);
+        var exists = array.TryGetElementAt(index: 5, out var item);
 
         // assert
         Assert.Multiple(() => {
@@ -49,7 +49,7 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3, 4, 5 };
 
         // act
-        var isInRange = array.IsInRange(2); // number 3
+        var isInRange = array.IsInRange(index: 2); // number 3
 
         // assert
         Assert.True(isInRange);
@@ -61,7 +61,7 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3, 4, 5 };
 
         // act
-        var isInRange = array.IsInRange(5); // out of range
+        var isInRange = array.IsInRange(index: 5); // out of range
 
         // assert
         Assert.False(isInRange);
@@ -73,7 +73,7 @@ public class ArrayExtensionsTests {
         var array = new[] { 1, 2, 3, 4, 5 };
 
         // act
-        var isInRange = array.IsInRange(-1); // out of range
+        var isInRange = array.IsInRange(index: -1); // out of range
 
         // assert
         Assert.False(isInRange);

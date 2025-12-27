@@ -61,13 +61,13 @@ public static class GuidHelper {
             };
         }
 
-        base64Buffer[22] = EQUALS;
-        base64Buffer[23] = EQUALS;
+        base64Buffer[index: 22] = EQUALS;
+        base64Buffer[index: 23] = EQUALS;
 
         Span<byte> result = stackalloc byte[16];
 
         if (!Convert.TryFromBase64Chars(base64Buffer, result, out _)) {
-            throw new InvalidOperationException("Couldn't convert from Base64 chars.");
+            throw new InvalidOperationException(message: "Couldn't convert from Base64 chars.");
         }
 
         return new Guid(result);

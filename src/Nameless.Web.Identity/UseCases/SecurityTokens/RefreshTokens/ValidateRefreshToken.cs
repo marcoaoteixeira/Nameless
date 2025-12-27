@@ -4,16 +4,19 @@ using Nameless.Web.Identity.Entities;
 
 namespace Nameless.Web.Identity.UseCases.SecurityTokens.RefreshTokens;
 
-public class ValidateRefreshTokenRequestHandler : IRequestHandler<ValidateRefreshTokenRequest, ValidateRefreshTokenResponse> {
+public class
+    ValidateRefreshTokenRequestHandler : IRequestHandler<ValidateRefreshTokenRequest, ValidateRefreshTokenResponse> {
     private readonly IUserRefreshTokenManager _userRefreshTokenManager;
     private readonly TimeProvider _timeProvider;
 
-    public ValidateRefreshTokenRequestHandler(IUserRefreshTokenManager userRefreshTokenManager, TimeProvider timeProvider) {
+    public ValidateRefreshTokenRequestHandler(IUserRefreshTokenManager userRefreshTokenManager,
+        TimeProvider timeProvider) {
         _userRefreshTokenManager = Guard.Against.Null(userRefreshTokenManager);
         _timeProvider = Guard.Against.Null(timeProvider);
     }
 
-    public async Task<ValidateRefreshTokenResponse> HandleAsync(ValidateRefreshTokenRequest request, CancellationToken cancellationToken) {
+    public async Task<ValidateRefreshTokenResponse> HandleAsync(ValidateRefreshTokenRequest request,
+        CancellationToken cancellationToken) {
         Guard.Against.Null(request);
 
         var userRefreshToken = await _userRefreshTokenManager.GetAsync(request.Token, cancellationToken)
@@ -29,9 +32,6 @@ public class ValidateRefreshTokenRequestHandler : IRequestHandler<ValidateRefres
         status |= userRefreshToken.IsRevoked() ? UserRefreshTokenStatus.Revoked : default;
         status |= userRefreshToken.IsExpired(now) ? UserRefreshTokenStatus.Expired : default;
 
-        return new ValidateRefreshTokenResponse {
-            UserID = userRefreshToken.UserId,
-            Status = status
-        };
+        return new ValidateRefreshTokenResponse { UserID = userRefreshToken.UserId, Status = status };
     }
 }

@@ -20,8 +20,8 @@ public sealed class Database : IDatabase, IDisposable {
     /// <param name="dbConnectionFactory">The database connection factory.</param>
     /// <param name="logger">The logger.</param>
     public Database(IDbConnectionFactory dbConnectionFactory, ILogger<Database> logger) {
-        _dbConnectionFactory = Guard.Against.Null(dbConnectionFactory);
-        _logger = Guard.Against.Null(logger);
+        _dbConnectionFactory = dbConnectionFactory;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -35,8 +35,6 @@ public sealed class Database : IDatabase, IDisposable {
     public int ExecuteNonQuery(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
 
-        Guard.Against.NullOrWhiteSpace(text);
-
         using var command = CreateCommand(text, type, parameters);
 
         try { return command.ExecuteNonQuery(); }
@@ -48,10 +46,8 @@ public sealed class Database : IDatabase, IDisposable {
 
     /// <inheritdoc />
     public IEnumerable<TResult> ExecuteReader<TResult>(string text, CommandType type, Func<IDataRecord, TResult> mapper,
-                                                       params Parameter[] parameters) {
+        params Parameter[] parameters) {
         BlockAccessAfterDispose();
-
-        Guard.Against.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
@@ -72,8 +68,6 @@ public sealed class Database : IDatabase, IDisposable {
     /// <inheritdoc />
     public TResult? ExecuteScalar<TResult>(string text, CommandType type, params Parameter[] parameters) {
         BlockAccessAfterDispose();
-
-        Guard.Against.NullOrWhiteSpace(text);
 
         using var command = CreateCommand(text, type, parameters);
 
@@ -96,9 +90,11 @@ public sealed class Database : IDatabase, IDisposable {
 
     private static IDbDataParameter ConvertParameter(IDbCommand command, Parameter parameter) {
         var result = command.CreateParameter();
+
         result.ParameterName = parameter.Name;
         result.DbType = parameter.Type;
         result.Value = parameter.Value ?? DBNull.Value;
+
         return result;
     }
 
@@ -128,6 +124,7 @@ public sealed class Database : IDatabase, IDisposable {
 
     private IDbCommand CreateCommand(string text, CommandType type, IEnumerable<Parameter> parameters) {
         var command = GetDbConnection().CreateCommand();
+
         command.CommandText = text;
         command.CommandType = type;
 

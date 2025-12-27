@@ -8,8 +8,8 @@ namespace Nameless.Localization.Json.Mockers;
 public class ResourceManagerMocker : Mocker<IResourceManager> {
     public ResourceManagerMocker WithResource(Resource resource) {
         MockInstance
-           .Setup(mock => mock.GetResource(It.IsAny<string>(), It.IsAny<string>(), resource.Culture))
-           .Returns(resource);
+            .Setup(mock => mock.GetResource(It.IsAny<string>(), It.IsAny<string>(), resource.Culture))
+            .Returns(resource);
 
         return this;
     }

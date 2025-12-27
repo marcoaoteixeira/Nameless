@@ -19,4 +19,8 @@
 		<ProjectReference Include="..\..\..\src\Nameless.Web.Identity\Nameless.Web.Identity.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Folder Include="App_Data\" />
+	</ItemGroup>
+
 </Project>

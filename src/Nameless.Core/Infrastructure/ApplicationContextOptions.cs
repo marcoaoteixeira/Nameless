@@ -15,39 +15,17 @@ public sealed class ApplicationContextOptions {
     public string ApplicationName { get; set; } = AppDomain.CurrentDomain.FriendlyName;
 
     /// <summary>
-    ///     Whether the application should use the
-    ///     local application data directory.
+    ///     Gets or sets where the application should store its data.
     /// </summary>
-    /// <remarks>
-    ///     When <see cref="UseLocalApplicationData"/> is <see langword="true"/>, then
-    ///     <list type="bullet">
-    ///         <item>
-    ///             <term>On Windows</term>
-    ///             <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
-    ///         </item>
-    ///         <item>
-    ///             <term>On Linux</term>
-    ///             <description>/home/CURRENT_USER/.local/share/APPLICATION_NAME</description>
-    ///         </item>
-    ///     </list>
-    ///     Otherwise,
-    ///     <list type="bullet">
-    ///         <item>
-    ///             <term>On Windows</term>
-    ///             <description>C:\ProgramData\APPLICATION_NAME</description>
-    ///         </item>
-    ///         <item>
-    ///             <term>On Linux</term>
-    ///             <description>/usr/share/APPLICATION_NAME</description>
-    ///         </item>
-    ///     </list>
-    ///     Also, it will try to create the application data directory if it does
-    ///     not exist. On failure, the exception will be thrown.
-    /// </remarks>
-    public bool UseLocalApplicationData { get; set; }
+    public ApplicationDataLocation ApplicationDataLocation { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the custom application data directory.
+    /// </summary>
+    public string? CustomApplicationDataDirectoryPath { get; set; }
 
     /// <summary>
     ///     Gets or sets the version of the application.
     /// </summary>
-    public Version Version { get; set; } = new(1, 0, 0);
+    public Version Version { get; set; } = new(major: 1, minor: 0, build: 0);
 }

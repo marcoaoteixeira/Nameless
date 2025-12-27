@@ -14,12 +14,12 @@ public sealed class MediatorOptions {
     /// <summary>
     ///     Gets the registered request pipeline behaviors.
     /// </summary>
-    internal IEnumerable<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
+    internal IReadOnlyList<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
 
     /// <summary>
     ///     Gets the registered stream pipeline behaviors.
     /// </summary>
-    internal IEnumerable<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
+    internal IReadOnlyList<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
 
     /// <summary>
     ///     Gets or sets the assemblies to scan for handlers.
@@ -83,7 +83,8 @@ public sealed class MediatorOptions {
         var service = typeof(IStreamPipelineBehavior<,>);
 
         if (!service.IsAssignableFromGenericType(behavior)) {
-            throw new InvalidOperationException($"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
+            throw new InvalidOperationException(
+                $"Type '{behavior.GetPrettyName()}' is not assignable from '{service.GetPrettyName()}'.");
         }
 
         if (!_streamPipelineBehaviors.Contains(behavior)) {

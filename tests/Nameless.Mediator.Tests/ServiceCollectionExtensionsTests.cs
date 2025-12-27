@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Events.Fixtures;
 using Nameless.Mediator.Fixtures;
@@ -12,9 +14,10 @@ namespace Nameless.Mediator;
 
 public class ServiceCollectionExtensionsTests {
     [Fact]
-    public void WhenRegisteringMediatorServices_ThenResolveServices() {
+    public async Task WhenRegisteringMediatorServices_ThenResolveServices() {
         // arrange
         var services = new ServiceCollection();
+        services.TryAddSingleton((ILogger)NullLogger.Instance);
         services.TryAddSingleton(new PrintServiceMocker().Build());
         services.RegisterMediator(opts => {
             opts.Assemblies = [typeof(ServiceCollectionExtensionsTests).Assembly];
@@ -22,7 +25,8 @@ public class ServiceCollectionExtensionsTests {
             opts
                 .RegisterRequestPipelineBehavior(typeof(MessageRequestPipelineBehavior))
                 .RegisterRequestPipelineBehavior(typeof(YetAnotherMessageRequestPipelineBehavior))
-                .RegisterRequestPipelineBehavior(typeof(OpenGenericRequestPipelineBehavior<,>));
+                .RegisterRequestPipelineBehavior(typeof(OpenGenericRequestPipelineBehavior<,>))
+                .RegisterRequestPipelineBehavior(typeof(PerformanceRequestPipelineBehavior<,>));
 
             opts
                 .RegisterStreamPipelineBehavior(typeof(MessageStreamPipelineBehavior))
@@ -40,11 +44,14 @@ public class ServiceCollectionExtensionsTests {
         var multipleMessageEventHandler = provider.GetService<IEventHandler<MessageOneEvent>>();
 
         var messageRequestHandlers = provider.GetServices<IRequestHandler<MessageRequest, MessageResponse>>().ToArray();
-        var messageRequestPipelineBehaviors = provider.GetServices<IRequestPipelineBehavior<MessageRequest, MessageResponse>>().ToArray();
-        var openGenericRequestPipelineBehavior = provider.GetService<IRequestPipelineBehavior<MessageEvent, MessageEvent>>();
+        var messageRequestPipelineBehaviors =
+            provider.GetServices<IRequestPipelineBehavior<MessageRequest, MessageResponse>>().ToArray();
+        var openGenericRequestPipelineBehavior =
+            provider.GetService<IRequestPipelineBehavior<MessageEvent, MessageEvent>>();
 
         var messageStreamHandlers = provider.GetServices<IStreamHandler<MessageStream, string>>().ToArray();
-        var messageStreamPipelineBehaviors = provider.GetServices<IStreamPipelineBehavior<MessageStream, string>>().ToArray();
+        var messageStreamPipelineBehaviors =
+            provider.GetServices<IStreamPipelineBehavior<MessageStream, string>>().ToArray();
 
         // assert
         Assert.Multiple(() => {
@@ -54,19 +61,19 @@ public class ServiceCollectionExtensionsTests {
             Assert.NotNull(streamHandlerInvoker);
 
             Assert.NotEmpty(messageEventHandlers);
-            Assert.Equal(2, messageEventHandlers.Length);
+            Assert.Equal(expected: 2, messageEventHandlers.Length);
             Assert.NotNull(multipleMessageEventHandler);
 
             Assert.NotEmpty(messageRequestHandlers);
             Assert.Single(messageRequestHandlers);
             Assert.NotEmpty(messageRequestPipelineBehaviors);
-            Assert.Equal(3, messageRequestPipelineBehaviors.Length);
+            Assert.Equal(expected: 4, messageRequestPipelineBehaviors.Length);
             Assert.NotNull(openGenericRequestPipelineBehavior);
 
             Assert.NotEmpty(messageStreamHandlers);
             Assert.Single(messageStreamHandlers);
             Assert.NotEmpty(messageStreamPipelineBehaviors);
-            Assert.Equal(2, messageStreamPipelineBehaviors.Length);
+            Assert.Equal(expected: 2, messageStreamPipelineBehaviors.Length);
         });
     }
 }

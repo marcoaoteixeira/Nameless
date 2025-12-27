@@ -1,7 +1,7 @@
 ﻿using Nameless.Mediator.Events.Fixtures;
 using Nameless.Mediator.Fixtures;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
 
 namespace Nameless.Mediator.Events;
 
@@ -13,8 +13,9 @@ public class EventHandlerInvokerTests {
         var printServiceMock = new PrintServiceMocker();
         var evt = new MessageEvent();
         var evtHandler = new MessageEventHandler(printServiceMock.Build());
-        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([evtHandler])
-                                                  .Build();
+        var provider = new ServiceProviderMocker()
+                       .WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([evtHandler])
+                       .Build();
         var sut = new EventHandlerInvoker(provider);
 
         // act
@@ -36,8 +37,9 @@ public class EventHandlerInvokerTests {
             messageEventHandler,
             yetAnotherMessageEventHandler
         ];
-        var provider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>(eventHandlers)
-                                                  .Build();
+        var provider = new ServiceProviderMocker()
+                       .WithGetService<IEnumerable<IEventHandler<MessageEvent>>>(eventHandlers)
+                       .Build();
         var sut = new EventHandlerInvoker(provider);
 
         // act

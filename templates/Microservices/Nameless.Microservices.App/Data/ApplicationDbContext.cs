@@ -19,6 +19,6 @@ public class ApplicationDbContext : DbContext {
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder builder) {
-        builder.ApplyConfiguration(new ToDoEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ToDoItemEntityTypeConfiguration());
     }
 }

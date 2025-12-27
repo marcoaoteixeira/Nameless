@@ -3,6 +3,7 @@ using Autofac;
 using Moq;
 using Nameless.Autofac.Fixtures;
 using Nameless.Autofac.Mockers;
+using Xunit;
 
 namespace Nameless.Autofac;
 

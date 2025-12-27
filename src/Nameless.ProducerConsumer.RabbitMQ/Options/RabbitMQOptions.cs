@@ -4,7 +4,7 @@
 ///     Represents the settings for RabbitMQ.
 /// </summary>
 public sealed class RabbitMQOptions {
-    public TimeSpan ConsumerStartupTimeout { get; set; } = TimeSpan.FromSeconds(1);
+    public TimeSpan ConsumerStartupTimeout { get; set; } = TimeSpan.FromSeconds(seconds: 1);
 
     /// <summary>
     ///     Gets or sets the server settings for RabbitMQ.

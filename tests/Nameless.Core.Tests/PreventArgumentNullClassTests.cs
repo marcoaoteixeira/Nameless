@@ -4,7 +4,7 @@ public class PreventArgumentNullClassTests {
     [Fact]
     public void WhenNonNullParamValue_ThenDoNotThrows() {
         // arrange & act & assert
-        var value = Guard.Against.Null<object>(1);
+        var value = Guard.Against.Null<object>(paramValue: 1);
 
         Assert.NotNull(value);
     }
@@ -12,7 +12,7 @@ public class PreventArgumentNullClassTests {
     [Fact]
     public void WhenNullParamValue_ThenThrowsArgumentNullException() {
         // arrange & act & assert
-        Assert.Throws<ArgumentNullException>(() => Guard.Against.Null<object>(null));
+        Assert.Throws<ArgumentNullException>(() => Guard.Against.Null<object>(paramValue: null));
     }
 
     [Fact]
@@ -21,7 +21,9 @@ public class PreventArgumentNullClassTests {
 
         // arrange & act & assert
         Assert.Multiple(() => {
-            var exception = Assert.Throws<ArgumentNullException>(() => Guard.Against.Null<object>(null, message: Message));
+            var exception =
+                Assert.Throws<ArgumentNullException>(() =>
+                    Guard.Against.Null<object>(paramValue: null, message: Message));
             Assert.NotNull(exception);
             Assert.Contains(Message, exception.Message);
         });
@@ -30,7 +32,8 @@ public class PreventArgumentNullClassTests {
     [Fact]
     public void WhenNullParamValue_WithCustomExceptionCreator_ThenThrowsCustomException() // arrange & act & assert
     {
-        Assert.Throws<InvalidOperationException>(() => Guard.Against.Null<object>(null, exceptionCreator: () => new InvalidOperationException()));
+        Assert.Throws<InvalidOperationException>(() =>
+            Guard.Against.Null<object>(paramValue: null, exceptionCreator: () => new InvalidOperationException()));
     }
 
     [Fact]

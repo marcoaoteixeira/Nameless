@@ -18,7 +18,7 @@ public class ValidationResultExtensionsTests {
         // arrange
         const string ErrorMessage = "Error Message";
         const string MemberName = "Member Name";
-        var error = new ValidationError(ErrorMessage, "Error Code", MemberName);
+        var error = new ValidationError(ErrorMessage, code: "Error Code", MemberName);
         var result = ValidationResult.Failure([error]);
 
         // act
@@ -37,11 +37,11 @@ public class ValidationResultExtensionsTests {
         const string ErrorMessage = "Error Message";
         const string MemberNameX = "Member Name X";
         const string MemberNameY = "Member Name Y";
-        var error = new ValidationError(ErrorMessage, "Error Code", MemberNameX);
+        var error = new ValidationError(ErrorMessage, code: "Error Code", MemberNameX);
         var result = ValidationResult.Failure([
-            new ValidationError(ErrorMessage, "Error Code", MemberNameX),
-            new ValidationError(ErrorMessage, "Error Code", MemberNameX),
-            new ValidationError(ErrorMessage, "Error Code", MemberNameY)
+            new ValidationError(ErrorMessage, code: "Error Code", MemberNameX),
+            new ValidationError(ErrorMessage, code: "Error Code", MemberNameX),
+            new ValidationError(ErrorMessage, code: "Error Code", MemberNameY)
         ]);
 
         // act

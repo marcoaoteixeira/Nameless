@@ -8,6 +8,7 @@ public record SignInInput {
     ///     Gets or init the user email.
     /// </summary>
     public required string Email { get; init; }
+
     /// <summary>
     ///     Gets or init the password.
     /// </summary>

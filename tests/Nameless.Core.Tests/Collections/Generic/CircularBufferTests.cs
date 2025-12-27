@@ -5,7 +5,8 @@ public class CircularBufferTests {
     [InlineData(1, new object[] { 1 })]
     [InlineData(10, new object[] { })]
     [InlineData(10, new object[] { 1 })]
-    public void WhenInitializingNewInstance_WithCapacityEqualOrLowerArraySize_ThenShouldNotThrowException(int capacity, object[] items) {
+    public void WhenInitializingNewInstance_WithCapacityEqualOrLowerArraySize_ThenShouldNotThrowException(int capacity,
+        object[] items) {
         var exception = Record.Exception(() => new CircularBuffer<object>(capacity, items));
 
         Assert.Null(exception);
@@ -14,7 +15,8 @@ public class CircularBufferTests {
     [Theory]
     [InlineData(1, new object[] { 1, 2, 3 })]
     [InlineData(0, new object[] { 1 })]
-    public void WhenInitializingNewInstance_WithCapacityLowerThanTheArraySize_ThenShouldThrowException(int capacity, object[] items) {
+    public void WhenInitializingNewInstance_WithCapacityLowerThanTheArraySize_ThenShouldThrowException(int capacity,
+        object[] items) {
         // act & assert
         Assert.Throws<ArgumentOutOfRangeException>(() => new CircularBuffer<object>(capacity, items));
     }
@@ -22,11 +24,11 @@ public class CircularBufferTests {
     [Fact]
     public void When_Adding_A_New_Item_Into_CircularBuffer_Then_Count_Should_Increment() {
         // arrange
-        var circularBuffer = new CircularBuffer<int>(10);
+        var circularBuffer = new CircularBuffer<int>(capacity: 10);
 
         // act
         var currentCount = circularBuffer.Count;
-        circularBuffer.Add(1);
+        circularBuffer.Add(element: 1);
         var newCount = circularBuffer.Count;
 
         // assert
@@ -49,7 +51,7 @@ public class CircularBufferTests {
         }
 
         // assert
-        Assert.Equal(expected: Capacity, circularBuffer.Count);
+        Assert.Equal(Capacity, circularBuffer.Count);
     }
 
     [Fact]
@@ -70,7 +72,7 @@ public class CircularBufferTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.Equal(expected: Total, countBeforeClear);
+            Assert.Equal(Total, countBeforeClear);
             Assert.Equal(expected: 0, countAfterClear);
         });
     }
@@ -84,10 +86,10 @@ public class CircularBufferTests {
         const int Expected = 2;
 
         // act
-        var actual = circularBuffer.IndexOf(3);
+        var actual = circularBuffer.IndexOf(element: 3);
 
         // assert
-        Assert.Equal(expected: Expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -99,10 +101,10 @@ public class CircularBufferTests {
         const int Expected = 0;
 
         // act
-        var actual = circularBuffer.IndexOf(3);
+        var actual = circularBuffer.IndexOf(element: 3);
 
         // assert
-        Assert.Equal(expected: Expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -114,10 +116,10 @@ public class CircularBufferTests {
         const int Expected = -1;
 
         // act
-        var actual = circularBuffer.IndexOf(6);
+        var actual = circularBuffer.IndexOf(element: 6);
 
         // assert
-        Assert.Equal(expected: Expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -127,7 +129,7 @@ public class CircularBufferTests {
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
 
         // act
-        var actual = circularBuffer.Contains(5);
+        var actual = circularBuffer.Contains(element: 5);
 
         // assert
         Assert.True(actual);
@@ -140,7 +142,7 @@ public class CircularBufferTests {
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
 
         // act
-        var actual = circularBuffer.Contains(6);
+        var actual = circularBuffer.Contains(element: 6);
 
         // assert
         Assert.False(actual);
@@ -154,7 +156,7 @@ public class CircularBufferTests {
         var array = new int[5];
 
         // act
-        circularBuffer.CopyTo(array, 0);
+        circularBuffer.CopyTo(array, startIndex: 0);
 
         // assert
         Assert.Equivalent(buffer, array);
@@ -169,10 +171,10 @@ public class CircularBufferTests {
         var expected = new[] { 0, 0, 0, 1, 2, 3, 4, 5, 0, 0 };
 
         // act
-        circularBuffer.CopyTo(array, 3);
+        circularBuffer.CopyTo(array, startIndex: 3);
 
         // assert
-        Assert.Equal(expected: expected, array);
+        Assert.Equal(expected, array);
     }
 
     [Fact]
@@ -184,7 +186,7 @@ public class CircularBufferTests {
         var array = new int[4];
 
         // act & assert
-        Assert.Throws<InvalidOperationException>(() => circularBuffer.CopyTo(array, 0));
+        Assert.Throws<InvalidOperationException>(() => circularBuffer.CopyTo(array, startIndex: 0));
     }
 
     [Fact]
@@ -197,7 +199,7 @@ public class CircularBufferTests {
         var array = circularBuffer.ToArray();
 
         // assert
-        Assert.Equal(expected: buffer, array);
+        Assert.Equal(buffer, array);
     }
 
     [Fact]
@@ -208,9 +210,9 @@ public class CircularBufferTests {
         var expected = new[] { 4, 5, 6, 7, 8 };
 
         // act
-        circularBuffer.Add(6);
-        circularBuffer.Add(7);
-        circularBuffer.Add(8);
+        circularBuffer.Add(element: 6);
+        circularBuffer.Add(element: 7);
+        circularBuffer.Add(element: 8);
 
         var array = circularBuffer.ToArray();
 
@@ -256,19 +258,19 @@ public class CircularBufferTests {
         const int Expected = 5;
 
         // act
-        var actual = circularBuffer[4];
+        var actual = circularBuffer[index: 4];
 
         // assert
-        Assert.Equal(expected: Expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
     public void When_Retrieving_Item_From_Empty_CircularBuffer_Then_Throws_IndexOutOfRangeException() {
         // arrange
-        var circularBuffer = new CircularBuffer<int>(5);
+        var circularBuffer = new CircularBuffer<int>(capacity: 5);
 
         // act & assert
-        Assert.Throws<IndexOutOfRangeException>(() => _ = circularBuffer[2]);
+        Assert.Throws<IndexOutOfRangeException>(() => _ = circularBuffer[index: 2]);
     }
 
     [Fact]
@@ -279,6 +281,6 @@ public class CircularBufferTests {
         var circularBuffer = new CircularBuffer<int>(buffer.Length, buffer);
 
         // act & assert
-        Assert.Throws<IndexOutOfRangeException>(() => _ = circularBuffer[10]);
+        Assert.Throws<IndexOutOfRangeException>(() => _ = circularBuffer[index: 10]);
     }
 }

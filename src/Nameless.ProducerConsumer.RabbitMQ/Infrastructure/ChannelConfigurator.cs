@@ -25,7 +25,8 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
     }
 
     /// <inheritdoc />
-    public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch, CancellationToken cancellationToken) {
+    public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch,
+        CancellationToken cancellationToken) {
         Guard.Against.Null(channel);
         Guard.Against.NullOrWhiteSpace(queueName);
 
@@ -37,44 +38,45 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
 
         if (TryGetExchangeSettings(queueSettings.ExchangeName, out var exchangeSettings)) {
             await channel.ExchangeDeclareAsync(
-                              exchangeSettings.Name,
-                              exchangeSettings.Type.GetDescription(),
-                              exchangeSettings.Durable,
-                              exchangeSettings.AutoDelete,
-                              exchangeSettings.Arguments,
-                              passive: true,
-                              cancellationToken: cancellationToken)
-                         .ConfigureAwait(false);
+                             exchangeSettings.Name,
+                             exchangeSettings.Type.GetDescription(),
+                             exchangeSettings.Durable,
+                             exchangeSettings.AutoDelete,
+                             exchangeSettings.Arguments,
+                             passive: true,
+                             cancellationToken: cancellationToken)
+                         .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         var queueDeclareResult = await channel.QueueDeclareAsync(queueSettings.Name,
-                                                   queueSettings.Durable,
-                                                   queueSettings.Exclusive,
-                                                   queueSettings.AutoDelete,
-                                                   queueSettings.Arguments,
-                                                   cancellationToken: cancellationToken)
-                                              .ConfigureAwait(false);
+                                                  queueSettings.Durable,
+                                                  queueSettings.Exclusive,
+                                                  queueSettings.AutoDelete,
+                                                  queueSettings.Arguments,
+                                                  cancellationToken: cancellationToken)
+                                              .ConfigureAwait(continueOnCapturedContext: false);
 
         foreach (var binding in queueSettings.Bindings) {
             await channel.QueueBindAsync(queueDeclareResult.QueueName,
-                              queueSettings.ExchangeName,
-                              binding.RoutingKey,
-                              binding.Arguments,
-                              cancellationToken: cancellationToken)
-                         .ConfigureAwait(false);
+                             queueSettings.ExchangeName,
+                             binding.RoutingKey,
+                             binding.Arguments,
+                             cancellationToken: cancellationToken)
+                         .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         if (usePrefetch) {
             var prefetch = _options.Value.Prefetch;
             await channel.BasicQosAsync(prefetch.Size,
-                              prefetch.Count,
-                              prefetch.Global,
-                              cancellationToken)
-                         .ConfigureAwait(false);
+                             prefetch.Count,
+                             prefetch.Global,
+                             cancellationToken)
+                         .ConfigureAwait(continueOnCapturedContext: false);
         }
     }
 
-    private bool TryGetExchangeSettings(string exchangeName, [NotNullWhen(returnValue: true)] out ExchangeSettings? output) {
+    private bool TryGetExchangeSettings(string exchangeName,
+        [NotNullWhen(returnValue: true)] out ExchangeSettings? output) {
         output = _options.Value.Exchanges.SingleOrDefault(Filter);
 
         return output is not null;

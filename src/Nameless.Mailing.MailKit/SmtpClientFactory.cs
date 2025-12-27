@@ -25,13 +25,13 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
         var client = new SmtpClient();
 
         await client.ConnectAsync(_options.Value.Host,
-                         _options.Value.Port,
-                         _options.Value.SecureSocket,
-                         cancellationToken)
-                    .ConfigureAwait(false);
+                        _options.Value.Port,
+                        _options.Value.SecureSocket,
+                        cancellationToken)
+                    .ConfigureAwait(continueOnCapturedContext: false);
 
         await client.AuthenticateSmtpClientAsync(_options.Value, cancellationToken)
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(continueOnCapturedContext: false);
 
         return client;
     }

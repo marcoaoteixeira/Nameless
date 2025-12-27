@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Nameless.Microservices.App.Internals;
 using Nameless.Validation;
 
 namespace Nameless.Microservices.App.Infrastructure;

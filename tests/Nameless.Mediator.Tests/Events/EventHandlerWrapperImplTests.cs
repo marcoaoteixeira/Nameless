@@ -1,7 +1,8 @@
 ﻿using Nameless.Mediator.Events.Fixtures;
 using Nameless.Mediator.Fixtures;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.DependencyInjection;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Mediator.Events;
 
@@ -13,8 +14,9 @@ public class EventHandlerWrapperImplTests {
         var printServiceMocker = new PrintServiceMocker();
         var eventHandler = new MessageEventHandler(printServiceMocker.Build());
         var evt = new MessageEvent { Message = nameof(EventHandlerWrapperImplTests) };
-        var serviceProvider = new ServiceProviderMocker().WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([eventHandler])
-                                                         .Build();
+        var serviceProvider = new ServiceProviderMocker()
+                              .WithGetService<IEnumerable<IEventHandler<MessageEvent>>>([eventHandler])
+                              .Build();
         var sut = new EventHandlerWrapperImpl<MessageEvent>();
 
         // act
@@ -42,6 +44,6 @@ public class EventHandlerWrapperImplTests {
         await sut.HandleAsync(evt, serviceProvider, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains("Event handler not found"));
+        loggerMocker.VerifyDebugCall(message => message.Contains(value: "Event handler not found"));
     }
 }

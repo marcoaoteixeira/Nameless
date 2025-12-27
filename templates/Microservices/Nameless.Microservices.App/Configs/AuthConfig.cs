@@ -11,7 +11,7 @@ public static class AuthConfig {
 
         self.Services
             .AddAuthorization()
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 var jsonWebTokenOptions = self.Configuration
                                               .GetSection(nameof(JsonWebTokenOptions))
@@ -26,13 +26,11 @@ public static class AuthConfig {
                     IssuerSigningKey = securityKey,
                     ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
 
-                    // ValidAlgorithms = [jsonWebTokenOptions],
-
                     ValidAudiences = jsonWebTokenOptions.Audiences,
                     ValidateAudience = jsonWebTokenOptions.ValidateAudience,
-
+                    
                     ValidateLifetime = jsonWebTokenOptions.ValidateLifetime,
-
+                    
                     ClockSkew = jsonWebTokenOptions.ClockSkew,
                 };
             });

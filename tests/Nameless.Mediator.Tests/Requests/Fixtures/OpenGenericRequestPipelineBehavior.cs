@@ -11,8 +11,10 @@ public class OpenGenericRequestPipelineBehavior<TRequest, TResponse> : IRequestP
         _printService = printService;
     }
 
-    public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-        _printService.Print($"OpenGenericRequestPipelineBehavior: {GetType().Name} | Request: {typeof(TRequest).Name} | Response: {typeof(TResponse).Name}");
+    public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken) {
+        _printService.Print(
+            $"OpenGenericRequestPipelineBehavior: {GetType().Name} | Request: {typeof(TRequest).Name} | Response: {typeof(TResponse).Name}");
 
         return next(cancellationToken);
     }

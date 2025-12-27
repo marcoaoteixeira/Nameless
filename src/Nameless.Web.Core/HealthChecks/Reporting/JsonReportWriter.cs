@@ -16,9 +16,9 @@ public static class JsonReportWriter {
         var result = Report.Create(report);
 
         await JsonSerializer.SerializeAsync(httpContext.Response.Body,
-                                 result,
-                                 Options.Value)
-                            .ConfigureAwait(false);
+                                result,
+                                Options.Value)
+                            .ConfigureAwait(continueOnCapturedContext: false);
     }
 
     private static JsonSerializerOptions CreateJsonSerializerOptions() {

@@ -23,7 +23,8 @@ public abstract class RequestHandlerWrapper {
     ///     asynchronous operation, where the task result contains an object
     ///     that represents the response.
     /// </returns>
-    public abstract Task<object?> HandleAsync(object request, IServiceProvider provider, CancellationToken cancellationToken);
+    public abstract Task<object?> HandleAsync(object request, IServiceProvider provider,
+        CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -54,5 +55,6 @@ public abstract class RequestHandlerWrapper<TResponse> : RequestHandlerWrapper {
     ///     of type <typeparamref name="TResponse" /> that represents the
     ///     response.
     /// </returns>
-    public abstract Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider provider, CancellationToken cancellationToken);
+    public abstract Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider provider,
+        CancellationToken cancellationToken);
 }

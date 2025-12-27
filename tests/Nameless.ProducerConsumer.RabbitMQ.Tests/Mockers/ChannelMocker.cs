@@ -7,14 +7,14 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Mockers;
 public class ChannelMocker : Mocker<IChannel> {
     public ChannelMocker WithQueueDeclareAsync(QueueDeclareOk result = null) {
         MockInstance.Setup(mock => mock.QueueDeclareAsync(
-                         It.IsAny<string>(), // queue name
-                         It.IsAny<bool>(), // durable
-                         It.IsAny<bool>(), // exclusive
-                         It.IsAny<bool>(), // autoDelete
-                         It.IsAny<IDictionary<string, object>>(), // arguments
-                         It.IsAny<bool>(), // passive
-                         It.IsAny<bool>(), // no wait
-                         It.IsAny<CancellationToken>()))
+                        It.IsAny<string>(), // queue name
+                        It.IsAny<bool>(), // durable
+                        It.IsAny<bool>(), // exclusive
+                        It.IsAny<bool>(), // autoDelete
+                        It.IsAny<IDictionary<string, object>>(), // arguments
+                        It.IsAny<bool>(), // passive
+                        It.IsAny<bool>(), // no wait
+                        It.IsAny<CancellationToken>()))
                     .ReturnsAsync(result ?? new QueueDeclareOk(string.Empty, messageCount: 0, consumerCount: 0));
 
         return this;
@@ -35,14 +35,14 @@ public class ChannelMocker : Mocker<IChannel> {
 
     public ChannelMocker WithExchangeDeclareAsync() {
         MockInstance.Setup(mock => mock.ExchangeDeclareAsync(
-                         It.IsAny<string>(), // exchange name
-                         It.IsAny<string>(), // exchange type
-                         It.IsAny<bool>(), // durable
-                         It.IsAny<bool>(), // autoDelete
-                         It.IsAny<IDictionary<string, object>>(), // arguments
-                         It.IsAny<bool>(), // passive
-                         It.IsAny<bool>(), // no wait
-                         It.IsAny<CancellationToken>()))
+                        It.IsAny<string>(), // exchange name
+                        It.IsAny<string>(), // exchange type
+                        It.IsAny<bool>(), // durable
+                        It.IsAny<bool>(), // autoDelete
+                        It.IsAny<IDictionary<string, object>>(), // arguments
+                        It.IsAny<bool>(), // passive
+                        It.IsAny<bool>(), // no wait
+                        It.IsAny<CancellationToken>()))
                     .Returns(Task.CompletedTask);
         return this;
     }
@@ -62,12 +62,12 @@ public class ChannelMocker : Mocker<IChannel> {
 
     public ChannelMocker WithQueueBindAsync() {
         MockInstance.Setup(mock => mock.QueueBindAsync(
-                         It.IsAny<string>(), // queue name
-                         It.IsAny<string>(), // exchange name
-                         It.IsAny<string>(), // routing key
-                         It.IsAny<IDictionary<string, object>>(), // arguments
-                         It.IsAny<bool>(), // no wait
-                         It.IsAny<CancellationToken>()))
+                        It.IsAny<string>(), // queue name
+                        It.IsAny<string>(), // exchange name
+                        It.IsAny<string>(), // routing key
+                        It.IsAny<IDictionary<string, object>>(), // arguments
+                        It.IsAny<bool>(), // no wait
+                        It.IsAny<CancellationToken>()))
                     .Returns(Task.CompletedTask);
         return this;
     }
@@ -85,10 +85,10 @@ public class ChannelMocker : Mocker<IChannel> {
 
     public ChannelMocker WithBasicQosAsync() {
         MockInstance.Setup(mock => mock.BasicQosAsync(
-                         It.IsAny<uint>(), // prefetch size
-                         It.IsAny<ushort>(), // prefetch count
-                         It.IsAny<bool>(), // global
-                         It.IsAny<CancellationToken>()))
+                        It.IsAny<uint>(), // prefetch size
+                        It.IsAny<ushort>(), // prefetch count
+                        It.IsAny<bool>(), // global
+                        It.IsAny<CancellationToken>()))
                     .Returns(Task.CompletedTask);
         return this;
     }

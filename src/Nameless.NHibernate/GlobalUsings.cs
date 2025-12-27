@@ -1,1 +1,1 @@
-﻿global using NHConfiguration = global::NHibernate.Cfg.Configuration;
+﻿global using NHConfiguration = NHibernate.Cfg.Configuration;

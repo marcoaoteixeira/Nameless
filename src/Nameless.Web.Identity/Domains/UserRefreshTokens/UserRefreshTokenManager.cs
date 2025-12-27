@@ -16,7 +16,8 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
     private readonly IOptions<RefreshTokenOptions> _options;
     private readonly ILogger<UserRefreshTokenManager> _logger;
 
-    public UserRefreshTokenManager(DbContext dbContext, IHttpContextAccessor httpContextAccessor, TimeProvider timeProvider, IOptions<RefreshTokenOptions> options, ILogger<UserRefreshTokenManager> logger) {
+    public UserRefreshTokenManager(DbContext dbContext, IHttpContextAccessor httpContextAccessor,
+        TimeProvider timeProvider, IOptions<RefreshTokenOptions> options, ILogger<UserRefreshTokenManager> logger) {
         _dbContext = Guard.Against.Null(dbContext);
         _httpContextAccessor = Guard.Against.Null(httpContextAccessor);
         _timeProvider = Guard.Against.Null(timeProvider);
@@ -57,7 +58,8 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
     public async Task<int> CleanUpAsync(User user, CancellationToken cancellationToken) {
         var options = _options.Value;
         var userRefreshTokenCount = await _dbContext.Set<UserRefreshToken>()
-                                                    .CountAsync(userRefreshToken => userRefreshToken.UserId == user.Id, cancellationToken)
+                                                    .CountAsync(userRefreshToken => userRefreshToken.UserId == user.Id,
+                                                        cancellationToken)
                                                     .ConfigureAwait(continueOnCapturedContext: false);
 
         if (options.TokenRetentionLimit > userRefreshTokenCount) {
@@ -79,7 +81,8 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
         }
     }
 
-    public async Task<int> RevokeAsync(User user, RevokeUserRefreshTokenMetadata metadata, CancellationToken cancellationToken) {
+    public async Task<int> RevokeAsync(User user, RevokeUserRefreshTokenMetadata metadata,
+        CancellationToken cancellationToken) {
         try {
             var now = _timeProvider.GetUtcNow();
             var expiresAt = metadata.ExpiresAt.GetValueOrDefault(now);
@@ -91,9 +94,12 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
                                        userRefreshToken.ExpiresAt <= expiresAt)
                                    .ExecuteUpdateAsync(update =>
                                            update.SetProperty(userRefreshToken => userRefreshToken.RevokedAt, now)
-                                                 .SetProperty(userRefreshToken => userRefreshToken.RevokedByIp, metadata.RevokedByIp)
-                                                 .SetProperty(userRefreshToken => userRefreshToken.RevokeReason, metadata.RevokeReason)
-                                                 .SetProperty(userRefreshToken => userRefreshToken.ReplacedByToken, metadata.ReplacedByToken)
+                                                 .SetProperty(userRefreshToken => userRefreshToken.RevokedByIp,
+                                                     metadata.RevokedByIp)
+                                                 .SetProperty(userRefreshToken => userRefreshToken.RevokeReason,
+                                                     metadata.RevokeReason)
+                                                 .SetProperty(userRefreshToken => userRefreshToken.ReplacedByToken,
+                                                     metadata.ReplacedByToken)
                                      , cancellationToken)
                                    .ConfigureAwait(continueOnCapturedContext: false);
         }

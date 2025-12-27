@@ -157,10 +157,10 @@ public static class ExpressionExtensions {
 
                     name = memberExpression.Member.Name;
 
-                    builder.Insert(0, name);
+                    builder.Insert(index: 0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(0, Separators.DOT);
+                        builder.Insert(index: 0, Separators.DOT);
                     }
 
                     part = memberExpression.Expression;
@@ -171,10 +171,10 @@ public static class ExpressionExtensions {
 
                     name = parameterExpression.Name;
 
-                    builder.Insert(0, name);
+                    builder.Insert(index: 0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(0, Separators.DOT);
+                        builder.Insert(index: 0, Separators.DOT);
                     }
 
                     part = null;
@@ -185,56 +185,56 @@ public static class ExpressionExtensions {
         return builder.ToString();
     }
 
-    /// <summary>
-    ///     Creates an AND condition with another expression.
-    /// </summary>
-    /// <typeparam name="T">Type of the expression.</typeparam>
     /// <param name="self">The left expression.</param>
-    /// <param name="expression">The right expression.</param>
-    /// <returns>An expression composition.</returns>
-    public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> expression) {
-        var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
-        var body = Expression.And(
-            Expression.Invoke(self, param),
-            Expression.Invoke(expression, param)
-        );
-        return Expression.Lambda<Func<T, bool>>(body, param);
-    }
+    /// <typeparam name="T">Type of the expression.</typeparam>
+    extension<T>(Expression<Func<T, bool>> self) {
+        /// <summary>
+        ///     Creates an AND condition with another expression.
+        /// </summary>
+        /// <param name="expression">The right expression.</param>
+        /// <returns>An expression composition.</returns>
+        public Expression<Func<T, bool>> And(Expression<Func<T, bool>> expression) {
+            var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
+            var body = Expression.And(
+                Expression.Invoke(self, param),
+                Expression.Invoke(expression, param)
+            );
+            return Expression.Lambda<Func<T, bool>>(body, param);
+        }
 
-    /// <summary>
-    ///     Creates an OR condition with another expression.
-    /// </summary>
-    /// <typeparam name="T">Type of the expression.</typeparam>
-    /// <param name="self">The left expression.</param>
-    /// <param name="expression">The right expression.</param>
-    /// <returns>An expression composition.</returns>
-    public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> self, Expression<Func<T, bool>> expression) {
-        var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
-        var body = Expression.Or(
-            Expression.Invoke(self, param),
-            Expression.Invoke(expression, param)
-        );
-        return Expression.Lambda<Func<T, bool>>(body, param);
+        /// <summary>
+        ///     Creates an OR condition with another expression.
+        /// </summary>
+        /// <param name="expression">The right expression.</param>
+        /// <returns>An expression composition.</returns>
+        public Expression<Func<T, bool>> Or(Expression<Func<T, bool>> expression) {
+            var param = Expression.Parameter(typeof(T), Separators.UNDERSCORE);
+            var body = Expression.Or(
+                Expression.Invoke(self, param),
+                Expression.Invoke(expression, param)
+            );
+            return Expression.Lambda<Func<T, bool>>(body, param);
+        }
     }
 
     private static void InsertIndexerInvocationText(StringBuilder builder, Expression indexExpression,
-                                                    LambdaExpression parentExpression) {
+        LambdaExpression parentExpression) {
         var convert = Expression.Convert(indexExpression, typeof(object));
-        var parameter = Expression.Parameter(typeof(object), null);
+        var parameter = Expression.Parameter(typeof(object), name: null);
         var lambda = Expression.Lambda<Func<object, object>>(convert, parameter);
         Func<object, object> func;
 
         try { func = lambda.Compile(); }
         catch (InvalidOperationException ex) {
             throw new InvalidOperationException(
-                $"Invalid indexer expression. {indexExpression} : {parentExpression.Parameters[0].Name}",
+                $"Invalid indexer expression. {indexExpression} : {parentExpression.Parameters[index: 0].Name}",
                 ex
             );
         }
 
-        builder.Insert(0, ']');
-        builder.Insert(0, Convert.ToString(func(Empty), CultureInfo.InvariantCulture));
-        builder.Insert(0, '[');
+        builder.Insert(index: 0, value: ']');
+        builder.Insert(index: 0, Convert.ToString(func(Empty), CultureInfo.InvariantCulture));
+        builder.Insert(index: 0, value: '[');
     }
 
     private static bool IsSingleArgumentIndexer(Expression expression) {
@@ -246,7 +246,7 @@ public static class ExpressionExtensions {
         // member of this type. Compiler names the indexer property, if any, in a
         // generated [DefaultMember] attribute for the containing type.
         var declaringType = methodExpression.Method.DeclaringType!;
-        var defaultMember = declaringType.GetCustomAttribute<DefaultMemberAttribute>(true);
+        var defaultMember = declaringType.GetCustomAttribute<DefaultMemberAttribute>(inherit: true);
         if (defaultMember is null) {
             return false;
         }

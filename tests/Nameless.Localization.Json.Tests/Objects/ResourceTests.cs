@@ -7,19 +7,19 @@ public class ResourceTests {
         var sut = new Resource(string.Empty,
             string.Empty,
             [
-                new Message("Message A", "Message A"),
-                new Message("Message B", "Message B"),
-                new Message("Message C", "Message C")
+                new Message(id: "Message A", text: "Message A"),
+                new Message(id: "Message B", text: "Message B"),
+                new Message(id: "Message C", text: "Message C")
             ],
-            true);
+            isAvailable: true);
 
         // act
-        var found = sut.TryGetMessage("Message C", out var actual);
+        var found = sut.TryGetMessage(id: "Message C", out var actual);
 
         // assert
         Assert.Multiple(() => {
             Assert.True(found);
-            Assert.Equal("Message C", actual.Id);
+            Assert.Equal(expected: "Message C", actual.Id);
         });
     }
 
@@ -29,14 +29,14 @@ public class ResourceTests {
         var sut = new Resource(string.Empty,
             string.Empty,
             [
-                new Message("Message A", "Message A"),
-                new Message("Message B", "Message B"),
-                new Message("Message C", "Message C")
+                new Message(id: "Message A", text: "Message A"),
+                new Message(id: "Message B", text: "Message B"),
+                new Message(id: "Message C", text: "Message C")
             ],
-            true);
+            isAvailable: true);
 
         // act
-        var found = sut.TryGetMessage("Error", out var actual);
+        var found = sut.TryGetMessage(id: "Error", out var actual);
 
         // assert
         Assert.Multiple(() => {
@@ -50,8 +50,8 @@ public class ResourceTests {
     [InlineData("Region A", "Region B", false)]
     public void Equals_Should_Return_Corresponding_Result(string nameX, string nameY, bool expected) {
         // arrange
-        var regionX = new Resource(nameX, nameX, [], true);
-        var regionY = new Resource(nameY, nameY, [], true);
+        var regionX = new Resource(nameX, nameX, [], isAvailable: true);
+        var regionY = new Resource(nameY, nameY, [], isAvailable: true);
 
         // act
         var actual = regionX.Equals(regionY);
@@ -65,8 +65,8 @@ public class ResourceTests {
     [InlineData("Region A", "Region B", false)]
     public void GetHashCode_Should_Return_Corresponding_Result(string nameX, string nameY, bool expected) {
         // arrange
-        var regionX = new Resource(nameX, nameX, [], true);
-        var regionY = new Resource(nameY, nameY, [], true);
+        var regionX = new Resource(nameX, nameX, [], isAvailable: true);
+        var regionY = new Resource(nameY, nameY, [], isAvailable: true);
 
         // act
         var hashCodeX = regionX.GetHashCode();

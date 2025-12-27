@@ -7,6 +7,7 @@ on:
       - 'refactor/**'
       - 'bugfix/**'
       - 'proposal/**'
+      - 'develop'
 
 env:
   SOLUTION: "./Nameless.sln"
@@ -20,11 +21,11 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ["9.0.x"]
+        dotnet-version: ["10.0.x"]
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.2.0
+        uses: actions/setup-dotnet@v5.0.1
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
@@ -32,10 +33,10 @@ jobs:
         run: >-
           dotnet tool install -g dotnet-reportgenerator-globaltool
           --add-source ${{ vars.PACKAGE_SOURCE_URL_NUGET_ORG }}
-          --version 5.4.3
+          --version 5.5.1
 
       - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
 
       - name: Register GitHub Package Registry As NuGet Source
         run: >-
@@ -50,7 +51,7 @@ jobs:
           dotnet build ${{ env.SOLUTION }}
           --configuration Debug
           --nologo
-          --verbosity normal
+          --verbosity minimal
 
       - name: Run Tests
         run: >-
@@ -64,7 +65,7 @@ jobs:
           --no-restore
           --results-directory ${{ env.CODE_COVERAGE_FOLDER_PATH }}
           --settings .runsettings
-          --verbosity normal
+          --verbosity minimal
 
       - name: Generate Coverage Report
         run: >-
@@ -74,7 +75,7 @@ jobs:
           -reporttypes:Html
 
       - name: Upload Coverage Report to Artifacts
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: coverage-report
           path: ${{ env.CODE_COVERAGE_REPORT_FOLDER_PATH }}

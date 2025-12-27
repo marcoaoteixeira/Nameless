@@ -35,30 +35,31 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     ///     The capacity of this circular buffer instance.
     /// </param>
     /// <param name="items">The startup items.</param>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="items" /> is <see langword="null"/>.
-    /// </exception>
     /// <exception cref="ArgumentOutOfRangeException">
     ///     if <paramref name="capacity" /> is less than 1. Or
     ///     if length of <paramref name="items" /> is greater than
     ///     <paramref name="capacity" />.
     /// </exception>
     public CircularBuffer(int capacity, TElement[] items) {
-        Guard.Against.LowerThan(capacity, 1);
-        Guard.Against.GreaterThan(items.Length,
+        Guard.Against.LowerThan(capacity, compare: 1);
+        Guard.Against.GreaterThan(
+            items.Length,
             paramName: nameof(items),
             compare: capacity,
             message:
-            $"Too many items. Maximum number of items must be less or equal to {nameof(capacity)} => {capacity}");
+            $"Too many items. Maximum number of items must be less or equal to {nameof(capacity)} => {capacity}"
+        );
 
         // let's create a copy of the current buffer.
         _buffer = new TElement[capacity];
 
         // copy all items to our inner buffer.
         if (items.Length > 0) {
-            Array.Copy(items,
+            Array.Copy(
+                items,
                 _buffer,
-                items.Length);
+                items.Length
+            );
             Count = items.Length;
         }
 
@@ -121,18 +122,13 @@ public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     }
 
     /// <inheritdoc />
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="array" /> is <see langword="null"/>.
-    /// </exception>
     /// <exception cref="InvalidOperationException">
     ///     if <paramref name="array" /> does not have enough positions
     ///     to copy all elements from circular buffer.
     /// </exception>
     public void CopyTo(TElement[] array, int startIndex) {
-        Guard.Against.Null(array);
-
         if (array.Length - startIndex < Count) {
-            throw new InvalidOperationException("Array does not contain enough space for items");
+            throw new InvalidOperationException(message: "Array does not contain enough space for items");
         }
 
         for (var index = 0; index < Count; ++index) {

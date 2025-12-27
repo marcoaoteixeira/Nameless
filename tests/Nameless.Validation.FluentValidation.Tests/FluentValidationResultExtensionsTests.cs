@@ -4,11 +4,10 @@ namespace Nameless.Validation.FluentValidation;
 
 public class FluentValidationResultExtensionsTests {
     [Fact]
-    public void WhenConvertingToValidationResult_WhenFluentValidationResultsAreValid_ThenReturnsSuccessfulValidationResult() {
+    public void
+        WhenConvertingToValidationResult_WhenFluentValidationResultsAreValid_ThenReturnsSuccessfulValidationResult() {
         // arrange
-        var results = new[] {
-            new global::FluentValidation.Results.ValidationResult()
-        };
+        var results = new[] { new global::FluentValidation.Results.ValidationResult() };
 
         // act
         var actual = results.ToValidationResult();
@@ -21,11 +20,12 @@ public class FluentValidationResultExtensionsTests {
     }
 
     [Fact]
-    public void WhenConvertingToValidationResult_WhenFluentValidationResultsAreInvalid_ThenReturnsFailureValidationResult() {
+    public void
+        WhenConvertingToValidationResult_WhenFluentValidationResultsAreInvalid_ThenReturnsFailureValidationResult() {
         // arrange
         var results = new[] {
             new global::FluentValidation.Results.ValidationResult {
-                Errors = [new ValidationFailure("Property", "Error Message")]
+                Errors = [new ValidationFailure(propertyName: "Property", errorMessage: "Error Message")]
             }
         };
 

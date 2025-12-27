@@ -25,7 +25,7 @@ public sealed class UserRefreshTokenEntityTypeConfiguration : IEntityTypeConfigu
 
         builder.Property(entity => entity.Token)
                .HasColumnName(RefreshTokens.Fields.TOKEN)
-               .HasMaxLength(512);
+               .HasMaxLength(maxLength: 512);
 
         builder.Property(entity => entity.ExpiresAt)
                .HasColumnName(RefreshTokens.Fields.EXPIRES_AT)
@@ -49,10 +49,10 @@ public sealed class UserRefreshTokenEntityTypeConfiguration : IEntityTypeConfigu
         builder.Property(entity => entity.ReplacedByToken)
                .HasColumnName(RefreshTokens.Fields.REPLACED_BY_TOKEN);
 
-        builder.HasIndex(entity => entity.UserId, name: RefreshTokens.Indexes.USER_ID)
+        builder.HasIndex(entity => entity.UserId, RefreshTokens.Indexes.USER_ID)
                .IsUnique();
 
-        builder.HasIndex(entity => entity.Token, name: RefreshTokens.Indexes.TOKEN)
+        builder.HasIndex(entity => entity.Token, RefreshTokens.Indexes.TOKEN)
                .IsUnique();
     }
 }

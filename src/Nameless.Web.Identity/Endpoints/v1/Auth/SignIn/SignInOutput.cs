@@ -8,6 +8,7 @@ public record SignInOutput {
     ///     Gets or init the access token.
     /// </summary>
     public required string AccessToken { get; init; }
+
     /// <summary>
     ///     Gets or init the refresh token, if exists.
     /// </summary>

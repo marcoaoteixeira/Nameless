@@ -29,9 +29,10 @@ internal static class EndpointRouteBuilderExtensions {
     /// </exception>
     internal static void MapEndpoint(this IEndpointRouteBuilder self, IEndpointDescriptor descriptor) {
         var routeHandlerBuilder = self.MapMethods(
-            pattern: descriptor.RoutePattern,
-            httpMethods: [descriptor.HttpMethod],
-            handler: (HttpContext httpContext, [FromServices] IEndpointFactory factory) => EndpointInvoker.InvokeAsync(httpContext, factory)
+            descriptor.RoutePattern,
+            [descriptor.HttpMethod],
+            (HttpContext httpContext, [FromServices] IEndpointFactory factory) =>
+                EndpointInvoker.InvokeAsync(httpContext, factory)
         );
 
         routeHandlerBuilder.WithName(descriptor.GetNameOrDefault());
@@ -81,7 +82,7 @@ internal static class EndpointRouteBuilderExtensions {
 
         switch (descriptor.UseAntiforgery) {
             case true when self.ServiceProvider.GetService<IAntiforgery>() is null:
-                throw new InvalidOperationException("Anti-forgery middleware not available.");
+                throw new InvalidOperationException(message: "Anti-forgery middleware not available.");
             case false:
                 routeHandlerBuilder.DisableAntiforgery();
                 break;
@@ -93,17 +94,17 @@ internal static class EndpointRouteBuilderExtensions {
 
         foreach (var accept in descriptor.Accepts) {
             routeHandlerBuilder.WithMetadata(new AcceptsMetadata(
-                contentTypes: accept.ContentTypes,
-                type: accept.RequestType,
-                isOptional: accept.IsOptional
+                accept.ContentTypes,
+                accept.RequestType,
+                accept.IsOptional
             ));
         }
 
         foreach (var produce in descriptor.Produces) {
             routeHandlerBuilder.WithMetadata(new ProducesResponseTypeMetadata(
-                statusCode: produce.StatusCode,
-                type: produce.ResponseType,
-                contentTypes: produce.ContentTypes
+                produce.StatusCode,
+                produce.ResponseType,
+                produce.ContentTypes
             ));
         }
 

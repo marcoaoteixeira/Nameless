@@ -3,12 +3,13 @@ using Moq;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Security;
+
 public class CryptographicServiceExtensionsTests {
     [Fact]
     public void WhenEncryptingStringValue_ThenReturnsEncryptedValue() {
         // arrange
         const string Expected = "This is a Test";
-        var cryptographicService = new CryptographicServiceMocker().WithEncrypt("This is a Test")
+        var cryptographicService = new CryptographicServiceMocker().WithEncrypt(result: "This is a Test")
                                                                    .Build();
 
         // act
@@ -22,7 +23,7 @@ public class CryptographicServiceExtensionsTests {
     public void WhenDecryptingStringValue_ThenReturnsDecryptedValue() {
         // arrange
         const string Expected = "This is a Test";
-        var cryptographicService = new CryptographicServiceMocker().WithDecrypt("This is a Test")
+        var cryptographicService = new CryptographicServiceMocker().WithDecrypt(result: "This is a Test")
                                                                    .Build();
 
         // act
@@ -40,8 +41,8 @@ public class CryptographicServiceMocker : Mocker<ICrypto> {
 
     public CryptographicServiceMocker WithEncrypt(byte[] result) {
         MockInstance
-           .Setup(mock => mock.Encrypt(It.IsAny<Stream>()))
-           .Returns(result);
+            .Setup(mock => mock.Encrypt(It.IsAny<Stream>()))
+            .Returns(result);
 
         return this;
     }
@@ -52,8 +53,8 @@ public class CryptographicServiceMocker : Mocker<ICrypto> {
 
     public CryptographicServiceMocker WithDecrypt(byte[] result) {
         MockInstance
-           .Setup(mock => mock.Decrypt(It.IsAny<Stream>()))
-           .Returns(result);
+            .Setup(mock => mock.Decrypt(It.IsAny<Stream>()))
+            .Returns(result);
 
         return this;
     }

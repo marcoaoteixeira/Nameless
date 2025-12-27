@@ -43,7 +43,7 @@ public sealed class BugAttribute : Attribute, ITraitAttribute {
         return [
             new KeyValuePair<string, string>(nameof(Category), nameof(Category.Bug)),
             new KeyValuePair<string, string>(nameof(Issue), Issue),
-            new KeyValuePair<string, string>(nameof(Author), Author ?? string.Empty),
+            new KeyValuePair<string, string>(nameof(Author), Author ?? string.Empty)
         ];
     }
 }

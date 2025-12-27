@@ -24,9 +24,14 @@ public sealed class Guard {
     private const string PARAM_GREATER_OR_EQUAL_MESSAGE = "Parameter cannot be greater or equal to '{0}'.";
     private const string PARAM_LOWER_THAN_MESSAGE = "Parameter cannot be lower than '{0}'.";
     private const string PARAM_GREATER_THAN_MESSAGE = "Parameter cannot be greater than '{0}'.";
-    private const string PARAM_OUT_OF_RANGE_MESSAGE = "Parameter must be between minimum value of '{0}' and maximum value of '{1}'.";
+
+    private const string PARAM_OUT_OF_RANGE_MESSAGE =
+        "Parameter must be between minimum value of '{0}' and maximum value of '{1}'.";
+
     private const string PARAM_ZERO_MESSAGE = "Parameter cannot be zero value.";
-    private const string PARAM_NOT_ASSIGNABLE_FROM_MESSAGE = "Parameter '{0}' of type '{1}' is not assignable to '{2}'.";
+
+    private const string PARAM_NOT_ASSIGNABLE_FROM_MESSAGE =
+        "Parameter '{0}' of type '{1}' is not assignable to '{2}'.";
 
     /// <summary>
     ///     Gets the unique instance of <see cref="Guard" />.
@@ -350,7 +355,6 @@ public sealed class Guard {
         string? paramName = null,
         string? message = null,
         Func<Exception>? exceptionCreator = null) {
-
         if (!EqualityComparer<TValue?>.Default.Equals(paramValue, y: default) && paramValue is not null) {
             return paramValue;
         }
@@ -407,7 +411,6 @@ public sealed class Guard {
         string? paramName = null,
         string? message = null,
         Func<Exception>? exceptionCreator = null) {
-
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var match = Regex.Match(paramValue, regexPattern, options);
@@ -418,6 +421,65 @@ public sealed class Guard {
         throw exceptionCreator?.Invoke()
               ?? new ArgumentException(string.IsNullOrWhiteSpace(message)
                       ? string.Format(PARAM_NO_MATCHING_PATTERN_MESSAGE, regexPattern)
+                      : message,
+                  paramName);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> matches
+    ///     the specified <paramref name="regex"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="regex">
+    ///     The regex object.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    ///     If <paramref name="paramValue"/> or
+    ///     <paramref name="regex"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     If a regular expression parsing error occurred, or
+    ///     if the <paramref name="paramValue"/> do not match
+    ///     the <paramref name="regex"/>.
+    /// </exception>
+    /// <exception cref="RegexMatchTimeoutException">
+    ///     If a time-out occurred.
+    /// </exception>
+    [DebuggerStepThrough]
+    public string NoMatchingPattern(string paramValue,
+        Regex regex,
+        [CallerArgumentExpression(nameof(paramValue))]
+        string? paramName = null,
+        string? message = null,
+        Func<Exception>? exceptionCreator = null) {
+        Null(regex);
+
+        var comparison = regex.Options.HasFlag(RegexOptions.IgnoreCase)
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        var match = regex.Match(paramValue);
+        if (match.Success && string.Equals(match.Value, paramValue, comparison)) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentException(string.IsNullOrWhiteSpace(message)
+                      ? string.Format(PARAM_NO_MATCHING_PATTERN_MESSAGE, regex)
                       : message,
                   paramName);
     }
@@ -588,7 +650,6 @@ public sealed class Guard {
                 : message,
             paramName: paramName,
             actualValue: paramValue);
-
     }
 
     /// <summary>
@@ -773,7 +834,6 @@ public sealed class Guard {
                   string.IsNullOrWhiteSpace(message)
                       ? string.Format(PARAM_GREATER_THAN_MESSAGE, compare)
                       : message);
-
     }
 
     /// <summary>

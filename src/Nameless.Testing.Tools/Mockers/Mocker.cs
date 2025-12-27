@@ -4,21 +4,20 @@ using Moq;
 namespace Nameless.Testing.Tools.Mockers;
 
 public abstract class Mocker<TService> where TService : class {
-    private readonly Mock<TService> _mockInstance;
     private readonly MockSequence? _sequence;
 
     protected Mock<TService> MockInstance {
         get {
             if (_sequence is not null) {
-                _mockInstance.InSequence(_sequence);
+                field.InSequence(_sequence);
             }
 
-            return _mockInstance;
+            return field;
         }
     }
 
     protected Mocker(MockBehavior behavior = MockBehavior.Default, bool useSequence = false, params object[] args) {
-        _mockInstance = new Mock<TService>(behavior, args);
+        MockInstance = new Mock<TService>(behavior, args);
         _sequence = useSequence ? new MockSequence() : null;
     }
 

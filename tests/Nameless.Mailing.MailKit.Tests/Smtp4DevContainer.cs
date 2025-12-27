@@ -6,19 +6,19 @@ using DotNet.Testcontainers.Containers;
 namespace Nameless.Mailing.MailKit;
 
 public class MessageSummary {
-    [JsonPropertyName("id")]
+    [JsonPropertyName(name: "id")]
     public Guid ID { get; set; }
 
-    [JsonPropertyName("from")]
+    [JsonPropertyName(name: "from")]
     public string From { get; set; }
 
-    [JsonPropertyName("to")]
+    [JsonPropertyName(name: "to")]
     public string[] To { get; set; }
 
-    [JsonPropertyName("subject")]
+    [JsonPropertyName(name: "subject")]
     public string Subject { get; set; }
 
-    [JsonPropertyName("receivedDate")]
+    [JsonPropertyName(name: "receivedDate")]
     public DateTime ReceivedDate { get; set; }
 }
 
@@ -29,16 +29,17 @@ public sealed class Smtp4DevContainer : IAsyncLifetime {
     public const int SMTP_PORT = 2525;
     public const int WEB_PORT = 8080;
 
-    private readonly IContainer _container = new ContainerBuilder().WithImage("rnwood/smtp4dev")
-                                                                   .WithName("smtp4dev-test-container")
-                                                                   .WithPortBinding(SMTP_PORT, CONTAINER_SMTP_PORT) // SMTP
-                                                                   .WithPortBinding(WEB_PORT, CONTAINER_WEB_PORT) // Web UI/API
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(CONTAINER_WEB_PORT))
+    private readonly IContainer _container = new ContainerBuilder().WithImage(image: "rnwood/smtp4dev")
+                                                                   .WithName(name: "smtp4dev-test-container")
+                                                                   .WithPortBinding(SMTP_PORT,
+                                                                       CONTAINER_SMTP_PORT) // SMTP
+                                                                   .WithPortBinding(WEB_PORT,
+                                                                       CONTAINER_WEB_PORT) // Web UI/API
+                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_WEB_PORT))
                                                                    .WithCleanUp(cleanUp: true)
                                                                    .Build();
-    private readonly HttpClient _httpClient = new() {
-        BaseAddress = new Uri($"http://localhost:{WEB_PORT}/api/")
-    };
+
+    private readonly HttpClient _httpClient = new() { BaseAddress = new Uri($"http://localhost:{WEB_PORT}/api/") };
 
     public async ValueTask InitializeAsync() {
         await _container.StartAsync();
@@ -49,7 +50,8 @@ public sealed class Smtp4DevContainer : IAsyncLifetime {
     }
 
     public IAsyncEnumerable<MessageSummary> GetNewestAsync(Guid? from = null, int quantity = 50) {
-        return _httpClient.GetFromJsonAsAsyncEnumerable<MessageSummary>($"Messages/new?lastSeenMessageId={from}&pageSize={quantity}");
+        return _httpClient.GetFromJsonAsAsyncEnumerable<MessageSummary>(
+            $"Messages/new?lastSeenMessageId={from}&pageSize={quantity}");
     }
 
     public Task<string> GetMessageContentAsync(Guid id, bool isHtml = false) {

@@ -5,7 +5,7 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// <summary>
 ///     Represents a collection of endpoint types.
 /// </summary>
-public class EndpointTypeCollection : IEnumerable<Type> {
+public sealed class EndpointTypeCollection : IEnumerable<Type> {
     private readonly Type[] _endpoints;
 
     /// <summary>
@@ -16,7 +16,7 @@ public class EndpointTypeCollection : IEnumerable<Type> {
     ///     A collection of endpoint types to include in the collection.
     /// </param>
     public EndpointTypeCollection(IEnumerable<Type> endpoints) {
-        _endpoints = endpoints.Select(ThrowOnNonEndpointType).ToArray();
+        _endpoints = [.. endpoints.Select(ThrowOnNonEndpointType).Distinct()];
     }
 
     /// <inheritdoc />
@@ -30,6 +30,10 @@ public class EndpointTypeCollection : IEnumerable<Type> {
     }
 
     private static Type ThrowOnNonEndpointType(Type type) {
-        return Guard.Against.NotAssignableFrom<IEndpoint>(type);
+        if (!typeof(IEndpoint).IsAssignableFrom(type)) {
+            throw new ArgumentException($"The current type '{type.Name}' must implement '{nameof(IEndpoint)}'.");
+        }
+
+        return type;
     }
 }

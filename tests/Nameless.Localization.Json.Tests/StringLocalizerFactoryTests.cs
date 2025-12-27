@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nameless.Localization.Json.Mockers;
 using Nameless.Localization.Json.Objects;
 using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Localization.Json;
 
@@ -17,7 +17,7 @@ public class StringLocalizerFactoryTests {
         var resource = new Resource(culture: CultureName,
             path: "Path_To_The_Resource",
             messages: [
-                new Message("This is a test", "Isso é um teste")
+                new Message(id: "This is a test", text: "Isso é um teste")
             ],
             isAvailable: true);
 
@@ -25,9 +25,9 @@ public class StringLocalizerFactoryTests {
                                                          .Build();
 
         var loggerFactory = new LoggerFactoryMocker()
-                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
-                           .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
-                           .Build();
+                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizer>>())
+                            .WithCreateLogger(Quick.Mock<ILogger<StringLocalizerFactory>>())
+                            .Build();
         var options = Microsoft.Extensions.Options.Options.Create(new JsonLocalizationOptions());
 
         return new StringLocalizerFactory(

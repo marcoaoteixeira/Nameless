@@ -8,4 +8,4 @@
 /// <param name="cancellationToken">The cancellation token.</param>
 /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
 public delegate Task MessageHandlerDelegate<in TMessage>(TMessage message, CancellationToken cancellationToken)
-        where TMessage : notnull;
+    where TMessage : notnull;

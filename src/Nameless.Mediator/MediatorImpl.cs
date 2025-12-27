@@ -24,8 +24,8 @@ public sealed class MediatorImpl : IMediator {
     ///     <paramref name="streamHandlerInvoker"/> is <see langword="null"/>.
     /// </exception>
     public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker,
-                        IRequestHandlerInvoker requestHandlerInvoker,
-                        IStreamHandlerInvoker streamHandlerInvoker) {
+        IRequestHandlerInvoker requestHandlerInvoker,
+        IStreamHandlerInvoker streamHandlerInvoker) {
         _eventHandlerInvoker = Guard.Against.Null(eventHandlerInvoker);
         _requestHandlerInvoker = Guard.Against.Null(requestHandlerInvoker);
         _streamHandlerInvoker = Guard.Against.Null(streamHandlerInvoker);
@@ -43,7 +43,8 @@ public sealed class MediatorImpl : IMediator {
     }
 
     /// <inheritdoc />
-    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request, CancellationToken cancellationToken) {
+    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
+        CancellationToken cancellationToken) {
         return _streamHandlerInvoker.CreateAsync(request, cancellationToken);
     }
 }

@@ -10,7 +10,6 @@ using Nameless.Web.Identity.Entities;
 using Nameless.Web.Identity.Infrastructure;
 using Nameless.Web.Identity.Internals;
 using Nameless.Web.Identity.Jwt;
-using Nameless.Web.IdentityModel.Jwt;
 
 namespace Nameless.Web.Identity.UseCases.SecurityTokens.AccessToken;
 
@@ -48,7 +47,8 @@ public class CreateAccessTokenRequestHandler : IRequestHandler<CreateAccessToken
     }
 
     /// <inheritdoc />
-    public async Task<CreateAccessTokenResponse> HandleAsync(CreateAccessTokenRequest request, CancellationToken cancellationToken) {
+    public async Task<CreateAccessTokenResponse> HandleAsync(CreateAccessTokenRequest request,
+        CancellationToken cancellationToken) {
         Guard.Against.Null(request);
 
         try {
@@ -60,9 +60,7 @@ public class CreateAccessTokenRequestHandler : IRequestHandler<CreateAccessToken
             var principal = await _signInManager.CreateUserPrincipalAsync(user)
                                                 .ConfigureAwait(continueOnCapturedContext: false);
             var descriptor = CreateSecurityTokenDescriptor(principal.Claims);
-            var tokenHandler = new JsonWebTokenHandler {
-                MapInboundClaims = false
-            };
+            var tokenHandler = new JsonWebTokenHandler { MapInboundClaims = false };
 
             // Force JsonWebTokenHandler to use the default claim name
             // https://stackoverflow.com/questions/57998262/why-is-claimtypes-nameidentifier-not-mapping-to-sub
@@ -72,9 +70,18 @@ public class CreateAccessTokenRequestHandler : IRequestHandler<CreateAccessToken
 
             return new CreateAccessTokenResponse { Token = token };
         }
-        catch (MissingSecretConfigurationException) { _logger.MissingSecretConfiguration(); throw; }
-        catch (MissingClaimSubException) { _logger.MissingClaimSub(); throw; }
-        catch (Exception ex) { _logger.CreateJsonWebTokenFailure(ex); throw; }
+        catch (MissingSecretConfigurationException) {
+            _logger.MissingSecretConfiguration();
+            throw;
+        }
+        catch (MissingClaimSubException) {
+            _logger.MissingClaimSub();
+            throw;
+        }
+        catch (Exception ex) {
+            _logger.CreateJsonWebTokenFailure(ex);
+            throw;
+        }
     }
 
     private SecurityTokenDescriptor CreateSecurityTokenDescriptor(IEnumerable<Claim> claims) {
@@ -92,9 +99,9 @@ public class CreateAccessTokenRequestHandler : IRequestHandler<CreateAccessToken
         var result = new SecurityTokenDescriptor {
             Claims = new Dictionary<string, object>(),
             SigningCredentials = new SigningCredentials(
-                key: new SymmetricSecurityKey(options.Secret.GetBytes()),
-                algorithm: SecurityAlgorithms.HmacSha256
-            ),
+                new SymmetricSecurityKey(options.Secret.GetBytes()),
+                SecurityAlgorithms.HmacSha256
+            )
         };
 
         if (!string.IsNullOrEmpty(options.Issuer)) {

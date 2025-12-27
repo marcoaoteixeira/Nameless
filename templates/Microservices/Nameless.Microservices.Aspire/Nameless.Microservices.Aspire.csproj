@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="13.1.0" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UserSecretsId>eb9a5b04-a2bf-40a0-9301-3a7abcc9ceac</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Nameless.Microservices.App\Nameless.Microservices.App.csproj" />
+	</ItemGroup>
+
+</Project>

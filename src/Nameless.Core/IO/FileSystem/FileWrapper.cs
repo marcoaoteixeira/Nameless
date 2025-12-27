@@ -8,13 +8,12 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.
 /// </summary>
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public class FileWrapper : IFile {
     private readonly FileInfo _file;
-    private readonly string _relativePath;
     private readonly IOptions<FileSystemOptions> _options;
 
-    private string DebuggerDisplayValue => $"Path: {_relativePath}";
+    private string DebuggerDisplayValue => $"Path: {field}";
 
     private FileSystemOptions Options => _options.Value;
 
@@ -41,12 +40,11 @@ public class FileWrapper : IFile {
     ///     The options for configuring the file system.
     /// </param>
     public FileWrapper(FileInfo file, IOptions<FileSystemOptions> options) {
-        _file = Guard.Against.Null(file);
-        _options = Guard.Against.Null(options);
+        _file = file;
+        _options = options;
 
         _options.Value.EnsureRootDirectory(Path);
-
-        _relativePath = SysPath.GetRelativePath(Options.Root, Path);
+        DebuggerDisplayValue = SysPath.GetRelativePath(Options.Root, Path);
     }
 
     /// <inheritdoc />
@@ -61,8 +59,6 @@ public class FileWrapper : IFile {
 
     /// <inheritdoc />
     public IFile Copy(string destinationRelativePath, bool overwrite) {
-        Guard.Against.NullOrWhiteSpace(destinationRelativePath);
-
         var destinationFullPath = SysPath.GetFullPath(destinationRelativePath, Options.Root);
 
         destinationFullPath = PathHelper.Normalize(destinationFullPath);

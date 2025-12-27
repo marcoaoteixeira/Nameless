@@ -22,8 +22,8 @@ public sealed class UserRoleEntityTypeConfiguration : IEntityTypeConfiguration<U
         builder.Property(entity => entity.RoleId)
                .HasColumnName(UsersRoles.Fields.ROLE_ID);
 
-        builder.HasIndex(entity => entity.RoleId, name: UsersRoles.Indexes.ROLE_ID);
+        builder.HasIndex(entity => entity.RoleId, UsersRoles.Indexes.ROLE_ID);
 
-        builder.HasIndex(entity => entity.UserId, name: UsersRoles.Indexes.USER_ID);
+        builder.HasIndex(entity => entity.UserId, UsersRoles.Indexes.USER_ID);
     }
 }

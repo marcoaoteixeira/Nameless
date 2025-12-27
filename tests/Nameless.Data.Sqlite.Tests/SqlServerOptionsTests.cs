@@ -10,9 +10,7 @@ public class SqliteOptionsTests {
 
         // act
         var actual = new SqliteOptions {
-            UseInMemory = UseInMemory,
-            DatabaseFilePath = DatabasePath,
-            Password = Password
+            UseInMemory = UseInMemory, DatabaseFilePath = DatabasePath, Password = Password
         };
 
         // assert

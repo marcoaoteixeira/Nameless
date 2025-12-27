@@ -21,7 +21,7 @@ public class AssemblyExtensionsTests {
         // assert
         Assert.Multiple(() => {
             Assert.NotNull(path);
-            Assert.Equal(expected: expected, path);
+            Assert.Equal(expected, path);
         });
     }
 }

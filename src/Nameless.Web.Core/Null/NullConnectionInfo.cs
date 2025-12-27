@@ -52,6 +52,6 @@ public sealed class NullConnectionInfo : ConnectionInfo {
 
     /// <inheritdoc />
     public override Task<X509Certificate2?> GetClientCertificateAsync(CancellationToken cancellationToken = default) {
-        return Task.FromResult<X509Certificate2?>(null);
+        return Task.FromResult<X509Certificate2?>(result: null);
     }
 }

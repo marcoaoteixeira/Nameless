@@ -2,7 +2,10 @@
 
 namespace Nameless.Web.Endpoints.Infrastructure;
 
-public class EndpointFactory : IEndpointFactory {
+/// <summary>
+///     Default implementation of <see cref="IEndpointFactory"/>.
+/// </summary>
+public sealed class EndpointFactory : IEndpointFactory {
     private readonly IServiceFactory _serviceFactory;
 
     /// <summary>
@@ -13,13 +16,11 @@ public class EndpointFactory : IEndpointFactory {
     ///     The endpoint resolver.
     /// </param>
     public EndpointFactory(IServiceFactory serviceFactory) {
-        _serviceFactory = Guard.Against.Null(serviceFactory);
+        _serviceFactory = serviceFactory;
     }
 
     /// <inheritdoc />
     public EndpointCall Create(IEndpointDescriptor descriptor) {
-        Guard.Against.Null(descriptor);
-
         var endpoint = (IEndpoint)_serviceFactory.Create(descriptor.EndpointType);
 
         return new EndpointCall(endpoint, descriptor.GetEndpointHandler());

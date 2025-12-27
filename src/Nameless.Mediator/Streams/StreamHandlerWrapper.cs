@@ -19,7 +19,8 @@ public abstract class StreamHandlerWrapper {
     /// <returns>
     ///     An <see cref="IAsyncEnumerable{T}" /> representing the stream of data.
     /// </returns>
-    public abstract IAsyncEnumerable<object?> HandleAsync(object request, IServiceProvider provider, CancellationToken cancellationToken);
+    public abstract IAsyncEnumerable<object?> HandleAsync(object request, IServiceProvider provider,
+        CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -44,5 +45,6 @@ public abstract class StreamHandlerWrapper<TResponse> : StreamHandlerWrapper {
     /// <returns>
     ///     An <see cref="IAsyncEnumerable{T}" /> representing the stream of data.
     /// </returns>
-    public abstract IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider, CancellationToken cancellationToken);
+    public abstract IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider,
+        CancellationToken cancellationToken);
 }

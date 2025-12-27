@@ -19,9 +19,9 @@ public sealed class ChannelFactory : IChannelFactory {
     /// <inheritdoc />
     public async Task<IChannel> CreateAsync(CancellationToken cancellationToken) {
         var connection = await _connectionManager.GetConnectionAsync(cancellationToken)
-                                                 .ConfigureAwait(false);
+                                                 .ConfigureAwait(continueOnCapturedContext: false);
 
         return await connection.CreateChannelAsync(cancellationToken: cancellationToken)
-                               .ConfigureAwait(false);
+                               .ConfigureAwait(continueOnCapturedContext: false);
     }
 }

@@ -43,7 +43,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
 
         try {
             return _connection ??= await GetConnectionFactory().CreateConnectionAsync(cancellationToken)
-                                                               .ConfigureAwait(false);
+                                                               .ConfigureAwait(continueOnCapturedContext: false);
         }
         catch (BrokerUnreachableException ex) {
             _logger.BrokerUnreachable(_options.Value.Server, ex);
@@ -60,7 +60,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync() {
-        await DisposeAsyncCore().ConfigureAwait(false);
+        await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
 
         Dispose(disposing: false);
         GC.SuppressFinalize(this);
@@ -86,10 +86,10 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     private async ValueTask DisposeAsyncCore() {
         if (_connection is not null) {
             await _connection.CloseAsync(Constants.ReplySuccess, reasonText: "Disposing RabbitMQ connection.")
-                             .ConfigureAwait(false);
+                             .ConfigureAwait(continueOnCapturedContext: false);
 
             await _connection.DisposeAsync()
-                             .ConfigureAwait(false);
+                             .ConfigureAwait(continueOnCapturedContext: false);
         }
     }
 
@@ -101,9 +101,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
         var opts = _options.Value;
 
         _connectionFactory = new ConnectionFactory {
-            HostName = opts.Server.Hostname,
-            Port = opts.Server.Port,
-            VirtualHost = opts.Server.VirtualHost
+            HostName = opts.Server.Hostname, Port = opts.Server.Port, VirtualHost = opts.Server.VirtualHost
         };
 
         SetCredentials(_connectionFactory, opts);
@@ -133,6 +131,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
         if (!opts.Server.Certificate.IsAvailable) { return; }
 
         connectionFactory.Ssl.CertificateSelectionCallback = (_, _, _, _, _)
-            => X509CertificateLoader.LoadPkcs12FromFile(opts.Server.Certificate.CertPath, opts.Server.Certificate.CertPassword);
+            => X509CertificateLoader.LoadPkcs12FromFile(opts.Server.Certificate.CertPath,
+                opts.Server.Certificate.CertPassword);
     }
 }

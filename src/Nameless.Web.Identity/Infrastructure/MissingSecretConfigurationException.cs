@@ -1,4 +1,4 @@
-﻿namespace Nameless.Web.IdentityModel.Jwt;
+﻿namespace Nameless.Web.Identity.Infrastructure;
 
 /// <summary>
 ///     Exception thrown when the JSON Web Token (JWT) secret is not configured.
@@ -9,7 +9,10 @@ public class MissingSecretConfigurationException : Exception {
     ///     <see cref="MissingSecretConfigurationException"/> class.
     /// </summary>
     public MissingSecretConfigurationException()
-        : this("The JSON Web Token (JWT) secret is not configured. Please ensure it is specified in the application settings.") { }
+        : this(
+            message:
+            "The JSON Web Token (JWT) secret is not configured. Please ensure it is specified in the application settings.") {
+    }
 
     /// <summary>
     ///     Initializes a new instance
@@ -19,7 +22,8 @@ public class MissingSecretConfigurationException : Exception {
     ///     The error message that explains the reason for the exception.
     /// </param>
     public MissingSecretConfigurationException(string message)
-        : base(message) { }
+        : base(message) {
+    }
 
     /// <summary>
     ///     Initializes a new instance
@@ -34,5 +38,6 @@ public class MissingSecretConfigurationException : Exception {
     ///     specified.
     /// </param>
     public MissingSecretConfigurationException(string message, Exception inner)
-        : base(message, inner) { }
+        : base(message, inner) {
+    }
 }

@@ -4,32 +4,44 @@
 ///     <see cref="DateTime" /> extension methods.
 /// </summary>
 public static class DateTimeExtensions {
-    private static readonly DateTime UnixStartDate = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-    /// <summary>
-    ///     Retrieves the difference, in years, between the <paramref name="self" />
-    ///     and the <paramref name="date" />. Note: Gregorian calendar.
-    /// </summary>
     /// <param name="self">The current <see cref="DateTime" />.</param>
-    /// <param name="date">The other <see cref="DateTime" />.</param>
-    /// <returns>An integer representation of the difference.</returns>
-    public static int GetYears(this DateTime self, DateTime date) {
-        var zero = new DateTime(1, 1, 1); // Gregorian calendar.
-        var span = self > date ? self - date : date - self;
+    extension(DateTime self) {
+        /// <summary>
+        ///     Retrieves the difference, in years, between the <paramref name="self" />
+        ///     and the <paramref name="date" />. Note: Gregorian calendar.
+        /// </summary>
+        /// <param name="date">The other <see cref="DateTime" />.</param>
+        /// <returns>An integer representation of the difference.</returns>
+        public int GetYears(DateTime date) {
+            var zero = new DateTime(year: 1, month: 1, day: 1); // Gregorian calendar.
+            var span = self > date ? self - date : date - self;
 
-        // Because we start at year 1 for the Gregorian
-        // calendar, we must subtract a year here.
-        var result = (zero + span).Year - 1;
+            // Because we start at year 1 for the Gregorian
+            // calendar, we must subtract a year here.
+            var result = (zero + span).Year - 1;
 
-        return result;
-    }
+            return result;
+        }
 
-    /// <summary>
-    ///     Converts a date into a Unix epoch date.
-    /// </summary>
-    /// <param name="self">The source <see cref="DateTime" /></param>
-    /// <returns>A <see cref="long" /> representing the Unix epoch date.</returns>
-    public static long ToUnixEpochDate(this DateTime self) {
-        return (long)Math.Round((self.ToUniversalTime() - UnixStartDate).TotalSeconds);
+        /// <summary>
+        ///     Retrieves the <see cref="DateTime"/> as Unix (Epoch) time
+        ///     in milliseconds.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="long" /> representing the Unix (Epoch) time
+        ///     in milliseconds.
+        /// </returns>
+        /// <remarks>
+        ///     If the <see cref="DateTime.Kind" /> is not
+        ///     <see cref="DateTimeKind.Utc" />, the method converts it to
+        ///     UTC before calculating the Unix time.
+        /// </remarks>
+        public long ToUnixTimeMilliseconds() {
+            var dateTime = self.Kind != DateTimeKind.Utc
+                ? self.ToUniversalTime()
+                : self;
+
+            return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+        }
     }
 }

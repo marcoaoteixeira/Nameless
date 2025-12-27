@@ -9,5 +9,5 @@ internal enum Category {
 
     RunOnDevMachine,
 
-    UnitTest,
+    UnitTest
 }

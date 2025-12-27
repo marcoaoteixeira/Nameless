@@ -10,9 +10,11 @@ public class MessageStreamHandler : IStreamHandler<MessageStream, string> {
         _printService = printService;
     }
 
-    public async IAsyncEnumerable<string> HandleAsync(MessageStream request, [EnumeratorCancellation] CancellationToken cancellationToken) {
+    public async IAsyncEnumerable<string> HandleAsync(MessageStream request,
+        [EnumeratorCancellation] CancellationToken cancellationToken) {
         foreach (var message in request.Messages) {
-            _printService.Print($"StreamHandler: {GetType().Name} | Request: {request.GetType().Name} | Message: {message}");
+            _printService.Print(
+                $"StreamHandler: {GetType().Name} | Request: {request.GetType().Name} | Message: {message}");
 
             yield return message;
         }

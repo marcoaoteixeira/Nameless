@@ -15,7 +15,7 @@ public abstract record SettingsBase {
                                   .Where(property => !typeof(SettingsBase).IsAssignableFrom(property.PropertyType));
 
         foreach (var property in properties) {
-            var propDescription = property.GetDescription(false);
+            var propDescription = property.GetDescription(fallbackToName: false);
             if (string.IsNullOrWhiteSpace(propDescription)) { continue; }
 
             var propValue = property.GetValue(this);

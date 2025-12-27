@@ -22,15 +22,15 @@ public sealed class UserClaimEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(entity => entity.ClaimType)
                .HasColumnName(UserClaims.Fields.CLAIM_TYPE)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.ClaimValue)
                .HasColumnName(UserClaims.Fields.CLAIM_VALUE)
-               .HasMaxLength(4096);
+               .HasMaxLength(maxLength: 4096);
 
         builder.Property(entity => entity.UserId)
                .HasColumnName(UserClaims.Fields.USER_ID);
 
-        builder.HasIndex(entity => entity.UserId, name: UserClaims.Indexes.USER_ID);
+        builder.HasIndex(entity => entity.UserId, UserClaims.Indexes.USER_ID);
     }
 }

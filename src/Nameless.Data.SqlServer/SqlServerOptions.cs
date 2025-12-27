@@ -9,7 +9,7 @@ public sealed class SqlServerOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
     internal bool UseCredentials
         => !string.IsNullOrWhiteSpace(Username) &&
            !string.IsNullOrWhiteSpace(Password) &&

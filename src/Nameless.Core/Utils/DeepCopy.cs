@@ -23,8 +23,6 @@ public static class DeepCopy {
     ///     Can't clone abstract, interface or pointer.
     /// </exception>
     public static object Clone(object value) {
-        Guard.Against.Null(value);
-
         var type = value.GetType();
 
         if (value is Type) {
@@ -38,7 +36,7 @@ public static class DeepCopy {
         var json = JsonSerializer.Serialize(value);
         var result = JsonSerializer.Deserialize(json, type);
 
-        return result ?? throw new InvalidOperationException("Unable to clone object.");
+        return result ?? throw new InvalidOperationException(message: "Unable to clone object.");
     }
 
     /// <summary>

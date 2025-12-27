@@ -15,6 +15,7 @@ public interface IConsumerFactory {
     ///     A <see cref="Task{TResult}"/> representing the asynchronous operation.
     ///     The result of the task is a new <see cref="IConsumer{TMessage}"/> instance.
     /// </returns>
-    Task<IConsumer<TMessage>> CreateAsync<TMessage>(string topic, Parameters parameters, CancellationToken cancellationToken)
+    Task<IConsumer<TMessage>> CreateAsync<TMessage>(string topic, Parameters parameters,
+        CancellationToken cancellationToken)
         where TMessage : notnull;
 }

@@ -17,15 +17,17 @@ public class AssemblyTypeConverter : TypeConverter {
     }
 
     /// <inheritdoc />
-    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType) {
+    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value,
+        Type destinationType) {
         if (value is not string assembly) {
             return null;
         }
 
         try { return Assembly.Load(assembly); }
         catch (Exception ex) {
-            context?.GetLogger<AssemblyTypeConverter>()
-                   .LogError(ex, "Couldn't load assembly '{Assembly}'", assembly);
+            context?
+                .GetLogger<AssemblyTypeConverter>()
+                .LogError(ex, message: "Couldn't load assembly '{Assembly}'", assembly);
         }
 
         return null;

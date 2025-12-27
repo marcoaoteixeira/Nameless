@@ -1,6 +1,5 @@
 ﻿using Nameless.Web.Endpoints;
 using Nameless.Web.Endpoints.Definitions;
-using Nameless.Web.Endpoints.Interception;
 
 namespace Nameless.Microservices.App.Endpoints.v1.HelloWorld;
 
@@ -23,7 +22,6 @@ public class HelloWorldEndpoint : IEndpoint {
                                         .Produces<HelloWorldOutput>()
                                         .Produces(statusCode: StatusCodes.Status429TooManyRequests)
                                         .ProducesValidationProblem()
-                                        .WithInterceptor<ValidateEndpointInterceptor>()
                                         .Build();
     }
 }

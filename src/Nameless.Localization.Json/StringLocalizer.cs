@@ -44,17 +44,17 @@ public sealed class StringLocalizer : IStringLocalizer {
     ///     <paramref name="location"/> is empty or white spaces.
     /// </exception>
     public StringLocalizer(string baseName,
-                           string location,
-                           CultureInfo culture,
-                           Resource resource,
-                           Func<string, string, CultureInfo, IStringLocalizer> factory,
-                           ILogger<StringLocalizer> logger) {
-        _baseName = Guard.Against.NullOrWhiteSpace(baseName);
-        _location = Guard.Against.NullOrWhiteSpace(location);
-        _culture = Guard.Against.Null(culture);
-        _resource = Guard.Against.Null(resource);
-        _factory = Guard.Against.Null(factory);
-        _logger = Guard.Against.Null(logger);
+        string location,
+        CultureInfo culture,
+        Resource resource,
+        Func<string, string, CultureInfo, IStringLocalizer> factory,
+        ILogger<StringLocalizer> logger) {
+        _baseName = baseName;
+        _location = location;
+        _culture = culture;
+        _resource = resource;
+        _factory = factory;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -68,7 +68,7 @@ public sealed class StringLocalizer : IStringLocalizer {
     /// <inheritdoc />
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) {
         foreach (var entry in _resource.Messages) {
-            yield return new LocalizedString(entry.Id, entry.Text, false, Location);
+            yield return new LocalizedString(entry.Id, entry.Text, resourceNotFound: false, Location);
         }
 
         if (!includeParentCultures) {
@@ -76,11 +76,11 @@ public sealed class StringLocalizer : IStringLocalizer {
         }
 
         var cultures = _culture.GetParents()
-                               .Skip(1) // Skips the first one since we get all messages already (above)
+                               .Skip(count: 1) // Skips the first one since we get all messages already (above)
                                .Append(CultureInfo.InvariantCulture); // Appends the invariant culture as last resort.
         foreach (var culture in cultures) {
             var localizer = _factory(_baseName, _location, culture);
-            foreach (var localeString in localizer.GetAllStrings(false)) {
+            foreach (var localeString in localizer.GetAllStrings(includeParentCultures: false)) {
                 yield return localeString;
             }
         }
@@ -96,6 +96,7 @@ public sealed class StringLocalizer : IStringLocalizer {
         return new LocalizedString(message.GetId(args),
             message.GetText(args),
             !found,
-            Location);
+            Location
+        );
     }
 }

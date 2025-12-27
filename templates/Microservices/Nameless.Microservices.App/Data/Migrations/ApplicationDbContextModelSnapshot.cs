@@ -15,11 +15,11 @@ namespace Nameless.Microservices.App.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("Nameless.Microservices.App.Domains.Entities.ToDo", b =>
+            modelBuilder.Entity("Nameless.Microservices.App.Entities.ToDoItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
@@ -38,7 +38,7 @@ namespace Nameless.Microservices.App.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("summary");
 
-                    b.HasKey("Id")
+                    b.HasKey("ID")
                         .HasName("pk_todos");
 
                     b.ToTable("todos", (string)null);

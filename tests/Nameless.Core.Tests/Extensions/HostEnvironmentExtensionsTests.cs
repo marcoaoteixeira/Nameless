@@ -9,8 +9,8 @@ public class HostEnvironmentExtensionsTests {
         // arrange
         var hostEnvironmentMock = new Mock<IHostEnvironment>();
         hostEnvironmentMock
-           .Setup(_ => _.EnvironmentName)
-           .Returns(HostEnvironmentExtensions.DeveloperMachine);
+            .Setup(_ => _.EnvironmentName)
+            .Returns(HostEnvironmentExtensions.DeveloperMachine);
 
         // act
         var actual = hostEnvironmentMock.Object.IsDeveloperMachine();
@@ -24,8 +24,8 @@ public class HostEnvironmentExtensionsTests {
         // arrange
         var hostEnvironmentMock = new Mock<IHostEnvironment>();
         hostEnvironmentMock
-           .Setup(_ => _.EnvironmentName)
-           .Returns("Production");
+            .Setup(_ => _.EnvironmentName)
+            .Returns(value: "Production");
 
         // act
         var actual = hostEnvironmentMock.Object.IsDeveloperMachine();
@@ -37,7 +37,7 @@ public class HostEnvironmentExtensionsTests {
     [Fact]
     public void IsRunningOnContainer_Should_Returns_True_If_Containerized() {
         // arrange
-        Environment.SetEnvironmentVariable(EnvironmentTokens.DOTNET_RUNNING_IN_CONTAINER, "true");
+        Environment.SetEnvironmentVariable(EnvironmentTokens.DOTNET_RUNNING_IN_CONTAINER, value: "true");
 
         // act
         var actual = Mock.Of<IHostEnvironment>().IsRunningOnContainer();
@@ -49,7 +49,7 @@ public class HostEnvironmentExtensionsTests {
     [Fact]
     public void IsRunningOnContainer_Should_Returns_False_If_Containerized() {
         // arrange
-        Environment.SetEnvironmentVariable(EnvironmentTokens.DOTNET_RUNNING_IN_CONTAINER, null);
+        Environment.SetEnvironmentVariable(EnvironmentTokens.DOTNET_RUNNING_IN_CONTAINER, value: null);
 
         // act
         var actual = Mock.Of<IHostEnvironment>().IsRunningOnContainer();

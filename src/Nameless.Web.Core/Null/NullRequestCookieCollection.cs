@@ -39,7 +39,7 @@ public sealed class NullRequestCookieCollection : IRequestCookieCollection {
     }
 
     /// <inheritdoc />
-    public bool TryGetValue(string key, [NotNullWhen(true)] out string? value) {
+    public bool TryGetValue(string key, [NotNullWhen(returnValue: true)] out string? value) {
         value = null;
 
         return false;

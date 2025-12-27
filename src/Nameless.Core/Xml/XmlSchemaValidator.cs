@@ -6,13 +6,10 @@ namespace Nameless.Xml;
 public sealed class XmlSchemaValidator : IXmlSchemaValidator {
     /// <inheritdoc />
     public bool Validate(Stream xml, Stream schema) {
-        Guard.Against.Null(xml);
-        Guard.Against.Null(schema);
-
         var success = false;
         var settings = new XmlReaderSettings();
         var xmlSchema = XmlSchema.Read(schema, validationEventHandler: null)
-                     ?? throw new InvalidOperationException("XmlSchema is null.");
+                        ?? throw new InvalidOperationException(message: "XmlSchema is null.");
 
         settings.Schemas.Add(xmlSchema);
         settings.ValidationType = ValidationType.Schema;

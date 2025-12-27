@@ -1,37 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nameless.Microservices.App.Domains.Entities;
+using Nameless.Microservices.App.Entities;
 
 namespace Nameless.Microservices.App.Data.Configurations;
 
 /// <summary>
 ///     Entity type configuration for the To-Do entity.
 /// </summary>
-public class ToDoEntityTypeConfiguration : IEntityTypeConfiguration<ToDo> {
+public class ToDoItemEntityTypeConfiguration : IEntityTypeConfiguration<ToDoItem> {
     /// <inheritdoc />
-    public void Configure(EntityTypeBuilder<ToDo> builder) {
+    public void Configure(EntityTypeBuilder<ToDoItem> builder) {
         builder.ToTable("todos");
 
         builder
-            .Property(entity => entity.Id)
-            .HasColumnName(nameof(ToDo.Id).ToSnakeCase())
+            .Property(entity => entity.ID)
+            .HasColumnName(nameof(ToDoItem.ID).ToSnakeCase())
             .ValueGeneratedOnAdd();
 
         builder
-            .HasKey(entity => entity.Id)
+            .HasKey(entity => entity.ID)
             .HasName("pk_todos");
 
         builder
             .Property(entity => entity.Summary)
-            .HasColumnName(nameof(ToDo.Summary).ToSnakeCase())
+            .HasColumnName(nameof(ToDoItem.Summary).ToSnakeCase())
             .HasMaxLength(4096);
 
         builder
             .Property(entity => entity.DueDate)
-            .HasColumnName(nameof(ToDo.DueDate).ToSnakeCase());
+            .HasColumnName(nameof(ToDoItem.DueDate).ToSnakeCase());
 
         builder
             .Property(entity => entity.ConclusionDate)
-            .HasColumnName(nameof(ToDo.ConclusionDate).ToSnakeCase());
+            .HasColumnName(nameof(ToDoItem.ConclusionDate).ToSnakeCase());
     }
 }

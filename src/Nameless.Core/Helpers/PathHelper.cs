@@ -19,9 +19,7 @@ public static class PathHelper {
     ///     </para>
     /// </remarks>
     public static string Normalize(string path) {
-        if (string.IsNullOrWhiteSpace(path)) { return string.Empty; }
-
-        return path.Replace(Separators.FORWARD_SLASH[0], Path.DirectorySeparatorChar)
-                   .Replace(Separators.BACKWARD_SLASH[0], Path.DirectorySeparatorChar);
+        return path.Replace(Separators.FORWARD_SLASH[index: 0], Path.DirectorySeparatorChar)
+                   .Replace(Separators.BACKWARD_SLASH[index: 0], Path.DirectorySeparatorChar);
     }
 }

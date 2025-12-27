@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.AspNetCore.Http;
 using Nameless.Web.Identity.Domains.UserRefreshTokens;
 using Nameless.Web.Identity.Entities;
 using Nameless.Web.Identity.Mockers;
@@ -20,7 +20,6 @@ public class CreateRefreshTokenRequestHandlerTests {
         IUserRefreshTokenManager userRefreshTokenManager = null,
         IOptions<RefreshTokenOptions> options = null,
         ILogger<CreateRefreshTokenRequestHandler> logger = null) {
-
         return new CreateRefreshTokenRequestHandler(
             httpContextAccessor ?? new HttpContextAccessorMocker().Build(),
             timeProvider ?? TimeProvider.System,
@@ -40,9 +39,7 @@ public class CreateRefreshTokenRequestHandlerTests {
         var userStore = new UserStoreMocker().WithFindByIdAsync(user)
                                              .Build();
         var userManager = IdentityHelpers.CreateUserManager(userStore);
-        var userRefreshToken = new UserRefreshToken {
-            Token = ExpectedToken
-        };
+        var userRefreshToken = new UserRefreshToken { Token = ExpectedToken };
         var userRefreshTokenManager = new UserRefreshTokenManagerMocker().WithCreateAsync(userRefreshToken)
                                                                          .Build();
 

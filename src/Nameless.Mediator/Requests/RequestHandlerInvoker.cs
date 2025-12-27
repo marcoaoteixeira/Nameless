@@ -33,7 +33,8 @@ public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
         static RequestHandlerWrapper CreateRequestHandlerWrapper(Type requestType) {
             var wrapperType = typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType)
-                          ?? throw new InvalidOperationException($"Couldn't create request handler wrapper for request '{requestType.GetPrettyName()}'.");
+                          ?? throw new InvalidOperationException(
+                              $"Couldn't create request handler wrapper for request '{requestType.GetPrettyName()}'.");
 
             return (RequestHandlerWrapper)wrapper;
         }

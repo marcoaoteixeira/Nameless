@@ -25,7 +25,8 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="request"/> is <see langword="null"/>.
     /// </exception>
-    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request, CancellationToken cancellationToken) {
+    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
+        CancellationToken cancellationToken) {
         Guard.Against.Null(request);
 
         var handler = _cache.GetOrAdd(request.GetType(), CreateStreamHandlerWrapper);
@@ -35,7 +36,8 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
         static StreamHandlerWrapper CreateStreamHandlerWrapper(Type requestType) {
             var wrapperType = typeof(StreamHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
             var wrapper = Activator.CreateInstance(wrapperType)
-                       ?? throw new InvalidOperationException($"Couldn't create stream handler wrapper for stream '{requestType.GetPrettyName()}'.");
+                          ?? throw new InvalidOperationException(
+                              $"Couldn't create stream handler wrapper for stream '{requestType.GetPrettyName()}'.");
             return (StreamHandlerWrapper)wrapper;
         }
     }

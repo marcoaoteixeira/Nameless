@@ -17,79 +17,73 @@ namespace Nameless.Web;
 ///     Host application builder extension methods.
 /// </summary>
 public static class HostApplicationBuilderExtensions {
-    public static THostApplicationBuilder RegisterAntiforgery<THostApplicationBuilder>(this THostApplicationBuilder self, Action<AntiforgeryOptions>? configure = null)
+    extension<THostApplicationBuilder>(THostApplicationBuilder self)
         where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddAntiforgery(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterAntiforgery(Action<AntiforgeryOptions>? configure = null) {
+            self.Services
+                .AddAntiforgery(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterOutputCache<THostApplicationBuilder>(this THostApplicationBuilder self, Action<OutputCacheOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddOutputCache(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterOutputCache(Action<OutputCacheOptions>? configure = null) {
+            self.Services
+                .AddOutputCache(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterAuthorization<THostApplicationBuilder>(this THostApplicationBuilder self, Action<AuthorizationOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddAuthorization(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterAuthorization(Action<AuthorizationOptions>? configure = null) {
+            self.Services
+                .AddAuthorization(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterAuthentication<THostApplicationBuilder>(this THostApplicationBuilder self, Action<AuthenticationOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddAuthentication(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterAuthentication(Action<AuthenticationOptions>? configure = null) {
+            self.Services
+                .AddAuthentication(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterJwtBearerAuthentication<THostApplicationBuilder>(this THostApplicationBuilder self, Action<JwtBearerOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddAuthentication(opts => {
-                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterJwtBearerAuthentication(Action<JwtBearerOptions>? configure = null) {
+            self.Services
+                .AddAuthentication(opts => {
+                    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterRateLimiter<THostApplicationBuilder>(this THostApplicationBuilder self, Action<RateLimiterOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddRateLimiter(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterRateLimiter(Action<RateLimiterOptions>? configure = null) {
+            self.Services
+                .AddRateLimiter(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterCors<THostApplicationBuilder>(this THostApplicationBuilder self, Action<CorsOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddCors(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterCors(Action<CorsOptions>? configure = null) {
+            self.Services
+                .AddCors(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterDataProtection<THostApplicationBuilder>(this THostApplicationBuilder self, Action<DataProtectionOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddDataProtection(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterDataProtection(Action<DataProtectionOptions>? configure = null) {
+            self.Services
+                .AddDataProtection(configure ?? (_ => { }));
 
-        return self;
-    }
+            return self;
+        }
 
-    public static THostApplicationBuilder RegisterRequestTimeouts<THostApplicationBuilder>(this THostApplicationBuilder self, Action<RequestTimeoutOptions>? configure = null)
-        where THostApplicationBuilder : IHostApplicationBuilder {
-        self.Services
-            .AddRequestTimeouts(configure ?? (_ => { }));
+        public THostApplicationBuilder RegisterRequestTimeouts(Action<RequestTimeoutOptions>? configure = null) {
+            self.Services
+                .AddRequestTimeouts(configure ?? (_ => { }));
 
-        return self;
+            return self;
+        }
     }
 }

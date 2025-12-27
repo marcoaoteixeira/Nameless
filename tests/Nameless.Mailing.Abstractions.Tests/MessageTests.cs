@@ -6,26 +6,28 @@ namespace Nameless.Mailing;
 public class MessageTests {
     [Theory]
     [ClassData(typeof(StringNullEmptyWhiteSpaceExceptionInlineData))]
-    public void WhenConstructingMessage_WhenSubjectIsNullEmptyOrWhitespaces_ThenThrowsException(string subject, Type exceptionType) {
-        Assert.Throws(exceptionType, () => new Message(subject, ["Address"], ["Address"], "Content"));
+    public void WhenConstructingMessage_WhenSubjectIsNullEmptyOrWhitespaces_ThenThrowsException(string subject,
+        Type exceptionType) {
+        Assert.Throws(exceptionType, () => new Message(subject, ["Address"], ["Address"], content: "Content"));
     }
 
     [Theory]
     [ClassData(typeof(ArrayNullEmptyExceptionInlineData<string>))]
     public void WhenConstructingMessage_WhenFromIsNullOrEmpty_ThenThrowsException(string[] from, Type exceptionType) {
-        Assert.Throws(exceptionType, () => new Message("Subject", from, ["Address"], "Content"));
+        Assert.Throws(exceptionType, () => new Message(subject: "Subject", from, ["Address"], content: "Content"));
     }
 
     [Theory]
     [ClassData(typeof(ArrayNullEmptyExceptionInlineData<string>))]
     public void WhenConstructingMessage_WhenToIsNullOrEmpty_ThenThrowsException(string[] to, Type exceptionType) {
-        Assert.Throws(exceptionType, () => new Message("Subject", ["Address"], to, "Content"));
+        Assert.Throws(exceptionType, () => new Message(subject: "Subject", ["Address"], to, content: "Content"));
     }
 
     [Theory]
     [ClassData(typeof(StringNullEmptyWhiteSpaceExceptionInlineData))]
-    public void WhenConstructingMessage_WhenContentIsNullEmptyOrWhitespaces_ThenThrowsException(string content, Type exceptionType) {
-        Assert.Throws(exceptionType, () => new Message("Subject", ["Address"], ["Address"], content));
+    public void WhenConstructingMessage_WhenContentIsNullEmptyOrWhitespaces_ThenThrowsException(string content,
+        Type exceptionType) {
+        Assert.Throws(exceptionType, () => new Message(subject: "Subject", ["Address"], ["Address"], content));
     }
 
     [Fact]

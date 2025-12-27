@@ -4,8 +4,11 @@ namespace Nameless;
 
 public class EnumExtensionsTests {
     public enum Status {
-        [Description("Okey-Dokey")] Ok,
-        [Description("Oh No")] Error,
+        [Description(description: "Okey-Dokey")]
+        Ok,
+
+        [Description(description: "Oh No")]
+        Error,
         Fatal
     }
 

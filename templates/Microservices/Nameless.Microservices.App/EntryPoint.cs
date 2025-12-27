@@ -1,4 +1,5 @@
 using System.Reflection;
+using Nameless.Mediator.Requests;
 using Nameless.Microservices.App.Configs;
 using Nameless.Web.Correlation;
 using Nameless.Web.Endpoints;
@@ -43,6 +44,8 @@ public class EntryPoint {
             .ConfigureRequestTimeout()
             .ConfigureOutputCache()
             .ConfigureCors()
+            .ConfigureServiceDiscovery()
+            .ConfigureOpenTelemetry()
             .ConfigureHealthCheck();
 
         var app = builder.Build();
@@ -69,6 +72,8 @@ public class EntryPoint {
         app.UseAuthorization();
         app.UseRequestTimeouts();
         app.UseAntiforgery();
+
+        // Endpoints
         app.UseMinimalEndpoints();
         app.UseHealthCheck();
 

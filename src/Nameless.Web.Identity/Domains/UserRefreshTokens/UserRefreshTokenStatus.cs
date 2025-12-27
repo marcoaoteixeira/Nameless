@@ -10,5 +10,5 @@ public enum UserRefreshTokenStatus {
 
     Inactive = Revoked | Expired,
 
-    Unknown = 8,
+    Unknown = 8
 }

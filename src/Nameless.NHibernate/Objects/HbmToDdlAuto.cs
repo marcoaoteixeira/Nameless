@@ -12,13 +12,18 @@ namespace Nameless.NHibernate.Objects;
 /// the schema is created, updated, validated, or left unchanged.
 /// </remarks>
 public enum HbmToDdlAuto {
-    [Description("none")] None,
+    [Description(description: "none")]
+    None,
 
-    [Description("create")] Create,
+    [Description(description: "create")]
+    Create,
 
-    [Description("create-drop")] CreateDrop,
+    [Description(description: "create-drop")]
+    CreateDrop,
 
-    [Description("validate")] Validate,
+    [Description(description: "validate")]
+    Validate,
 
-    [Description("update")] Update
+    [Description(description: "update")]
+    Update
 }

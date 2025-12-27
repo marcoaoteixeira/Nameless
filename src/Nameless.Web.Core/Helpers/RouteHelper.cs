@@ -23,7 +23,7 @@ public static class RouteHelper {
 
         foreach (var match in matches.OfType<Match>()) {
             // Strip constraints, e.g., {id:int} -> id
-            yield return match.Groups[1].Value.Split(':')[0];
+            yield return match.Groups[groupnum: 1].Value.Split(separator: ':')[0];
         }
     }
 }

@@ -6,9 +6,11 @@ using Nameless.Web.Identity.Entities;
 
 namespace Nameless.Web.Identity.Mockers;
 
-public class UserStoreMocker : Mocker<UserStoreBase<User, Role, Guid, UserClaim, UserRole, UserLogin, UserToken, RoleClaim>> {
+public class
+    UserStoreMocker : Mocker<UserStoreBase<User, Role, Guid, UserClaim, UserRole, UserLogin, UserToken, RoleClaim>> {
     public UserStoreMocker()
-        : base(args: [new IdentityErrorDescriber()]) { }
+        : base(args: [new IdentityErrorDescriber()]) {
+    }
 
     public UserStoreMocker WithFindByIdAsync(User returnValue) {
         MockInstance

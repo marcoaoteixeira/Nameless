@@ -81,7 +81,7 @@ public sealed class NullDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
     }
 
     /// <inheritdoc />
-    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value) {
+    public bool TryGetValue(TKey key, [MaybeNullWhen(returnValue: false)] out TValue value) {
         value = default;
 
         return false;

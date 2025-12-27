@@ -9,7 +9,7 @@ public sealed class CertificateSettings {
     /// <summary>
     ///     Whether the certificate settings are available for use.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(CertPath), nameof(CertPassword))]
+    [MemberNotNullWhen(returnValue: true, nameof(CertPath), nameof(CertPassword))]
     internal bool IsAvailable
         => !string.IsNullOrWhiteSpace(CertPath) &&
            !string.IsNullOrWhiteSpace(CertPassword);

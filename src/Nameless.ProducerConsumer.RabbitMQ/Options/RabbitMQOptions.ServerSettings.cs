@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
-[DebuggerDisplay("{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 public sealed class ServerSettings {
     private string DebuggerDisplayValue
         => UseCredentials
@@ -13,7 +13,7 @@ public sealed class ServerSettings {
     /// <summary>
     ///     Whether to use credentials for the RabbitMQ connection.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(Username), nameof(Password))]
+    [MemberNotNullWhen(returnValue: true, nameof(Username), nameof(Password))]
     internal bool UseCredentials
         => !string.IsNullOrWhiteSpace(Username) &&
            !string.IsNullOrWhiteSpace(Password);

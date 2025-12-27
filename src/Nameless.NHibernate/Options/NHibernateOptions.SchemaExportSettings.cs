@@ -3,8 +3,6 @@
 public sealed record SchemaExportSettings {
     public const string DEFAULT_OUTPUT_DIRECTORY_NAME = "NHibernate";
 
-    private string? _outputDirectoryName;
-
     public bool ExecuteSchemaExport { get; set; } = true;
 
     public bool ConsoleOutput { get; set; }
@@ -16,7 +14,7 @@ public sealed record SchemaExportSettings {
     public bool JustDrop { get; set; }
 
     public string OutputDirectoryName {
-        get => _outputDirectoryName.WithFallback(DEFAULT_OUTPUT_DIRECTORY_NAME);
-        set => _outputDirectoryName = value;
+        get => field.WithFallback(DEFAULT_OUTPUT_DIRECTORY_NAME);
+        set;
     }
 }

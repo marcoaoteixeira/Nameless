@@ -8,6 +8,6 @@ public class UnavailablePrintService : IPrintService {
     }
 
     public void Print(string value) {
-        _output.WriteLine("Print service unavailable.");
+        _output.WriteLine(value: "Print service unavailable.");
     }
 }

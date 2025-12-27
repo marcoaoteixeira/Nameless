@@ -1,6 +1,7 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Moq;
 using Nameless.Autofac.Mockers;
+using Xunit;
 
 namespace Nameless.Autofac;
 
@@ -10,11 +11,11 @@ public class ServiceProviderExtensionsTests {
         // arrange
         var cts = new CancellationTokenSource();
         var hostApplicationLifetime = new HostApplicationLifetimeMocker()
-                                     .WithApplicationStopped(cts.Token)
-                                     .Build();
+                                      .WithApplicationStopped(cts.Token)
+                                      .Build();
 
         var lifetimeScopeMocker = new LifetimeScopeMocker()
-           .WithResolve(hostApplicationLifetime);
+            .WithResolve(hostApplicationLifetime);
 
         var serviceProvider = new AutofacServiceProvider(lifetimeScopeMocker.Build());
 

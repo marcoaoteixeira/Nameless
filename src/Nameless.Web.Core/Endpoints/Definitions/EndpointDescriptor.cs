@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Nameless.Web.Endpoints.Definitions.Metadata;
+using Nameless.Web.OpenApi;
 
 namespace Nameless.Web.Endpoints.Definitions;
 
 /// <summary>
 ///     Default implementation of <see cref="IEndpointDescriptor" />.
 /// </summary>
-public class EndpointDescriptor : IEndpointDescriptor {
+public sealed class EndpointDescriptor : IEndpointDescriptor {
     private readonly Dictionary<Type, AcceptMetadata> _accepts = [];
     private readonly Dictionary<int, ProduceMetadata> _produces = [];
     private readonly Dictionary<Type, Action<IEndpointFilterBuilder>> _filters = [];
@@ -43,7 +44,7 @@ public class EndpointDescriptor : IEndpointDescriptor {
     public string[] Tags { get; set; } = [];
 
     /// <inheritdoc />
-    public VersionMetadata Version { get; set; } = new(1, Stability.Stable);
+    public VersionMetadata Version { get; set; } = new(Number: 1, Stability.Stable);
 
     /// <inheritdoc />
     public string? RequestTimeoutPolicy { get; set; }
@@ -89,8 +90,6 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     Type of the endpoint.
     /// </param>
     public EndpointDescriptor(Type endpointType) {
-        Guard.Against.NotAssignableFrom<IEndpoint>(endpointType);
-
         EndpointType = endpointType;
     }
 
@@ -105,8 +104,6 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     to differentiate between different accepts.
     /// </remarks>
     public void AddAccept(AcceptMetadata metadata) {
-        Guard.Against.Null(metadata);
-
         _accepts[metadata.RequestType] = metadata;
     }
 
@@ -121,8 +118,6 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     to differentiate between different responses.
     /// </remarks>
     public void AddProduce(ProduceMetadata metadata) {
-        Guard.Against.Null(metadata);
-
         _produces[metadata.StatusCode] = metadata;
     }
 
@@ -150,6 +145,6 @@ public class EndpointDescriptor : IEndpointDescriptor {
     ///     The metadata object.
     /// </param>
     public void AddAdditionalMetadata(object metadata) {
-        _additionalMetadata.Add(Guard.Against.Null(metadata));
+        _additionalMetadata.Add(metadata);
     }
 }

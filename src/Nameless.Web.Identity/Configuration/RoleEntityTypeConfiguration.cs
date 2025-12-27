@@ -22,17 +22,17 @@ public sealed class RoleEntityTypeConfiguration : IEntityTypeConfiguration<Role>
 
         builder.Property(entity => entity.Name)
                .HasColumnName(Roles.Fields.NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property(entity => entity.NormalizedName)
                .HasColumnName(Roles.Fields.NORMALIZED_NAME)
-               .HasMaxLength(256);
+               .HasMaxLength(maxLength: 256);
 
         builder.Property<string>(CONCURRENCY_STAMP)
                .HasMaxLength(int.MaxValue)
                .IsConcurrencyToken();
 
-        builder.HasIndex(entity => entity.NormalizedName, name: Roles.Indexes.NORMALIZED_NAME)
+        builder.HasIndex(entity => entity.NormalizedName, Roles.Indexes.NORMALIZED_NAME)
                .IsUnique()
                .HasFilter(Roles.Indexes.Filters.NORMALIZED_NAME_NOT_NULL);
 

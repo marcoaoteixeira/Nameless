@@ -6,19 +6,23 @@ namespace Nameless;
 ///     <see cref="CultureInfo" /> extension methods.
 /// </summary>
 public static class CultureInfoExtensions {
-    /// <summary>
-    ///     Retrieves the culture tree.
-    /// </summary>
-    /// <param name="self">The current culture info.</param>
-    /// <returns>An instance of <see cref="IEnumerable{CultureInfo}" /> with all lower cultures.</returns>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="self" /> is <see langword="null"/>.
-    /// </exception>
-    public static IEnumerable<CultureInfo> GetParents(this CultureInfo self) {
-        var culture = new CultureInfo(self.Name);
-        while (!culture.Equals(culture.Parent)) {
-            yield return culture;
-            culture = culture.Parent;
+    /// <param name="self">
+    ///     The current culture info.
+    /// </param>
+    extension(CultureInfo self) {
+        /// <summary>
+        ///     Retrieves the culture tree.
+        /// </summary>
+        /// <returns>
+        ///     An instance of <see cref="IEnumerable{CultureInfo}" /> with all
+        ///     lower cultures.
+        /// </returns>
+        public IEnumerable<CultureInfo> GetParents() {
+            var culture = new CultureInfo(self.Name);
+            while (!culture.Equals(culture.Parent)) {
+                yield return culture;
+                culture = culture.Parent;
+            }
         }
     }
 }

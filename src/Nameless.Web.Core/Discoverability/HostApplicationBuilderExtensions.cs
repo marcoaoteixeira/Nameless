@@ -21,7 +21,8 @@ public static class HostApplicationBuilderExtensions {
     ///     The current <typeparamref name="THostApplicationBuilder"/>
     ///     instance so other actions can be chained.
     /// </returns>
-    public static THostApplicationBuilder RegisterDiscoverability<THostApplicationBuilder>(this THostApplicationBuilder self, Action<DiscoverabilityOptions>? configure = null)
+    public static THostApplicationBuilder RegisterDiscoverability<THostApplicationBuilder>(
+        this THostApplicationBuilder self, Action<DiscoverabilityOptions>? configure = null)
         where THostApplicationBuilder : IHostApplicationBuilder {
         var innerConfigure = configure ?? (_ => { });
         var options = new DiscoverabilityOptions();

@@ -3,7 +3,7 @@ using Moq;
 using Nameless.ProducerConsumer.RabbitMQ.Mockers;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools;
-using Nameless.Testing.Tools.Mockers;
+using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
@@ -47,10 +47,7 @@ public class ChannelConfiguratorTests {
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
             opts.Exchanges = [
                 new ExchangeSettings {
-                    Name = ExchangeName,
-                    Type = ExchangeType.Direct,
-                    Durable = true,
-                    AutoDelete = false
+                    Name = ExchangeName, Type = ExchangeType.Direct, Durable = true, AutoDelete = false
                 }
             ];
 
@@ -119,7 +116,7 @@ public class ChannelConfiguratorTests {
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Queues = [new QueueSettings { Name = QueueName, }];
+            opts.Queues = [new QueueSettings { Name = QueueName }];
         });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
@@ -143,7 +140,7 @@ public class ChannelConfiguratorTests {
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Queues = [new QueueSettings { Name = QueueName, }];
+            opts.Queues = [new QueueSettings { Name = QueueName }];
         });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
         var loggerMocker = new LoggerMocker<ChannelConfigurator>().WithAnyLogLevel();
@@ -151,7 +148,8 @@ public class ChannelConfiguratorTests {
         var sut = new ChannelConfigurator(options, loggerMocker.Build());
 
         // act
-        await sut.ConfigureAsync(channelMocker.Build(), "other-test-queue", UsePrefetch, CancellationToken.None);
+        await sut.ConfigureAsync(channelMocker.Build(), queueName: "other-test-queue", UsePrefetch,
+            CancellationToken.None);
 
         // assert
         Assert.Multiple(() => {

@@ -31,7 +31,8 @@ public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     private static EventHandlerWrapper CreateEventHandlerWrapper(Type evtType) {
         var wrapperType = typeof(EventHandlerWrapperImpl<>).MakeGenericType(evtType);
         var wrapper = Activator.CreateInstance(wrapperType)
-                   ?? throw new InvalidOperationException($"Couldn't create event handler wrapper for event '{evtType.GetPrettyName()}'.");
+                      ?? throw new InvalidOperationException(
+                          $"Couldn't create event handler wrapper for event '{evtType.GetPrettyName()}'.");
 
         return (EventHandlerWrapper)wrapper;
     }

@@ -5,34 +5,36 @@ namespace Nameless.Web.Correlation;
 public static class HttpContextExtensions {
     private const string CORRELATION_ID_KEY = "X-Correlation-ID";
 
-    public static bool HasCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
-        key ??= CORRELATION_ID_KEY;
+    extension(HttpContext self) {
+        public bool HasCorrelationID(string? key = null, bool useHeader = true) {
+            key ??= CORRELATION_ID_KEY;
 
-        Guard.Against.NullOrWhiteSpace(key);
+            Guard.Against.NullOrWhiteSpace(key);
 
-        return useHeader
-            ? GetFromHttpContextHeaders(self, key) is not null
-            : GetFromHttpContextItems(self, key) is not null;
-    }
+            return useHeader
+                ? GetFromHttpContextHeaders(self, key) is not null
+                : GetFromHttpContextItems(self, key) is not null;
+        }
 
-    public static string? GetCorrelationID(this HttpContext self, string? key = null, bool useHeader = true) {
-        key ??= CORRELATION_ID_KEY;
+        public string? GetCorrelationID(string? key = null, bool useHeader = true) {
+            key ??= CORRELATION_ID_KEY;
 
-        Guard.Against.NullOrWhiteSpace(key);
+            Guard.Against.NullOrWhiteSpace(key);
 
-        return useHeader
-            ? GetFromHttpContextHeaders(self, key)
-            : GetFromHttpContextItems(self, key);
-    }
+            return useHeader
+                ? GetFromHttpContextHeaders(self, key)
+                : GetFromHttpContextItems(self, key);
+        }
 
-    public static void SetCorrelationID(this HttpContext self, string value, string? key = null, bool useHeader = true) {
-        key ??= CORRELATION_ID_KEY;
+        public void SetCorrelationID(string value, string? key = null, bool useHeader = true) {
+            key ??= CORRELATION_ID_KEY;
 
-        Guard.Against.NullOrWhiteSpace(key);
-        Guard.Against.NullOrWhiteSpace(value);
+            Guard.Against.NullOrWhiteSpace(key);
+            Guard.Against.NullOrWhiteSpace(value);
 
-        if (useHeader) { self.Response.Headers[key] = value; }
-        else { self.Items[key] = value; }
+            if (useHeader) { self.Response.Headers[key] = value; }
+            else { self.Items[key] = value; }
+        }
     }
 
     private static string? GetFromHttpContextItems(HttpContext context, string key) {

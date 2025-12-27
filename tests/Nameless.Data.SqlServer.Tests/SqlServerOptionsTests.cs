@@ -18,7 +18,7 @@ public class SqlServerOptionsTests {
             Username = Username,
             Password = Password,
             UseAttachedDb = UseAttachedDb,
-            UseIntegratedSecurity = UseIntegratedSecurity,
+            UseIntegratedSecurity = UseIntegratedSecurity
         };
 
         // assert

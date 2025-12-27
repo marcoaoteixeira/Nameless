@@ -17,7 +17,6 @@ public class CreateAccessTokenRequestHandlerTests {
         TimeProvider timeProvider = null,
         IOptions<JsonWebTokenOptions> options = null,
         ILogger<CreateAccessTokenRequestHandler> logger = null) {
-
         return new CreateAccessTokenRequestHandler(
             signInManager ?? IdentityHelpers.CreateSignInManager(),
             timeProvider ?? TimeProvider.System,
@@ -34,7 +33,7 @@ public class CreateAccessTokenRequestHandlerTests {
         var userStore = new UserStoreMocker().WithFindByIdAsync(user)
                                              .WithGetUserIdAsync(user.Id.ToString())
                                              .WithGetUserNameAsync(user.Email)
-                                             .WithGetSecurityStampAsync("SecurityStamp")
+                                             .WithGetSecurityStampAsync(returnValue: "SecurityStamp")
                                              .WithGetClaimsAsync([sub])
                                              .Build();
         var userManager = IdentityHelpers.CreateUserManager(userStore);
@@ -44,9 +43,7 @@ public class CreateAccessTokenRequestHandlerTests {
         var options = IdentityHelpers.CreateOptions<JsonWebTokenOptions>(opts => {
             opts.Secret = "312a13d5-607c-4814-8c82-9ad995a770a8";
         });
-        var request = new CreateAccessTokenRequest {
-            UserID = user.Id
-        };
+        var request = new CreateAccessTokenRequest { UserID = user.Id };
         var sut = CreateSut(signInManager, options: options);
 
         // act

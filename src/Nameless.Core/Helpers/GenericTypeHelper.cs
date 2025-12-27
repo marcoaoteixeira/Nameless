@@ -4,14 +4,32 @@ using System.Reflection;
 namespace Nameless.Helpers;
 
 /// <summary>
-/// Helper class for working with generic types.
+///     Helper class for working with generic types.
 /// </summary>
-public static class GenericTypeHelper {
+/// <remarks>
+///     The "GenericTypeHelper" provides mechanisms to infer which types can be
+///     used in an open generic type, given that the open generic imposes
+///     certain constraints. For example, imagine you have a type
+///     MyGenericList&lt;T&gt;, where T must be any type that implements the
+///     IEntry interface. In this case, the helper attempts to locate all types
+///     that implement IEntry within the provided assemblies and returns a list
+///     of those types.
+///
+///     As a side note, the helper does not process generic types used as
+///     constraints. That becomes a deep rabbit hole, and if you have a
+///     constraint that itself is a generic type, it may be worth revisiting
+///     the design.Therefore, constraints such as <c>where T : IGenericConstraint&lt;X&gt;</c>
+///     will not be processed during type discovery. However, the helper will
+///     still attempt to find all types that implement <c>IGenericConstraint&lt;X&gt;</c>
+///     within the provided assemblies.
+/// </remarks>
+public static class GenericTypeHelper
+{
     /// <summary>
     ///     Finds all types that can close a given generic definition type.
     /// </summary>
     /// <param name="genericDefinition">
-    ///     The generic definition type.
+    ///     The open generic type.
     /// </param>
     /// <param name="assemblies">
     ///     A list of assemblies to search in. If empty, uses default
@@ -19,28 +37,25 @@ public static class GenericTypeHelper {
     /// </param>
     /// <returns>
     ///     An <see cref="IEnumerable{T}"/> of <see cref="Type"/> arrays,
-    ///     where each array contains types that can close the generic
-    ///     definition type.
+    ///     where each array contains types that can close the open generic
+    ///     type.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    ///     if
-    ///         <paramref name="genericDefinition"/> or
-    ///         <paramref name="assemblies"/>
-    ///     is <see langword="null"/>.
-    /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="genericDefinition"/> is not a generic type
     ///     definition.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    ///     if the <paramref name="genericDefinition"/> has no discoverable
-    ///     constraints, making it impossible to find closing types.
+    ///     if a generic parameter has no discoverable constraints,
+    ///     making it impossible to find closing types.
     /// </exception>
-    public static IEnumerable<Type[]> GetArgumentsThatCloses(Type genericDefinition, params Assembly[] assemblies) {
-        Guard.Against.Null(genericDefinition);
-        Guard.Against.Null(assemblies);
-
-        if (!genericDefinition.IsGenericTypeDefinition) {
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="genericDefinition"/> or
+    ///     <paramref name="assemblies"/> is <see langword="null"/>.
+    /// </exception>
+    public static IEnumerable<Type[]> GetArgumentsThatCloses(Type genericDefinition, params Assembly[] assemblies)
+    {
+        if (!genericDefinition.IsGenericTypeDefinition)
+        {
             throw new ArgumentException("The type must be a generic type definition.", nameof(genericDefinition));
         }
 
@@ -51,20 +66,21 @@ public static class GenericTypeHelper {
 
         // Discover available types for each generic parameter
         var availableTypesPerParameter = new Type[genericArgs.Length][];
-        for (var idx = 0; idx < genericArgs.Length; idx++) {
+        for (var idx = 0; idx < genericArgs.Length; idx++)
+        {
             availableTypesPerParameter[idx] = DiscoverTypesForParameter(genericArgs[idx], searchAssemblies).ToArray();
-
-            if (availableTypesPerParameter[idx].Length != 0) {
+            if (availableTypesPerParameter[idx].Length != 0)
+            {
                 continue;
             }
 
-            var message = $"""
-                           Generic parameter '{genericArgs[idx].Name}' at position {idx} has no discoverable constraints.
-                           Unable to determine available types for closing the generic type '{genericDefinition.Name}'.
-                           Constraints found: {GetConstraintDescription(genericArgs[idx])}
-                           """;
+            var errorMessage = $"""
+                                Generic parameter '{genericArgs[idx].Name}' at position {idx} has no discoverable constraints.
+                                Unable to determine available types for closing the generic type '{genericDefinition.Name}'.
+                                Constraints found: {GetConstraintDescription(genericArgs[idx])}
+                                """;
 
-            throw new InvalidOperationException(message);
+            throw new InvalidOperationException(errorMessage);
         }
 
         return FindValidCombinations(genericArgs, availableTypesPerParameter, genericDefinition);
@@ -73,8 +89,10 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Gets default assemblies to search in.
     /// </summary>
-    private static Assembly[] GetDefaultAssemblies(Type genericDefinition) {
-        var assemblies = new HashSet<Assembly> {
+    private static Assembly[] GetDefaultAssemblies(Type genericDefinition)
+    {
+        var assemblies = new HashSet<Assembly>
+        {
             genericDefinition.Assembly, // Assembly containing the open generic type
             Assembly.GetExecutingAssembly(), // Current assembly
             Assembly.GetCallingAssembly() // Calling assembly
@@ -82,11 +100,13 @@ public static class GenericTypeHelper {
 
         // Add assemblies of constraint types
         var genericArgs = genericDefinition.GetGenericArguments();
-
-        foreach (var arg in genericArgs) {
+        foreach (var arg in genericArgs)
+        {
             var constraints = arg.GetGenericParameterConstraints();
-            foreach (var constraint in constraints) {
-                if (!constraint.IsGenericParameter) {
+            foreach (var constraint in constraints)
+            {
+                if (!constraint.IsGenericParameter)
+                {
                     assemblies.Add(constraint.Assembly);
                 }
             }
@@ -98,22 +118,28 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Discovers types that can satisfy the constraints of a generic parameter.
     /// </summary>
-    private static HashSet<Type> DiscoverTypesForParameter(Type genericArg, Assembly[] assemblies) {
+    private static HashSet<Type> DiscoverTypesForParameter(Type genericArg, Assembly[] assemblies)
+    {
         var discoveredTypes = new HashSet<Type>();
         var attrs = genericArg.GenericParameterAttributes;
         var typeConstraints = genericArg.GetGenericParameterConstraints();
 
         // If no constraints at all, we can't discover types
-        if (attrs == GenericParameterAttributes.None && typeConstraints.Length == 0) {
+        if (attrs == GenericParameterAttributes.None && typeConstraints.Length == 0)
+        {
             return discoveredTypes;
         }
 
         // Get all types from the specified assemblies
         var allTypes = GetAllTypesFromAssemblies(assemblies);
 
-        foreach (var type in allTypes) {
+        foreach (var type in allTypes)
+        {
             try {
-                if (SatisfiesParameterConstraints(genericArg, type)) {
+                var typeName = type.Name;
+
+                if (SatisfiesParameterConstraints(genericArg, type))
+                {
                     discoveredTypes.Add(type);
                 }
             }
@@ -122,12 +148,20 @@ public static class GenericTypeHelper {
 
         // If we have type constraints, also include the constraint
         // types themselves (if concrete)
-        foreach (var constraint in typeConstraints) {
-            if (constraint is not { IsGenericParameter: false, IsAbstract: false, IsInterface: false }) {
+        foreach (var constraint in typeConstraints)
+        {
+            if (constraint is not
+                {
+                    IsGenericParameter: false,
+                    IsAbstract: false,
+                    IsInterface: false
+                })
+            {
                 continue;
             }
 
-            if (SatisfiesParameterConstraints(genericArg, constraint)) {
+            if (SatisfiesParameterConstraints(genericArg, constraint))
+            {
                 discoveredTypes.Add(constraint);
             }
         }
@@ -138,13 +172,17 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Gets all types from the specified assemblies, filtering out problematic types.
     /// </summary>
-    private static Type[] GetAllTypesFromAssemblies(Assembly[] assemblies) {
+    private static Type[] GetAllTypesFromAssemblies(Assembly[] assemblies)
+    {
         var allTypes = new List<Type>();
 
-        foreach (var assembly in assemblies) {
-            try {
+        foreach (var assembly in assemblies)
+        {
+            try
+            {
                 var types = assembly.GetExportedTypes()
-                                    .Where(type => type is {
+                                    .Where(type => type is
+                                    {
                                         // Exclude open generic types
                                         IsGenericTypeDefinition: false,
 
@@ -175,28 +213,35 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Checks if a type satisfies all constraints of a generic parameter.
     /// </summary>
-    private static bool SatisfiesParameterConstraints(Type genericArg, Type candidateType) {
+    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery", Justification = "Avoid convert to a LINQ operation when it makes difficult to read.")]
+    private static bool SatisfiesParameterConstraints(Type genericArg, Type candidateType)
+    {
         var attrs = genericArg.GenericParameterAttributes;
 
         // Check reference type constraint
-        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0 && candidateType.IsValueType) {
+        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0 && candidateType.IsValueType)
+        {
             return false;
         }
 
         // Check value type constraint
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable())) {
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable()))
+        {
             return false;
         }
 
         // Check new() constraint
-        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 && !candidateType.HasParameterlessConstructor()) {
+        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 && !candidateType.HasParameterlessConstructor())
+        {
             return false;
         }
 
         // Check type constraints
         var typeConstraints = genericArg.GetGenericParameterConstraints();
-        foreach (var constraint in typeConstraints) {
-            if (!CanSatisfyTypeConstraint(constraint, candidateType)) {
+        foreach (var constraint in typeConstraints)
+        {
+            if (!CanSatisfyTypeConstraint(constraint, candidateType))
+            {
                 return false;
             }
         }
@@ -207,20 +252,28 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Checks if a candidate type can satisfy a type constraint.
     /// </summary>
-    private static bool CanSatisfyTypeConstraint(Type constraint, Type candidateType) {
+    private static bool CanSatisfyTypeConstraint(Type constraint, Type candidateType)
+    {
         // Handle generic parameter constraints (cross-parameter references)
-        if (constraint.IsGenericParameter) {
+        if (constraint.IsGenericParameter)
+        {
             // For cross-parameter constraints, we'll validate this during combination checking
             return true;
         }
 
-        // Handle regular type constraints
-        if (constraint is { IsGenericType: false, ContainsGenericParameters: false }) {
-            return constraint.IsAssignableFrom(candidateType);
+        switch (constraint)
+        {
+            // Handle regular type constraints
+            case { IsGenericType: false, ContainsGenericParameters: false }:
+                return constraint.IsAssignableFrom(candidateType);
+            // Handle open generic type constraints
+            case { IsGenericType: true, ContainsGenericParameters: true }:
+                return constraint.IsAssignableFromGenericType(candidateType);
         }
 
-        // Handle open generic constraints
-        if (!candidateType.IsGenericType) {
+        // Handle generic constraints
+        if (!candidateType.IsGenericType)
+        {
             return false;
         }
 
@@ -237,21 +290,25 @@ public static class GenericTypeHelper {
     }
 
     /// <summary>
-    ///     Gets a detailed description of constraints for error reporting.
+    /// Gets a detailed description of constraints for error reporting.
     /// </summary>
-    private static string GetConstraintDescription(Type genericArg) {
+    private static string GetConstraintDescription(Type genericArg)
+    {
         var constraints = new List<string>();
         var attrs = genericArg.GenericParameterAttributes;
 
-        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0) {
+        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0)
+        {
             constraints.Add("class");
         }
 
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0) {
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+        {
             constraints.Add("struct");
         }
 
-        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0) {
+        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0)
+        {
             constraints.Add("new()");
         }
 
@@ -262,46 +319,62 @@ public static class GenericTypeHelper {
     }
 
     /// <summary>
-    ///     Finds all valid combinations of types that can close the generic
-    ///     type.
+    /// Finds all valid combinations of types that can close the generic type.
     /// </summary>
-    private static IEnumerable<Type[]> FindValidCombinations(Type[] genericArgs, Type[][] availableTypesPerParameter, Type genericDefinition) {
-        return GenerateCombinations(availableTypesPerParameter, parameterIndex: 0, new Type[genericArgs.Length])
-           .Where(combination => ValidateTypeArguments(genericDefinition, combination));
+    private static IEnumerable<Type[]> FindValidCombinations(Type[] genericArgs, Type[][] availableTypesPerParameter, Type openGeneric)
+    {
+        return GenerateCombinations(
+                availableTypesPerParameter,
+                parameterIndex: 0,
+                new Type[genericArgs.Length]
+            ).Where(combination => ValidateTypeArguments(openGeneric, combination));
     }
 
     /// <summary>
-    ///     Generates all possible combinations of types from the available
-    ///     types per parameter.
+    /// Generates all possible combinations of types from the available types per parameter.
     /// </summary>
-    private static IEnumerable<Type[]> GenerateCombinations(Type[][] availableTypesPerParameter, int parameterIndex, Type[] currentCombination) {
-        if (parameterIndex >= availableTypesPerParameter.Length) {
+    private static IEnumerable<Type[]> GenerateCombinations(Type[][] availableTypesPerParameter, int parameterIndex, Type[] currentCombination)
+    {
+        if (parameterIndex >= availableTypesPerParameter.Length)
+        {
             yield return (Type[])currentCombination.Clone();
             yield break;
         }
 
-        foreach (var type in availableTypesPerParameter[parameterIndex]) {
+        foreach (var type in availableTypesPerParameter[parameterIndex])
+        {
             currentCombination[parameterIndex] = type;
-            foreach (var combination in GenerateCombinations(availableTypesPerParameter, parameterIndex + 1, currentCombination)) {
+
+            var combinations = GenerateCombinations(
+                availableTypesPerParameter,
+                parameterIndex + 1,
+                currentCombination
+            );
+
+            foreach (var combination in combinations)
+            {
                 yield return combination;
             }
         }
     }
 
     /// <summary>
-    ///     Validates that the provided type arguments satisfy all constraints
-    ///     including cross-parameter constraints.
+    /// Validates that the provided type arguments satisfy all constraints including cross-parameter constraints.
     /// </summary>
-    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery", Justification = "Convert to LINQ will make it less readable.")]
-    private static bool ValidateTypeArguments(Type genericDefinition, Type[] typeArguments) {
-        var genericParameters = genericDefinition.GetGenericArguments();
+    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery", Justification = "Avoid convert to a LINQ operation when it makes difficult to read.")]
+    private static bool ValidateTypeArguments(Type openGeneric, Type[] typeArguments)
+    {
+        var genericParameters = openGeneric.GetGenericArguments();
 
-        if (genericParameters.Length != typeArguments.Length) {
+        if (genericParameters.Length != typeArguments.Length)
+        {
             return false;
         }
 
-        for (var idx = 0; idx < genericParameters.Length; idx++) {
-            if (!SatisfiesAllConstraints(genericParameters[idx], typeArguments[idx], typeArguments, genericParameters)) {
+        for (var idx = 0; idx < genericParameters.Length; idx++)
+        {
+            if (!SatisfiesAllConstraints(genericParameters[idx], typeArguments[idx], typeArguments, genericParameters))
+            {
                 return false;
             }
         }
@@ -312,27 +385,33 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Checks if a type satisfies all constraints including cross-parameter constraints.
     /// </summary>
-    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery", Justification = "Convert to LINQ will make it less readable.")]
-    private static bool SatisfiesAllConstraints(Type genericArg, Type candidateType, Type[] allTypeArguments, Type[] allGenericParameters) {
+    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery", Justification = "Avoid convert to a LINQ operation when it makes difficult to read.")]
+    private static bool SatisfiesAllConstraints(Type genericArg, Type candidateType, Type[] allTypeArguments, Type[] allGenericParameters)
+    {
         var attrs = genericArg.GenericParameterAttributes;
 
         // Check basic constraints
-        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0 && candidateType.IsValueType) {
+        if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0 && candidateType.IsValueType)
+        {
             return false;
         }
 
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable())) {
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable()))
+        {
             return false;
         }
 
-        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 && !candidateType.HasParameterlessConstructor()) {
+        if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 && !candidateType.HasParameterlessConstructor())
+        {
             return false;
         }
 
         // Check type constraints with cross-parameter resolution
         var typeConstraints = genericArg.GetGenericParameterConstraints();
-        foreach (var constraint in typeConstraints) {
-            if (!SatisfiesTypeConstraintWithResolution(constraint, candidateType, allTypeArguments, allGenericParameters)) {
+        foreach (var constraint in typeConstraints)
+        {
+            if (!SatisfiesTypeConstraintWithResolution(constraint, candidateType, allTypeArguments, allGenericParameters))
+            {
                 return false;
             }
         }
@@ -343,7 +422,8 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Checks type constraints with cross-parameter resolution.
     /// </summary>
-    private static bool SatisfiesTypeConstraintWithResolution(Type constraint, Type candidateType, Type[] typeArguments, Type[] genericParameters) {
+    private static bool SatisfiesTypeConstraintWithResolution(Type constraint, Type candidateType, Type[] typeArguments, Type[] genericParameters)
+    {
         // Resolve cross-parameter constraints
         var resolvedConstraint = ResolveGenericConstraint(constraint, typeArguments, genericParameters);
 
@@ -353,13 +433,17 @@ public static class GenericTypeHelper {
     /// <summary>
     /// Resolves a generic constraint by substituting type arguments for generic parameters.
     /// </summary>
-    private static Type? ResolveGenericConstraint(Type constraint, Type[] typeArguments, Type[] genericParameters) {
-        if (!constraint.ContainsGenericParameters) {
+    private static Type? ResolveGenericConstraint(Type constraint, Type[] typeArguments, Type[] genericParameters)
+    {
+        if (!constraint.ContainsGenericParameters)
+        {
             return constraint;
         }
 
-        try {
-            if (constraint.IsGenericParameter) {
+        try
+        {
+            if (constraint.IsGenericParameter)
+            {
                 var paramIndex = Array.IndexOf(genericParameters, constraint);
 
                 return paramIndex >= 0 && paramIndex < typeArguments.Length
@@ -367,20 +451,23 @@ public static class GenericTypeHelper {
                     : null;
             }
 
-            if (constraint.IsGenericType) {
+            if (constraint.IsGenericType)
+            {
                 var constraintArgs = constraint.GetGenericArguments();
                 var resolvedArgs = new List<Type>();
 
-                foreach (var constraintArg in constraintArgs) {
+                foreach (var constraintArg in constraintArgs)
+                {
                     var resolvedArg = ResolveGenericConstraint(constraintArg, typeArguments, genericParameters);
-                    if (resolvedArg is null) {
+                    if (resolvedArg is null)
+                    {
                         return null;
                     }
+
                     resolvedArgs.Add(resolvedArg);
                 }
 
-                return constraint.GetGenericTypeDefinition()
-                                 .MakeGenericType(resolvedArgs.ToArray());
+                return constraint.GetGenericTypeDefinition().MakeGenericType(resolvedArgs.ToArray());
             }
         }
         catch { return null; }

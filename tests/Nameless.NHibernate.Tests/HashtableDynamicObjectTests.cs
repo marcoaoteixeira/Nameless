@@ -45,7 +45,7 @@ public class HashtableDynamicObjectTests {
         Assert.Multiple(() => {
             Assert.NotNull(entity.Attribute);
             Assert.Equal("Test", entity.Attribute.Name);
-            Assert.Equal("Test", name);
+            Assert.Equal(expected: "Test", name);
         });
     }
 

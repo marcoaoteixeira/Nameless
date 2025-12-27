@@ -31,7 +31,7 @@ public sealed class SslSettings {
     /// <summary>
     ///     Whether the SSL settings are available for use.
     /// </summary>
-    [MemberNotNullWhen(true, [nameof(ServerName)])]
+    [MemberNotNullWhen(returnValue: true, [nameof(ServerName)])]
     public bool IsAvailable
         => Enabled &&
            !string.IsNullOrWhiteSpace(ServerName) &&

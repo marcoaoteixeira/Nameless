@@ -9,21 +9,20 @@
 <Project>
 	<!-- Boolean variables -->
 	<PropertyGroup>
-		<IsAspireHost>$(MSBuildProjectName.EndsWith('.Aspire.AppHost'))</IsAspireHost>
-		<IsAspireSharedProject>$(MSBuildProjectName.EndsWith('.Aspire.Shared'))</IsAspireSharedProject>
-		<IsTestProject>$(MSBuildProjectName.EndsWith('.Tests'))</IsTestProject>
-		<IsAppsProject>$(MSBuildProjectFullPath.Contains('\apps\'))</IsAppsProject>
+		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
+		<IsTestsProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestsProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
-		<EnableCodeAnalysis Condition="$(IsTestProject) == 'False'">True</EnableCodeAnalysis>
+		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
 
 		<!-- Pack only projects in "src" folder. -->
-		<IncludeNuGetPackageInfo>$(MSBuildProjectFullPath.Contains('\src\'))</IncludeNuGetPackageInfo>
+		<IncludeNuGetPackageInfo>False</IncludeNuGetPackageInfo>
+		<IncludeNuGetPackageInfo Condition="$(IsSrcProject) == 'True'">True</IncludeNuGetPackageInfo>
 	</PropertyGroup>
 
 	<!-- All projects must include these properties. -->
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -31,19 +30,13 @@
 		<IsPackable>False</IsPackable>
 	</PropertyGroup>
 
-	<!-- All projects, except tests, must include these properties -->
-	<PropertyGroup Condition="$(IsTestProject) == 'False'">
+	<PropertyGroup>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
-	</PropertyGroup>
-
-	<!-- Only Aspire projects must include these properties -->
-	<PropertyGroup Condition="$(IsAspireHost)">
-		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!--
@@ -80,14 +73,14 @@
 	</ItemGroup>
 
 	<!-- For test projects, use these properties -->
-	<PropertyGroup Condition="$(IsTestProject)">
+	<PropertyGroup Condition="$(IsTestsProject)">
 		<Nullable>disable</Nullable>
 		<IsPackable>False</IsPackable>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<!-- Test projects must include these properties -->
-	<ItemGroup Condition="$(IsTestProject)">
+	<ItemGroup Condition="$(IsTestsProject)">
 		<Using Include="Xunit" />
 	</ItemGroup>
 </Project>

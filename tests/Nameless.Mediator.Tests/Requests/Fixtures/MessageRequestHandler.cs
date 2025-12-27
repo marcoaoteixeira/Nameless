@@ -10,7 +10,8 @@ public class MessageRequestHandler : IRequestHandler<MessageRequest, MessageResp
     }
 
     public Task<MessageResponse> HandleAsync(MessageRequest request, CancellationToken cancellationToken) {
-        _printService.Print($"RequestHandler: {GetType().Name} | Request: {request.GetType().Name} | Message: {request.Message}");
+        _printService.Print(
+            $"RequestHandler: {GetType().Name} | Request: {request.GetType().Name} | Message: {request.Message}");
 
         return Task.FromResult(new MessageResponse(request.Message));
     }

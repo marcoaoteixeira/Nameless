@@ -7,7 +7,7 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// <summary>
 ///     The default implementation of <see cref="IServiceFactory"/>.
 /// </summary>
-public class ServiceFactory : IServiceFactory {
+public sealed class ServiceFactory : IServiceFactory {
     private readonly IServiceProvider _serviceProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -25,8 +25,8 @@ public class ServiceFactory : IServiceFactory {
     ///     HTTP context.
     /// </param>
     public ServiceFactory(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor) {
-        _serviceProvider = Guard.Against.Null(serviceProvider);
-        _httpContextAccessor = Guard.Against.Null(httpContextAccessor);
+        _serviceProvider = serviceProvider;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <inheritdoc />

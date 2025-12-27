@@ -1,52 +1,54 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Nameless.Web.OpenApi;
 
 /// <summary>
-///     An OpenAPI document transformer that adds the "Bearer" token option.
+///     An OpenAPI document transformer that adds a Bearer token security
+///     scheme to the OpenAPI document based on the application's
+///     authentication configuration.
+///     This enables API consumers to understand and use Bearer
+///     authentication when interacting with the API endpoints.
 /// </summary>
-public sealed class BearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTransformer {
+public class BearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTransformer {
     private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="BearerSecuritySchemeDocumentTransformer"/>.
+    ///     Initializes a new instance of <see cref="BearerSecuritySchemeDocumentTransformer"/>.
     /// </summary>
-    /// <param name="authenticationSchemeProvider">The authentication scheme provider.</param>
+    /// <param name="authenticationSchemeProvider">
+    ///     The authentication scheme provider.
+    /// </param>
     public BearerSecuritySchemeDocumentTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider) {
-        _authenticationSchemeProvider = Guard.Against.Null(authenticationSchemeProvider);
+        _authenticationSchemeProvider = authenticationSchemeProvider;
     }
 
     /// <inheritdoc />
-    /// <remarks>
-    /// This will add the option to pass a JSON Web Token to all available operations.
-    /// </remarks>
-    public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken) {
-        Guard.Against.Null(document);
-
+    public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context,
+        CancellationToken cancellationToken) {
         var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
         if (authenticationSchemes.All(authScheme => authScheme.Name != JwtBearerDefaults.AuthenticationScheme)) {
             return;
         }
 
         document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
 
-        document.Components.SecuritySchemes.Add(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme {
-            Type = SecuritySchemeType.Http,
-            Scheme = JwtBearerDefaults.AuthenticationScheme.ToLowerInvariant(),
-            In = ParameterLocation.Header,
-            BearerFormat = "JSON Web Token"
-        });
+        document.Components.SecuritySchemes.Add(JwtBearerDefaults.AuthenticationScheme,
+            new OpenApiSecurityScheme {
+                Type = SecuritySchemeType.Http,
+                Scheme = JwtBearerDefaults.AuthenticationScheme.ToLowerInvariant(),
+                In = ParameterLocation.Header,
+                BearerFormat = "JSON Web Token"
+            });
 
-        document.SecurityRequirements.Add(new OpenApiSecurityRequirement {
-            [new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                    Type = ReferenceType.SecurityScheme
-                }
-            }] = []
+        document.Security ??= [];
+        document.Security.Add(new OpenApiSecurityRequirement {
+            [new OpenApiSecuritySchemeReference(
+                JwtBearerDefaults.AuthenticationScheme
+            )] = []
         });
     }
 }

@@ -67,9 +67,7 @@ public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="culture"/> is <see langword="null"/>.
     /// </exception>
-    public bool TryGet(CultureInfo culture, [NotNullWhen(true)] out PluralizationRuleDelegate? rule) {
-        Guard.Against.Null(culture);
-
+    public bool TryGet(CultureInfo culture, [NotNullWhen(returnValue: true)] out PluralizationRuleDelegate? rule) {
         rule = null;
 
         if (string.IsNullOrWhiteSpace(culture.Name)) {
@@ -77,7 +75,7 @@ public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
         }
 
         return Cache.TryGetValue(culture.Name, out rule)
-            || TryGet(culture.Parent, out rule);
+               || TryGet(culture.Parent, out rule);
     }
 
     private void AddRule(IEnumerable<string> cultures, PluralizationRuleDelegate rule) {

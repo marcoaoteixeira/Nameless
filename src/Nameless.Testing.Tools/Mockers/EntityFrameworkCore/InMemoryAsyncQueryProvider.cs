@@ -38,7 +38,7 @@ public class InMemoryAsyncQueryProvider<TEntity> : IAsyncQueryProvider {
 
         var resultType = typeof(TResult).GetGenericArguments().FirstOrDefault();
         if (resultType is null) {
-            throw new InvalidOperationException("Return type do not provide generic argument.");
+            throw new InvalidOperationException(message: "Return type do not provide generic argument.");
         }
 
         var handler = typeof(Task).GetMethod(nameof(Task.FromResult))?.MakeGenericMethod(resultType);
@@ -46,7 +46,7 @@ public class InMemoryAsyncQueryProvider<TEntity> : IAsyncQueryProvider {
             throw new InvalidOperationException($"Could not find handler for {nameof(Task.FromResult)}.");
         }
 
-        var handlerResult = handler.Invoke(null, [result]);
+        var handlerResult = handler.Invoke(obj: null, [result]);
         if (handlerResult is null) {
             throw new InvalidOperationException($"{nameof(Task.FromResult)} handler didn't return valid result.");
         }

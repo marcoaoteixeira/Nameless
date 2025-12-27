@@ -20,5 +20,6 @@ public interface IConsumer<out TMessage> : IDisposable, IAsyncDisposable
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters, CancellationToken cancellationToken);
+    Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters,
+        CancellationToken cancellationToken);
 }

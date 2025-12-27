@@ -6,7 +6,8 @@ namespace Nameless.IO.FileSystem;
 
 [UnitTest]
 public class DirectoryWrapperTests {
-    private static IOptions<FileSystemOptions> CreateOptions(string root = null, bool allowOperationOutsideRoot = false) {
+    private static IOptions<FileSystemOptions>
+        CreateOptions(string root = null, bool allowOperationOutsideRoot = false) {
         return OptionsHelper.Create<FileSystemOptions>(opts => {
             opts.Root = root ?? typeof(FileWrapperTests).Assembly.GetDirectoryPath();
             opts.AllowOperationOutsideRoot = allowOperationOutsideRoot;
@@ -16,7 +17,8 @@ public class DirectoryWrapperTests {
     [Fact]
     public void WhenGettingName_ThenReturnsDirectoryNameFromUnderlyingDirectory() {
         // arrange
-        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
+        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(),
+            nameof(DirectoryWrapper));
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
@@ -30,7 +32,8 @@ public class DirectoryWrapperTests {
     [Fact]
     public void WhenGettingPath_ThenReturnsDirectoryFullPathFromUnderlyingDirectory() {
         // arrange
-        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
+        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(),
+            nameof(DirectoryWrapper));
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
@@ -58,7 +61,8 @@ public class DirectoryWrapperTests {
     [Fact]
     public void WhenCheckingExistence_WhenDirectoryDoesNotExist_ThenReturnsFalse() {
         // arrange
-        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), $"{Guid.NewGuid():N}");
+        var directoryPath =
+            Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), $"{Guid.NewGuid():N}");
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
@@ -72,7 +76,8 @@ public class DirectoryWrapperTests {
     [Fact]
     public void WhenCreatingDirectory_ThenExistsMustReturnTrue() {
         // arrange
-        var directoryPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), $"{Guid.NewGuid():N}");
+        var directoryPath =
+            Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), $"{Guid.NewGuid():N}");
         var directory = new DirectoryInfo(directoryPath);
         var sut = new DirectoryWrapper(directory, CreateOptions());
 
@@ -89,10 +94,12 @@ public class DirectoryWrapperTests {
     }
 
     [Fact]
-    public void WhenCreatingDirectory_WhenAllowOperationOutsideRootIsFalse_WhenUnderlyingDirectoryIsOutsideRoot_ThenThrowsException() {
+    public void
+        WhenCreatingDirectory_WhenAllowOperationOutsideRootIsFalse_WhenUnderlyingDirectoryIsOutsideRoot_ThenThrowsException() {
         // arrange
-        var rootPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
-        var options = CreateOptions(root: rootPath, allowOperationOutsideRoot: false);
+        var rootPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(),
+            nameof(DirectoryWrapper));
+        var options = CreateOptions(rootPath, allowOperationOutsideRoot: false);
 
         var directoryPath = typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath();
         var directory = new DirectoryInfo(directoryPath);
@@ -105,10 +112,12 @@ public class DirectoryWrapperTests {
     }
 
     [Fact]
-    public void WhenCreatingDirectory_WhenAllowOperationOutsideRootIsTrue_WhenUnderlyingDirectoryIsOutsideRoot_ThenDoNotThrows() {
+    public void
+        WhenCreatingDirectory_WhenAllowOperationOutsideRootIsTrue_WhenUnderlyingDirectoryIsOutsideRoot_ThenDoNotThrows() {
         // arrange
-        var rootPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(), nameof(DirectoryWrapper));
-        var options = CreateOptions(root: rootPath, allowOperationOutsideRoot: true);
+        var rootPath = Path.Combine(typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath(),
+            nameof(DirectoryWrapper));
+        var options = CreateOptions(rootPath, allowOperationOutsideRoot: true);
 
         var directoryPath = typeof(DirectoryWrapperTests).Assembly.GetDirectoryPath();
         var directory = new DirectoryInfo(directoryPath);

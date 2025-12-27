@@ -19,9 +19,9 @@ public static class ValidationResultExtensions {
         return self.Errors
                    .GroupBy(error => error.MemberName)
                    .ToDictionary(
-                        keySelector: group => group.Key,
-                        elementSelector: group => group.Select(item => item.Error)
-                                                       .ToArray());
+                       group => group.Key,
+                       group => group.Select(item => item.Error)
+                                     .ToArray());
     }
 
     /// <summary>

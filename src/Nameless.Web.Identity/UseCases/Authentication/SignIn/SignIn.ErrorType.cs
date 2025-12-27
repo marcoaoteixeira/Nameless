@@ -7,5 +7,5 @@ public enum SignInErrorType {
 
     LockedOut,
 
-    NotAllowed,
+    NotAllowed
 }

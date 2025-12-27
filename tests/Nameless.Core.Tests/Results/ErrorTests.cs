@@ -1,3 +1,5 @@
+using Nameless.ObjectModel;
+
 namespace Nameless.Results;
 
 public class ErrorTests {
@@ -12,12 +14,12 @@ public class ErrorTests {
                 ErrorType.Failure => Error.Failure(type.ToString()),
                 ErrorType.Forbidden => Error.Forbidden(type.ToString()),
                 ErrorType.Unauthorized => Error.Unauthorized(type.ToString()),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Missing ErrorType case")
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, message: "Missing ErrorType case")
             };
 
             // assert
             Assert.Multiple(() => {
-                Assert.Equal(type.ToString(), error.Description);
+                Assert.Equal(type.ToString(), error.Message);
                 Assert.Equal(type, error.Type);
             });
         }

@@ -13,5 +13,5 @@ public interface IPluralizationRuleProvider {
     /// <param name="culture">The culture.</param>
     /// <param name="rule">The output pluralization rule delegate.</param>
     /// <returns><see langword="true"/> if pluralization rule was found; otherwise <see langword="false"/>.</returns>
-    bool TryGet(CultureInfo culture, [NotNullWhen(true)] out PluralizationRuleDelegate? rule);
+    bool TryGet(CultureInfo culture, [NotNullWhen(returnValue: true)] out PluralizationRuleDelegate? rule);
 }
