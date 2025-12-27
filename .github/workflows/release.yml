@@ -15,11 +15,11 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ['9.0.x']
+        dotnet-version: ['10.0.x']
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.2.0
+        uses: actions/setup-dotnet@v5.0.1
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
@@ -35,7 +35,7 @@ jobs:
           fi      
 
       - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
 
       - name: Register GitHub Package Registry As NuGet Source
         run: >-
@@ -67,7 +67,7 @@ jobs:
           -p:Version=${{ env.VERSION }}
 
       - name: Print NuGet Package Directory
-        uses: jaywcjlove/github-action-folder-tree@main
+        uses: jaywcjlove/github-action-folder-tree@1.2.0
         with:
           path: ${{ env.NUPKG_OUTPUT_PATH }}
           depth: 2 
