@@ -41,8 +41,7 @@ public sealed class QueryBuilder : IQueryBuilder {
     ///     The analyzer to be used for parsing and analyzing text.
     /// </param>
     public QueryBuilder(Analyzer analyzer) {
-        _analyzer = Guard.Against.Null(analyzer);
-
+        _analyzer = analyzer;
         _sort = string.Empty;
         _comparer = 0;
         _sortDescending = true;
@@ -52,9 +51,6 @@ public sealed class QueryBuilder : IQueryBuilder {
 
     /// <inheritdoc />
     public IQueryBuilder WithFields(string[] names, string value, float fuzziness) {
-        Guard.Against.Null(names);
-        Guard.Against.NullOrWhiteSpace(value);
-
         value = QueryParserBase.Escape(value);
 
         foreach (var name in names) {
@@ -648,7 +644,7 @@ public sealed class QueryBuilder : IQueryBuilder {
         var result = new List<string>();
 
         using var reader = new StringReader(text);
-        using var token = analyzer.GetTokenStream(field, reader);
+        var token = analyzer.GetTokenStream(field, reader);
 
         token.Reset();
 
@@ -663,6 +659,9 @@ public sealed class QueryBuilder : IQueryBuilder {
                 /* swallow */
             }
         }
+
+        token.End();
+        token.Close();
 
         return result;
     }
@@ -692,16 +691,18 @@ public sealed class QueryBuilder : IQueryBuilder {
                 booleanQuery.Add(clause);
             }
 
-            if (_filters.Count > 0) {
-                var filter = new BooleanQuery();
-                foreach (var clause in _filters) {
-                    filter.Add(clause);
-                }
-
-                resultQuery = new FilteredQuery(booleanQuery,
-                    new QueryWrapperFilter(filter)
-                );
+            if (_filters.Count <= 0) {
+                return resultQuery;
             }
+
+            var filter = new BooleanQuery();
+            foreach (var clause in _filters) {
+                filter.Add(clause);
+            }
+
+            resultQuery = new FilteredQuery(booleanQuery,
+                new QueryWrapperFilter(filter)
+            );
         }
 
         return resultQuery;

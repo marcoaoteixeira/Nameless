@@ -50,7 +50,7 @@ jobs:
           dotnet build ${{ env.SOLUTION }}
           --configuration Release
           --nologo
-          --verbosity detailed
+          --verbosity minimal
 
       - name: Create NuGet Packages
         run: >-
@@ -60,7 +60,7 @@ jobs:
           --include-symbols
           --nologo
           --output ${{ env.NUPKG_OUTPUT_PATH }}
-          --verbosity normal
+          --verbosity minimal
           -p:AssemblyVersion=${{ env.VERSION }}
           -p:FileVersion=${{ env.VERSION }}
           -p:PackageVersion=${{ env.VERSION }}
