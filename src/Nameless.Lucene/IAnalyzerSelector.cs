@@ -1,6 +1,4 @@
-﻿using Nameless.Lucene.Results;
-
-namespace Nameless.Lucene;
+﻿namespace Nameless.Lucene;
 
 /// <summary>
 ///     Defines an analyzer selector.

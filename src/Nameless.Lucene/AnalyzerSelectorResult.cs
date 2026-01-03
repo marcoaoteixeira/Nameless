@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 
-namespace Nameless.Lucene.Results;
+namespace Nameless.Lucene;
 
 /// <summary>
 ///     Represents an analyzer selector result.

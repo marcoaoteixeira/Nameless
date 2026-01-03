@@ -10,7 +10,9 @@ using Microsoft.Extensions.Options;
 using Nameless.IO.FileSystem;
 using Nameless.Lucene.Empty;
 using Nameless.Lucene.Internals;
-using Nameless.Lucene.Results;
+using Nameless.Lucene.Requests;
+using Nameless.Lucene.Responses;
+using Nameless.ObjectModel;
 
 namespace Nameless.Lucene;
 
@@ -18,8 +20,8 @@ namespace Nameless.Lucene;
 ///     Default implementation of <see cref="IIndex"/>.
 /// </summary>
 public sealed class Index : IIndex {
-    private const int INSERT_CHUNK_SIZE = 32;
-    private const int REMOVE_CHUNK_SIZE = 32;
+    private const string USER_CANCELLED_TASK_ERROR = "The operation was cancelled by the user.";
+    private const string MAX_BOOLEAN_CLAUSE_EXCEEDED_ERROR = "The number of clauses in the boolean query exceeds the maximum allowed (1024).";
 
     private readonly Analyzer _analyzer;
     private readonly IFileSystem _fileSystem;
@@ -70,167 +72,120 @@ public sealed class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<InsertDocumentsResult> InsertAsync(Document[] documents, CancellationToken cancellationToken) {
+    public Task<InsertDocumentsResponse> InsertDocumentsAsync(InsertDocumentsRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
-
-        Guard.Against.NullOrEmpty(documents);
-
-        InsertDocumentsResult result;
-        var chunks = documents.Chunk(INSERT_CHUNK_SIZE);
-        var count = 0;
-
+        
         try {
-            var indexWriter = GetIndexWriter();
+            var docs = request.Documents
+                              .TakeWhile(_ => !cancellationToken.IsCancellationRequested)
+                              .Select(document => document.ToIndexableFields())
+                              .ToArray();
 
-            foreach (var chunk in chunks) {
-                if (cancellationToken.IsCancellationRequested) {
-                    break;
-                }
-
-                count += chunk.Length;
-
-                var docs = chunk.Select(document => document.ToIndexableFields());
-
-                indexWriter.AddDocuments(docs);
-                indexWriter.Commit();
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromResult<InsertDocumentsResponse>(0);
             }
 
-            result = InsertDocumentsResult.Success(
-                count,
-                cancellationToken.IsCancellationRequested
-            );
+            var indexWriter = GetIndexWriter();
+
+            indexWriter.AddDocuments(docs);
+            indexWriter.Commit();
+
+            return Task.FromResult<InsertDocumentsResponse>(request.Documents.Length);
         }
-        catch (OutOfMemoryException ex) {
-            DestroyIndexWriter();
+        catch (Exception ex) {
+            if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
             _logger.InsertDocumentsFailure(ex);
 
-            result = InsertDocumentsResult.Failure(ex.Message);
-        }
-        catch (Exception ex) {
-            _logger.InsertDocumentsFailure(ex);
-
-            result = InsertDocumentsResult.Failure(ex.Message);
-        }
-
-        return Task.FromResult(result);
-    }
-
-    /// <inheritdoc />
-    public Task<RemoveDocumentsResult> RemoveAsync(Document[] documents, CancellationToken cancellationToken) {
-        BlockAccessAfterDispose();
-
-        Guard.Against.NullOrEmpty(documents);
-
-        RemoveDocumentsResult result;
-
-        // Chunks cannot be larger than the maximum number of
-        // clauses permitted in a boolean query.
-        // See BooleanQuery.MaxClauseCount
-        var chunks = documents.Chunk(REMOVE_CHUNK_SIZE);
-        var count = 0;
-
-        try {
-            var indexWriter = GetIndexWriter();
-
-            foreach (var chunk in chunks) {
-                if (cancellationToken.IsCancellationRequested) {
-                    break;
-                }
-
-                count += chunk.Length;
-
-                var query = new BooleanQuery();
-                var clauses = chunk.Select(CreateDeleteClause);
-
-                query.Clauses.AddRange(clauses);
-
-                indexWriter.DeleteDocuments(query);
-                indexWriter.Commit();
-            }
-
-            result = RemoveDocumentsResult.Success(
-                count,
-                cancellationToken.IsCancellationRequested
-            );
-        }
-        catch (OutOfMemoryException ex) {
-            DestroyIndexWriter();
-
-            _logger.RemoveDocumentsFailure(ex);
-
-            result = RemoveDocumentsResult.Failure(ex.Message);
-        }
-        catch (Exception ex) {
-            _logger.RemoveDocumentsFailure(ex);
-
-            result = RemoveDocumentsResult.Failure(ex.Message);
-        }
-
-        return Task.FromResult(result);
-
-        static BooleanClause CreateDeleteClause(Document doc) {
-            var term = new Term(nameof(Document.ID), doc.ID);
-            var termQuery = new TermQuery(term);
-
-            return new BooleanClause(termQuery, Occur.SHOULD);
+            return Task.FromResult<InsertDocumentsResponse>(Error.Failure(ex.Message));
         }
     }
 
     /// <inheritdoc />
-    public Task<RemoveDocumentsResult> RemoveAsync(Query query, CancellationToken cancellationToken) {
+    public Task<DeleteDocumentsResponse> DeleteDocumentsAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        Guard.Against.Null(query);
-
-        RemoveDocumentsResult result;
+        if (request.Documents.Length > BooleanQuery.MaxClauseCount) {
+            return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(MAX_BOOLEAN_CLAUSE_EXCEEDED_ERROR));
+        }
 
         try {
-            var count = GetQueryCount(query);
-            var indexWriter = GetIndexWriter();
+            var clauses = request.Documents
+                                 .TakeWhile(_ => !cancellationToken.IsCancellationRequested)
+                                 .Select(document => document.CreateDeleteBooleanClause())
+                                 .ToArray();
 
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+            }
+
+            var query = new BooleanQuery();
+            query.Clauses.AddRange(clauses);
+
+            var indexWriter = GetIndexWriter();
             indexWriter.DeleteDocuments(query);
             indexWriter.Commit();
 
-            result = RemoveDocumentsResult.Success(
-                count,
-                cancellationToken.IsCancellationRequested
-            );
-        }
-        catch (OutOfMemoryException ex) {
-            DestroyIndexWriter();
-
-            _logger.RemoveDocumentsFailure(ex);
-
-            result = RemoveDocumentsResult.Failure(ex.Message);
+            return Task.FromResult<DeleteDocumentsResponse>(request.Documents.Length);
         }
         catch (Exception ex) {
-            _logger.RemoveDocumentsFailure(ex);
+            if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            result = RemoveDocumentsResult.Failure(ex.Message);
+            _logger.DeleteDocumentsFailure(ex);
+
+            return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(ex.Message));
         }
-
-        return Task.FromResult(result);
     }
 
     /// <inheritdoc />
-    public Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit,
-        CancellationToken cancellationToken) {
+    public Task<DeleteDocumentsByQueryResponse> DeleteDocumentsAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
-        Guard.Against.Null(query);
-        Guard.Against.Null(sort);
-        Guard.Against.LowerThan(start, compare: 0);
-        Guard.Against.LowerOrEqual(limit, compare: 0);
+        try {
+            var count = GetQueryCount(request.Query);
 
-        SearchDocumentsResult result;
+            if (count == 0) {
+                return Task.FromResult<DeleteDocumentsByQueryResponse>(0);
+            }
+
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromResult<DeleteDocumentsByQueryResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+            }
+
+            var indexWriter = GetIndexWriter();
+
+            indexWriter.DeleteDocuments(request.Query);
+            indexWriter.Commit();
+
+            return Task.FromResult<DeleteDocumentsByQueryResponse>(count);
+        }
+        catch (Exception ex) {
+            if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
+
+            _logger.DeleteDocumentsFailure(ex);
+
+            return Task.FromResult<DeleteDocumentsByQueryResponse>(Error.Failure(ex.Message));
+        }
+    }
+
+    /// <inheritdoc />
+    public Task<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CancellationToken cancellationToken) {
+        BlockAccessAfterDispose();
 
         try {
-            var count = GetQueryCount(query);
+            var count = GetQueryCount(request.Query);
+
+            if (count == 0) {
+                return Task.FromResult<SearchDocumentsResponse>(SearchResult.Empty);
+            }
+
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromResult<SearchDocumentsResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+            }
 
             var collector = TopFieldCollector.Create(
-                sort,
-                start + limit,
+                request.Sort,
+                request.Start + request.Limit,
                 fillFields: false,
                 trackDocScores: true,
                 trackMaxScore: false,
@@ -239,22 +194,20 @@ public sealed class Index : IIndex {
             var indexReader = GetIndexReader();
             var indexSearch = new IndexSearcher(indexReader);
 
-            indexSearch.Search(query, collector);
+            indexSearch.Search(request.Query, collector);
 
             var hits = collector.GetTopDocs()
                                 .ScoreDocs
                                 .Select(score => score.ToSearchHit(indexSearch))
                                 .ToArray();
 
-            result = SearchDocumentsResult.Success(count, hits);
+            return Task.FromResult<SearchDocumentsResponse>(new SearchResult(hits, count));
         }
         catch (Exception ex) {
             _logger.SearchFailure(ex);
 
-            result = SearchDocumentsResult.Failure(ex.Message);
+            return Task.FromResult<SearchDocumentsResponse>(Error.Failure(ex.Message));
         }
-
-        return Task.FromResult(result);
     }
 
     /// <inheritdoc />

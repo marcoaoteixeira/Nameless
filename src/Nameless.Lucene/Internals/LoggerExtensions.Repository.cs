@@ -24,11 +24,11 @@ internal static class IndexLoggerExtensions {
             formatString: "An error occurred while trying to insert the documents."
         );
 
-    private static readonly Action<ILogger, Exception> RemoveDocumentsFailureDelegate
+    private static readonly Action<ILogger, Exception> DeleteDocumentsFailureDelegate
         = LoggerMessage.Define(
             LogLevel.Error,
             eventId: default,
-            formatString: "An error occurred while trying to remove the documents."
+            formatString: "An error occurred while trying to delete the documents."
         );
 
     private static readonly Action<ILogger, Exception> GetQueryCountFailureDelegate
@@ -58,8 +58,8 @@ internal static class IndexLoggerExtensions {
             InsertDocumentsFailureDelegate(self, exception);
         }
 
-        internal void RemoveDocumentsFailure(Exception exception) {
-            RemoveDocumentsFailureDelegate(self, exception);
+        internal void DeleteDocumentsFailure(Exception exception) {
+            DeleteDocumentsFailureDelegate(self, exception);
         }
 
         internal void GetQueryCountFailure(Exception exception) {

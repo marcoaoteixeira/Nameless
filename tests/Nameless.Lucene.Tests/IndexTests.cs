@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.IO.FileSystem;
+using Nameless.Lucene.Requests;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
 
@@ -70,34 +71,38 @@ public class IndexTests {
         var documents = CreateDocuments().ToArray();
 
         // store documents
-        var insertResult = await index.InsertAsync(documents, CancellationToken.None);
+        var request = new InsertDocumentsRequest(documents);
+        var response = await index.InsertDocumentsAsync(request, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(insertResult.Succeeded);
-            Assert.Equal(documents.Length, insertResult.Count);
+            Assert.True(response.Success);
+            Assert.Equal(documents.Length, response.Value);
         });
 
         // retrieve documents
         var queryDefinition = index.CreateQueryBuilder()
                                    .Build(); // match all query
 
-        var searchResult = await index.SearchAsync(queryDefinition.Query, cancellationToken: CancellationToken.None);
+        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
+        var searchResponse = await index.SearchDocumentsAsync(searchRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(searchResult.Succeeded);
-            Assert.Equal(8, searchResult.Results.Length);
+            Assert.True(searchResponse.Success);
+            Assert.Equal(8, searchResponse.Value.Count);
         });
 
         // delete documents
-        var removeResult = await index.RemoveAsync(queryDefinition.Query, CancellationToken.None);
+        var deleteRequest = new DeleteDocumentsByQueryRequest(queryDefinition.Query);
+        var deleteResponse = await index.DeleteDocumentsAsync(deleteRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(removeResult.Succeeded);
-            Assert.Equal(8, removeResult.Count);
+            Assert.True(deleteResponse.Success);
+            Assert.Equal(8, deleteResponse.Value);
         });
 
         // ensure index is empty
-        var emptySearchResult = await index.SearchAsync(queryDefinition.Query, cancellationToken: CancellationToken.None);
+        var emptySearchRequest = new SearchDocumentsRequest(queryDefinition.Query);
+        var emptySearchResponse = await index.SearchDocumentsAsync(emptySearchRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(emptySearchResult.Succeeded);
-            Assert.Empty(emptySearchResult.Results);
+            Assert.True(emptySearchResponse.Success);
+            Assert.Empty(emptySearchResponse.Value.Hits);
         });
     }
 
@@ -121,10 +126,11 @@ public class IndexTests {
         var documents = CreateUniqueDocuments().ToArray();
 
         // store documents
-        var insertResult = await index.InsertAsync(documents, CancellationToken.None);
+        var insertRequest = new InsertDocumentsRequest(documents);
+        var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(insertResult.Succeeded);
-            Assert.Equal(documents.Length, insertResult.Count);
+            Assert.True(insertResponse.Success);
+            Assert.Equal(documents.Length, insertResponse.Value);
         });
 
         // retrieve documents
@@ -132,10 +138,11 @@ public class IndexTests {
                                    .WithField("content", "corujas", useWildcard: false)
                                    .Build();
 
-        var searchResult = await index.SearchAsync(queryDefinition.Query, cancellationToken: CancellationToken.None);
+        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
+        var searchResponse = await index.SearchDocumentsAsync(searchRequest, cancellationToken: CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(searchResult.Succeeded);
-            Assert.Single(searchResult.Results);
+            Assert.True(searchResponse.Success);
+            Assert.Single(searchResponse.Value.Hits);
         });
     }
 
@@ -159,10 +166,11 @@ public class IndexTests {
         var documents = CreateUniqueDocuments().ToArray();
 
         // store documents
-        var insertResult = await index.InsertAsync(documents, CancellationToken.None);
+        var insertRequest = new InsertDocumentsRequest(documents);
+        var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(insertResult.Succeeded);
-            Assert.Equal(documents.Length, insertResult.Count);
+            Assert.True(insertResponse.Success);
+            Assert.Equal(documents.Length, insertResponse.Value);
         });
 
         // retrieve documents
@@ -170,10 +178,11 @@ public class IndexTests {
                                    .WithField("content", "*am", useWildcard: true)
                                    .Build();
 
-        var searchResult = await index.SearchAsync(queryDefinition.Query, cancellationToken: CancellationToken.None);
+        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
+        var searchResponse = await index.SearchDocumentsAsync(searchRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(searchResult.Succeeded);
-            Assert.Equal(5, searchResult.Results.Length);
+            Assert.True(searchResponse.Success);
+            Assert.Equal(5, searchResponse.Value.Count);
         });
     }
 
@@ -198,10 +207,11 @@ public class IndexTests {
         var documents = CreateUniqueDocuments(date).ToArray();
 
         // store documents
-        var insertResult = await index.InsertAsync(documents, CancellationToken.None);
+        var insertRequest = new InsertDocumentsRequest(documents);
+        var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(insertResult.Succeeded);
-            Assert.Equal(documents.Length, insertResult.Count);
+            Assert.True(insertResponse.Success);
+            Assert.Equal(documents.Length, insertResponse.Value);
         });
 
         // retrieve documents
@@ -216,12 +226,13 @@ public class IndexTests {
                                     )
                                    .Build();
 
-        var searchResult = await index.SearchAsync(queryDefinition.Query, cancellationToken: CancellationToken.None);
+        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
+        var searchResponse = await index.SearchDocumentsAsync(searchRequest, CancellationToken.None);
         Assert.Multiple(() => {
-            Assert.True(searchResult.Succeeded);
-            Assert.Equal(3, searchResult.Results.Length);
+            Assert.True(searchResponse.Success);
+            Assert.Equal(3, searchResponse.Value.Count);
 
-            foreach (var result in searchResult.Results) {
+            foreach (var result in searchResponse.Value.Hits) {
                 var resultDate = result.GetDateTime("date");
 
                 Assert.Equal(term, resultDate);

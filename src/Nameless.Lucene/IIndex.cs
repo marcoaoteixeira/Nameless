@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Search;
-using Nameless.Lucene.Results;
+﻿using Nameless.Lucene.Requests;
+using Nameless.Lucene.Responses;
 
 namespace Nameless.Lucene;
 
@@ -18,8 +18,8 @@ public interface IIndex : IDisposable {
     /// <summary>
     ///     Inserts the documents asynchronously into the index.
     /// </summary>
-    /// <param name="documents">
-    ///     The documents.
+    /// <param name="request">
+    ///     The insert document request.
     /// </param>
     /// <param name="cancellationToken">
     ///     The cancellation token.
@@ -27,15 +27,15 @@ public interface IIndex : IDisposable {
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous
     ///     operation, where the result contains an instance of
-    ///     <see cref="InsertDocumentsResult" />.
+    ///     <see cref="InsertDocumentsResponse" />.
     /// </returns>
-    Task<InsertDocumentsResult> InsertAsync(Document[] documents, CancellationToken cancellationToken);
+    Task<InsertDocumentsResponse> InsertDocumentsAsync(InsertDocumentsRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes the documents asynchronously from the index.
     /// </summary>
-    /// <param name="documents">
-    ///     The documents.
+    /// <param name="request">
+    ///     The delete document request.
     /// </param>
     /// <param name="cancellationToken">
     ///     The cancellation token.
@@ -43,16 +43,16 @@ public interface IIndex : IDisposable {
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous
     ///     operation, where the result contains an instance of
-    ///     <see cref="RemoveDocumentsResult" />.
+    ///     <see cref="DeleteDocumentsResponse" />.
     /// </returns>
-    Task<RemoveDocumentsResult> RemoveAsync(Document[] documents, CancellationToken cancellationToken);
+    Task<DeleteDocumentsResponse> DeleteDocumentsAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes documents asynchronously from the index given the
     ///     results obtained from a query.
     /// </summary>
-    /// <param name="query">
-    ///     The query.
+    /// <param name="request">
+    ///     The delete by query request.
     /// </param>
     /// <param name="cancellationToken">
     ///     The cancellation token.
@@ -60,24 +60,15 @@ public interface IIndex : IDisposable {
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous
     ///     operation, where the result contains an instance of
-    ///     <see cref="RemoveDocumentsResult" />.
+    ///     <see cref="DeleteDocumentsByQueryResponse" />.
     /// </returns>
-    Task<RemoveDocumentsResult> RemoveAsync(Query query, CancellationToken cancellationToken);
+    Task<DeleteDocumentsByQueryResponse> DeleteDocumentsAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes a search asynchronously against the index.
     /// </summary>
-    /// <param name="query">
-    ///     The query.
-    /// </param>
-    /// <param name="sort">
-    ///     The sort.
-    /// </param>
-    /// <param name="start">
-    ///     The start document.
-    /// </param>
-    /// <param name="limit">
-    ///     The maximum number of documents to return.
+    /// <param name="request">
+    ///     The search request.
     /// </param>
     /// <param name="cancellationToken">
     ///     The cancellation token.
@@ -85,8 +76,7 @@ public interface IIndex : IDisposable {
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous
     ///     operation, where the result contains an instance of
-    ///     <see cref="SearchDocumentsResult" />.
+    ///     <see cref="SearchDocumentsResponse" />.
     /// </returns>
-    Task<SearchDocumentsResult> SearchAsync(Query query, Sort sort, int start, int limit,
-        CancellationToken cancellationToken);
+    Task<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CancellationToken cancellationToken);
 }
