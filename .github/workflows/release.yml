@@ -25,14 +25,12 @@ jobs:
 
       - name: Get Version Number From Tag
         run: |
-          if [[ ${GITHUB_REF} =~ \/v(.*)$ ]]
-          then
-            echo VERSION=${BASH_REMATCH[1]} >> $GITHUB_ENV
-            echo Version ${BASH_REMATCH[1]}
-          else
-            echo VERSION='1.0.0' >> $GITHUB_ENV
-            echo Version 1.0.0
-          fi      
+          $version = "1.0.0"
+          if ($env:GITHUB_REF like 'v*') {
+            $version = $env:GITHUB_REF.Substring(1)
+          }
+          [System.Environment]::SetEnvironmentVariable('VERSION', $version, 'Process')
+          Write-Host "VERSION = $env:VERSION"
 
       - name: Checkout Source Code
         uses: actions/checkout@v6.0.1
