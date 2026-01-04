@@ -47,7 +47,7 @@ public sealed record QueryDefinition {
     ///     specified.
     /// </param>
     public QueryDefinition(Query query, Sort? sort = null, int start = 0, int limit = Defaults.QUERY_MAXIMUM_RESULTS) {
-        Query = Guard.Against.Null(query);
+        Query = query;
         Sort = sort ?? Sort.RELEVANCE;
         Start = Guard.Against.LowerThan(start, compare: 0);
         Limit = Guard.Against.LowerOrEqual(limit, compare: 0);

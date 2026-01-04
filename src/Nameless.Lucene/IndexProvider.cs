@@ -38,10 +38,10 @@ public sealed class IndexProvider : IIndexProvider {
         IFileSystem fileSystem,
         IOptions<LuceneOptions> options,
         ILogger<Index> logger) {
-        _analyzerProvider = Guard.Against.Null(analyzerProvider);
-        _fileSystem = Guard.Against.Null(fileSystem);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _analyzerProvider = analyzerProvider;
+        _fileSystem = fileSystem;
+        _options = options;
+        _logger = logger;
     }
 
     ~IndexProvider() {
