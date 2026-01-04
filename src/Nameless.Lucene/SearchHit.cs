@@ -18,7 +18,7 @@ public sealed class SearchHit : ISearchHit {
     public float Score { get; }
 
     public SearchHit(LuceneDocument document, float score = 0F) {
-        _document = Guard.Against.Null(document);
+        _document = document;
         _documentID = new Lazy<string>(GetDocumentID);
 
         Score = score;

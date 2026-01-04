@@ -3,19 +3,29 @@ using Nameless.Results;
 
 namespace Nameless.Lucene.Responses;
 
-public sealed record SearchResult(ISearchHit[] Hits, int Count) {
-    public static SearchResult Empty => new(Hits: [], Count: 0);
+public sealed record SearchDocumentsMetadata(ISearchHit[] Hits, int Count) {
+    public static SearchDocumentsMetadata Empty => new(Hits: [], Count: 0);
 }
 
-public sealed class SearchDocumentsResponse : Result<SearchResult> {
-    private SearchDocumentsResponse(SearchResult value, Error[] errors)
+public sealed class SearchDocumentsResponse : Result<SearchDocumentsMetadata> {
+    private SearchDocumentsResponse(SearchDocumentsMetadata value, Error[] errors)
         : base(value, errors) { }
 
-    public static implicit operator SearchDocumentsResponse(SearchResult value) {
+    public static implicit operator SearchDocumentsResponse(SearchDocumentsMetadata value) {
         return new SearchDocumentsResponse(value, errors: []);
     }
 
     public static implicit operator SearchDocumentsResponse(Error error) {
-        return new SearchDocumentsResponse(value: SearchResult.Empty, errors: [error]);
+        return new SearchDocumentsResponse(value: SearchDocumentsMetadata.Empty, errors: [error]);
+    }
+
+    public static Task<SearchDocumentsResponse> From(ISearchHit[] hits, int count) {
+        return Task.FromResult<SearchDocumentsResponse>(
+            new SearchDocumentsMetadata(hits, count)
+        );
+    }
+
+    public static Task<SearchDocumentsResponse> From(Error error) {
+        return Task.FromResult<SearchDocumentsResponse>(error);
     }
 }

@@ -8,7 +8,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Contains all defaults for the library.
 /// </summary>
-public class Defaults {
+public static class Defaults {
     /// <summary>
     ///     Gets the default maximum number of results that can be returned
     ///     by a query.
@@ -25,8 +25,8 @@ public class Defaults {
     ///     <see cref="StandardAnalyzer"/>.
     /// </summary>
     public static Analyzer Analyzer => new StandardAnalyzer(
-        Constants.CURRENT_VERSION,
-        new CharArraySet(
+        matchVersion: Constants.CURRENT_VERSION,
+        stopWords: new CharArraySet(
             Constants.CURRENT_VERSION,
             Enumerable.Empty<string>(),
             ignoreCase: true

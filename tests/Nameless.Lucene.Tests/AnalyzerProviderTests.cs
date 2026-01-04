@@ -8,15 +8,6 @@ namespace Nameless.Lucene;
 [UnitTest]
 public class AnalyzerProviderTests {
     [Fact]
-    public void WhenConstructing_WhenOptionsIsNull_ThenThrowArgumentNullException() {
-        // arrange && act
-        var actual = Record.Exception(() => new AnalyzerProvider(null!));
-
-        // assert
-        Assert.IsType<ArgumentNullException>(actual);
-    }
-
-    [Fact]
     public void WhenConstructing_WhenOptionsIsNotNull_ThenReturnsNewInstance() {
         // arrange
         var options = OptionsHelper.Create<LuceneOptions>();

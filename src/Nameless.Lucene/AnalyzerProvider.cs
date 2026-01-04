@@ -19,7 +19,7 @@ public sealed class AnalyzerProvider : IAnalyzerProvider {
     ///     if <paramref name="options" /> is <see langword="null"/>
     /// </exception>
     public AnalyzerProvider(IOptions<LuceneOptions> options) {
-        _options = Guard.Against.Null(options);
+        _options = options;
     }
 
     /// <inheritdoc />

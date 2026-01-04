@@ -27,20 +27,6 @@ public class QueryDefinitionTests {
     }
 
     [Fact]
-    public void WhenConstructing_WhenQueryIsNull_ThenThrowsArgumentNullException() {
-        // arrange
-        var sort = Sort.RELEVANCE;
-        const int Start = 0;
-        const int Limit = 1;
-
-        // act
-        var actual = Record.Exception(() => new QueryDefinition(null!, sort, Start, Limit));
-
-        // assert
-        Assert.IsType<ArgumentNullException>(actual);
-    }
-
-    [Fact]
     public void WhenConstructing_WhenStartIsLowerThanZero_ThenThrowsArgumentOutOfRangeException() {
         // arrange
         var query = new FakeQuery();

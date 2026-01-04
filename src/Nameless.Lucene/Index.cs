@@ -47,8 +47,7 @@ public sealed class Index : IIndex {
                                                    throw new InvalidOperationException(
                                                        $"{nameof(IndexWriterConfig)} not available.");
 
-    public Index(Analyzer analyzer, IFileSystem fileSystem, string name, IOptions<LuceneOptions> options,
-        ILogger<Index> logger) {
+    public Index(Analyzer analyzer, IFileSystem fileSystem, string name, IOptions<LuceneOptions> options, ILogger<Index> logger) {
         _analyzer = analyzer;
         _fileSystem = fileSystem;
         _options = options;
@@ -82,7 +81,7 @@ public sealed class Index : IIndex {
                               .ToArray();
 
             if (cancellationToken.IsCancellationRequested) {
-                return Task.FromResult<InsertDocumentsResponse>(0);
+                return InsertDocumentsResponse.From(totalDocumentsInserted: 0);
             }
 
             var indexWriter = GetIndexWriter();
@@ -90,14 +89,14 @@ public sealed class Index : IIndex {
             indexWriter.AddDocuments(docs);
             indexWriter.Commit();
 
-            return Task.FromResult<InsertDocumentsResponse>(request.Documents.Length);
+            return InsertDocumentsResponse.From(request.Documents.Length);
         }
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
             _logger.InsertDocumentsFailure(ex);
 
-            return Task.FromResult<InsertDocumentsResponse>(Error.Failure(ex.Message));
+            return InsertDocumentsResponse.From(Error.Failure(ex.Message));
         }
     }
 
@@ -106,7 +105,7 @@ public sealed class Index : IIndex {
         BlockAccessAfterDispose();
 
         if (request.Documents.Length > BooleanQuery.MaxClauseCount) {
-            return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(MAX_BOOLEAN_CLAUSE_EXCEEDED_ERROR));
+            return DeleteDocumentsResponse.From(Error.Failure(MAX_BOOLEAN_CLAUSE_EXCEEDED_ERROR));
         }
 
         try {
@@ -116,7 +115,7 @@ public sealed class Index : IIndex {
                                  .ToArray();
 
             if (cancellationToken.IsCancellationRequested) {
-                return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+                return DeleteDocumentsResponse.From(Error.Failure(USER_CANCELLED_TASK_ERROR));
             }
 
             var query = new BooleanQuery();
@@ -126,14 +125,14 @@ public sealed class Index : IIndex {
             indexWriter.DeleteDocuments(query);
             indexWriter.Commit();
 
-            return Task.FromResult<DeleteDocumentsResponse>(request.Documents.Length);
+            return DeleteDocumentsResponse.From(request.Documents.Length);
         }
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
             _logger.DeleteDocumentsFailure(ex);
 
-            return Task.FromResult<DeleteDocumentsResponse>(Error.Failure(ex.Message));
+            return DeleteDocumentsResponse.From(Error.Failure(ex.Message));
         }
     }
 
@@ -145,11 +144,11 @@ public sealed class Index : IIndex {
             var count = GetQueryCount(request.Query);
 
             if (count == 0) {
-                return Task.FromResult<DeleteDocumentsByQueryResponse>(0);
+                return DeleteDocumentsByQueryResponse.From(count);
             }
 
             if (cancellationToken.IsCancellationRequested) {
-                return Task.FromResult<DeleteDocumentsByQueryResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+                return DeleteDocumentsByQueryResponse.From(Error.Failure(USER_CANCELLED_TASK_ERROR));
             }
 
             var indexWriter = GetIndexWriter();
@@ -157,14 +156,14 @@ public sealed class Index : IIndex {
             indexWriter.DeleteDocuments(request.Query);
             indexWriter.Commit();
 
-            return Task.FromResult<DeleteDocumentsByQueryResponse>(count);
+            return DeleteDocumentsByQueryResponse.From(count);
         }
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
             _logger.DeleteDocumentsFailure(ex);
 
-            return Task.FromResult<DeleteDocumentsByQueryResponse>(Error.Failure(ex.Message));
+            return DeleteDocumentsByQueryResponse.From(Error.Failure(ex.Message));
         }
     }
 
@@ -176,11 +175,11 @@ public sealed class Index : IIndex {
             var count = GetQueryCount(request.Query);
 
             if (count == 0) {
-                return Task.FromResult<SearchDocumentsResponse>(SearchResult.Empty);
+                return SearchDocumentsResponse.From(hits: [], count);
             }
 
             if (cancellationToken.IsCancellationRequested) {
-                return Task.FromResult<SearchDocumentsResponse>(Error.Failure(USER_CANCELLED_TASK_ERROR));
+                return SearchDocumentsResponse.From(Error.Failure(USER_CANCELLED_TASK_ERROR));
             }
 
             var collector = TopFieldCollector.Create(
@@ -201,12 +200,12 @@ public sealed class Index : IIndex {
                                 .Select(score => score.ToSearchHit(indexSearch))
                                 .ToArray();
 
-            return Task.FromResult<SearchDocumentsResponse>(new SearchResult(hits, count));
+            return SearchDocumentsResponse.From(hits, count);
         }
         catch (Exception ex) {
             _logger.SearchFailure(ex);
 
-            return Task.FromResult<SearchDocumentsResponse>(Error.Failure(ex.Message));
+            return SearchDocumentsResponse.From(Error.Failure(ex.Message));
         }
     }
 
