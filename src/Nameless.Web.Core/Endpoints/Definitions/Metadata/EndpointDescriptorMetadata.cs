@@ -6,4 +6,4 @@
 /// <param name="Descriptor">
 ///     The endpoint descriptor.
 /// </param>
-public sealed record EndpointDescriptorMetadata(IEndpointDescriptor Descriptor);
+public record EndpointDescriptorMetadata(IEndpointDescriptor Descriptor);

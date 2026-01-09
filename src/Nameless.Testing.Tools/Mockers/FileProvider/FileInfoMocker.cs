@@ -3,7 +3,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace Nameless.Testing.Tools.Mockers.FileProvider;
 
-public sealed class FileInfoMocker : Mocker<IFileInfo> {
+public class FileInfoMocker : Mocker<IFileInfo> {
     public FileInfoMocker WithExists(bool returnValue) {
         MockInstance.Setup(mock => mock.Exists)
                     .Returns(returnValue);

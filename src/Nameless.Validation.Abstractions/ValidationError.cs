@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents a validation error entry.
 /// </summary>
-public sealed record ValidationError {
+public record ValidationError {
     /// <summary>
     ///     Gets the error message.
     /// </summary>

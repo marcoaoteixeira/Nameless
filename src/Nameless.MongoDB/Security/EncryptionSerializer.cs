@@ -9,7 +9,7 @@ namespace Nameless.MongoDB.Security;
 /// <summary>
 /// Serializer for encrypting and decrypting string values using DES algorithm.
 /// </summary>
-public sealed class EncryptionSerializer : SerializerBase<string?> {
+public class EncryptionSerializer : SerializerBase<string?> {
     private static readonly byte[] DefaultKey = [0x38, 0xc4, 0x18, 0x22, 0x5b, 0xf2, 0xec, 0x9e];
     private static readonly byte[] DefaultIv = [0x93, 0xdf, 0x93, 0x74, 0x43, 0xe0, 0x1b, 0x16];
 

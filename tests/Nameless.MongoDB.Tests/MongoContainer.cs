@@ -23,14 +23,14 @@ public sealed class MongoContainer : IAsyncLifetime {
         { "MONGO_INITDB_ROOT_PASSWORD", PASSWORD }
     });
 
-    private readonly IContainer _container = new ContainerBuilder().WithImage(image: "mongo:8.2.3")
-                                                                   .WithName(name: "mongo-test-container")
-                                                                   .WithPortBinding(HOST_PORT, CONTAINER_PORT)
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_PORT))
-                                                                   .WithHostname(HOST_NAME)
-                                                                   .WithCleanUp(cleanUp: true)
-                                                                   .WithEnvironment(Parameter)
-                                                                   .Build();
+    private readonly IContainer _container = new ContainerBuilder("mongo:8.2.3")
+                                             .WithName(name: "mongo-test-container")
+                                             .WithPortBinding(HOST_PORT, CONTAINER_PORT)
+                                             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_PORT))
+                                             .WithHostname(HOST_NAME)
+                                             .WithCleanUp(cleanUp: true)
+                                             .WithEnvironment(Parameter)
+                                             .Build();
 
     public async ValueTask InitializeAsync() {
         await _container.StartAsync();

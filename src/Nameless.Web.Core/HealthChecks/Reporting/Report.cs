@@ -2,7 +2,7 @@
 
 namespace Nameless.Web.HealthChecks.Reporting;
 
-public sealed record Report {
+public record Report {
     public HealthStatus Status { get; private set; } = HealthStatus.Healthy;
     public TimeSpan Duration { get; private set; } = TimeSpan.Zero;
     public Dictionary<string, ReportEntry> Entries { get; private set; } = [];

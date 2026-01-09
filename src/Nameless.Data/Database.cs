@@ -7,7 +7,7 @@ namespace Nameless.Data;
 /// <summary>
 ///     Default implementation of <see cref="IDatabase" />.
 /// </summary>
-public sealed class Database : IDatabase, IDisposable {
+public class Database : IDatabase, IDisposable {
     private readonly IDbConnectionFactory _dbConnectionFactory;
     private readonly ILogger<Database> _logger;
 

@@ -2,7 +2,7 @@
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record AdoNetSettings : SettingsBase {
+public record AdoNetSettings : SettingsBase {
     [Description(description: "adonet.batch_size")]
     public int? BatchSize { get; set; }
 

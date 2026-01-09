@@ -6,7 +6,7 @@ namespace Nameless.Collections.Generic;
 ///     Default implementation of <see cref="ICircularBuffer{TElement}" />.
 /// </summary>
 /// <typeparam name="TElement">Type of the element.</typeparam>
-public sealed class CircularBuffer<TElement> : ICircularBuffer<TElement> {
+public class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     private readonly TElement[] _buffer;
 
     private int _end;

@@ -6,7 +6,7 @@ namespace Nameless.Mailing.MailKit;
 /// <summary>
 ///     Implementation of <see cref="ISmtpClientFactory" />
 /// </summary>
-public sealed class SmtpClientFactory : ISmtpClientFactory {
+public class SmtpClientFactory : ISmtpClientFactory {
     private readonly IOptions<MailingOptions> _options;
 
     /// <summary>
@@ -17,7 +17,7 @@ public sealed class SmtpClientFactory : ISmtpClientFactory {
     ///     if <paramref name="options" /> is <see langword="null"/>.
     /// </exception>
     public SmtpClientFactory(IOptions<MailingOptions> options) {
-        _options = Guard.Against.Null(options);
+        _options = options;
     }
 
     /// <inhertidoc />

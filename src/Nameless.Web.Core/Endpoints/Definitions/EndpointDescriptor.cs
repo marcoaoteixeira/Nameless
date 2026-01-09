@@ -7,7 +7,7 @@ namespace Nameless.Web.Endpoints.Definitions;
 /// <summary>
 ///     Default implementation of <see cref="IEndpointDescriptor" />.
 /// </summary>
-public sealed class EndpointDescriptor : IEndpointDescriptor {
+public class EndpointDescriptor : IEndpointDescriptor {
     private readonly Dictionary<Type, AcceptMetadata> _accepts = [];
     private readonly Dictionary<int, ProduceMetadata> _produces = [];
     private readonly Dictionary<Type, Action<IEndpointFilterBuilder>> _filters = [];

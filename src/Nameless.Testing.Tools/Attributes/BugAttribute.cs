@@ -10,7 +10,7 @@ namespace Nameless.Testing.Tools.Attributes;
 ///     indicate that they are bug test cases.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public sealed class BugAttribute : Attribute, ITraitAttribute {
+public class BugAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets the issue identifier.
     /// </summary>

@@ -2,7 +2,7 @@
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record TransactionSettings : SettingsBase {
+public record TransactionSettings : SettingsBase {
     [Description(description: "transaction.factory_class")]
     public string? FactoryClass { get; set; }
 

@@ -6,7 +6,7 @@ namespace Nameless.NHibernate.Infrastructure;
 /// <summary>
 ///     Default implementation of <see cref="ExplicitlyDeclaredModel" />.
 /// </summary>
-public sealed class ModelInspector : ExplicitlyDeclaredModel {
+public class ModelInspector : ExplicitlyDeclaredModel {
     private readonly Type[] _entityTypes;
 
     /// <summary>

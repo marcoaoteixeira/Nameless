@@ -8,7 +8,7 @@ namespace Nameless.Autofac;
 /// <summary>
 ///     Defines a resolve middleware to inject public properties.
 /// </summary>
-public sealed class PropertyResolveMiddleware : IResolveMiddleware {
+public class PropertyResolveMiddleware : IResolveMiddleware {
     private readonly Func<MemberInfo, IComponentContext, object> _factory;
     private readonly Type _serviceType;
 

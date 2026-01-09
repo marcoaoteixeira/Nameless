@@ -9,7 +9,7 @@ namespace Nameless.Web.Filters;
 /// <summary>
 ///     Endpoint filter that provides validation capabilities.
 /// </summary>
-public sealed class ValidateRequestEndpointFilter : IEndpointFilter {
+public class ValidateRequestEndpointFilter : IEndpointFilter {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {
         var validationService = context.HttpContext
                                        .RequestServices

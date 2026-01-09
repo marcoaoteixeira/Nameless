@@ -11,7 +11,7 @@ namespace Nameless.Web.Endpoints.Definitions;
 /// <summary>
 ///     A builder for creating endpoint descriptors.
 /// </summary>
-public sealed class EndpointDescriptorBuilder {
+public class EndpointDescriptorBuilder {
     private const string ROUTE_SYNTAX = "Route";
 
     private readonly EndpointDescriptor _descriptor;

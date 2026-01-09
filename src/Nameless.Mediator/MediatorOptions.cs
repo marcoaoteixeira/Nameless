@@ -7,7 +7,7 @@ namespace Nameless.Mediator;
 /// <summary>
 ///     Mediator options for configuring the mediator services.
 /// </summary>
-public sealed class MediatorOptions {
+public class MediatorOptions {
     private readonly List<Type> _requestPipelineBehaviors = [];
     private readonly List<Type> _streamPipelineBehaviors = [];
 

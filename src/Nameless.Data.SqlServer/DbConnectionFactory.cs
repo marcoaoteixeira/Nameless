@@ -7,7 +7,7 @@ namespace Nameless.Data.SqlServer;
 /// <summary>
 /// Default implementation of <see cref="IDbConnectionFactory"/> for MS SQL Server database.
 /// </summary>
-public sealed class DbConnectionFactory : IDbConnectionFactory {
+public class DbConnectionFactory : IDbConnectionFactory {
     private readonly IOptions<SqlServerOptions> _options;
 
     /// <inheritdoc />

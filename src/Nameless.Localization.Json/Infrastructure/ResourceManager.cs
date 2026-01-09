@@ -13,7 +13,7 @@ namespace Nameless.Localization.Json.Infrastructure;
 /// <summary>
 ///     Current implementation of <see cref="IResourceManager" />.
 /// </summary>
-public sealed class ResourceManager : IResourceManager {
+public class ResourceManager : IResourceManager {
     private readonly ConcurrentDictionary<CacheKey, CacheEntry> _cache = [];
     private readonly IFileProvider _fileProvider;
     private readonly ILogger<ResourceManager> _logger;
@@ -30,8 +30,7 @@ public sealed class ResourceManager : IResourceManager {
     ///     <paramref name="options" /> or
     ///     <paramref name="logger" /> is <see langword="null"/>.
     /// </exception>
-    public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options,
-        ILogger<ResourceManager> logger) {
+    public ResourceManager(IFileProvider fileProvider, IOptions<JsonLocalizationOptions> options, ILogger<ResourceManager> logger) {
         _fileProvider = fileProvider;
         _options = options;
         _logger = logger;

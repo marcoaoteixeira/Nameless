@@ -10,7 +10,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Default implementation of <see cref="IQueryBuilder"/>.
 /// </summary>
-public sealed class QueryBuilder : IQueryBuilder {
+public class QueryBuilder : IQueryBuilder {
     public const float MINIMUM_FUZZINESS = 0F;
     public const float MAXIMUM_FUZZINESS = 2F;
 

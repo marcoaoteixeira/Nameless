@@ -8,4 +8,4 @@ namespace Nameless.Web.Endpoints.Definitions.Metadata;
 /// <param name="Handler">
 ///     The endpoint handler.
 /// </param>
-public sealed record EndpointHandlerMetadata(MethodInfo Handler);
+public record EndpointHandlerMetadata(MethodInfo Handler);

@@ -5,7 +5,7 @@ namespace Nameless.Validation.FluentValidation;
 /// <summary>
 /// Default implementation of <see cref="IValidationService"/> that uses FluentValidation for validation.
 /// </summary>
-public sealed class ValidationService : IValidationService {
+public class ValidationService : IValidationService {
     private readonly IValidator[] _validators;
 
     /// <summary>

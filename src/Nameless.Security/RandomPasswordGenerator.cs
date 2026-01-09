@@ -27,7 +27,7 @@ namespace Nameless.Security;
 ///     this because some back-end systems do not like certain special
 ///     characters in the first position).
 /// </summary>
-public sealed class RandomPasswordGenerator : IPasswordGenerator {
+public class RandomPasswordGenerator : IPasswordGenerator {
     /// <inheritdoc />
     /// <remarks>
     ///     On failure will return a <see cref="string.Empty" /> value.

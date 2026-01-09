@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Web.Correlation;
 
-public sealed class HttpContextCorrelationOptions {
+public class HttpContextCorrelationOptions {
     /// <summary>
     ///     Gets or sets the key used to store the correlation ID.
     /// </summary>

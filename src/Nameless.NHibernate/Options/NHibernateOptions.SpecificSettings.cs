@@ -2,7 +2,7 @@
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record SpecificSettings : SettingsBase {
+public record SpecificSettings : SettingsBase {
     [Description(description: "firebird.disable_parameter_casting")]
     public bool? FirebirdDisableParameterCasting { get; set; }
 

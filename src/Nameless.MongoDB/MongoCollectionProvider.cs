@@ -6,7 +6,7 @@ namespace Nameless.MongoDB;
 /// <summary>
 ///     Default implementation of <see cref="IMongoCollectionProvider"/>.
 /// </summary>
-public sealed class MongoCollectionProvider : IMongoCollectionProvider {
+public class MongoCollectionProvider : IMongoCollectionProvider {
     private readonly ICollectionNamingStrategy _collectionNamingStrategy;
     private readonly IMongoDatabase _database;
 
@@ -20,8 +20,8 @@ public sealed class MongoCollectionProvider : IMongoCollectionProvider {
     ///     <paramref name="collectionNamingStrategy"/> is <see langword="null"/>.
     /// </exception>
     public MongoCollectionProvider(IMongoDatabase database, ICollectionNamingStrategy collectionNamingStrategy) {
-        _database = Guard.Against.Null(database);
-        _collectionNamingStrategy = Guard.Against.Null(collectionNamingStrategy);
+        _database = database;
+        _collectionNamingStrategy = collectionNamingStrategy;
     }
 
     /// <inheritdoc />

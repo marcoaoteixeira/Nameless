@@ -13,7 +13,7 @@ namespace Nameless.Testing.Tools.Attributes;
 ///     indicate that they are end-to-end tests.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public sealed class E2EAttribute : Attribute, ITraitAttribute {
+public class E2EAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>

@@ -3,7 +3,7 @@
 /// <summary>
 ///     Password parameters.
 /// </summary>
-public sealed record PasswordParameters {
+public record PasswordParameters {
     /// <summary>
     ///     Default symbols values.
     /// </summary>

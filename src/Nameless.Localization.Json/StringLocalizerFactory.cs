@@ -11,7 +11,7 @@ namespace Nameless.Localization.Json;
 /// <summary>
 /// Implements a factory for creating instances of <see cref="IStringLocalizer"/> that retrieves localized strings from JSON resource files.
 /// </summary>
-public sealed class StringLocalizerFactory : IStringLocalizerFactory {
+public class StringLocalizerFactory : IStringLocalizerFactory {
     private readonly ICultureProvider _cultureContext;
     private readonly IResourceManager _resourceManager;
     private readonly IOptions<JsonLocalizationOptions> _options;

@@ -4,7 +4,7 @@ using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record ConnectionSettings : SettingsBase {
+public record ConnectionSettings : SettingsBase {
     [Description(description: "connection.provider")]
     public string? Provider { get; set; }
 

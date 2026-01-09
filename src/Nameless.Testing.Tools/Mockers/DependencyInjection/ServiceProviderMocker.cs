@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Testing.Tools.Mockers.DependencyInjection;
 
-public sealed class ServiceProviderMocker : Mocker<IServiceProvider> {
+public class ServiceProviderMocker : Mocker<IServiceProvider> {
     public ServiceProviderMocker WithGetService(Type serviceType, object returnValue) {
         MockInstance
             .Setup(mock => mock.GetService(serviceType))

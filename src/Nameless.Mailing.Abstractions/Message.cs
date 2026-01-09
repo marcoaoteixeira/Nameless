@@ -5,7 +5,7 @@ namespace Nameless.Mailing;
 /// <summary>
 ///     Defines a message to the mailing system.
 /// </summary>
-public sealed record Message {
+public record Message {
     /// <summary>
     ///     Gets the message subject.
     /// </summary>

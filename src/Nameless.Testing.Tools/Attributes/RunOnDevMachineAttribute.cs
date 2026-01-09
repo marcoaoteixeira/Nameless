@@ -10,7 +10,7 @@ namespace Nameless.Testing.Tools.Attributes;
 ///     indicate that they are unit tests.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public sealed class RunOnDevMachineAttribute : Attribute, ITraitAttribute {
+public class RunOnDevMachineAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>

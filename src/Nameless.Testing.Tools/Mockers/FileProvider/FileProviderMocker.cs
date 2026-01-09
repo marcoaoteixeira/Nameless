@@ -4,7 +4,7 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.FileProvider;
 
-public sealed class FileProviderMocker : Mocker<IFileProvider> {
+public class FileProviderMocker : Mocker<IFileProvider> {
     public FileProviderMocker WithGetFileInfo(IFileInfo returnValue) {
         MockInstance.Setup(mock => mock.GetFileInfo(It.IsAny<string>()))
                     .Returns(returnValue);

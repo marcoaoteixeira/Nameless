@@ -7,7 +7,7 @@ namespace Nameless.Mediator;
 /// <summary>
 /// Default implementation of the <see cref="IMediator"/> interface.
 /// </summary>
-public sealed class MediatorImpl : IMediator {
+public class MediatorImpl : IMediator {
     private readonly IEventHandlerInvoker _eventHandlerInvoker;
     private readonly IRequestHandlerInvoker _requestHandlerInvoker;
     private readonly IStreamHandlerInvoker _streamHandlerInvoker;
@@ -26,9 +26,9 @@ public sealed class MediatorImpl : IMediator {
     public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker,
         IRequestHandlerInvoker requestHandlerInvoker,
         IStreamHandlerInvoker streamHandlerInvoker) {
-        _eventHandlerInvoker = Guard.Against.Null(eventHandlerInvoker);
-        _requestHandlerInvoker = Guard.Against.Null(requestHandlerInvoker);
-        _streamHandlerInvoker = Guard.Against.Null(streamHandlerInvoker);
+        _eventHandlerInvoker = eventHandlerInvoker;
+        _requestHandlerInvoker = requestHandlerInvoker;
+        _streamHandlerInvoker = streamHandlerInvoker;
     }
 
     /// <inheritdoc />

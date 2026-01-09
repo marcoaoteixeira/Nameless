@@ -6,7 +6,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Default implementation of <see cref="IAnalyzerProvider" />.
 /// </summary>
-public sealed class AnalyzerProvider : IAnalyzerProvider {
+public class AnalyzerProvider : IAnalyzerProvider {
     private readonly IOptions<LuceneOptions> _options;
 
     /// <summary>

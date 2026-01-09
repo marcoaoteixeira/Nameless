@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents a document field.
 /// </summary>
-public sealed record Field {
+public record Field {
     /// <summary>
     ///     Gets the name.
     /// </summary>

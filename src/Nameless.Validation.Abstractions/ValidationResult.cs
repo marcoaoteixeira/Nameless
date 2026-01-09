@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents the validation execution result.
 /// </summary>
-public sealed record ValidationResult {
+public record ValidationResult {
     /// <summary>
     ///     Gets the errors from the validation execution.
     /// </summary>

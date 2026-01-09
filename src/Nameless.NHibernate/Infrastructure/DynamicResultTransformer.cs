@@ -6,7 +6,7 @@ namespace Nameless.NHibernate.Infrastructure;
 /// <summary>
 /// Dynamic result transformer.
 /// </summary>
-public sealed class DynamicResultTransformer : IResultTransformer {
+public class DynamicResultTransformer : IResultTransformer {
     /// <summary>
     /// Transforms a <see cref="IList"/> object.
     /// </summary>

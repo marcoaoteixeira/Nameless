@@ -3,7 +3,7 @@
 /// <summary>
 ///     Application context options.
 /// </summary>
-public sealed class ApplicationContextOptions {
+public class ApplicationContextOptions {
     /// <summary>
     ///     Gets or sets the name of the current environment.
     /// </summary>

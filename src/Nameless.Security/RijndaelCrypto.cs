@@ -14,7 +14,7 @@ namespace Nameless.Security;
 ///     encrypted values from the same plain text, encryption key, initialization
 ///     vector, and other parameters. This class is thread-safe.
 /// </summary>
-public sealed class RijndaelCrypto : ICrypto, IDisposable {
+public class RijndaelCrypto : ICrypto, IDisposable {
     private readonly Lock _lock = new();
 
     private readonly IOptions<CryptoOptions> _options;

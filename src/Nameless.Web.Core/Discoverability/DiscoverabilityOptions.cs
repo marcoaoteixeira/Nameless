@@ -6,7 +6,7 @@ namespace Nameless.Web.Discoverability;
 /// <summary>
 ///     Discovery services options for configuring service discovery in the application.
 /// </summary>
-public sealed class DiscoverabilityOptions {
+public class DiscoverabilityOptions {
     /// <summary>
     ///     Gets or sets the action to configure service discovery options.
     /// </summary>

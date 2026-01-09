@@ -17,14 +17,14 @@ public sealed class RabbitContainer : IAsyncLifetime {
         { "RABBITMQ_DEFAULT_USER", USERNAME }, { "RABBITMQ_DEFAULT_PASS", PASSWORD }
     });
 
-    private readonly IContainer _container = new ContainerBuilder().WithImage(image: "rabbitmq:4.1.0-alpine")
-                                                                   .WithName(name: "rabbitmq-test-container")
-                                                                   .WithPortBinding(HOST_PORT, CONTAINER_PORT)
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_PORT))
-                                                                   .WithHostname(HOST_NAME)
-                                                                   .WithCleanUp(cleanUp: true)
-                                                                   .WithEnvironment(Parameter)
-                                                                   .Build();
+    private readonly IContainer _container = new ContainerBuilder("rabbitmq:4.1.0-alpine")
+                                             .WithName(name: "rabbitmq-test-container")
+                                             .WithPortBinding(HOST_PORT, CONTAINER_PORT)
+                                             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_PORT))
+                                             .WithHostname(HOST_NAME)
+                                             .WithCleanUp(cleanUp: true)
+                                             .WithEnvironment(Parameter)
+                                             .Build();
 
     private IConnection _connection;
 

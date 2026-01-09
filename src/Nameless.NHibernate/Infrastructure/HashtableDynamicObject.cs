@@ -19,7 +19,7 @@ namespace Nameless.NHibernate.Infrastructure;
 ///         }
 ///     }
 /// </example>
-public sealed class HashtableDynamicObject : DynamicObject {
+public class HashtableDynamicObject : DynamicObject {
     private readonly IDictionary _storage;
 
     /// <summary>

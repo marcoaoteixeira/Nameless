@@ -7,7 +7,7 @@ namespace Nameless.Web.Endpoints;
 /// <summary>
 ///     Represents options for configuring endpoints.
 /// </summary>
-public sealed class EndpointOptions {
+public class EndpointOptions {
     /// <summary>
     ///     Gets or sets the assemblies to scan for endpoints.
     /// </summary>

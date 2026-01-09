@@ -11,7 +11,7 @@ namespace Nameless.Results;
 /// <typeparam name="TArg1">
 ///     Type of the second result.
 /// </typeparam>
-public sealed class Switch<TArg0, TArg1> {
+public class Switch<TArg0, TArg1> {
     private readonly TArg0? _arg0;
     private readonly TArg1? _arg1;
 
@@ -66,7 +66,7 @@ public sealed class Switch<TArg0, TArg1> {
     /// <param name="arg1">
     ///     The second argument.
     /// </param>
-    private Switch(int index, TArg0? arg0 = default, TArg1? arg1 = default) {
+    protected Switch(int index, TArg0? arg0 = default, TArg1? arg1 = default) {
         Index = index;
 
         _arg0 = arg0;

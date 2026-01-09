@@ -5,7 +5,7 @@ namespace Nameless.ProducerConsumer;
 /// <summary>
 ///     Represents a collection of parameters. Parameter's name is case-insensitive.
 /// </summary>
-public sealed record Parameters : IEnumerable<KeyValuePair<string, object?>> {
+public class Parameters : IEnumerable<KeyValuePair<string, object?>> {
     private readonly Dictionary<string, object?> _data = new(StringComparer.CurrentCultureIgnoreCase);
 
     /// <summary>

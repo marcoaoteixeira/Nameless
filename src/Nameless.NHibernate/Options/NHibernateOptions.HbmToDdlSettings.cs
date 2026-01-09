@@ -3,7 +3,7 @@ using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record HbmToDdlSettings : SettingsBase {
+public record HbmToDdlSettings : SettingsBase {
     [Description(description: "hbm2ddl.auto")]
     public HbmToDdlAuto? Auto { get; set; }
 

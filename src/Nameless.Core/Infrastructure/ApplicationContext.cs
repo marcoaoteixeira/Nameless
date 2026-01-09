@@ -5,7 +5,7 @@ using Nameless.Internals;
 
 namespace Nameless.Infrastructure;
 
-public sealed class ApplicationContext : IApplicationContext {
+public class ApplicationContext : IApplicationContext {
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
     private readonly Lazy<string> _dataDirectoryPath;

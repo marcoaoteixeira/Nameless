@@ -7,7 +7,7 @@ namespace Nameless.Web.Endpoints.Definitions;
 ///     Default implementation of the <see cref="IEndpointFilterBuilder"/>
 ///     interface.
 /// </summary>
-public sealed class EndpointFilterBuilder : IEndpointFilterBuilder {
+public class EndpointFilterBuilder : IEndpointFilterBuilder {
     private readonly RouteHandlerBuilder _routeHandlerBuilder;
 
     /// <summary>

@@ -5,7 +5,7 @@ namespace Nameless.Data.Sqlite;
 /// <summary>
 /// Sqlite options.
 /// </summary>
-public sealed class SqliteOptions {
+public class SqliteOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
     /// </summary>

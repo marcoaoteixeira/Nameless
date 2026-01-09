@@ -7,11 +7,8 @@ namespace Nameless.Localization.Json.Infrastructure;
 /// <summary>
 /// Default implementation of <see cref="IPluralizationRuleProvider"/>.
 /// </summary>
-public sealed class PluralizationRuleProvider : IPluralizationRuleProvider {
-    // ReSharper disable once InconsistentNaming
-    private readonly ConcurrentDictionary<string, PluralizationRuleDelegate> Cache = [];
-
-    public readonly PluralizationRuleDelegate DefaultRule = count => count >= 1 ? 1 : 0;
+public class PluralizationRuleProvider : IPluralizationRuleProvider {
+    private ConcurrentDictionary<string, PluralizationRuleDelegate> Cache { get; } = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PluralizationRuleProvider"/> class.

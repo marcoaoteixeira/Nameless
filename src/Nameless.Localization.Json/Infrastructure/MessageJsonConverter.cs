@@ -7,7 +7,7 @@ namespace Nameless.Localization.Json.Infrastructure;
 /// <summary>
 /// Converts <see cref="Message"/> objects to and from JSON.
 /// </summary>
-public sealed class MessageJsonConverter : JsonConverter<Message> {
+public class MessageJsonConverter : JsonConverter<Message> {
     /// <inheritdoc />
     public override Message Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         if (reader.TokenType != JsonTokenType.StartObject) {

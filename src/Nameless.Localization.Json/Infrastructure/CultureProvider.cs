@@ -7,7 +7,7 @@ namespace Nameless.Localization.Json.Infrastructure;
 /// <summary>
 ///     Default implementation of <see cref="ICultureProvider" />.
 /// </summary>
-public sealed class CultureProvider : ICultureProvider {
+public class CultureProvider : ICultureProvider {
     private static readonly CultureInfo DefaultCulture = new(name: "en-US");
 
     private readonly ILogger<CultureProvider> _logger;

@@ -8,7 +8,7 @@ namespace Nameless.Web.OpenApi;
 /// <summary>
 ///     Deprecates OpenAPI operations based on the stability of the endpoint.
 /// </summary>
-public sealed class DeprecateOpenApiOperationTransformer : IOpenApiOperationTransformer {
+public class DeprecateOpenApiOperationTransformer : IOpenApiOperationTransformer {
     /// <inheritdoc />
     /// <remarks>
     ///     It tries to simulate the behavior of the StabilityOpenApiOperationFilter from the Scalar.AspNetCore package.

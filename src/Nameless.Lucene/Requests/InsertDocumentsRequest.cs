@@ -1,3 +1,3 @@
 ﻿namespace Nameless.Lucene.Requests;
 
-public sealed record InsertDocumentsRequest(Document[] Documents);
+public record InsertDocumentsRequest(Document[] Documents);

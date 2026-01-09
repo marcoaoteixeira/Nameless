@@ -7,7 +7,7 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// <summary>
 ///     The default implementation of <see cref="IServiceFactory"/>.
 /// </summary>
-public sealed class ServiceFactory : IServiceFactory {
+public class ServiceFactory : IServiceFactory {
     private readonly IServiceProvider _serviceProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 

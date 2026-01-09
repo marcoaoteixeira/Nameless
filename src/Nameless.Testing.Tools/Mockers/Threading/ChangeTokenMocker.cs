@@ -3,7 +3,7 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.Threading;
 
-public sealed class ChangeTokenMocker : Mocker<IChangeToken> {
+public class ChangeTokenMocker : Mocker<IChangeToken> {
     public ChangeTokenMocker WithHasChanged(bool returnValue) {
         MockInstance.Setup(mock => mock.HasChanged)
                     .Returns(returnValue);

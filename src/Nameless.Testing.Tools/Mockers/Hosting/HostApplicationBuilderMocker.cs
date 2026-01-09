@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Testing.Tools.Mockers.Hosting;
 
-public sealed class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilder> {
+public class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilder> {
     public HostApplicationBuilderMocker WithServices(IServiceCollection returnValue) {
         MockInstance.Setup(mock => mock.Services)
                     .Returns(returnValue);

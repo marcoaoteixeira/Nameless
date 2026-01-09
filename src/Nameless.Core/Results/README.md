@@ -83,7 +83,7 @@ You can extend the `Result<T>` class to your needs by creating custom
 class that encapsulates the result of a user creation operation:
 
 ```csharp
-public sealed class CreateUserResult : Result<User> {
+public class CreateUserResult : Result<User> {
 	// Use a private constructor to prevent the class for being
 	// constructed. We should use the implicit operators
 	// for that.

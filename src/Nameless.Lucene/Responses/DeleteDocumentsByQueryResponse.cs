@@ -3,9 +3,9 @@ using Nameless.Results;
 
 namespace Nameless.Lucene.Responses;
 
-public readonly record struct DeleteDocumentsByQueryMetadata(int TotalDocumentsDeleted);
+public readonly record struct DeleteDocumentsByQueryMetadata(int Count);
 
-public sealed class DeleteDocumentsByQueryResponse : Result<DeleteDocumentsByQueryMetadata> {
+public class DeleteDocumentsByQueryResponse : Result<DeleteDocumentsByQueryMetadata> {
     private DeleteDocumentsByQueryResponse(DeleteDocumentsByQueryMetadata value, Error[] errors)
         : base(value, errors) { }
 
@@ -17,9 +17,9 @@ public sealed class DeleteDocumentsByQueryResponse : Result<DeleteDocumentsByQue
         return new DeleteDocumentsByQueryResponse(value: default, errors: [error]);
     }
 
-    public static Task<DeleteDocumentsByQueryResponse> From(int totalDocumentsDeleted) {
+    public static Task<DeleteDocumentsByQueryResponse> From(int count) {
         return Task.FromResult<DeleteDocumentsByQueryResponse>(
-            new DeleteDocumentsByQueryMetadata(totalDocumentsDeleted)
+            new DeleteDocumentsByQueryMetadata(count)
         );
     }
 

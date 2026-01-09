@@ -2,7 +2,7 @@
 
 namespace Nameless.Testing.Tools.Mockers.Configuration;
 
-public sealed class ConfigurationSectionMocker : Mocker<IConfigurationSection> {
+public class ConfigurationSectionMocker : Mocker<IConfigurationSection> {
     public ConfigurationSectionMocker WithKey(string returnValue) {
         MockInstance.Setup(mock => mock.Key)
                     .Returns(returnValue);

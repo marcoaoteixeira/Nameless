@@ -5,7 +5,7 @@ namespace Nameless.Mediator.Requests;
 /// <summary>
 ///     The default implementation of <see cref="IRequestHandlerInvoker" />.
 /// </summary>
-public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
+public class RequestHandlerInvoker : IRequestHandlerInvoker {
     private readonly ConcurrentDictionary<Type, RequestHandlerWrapper> _cache = new();
     private readonly IServiceProvider _provider;
 
@@ -19,7 +19,7 @@ public sealed class RequestHandlerInvoker : IRequestHandlerInvoker {
     ///     if <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public RequestHandlerInvoker(IServiceProvider provider) {
-        _provider = Guard.Against.Null(provider);
+        _provider = provider;
     }
 
     /// <inheritdoc />

@@ -4,7 +4,7 @@
 ///     Default implementation of <see cref="IPage{TItem}" />.
 /// </summary>
 /// <typeparam name="TItem">Type of the page's items.</typeparam>
-public sealed class Page<TItem> : IPage<TItem> {
+public class Page<TItem> : IPage<TItem> {
     private readonly IQueryable<TItem> _query;
     private readonly Lazy<TItem[]> _items;
     private readonly Lazy<int> _totalItems;

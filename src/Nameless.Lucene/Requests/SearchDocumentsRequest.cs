@@ -2,7 +2,7 @@
 
 namespace Nameless.Lucene.Requests;
 
-public sealed record SearchDocumentsRequest {
+public record SearchDocumentsRequest {
     public Query Query { get; init; }
     
     public Sort Sort { get; init; }
