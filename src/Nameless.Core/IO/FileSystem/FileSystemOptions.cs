@@ -5,7 +5,7 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     The options for configuring the <see cref="IFileSystem"/>.
 /// </summary>
-public sealed class FileSystemOptions {
+public class FileSystemOptions {
     /// <summary>
     ///     Gets or sets the root directory for file system operations.
     /// </summary>

@@ -75,7 +75,7 @@ public class IndexTests {
         var response = await index.InsertDocumentsAsync(request, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(response.Success);
-            Assert.Equal(documents.Length, response.Value.TotalDocumentsInserted);
+            Assert.Equal(documents.Length, response.Value.Count);
         });
 
         // retrieve documents
@@ -94,7 +94,7 @@ public class IndexTests {
         var deleteResponse = await index.DeleteDocumentsAsync(deleteRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(deleteResponse.Success);
-            Assert.Equal(8, deleteResponse.Value.TotalDocumentsDeleted);
+            Assert.Equal(8, deleteResponse.Value.Count);
         });
 
         // ensure index is empty
@@ -130,7 +130,7 @@ public class IndexTests {
         var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.TotalDocumentsInserted);
+            Assert.Equal(documents.Length, insertResponse.Value.Count);
         });
 
         // retrieve documents
@@ -170,7 +170,7 @@ public class IndexTests {
         var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.TotalDocumentsInserted);
+            Assert.Equal(documents.Length, insertResponse.Value.Count);
         });
 
         // retrieve documents
@@ -211,7 +211,7 @@ public class IndexTests {
         var insertResponse = await index.InsertDocumentsAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.TotalDocumentsInserted);
+            Assert.Equal(documents.Length, insertResponse.Value.Count);
         });
 
         // retrieve documents

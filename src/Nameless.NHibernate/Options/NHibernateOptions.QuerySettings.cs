@@ -2,7 +2,7 @@
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record QuerySettings : SettingsBase {
+public record QuerySettings : SettingsBase {
     [Description(description: "query.substitutions")]
     public string? Substitutions { get; set; } = "true=1;false=0";
 

@@ -3,7 +3,7 @@ using Nameless.NHibernate.Objects;
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record CommonSettings : SettingsBase {
+public record CommonSettings : SettingsBase {
     [Description(description: "dialect")]
     public string? Dialect { get; set; } = "NHibernate.Dialect.SQLiteDialect";
 

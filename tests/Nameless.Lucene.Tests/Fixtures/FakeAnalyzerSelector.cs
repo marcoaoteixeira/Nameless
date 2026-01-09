@@ -9,10 +9,10 @@ public sealed class FakeAnalyzerSelector : IAnalyzerSelector {
 
     public AnalyzerSelectorResult GetAnalyzer(string indexName) {
         return new AnalyzerSelectorResult(
-            analyzer: string.Equals(indexName, _indexName)
+            Analyzer: string.Equals(indexName, _indexName)
                 ? new FakeAnalyzer()
                 : null,
-            priority: 0
+            Priority: 0
         );
     }
 }

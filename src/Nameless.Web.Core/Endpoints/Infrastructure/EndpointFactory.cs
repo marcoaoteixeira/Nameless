@@ -5,7 +5,7 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// <summary>
 ///     Default implementation of <see cref="IEndpointFactory"/>.
 /// </summary>
-public sealed class EndpointFactory : IEndpointFactory {
+public class EndpointFactory : IEndpointFactory {
     private readonly IServiceFactory _serviceFactory;
 
     /// <summary>

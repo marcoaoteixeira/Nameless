@@ -7,7 +7,7 @@ namespace Nameless.Localization.Json.Objects;
 /// Represents a resource containing localized messages for a specific culture.
 /// </summary>
 [DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
-public sealed record Resource {
+public record Resource {
     /// <summary>
     /// Gets an empty resource with no path, culture, and messages.
     /// </summary>

@@ -5,7 +5,7 @@ namespace Nameless.MongoDB.Infrastructure;
 /// <summary>
 /// Default implementation of <see cref="ICollectionNamingStrategy"/>.
 /// </summary>
-public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
+public class CollectionNamingStrategy : ICollectionNamingStrategy {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     Thrown when <paramref name="type"/> is <see langword="null"/>.
@@ -18,8 +18,6 @@ public sealed class CollectionNamingStrategy : ICollectionNamingStrategy {
     /// converting them to lower case separated by underline, e.g.: UsersInRoles => users_in_roles,
     /// </remarks>
     public string GetCollectionName(Type type) {
-        Guard.Against.Null(type);
-
         var attr = type.GetCustomAttribute<CollectionNameAttribute>(inherit: false);
         if (attr is not null) {
             return attr.Name;

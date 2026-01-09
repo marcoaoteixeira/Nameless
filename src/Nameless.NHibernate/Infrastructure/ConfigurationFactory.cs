@@ -7,7 +7,7 @@ namespace Nameless.NHibernate.Infrastructure;
 /// <summary>
 /// Default implementation of <see cref="IConfigurationFactory"/>.
 /// </summary>
-public sealed class ConfigurationFactory : IConfigurationFactory {
+public class ConfigurationFactory : IConfigurationFactory {
     private readonly IOptions<NHibernateOptions> _options;
 
     /// <summary>

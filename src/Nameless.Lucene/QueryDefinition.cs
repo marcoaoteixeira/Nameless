@@ -6,7 +6,7 @@ namespace Nameless.Lucene;
 ///     Represents a definition for a search query, including the query itself,
 ///     sorting options, and pagination settings.
 /// </summary>
-public sealed record QueryDefinition {
+public record QueryDefinition {
     /// <summary>
     ///     Gets the Lucene query to be executed.
     /// </summary>

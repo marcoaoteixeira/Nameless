@@ -9,7 +9,7 @@ namespace Nameless.Mediator.Events;
 /// <typeparam name="TEvent">
 ///     Type of the event.
 /// </typeparam>
-public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
+public class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     where TEvent : IEvent {
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
@@ -17,9 +17,6 @@ public sealed class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     ///     <paramref name="provider"/>is <see langword="null"/>.
     /// </exception>
     public override Task HandleAsync(IEvent evt, IServiceProvider provider, CancellationToken cancellationToken) {
-        Guard.Against.Null(evt);
-        Guard.Against.Null(provider);
-
         var logger = provider.GetLogger<EventHandlerWrapper>();
         var handlers = provider.GetServices<IEventHandler<TEvent>>().ToArray();
 

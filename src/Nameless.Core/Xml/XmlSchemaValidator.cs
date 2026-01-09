@@ -3,7 +3,7 @@ using System.Xml.Schema;
 
 namespace Nameless.Xml;
 
-public sealed class XmlSchemaValidator : IXmlSchemaValidator {
+public class XmlSchemaValidator : IXmlSchemaValidator {
     /// <inheritdoc />
     public bool Validate(Stream xml, Stream schema) {
         var success = false;

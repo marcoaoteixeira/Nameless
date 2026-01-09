@@ -3,7 +3,7 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.Logging;
 
-public sealed class LoggerFactoryMocker : Mocker<ILoggerFactory> {
+public class LoggerFactoryMocker : Mocker<ILoggerFactory> {
     public LoggerFactoryMocker WithCreateLogger(ILogger returnValue) {
         MockInstance.Setup(mock => mock.CreateLogger(It.IsAny<string>()))
                     .Returns(returnValue);

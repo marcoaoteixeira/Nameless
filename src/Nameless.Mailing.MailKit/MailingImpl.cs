@@ -7,7 +7,7 @@ namespace Nameless.Mailing.MailKit;
 /// <summary>
 /// Default implementation of <see cref="IMailing"/> using MailKit for sending emails.
 /// </summary>
-public sealed class MailingImpl : IMailing {
+public class MailingImpl : IMailing {
     private readonly ILogger<MailingImpl> _logger;
     private readonly ISmtpClientFactory _smtpClientFactory;
 
@@ -21,8 +21,8 @@ public sealed class MailingImpl : IMailing {
     ///     <paramref name="logger"/> is <see langword="null"/>.
     /// </exception>
     public MailingImpl(ISmtpClientFactory smtpClientFactory, ILogger<MailingImpl> logger) {
-        _smtpClientFactory = Guard.Against.Null(smtpClientFactory);
-        _logger = Guard.Against.Null(logger);
+        _smtpClientFactory = smtpClientFactory;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -34,8 +34,6 @@ public sealed class MailingImpl : IMailing {
     ///     <see cref="Message.To"/> is empty.
     /// </exception>
     public async Task DeliverAsync(Message message, CancellationToken cancellationToken) {
-        Guard.Against.Null(message);
-
         var mail = CreateMimeMessage(message);
 
         if (mail.From.Count == 0) {

@@ -3,7 +3,7 @@
 /// <summary>
 /// The localization options.
 /// </summary>
-public sealed class JsonLocalizationOptions {
+public class JsonLocalizationOptions {
     /// <summary>
     ///     Gets or sets the name of the directory where the
     ///     JSON resources files are stored.

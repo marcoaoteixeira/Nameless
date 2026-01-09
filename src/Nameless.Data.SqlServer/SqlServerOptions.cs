@@ -5,7 +5,7 @@ namespace Nameless.Data.SqlServer;
 /// <summary>
 /// MS SQL Server options.
 /// </summary>
-public sealed class SqlServerOptions {
+public class SqlServerOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
     /// </summary>

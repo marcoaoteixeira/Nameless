@@ -4,7 +4,7 @@
 /// Defines a name for a MongoDB collection.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public sealed class CollectionNameAttribute : Attribute {
+public class CollectionNameAttribute : Attribute {
     /// <summary>
     /// Gets the name of the MongoDB collection.
     /// </summary>

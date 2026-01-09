@@ -1,6 +1,6 @@
 ﻿namespace Nameless.Web.Infrastructure;
 
-public sealed class PeriodicTimerWrapper : IPeriodicTimer {
+public class PeriodicTimerWrapper : IPeriodicTimer {
     private PeriodicTimer _timer;
 
     private bool _disposed;

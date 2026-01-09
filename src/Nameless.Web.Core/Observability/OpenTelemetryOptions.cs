@@ -8,7 +8,7 @@ namespace Nameless.Web.Observability;
 /// <summary>
 ///     OpenTelemetry options for configuring logging and tracing in the application.
 /// </summary>
-public sealed class OpenTelemetryOptions {
+public class OpenTelemetryOptions {
     /// <summary>
     ///     Gets or sets the activity sources.
     /// </summary>

@@ -2,7 +2,7 @@
 
 namespace Nameless.NHibernate.Options;
 
-public sealed record CacheSettings : SettingsBase {
+public record CacheSettings : SettingsBase {
     [Description(description: "cache.use_second_level_cache")]
     public bool? UseSecondLevelCache { get; set; }
 

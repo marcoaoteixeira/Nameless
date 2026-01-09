@@ -3,7 +3,7 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.Configuration;
 
-public sealed class ConfigurationManagerMocker : Mocker<IConfigurationManager> {
+public class ConfigurationManagerMocker : Mocker<IConfigurationManager> {
     public ConfigurationManagerMocker WithGetSection(IConfigurationSection returnValue) {
         MockInstance.Setup(mock => mock.GetSection(It.IsAny<string>()))
                     .Returns(returnValue);

@@ -2,7 +2,7 @@ using Nameless.Infrastructure;
 
 namespace Nameless.Testing.Tools.Mockers.Infrastructure;
 
-public sealed class ApplicationContextMocker : Mocker<IApplicationContext> {
+public class ApplicationContextMocker : Mocker<IApplicationContext> {
     public ApplicationContextMocker WithEnvironment(string returnValue) {
         MockInstance.Setup(mock => mock.EnvironmentName)
                     .Returns(returnValue);

@@ -6,7 +6,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Default implementation of <see cref="ISearchHit" />.
 /// </summary>
-public sealed class SearchHit : ISearchHit {
+public class SearchHit : ISearchHit {
     private readonly LuceneDocument _document;
 
     private readonly Lazy<string> _documentID;

@@ -5,7 +5,7 @@ namespace Nameless.MongoDB;
 /// <summary>
 /// Represents the settings for MongoDB credentials.
 /// </summary>
-public sealed record CredentialsSettings {
+public record CredentialsSettings {
     /// <summary>
     /// Whether to use credentials for MongoDB connection.
     /// </summary>

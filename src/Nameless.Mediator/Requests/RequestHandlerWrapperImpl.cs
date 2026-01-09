@@ -12,30 +12,25 @@ namespace Nameless.Mediator.Requests;
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
+public class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse> {
     /// <inheritdoc />
-    public override async Task<object?> HandleAsync(object request, IServiceProvider provider,
-        CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
-        Guard.Against.Null(provider);
-
-        return await HandleAsync((IRequest<TResponse>)request, provider, cancellationToken)
-            .ConfigureAwait(continueOnCapturedContext: false);
+    public override async Task<object?> HandleAsync(object request, IServiceProvider provider, CancellationToken cancellationToken) {
+        return await HandleAsync((IRequest<TResponse>)request, provider, cancellationToken).SkipContextSync();
     }
 
     /// <inheritdoc />
-    public override Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider provider,
-        CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
-        Guard.Against.Null(provider);
-
+    public override Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider provider, CancellationToken cancellationToken) {
         return provider.GetServices<IRequestPipelineBehavior<TRequest, TResponse>>()
                        .Reverse()
                        .Aggregate(
-                           (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
-                           (next, pipeline) => token => pipeline.HandleAsync((TRequest)request, next,
-                               token == CancellationToken.None ? cancellationToken : token))
+                           seed: (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
+                           func: (next, pipeline) => token => pipeline.HandleAsync(
+                               request: (TRequest)request,
+                               next: next,
+                               cancellationToken: token == CancellationToken.None ? cancellationToken : token
+                            )
+                        )
                        .Invoke(cancellationToken);
 
         Task<TResponse> InnerHandleAsync(CancellationToken token) {

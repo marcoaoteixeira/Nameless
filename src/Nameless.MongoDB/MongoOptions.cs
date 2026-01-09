@@ -7,7 +7,7 @@ namespace Nameless.MongoDB;
 /// <summary>
 /// Options for configuring the MongoDB connection.
 /// </summary>
-public sealed class MongoOptions {
+public class MongoOptions {
     /// <summary>
     ///     Gets or sets the assemblies to scan for document mappers.
     /// </summary>

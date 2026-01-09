@@ -5,7 +5,7 @@ namespace Nameless.Mediator.Events;
 /// <summary>
 ///     The default implementation of <see cref="IEventHandlerInvoker" />.
 /// </summary>
-public sealed class EventHandlerInvoker : IEventHandlerInvoker {
+public class EventHandlerInvoker : IEventHandlerInvoker {
     private readonly ConcurrentDictionary<Type, EventHandlerWrapper> _cache = new();
     private readonly IServiceProvider _provider;
 
@@ -17,7 +17,7 @@ public sealed class EventHandlerInvoker : IEventHandlerInvoker {
     ///     Thrown when <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public EventHandlerInvoker(IServiceProvider provider) {
-        _provider = Guard.Against.Null(provider);
+        _provider = provider;
     }
 
     /// <inheritdoc />

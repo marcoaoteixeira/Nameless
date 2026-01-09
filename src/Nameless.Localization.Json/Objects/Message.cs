@@ -9,7 +9,7 @@ namespace Nameless.Localization.Json.Objects;
 /// </summary>
 [DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
 [JsonConverter(typeof(MessageJsonConverter))]
-public sealed record Message {
+public record Message {
     /// <summary>
     /// Gets an empty message with no identifier and text.
     /// </summary>

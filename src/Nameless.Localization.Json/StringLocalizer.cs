@@ -9,7 +9,7 @@ namespace Nameless.Localization.Json;
 /// <summary>
 /// Implements a string localizer that retrieves localized strings from a JSON resource file.
 /// </summary>
-public sealed class StringLocalizer : IStringLocalizer {
+public class StringLocalizer : IStringLocalizer {
     private readonly string _baseName;
     private readonly CultureInfo _culture;
     private readonly Func<string, string, CultureInfo, IStringLocalizer> _factory;

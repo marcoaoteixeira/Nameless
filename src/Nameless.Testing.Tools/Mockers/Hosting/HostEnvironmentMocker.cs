@@ -2,7 +2,7 @@
 
 namespace Nameless.Testing.Tools.Mockers.Hosting;
 
-public sealed class HostEnvironmentMocker : Mocker<IHostEnvironment> {
+public class HostEnvironmentMocker : Mocker<IHostEnvironment> {
     public HostEnvironmentMocker WithEnvironmentName(string returnValue) {
         MockInstance.Setup(mock => mock.EnvironmentName)
                     .Returns(returnValue);

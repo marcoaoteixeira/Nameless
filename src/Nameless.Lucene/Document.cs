@@ -5,7 +5,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Represents a document to be indexed in Lucene.
 /// </summary>
-public sealed class Document : IEnumerable<Field> {
+public class Document : IEnumerable<Field> {
     /// <summary>
     ///     Gets the reserved name for the document ID field.
     /// </summary>

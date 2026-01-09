@@ -5,7 +5,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Lucene Options
 /// </summary>
-public sealed class LuceneOptions {
+public class LuceneOptions {
     private readonly HashSet<IAnalyzerSelector> _analyzerSelectors = [];
 
     /// <summary>

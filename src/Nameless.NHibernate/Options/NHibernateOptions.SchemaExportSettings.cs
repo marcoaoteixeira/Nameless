@@ -1,6 +1,6 @@
 ﻿namespace Nameless.NHibernate.Options;
 
-public sealed record SchemaExportSettings {
+public record SchemaExportSettings {
     public const string DEFAULT_OUTPUT_DIRECTORY_NAME = "NHibernate";
 
     public bool ExecuteSchemaExport { get; set; } = true;

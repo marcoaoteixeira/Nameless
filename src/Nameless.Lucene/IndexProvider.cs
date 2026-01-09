@@ -8,7 +8,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Default implementation of <see cref="IIndexProvider" />.
 /// </summary>
-public sealed class IndexProvider : IIndexProvider {
+public class IndexProvider : IIndexProvider {
     private readonly ConcurrentDictionary<string, Index> _cache = new();
     private readonly IAnalyzerProvider _analyzerProvider;
     private readonly IFileSystem _fileSystem;

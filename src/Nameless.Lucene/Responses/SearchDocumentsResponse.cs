@@ -3,11 +3,11 @@ using Nameless.Results;
 
 namespace Nameless.Lucene.Responses;
 
-public sealed record SearchDocumentsMetadata(ISearchHit[] Hits, int Count) {
+public record SearchDocumentsMetadata(ISearchHit[] Hits, int Count) {
     public static SearchDocumentsMetadata Empty => new(Hits: [], Count: 0);
 }
 
-public sealed class SearchDocumentsResponse : Result<SearchDocumentsMetadata> {
+public class SearchDocumentsResponse : Result<SearchDocumentsMetadata> {
     private SearchDocumentsResponse(SearchDocumentsMetadata value, Error[] errors)
         : base(value, errors) { }
 

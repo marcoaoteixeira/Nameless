@@ -5,7 +5,7 @@ namespace Nameless.NHibernate.Infrastructure;
 /// <summary>
 ///     UUID hex comb implementation for <see cref="IGeneratorDef" />.
 /// </summary>
-public sealed class UuidHexCombGeneratorDef : IGeneratorDef {
+public class UuidHexCombGeneratorDef : IGeneratorDef {
     /// <inheritdoc />
     public string Class => "uuid.hex";
 

@@ -2,7 +2,7 @@
 
 namespace Nameless.Web.HealthChecks.Reporting;
 
-public sealed record ReportEntry {
+public record ReportEntry {
     public HealthStatus Status { get; set; }
     public string? Description { get; set; }
     public TimeSpan Duration { get; set; }

@@ -3,7 +3,7 @@ using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.Logging;
 
-public sealed class LoggerMocker<T> : Mocker<ILogger<T>> {
+public class LoggerMocker<T> : Mocker<ILogger<T>> {
     public LoggerMocker<T> WithAnyLogLevel() {
         MockInstance.Setup(mock => mock.IsEnabled(It.IsAny<LogLevel>()))
                     .Returns(value: true);

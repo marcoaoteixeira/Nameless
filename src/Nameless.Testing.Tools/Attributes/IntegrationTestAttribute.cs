@@ -13,7 +13,7 @@ namespace Nameless.Testing.Tools.Attributes;
 ///     indicate that they are integration tests.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public sealed class IntegrationTestAttribute : Attribute, ITraitAttribute {
+public class IntegrationTestAttribute : Attribute, ITraitAttribute {
     /// <summary>
     ///     Gets or sets the author of the test.
     /// </summary>

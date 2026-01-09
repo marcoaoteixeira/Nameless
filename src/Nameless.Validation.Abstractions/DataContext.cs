@@ -5,7 +5,7 @@ namespace Nameless.Validation;
 /// <summary>
 ///     Provides data context to the validation.
 /// </summary>
-public sealed record DataContext : IEnumerable<KeyValuePair<string, object?>> {
+public record DataContext : IEnumerable<KeyValuePair<string, object?>> {
     private readonly Dictionary<string, object?> _data = [];
 
     /// <summary>

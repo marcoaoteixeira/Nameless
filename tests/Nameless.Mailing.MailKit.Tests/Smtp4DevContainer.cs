@@ -29,15 +29,13 @@ public sealed class Smtp4DevContainer : IAsyncLifetime {
     public const int SMTP_PORT = 2525;
     public const int WEB_PORT = 8080;
 
-    private readonly IContainer _container = new ContainerBuilder().WithImage(image: "rnwood/smtp4dev")
-                                                                   .WithName(name: "smtp4dev-test-container")
-                                                                   .WithPortBinding(SMTP_PORT,
-                                                                       CONTAINER_SMTP_PORT) // SMTP
-                                                                   .WithPortBinding(WEB_PORT,
-                                                                       CONTAINER_WEB_PORT) // Web UI/API
-                                                                   .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_WEB_PORT))
-                                                                   .WithCleanUp(cleanUp: true)
-                                                                   .Build();
+    private readonly IContainer _container = new ContainerBuilder("rnwood/smtp4dev")
+                                             .WithName(name: "smtp4dev-test-container")
+                                             .WithPortBinding(SMTP_PORT, CONTAINER_SMTP_PORT) // SMTP
+                                             .WithPortBinding(WEB_PORT, CONTAINER_WEB_PORT) // Web UI/API
+                                             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(CONTAINER_WEB_PORT))
+                                             .WithCleanUp(cleanUp: true)
+                                             .Build();
 
     private readonly HttpClient _httpClient = new() { BaseAddress = new Uri($"http://localhost:{WEB_PORT}/api/") };
 

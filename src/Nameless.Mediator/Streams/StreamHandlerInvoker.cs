@@ -5,7 +5,7 @@ namespace Nameless.Mediator.Streams;
 /// <summary>
 ///     The default implementation of <see cref="IStreamHandlerInvoker" />.
 /// </summary>
-public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
+public class StreamHandlerInvoker : IStreamHandlerInvoker {
     private readonly ConcurrentDictionary<Type, StreamHandlerWrapper> _cache = new();
 
     private readonly IServiceProvider _provider;
@@ -18,17 +18,14 @@ public sealed class StreamHandlerInvoker : IStreamHandlerInvoker {
     ///     if <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
     public StreamHandlerInvoker(IServiceProvider provider) {
-        _provider = Guard.Against.Null(provider);
+        _provider = provider;
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="request"/> is <see langword="null"/>.
     /// </exception>
-    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request,
-        CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
-
+    public IAsyncEnumerable<TResponse> CreateAsync<TResponse>(IStream<TResponse> request, CancellationToken cancellationToken) {
         var handler = _cache.GetOrAdd(request.GetType(), CreateStreamHandlerWrapper);
 
         return ((StreamHandlerWrapper<TResponse>)handler).HandleAsync(request, _provider, cancellationToken);

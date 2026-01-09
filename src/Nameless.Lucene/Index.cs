@@ -19,7 +19,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Default implementation of <see cref="IIndex"/>.
 /// </summary>
-public sealed class Index : IIndex {
+public class Index : IIndex {
     private const string USER_CANCELLED_TASK_ERROR = "The operation was cancelled by the user.";
     private const string MAX_BOOLEAN_CLAUSE_EXCEEDED_ERROR = "The number of clauses in the boolean query exceeds the maximum allowed (1024).";
 
@@ -81,7 +81,7 @@ public sealed class Index : IIndex {
                               .ToArray();
 
             if (cancellationToken.IsCancellationRequested) {
-                return InsertDocumentsResponse.From(totalDocumentsInserted: 0);
+                return InsertDocumentsResponse.From(count: 0);
             }
 
             var indexWriter = GetIndexWriter();

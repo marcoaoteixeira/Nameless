@@ -7,7 +7,7 @@ namespace Nameless.Data.Sqlite;
 /// <summary>
 /// Default implementation of <see cref="IDbConnectionFactory"/> for Sqlite database.
 /// </summary>
-public sealed class DbConnectionFactory : IDbConnectionFactory {
+public class DbConnectionFactory : IDbConnectionFactory {
     private readonly IOptions<SqliteOptions> _options;
 
     /// <summary>

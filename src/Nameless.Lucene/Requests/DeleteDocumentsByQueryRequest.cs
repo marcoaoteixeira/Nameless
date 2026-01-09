@@ -2,4 +2,4 @@
 
 namespace Nameless.Lucene.Requests;
 
-public sealed record DeleteDocumentsByQueryRequest(Query Query);
+public record DeleteDocumentsByQueryRequest(Query Query);

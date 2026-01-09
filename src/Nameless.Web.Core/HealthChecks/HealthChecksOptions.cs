@@ -6,7 +6,7 @@ namespace Nameless.Web.HealthChecks;
 /// <summary>
 ///     Options for health checks.
 /// </summary>
-public sealed class HealthChecksOptions {
+public class HealthChecksOptions {
     private readonly Dictionary<Type, Action<IHealthChecksBuilder>> _healthChecks = [];
 
     /// <summary>

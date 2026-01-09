@@ -3,9 +3,9 @@ using Nameless.Results;
 
 namespace Nameless.Lucene.Responses;
 
-public readonly record struct InsertDocumentsMetadata(int TotalDocumentsInserted);
+public readonly record struct InsertDocumentsMetadata(int Count);
 
-public sealed class InsertDocumentsResponse : Result<InsertDocumentsMetadata> {
+public class InsertDocumentsResponse : Result<InsertDocumentsMetadata> {
     private InsertDocumentsResponse(InsertDocumentsMetadata value, Error[] errors)
         : base(value, errors) { }
 
@@ -17,9 +17,9 @@ public sealed class InsertDocumentsResponse : Result<InsertDocumentsMetadata> {
         return new InsertDocumentsResponse(value: default, errors: [error]);
     }
 
-    public static Task<InsertDocumentsResponse> From(int totalDocumentsInserted) {
+    public static Task<InsertDocumentsResponse> From(int count) {
         return Task.FromResult<InsertDocumentsResponse>(
-            new InsertDocumentsMetadata(totalDocumentsInserted)
+            new InsertDocumentsMetadata(count)
         );
     }
 

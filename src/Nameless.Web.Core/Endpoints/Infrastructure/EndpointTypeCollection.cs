@@ -5,7 +5,7 @@ namespace Nameless.Web.Endpoints.Infrastructure;
 /// <summary>
 ///     Represents a collection of endpoint types.
 /// </summary>
-public sealed class EndpointTypeCollection : IEnumerable<Type> {
+public class EndpointTypeCollection : IEnumerable<Type> {
     private readonly Type[] _endpoints;
 
     /// <summary>
