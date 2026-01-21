@@ -37,7 +37,7 @@ public class ValidateRequestEndpointFilter : IEndpointFilter {
 
             var result = await validationService.ValidateAsync(arg, cancellationToken);
 
-            if (!result.Succeeded) {
+            if (!result.Success) {
                 return HttpResults.ValidationProblem(result.ToDictionary());
             }
         }

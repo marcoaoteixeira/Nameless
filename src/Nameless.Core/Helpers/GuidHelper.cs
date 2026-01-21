@@ -23,8 +23,8 @@ public static class GuidHelper {
         // The base64 representation as bytes
         Span<byte> base64Buffer = stackalloc byte[24];
 
-        var memoryWriteSucceeded = MemoryMarshal.TryWrite(valueBuffer, in value);
-        if (!memoryWriteSucceeded) {
+        var writtenSuccessfully = MemoryMarshal.TryWrite(valueBuffer, in value);
+        if (!writtenSuccessfully) {
             throw new InvalidOperationException($"Couldn't write to {nameof(valueBuffer)}.");
         }
 

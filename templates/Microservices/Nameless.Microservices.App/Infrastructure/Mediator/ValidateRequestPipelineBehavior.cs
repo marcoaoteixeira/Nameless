@@ -28,7 +28,7 @@ public class ValidateRequestPipelineBehavior<TRequest, TResponse> : IRequestPipe
     public async Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
         var result = await _validationService.ValidateAsync(request, cancellationToken);
 
-        if (result.Succeeded) {
+        if (result.Success) {
             return await next(cancellationToken);
         }
 

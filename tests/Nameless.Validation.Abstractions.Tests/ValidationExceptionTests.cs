@@ -5,7 +5,7 @@ public class ValidationExceptionTests {
     public void WhenInitializingWithResult_ThenRetrieveValueFromProperty() {
         // arrange
         var error = new ValidationError(error: "Error Message", code: "Error Code", memberName: "Member Name");
-        var result = ValidationResult.Failure([error]);
+        var result = ValidationResult.Create(error);
         var sut = new ValidationException(result);
 
         // act
@@ -34,7 +34,7 @@ public class ValidationExceptionTests {
     public void WhenInitializingWithAllParameters_ThenRetrieveAllProperties() {
         // arrange
         var error = new ValidationError(error: "Error Message", code: "Error Code", memberName: "Member Name");
-        var result = ValidationResult.Failure([error]);
+        var result = ValidationResult.Create(error);
         const string Message = "Validation Error";
         var innerException = new Exception(message: "Inner Exception");
 
@@ -54,7 +54,7 @@ public class ValidationExceptionTests {
     public void WhenInitializingWithoutInnerException_ThenInnerExceptionIsNull() {
         // arrange
         var error = new ValidationError(error: "Error Message", code: "Error Code", memberName: "Member Name");
-        var result = ValidationResult.Failure([error]);
+        var result = ValidationResult.Create(error);
         const string Message = "Validation Error";
 
         // act

@@ -33,7 +33,7 @@ internal static class Constants {
         internal static class ConfirmEmail {
             internal const string UNABLE_LOAD_USER_MESSAGE = "Error loading user with ID '{0}'.";
             internal const string UNABLE_LOAD_USER_TITLE = "Error Loading User";
-            internal const string CONFIRM_EMAIL_SUCCEEDED = "Thank you for confirming your email.";
+            internal const string CONFIRM_EMAIL_SUCCESS = "Thank you for confirming your email.";
             internal const string CONFIRM_EMAIL_FAILED_MESSAGE = "Error confirming your email.";
             internal const string CONFIRM_EMAIL_FAILED_TITLE = "Confirm E-mail";
         }

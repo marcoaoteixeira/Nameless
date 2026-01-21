@@ -36,12 +36,14 @@ public class ValidatorServiceTests {
         var dog = new Animal { Name = "Dog" };
 
         // act
-        var result = await sut.ValidateAsync(dog,
-            new DataContext(),
-            CancellationToken.None);
+        var result = await sut.ValidateAsync(
+            value: dog,
+            dataContext: [],
+            cancellationToken: CancellationToken.None
+        );
 
         // assert
-        Assert.True(result.Succeeded);
+        Assert.True(result.Success);
     }
 
     [Fact]
@@ -54,7 +56,7 @@ public class ValidatorServiceTests {
         var result = await sut.ValidateAsync(dog, [], CancellationToken.None);
 
         // assert
-        Assert.True(result.Succeeded);
+        Assert.True(result.Success);
     }
 
     [Fact]
@@ -76,7 +78,7 @@ public class ValidatorServiceTests {
         var third = await sut.ValidateAsync(dog, dataContext, CancellationToken.None);
 
         // assert
-        Assert.True(first.Succeeded && second.Succeeded && third.Succeeded);
+        Assert.True(first.Success && second.Success && third.Success);
     }
 
     [Fact]
@@ -92,7 +94,7 @@ public class ValidatorServiceTests {
         var actual = await sut.ValidateAsync(dog, CancellationToken.None);
 
         // assert
-        Assert.True(actual.Succeeded);
+        Assert.True(actual.Success);
     }
 
     [Fact]
@@ -110,7 +112,7 @@ public class ValidatorServiceTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(actual.Succeeded);
+            Assert.True(actual.Success);
 
             validatorMocker.Verify(mock => mock.ValidateAsync(
                 It.Is<IValidationContext>(ctx => ctx.RootContextData.ContainsKey("Value")),

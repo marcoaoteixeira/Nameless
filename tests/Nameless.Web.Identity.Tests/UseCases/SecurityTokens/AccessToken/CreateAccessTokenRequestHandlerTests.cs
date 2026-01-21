@@ -51,7 +51,7 @@ public class CreateAccessTokenRequestHandlerTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(response.Succeeded);
+            Assert.True(response.Success);
             Assert.NotNull(response.Token);
         });
     }

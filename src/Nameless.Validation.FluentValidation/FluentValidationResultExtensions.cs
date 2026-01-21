@@ -16,19 +16,15 @@ public static class FluentValidationResultExtensions {
         ///     A <see cref="ValidationResult"/> representing the combined results.
         /// </returns>
         public ValidationResult ToValidationResult() {
-            var array = Guard.Against
-                             .Null(self)
-                             .Where(item => !item.IsValid)
-                             .SelectMany(item => item.Errors)
-                             .Select(error => new ValidationError(
-                                 error.ErrorMessage,
-                                 error.ErrorCode,
-                                 error.PropertyName))
-                             .ToArray();
+            var array = self.Where(item => !item.IsValid)
+                            .SelectMany(item => item.Errors)
+                            .Select(error => new ValidationError(
+                                error.ErrorMessage,
+                                error.ErrorCode,
+                                error.PropertyName)
+                            );
 
-            return array.Length == 0
-                ? ValidationResult.Success()
-                : ValidationResult.Failure(array);
+            return ValidationResult.Create([.. array]);
         }
     }
 }
