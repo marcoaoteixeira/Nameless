@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Nameless.Testing.Tools;
+using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.IO;
 
 namespace Nameless;

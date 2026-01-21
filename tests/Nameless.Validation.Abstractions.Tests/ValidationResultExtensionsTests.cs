@@ -2,9 +2,9 @@
 
 public class ValidationResultExtensionsTests {
     [Fact]
-    public void WhenCreatingDictionary_WithSucceededResult_ThenReturnsEmptyDictionary() {
+    public void WhenCreatingDictionary_WithSuccessResult_ThenReturnsEmptyDictionary() {
         // arrange
-        var result = ValidationResult.Success();
+        var result = ValidationResult.Create();
 
         // act
         var dictionary = result.ToDictionary();
@@ -19,7 +19,7 @@ public class ValidationResultExtensionsTests {
         const string ErrorMessage = "Error Message";
         const string MemberName = "Member Name";
         var error = new ValidationError(ErrorMessage, code: "Error Code", MemberName);
-        var result = ValidationResult.Failure([error]);
+        var result = ValidationResult.Create(error);
 
         // act
         var dictionary = result.ToDictionary();
@@ -38,11 +38,11 @@ public class ValidationResultExtensionsTests {
         const string MemberNameX = "Member Name X";
         const string MemberNameY = "Member Name Y";
         var error = new ValidationError(ErrorMessage, code: "Error Code", MemberNameX);
-        var result = ValidationResult.Failure([
+        var result = ValidationResult.Create(
             new ValidationError(ErrorMessage, code: "Error Code", MemberNameX),
             new ValidationError(ErrorMessage, code: "Error Code", MemberNameX),
             new ValidationError(ErrorMessage, code: "Error Code", MemberNameY)
-        ]);
+        );
 
         // act
         var dictionary = result.ToDictionary();

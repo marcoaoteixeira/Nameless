@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Lucene.Fixtures;
 using Nameless.Lucene.Mockers;
-using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.IO;
 
 namespace Nameless.Lucene;

@@ -14,7 +14,7 @@ public class FluentValidationResultExtensionsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(actual.Succeeded);
+            Assert.True(actual.Success);
             Assert.Empty(actual.Errors);
         });
     }
@@ -34,7 +34,7 @@ public class FluentValidationResultExtensionsTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.False(actual.Succeeded);
+            Assert.False(actual.Success);
             Assert.NotEmpty(actual.Errors);
         });
     }

@@ -6,5 +6,5 @@ public abstract record Response {
     public string? Error { get; init; }
 
     [MemberNotNullWhen(returnValue: false, nameof(Error))]
-    public virtual bool Succeeded => string.IsNullOrWhiteSpace(Error);
+    public virtual bool Success => string.IsNullOrWhiteSpace(Error);
 }

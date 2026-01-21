@@ -45,14 +45,14 @@ public class SignInEndpoint : IEndpoint {
         Guard.Against.Null(input);
 
         var validationResult = await _validationService.ValidateAsync(input, cancellationToken);
-        if (!validationResult.Succeeded) {
+        if (!validationResult.Success) {
             return ValidationProblem(validationResult.ToDictionary());
         }
 
         var request = new SignInRequest { Email = input.Email, Password = input.Password };
         var signInResponse = await _mediator.ExecuteAsync(request, cancellationToken);
 
-        return signInResponse.Succeeded
+        return signInResponse.Success
             ? Ok(signInResponse)
             : Unauthorized();
     }

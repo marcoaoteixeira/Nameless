@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.Standard;
 using Nameless.Lucene.Fixtures;
-using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Testing.Tools.Helpers;
 
 namespace Nameless.Lucene;
 

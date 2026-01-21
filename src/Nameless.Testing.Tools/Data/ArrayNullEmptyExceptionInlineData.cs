@@ -4,7 +4,7 @@ namespace Nameless.Testing.Tools.Data;
 
 public class ArrayNullEmptyExceptionInlineData<TArray> : TheoryData<TArray[]?, Type> {
     public ArrayNullEmptyExceptionInlineData() {
-        Add(p1: null, typeof(ArgumentNullException));
+        Add(null, typeof(ArgumentNullException));
         Add([], typeof(ArgumentException));
     }
 }

@@ -33,7 +33,7 @@ public sealed class CreateToDoItemEndpoint : IEndpoint {
 
     public async Task<IResult> HandleAsync([FromBody] CreateToDoItemInput input, CancellationToken cancellationToken = default) {
         var validation = await _validationService.ValidateAsync(input, cancellationToken);
-        if (!validation.Succeeded) {
+        if (!validation.Success) {
             return TypedResults.ValidationProblem(validation.ToDictionary());
         }
 

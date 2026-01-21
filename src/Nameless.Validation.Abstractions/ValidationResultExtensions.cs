@@ -14,7 +14,7 @@ public static class ValidationResultExtensions {
     ///     A dictionary containing all entries from the validation result.
     /// </returns>
     public static IDictionary<string, string[]> ToDictionary(this ValidationResult self) {
-        if (self.Succeeded) { return new Dictionary<string, string[]>(); }
+        if (self.Success) { return new Dictionary<string, string[]>(); }
 
         return self.Errors
                    .GroupBy(error => error.MemberName)
@@ -38,12 +38,9 @@ public static class ValidationResultExtensions {
     public static ValidationResult Aggregate(this IEnumerable<ValidationResult> self) {
         var array = Guard.Against
                          .Null(self)
-                         .Where(item => !item.Succeeded)
-                         .SelectMany(item => item.Errors)
-                         .ToArray();
+                         .Where(item => !item.Success)
+                         .SelectMany(item => item.Errors);
 
-        return array.Length == 0
-            ? ValidationResult.Success()
-            : ValidationResult.Failure(array);
+        return ValidationResult.Create([.. array]);
     }
 }

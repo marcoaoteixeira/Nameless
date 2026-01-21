@@ -49,7 +49,7 @@ public class RefreshEndpoint : IEndpoint {
         Guard.Against.Null(input);
 
         var validateResponse = await ValidateRefreshTokenAsync(input.Token, cancellationToken);
-        if (!validateResponse.Succeeded) {
+        if (!validateResponse.Success) {
             return validateResponse.Status switch {
                 UserRefreshTokenStatus.Revoked or
                     UserRefreshTokenStatus.Expired or
@@ -59,7 +59,7 @@ public class RefreshEndpoint : IEndpoint {
         }
 
         var accessTokenResponse = await CreateAccessTokenAsync(validateResponse.UserID, cancellationToken);
-        if (!accessTokenResponse.Succeeded) {
+        if (!accessTokenResponse.Success) {
             return Forbid();
         }
 

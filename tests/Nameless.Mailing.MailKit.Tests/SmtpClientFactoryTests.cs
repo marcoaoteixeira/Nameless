@@ -1,6 +1,6 @@
 ﻿using MailKit.Net.Smtp;
-using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Testing.Tools.Helpers;
 
 namespace Nameless.Mailing.MailKit;
 

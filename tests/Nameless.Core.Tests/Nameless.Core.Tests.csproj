@@ -15,8 +15,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Resources\LoremIpsun.txt">
+		<Content Include="Resources\FolderA\FolderB\FolderC\LoremIpsun.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\LoremIpsun.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Resources\ThisIsATest.txt">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

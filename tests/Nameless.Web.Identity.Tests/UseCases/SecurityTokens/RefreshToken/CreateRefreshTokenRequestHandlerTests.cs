@@ -54,7 +54,7 @@ public class CreateRefreshTokenRequestHandlerTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(response.Succeeded);
+            Assert.True(response.Success);
             Assert.Equal(ExpectedToken, response.Token);
         });
     }
@@ -71,7 +71,7 @@ public class CreateRefreshTokenRequestHandlerTests {
 
         // assert
         Assert.Multiple(() => {
-            Assert.True(response.Succeeded);
+            Assert.True(response.Success);
             Assert.Null(response.Token);
         });
     }
