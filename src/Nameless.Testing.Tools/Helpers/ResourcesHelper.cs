@@ -72,10 +72,16 @@ public static class ResourcesHelper {
             ? $"{Guid.CreateVersion7():N}{fileExtension}"
             : Path.GetFileName(newFileName);
 
-        var temporaryDirectoryPath = InnerGetTemporaryDirectoryPath(assembly);
+        var temporaryDirectoryPath = Path.Combine(
+            InnerGetTemporaryDirectoryPath(assembly),
+            relativeDirectoryPath
+        );
+
+        // Ensure directory existence.
+        Directory.CreateDirectory(temporaryDirectoryPath);
+
         var temporaryFilePath = Path.Combine(
             temporaryDirectoryPath,
-            relativeDirectoryPath,
             newFileName
         );
         
