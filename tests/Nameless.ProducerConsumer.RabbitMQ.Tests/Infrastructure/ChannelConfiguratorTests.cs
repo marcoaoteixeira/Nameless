@@ -3,6 +3,7 @@ using Moq;
 using Nameless.ProducerConsumer.RabbitMQ.Mockers;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools;
+using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;

@@ -16,7 +16,7 @@ public interface IIndex : IDisposable {
     IQueryBuilder CreateQueryBuilder();
 
     /// <summary>
-    ///     Inserts the documents asynchronously into the index.
+    ///     Inserts documents asynchronously into the index.
     /// </summary>
     /// <param name="request">
     ///     The insert document request.
@@ -27,9 +27,9 @@ public interface IIndex : IDisposable {
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous
     ///     operation, where the result contains an instance of
-    ///     <see cref="InsertDocumentsResponse" />.
+    ///     <see cref="InsertResponse" />.
     /// </returns>
-    Task<InsertDocumentsResponse> InsertDocumentsAsync(InsertDocumentsRequest request, CancellationToken cancellationToken);
+    Task<InsertResponse> InsertAsync(InsertRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes the documents asynchronously from the index.
@@ -45,7 +45,7 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="DeleteDocumentsResponse" />.
     /// </returns>
-    Task<DeleteDocumentsResponse> DeleteDocumentsAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken);
+    Task<DeleteDocumentsResponse> DeleteAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes documents asynchronously from the index given the
@@ -62,7 +62,7 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="DeleteDocumentsByQueryResponse" />.
     /// </returns>
-    Task<DeleteDocumentsByQueryResponse> DeleteDocumentsAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken);
+    Task<DeleteDocumentsByQueryResponse> DeleteAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes a search asynchronously against the index.
@@ -78,5 +78,5 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="SearchDocumentsResponse" />.
     /// </returns>
-    Task<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CancellationToken cancellationToken);
+    Task<SearchDocumentsResponse> SearchAsync(SearchDocumentsRequest request, CancellationToken cancellationToken);
 }

@@ -2,6 +2,7 @@
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;
 using RabbitMQ.Client.Exceptions;
 

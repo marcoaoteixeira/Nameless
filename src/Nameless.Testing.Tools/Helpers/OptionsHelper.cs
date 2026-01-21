@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace Nameless.Testing.Tools;
+namespace Nameless.Testing.Tools.Helpers;
 
 /// <summary>
 ///     Simple class to help with <see cref="IOptions{TOptions}"/>

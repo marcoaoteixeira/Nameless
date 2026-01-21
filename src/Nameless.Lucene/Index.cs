@@ -71,7 +71,7 @@ public class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<InsertDocumentsResponse> InsertDocumentsAsync(InsertDocumentsRequest request, CancellationToken cancellationToken) {
+    public Task<InsertResponse> InsertAsync(InsertRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
         
         try {
@@ -81,7 +81,7 @@ public class Index : IIndex {
                               .ToArray();
 
             if (cancellationToken.IsCancellationRequested) {
-                return InsertDocumentsResponse.From(count: 0);
+                return InsertResponse.From(count: 0);
             }
 
             var indexWriter = GetIndexWriter();
@@ -89,19 +89,19 @@ public class Index : IIndex {
             indexWriter.AddDocuments(docs);
             indexWriter.Commit();
 
-            return InsertDocumentsResponse.From(request.Documents.Length);
+            return InsertResponse.From(request.Documents.Length);
         }
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
             _logger.InsertDocumentsFailure(ex);
 
-            return InsertDocumentsResponse.From(Error.Failure(ex.Message));
+            return InsertResponse.From(Error.Failure(ex.Message));
         }
     }
 
     /// <inheritdoc />
-    public Task<DeleteDocumentsResponse> DeleteDocumentsAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken) {
+    public Task<DeleteDocumentsResponse> DeleteAsync(DeleteDocumentsRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         if (request.Documents.Length > BooleanQuery.MaxClauseCount) {
@@ -137,7 +137,7 @@ public class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<DeleteDocumentsByQueryResponse> DeleteDocumentsAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken) {
+    public Task<DeleteDocumentsByQueryResponse> DeleteAsync(DeleteDocumentsByQueryRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         try {
@@ -168,7 +168,7 @@ public class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CancellationToken cancellationToken) {
+    public Task<SearchDocumentsResponse> SearchAsync(SearchDocumentsRequest request, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         try {
