@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nameless.Compression.Requests;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 
