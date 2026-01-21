@@ -42,7 +42,7 @@ public class CompressArchiveRequest {
     ///     The current <see cref="CompressArchiveRequest"/> instance with so
     ///     other actions can be chained.
     /// </returns>
-    public CompressArchiveRequest IncludeFile(string path, string? directoryPath) {
+    public CompressArchiveRequest IncludeFile(string path, string? directoryPath = null) {
         Guard.Against.NullOrWhiteSpace(path);
 
         var entry = new FileEntry(
