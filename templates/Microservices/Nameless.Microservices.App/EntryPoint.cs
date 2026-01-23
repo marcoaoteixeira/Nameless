@@ -1,6 +1,7 @@
 using System.Reflection;
-using Nameless.Mediator.Requests;
 using Nameless.Microservices.App.Configs;
+using Nameless.Microservices.App.Endpoints.v1.HelloWorld;
+using Nameless.Web;
 using Nameless.Web.Correlation;
 using Nameless.Web.Endpoints;
 
@@ -46,7 +47,9 @@ public class EntryPoint {
             .ConfigureCors()
             .ConfigureServiceDiscovery()
             .ConfigureOpenTelemetry()
-            .ConfigureHealthCheck();
+            .ConfigureHealthCheck()
+            .ConfigureDiagnostics()
+            .ConfigureBootstrap();
 
         var app = builder.Build();
 
@@ -77,6 +80,6 @@ public class EntryPoint {
         app.UseMinimalEndpoints();
         app.UseHealthCheck();
 
-        app.Run();
+        app.Run(executeBootstrap: true);
     }
 }

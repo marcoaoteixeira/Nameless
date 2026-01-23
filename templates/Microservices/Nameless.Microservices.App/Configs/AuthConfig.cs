@@ -5,36 +5,38 @@ using Nameless.Web.Identity.Jwt;
 namespace Nameless.Microservices.App.Configs;
 
 public static class AuthConfig {
-    public static WebApplicationBuilder ConfigureAuth(this WebApplicationBuilder self) {
-        // Configures the authorization and authentication services for the application.
-        // This template uses JWT for authentication.
+    extension(WebApplicationBuilder self) {
+        public WebApplicationBuilder ConfigureAuth() {
+            // Configures the authorization and authentication services for the application.
+            // This template uses JWT for authentication.
 
-        self.Services
-            .AddAuthorization()
-            .AddAuthentication(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => {
-                var jsonWebTokenOptions = self.Configuration
-                                              .GetSection(nameof(JsonWebTokenOptions))
-                                              .Get<JsonWebTokenOptions>() ?? new JsonWebTokenOptions();
+            self.Services
+                .AddAuthorization()
+                .AddAuthentication(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    var jsonWebTokenOptions = self.Configuration
+                                                  .GetSection(nameof(JsonWebTokenOptions))
+                                                  .Get<JsonWebTokenOptions>() ?? new JsonWebTokenOptions();
 
-                var key = Defaults.Encoding.GetBytes(jsonWebTokenOptions.Secret ?? string.Empty);
-                var securityKey = new SymmetricSecurityKey(key);
+                    var key = Defaults.Encoding.GetBytes(jsonWebTokenOptions.Secret ?? string.Empty);
+                    var securityKey = new SymmetricSecurityKey(key);
 
-                options.TokenValidationParameters = new TokenValidationParameters {
-                    ValidIssuer = jsonWebTokenOptions.Issuer,
-                    ValidateIssuer = jsonWebTokenOptions.ValidateIssuer,
-                    IssuerSigningKey = securityKey,
-                    ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
+                    options.TokenValidationParameters = new TokenValidationParameters {
+                        ValidIssuer = jsonWebTokenOptions.Issuer,
+                        ValidateIssuer = jsonWebTokenOptions.ValidateIssuer,
+                        IssuerSigningKey = securityKey,
+                        ValidateIssuerSigningKey = jsonWebTokenOptions.ValidateIssuerSigninKey,
 
-                    ValidAudiences = jsonWebTokenOptions.Audiences,
-                    ValidateAudience = jsonWebTokenOptions.ValidateAudience,
-                    
-                    ValidateLifetime = jsonWebTokenOptions.ValidateLifetime,
-                    
-                    ClockSkew = jsonWebTokenOptions.ClockSkew,
-                };
-            });
+                        ValidAudiences = jsonWebTokenOptions.Audiences,
+                        ValidateAudience = jsonWebTokenOptions.ValidateAudience,
 
-        return self;
+                        ValidateLifetime = jsonWebTokenOptions.ValidateLifetime,
+
+                        ClockSkew = jsonWebTokenOptions.ClockSkew,
+                    };
+                });
+
+            return self;
+        }
     }
 }
