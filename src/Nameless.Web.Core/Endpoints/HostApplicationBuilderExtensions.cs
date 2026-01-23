@@ -66,19 +66,20 @@ public static class HostApplicationBuilderExtensions {
         return self;
     }
 
-    private static IServiceCollection AddOpenApi(this IServiceCollection self,
-        Func<IEnumerable<OpenApiDocumentOptions>>? configure) {
-        var descriptors = (configure?.Invoke() ?? []).ToArray();
+    extension(IServiceCollection self) {
+        private IServiceCollection AddOpenApi(Func<IEnumerable<OpenApiDocumentOptions>>? configure) {
+            var descriptors = (configure?.Invoke() ?? []).ToArray();
 
-        if (descriptors.Length == 0) {
-            return self.AddOpenApi();
+            if (descriptors.Length == 0) {
+                return self.AddOpenApi();
+            }
+
+            foreach (var descriptor in descriptors) {
+                self.AddOpenApi(descriptor.DocumentName, descriptor.Options ?? (_ => { }));
+            }
+
+            return self;
         }
-
-        foreach (var descriptor in descriptors) {
-            self.AddOpenApi(descriptor.DocumentName, descriptor.Options ?? (_ => { }));
-        }
-
-        return self;
     }
 
     private static void DefaultConfigureApiVersioningOptions(ApiVersioningOptions options) {
