@@ -71,11 +71,11 @@ public class Index : IIndex {
     }
 
     /// <inheritdoc />
-    public Task<InsertResponse> InsertAsync(InsertRequest request, CancellationToken cancellationToken) {
+    public Task<InsertResponse> InsertAsync(InsertDocumentsRequest documentsRequest, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
         
         try {
-            var docs = request.Documents
+            var docs = documentsRequest.Documents
                               .TakeWhile(_ => !cancellationToken.IsCancellationRequested)
                               .Select(document => document.ToIndexableFields())
                               .ToArray();
@@ -89,7 +89,7 @@ public class Index : IIndex {
             indexWriter.AddDocuments(docs);
             indexWriter.Commit();
 
-            return InsertResponse.From(request.Documents.Length);
+            return InsertResponse.From(documentsRequest.Documents.Length);
         }
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
