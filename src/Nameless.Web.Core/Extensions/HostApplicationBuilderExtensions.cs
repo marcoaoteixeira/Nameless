@@ -22,7 +22,7 @@ public static class HostApplicationBuilderExtensions {
         public THostApplicationBuilder RegisterAntiforgery(Action<AntiforgeryOptions>? configure = null) {
             self.Services
                 .AddAntiforgery(configure ?? (_ => { }));
-
+            
             return self;
         }
 

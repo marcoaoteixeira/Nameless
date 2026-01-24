@@ -1,7 +1,6 @@
 using System.Reflection;
 using Nameless.Microservices.App.Configs;
-using Nameless.Microservices.App.Endpoints.v1.HelloWorld;
-using Nameless.Web;
+using Nameless.Web.Bootstrap;
 using Nameless.Web.Correlation;
 using Nameless.Web.Endpoints;
 
@@ -16,8 +15,7 @@ public class EntryPoint {
     // available to the application. Specify the relevant assemblies
     // here to ensure they are loaded and available for discovery.
     private static readonly Assembly[] SupportAssemblies = [
-        typeof(EntryPoint).Assembly,
-        typeof(IEndpoint).Assembly,
+        typeof(EntryPoint).Assembly
     ];
 
     /// <summary>
@@ -29,6 +27,17 @@ public class EntryPoint {
     public static void Main(string[] args) {
         var builder = WebApplication.CreateBuilder(args);
 
+        ConfigureApplicationServices(builder);
+
+        var app = builder.Build();
+
+        ConfigureApplicationMiddlewares(app);
+
+        app.Run();
+    }
+
+    private static void ConfigureApplicationServices(WebApplicationBuilder builder)
+    {
         // When registering services, we do not need to put
         // them in any specific order, but at least we should
         // keep them grouped by their purpose.
@@ -50,9 +59,10 @@ public class EntryPoint {
             .ConfigureHealthCheck()
             .ConfigureDiagnostics()
             .ConfigureBootstrap();
+    }
 
-        var app = builder.Build();
-
+    private static void ConfigureApplicationMiddlewares(WebApplication app)
+    {
         // When setting up the application middlewares,
         // we should be aware that the order of these middlewares
         // is important.
@@ -75,11 +85,10 @@ public class EntryPoint {
         app.UseAuthorization();
         app.UseRequestTimeouts();
         app.UseAntiforgery();
+        app.UseBootstrap();
 
         // Endpoints
         app.UseMinimalEndpoints();
         app.UseHealthCheck();
-
-        app.Run(executeBootstrap: true);
     }
 }
