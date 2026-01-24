@@ -73,7 +73,7 @@ public class IndexTests {
         var documents = CreateDocuments().ToArray();
 
         // store documents
-        var request = new InsertRequest(documents);
+        var request = new InsertDocumentsRequest(documents);
         var response = await index.InsertAsync(request, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(response.Success);
@@ -141,7 +141,7 @@ public class IndexTests {
         var documents = CreateUniqueDocuments().ToArray();
 
         // store documents
-        var insertRequest = new InsertRequest(documents);
+        var insertRequest = new InsertDocumentsRequest(documents);
         var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);
@@ -181,7 +181,7 @@ public class IndexTests {
         var documents = CreateUniqueDocuments().ToArray();
 
         // store documents
-        var insertRequest = new InsertRequest(documents);
+        var insertRequest = new InsertDocumentsRequest(documents);
         var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);
@@ -222,7 +222,7 @@ public class IndexTests {
         var documents = CreateUniqueDocuments(date).ToArray();
 
         // store documents
-        var insertRequest = new InsertRequest(documents);
+        var insertRequest = new InsertDocumentsRequest(documents);
         var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
         Assert.Multiple(() => {
             Assert.True(insertResponse.Success);

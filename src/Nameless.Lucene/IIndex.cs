@@ -18,7 +18,7 @@ public interface IIndex : IDisposable {
     /// <summary>
     ///     Inserts documents asynchronously into the index.
     /// </summary>
-    /// <param name="request">
+    /// <param name="documentsRequest">
     ///     The insert document request.
     /// </param>
     /// <param name="cancellationToken">
@@ -29,7 +29,7 @@ public interface IIndex : IDisposable {
     ///     operation, where the result contains an instance of
     ///     <see cref="InsertResponse" />.
     /// </returns>
-    Task<InsertResponse> InsertAsync(InsertRequest request, CancellationToken cancellationToken);
+    Task<InsertResponse> InsertAsync(InsertDocumentsRequest documentsRequest, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Removes the documents asynchronously from the index.
