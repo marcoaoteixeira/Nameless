@@ -45,7 +45,7 @@ internal static class LoggerExtensions {
             formatString: "Step '{StepName}' failed with error: {Error}"
         );
 
-    extension(ILogger<BootstrapExecutor> self) {
+    extension(ILogger<Bootstrapper> self) {
         internal void BootstrapperInitializing() {
             BootstrapperInitializingDelegate(self, null /* exception */);
         }
