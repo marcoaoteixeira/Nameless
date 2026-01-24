@@ -16,16 +16,16 @@ namespace Nameless.Bootstrap;
 ///     not thread-safe and should be used only during the application's
 ///     startup phase.
 /// </remarks>
-public class BootstrapExecutor : IBootstrapExecutor {
-    public static readonly string ActivitySourceName = typeof(BootstrapExecutor).FullName ?? nameof(BootstrapExecutor);
+public class Bootstrapper : IBootstrapper {
+    public static readonly string ActivitySourceName = typeof(Bootstrapper).FullName ?? nameof(Bootstrapper);
 
     private readonly IActivitySource _activitySource;
     private readonly IStep[] _steps;
-    private readonly ILogger<BootstrapExecutor> _logger;
+    private readonly ILogger<Bootstrapper> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the
-    ///     <see cref="BootstrapExecutor"/> class.
+    ///     <see cref="Bootstrapper"/> class.
     /// </summary>
     /// <param name="activitySourceProvider">
     ///     The provider used to create the activity source for tracing
@@ -39,17 +39,17 @@ public class BootstrapExecutor : IBootstrapExecutor {
     ///     The logger used to record execution details and diagnostic
     ///     information.
     /// </param>
-    public BootstrapExecutor(
+    public Bootstrapper(
         IActivitySourceProvider activitySourceProvider,
         IEnumerable<IStep> steps,
-        ILogger<BootstrapExecutor> logger) {
+        ILogger<Bootstrapper> logger) {
         _activitySource = activitySourceProvider.Create(ActivitySourceName);
         _steps = [.. steps];
         _logger = logger;
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(CancellationToken cancellationToken) {
+    public async Task ExecuteAsync(FlowContext context, CancellationToken cancellationToken) {
         _logger.BootstrapperInitializing();
 
         using var bootstrapActivity = _activitySource.StartActivity(
@@ -57,7 +57,6 @@ public class BootstrapExecutor : IBootstrapExecutor {
         );
 
         var bootstrapSw = Stopwatch.StartNew();
-        var flowContext = new FlowContext();
         var currentStep = 0;
 
         foreach (var step in _steps) {
@@ -76,7 +75,7 @@ public class BootstrapExecutor : IBootstrapExecutor {
 
                 _logger.StepInitializing(step);
 
-                await step.ExecuteAsync(flowContext, cancellationToken)
+                await step.ExecuteAsync(context, cancellationToken)
                           .SkipContextSync();
 
                 _logger.StepSuccess(step);
@@ -120,8 +119,8 @@ public class BootstrapExecutor : IBootstrapExecutor {
     }
 
     internal static class Metrics {
-        internal const string BOOTSTRAP_EXECUTOR_ACTIVITY_NAME = $"{nameof(BootstrapExecutor)}.{nameof(ExecuteAsync)}";
-        internal const string STEP_ACTIVITY_NAME_PATTERN = $"{nameof(BootstrapExecutor)}.{nameof(IStep)}:{{0}}";
+        internal const string BOOTSTRAP_EXECUTOR_ACTIVITY_NAME = $"{nameof(Bootstrapper)}.{nameof(ExecuteAsync)}";
+        internal const string STEP_ACTIVITY_NAME_PATTERN = $"{nameof(Bootstrapper)}.{nameof(IStep)}:{{0}}";
 
         internal const string BOOTSTRAP_TOTAL_STEPS = "bootstrap.total_steps";
         internal const string BOOTSTRAP_DURATION_MS = "bootstrap.duration_ms";

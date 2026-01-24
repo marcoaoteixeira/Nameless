@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions {
 
             innerConfigure(options);
 
-            self.TryAddSingleton<IBootstrapExecutor, BootstrapExecutor>();
+            self.TryAddSingleton<IBootstrapper, Bootstrapper>();
             self.RegisterSteps(options);
 
             return self;

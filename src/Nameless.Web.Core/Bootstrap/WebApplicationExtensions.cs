@@ -25,7 +25,7 @@ public static class WebApplicationExtensions {
             // once the application has started.
             self.Lifetime.ApplicationStarted.Register(
                 callback: (state, _) => {
-                    var executor = self.Services.GetService<IBootstrapExecutor>()
+                    var executor = self.Services.GetService<IBootstrapper>()
                                    ?? throw new BootstrappingException("Bootstrap services were not registered.");
 
                     using var cts = new CancellationTokenSource(

@@ -8,7 +8,7 @@ public static class OpenTelemetryConfig {
     extension(WebApplicationBuilder self) {
         public WebApplicationBuilder ConfigureOpenTelemetry() {
             self.RegisterOpenTelemetry(opts => {
-                opts.ActivitySources = [BootstrapExecutor.ActivitySourceName];
+                opts.ActivitySources = [Bootstrapper.ActivitySourceName];
                 //opts.ConfigureResources = resourceBuilder => {
                     
                 //    resourceBuilder.AddService(self.Environment.ApplicationName);
