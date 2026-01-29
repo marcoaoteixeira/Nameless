@@ -20,7 +20,7 @@ public sealed class FlowContext : IEnumerable<KeyValuePair<string, object?>> {
     /// </returns>
     public object? this[string key] {
         get => _data.GetValueOrDefault(key);
-        set => _data[Guard.Against.NullOrWhiteSpace(key)] = value;
+        set => _data[key] = value;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public sealed class FlowContext : IEnumerable<KeyValuePair<string, object?>> {
     ///     The key/value pair.
     /// </param>
     public void Add(KeyValuePair<string, object?> kvp) {
-        _data[Guard.Against.NullOrWhiteSpace(kvp.Key)] = kvp.Value;
+        _data[kvp.Key] = kvp.Value;
     }
 
     /// <inheritdoc />

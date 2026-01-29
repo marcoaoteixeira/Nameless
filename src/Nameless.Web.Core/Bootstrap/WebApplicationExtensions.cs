@@ -15,34 +15,44 @@ public static class WebApplicationExtensions {
         /// <summary>
         ///     Runs the bootstrap process before initializing the application.
         /// </summary>
-        /// <param name="timeout">
-        ///     The maximum time to wait for the bootstrap process to complete,
-        ///     in milliseconds.
+        /// <param name="configure">
+        ///     A configuration delegate to help configure the bootstrap
+        ///     infrastructure.
         /// </param>
-        public WebApplication UseBootstrap(int timeout = -1) {
+        public WebApplication UseBootstrap(Action<BootstrapExecutionOptions>? configure = null) {
+            var innerConfigure = configure ?? (_ => { });
+            var options = new BootstrapExecutionOptions();
+
+            innerConfigure(options);
+
             // The application needs to start before we can run the
             // bootstrap process, so we register a callback to be executed
             // once the application has started.
-            self.Lifetime.ApplicationStarted.Register(
-                callback: (state, _) => {
-                    var executor = self.Services.GetService<IBootstrapper>()
-                                   ?? throw new BootstrappingException("Bootstrap services were not registered.");
-
-                    using var cts = new CancellationTokenSource(
-                        millisecondsDelay: Convert.ToInt32(state)
-                    );
-
-                    // Although this is an async method, we need to run it on
-                    // a blocking manner here since the callback does not
-                    // support async execution.
-                    executor.ExecuteAsync(cts.Token)
-                            .GetAwaiter()
-                            .GetResult();
-                },
-                state: timeout
-            );
+            self.Lifetime.ApplicationStarted.Register(self.ExecuteBootstrap, options);
 
             return self;
         }
+
+        private void ExecuteBootstrap(object? state, CancellationToken _) {
+            var opts = state as BootstrapExecutionOptions ?? new BootstrapExecutionOptions();
+            var executor = self.Services.GetService<IBootstrapper>()
+                           ?? throw new BootstrapException("Bootstrap services were not registered.");
+
+            using var cts = new CancellationTokenSource(
+                millisecondsDelay: opts.Timeout
+            );
+
+            // Although this is an async method, we need to run it on
+            // a blocking manner here since the callback does not
+            // support async execution.
+            executor.ExecuteAsync(opts.Context, cts.Token)
+                    .GetAwaiter()
+                    .GetResult();
+        }
     }
+}
+
+public class BootstrapExecutionOptions {
+    public FlowContext Context { get; set; } = [];
+    public int Timeout { get; set; } = -1;
 }

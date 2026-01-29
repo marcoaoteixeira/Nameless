@@ -27,9 +27,19 @@ public static class ActivitySourceProviderExtensions {
         /// </returns>
         public IActivitySource Create(Assembly assembly) {
             return self.Create(
-                assembly.GetSemanticName(),
-                assembly.GetSemanticVersion()
+                name: GetAssemblyName(assembly),
+                version: GetAssemblyVersion(assembly)
             );
+
+            static string GetAssemblyName(Assembly assembly) {
+                return assembly.GetName().Name ?? string.Empty;
+            }
+
+            static string GetAssemblyVersion(Assembly assembly) {
+                var version = assembly.GetName().Version ?? new Version(1, 0, 0);
+
+                return $"{version.Major}.{version.Minor}.{version.Build}";
+            }
         }
     }
 }

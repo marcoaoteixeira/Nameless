@@ -27,18 +27,13 @@ public static class ServiceCollectionExtensions {
             innerConfigure(options);
 
             self.TryAddSingleton<IBootstrapper, Bootstrapper>();
-            self.RegisterSteps(options);
+            self.TryAddEnumerable(CreateServiceDescriptors(options.Steps));
 
             return self;
 
-        }
-
-        private void RegisterSteps(BootstrapOptions opts) {
-            var service = typeof(IStep);
-            var descriptors = opts.Steps
-                                  .Select(implementation => ServiceDescriptor.Singleton(service, implementation));
-
-            self.TryAddEnumerable(descriptors);
+            static IEnumerable<ServiceDescriptor> CreateServiceDescriptors(IEnumerable<Type> steps) {
+                return steps.Select(step => ServiceDescriptor.Singleton(typeof(IStep), step));
+            }
         }
     }
 }

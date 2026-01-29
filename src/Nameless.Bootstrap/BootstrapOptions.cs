@@ -28,7 +28,7 @@ public class BootstrapOptions {
         var step = typeof(TStep);
 
         if (!_steps.Contains(step)) {
-            _steps.Add(typeof(TStep));
+            _steps.Add(step);
         }
 
         return this;

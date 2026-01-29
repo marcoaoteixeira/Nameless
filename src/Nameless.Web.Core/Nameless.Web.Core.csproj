@@ -34,6 +34,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Bootstrap\Nameless.Bootstrap.csproj" />
 		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
 		<ProjectReference Include="..\Nameless.Validation.Abstractions\Nameless.Validation.Abstractions.csproj" />
 	</ItemGroup>

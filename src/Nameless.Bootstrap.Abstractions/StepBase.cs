@@ -9,5 +9,8 @@ public abstract class StepBase : IStep {
     public virtual string Name => GetType().Name;
 
     /// <inheritdoc />
+    public virtual bool ThrowOnError => false;
+
+    /// <inheritdoc />
     public abstract Task ExecuteAsync(FlowContext context, CancellationToken cancellationToken);
 }

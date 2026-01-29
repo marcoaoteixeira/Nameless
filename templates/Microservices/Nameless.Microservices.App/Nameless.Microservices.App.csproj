@@ -12,7 +12,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Bootstrap\Nameless.Bootstrap.csproj" />
 		<ProjectReference Include="..\..\..\src\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Nameless.Diagnostics\Nameless.Diagnostics.csproj" />
 		<ProjectReference Include="..\..\..\src\Nameless.Mediator\Nameless.Mediator.csproj" />
 		<ProjectReference Include="..\..\..\src\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
 		<ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.Core.csproj" />
