@@ -7,9 +7,8 @@
 public class BootstrapOptions {
     /// <summary>
     ///     Whether it should execute the steps in parallel or not.
-    ///     Default is <see langword="true"/>.
     /// </summary>
-    public bool EnableParallelExecution { get; set; } = true;
+    public bool EnableParallelExecution { get; set; }
 
     /// <summary>
     ///     Gets or sets the maximum degree of parallelism.
