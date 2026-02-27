@@ -13,7 +13,7 @@ public class MongoClientFactory : IMongoClientFactory {
     ///     MongoDB options to configure the client.
     /// </param>
     public MongoClientFactory(IOptions<MongoOptions> options) {
-        _options = Guard.Against.Null(options);
+        _options = Throws.When.Null(options);
     }
 
     /// <inheritdoc />

@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Logging;
-using Nameless.Data.Internals;
 
 namespace Nameless.Data;
 

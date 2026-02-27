@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Nameless.Mediator;
 using Nameless.Validation;
-using Nameless.Web.Endpoints;
-using Nameless.Web.Endpoints.Definitions;
 using Nameless.Web.Identity.UseCases.Authentication.SignIn;
+using Nameless.Web.MinimalEndpoints;
+using Nameless.Web.MinimalEndpoints.Definitions;
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Nameless.Web.Identity.Endpoints.v1.Auth.SignIn;
@@ -19,8 +19,8 @@ public class SignInEndpoint : IEndpoint {
     public SignInEndpoint(
         IMediator mediator,
         IValidationService validationService) {
-        _mediator = Guard.Against.Null(mediator);
-        _validationService = Guard.Against.Null(validationService);
+        _mediator = Throws.When.Null(mediator);
+        _validationService = Throws.When.Null(validationService);
     }
 
     /// <inheritdoc />
@@ -42,7 +42,7 @@ public class SignInEndpoint : IEndpoint {
     }
 
     public async Task<IResult> ExecuteAsync([FromBody] SignInInput input, CancellationToken cancellationToken) {
-        Guard.Against.Null(input);
+        Throws.When.Null(input);
 
         var validationResult = await _validationService.ValidateAsync(input, cancellationToken);
         if (!validationResult.Success) {

@@ -15,7 +15,7 @@ public class ConnectionManagerTests {
     public async Task WhenGettingConnection_WhenRabbitMQInstanceIsRunning_ThenReturnsConnection() {
         // arrange
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Server = new ServerSettings { Port = RabbitContainer.HOST_PORT };
+            opts.Server = new ServerOptions { Port = RabbitContainer.HOST_PORT };
         });
         var sut = new ConnectionManager(options, Quick.Mock<ILogger<ConnectionManager>>());
 
@@ -36,7 +36,7 @@ public class ConnectionManagerTests {
                                                                 .WithLog(LogLevel.Error,
                                                                     message => errorMessage = message);
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Server = new ServerSettings { Port = 5000 };
+            opts.Server = new ServerOptions { Port = 5000 };
         });
         var sut = new ConnectionManager(options, loggerMocker.Build());
 
@@ -48,7 +48,7 @@ public class ConnectionManagerTests {
             Assert.NotEmpty(errorMessage);
             Assert.IsType<BrokerUnreachableException>(exception);
 
-            loggerMocker.VerifyErrorCall(message => message.Contains(value: "Unable to connect to broker"));
+            loggerMocker.VerifyError(message => message.Contains(value: "Unable to connect to broker"));
         });
 
         await sut.DisposeAsync();

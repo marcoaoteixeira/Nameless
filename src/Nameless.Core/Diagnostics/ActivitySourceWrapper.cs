@@ -9,6 +9,16 @@ namespace Nameless.Diagnostics;
 public class ActivitySourceWrapper : IActivitySource {
     private readonly ActivitySource _activitySource;
 
+    private bool _disposed;
+
+    public event Action<IActivitySource>? OnDispose;
+
+    /// <inheritdoc />
+    public string Name => _activitySource.Name;
+
+    /// <inheritdoc />
+    public string? Version => _activitySource.Version;
+
     /// <summary>
     ///     Initializes a new instance of the
     ///     <see cref="ActivitySourceWrapper"/> class.
@@ -29,5 +39,18 @@ public class ActivitySourceWrapper : IActivitySource {
         return activity is not null
             ? new ActivityWrapper(activity)
             : NullActivity.Instance;
+    }
+
+    /// <inheritdoc />
+    public void Dispose() {
+        if (_disposed) { return; }
+
+        _activitySource.Dispose();
+
+        GC.SuppressFinalize(this);
+
+        OnDispose?.Invoke(this);
+
+        _disposed = true;
     }
 }

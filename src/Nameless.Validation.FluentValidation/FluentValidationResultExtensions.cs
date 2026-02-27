@@ -21,8 +21,8 @@ public static class FluentValidationResultExtensions {
                             .Select(error => new ValidationError(
                                 error.ErrorMessage,
                                 error.ErrorCode,
-                                error.PropertyName)
-                            );
+                                error.PropertyName
+                            ));
 
             return ValidationResult.Create([.. array]);
         }

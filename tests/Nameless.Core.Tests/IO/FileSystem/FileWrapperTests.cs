@@ -2,6 +2,7 @@
 using Nameless.Helpers;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
+using Nameless.Testing.Tools.Resources;
 
 namespace Nameless.IO.FileSystem;
 
@@ -19,39 +20,39 @@ public class FileWrapperTests {
     public void WhenGettingName_ThenReturnsFileNameFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Name;
 
         // assert
-        Assert.Equal(FileName, actual);
+        Assert.Equal(Path.GetFileName(resource.Path), actual);
     }
 
     [Fact]
     public void WhenGettingPath_ThenReturnsFullPathFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Path;
 
         // assert
-        Assert.Equal(path, actual);
+        Assert.Equal(resource.Path, actual);
     }
 
     [Fact]
     public void WhenCheckingFileExistence_WhenUnderlyingFileExists_ThenReturnsTrue() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Exists;
@@ -79,9 +80,9 @@ public class FileWrapperTests {
     public void WhenGettingLastWriteTime_ThenReturnsFileLastWriteTime() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.LastWriteTime;
@@ -94,9 +95,9 @@ public class FileWrapperTests {
     public void WhenOpeningTheFile_ThenReturnsStreamToTheFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         using var actual = sut.Open();
@@ -110,9 +111,9 @@ public class FileWrapperTests {
         // arrange
         const string Expected = "This Is A Test";
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         using var stream = new StreamReader(sut.Open());
@@ -125,10 +126,9 @@ public class FileWrapperTests {
     [Fact]
     public void WhenDeletingFile_ThenFileShouldBeDeleted() {
         // arrange
-        var path = ResourcesHelper.CreateCopy(relativeFilePath: "ThisIsATest.txt",
-            newFileName: "0d8c7a52-11fb-4306-928c-98214d778666");
-        var file = new FileInfo(path);
-        var sut = new FileWrapper(file, CreateOptions());
+        using var resource = ResourcesHelper.GetResource("ThisIsATest.txt");
+        var file = new FileInfo(resource.Path);
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var exists = sut.Exists;

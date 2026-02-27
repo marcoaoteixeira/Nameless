@@ -20,11 +20,12 @@ public class ServiceCollectionExtensionsTests {
         services.TryAddSingleton((ILogger)NullLogger.Instance);
         services.TryAddSingleton(new PrintServiceMocker().Build());
         services.RegisterMediator(opts => {
-            opts.Assemblies = [typeof(ServiceCollectionExtensionsTests).Assembly];
+            opts.IncludeAssemblies(typeof(ServiceCollectionExtensionsTests).Assembly);
 
             opts
                 .RegisterRequestPipelineBehavior(typeof(MessageRequestPipelineBehavior))
-                .RegisterRequestPipelineBehavior(typeof(YetAnotherMessageRequestPipelineBehavior))
+                //.RegisterRequestPipelineBehavior(typeof(YetAnotherMessageRequestPipelineBehavior))
+                .RegisterRequestPipelineBehavior<YetAnotherMessageRequestPipelineBehavior, MessageRequest, MessageResponse>()
                 .RegisterRequestPipelineBehavior(typeof(OpenGenericRequestPipelineBehavior<,>))
                 .RegisterRequestPipelineBehavior(typeof(PerformanceRequestPipelineBehavior<,>));
 
@@ -32,7 +33,7 @@ public class ServiceCollectionExtensionsTests {
                 .RegisterStreamPipelineBehavior(typeof(MessageStreamPipelineBehavior))
                 .RegisterStreamPipelineBehavior(typeof(YetAnotherMessageStreamPipelineBehavior));
         });
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
 
         // act
         var mediator = provider.GetService<IMediator>();

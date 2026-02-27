@@ -10,15 +10,15 @@ public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
         /// <summary>
         ///     Registers the default implementation of the
-        ///     <see cref="IZipArchiveService"/> to the service collection
+        ///     <see cref="IZipFileService"/> to the service collection
         ///     as a singleton.
         /// </summary>
         /// <returns>
         ///     The <see cref="IServiceCollection"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterZipArchiveService() {
-            self.TryAddSingleton<IZipArchiveService, ZipArchiveService>();
+        public IServiceCollection RegisterZipFile() {
+            self.TryAddSingleton<IZipFileService, ZipFileService>();
 
             return self;
         }

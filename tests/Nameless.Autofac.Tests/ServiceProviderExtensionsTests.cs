@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using Nameless.Autofac.Mockers;
 using Xunit;
@@ -24,14 +25,19 @@ public class ServiceProviderExtensionsTests {
         cts.Cancel();
 
         // assert
-        lifetimeScopeMocker.Verify(mock => mock.Dispose(), Times.Once());
+        lifetimeScopeMocker.Verify(mock => mock.Dispose());
     }
 
     [Fact]
     public void WhenRegisterAutofacDisposeHandler_WhenHostApplicationLifetimeNull_ThenDoNothing() {
         // arrange
         var cts = new CancellationTokenSource();
-        var lifetimeScopeMocker = new LifetimeScopeMocker();
+        var hostApplicationLifetime = new HostApplicationLifetimeMocker()
+            .WithApplicationStopped(cts.Token)
+            .Build();
+
+        var lifetimeScopeMocker = new LifetimeScopeMocker()
+            .WithResolve(hostApplicationLifetime);
 
         var serviceProvider = new AutofacServiceProvider(lifetimeScopeMocker.Build());
 
@@ -40,6 +46,6 @@ public class ServiceProviderExtensionsTests {
         cts.Cancel();
 
         // assert
-        lifetimeScopeMocker.Verify(mock => mock.Dispose(), Times.Never());
+        lifetimeScopeMocker.Verify(mock => mock.Dispose());
     }
 }

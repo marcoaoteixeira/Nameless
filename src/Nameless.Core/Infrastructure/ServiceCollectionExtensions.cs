@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions {
         ///     is <see langword="null"/>.
         /// </exception>
         public IServiceCollection RegisterApplicationContext(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(ApplicationContextOptions));
+            var section = configuration.GetSection<ApplicationContextOptions>();
 
             return self.Configure<ApplicationContextOptions>(section)
                        .InnerRegisterApplicationContext();

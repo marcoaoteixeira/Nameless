@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Attributes;
 
 namespace Nameless.Data.SqlServer;
 
 /// <summary>
 /// MS SQL Server options.
 /// </summary>
+[ConfigurationSectionName("SqlServer")]
 public class SqlServerOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
@@ -44,4 +46,13 @@ public class SqlServerOptions {
     /// Whether it should use integrated security.
     /// </summary>
     public bool UseIntegratedSecurity { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the connection string name.
+    /// </summary>
+    /// <remarks>
+    ///     If provided, it will be the preferred connection string over
+    ///     the current configuration.
+    /// </remarks>
+    public string? ConnectionStringName { get; set; }
 }

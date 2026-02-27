@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions {
         ///     is <see langword="null"/>.
         /// </exception>
         public IServiceCollection RegisterFileSystem(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(FileSystemOptions));
+            var section = configuration.GetSection<FileSystemOptions>();
 
             return self.Configure<FileSystemOptions>(section)
                        .InnerRegisterFileSystem();
@@ -72,7 +72,7 @@ public static class ServiceCollectionExtensions {
 
         var rootDirectoryPath = applicationContext is not null
             ? applicationContext.DataDirectoryPath
-            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path2: "App_Data");
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
 
         options.Value.Root = Directory.CreateDirectory(rootDirectoryPath).FullName;
 

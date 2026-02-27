@@ -1,13 +1,11 @@
-﻿using Lucene.Net.Util;
+﻿namespace Nameless.Lucene;
 
-namespace Nameless.Lucene;
+public static class Constants {
+    internal const string DOCUMENT_ID_PROP = "__id__";
 
-/// <summary>
-///     Constants that are used across the library.
-/// </summary>
-internal static class Constants {
     /// <summary>
-    ///     Gets the current version of Lucene being used.
+    ///     Gets the maximum number of results that can be returned
+    ///     by a query.
     /// </summary>
-    internal const LuceneVersion CURRENT_VERSION = LuceneVersion.LUCENE_48;
+    public const int QUERY_MAXIMUM_RESULTS = short.MaxValue;
 }

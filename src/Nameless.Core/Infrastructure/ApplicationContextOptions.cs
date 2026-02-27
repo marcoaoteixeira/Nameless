@@ -1,8 +1,11 @@
-﻿namespace Nameless.Infrastructure;
+﻿using Nameless.Attributes;
+
+namespace Nameless.Infrastructure;
 
 /// <summary>
 ///     Application context options.
 /// </summary>
+[ConfigurationSectionName("ApplicationContext")]
 public class ApplicationContextOptions {
     /// <summary>
     ///     Gets or sets the name of the current environment.

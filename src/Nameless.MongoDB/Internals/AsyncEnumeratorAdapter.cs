@@ -38,14 +38,14 @@ internal class AsyncEnumeratorAdapter<TValue> : IAsyncEnumerator<TValue> {
     /// <inheritdoc />
     public async ValueTask<bool> MoveNextAsync() {
         _asyncCursor ??= await _source.ToCursorAsync(_cancellationToken)
-                                      .ConfigureAwait(continueOnCapturedContext: false);
+                                      .SkipContextSync();
 
         if (_batchEnumerator is not null && _batchEnumerator.MoveNext()) {
             return true;
         }
 
         var canMoveNext = await _asyncCursor.MoveNextAsync(_cancellationToken)
-                                            .ConfigureAwait(continueOnCapturedContext: false);
+                                            .SkipContextSync();
 
         if (_asyncCursor is not null && canMoveNext) {
             _batchEnumerator?.Dispose();

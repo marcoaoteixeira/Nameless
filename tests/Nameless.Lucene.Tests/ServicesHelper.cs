@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Infrastructure;
 using Nameless.IO.FileSystem;
+using Nameless.Lucene.Infrastructure.Implementations;
+using Index = Nameless.Lucene.Infrastructure.Implementations.Index;
 
 namespace Nameless.Lucene;
 internal static class ServicesHelper {
@@ -22,9 +24,10 @@ internal static class ServicesHelper {
                 opts.Root = RootDirectoryPath;
             });
 
-        services.RegisterLucene(opts => {
-            opts.SetDirectoryName(IndexesDirectoryName);
-        });
+        services.RegisterLucene(
+            registration: _ => { },
+            configure: _ => { }
+        );
 
         return services.BuildServiceProvider();
     }

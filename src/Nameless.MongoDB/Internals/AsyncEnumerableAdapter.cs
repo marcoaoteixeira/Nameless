@@ -14,7 +14,7 @@ internal class AsyncEnumerableAdapter<TValue> : IAsyncEnumerable<TValue> {
     /// </summary>
     /// <param name="source">The source of the async cursor.</param>
     internal AsyncEnumerableAdapter(IAsyncCursorSource<TValue> source) {
-        _source = Guard.Against.Null(source);
+        _source = Throws.When.Null(source);
     }
 
     /// <inheritdoc />

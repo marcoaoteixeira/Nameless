@@ -1,28 +1,31 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿using Nameless.Attributes;
+
+namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for RabbitMQ.
 /// </summary>
-public sealed class RabbitMQOptions {
+[ConfigurationSectionName("RabbitMQ")]
+public class RabbitMQOptions {
     public TimeSpan ConsumerStartupTimeout { get; set; } = TimeSpan.FromSeconds(seconds: 1);
 
     /// <summary>
     ///     Gets or sets the server settings for RabbitMQ.
     /// </summary>
-    public ServerSettings Server { get; set; } = new();
+    public ServerOptions Server { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the exchanges to be used in RabbitMQ.
     /// </summary>
-    public ExchangeSettings[] Exchanges = [];
+    public ExchangeOptions[] Exchanges = [];
 
     /// <summary>
     ///     Gets or sets the queues to be used in RabbitMQ.
     /// </summary>
-    public QueueSettings[] Queues { get; set; } = [];
+    public QueueOptions[] Queues { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the prefetch settings for RabbitMQ consumers.
     /// </summary>
-    public PrefetchSettings Prefetch { get; set; } = new();
+    public PrefetchOptions Prefetch { get; set; } = new();
 }

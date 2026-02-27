@@ -1,259 +1,147 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Nameless.IO.FileSystem;
-using Nameless.Lucene.Requests;
+using Nameless.Lucene.ObjectModel;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Helpers;
+using Nameless.Testing.Tools.Mockers.IO;
+using Index = Nameless.Lucene.Infrastructure.Implementations.Index;
 
 namespace Nameless.Lucene;
 
 [UnitTest]
 public class IndexTests {
-    private static IEnumerable<Document> CreateDocuments() {
-        var files = new[] {
-            "LoremIpsum.txt",
-            "text_001.txt",
-            "text_002.txt",
-            "text_003.txt",
-            "text_004.txt",
-            "text_005.txt",
-            "text_006.txt",
-            "text_007.txt",
-        };
-
-        foreach (var file in files) {
-            var id = Guid.CreateVersion7().ToString("N");
-            var content = ResourcesHelper.GetStream(file).GetContentAsString();
-            yield return new Document(id)
-                .Set("document_id", id)
-                .Set("content", content, FieldOptions.Analyze | FieldOptions.Store);
-        }
+    private static string CreateDirectoryPath() {
+        return Path.Combine(Path.GetTempPath(), $"{Guid.CreateVersion7():N}");
     }
 
-    private static IEnumerable<Document> CreateUniqueDocuments(DateTime? date = null) {
-        var files = new[] {
-            "unique_001.txt",
-            "unique_002.txt",
-            "unique_003.txt",
-            "unique_004.txt",
-            "unique_005.txt",
-        };
+    private static IFileSystem CreateFileSystem(string directoryPath) {
+        var directory = new DirectoryMocker().WithPath(directoryPath).Build();
 
-        var innerDate = (date ?? DateTime.UtcNow).Date;
+        return new FileSystemMocker().WithGetDirectory(directory).Build();
+    }
 
-        foreach (var file in files) {
-            var content = ResourcesHelper.GetStream(file).GetContentAsString();
-
-            yield return new Document(Guid.CreateVersion7().ToString("N"))
-                         .Set("group", file.Split('_')[0], FieldOptions.Analyze | FieldOptions.Store)
-                         .Set("number", file.Split('_')[1].Replace(".txt", string.Empty), FieldOptions.Analyze | FieldOptions.Store)
-                         .Set("date", innerDate, FieldOptions.Analyze | FieldOptions.Store)
-                         .Set("content", content, FieldOptions.Analyze | FieldOptions.Store);
-
-            innerDate = innerDate.AddDays(1);
-        }
+    public static Index CreateSut(string directoryPath, ILogger<Index> logger = null) {
+        return new Index(
+            Defaults.Analyzer,
+            CreateFileSystem(directoryPath),
+            $"{Guid.CreateVersion7():N}",
+            Options.Create(new LuceneOptions()),
+            logger ?? NullLogger<Index>.Instance
+        );
     }
 
     [Fact]
-    public async Task Happy_Path() {
-        const string IndexName = "bc8a58ca6a3b41558ccd30c5adaccd9c";
+    public void WhenInsertDocuments_ThenIndexMustAcceptDocuments() {
+        // arrange
+        var directoryPath = CreateDirectoryPath();
+        var sut = CreateSut(directoryPath);
+        var documents = new DocumentCollection([
+            [new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES)],
+            [new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES)],
+            [new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES)],
+            [new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES)],
+            [new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES)]
+        ]);
 
-        await using var provider = ServicesHelper.CreateContainer();
+        // act
+        var result = sut.Insert(documents);
+        sut.SaveChanges();
 
-        // cleanup previous index if any
-        var fileSystem = provider.GetRequiredService<IFileSystem>();
-        var indexDirectory = fileSystem.GetDirectory(Path.Combine(ServicesHelper.IndexesDirectoryName, IndexName));
-        if (indexDirectory.Exists) {
-            indexDirectory.Delete(recursive: true);
-        }
-
-        var indexProvider = provider.GetRequiredService<IIndexProvider>();
-        using var index = indexProvider.Get(IndexName);
-        Assert.NotNull(index);
-
-        var documents = CreateDocuments().ToArray();
-
-        // store documents
-        var request = new InsertDocumentsRequest(documents);
-        var response = await index.InsertAsync(request, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(documents.Length, response.Value.Count);
-        });
-
-        // retrieve documents
-        var queryDefinition = index.CreateQueryBuilder()
-                                   .Build(); // match all query
-
-        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
-        var searchResponse = await index.SearchAsync(searchRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(searchResponse.Success);
-            Assert.Equal(8, searchResponse.Value.Count);
-        });
-
-        // retrieve only one document
-        var oneDoc = documents[0];
-        var oneDocQueryDefinition = index.CreateQueryBuilder()
-                                         .WithField("document_id", [oneDoc.ID])
-                                         .Build();
-
-        var oneDocSearchRequest = new SearchDocumentsRequest(oneDocQueryDefinition.Query);
-        var oneDocSearchResponse = await index.SearchAsync(oneDocSearchRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(oneDocSearchResponse.Success);
-            Assert.Equal(1, oneDocSearchResponse.Value.Count);
-        });
-
-        // delete documents
-        var deleteRequest = new DeleteDocumentsByQueryRequest(queryDefinition.Query);
-        var deleteResponse = await index.DeleteAsync(deleteRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(deleteResponse.Success);
-            Assert.Equal(8, deleteResponse.Value.Count);
-        });
-
-        // ensure index is empty
-        var emptySearchRequest = new SearchDocumentsRequest(queryDefinition.Query);
-        var emptySearchResponse = await index.SearchAsync(emptySearchRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(emptySearchResponse.Success);
-            Assert.Empty(emptySearchResponse.Value.Hits);
-        });
+        // assert
+        Assert.Equal(documents.Count, result.Value);
     }
 
     [Fact]
-    public async Task WhenSearch_WhenUsingField_ThenReturnsDocumentsWithTerm() {
-        const string IndexName = "dc237104-e52f-48fc-92a2-f071a999c8fd";
+    public void WhenDeletingDocuments_ThenIndexMustRemoveDocuments() {
+        // arrange
+        var directoryPath = CreateDirectoryPath();
+        var sut = CreateSut(directoryPath);
+        var query = new TermQuery(new Term("__id__", $"{Guid.CreateVersion7():N}"));
 
-        await using var provider = ServicesHelper.CreateContainer();
+        // act
+        var result = sut.Delete(query);
 
-        // cleanup previous index if any
-        var fileSystem = provider.GetRequiredService<IFileSystem>();
-        var indexDirectory = fileSystem.GetDirectory(Path.Combine(ServicesHelper.IndexesDirectoryName, IndexName));
-        if (indexDirectory.Exists) {
-            indexDirectory.Delete(recursive: true);
-        }
-
-        var indexProvider = provider.GetRequiredService<IIndexProvider>();
-        using var index = indexProvider.Get(IndexName);
-        Assert.NotNull(index);
-
-        var documents = CreateUniqueDocuments().ToArray();
-
-        // store documents
-        var insertRequest = new InsertDocumentsRequest(documents);
-        var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.Count);
-        });
-
-        // retrieve documents
-        var queryDefinition = index.CreateQueryBuilder()
-                                   .WithField("content", "corujas", useWildcard: false)
-                                   .Build();
-
-        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
-        var searchResponse = await index.SearchAsync(searchRequest, cancellationToken: CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(searchResponse.Success);
-            Assert.Single(searchResponse.Value.Hits);
-        });
+        // assert
+        Assert.True(result.Value);
     }
 
     [Fact]
-    public async Task WhenSearch_WhenUsingField_WithWildcard_ThenReturnsDocumentsWithTerm() {
-        const string IndexName = "b02b8b0c-3861-4106-845d-51c4122fb321";
+    public void WhenSearchingDocuments_WhenThereAreDocumentsInIndex_ThenReturnsDocuments() {
+        // arrange
+        var directoryPath = CreateDirectoryPath();
+        var sut = CreateSut(directoryPath);
 
-        await using var provider = ServicesHelper.CreateContainer();
+        var documents = new DocumentCollection([
+            [
+                new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES),
+                new StringField("Name", "John Doe", Field.Store.YES),
+                new StringField("Email", "john.doe@email.com", Field.Store.YES)
+            ]
+        ]);
 
-        // cleanup previous index if any
-        var fileSystem = provider.GetRequiredService<IFileSystem>();
-        var indexDirectory = fileSystem.GetDirectory(Path.Combine(ServicesHelper.IndexesDirectoryName, IndexName));
-        if (indexDirectory.Exists) {
-            indexDirectory.Delete(recursive: true);
-        }
+        sut.Insert(documents);
+        sut.SaveChanges();
 
-        var indexProvider = provider.GetRequiredService<IIndexProvider>();
-        using var index = indexProvider.Get(IndexName);
-        Assert.NotNull(index);
+        var query = new TermQuery(
+            new Term("Name", "John Doe")
+        );
+        var collector = TopFieldCollector.Create(
+            Sort.RELEVANCE,
+            numHits: 10,
+            fillFields: false,
+            trackDocScores: true,
+            trackMaxScore: false,
+            docsScoredInOrder: true
+        );
 
-        var documents = CreateUniqueDocuments().ToArray();
+        // act
+        var result = sut.Search(query, collector);
 
-        // store documents
-        var insertRequest = new InsertDocumentsRequest(documents);
-        var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.Count);
-        });
-
-        // retrieve documents
-        var queryDefinition = index.CreateQueryBuilder()
-                                   .WithField("content", "*am", useWildcard: true)
-                                   .Build();
-
-        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
-        var searchResponse = await index.SearchAsync(searchRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(searchResponse.Success);
-            Assert.Equal(5, searchResponse.Value.Count);
-        });
+        // assert
+        result.Match(
+            onSuccess: Assert.NotEmpty,
+            onFailure: failure => Assert.Fail(failure[0].Message)
+        );
     }
 
     [Fact]
-    public async Task WhenSearch_WhenUsingDateRange_ThenReturnsDocuments() {
-        const string IndexName = "b02b8b0c-3861-4106-845d-51c4122fb321";
+    public void WhenCountingDocuments_WhenThereAreDocumentsInIndex_ThenReturnsTotalNumberOfDocuments() {
+        // arrange
+        var directoryPath = CreateDirectoryPath();
+        var sut = CreateSut(directoryPath);
 
-        await using var provider = ServicesHelper.CreateContainer();
+        var documents = new DocumentCollection([
+            [
+                new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES),
+                new StringField("Name", "John Doe", Field.Store.YES),
+                new StringField("Email", "john.doe@email.com", Field.Store.YES)
+            ],
+            [
+                new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES),
+                new StringField("Name", "John Doe", Field.Store.YES),
+                new StringField("Email", "john.doe@email.com", Field.Store.YES)
+            ],
+            [
+                new StringField("__id__", Guid.CreateVersion7().ToString(), Field.Store.YES),
+                new StringField("Name", "John Doe", Field.Store.YES),
+                new StringField("Email", "john.doe@email.com", Field.Store.YES)
+            ]
+        ]);
 
-        // cleanup previous index if any
-        var fileSystem = provider.GetRequiredService<IFileSystem>();
-        var indexDirectory = fileSystem.GetDirectory(Path.Combine(ServicesHelper.IndexesDirectoryName, IndexName));
-        if (indexDirectory.Exists) {
-            indexDirectory.Delete(recursive: true);
-        }
+        sut.Insert(documents);
+        sut.SaveChanges();
 
-        var indexProvider = provider.GetRequiredService<IIndexProvider>();
-        using var index = indexProvider.Get(IndexName);
-        Assert.NotNull(index);
+        // act
+        var result = sut.Count(new MatchAllDocsQuery());
 
-        var date = DateTime.UtcNow.Date;
-        var documents = CreateUniqueDocuments(date).ToArray();
-
-        // store documents
-        var insertRequest = new InsertDocumentsRequest(documents);
-        var insertResponse = await index.InsertAsync(insertRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(insertResponse.Success);
-            Assert.Equal(documents.Length, insertResponse.Value.Count);
-        });
-
-        // retrieve documents
-        var term = date.AddDays(2);
-        var queryDefinition = index.CreateQueryBuilder()
-                                   .WithinRange(
-                                       name: "date",
-                                       minimum: term,
-                                       maximum: null,
-                                       includeMinimum: true,
-                                       includeMaximum: false
-                                    )
-                                   .Build();
-
-        var searchRequest = new SearchDocumentsRequest(queryDefinition.Query);
-        var searchResponse = await index.SearchAsync(searchRequest, CancellationToken.None);
-        Assert.Multiple(() => {
-            Assert.True(searchResponse.Success);
-            Assert.Equal(3, searchResponse.Value.Count);
-
-            foreach (var result in searchResponse.Value.Hits) {
-                var resultDate = result.GetDateTime("date");
-
-                Assert.Equal(term, resultDate);
-
-                term = term.AddDays(1);
-            }
-        });
+        // assert
+        result.Match(
+            onSuccess: value => Assert.Equal(3, value),
+            onFailure: failure => Assert.Fail(failure[0].Message)
+        );
     }
 }

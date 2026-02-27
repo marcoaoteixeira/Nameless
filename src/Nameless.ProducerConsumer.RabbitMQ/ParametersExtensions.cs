@@ -4,241 +4,156 @@ using RabbitMQ.Client;
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public static class ParametersExtensions {
-    #region Basic Properties Parameters
-
     extension(Parameters self) {
-        public string? GetAppId() {
-            return self[nameof(IBasicProperties.AppId)] as string;
+        #region Basic Properties Parameters
+
+        public string? AppId {
+            get => self[nameof(IBasicProperties.AppId)] as string;
+            set => self[nameof(IBasicProperties.AppId)] = value;
         }
 
-        public void SetAppId(string? value) {
-            self[nameof(IBasicProperties.AppId)] = value;
+        public string? ClusterId {
+            get => self[nameof(IBasicProperties.ClusterId)] as string;
+            set => self[nameof(IBasicProperties.ClusterId)] = value;
         }
 
-        public string? GetClusterId() {
-            return self[nameof(IBasicProperties.ClusterId)] as string;
+        public string? ContentEncoding {
+            get => self[nameof(IBasicProperties.ContentEncoding)] as string;
+            set => self[nameof(IBasicProperties.ContentEncoding)] = value;
         }
 
-        public void SetClusterId(string? value) {
-            self[nameof(IBasicProperties.ClusterId)] = value;
+        public string? ContentType {
+            get => self[nameof(IBasicProperties.ContentType)] as string;
+            set => self[nameof(IBasicProperties.ContentType)] = value;
         }
 
-        public string? GetContentEncoding() {
-            return self[nameof(IBasicProperties.ContentEncoding)] as string;
+        public string? CorrelationId {
+            get => self[nameof(IBasicProperties.CorrelationId)] as string;
+            set => self[nameof(IBasicProperties.CorrelationId)] = value;
         }
 
-        public void SetContentEncoding(string? value) {
-            self[nameof(IBasicProperties.ContentEncoding)] = value;
+        public DeliveryModes DeliveryMode {
+            get => self[nameof(IBasicProperties.DeliveryMode)] is DeliveryModes modes ? modes : default;
+            set => self[nameof(IBasicProperties.DeliveryMode)] = value;
         }
 
-        public string? GetContentType() {
-            return self[nameof(IBasicProperties.ContentType)] as string;
+        public string? Expiration {
+            get => self[nameof(IBasicProperties.Expiration)] as string;
+            set => self[nameof(IBasicProperties.Expiration)] = value;
         }
 
-        public void SetContentType(string? value) {
-            self[nameof(IBasicProperties.ContentType)] = value;
+        public IDictionary<string, object?> Headers {
+            get => self[nameof(IBasicProperties.Headers)] as Dictionary<string, object?> ?? [];
+            set => self[nameof(IBasicProperties.Headers)] = value;
         }
 
-        public string? GetCorrelationId() {
-            return self[nameof(IBasicProperties.CorrelationId)] as string;
+        public string? MessageId {
+            get => self[nameof(IBasicProperties.MessageId)] as string;
+            set => self[nameof(IBasicProperties.MessageId)] = value;
         }
 
-        public void SetCorrelationId(string? value) {
-            self[nameof(IBasicProperties.CorrelationId)] = value;
+        public bool Persistent {
+            get => self[nameof(IBasicProperties.Persistent)] is true;
+            set => self[nameof(IBasicProperties.Persistent)] = value;
         }
 
-        public DeliveryModes GetDeliveryMode() {
-            return self[nameof(IBasicProperties.DeliveryMode)] is DeliveryModes modes ? modes : default;
+        public byte Priority {
+            get => self[nameof(IBasicProperties.Priority)] is byte value ? value : (byte)0;
+            set => self[nameof(IBasicProperties.Priority)] = value;
         }
 
-        public void SetDeliveryMode(byte? value) {
-            self[nameof(IBasicProperties.DeliveryMode)] = value;
+        public string? ReplyTo {
+            get => self[nameof(IBasicProperties.ReplyTo)] as string;
+            set => self[nameof(IBasicProperties.ReplyTo)] = value;
         }
 
-        public string? GetExpiration() {
-            return self[nameof(IBasicProperties.Expiration)] as string;
+        public PublicationAddress? ReplyToAddress {
+            get => self[nameof(IBasicProperties.ReplyToAddress)] as PublicationAddress;
+            set => self[nameof(IBasicProperties.ReplyToAddress)] = value;
         }
 
-        public void SetExpiration(string? value) {
-            self[nameof(IBasicProperties.Expiration)] = value;
+        public AmqpTimestamp Timestamp {
+            get => self[nameof(IBasicProperties.Timestamp)] is AmqpTimestamp value ? value : default;
+            set => self[nameof(IBasicProperties.Timestamp)] = value;
         }
 
-        public IDictionary<string, object?> GetHeaders() {
-            return self[nameof(IBasicProperties.Headers)] as Dictionary<string, object?> ?? [];
+        public string? Type {
+            get => self[nameof(IBasicProperties.Type)] as string;
+            set => self[nameof(IBasicProperties.Type)] = value;
         }
 
-        public void SetHeaders(IDictionary<string, object>? value) {
-            self[nameof(IBasicProperties.Headers)] = value;
+        public string? UserId {
+            get => self[nameof(IBasicProperties.UserId)] as string;
+            set => self[nameof(IBasicProperties.UserId)] = value;
         }
 
-        public string? GetMessageId() {
-            return self[nameof(IBasicProperties.MessageId)] as string;
+        #endregion
+
+        #region Producer Parameters
+
+        public string ExchangeName {
+            get => self[ProducerParametersNames.EXCHANGE_NAME] as string ?? Internals.Defaults.EXCHANGE_NAME;
+            set => self[ProducerParametersNames.EXCHANGE_NAME] = value;
         }
 
-        public void SetMessageId(string? value) {
-            self[nameof(IBasicProperties.MessageId)] = value;
+        public bool HasRoutingKeys {
+            get => self.RoutingKeys.Length > 0;
         }
 
-        public bool GetPersistent() {
-            return self[nameof(IBasicProperties.Persistent)] is true;
+        public string[] RoutingKeys {
+            get => self[ProducerParametersNames.ROUTING_KEYS] as string[] ?? [];
+            set => self[ProducerParametersNames.ROUTING_KEYS] = value;
         }
 
-        public void SetPersistent(bool? value) {
-            self[nameof(IBasicProperties.Persistent)] = value;
+        public bool Mandatory {
+            get => self[ProducerParametersNames.MANDATORY] is true;
+            set => self[ProducerParametersNames.MANDATORY] = value;
         }
 
-        public byte GetPriority() {
-            return self[nameof(IBasicProperties.Priority)] is byte value ? value : (byte)0;
+        public bool UsePrefetch {
+            get => self[ProducerParametersNames.USE_PREFETCH] is true;
+            set => self[ProducerParametersNames.USE_PREFETCH] = value;
         }
 
-        public void SetPriority(byte? value) {
-            self[nameof(IBasicProperties.Priority)] = value;
+        #endregion
+
+        #region Consumer Parameters
+
+        public string GetQueueName {
+            get => self[ConsumerParameterNames.QUEUE_NAME] as string ?? Internals.Defaults.QUEUE_NAME;
+            set => self[ConsumerParameterNames.QUEUE_NAME] = value;
         }
 
-        public string? GetReplyTo() {
-            return self[nameof(IBasicProperties.ReplyTo)] as string;
+        public bool GetAckOnSuccess {
+            get => self[ConsumerParameterNames.ACK_ON_SUCCESS] is true;
+            set => self[ConsumerParameterNames.ACK_ON_SUCCESS] = value;
         }
 
-        public void SetReplyTo(string? value) {
-            self[nameof(IBasicProperties.ReplyTo)] = value;
+        public bool GetAckMultiple {
+            get => self[ConsumerParameterNames.ACK_MULTIPLE] is true;
+            set => self[ConsumerParameterNames.ACK_MULTIPLE] = value;
         }
 
-        public PublicationAddress? GetReplyToAddress() {
-            return self[nameof(IBasicProperties.ReplyToAddress)] as PublicationAddress;
+        public bool GetNAckOnFailure {
+            get => self[ConsumerParameterNames.NACK_ON_FAILURE] is true;
+            set => self[ConsumerParameterNames.NACK_ON_FAILURE] = value;
         }
 
-        public void SetReplyToAddress(PublicationAddress? value) {
-            self[nameof(IBasicProperties.ReplyToAddress)] = value;
+        public bool GetNAckMultiple {
+            get => self[ConsumerParameterNames.NACK_MULTIPLE] is true;
+            set => self[ConsumerParameterNames.NACK_MULTIPLE] = value;
         }
 
-        public AmqpTimestamp GetTimestamp() {
-            return self[nameof(IBasicProperties.Timestamp)] is AmqpTimestamp value ? value : default;
+        public bool AutoAck {
+            get => self[ConsumerParameterNames.AUTO_ACK] is true;
+            set => self[ConsumerParameterNames.AUTO_ACK] = value;
         }
 
-        public void SetTimestamp(AmqpTimestamp? value) {
-            self[nameof(IBasicProperties.Timestamp)] = value;
+        public bool GetRequeueOnFailure {
+            get => self[ConsumerParameterNames.REQUEUE_ON_FAILURE] is true;
+            set => self[ConsumerParameterNames.REQUEUE_ON_FAILURE] = value;
         }
 
-        public string? GetTypeProp() {
-            return self[nameof(IBasicProperties.Type)] as string;
-        }
-
-        public void SetTypeProp(string? value) {
-            self[nameof(IBasicProperties.Type)] = value;
-        }
-
-        public string? GetUserId() {
-            return self[nameof(IBasicProperties.UserId)] as string;
-        }
-
-        public void SetUserId(string? value) {
-            self[nameof(IBasicProperties.UserId)] = value;
-        }
+        #endregion
     }
-
-    #endregion
-
-    #region Producer Parameters
-
-    extension(Parameters self) {
-        public string GetExchangeName() {
-            return self[ProducerParametersNames.EXCHANGE_NAME] as string ?? Internals.Defaults.EXCHANGE_NAME;
-        }
-
-        public void SetExchangeName(string? value) {
-            self[ProducerParametersNames.EXCHANGE_NAME] = value;
-        }
-
-        public bool HasRoutingKeys() {
-            return self.GetRoutingKeys().Length > 0;
-        }
-
-        public string[] GetRoutingKeys() {
-            return self[ProducerParametersNames.ROUTING_KEYS] as string[] ?? [];
-        }
-
-        public void SetRoutingKeys(string[]? value) {
-            self[ProducerParametersNames.ROUTING_KEYS] = value;
-        }
-
-        public bool GetMandatory() {
-            return self[ProducerParametersNames.MANDATORY] is true;
-        }
-
-        public void SetMandatory(bool? value) {
-            self[ProducerParametersNames.MANDATORY] = value;
-        }
-
-        public bool GetUsePrefetch() {
-            return self[ProducerParametersNames.USE_PREFETCH] is true;
-        }
-
-        public void SetUsePrefetch(bool? value) {
-            self[ProducerParametersNames.USE_PREFETCH] = value;
-        }
-    }
-
-    #endregion
-
-    #region Consumer Parameters
-
-    extension(Parameters self) {
-        public string GetQueueName() {
-            return self[ConsumerParameterNames.QUEUE_NAME] as string ?? Internals.Defaults.QUEUE_NAME;
-        }
-
-        public void SetQueueName(string? value) {
-            self[ConsumerParameterNames.QUEUE_NAME] = value;
-        }
-
-        public bool GetAckOnSuccess() {
-            return self[ConsumerParameterNames.ACK_ON_SUCCESS] is true;
-        }
-
-        public void SetAckOnSuccess(bool? value) {
-            self[ConsumerParameterNames.ACK_ON_SUCCESS] = value;
-        }
-
-        public bool GetAckMultiple() {
-            return self[ConsumerParameterNames.ACK_MULTIPLE] is true;
-        }
-
-        public void SetAckMultiple(bool? value) {
-            self[ConsumerParameterNames.ACK_MULTIPLE] = value;
-        }
-
-        public bool GetNAckOnFailure() {
-            return self[ConsumerParameterNames.NACK_ON_FAILURE] is true;
-        }
-
-        public void SetNAckOnFailure(bool? value) {
-            self[ConsumerParameterNames.NACK_ON_FAILURE] = value;
-        }
-
-        public bool GetNAckMultiple() {
-            return self[ConsumerParameterNames.NACK_MULTIPLE] is true;
-        }
-
-        public void SetNAckMultiple(bool? value) {
-            self[ConsumerParameterNames.NACK_MULTIPLE] = value;
-        }
-
-        public bool GetAutoAck() {
-            return self[ConsumerParameterNames.AUTO_ACK] is true;
-        }
-
-        public void SetAutoAck(bool? value) {
-            self[ConsumerParameterNames.AUTO_ACK] = value;
-        }
-
-        public bool GetRequeueOnFailure() {
-            return self[ConsumerParameterNames.REQUEUE_ON_FAILURE] is true;
-        }
-
-        public void SetRequeueOnFailure(bool? value) {
-            self[ConsumerParameterNames.REQUEUE_ON_FAILURE] = value;
-        }
-    }
-
-    #endregion
 }

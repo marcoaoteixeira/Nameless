@@ -29,7 +29,7 @@ public sealed class ActivityWrapper : IActivity {
     /// <inheritdoc />
     public IActivity SetTag(string key, object? value) {
         BlockAccessAfterDispose();
-
+        
         _activity.SetTag(key, value);
 
         return this;

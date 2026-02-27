@@ -13,21 +13,7 @@ public static class ServiceCollectionExtensions {
     /// </param>
     extension(IServiceCollection self) {
         /// <summary>
-        ///     Registers the <see cref="IPasswordGenerator"/> service with a
-        ///     default implementation.
-        /// </summary>
-        /// <returns>
-        ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
-        /// </returns>
-        public IServiceCollection RegisterPasswordGenerator() {
-            self.TryAddSingleton<IPasswordGenerator, RandomPasswordGenerator>();
-
-            return self;
-        }
-
-        /// <summary>
-        ///     Registers the <see cref="ICrypto"/> service with a
-        ///     default implementation.
+        ///     Registers security services.
         /// </summary>
         /// <param name="configure">
         ///     The action to configure the <see cref="CryptoOptions"/> for
@@ -37,15 +23,13 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterCrypto(Action<CryptoOptions>? configure = null) {
-            self.Configure(configure ?? (_ => { }));
-
-            return self.InnerRegisterCrypto();
+        public IServiceCollection RegisterSecurity(Action<CryptoOptions>? configure = null) {
+            return self.Configure(configure ?? (_ => { }))
+                       .InnerRegisterSecurity();
         }
 
         /// <summary>
-        ///     Registers the <see cref="ICrypto"/> service with a
-        ///     default implementation.
+        ///     Registers security services.
         /// </summary>
         /// <param name="configuration">
         ///     The configuration.
@@ -54,15 +38,15 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterCrypto(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(CryptoOptions));
+        public IServiceCollection RegisterSecurity(IConfiguration configuration) {
+            var section = configuration.GetSection<CryptoOptions>();
 
-            self.Configure<CryptoOptions>(section);
-
-            return self.InnerRegisterCrypto();
+            return self.Configure<CryptoOptions>(section)
+                       .InnerRegisterSecurity();
         }
 
-        private IServiceCollection InnerRegisterCrypto() {
+        private IServiceCollection InnerRegisterSecurity() {
+            self.TryAddSingleton<IPasswordGenerator, RandomPasswordGenerator>();
             self.TryAddSingleton<ICrypto, RijndaelCrypto>();
 
             return self;

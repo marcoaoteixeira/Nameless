@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MailKit.Security;
+using Nameless.Attributes;
 
 namespace Nameless.Mailing.MailKit;
 
 /// <summary>
 ///     The configuration for mailing client.
 /// </summary>
+[ConfigurationSectionName("Mailing")]
 public class MailingOptions {
     /// <summary>
     ///     Whether to use credentials for SMTP authentication.

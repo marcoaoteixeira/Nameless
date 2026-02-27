@@ -19,27 +19,24 @@ public class ValidationService : IValidationService {
     }
 
     /// <inheritdoc />
-    public Task<ValidationResult> ValidateAsync(object value, CancellationToken cancellationToken) {
-        return ValidateAsync(value, [], cancellationToken);
-    }
+    public async Task<ValidationResult> ValidateAsync(object value, IDictionary<string, object> context, CancellationToken cancellationToken) {
+        var validationContext = CreateValidationContext();
 
-    /// <inheritdoc />
-    public async Task<ValidationResult> ValidateAsync(object value, DataContext dataContext,
-        CancellationToken cancellationToken) {
-        var validationContext = CreateValidationContext(value, dataContext);
         var tasks = _validators.Where(validator => validator.CanValidateInstancesOfType(value.GetType()))
                                .Select(validator => validator.ValidateAsync(validationContext, cancellationToken));
-        var results = await Task.WhenAll(tasks);
+        
+        var results = await Task.WhenAll(tasks).SkipContextSync();
 
         return results.ToValidationResult();
 
-        static ValidationContext<object> CreateValidationContext(object value, DataContext dataContext) {
-            var context = new ValidationContext<object>(value);
-            foreach (var key in dataContext.Keys) {
-                context.RootContextData[key] = dataContext[key];
+        ValidationContext<object> CreateValidationContext() {
+            var result = new ValidationContext<object>(value);
+            
+            foreach (var key in context.Keys) {
+                result.RootContextData[key] = context[key];
             }
 
-            return context;
+            return result;
         }
     }
 }

@@ -22,9 +22,9 @@ public sealed class ConsumerFactory : IConsumerFactory {
     /// <param name="loggerFactory">The logger factory.</param>
     public ConsumerFactory(IChannelFactory channelFactory, IChannelConfigurator channelConfigurator,
         ILoggerFactory loggerFactory) {
-        _channelFactory = Guard.Against.Null(channelFactory);
-        _channelConfigurator = Guard.Against.Null(channelConfigurator);
-        _loggerFactory = Guard.Against.Null(loggerFactory);
+        _channelFactory = Throws.When.Null(channelFactory);
+        _channelConfigurator = Throws.When.Null(channelConfigurator);
+        _loggerFactory = Throws.When.Null(loggerFactory);
         _logger = loggerFactory.CreateLogger<ConsumerFactory>();
     }
 
@@ -36,13 +36,14 @@ public sealed class ConsumerFactory : IConsumerFactory {
 
         try {
             channel = await _channelFactory.CreateAsync(cancellationToken)
-                                           .ConfigureAwait(continueOnCapturedContext: false);
+                                           .SkipContextSync();
 
-            await _channelConfigurator.ConfigureAsync(channel,
+            await _channelConfigurator.ConfigureAsync(
+                                          channel,
                                           topic,
-                                          parameters.GetUsePrefetch(),
+                                          parameters.UsePrefetch,
                                           cancellationToken)
-                                      .ConfigureAwait(continueOnCapturedContext: false);
+                                      .SkipContextSync();
 
             var consumerLogger = _loggerFactory.CreateLogger<Consumer<TMessage>>();
 

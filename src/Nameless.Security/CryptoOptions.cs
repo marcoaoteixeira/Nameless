@@ -64,7 +64,7 @@ public class CryptoOptions {
     /// </exception>
     public int MinimumSaltSize {
         get;
-        set => field = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+        set => field = Throws.When.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
     } = 16;
 
     /// <summary>
@@ -83,7 +83,7 @@ public class CryptoOptions {
     /// </exception>
     public int MaximumSaltSize {
         get;
-        set => field = Guard.Against.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
+        set => field = Throws.When.OutOfRange(value, MINIMUM_ALLOWED_SALT_SIZE, MAXIMUM_ALLOWED_SALT_SIZE);
     } = 128;
 
     /// <summary>
@@ -96,6 +96,6 @@ public class CryptoOptions {
     /// </exception>
     public int PasswordIterations {
         get;
-        set => field = Guard.Against.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
+        set => field = Throws.When.LowerThan(value, MINIMUM_PASSWORD_ITERATIONS);
     } = 1;
 }

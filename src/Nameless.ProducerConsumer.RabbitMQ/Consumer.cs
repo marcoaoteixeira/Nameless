@@ -35,18 +35,17 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
     /// <param name="channel">The channel.</param>
     /// <param name="logger">The logger.</param>
     public Consumer(string topic, IChannel channel, ILogger<Consumer<TMessage>> logger) {
-        Topic = Guard.Against.Null(topic);
+        Topic = Throws.When.Null(topic);
 
-        _channel = Guard.Against.Null(channel);
-        _logger = Guard.Against.Null(logger);
+        _channel = Throws.When.Null(channel);
+        _logger = Throws.When.Null(logger);
     }
 
     ~Consumer() {
         Dispose(disposing: false);
     }
 
-    public async Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters,
-        CancellationToken cancellationToken) {
+    public async Task StartAsync(MessageHandlerDelegate<TMessage> handler, Parameters parameters, CancellationToken cancellationToken) {
         BlockAccessAfterDispose();
 
         if (_started) {
@@ -55,7 +54,7 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
             return;
         }
 
-        _handler = Guard.Against.Null(handler);
+        _handler = handler;
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         var channel = GetChannel();
@@ -71,12 +70,8 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
 
         // startup the consumer
         _consumerTag = Guid.NewGuid().ToString(format: "N");
-        var startupStatus = await channel.BasicConsumeAsync(Topic,
-                                             parameters.GetAutoAck(),
-                                             _consumerTag,
-                                             _consumer,
-                                             cancellationToken)
-                                         .ConfigureAwait(continueOnCapturedContext: false);
+        var startupStatus = await channel.BasicConsumeAsync(Topic, parameters.AutoAck, _consumerTag, _consumer, cancellationToken)
+                                         .SkipContextSync();
 
         _logger.ConsumerStarted(startupStatus, _consumerTag, parameters);
         _started = true;
@@ -95,27 +90,15 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
     }
 
     private MessageHandlerDelegate<TMessage> GetMessageHandler() {
-        if (_handler is null) {
-            throw new InvalidOperationException($"Consumer '{_consumerTag}' output handler is not available.");
-        }
-
-        return _handler;
+        return _handler ?? throw new InvalidOperationException($"Consumer '{_consumerTag}' output handler is not available.");
     }
 
     private IChannel GetChannel() {
-        if (_channel is null) {
-            throw new InvalidOperationException($"Consumer '{_consumerTag}' channel is not available.");
-        }
-
-        return _channel;
+        return _channel ?? throw new InvalidOperationException($"Consumer '{_consumerTag}' channel is not available.");
     }
 
     private CancellationTokenSource GetCancellationTokenSource() {
-        if (_cancellationTokenSource is null) {
-            throw new InvalidOperationException(message: "Cancellation token source is not available.");
-        }
-
-        return _cancellationTokenSource;
+        return _cancellationTokenSource ?? throw new InvalidOperationException("Cancellation token source is not available.");
     }
 
     private void BlockAccessAfterDispose() {
@@ -141,9 +124,11 @@ public sealed class Consumer<TMessage> : IConsumer<TMessage>
 
     private async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
-            await _channel.CloseAsync(Constants.ReplySuccess, replyText: "Consumer work finished.",
+            await _channel.CloseAsync(
+                              Constants.ReplySuccess,
+                              replyText: "Consumer work finished.",
                               CancellationToken.None)
-                          .ConfigureAwait(continueOnCapturedContext: false);
+                          .SkipContextSync();
 
             await _channel.DisposeAsync()
                           .ConfigureAwait(continueOnCapturedContext: false);

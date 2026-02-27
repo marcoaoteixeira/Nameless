@@ -1,41 +1,58 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace Nameless.Diagnostics;
 
 /// <summary>
-///     The default implementation of <see cref="IActivitySourceProvider"/>.
+///     Represents a cache for instances of <see cref="ActivitySource"/>.
 /// </summary>
-public class ActivitySourceProvider : IActivitySourceProvider {
-    private readonly IOptions<ActivitySourceOptions> _options;
-    private readonly ConcurrentDictionary<CacheKey, ActivitySourceWrapper> _cache = [];
-
+public static class ActivitySourceProvider {
+    private static ConcurrentDictionary<CacheKey, ActivitySourceWrapper> Cache { get; } = [];
+    
     /// <summary>
-    ///     Initializes a new instance of the
-    ///     <see cref="ActivitySourceProvider"/> class.
+    ///     Creates a new <see cref="IActivitySource"/> instance
     /// </summary>
-    /// <param name="options">
-    ///     The options.
-    /// </param>
-    public ActivitySourceProvider(IOptions<ActivitySourceOptions> options) {
-        _options = options;
-    }
+    /// <returns>
+    ///     A new instance of <see cref="IActivitySource"/>.
+    /// </returns>
+    public static IActivitySource Create() {
+        var key = CacheKey.Create(Assembly.GetCallingAssembly());
 
-    /// <inheritdoc />
-    public IActivitySource Create(string name, string? version = null) {
-        var key = _options.Value.UseUniqueActivitySource
-            ? new CacheKey(_options.Value.UniqueActivitySourceName, _options.Value.UniqueActivitySourceVersion)
-            : new CacheKey(name, version);
-
-        return _cache.GetOrAdd(key, CreateActivitySource);
+        return Cache.GetOrAdd(key, CreateActivitySource);
     }
 
     private static ActivitySourceWrapper CreateActivitySource(CacheKey key) {
-        return new ActivitySourceWrapper(
-            new ActivitySource(key.Name, key.Version ?? string.Empty)
+        var result = new ActivitySourceWrapper(
+            new ActivitySource(key.Name, key.Version)
         );
+
+        result.OnDispose += RemoveFromCache;
+
+        return result;
     }
 
-    private readonly record struct CacheKey(string Name, string? Version);
+    private static void RemoveFromCache(IActivitySource activitySource) {
+        var key = CacheKey.Create(activitySource);
+
+        if (Cache.TryRemove(key, out var output)) {
+            output.OnDispose -= RemoveFromCache;
+        }
+    }
+
+    internal readonly record struct CacheKey(string Name, string Version) {
+        internal static CacheKey Create(Assembly assembly) {
+            return new CacheKey {
+                Name = assembly.GetSemanticName(),
+                Version = assembly.GetSemanticVersion()
+            };
+        }
+
+        internal static CacheKey Create(IActivitySource activitySource) {
+            return new CacheKey {
+                Name = activitySource.Name,
+                Version = activitySource.Version ?? string.Empty
+            };
+        }
+    }
 }

@@ -31,11 +31,9 @@ public static class HttpContextExtensions {
     }
 
     private static IPAddress GetIpAddress(HttpContext httpContext) {
-        return Guard.Against
-                    .Null(httpContext)
-                    .Request
-                    .Headers
-                    .TryGetValue(X_FORWARDED_FOR_KEY, out var xForwardedFor)
+        return httpContext.Request
+                          .Headers
+                          .TryGetValue(X_FORWARDED_FOR_KEY, out var xForwardedFor)
             ? IPAddress.Parse(xForwardedFor.ToString())
             : httpContext.Connection.RemoteIpAddress ?? IPAddress.None;
     }

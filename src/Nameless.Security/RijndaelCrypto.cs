@@ -34,8 +34,8 @@ public class RijndaelCrypto : ICrypto, IDisposable {
     /// <param name="options">The options.</param>
     /// <param name="logger">The logger.</param>
     public RijndaelCrypto(IOptions<CryptoOptions> options, ILogger<RijndaelCrypto> logger) {
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
         _ivBuffer = new Lazy<byte[]>(CreateIvBuffer);
         _keyBuffer = new Lazy<byte[]>(CreateKeyBuffer);
 
@@ -48,7 +48,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
 
     /// <inheritdoc />
     public byte[] Encrypt(Stream stream) {
-        Guard.Against.Null(stream);
+        Throws.When.Null(stream);
 
         BlockAccessAfterDispose();
 
@@ -88,7 +88,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
     }
 
     public byte[] Decrypt(Stream stream) {
-        Guard.Against.Null(stream);
+        Throws.When.Null(stream);
 
         BlockAccessAfterDispose();
 

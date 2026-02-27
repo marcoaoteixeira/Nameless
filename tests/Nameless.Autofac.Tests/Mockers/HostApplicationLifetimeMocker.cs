@@ -4,9 +4,9 @@ using Nameless.Testing.Tools.Mockers;
 namespace Nameless.Autofac.Mockers;
 
 public sealed class HostApplicationLifetimeMocker : Mocker<IHostApplicationLifetime> {
-    public HostApplicationLifetimeMocker WithApplicationStopped(CancellationToken cancellationToken) {
+    public HostApplicationLifetimeMocker WithApplicationStopped(CancellationToken returnValue) {
         MockInstance.Setup(mock => mock.ApplicationStopped)
-                    .Returns(cancellationToken);
+                    .Returns(returnValue);
 
         return this;
     }

@@ -26,7 +26,7 @@ public class PerformanceRequestPipelineBehavior<TRequest, TResponse> : IRequestP
     ///     The logger.
     /// </param>
     public PerformanceRequestPipelineBehavior(ILogger logger) {
-        _logger = Guard.Against.Null(logger);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />

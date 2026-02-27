@@ -10,23 +10,8 @@ public interface IValidationService {
     /// <param name="value">
     ///     The value.
     /// </param>
-    /// <param name="cancellationToken">
-    ///     The cancellation token.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="Task{T}"/> representing the asynchronous execution.
-    ///     The result of the task will be the validation result.
-    /// </returns>
-    Task<ValidationResult> ValidateAsync(object value, CancellationToken cancellationToken);
-
-    /// <summary>
-    ///     Validates a value.
-    /// </summary>
-    /// <param name="value">
-    ///     The value.
-    /// </param>
-    /// <param name="dataContext">
-    ///     The data context.
+    /// <param name="context">
+    ///     The validation context.
     /// </param>
     /// <param name="cancellationToken">
     ///     The cancellation token.
@@ -35,5 +20,5 @@ public interface IValidationService {
     ///     A <see cref="Task{T}"/> representing the asynchronous execution.
     ///     The result of the task will be the validation result.
     /// </returns>
-    Task<ValidationResult> ValidateAsync(object value, DataContext dataContext, CancellationToken cancellationToken);
+    Task<ValidationResult> ValidateAsync(object value, IDictionary<string, object> context, CancellationToken cancellationToken);
 }

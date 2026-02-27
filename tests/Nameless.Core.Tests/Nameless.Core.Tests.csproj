@@ -15,10 +15,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Resources\FolderA\FolderB\FolderC\LoremIpsun.txt">
+		<Content Include="Resources\FolderA\FolderB\FolderC\LoremIpsum.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="Resources\LoremIpsun.txt">
+		<Content Include="Resources\LoremIpsum.txt">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Resources\ThisIsATest.txt">
@@ -27,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Bogus" />
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />

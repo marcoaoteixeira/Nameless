@@ -44,6 +44,6 @@ public class EventHandlerWrapperImplTests {
         await sut.HandleAsync(evt, serviceProvider, CancellationToken.None);
 
         // assert
-        loggerMocker.VerifyDebugCall(message => message.Contains(value: "Event handler not found"));
+        loggerMocker.VerifyDebug(message => message.Contains(value: "Event handler not found"));
     }
 }

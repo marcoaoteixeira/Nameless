@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Nameless.Lucene;
 
@@ -9,11 +10,12 @@ namespace Nameless.Lucene;
 ///     Contains all defaults for the library.
 /// </summary>
 public static class Defaults {
+    public static string IndexName => "ZGVmYXVsdC1sdWNlbmUtaW5kZXg=";
+    
     /// <summary>
-    ///     Gets the default maximum number of results that can be returned
-    ///     by a query.
+    ///     Gets the current version of Lucene being used.
     /// </summary>
-    public const int QUERY_MAXIMUM_RESULTS = short.MaxValue;
+    public static LuceneVersion CurrentVersion => LuceneVersion.LUCENE_48;
 
     /// <summary>
     ///     Gets the default <see cref="Sort"/>,
@@ -25,11 +27,35 @@ public static class Defaults {
     ///     <see cref="StandardAnalyzer"/>.
     /// </summary>
     public static Analyzer Analyzer => new StandardAnalyzer(
-        matchVersion: Constants.CURRENT_VERSION,
+        matchVersion: CurrentVersion,
         stopWords: new CharArraySet(
-            Constants.CURRENT_VERSION,
+            CurrentVersion,
             Enumerable.Empty<string>(),
             ignoreCase: true
         )
     );
+
+    public static Type[] IndexableTypes { get; } = [
+        // more common
+        typeof(string),
+        typeof(int),
+        typeof(bool),
+        typeof(DateTime),
+        typeof(Enum),
+        typeof(double),
+
+        // less common
+        typeof(sbyte),
+        typeof(byte),
+        typeof(ushort),
+        typeof(short),
+        typeof(uint),
+        typeof(ulong),
+        typeof(long),
+        typeof(float),
+        typeof(DateTimeOffset),
+        typeof(DateOnly),
+        typeof(TimeOnly),
+        typeof(TimeSpan),
+    ];
 }

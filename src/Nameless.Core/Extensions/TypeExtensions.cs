@@ -12,43 +12,46 @@ public static class TypeExtensions {
     /// </param>
     extension(Type self) {
         /// <summary>
+        ///     Whether the type is an open generic, meaning that it is
+        ///     a generic type definition or it has generic parameters.
+        /// </summary>
+        /// <returns>
+        ///     <see langword="true"/> if the type is an open generic;
+        ///     otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool IsOpenGeneric => self.IsGenericTypeDefinition || self.ContainsGenericParameters;
+
+        /// <summary>
         ///     Checks if the <see cref="Type" /> is a concrete class.
         /// </summary>
         /// <returns>
         ///     <see langword="true"/> if the type is a concrete class;
         ///     otherwise, <see langword="false"/>.
         /// </returns>
-        public bool IsConcrete() {
-            return self is {
-                IsClass: true,
-                IsAbstract: false,
-                IsInterface: false,
-                IsGenericTypeDefinition: false
-            };
-        }
+        public bool IsConcrete => self is {
+            IsClass: true,
+            IsAbstract: false,
+            IsInterface: false
+        };
 
         /// <summary>
         ///     Verifies if the <see cref="Type" /> is an instance of <see cref="Nullable" />.
         /// </summary>
         /// <returns><see langword="true"/>, if is instance of <see cref="Nullable" />, otherwise, <see langword="false"/>.</returns>
-        public bool IsNullable() {
-            return self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
+        public bool IsNullable => self.IsGenericType && self.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
         ///     Can convert to <see cref="Nullable" /> type.
         /// </summary>
         /// <returns><see langword="true"/>, if it can convert, otherwise, <see langword="false"/>.</returns>
-        public bool AllowNull() {
-            return !self.IsValueType || self.IsNullable();
-        }
+        public bool AllowNull => !self.IsValueType || self.IsNullable;
 
         /// <summary>
         ///     Checks if the current open generic type is assignable from the <paramref name="type" />.
         /// </summary>
         /// <param name="type">The assignable from type.</param>
         /// <returns><see langword="true"/> if assignable; otherwise <see langword="false"/>.</returns>
-        public bool IsAssignableFromGenericType(Type? type) {
+        public bool IsAssignableFromGeneric(Type? type) {
             if (!self.IsGenericType) { return false; }
 
             while (true) {
@@ -89,7 +92,7 @@ public static class TypeExtensions {
         public bool HasInterface(Type interfaceType) {
             return self.GetInterfaces()
                        .Any(type =>
-                           interfaceType.IsAssignableFrom(type) || interfaceType.IsAssignableFromGenericType(type));
+                           interfaceType.IsAssignableFrom(type) || interfaceType.IsAssignableFromGeneric(type));
         }
 
         /// <summary>
@@ -118,7 +121,7 @@ public static class TypeExtensions {
         /// </summary>
         /// <returns><see langword="true"/> if the type has a parameterless constructor; otherwise <see langword="false"/>.</returns>
         public bool HasParameterlessConstructor() {
-            return self.GetConstructor(Type.EmptyTypes) is not null || (self.IsValueType && !self.IsNullable());
+            return self.GetConstructor(Type.EmptyTypes) is not null || self is { IsValueType: true, IsNullable: false };
         }
 
         /// <summary>
@@ -205,18 +208,6 @@ public static class TypeExtensions {
             return genericDefinition.IsGenericTypeDefinition
                 ? GetInterfacesThatClosesCore(self, genericDefinition)
                 : [];
-        }
-
-        /// <summary>
-        ///     Whether the type is an open generic, meaning that it is
-        ///     a generic type definition or it has generic parameters.
-        /// </summary>
-        /// <returns>
-        ///     <see langword="true"/> if the type is an open generic;
-        ///     otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool IsOpenGeneric() {
-            return self.IsGenericTypeDefinition || self.ContainsGenericParameters;
         }
 
         /// <summary>

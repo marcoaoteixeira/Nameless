@@ -1,7 +1,6 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nameless.Autofac.Internals;
 
 namespace Nameless.Autofac;
 

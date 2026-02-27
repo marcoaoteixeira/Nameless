@@ -1,4 +1,6 @@
-﻿namespace Nameless.Validation;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless.Validation;
 
 /// <summary>
 ///     Attributes that indicates that a class is subject to validation.
@@ -14,7 +16,7 @@ public class ValidateAttribute : Attribute {
     ///     <see langword="true"/> if <paramref name="obj" /> is annotated;
     ///     otherwise <see langword="false"/>.
     /// </returns>
-    public static bool IsPresent(object? obj) {
+    public static bool IsPresent([NotNullWhen(returnValue: true)] object? obj) {
         return obj is not null && obj.GetType().HasAttribute<ValidateAttribute>();
     }
 }

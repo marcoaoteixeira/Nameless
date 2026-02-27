@@ -19,9 +19,9 @@ public sealed class ProducerFactory : IProducerFactory {
         IChannelConfigurator channelConfigurator,
         TimeProvider timeProvider,
         ILoggerFactory loggerFactory) {
-        _channelFactory = Guard.Against.Null(channelFactory);
-        _channelConfigurator = Guard.Against.Null(channelConfigurator);
-        _timeProvider = Guard.Against.Null(timeProvider);
+        _channelFactory = Throws.When.Null(channelFactory);
+        _channelConfigurator = Throws.When.Null(channelConfigurator);
+        _timeProvider = Throws.When.Null(timeProvider);
         _logger = loggerFactory.CreateLogger<ProducerFactory>();
         _producerLogger = loggerFactory.CreateLogger<Producer>();
     }
@@ -32,13 +32,13 @@ public sealed class ProducerFactory : IProducerFactory {
 
         try {
             channel = await _channelFactory.CreateAsync(cancellationToken)
-                                           .ConfigureAwait(continueOnCapturedContext: false);
+                                           .SkipContextSync();
 
             await _channelConfigurator.ConfigureAsync(channel,
                                           topic,
                                           usePrefetch: false,
                                           cancellationToken)
-                                      .ConfigureAwait(continueOnCapturedContext: false);
+                                      .SkipContextSync();
 
             return new Producer(topic, channel, _timeProvider, _producerLogger);
         }

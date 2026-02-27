@@ -13,15 +13,15 @@ public sealed class ChannelFactory : IChannelFactory {
     /// </summary>
     /// <param name="connectionManager">The connection manager.</param>
     public ChannelFactory(IConnectionManager connectionManager) {
-        _connectionManager = Guard.Against.Null(connectionManager);
+        _connectionManager = Throws.When.Null(connectionManager);
     }
 
     /// <inheritdoc />
     public async Task<IChannel> CreateAsync(CancellationToken cancellationToken) {
         var connection = await _connectionManager.GetConnectionAsync(cancellationToken)
-                                                 .ConfigureAwait(continueOnCapturedContext: false);
+                                                 .SkipContextSync();
 
         return await connection.CreateChannelAsync(cancellationToken: cancellationToken)
-                               .ConfigureAwait(continueOnCapturedContext: false);
+                               .SkipContextSync();
     }
 }

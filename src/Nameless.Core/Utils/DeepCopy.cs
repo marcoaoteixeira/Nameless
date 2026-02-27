@@ -29,7 +29,7 @@ public static class DeepCopy {
             throw new InvalidOperationException($"Can't clone non-class object. Object type: {type}.");
         }
 
-        if (!type.IsConcrete()) {
+        if (!type.IsConcrete) {
             throw new InvalidOperationException($"Can't clone non-concrete object. Object type: {type}.");
         }
 

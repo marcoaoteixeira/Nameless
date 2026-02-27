@@ -13,14 +13,14 @@ public class ModelInspector : ExplicitlyDeclaredModel {
     ///     Initializes a new instance of <see cref="ModelInspector" />
     /// </summary>
     public ModelInspector(Type[] entityTypes) {
-        _entityTypes = Guard.Against.Null(entityTypes);
+        _entityTypes = Throws.When.Null(entityTypes);
     }
 
     /// <inheritdoc />
     public override bool IsEntity(Type type) {
         return _entityTypes.Any(entityType =>
             entityType.IsGenericType
-                ? entityType.IsAssignableFromGenericType(type)
+                ? entityType.IsAssignableFromGeneric(type)
                 : entityType.IsAssignableFrom(type));
     }
 }

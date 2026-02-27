@@ -29,9 +29,9 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection" /> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterJsonLocalization(Action<JsonLocalizationOptions>? configure = null) {
+        public IServiceCollection RegisterLocalization(Action<JsonLocalizationOptions>? configure = null) {
             return self.Configure(configure ?? (_ => { }))
-                       .InnerRegisterJsonLocalization();
+                       .InnerRegisterLocalization();
         }
 
         /// <summary>
@@ -44,25 +44,25 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection" /> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterJsonLocalization(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(JsonLocalizationOptions));
+        public IServiceCollection RegisterLocalization(IConfiguration configuration) {
+            var section = configuration.GetSection<JsonLocalizationOptions>();
 
             return self.Configure<JsonLocalizationOptions>(section)
-                       .InnerRegisterJsonLocalization();
+                       .InnerRegisterLocalization();
         }
 
-        private IServiceCollection InnerRegisterJsonLocalization() {
+        private IServiceCollection InnerRegisterLocalization() {
             self.TryAddKeyedSingleton<ICultureProvider, CultureProvider>(CULTURE_PROVIDER_KEY);
             self.TryAddKeyedSingleton<IResourceManager, ResourceManager>(RESOURCE_PROVIDER_KEY);
 
-            self.Replace(ServiceDescriptor.Singleton(ResolveStringLocalizerFactory));
+            self.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory>(ResolveStringLocalizerFactory));
             self.Replace(ServiceDescriptor.Transient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>)));
 
             return self;
         }
     }
 
-    private static IStringLocalizerFactory ResolveStringLocalizerFactory(IServiceProvider provider) {
+    private static StringLocalizerFactory ResolveStringLocalizerFactory(IServiceProvider provider) {
         var cultureProvider = provider.GetRequiredKeyedService<ICultureProvider>(CULTURE_PROVIDER_KEY);
         var resourceManager = provider.GetRequiredKeyedService<IResourceManager>(RESOURCE_PROVIDER_KEY);
         var options = provider.GetOptions<JsonLocalizationOptions>();

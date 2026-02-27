@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search;
 using Nameless.Lucene.Fixtures;
+using Nameless.Lucene.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene;

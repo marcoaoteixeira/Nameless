@@ -8,7 +8,7 @@ public class PreventArgumentNullOrEmptyTests {
     [Fact]
     public void WhenNonNullOrEmptyParamValue_ThenDoNotThrows() {
         // arrange & act & assert
-        var value = Guard.Against.NullOrEmpty(_nonEmptyEnumerable);
+        var value = Throws.When.NullOrEmpty(_nonEmptyEnumerable);
 
         Assert.NotNull(value);
     }
@@ -16,13 +16,13 @@ public class PreventArgumentNullOrEmptyTests {
     [Fact]
     public void WhenNullParamValue_ThenThrowsArgumentNullException() {
         // arrange & act & assert
-        Assert.Throws<ArgumentNullException>(() => Guard.Against.NullOrEmpty(_nullEnumerable));
+        Assert.Throws<ArgumentNullException>(() => Throws.When.NullOrEmpty(_nullEnumerable));
     }
 
     [Fact]
     public void WhenEmptyParamValue_ThenThrowsArgumentException() {
         // arrange & act & assert
-        Assert.Throws<ArgumentException>(() => Guard.Against.NullOrEmpty(_emptyEnumerable));
+        Assert.Throws<ArgumentException>(() => Throws.When.NullOrEmpty(_emptyEnumerable));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class PreventArgumentNullOrEmptyTests {
         Assert.Multiple(() => {
             var exception =
                 Assert.Throws<ArgumentNullException>(() =>
-                    Guard.Against.NullOrEmpty(_nullEnumerable, message: Message));
+                    Throws.When.NullOrEmpty(_nullEnumerable, message: Message));
             Assert.NotNull(exception);
             Assert.Contains(Message, exception.Message);
         });
@@ -47,7 +47,7 @@ public class PreventArgumentNullOrEmptyTests {
         Assert.Multiple(() => {
             var exception =
                 Assert.Throws<ArgumentException>(() =>
-                    Guard.Against.NullOrEmpty(_emptyEnumerable, message: Message));
+                    Throws.When.NullOrEmpty(_emptyEnumerable, message: Message));
             Assert.NotNull(exception);
             Assert.Contains(Message, exception.Message);
         });
@@ -57,7 +57,7 @@ public class PreventArgumentNullOrEmptyTests {
     public void WhenNullParamValue_WithCustomExceptionCreator_ThenThrowsCustomException() // arrange & act & assert
     {
         Assert.Throws<InvalidOperationException>(() =>
-            Guard.Against.NullOrEmpty(_nullEnumerable,
+            Throws.When.NullOrEmpty(_nullEnumerable,
                 exceptionCreator: () => new InvalidOperationException()));
     }
 
@@ -65,7 +65,7 @@ public class PreventArgumentNullOrEmptyTests {
     public void WhenEmptyParamValue_WithCustomExceptionCreator_ThenThrowsCustomException() // arrange & act & assert
     {
         Assert.Throws<InvalidOperationException>(() =>
-            Guard.Against.NullOrEmpty(_emptyEnumerable,
+            Throws.When.NullOrEmpty(_emptyEnumerable,
                 exceptionCreator: () => new InvalidOperationException()));
     }
 
@@ -73,7 +73,7 @@ public class PreventArgumentNullOrEmptyTests {
     public void WhenNullParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName() {
         // arrange & act & assert
         Assert.Multiple(() => {
-            var exception = Assert.Throws<ArgumentNullException>(() => Guard.Against.NullOrEmpty(_nullEnumerable));
+            var exception = Assert.Throws<ArgumentNullException>(() => Throws.When.NullOrEmpty(_nullEnumerable));
             Assert.NotNull(exception);
             Assert.Contains(nameof(_nullEnumerable), exception.Message);
         });
@@ -83,7 +83,7 @@ public class PreventArgumentNullOrEmptyTests {
     public void WhenEmptyParamValue_WithOmittedParamName_ThenExceptionMessageContainsCallerParamName() {
         // arrange & act & assert
         Assert.Multiple(() => {
-            var exception = Assert.Throws<ArgumentException>(() => Guard.Against.NullOrEmpty(_emptyEnumerable));
+            var exception = Assert.Throws<ArgumentException>(() => Throws.When.NullOrEmpty(_emptyEnumerable));
             Assert.NotNull(exception);
             Assert.Contains(nameof(_emptyEnumerable), exception.Message);
         });
@@ -96,7 +96,7 @@ public class PreventArgumentNullOrEmptyTests {
 
         Assert.Multiple(() => {
             var exception =
-                Assert.Throws<ArgumentNullException>(() => Guard.Against.NullOrEmpty(_nullEnumerable, ParamName));
+                Assert.Throws<ArgumentNullException>(() => Throws.When.NullOrEmpty(_nullEnumerable, ParamName));
             Assert.NotNull(exception);
             Assert.Contains(ParamName, exception.Message);
         });
@@ -109,7 +109,7 @@ public class PreventArgumentNullOrEmptyTests {
 
         Assert.Multiple(() => {
             var exception =
-                Assert.Throws<ArgumentException>(() => Guard.Against.NullOrEmpty(_emptyEnumerable, ParamName));
+                Assert.Throws<ArgumentException>(() => Throws.When.NullOrEmpty(_emptyEnumerable, ParamName));
             Assert.NotNull(exception);
             Assert.Contains(ParamName, exception.Message);
         });

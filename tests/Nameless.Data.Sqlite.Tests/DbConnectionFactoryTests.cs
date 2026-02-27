@@ -1,5 +1,7 @@
 ﻿using System.Data.SQLite;
 using Microsoft.Extensions.Options;
+using Microsoft.Testing.Platform.Builder;
+using Nameless.Testing.Tools.Mockers.Configuration;
 
 namespace Nameless.Data.Sqlite;
 
@@ -9,7 +11,8 @@ public class DbConnectionFactoryTests {
         // arrange
         const string Expected = "Sqlite";
         var options = Options.Create(new SqliteOptions());
-        var sut = new DbConnectionFactory(options);
+        var configuration = new ConfigurationMocker().Build();
+        var sut = new DbConnectionFactory(configuration, options);
 
         // act
         var actual = sut.ProviderName;
@@ -22,7 +25,8 @@ public class DbConnectionFactoryTests {
     public void GetDbConnection_Should_Return_A_SqlConnection() {
         // arrange
         var options = Options.Create(new SqliteOptions());
-        var sut = new DbConnectionFactory(options);
+        var configuration = new ConfigurationMocker().Build();
+        var sut = new DbConnectionFactory(configuration, options);
 
         // act
         var actual = sut.CreateDbConnection();
@@ -35,7 +39,8 @@ public class DbConnectionFactoryTests {
     public void Two_Calls_To_GetDbConnection_Should_Return_Different_SqlConnection() {
         // arrange
         var options = Options.Create(new SqliteOptions());
-        var sut = new DbConnectionFactory(options);
+        var configuration = new ConfigurationMocker().Build();
+        var sut = new DbConnectionFactory(configuration, options);
 
         // act
         var first = sut.CreateDbConnection();

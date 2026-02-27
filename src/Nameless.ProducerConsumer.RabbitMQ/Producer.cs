@@ -27,11 +27,11 @@ public sealed class Producer : IProducer {
     /// <param name="timeProvider">The time provider.</param>
     /// <param name="logger">The logger.</param>
     public Producer(string topic, IChannel channel, TimeProvider timeProvider, ILogger<Producer> logger) {
-        Topic = Guard.Against.Null(topic);
+        Topic = Throws.When.Null(topic);
 
-        _channel = Guard.Against.Null(channel);
-        _timeProvider = Guard.Against.Null(timeProvider);
-        _logger = Guard.Against.Null(logger);
+        _channel = Throws.When.Null(channel);
+        _timeProvider = Throws.When.Null(timeProvider);
+        _logger = Throws.When.Null(logger);
     }
 
     ~Producer() {
@@ -47,16 +47,16 @@ public sealed class Producer : IProducer {
 
         try {
             // if we don't have any routing key
-            var routingKeys = parameters.GetRoutingKeys();
-            if (routingKeys.Length == 0) {
+            var routingKeys = parameters.RoutingKeys;
+            if (!parameters.HasRoutingKeys) {
                 // to topic will be our routing key.
                 routingKeys = [Topic];
             }
 
             foreach (var routingKey in routingKeys) {
-                await GetChannel().BasicPublishAsync(parameters.GetExchangeName(),
+                await GetChannel().BasicPublishAsync(parameters.ExchangeName,
                                       routingKey,
-                                      parameters.GetMandatory(),
+                                      parameters.Mandatory,
                                       properties,
                                       buffer,
                                       cancellationToken)
@@ -111,7 +111,7 @@ public sealed class Producer : IProducer {
     private async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
             await _channel.CloseAsync(Constants.ReplySuccess, replyText: "Publisher finished work.")
-                          .ConfigureAwait(continueOnCapturedContext: false);
+                          .SkipContextSync();
 
             await _channel.DisposeAsync()
                           .ConfigureAwait(continueOnCapturedContext: false);

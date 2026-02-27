@@ -8,7 +8,7 @@ public record Report {
     public Dictionary<string, ReportEntry> Entries { get; private set; } = [];
 
     public static Report Create(HealthReport report) {
-        Guard.Against.Null(report);
+        Throws.When.Null(report);
 
         var entries = report.Entries.ToDictionary(
             entry => entry.Key,

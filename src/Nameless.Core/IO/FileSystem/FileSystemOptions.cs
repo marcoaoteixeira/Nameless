@@ -1,10 +1,12 @@
-﻿using Nameless.Helpers;
+﻿using Nameless.Attributes;
+using Nameless.Helpers;
 
 namespace Nameless.IO.FileSystem;
 
 /// <summary>
 ///     The options for configuring the <see cref="IFileSystem"/>.
 /// </summary>
+[ConfigurationSectionName("FileSystem")]
 public class FileSystemOptions {
     /// <summary>
     ///     Gets or sets the root directory for file system operations.

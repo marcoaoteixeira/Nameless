@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.IO;
+using Nameless.Testing.Tools.Resources;
 
 namespace Nameless;
 
@@ -80,11 +80,11 @@ public class StreamExtensionsTests {
     [Fact]
     public void WhenGettingContentAsByteArray_WhenStreamIsNotMemoryStream_WhenCanRead_ThenReturnsStreamAsByteArray() {
         // arrange
-        var stream = ResourcesHelper.GetStream(relativeFilePath: "ThisIsATest.txt");
+        using var resource = ResourcesHelper.GetResource("ThisIsATest.txt");
         var expected = "This Is A Test"u8.ToArray();
 
         // act
-        var actual = stream.GetContentAsByteArray();
+        var actual = resource.Open().GetContentAsByteArray();
 
         // assert
         Assert.Equivalent(expected, actual);

@@ -45,11 +45,11 @@ public class MailingImpl : IMailing {
         }
 
         using var client = await _smtpClientFactory.CreateAsync(cancellationToken)
-                                                   .ConfigureAwait(continueOnCapturedContext: false);
+                                                   .SkipContextSync();
 
         try {
             var result = await client.SendAsync(mail, cancellationToken)
-                                     .ConfigureAwait(continueOnCapturedContext: false);
+                                     .SkipContextSync();
 
             _logger.EmailSentResult(result);
         }
