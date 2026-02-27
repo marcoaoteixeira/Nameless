@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Bootstrap.Infrastructure;
+using Nameless.Bootstrap.Resilience;
 using Nameless.Helpers;
 using Nameless.Registration;
 
@@ -15,6 +16,11 @@ public static class ServiceCollectionExtensions {
     private const string PARALLEL_BOOTSTRAPPER_KEY = $"{nameof(ParallelBootstrapper)} :: 791d0bc2-d1e4-4140-b722-5fcade174486";
 
     extension(IServiceCollection self) {
+        public IServiceCollection RegisterBootstrap(Action<BootstrapRegistrationSettings> registration) {
+            return self.Configure<BootstrapOptions>(_ => { })
+                       .InnerRegisterBootstrap(registration);
+        }
+
         public IServiceCollection RegisterBootstrap(Action<BootstrapRegistrationSettings> registration, IConfiguration configuration) {
             return self.Configure<BootstrapOptions>(configuration)
                        .InnerRegisterBootstrap(registration);
@@ -44,6 +50,7 @@ public static class ServiceCollectionExtensions {
 
             self.TryAddKeyedTransient<Bootstrapper>(SEQUENTIAL_BOOTSTRAPPER_KEY);
             self.TryAddKeyedTransient<ParallelBootstrapper>(PARALLEL_BOOTSTRAPPER_KEY);
+            self.TryAddTransient<IRetryPolicyFactory, RetryPolicyFactory>();
             self.TryAddTransient<IBootstrapper>(ResolveBootstrapper);
             
             self.TryAddEnumerable(
