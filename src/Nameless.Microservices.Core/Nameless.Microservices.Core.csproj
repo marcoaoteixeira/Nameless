@@ -3,7 +3,15 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.Microservices</RootNamespace>
 		<InterceptorsNamespaces>$(InterInterceptorsNamespaces);Micorosoft.AspNetCore.AOpenApi.Generated</InterceptorsNamespaces>
-  </PropertyGroup>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
