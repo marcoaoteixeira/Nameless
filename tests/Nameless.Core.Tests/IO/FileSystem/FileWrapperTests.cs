@@ -22,13 +22,13 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Name;
 
         // assert
-        Assert.Equal(FileName, actual);
+        Assert.Equal(Path.GetFileName(resource.Path), actual);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Path;
@@ -52,7 +52,7 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.Exists;
@@ -82,7 +82,7 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var actual = sut.LastWriteTime;
@@ -97,7 +97,7 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         using var actual = sut.Open();
@@ -113,7 +113,7 @@ public class FileWrapperTests {
         const string FileName = "ThisIsATest.txt";
         using var resource = ResourcesHelper.GetResource(FileName);
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         using var stream = new StreamReader(sut.Open());
@@ -128,7 +128,7 @@ public class FileWrapperTests {
         // arrange
         using var resource = ResourcesHelper.GetResource("ThisIsATest.txt");
         var file = new FileInfo(resource.Path);
-        var sut = new FileWrapper(file, CreateOptions());
+        var sut = new FileWrapper(file, CreateOptions(root: Path.GetTempPath()));
 
         // act
         var exists = sut.Exists;

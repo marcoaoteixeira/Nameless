@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions {
 
         private IServiceCollection InnerRegisterMailing() {
             self.TryAddKeyedSingleton<ISmtpClientFactory, SmtpClientFactory>(SMTP_CLIENT_FACTORY_KEY);
-            self.TryAddSingleton(ResolveMailing);
+            self.TryAddSingleton<IMailing>(ResolveMailing);
 
             return self;
         }

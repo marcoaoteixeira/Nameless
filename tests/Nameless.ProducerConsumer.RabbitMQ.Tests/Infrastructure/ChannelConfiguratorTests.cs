@@ -149,8 +149,12 @@ public class ChannelConfiguratorTests {
         var sut = new ChannelConfigurator(options, loggerMocker.Build());
 
         // act
-        await sut.ConfigureAsync(channelMocker.Build(), queueName: "other-test-queue", UsePrefetch,
-            CancellationToken.None);
+        await sut.ConfigureAsync(
+            channelMocker.Build(),
+            queueName: "other-test-queue",
+            UsePrefetch,
+            CancellationToken.None
+        );
 
         // assert
         Assert.Multiple(() => {

@@ -18,14 +18,14 @@ public sealed class LifetimeScopeMocker : Mocker<ILifetimeScope> {
                     .Returns(componentRegistryMock.Object);
     }
 
-    public LifetimeScopeMocker WithResolve<TComponent>(TComponent component) {
+    public LifetimeScopeMocker WithResolve<TComponent>(TComponent returnValue) {
         var service = new TypedService(typeof(TComponent));
         var serviceRegistration = new ServiceRegistration();
         var parameters = Enumerable.Empty<Parameter>();
         var resolveRequest = new ResolveRequest(service, serviceRegistration, parameters);
 
         MockInstance.Setup(mock => mock.ResolveComponent(resolveRequest))
-                    .Returns(component);
+                    .Returns(returnValue);
 
         return this;
     }

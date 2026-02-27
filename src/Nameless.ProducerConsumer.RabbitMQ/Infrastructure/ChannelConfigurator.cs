@@ -84,11 +84,12 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
     private bool TryGetQueueSettings(string queueName, [NotNullWhen(returnValue: true)] out QueueOptions? output) {
         output = _options.Value.Queues.SingleOrDefault(Filter);
 
-        var result = output is not null;
+        var hasQueue = output is not null;
 
-        _logger.OnCondition(result).QueueSettingsNotFound(queueName);
+        _logger.OnCondition(!hasQueue)
+               .QueueSettingsNotFound(queueName);
 
-        return result;
+        return hasQueue;
 
         bool Filter(QueueOptions item) {
             return string.Equals(item.Name, queueName, StringComparison.Ordinal);

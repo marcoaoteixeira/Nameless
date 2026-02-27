@@ -46,7 +46,7 @@ public class ZipFileServiceTests {
         // arrange
         var sut = CreateSut();
 
-        await using var sourceFilePath = ResourcesHelper.GetResource(RESOURCE_FILE);
+        await using var sourceFilePath = ResourcesHelper.GetResource(RESOURCE_FILE, createCopy: false);
         
         var sourceDirectoryPath = Path.Combine(Path.GetDirectoryName(sourceFilePath.Path) ?? string.Empty, "FolderA");
         var destinationFilePath = Path.Combine(Path.GetTempPath(), "Compress\\LoremIpsum.zip");
