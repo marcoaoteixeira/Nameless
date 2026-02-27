@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.MicrosoftExtensions;
-using Nameless.Web.Endpoints.Definitions.Metadata;
+using Nameless.Web.MinimalEndpoints.Definitions.Metadata;
 
 namespace Nameless.Web.OpenApi;
 

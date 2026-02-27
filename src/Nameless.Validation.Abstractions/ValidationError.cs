@@ -32,7 +32,7 @@ public record ValidationError {
     ///     The member name.
     /// </param>
     public ValidationError(string error, string? code = null, string? memberName = null) {
-        Error = Guard.Against.NullOrWhiteSpace(error);
+        Error = Throws.When.NullOrWhiteSpace(error);
         Code = code ?? string.Empty;
         MemberName = memberName ?? string.Empty;
     }

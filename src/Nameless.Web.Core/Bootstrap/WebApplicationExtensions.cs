@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Bootstrap;
+using Nameless.Bootstrap.Infrastructure;
+using Nameless.Helpers;
 
 namespace Nameless.Web.Bootstrap;
 
@@ -20,10 +22,7 @@ public static class WebApplicationExtensions {
         ///     infrastructure.
         /// </param>
         public WebApplication UseBootstrap(Action<BootstrapExecutionOptions>? configure = null) {
-            var innerConfigure = configure ?? (_ => { });
-            var options = new BootstrapExecutionOptions();
-
-            innerConfigure(options);
+            var options = ActionHelper.FromDelegate(configure);
 
             // The application needs to start before we can run the
             // bootstrap process, so we register a callback to be executed
@@ -50,9 +49,4 @@ public static class WebApplicationExtensions {
                     .GetResult();
         }
     }
-}
-
-public class BootstrapExecutionOptions {
-    public FlowContext Context { get; set; } = [];
-    public int Timeout { get; set; } = -1;
 }

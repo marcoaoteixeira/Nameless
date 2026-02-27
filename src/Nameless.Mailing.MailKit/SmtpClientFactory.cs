@@ -24,14 +24,15 @@ public class SmtpClientFactory : ISmtpClientFactory {
     public async Task<ISmtpClient> CreateAsync(CancellationToken cancellationToken) {
         var client = new SmtpClient();
 
-        await client.ConnectAsync(_options.Value.Host,
+        await client.ConnectAsync(
+                        _options.Value.Host,
                         _options.Value.Port,
                         _options.Value.SecureSocket,
                         cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
+                    .SkipContextSync();
 
         await client.AuthenticateSmtpClientAsync(_options.Value, cancellationToken)
-                    .ConfigureAwait(continueOnCapturedContext: false);
+                    .SkipContextSync();
 
         return client;
     }

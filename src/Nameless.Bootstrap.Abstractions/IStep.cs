@@ -1,4 +1,7 @@
-﻿namespace Nameless.Bootstrap;
+﻿using Nameless.Bootstrap.Infrastructure;
+using Nameless.Bootstrap.Notification;
+
+namespace Nameless.Bootstrap;
 
 /// <summary>
 ///     Represents a single step in the bootstrap process.
@@ -10,9 +13,22 @@ public interface IStep {
     string Name { get; }
 
     /// <summary>
-    ///     Whether it should throw exception on error.
+    ///     Whether it should execute the step or not.
     /// </summary>
-    bool ThrowOnError { get; }
+    bool IsEnabled { get; }
+
+    /// <summary>
+    ///     Gets a list of step names that this step depends on.
+    /// </summary>
+    IReadOnlyCollection<string> Dependencies { get; }
+
+    /// <summary>
+    ///     Gets the retry configuration policy for the step.
+    /// </summary>
+    /// <remarks>
+    ///     If is <see langword="null"/>, "No retry".
+    /// </remarks>
+    RetryPolicyConfiguration? RetryPolicy { get; }
 
     /// <summary>
     ///     Asynchronously executes the step logic using
@@ -22,6 +38,9 @@ public interface IStep {
     ///     The context object that provides data and state information for
     ///     the current step execution.
     /// </param>
+    /// <param name="progress">
+    ///     The progress notifier.
+    /// </param>
     /// <param name="cancellationToken">
     ///     A cancellation token that can be used to cancel the asynchronous
     ///     operation.
@@ -29,5 +48,5 @@ public interface IStep {
     /// <returns>
     ///     A task that represents the asynchronous operation.
     /// </returns>
-    Task ExecuteAsync(FlowContext context, CancellationToken cancellationToken);
+    Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken);
 }

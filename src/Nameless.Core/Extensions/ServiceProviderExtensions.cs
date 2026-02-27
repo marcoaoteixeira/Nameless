@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Nameless.Attributes;
 
 namespace Nameless;
 
@@ -19,8 +20,9 @@ public static class ServiceProviderExtensions {
         ///     is available, otherwise; <see cref="NullLogger{T}" />.
         /// </returns>
         public ILogger<TCategoryName> GetLogger<TCategoryName>() {
-            return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName>
-                   ?? NullLogger<TCategoryName>.Instance;
+            var logger = self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName>;
+
+            return logger ?? NullLogger<TCategoryName>.Instance;
         }
 
         /// <summary>
@@ -33,60 +35,73 @@ public static class ServiceProviderExtensions {
         ///     is available, otherwise; <see cref="NullLogger" />.
         /// </returns>
         public ILogger GetLogger(Type categoryType) {
-            return self.GetLoggerCore(categoryType)
-                   ?? NullLogger.Instance;
+            var logger = self.GetLoggerCore(categoryType);
+
+            return logger ?? NullLogger.Instance;
         }
 
         /// <summary>
-        ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current <see cref="IServiceProvider" />.
+        ///     Retrieves an options instance of the specified type, using the
+        ///     service provider, configuration, or a custom factory as
+        ///     sources.
         /// </summary>
-        /// <typeparam name="TOptions">Type of the options.</typeparam>
+        /// <remarks>
+        ///     <para>
+        ///     This method attempts to resolve the options instance in the
+        ///     following order: from the service provider, from configuration
+        ///     using a section name derived from
+        ///     <typeparamref name="TOptions"/>, from the provided factory, or
+        ///     by instantiating a new default instance.
+        ///     This ensures that an options instance is always returned, even
+        ///     if no configuration or registration exists.
+        ///     </para>
+        ///     <para>
+        ///     Note that if <c>AddOptions</c> is registered in the dependency
+        ///     injection container, the options instance will always be
+        ///     resolved by the provider. If the values within the options
+        ///     instance are <see langword="null"/> or empty, this typically
+        ///     indicates that no <c>Configure</c> action was applied for that
+        ///     options type.
+        ///     </para>
+        /// </remarks>
+        /// <typeparam name="TOptions">
+        ///     The type of options to retrieve. Must be a reference type with
+        ///     a parameterless constructor.
+        /// </typeparam>
+        /// <param name="factory">
+        ///     An optional factory function used to create the options
+        ///     instance if it cannot be obtained from the service provider or
+        ///     configuration. If <see langword="null"/>, a new instance is
+        ///     created using the parameterless constructor.
+        /// </param>
         /// <returns>
-        ///     An instance of <see cref="IOptions{TOptions}" />.
+        ///     An <see cref="IOptions{TOptions}"/> containing the resolved
+        ///     options instance.
         /// </returns>
-        public IOptions<TOptions> GetOptions<TOptions>()
+        public IOptions<TOptions> GetOptions<TOptions>(Func<TOptions>? factory = null)
             where TOptions : class, new() {
-            return self.GetOptions(() => new TOptions());
-        }
-
-        /// <summary>
-        ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current <see cref="IServiceProvider" />.
-        /// </summary>
-        /// <typeparam name="TOptions">Type of the options.</typeparam>
-        /// <param name="optionsFactory">An options factory, if the options were not to be found.</param>
-        /// <returns>
-        ///     An instance of <see cref="IOptions{TOptions}" />.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        ///     if <paramref name="self" /> or
-        ///     <paramref name="optionsFactory" /> is <see langword="null"/>.
-        /// </exception>
-        public IOptions<TOptions> GetOptions<TOptions>(Func<TOptions> optionsFactory)
-            where TOptions : class {
-            // let's first check if our provider can resolve this option
-            var options = self.GetService<IOptions<TOptions>>();
-            if (options is not null) {
-                return options;
+            // 1st attempt: from the service provider;
+            var fromProvider = self.GetService<IOptions<TOptions>>();
+            if (fromProvider is not null) {
+                return fromProvider;
             }
 
-            // shoot, no good. let's try get it from configuration service
+            // 2nd attempt: from the configuration
+            var sectionName = ConfigurationSectionNameAttribute.GetSectionName<TOptions>();
             var configuration = self.GetService<IConfiguration>();
-            if (configuration is not null) {
-                var sectionName = typeof(TOptions).Name;
-                var configOptions = configuration.GetSection(sectionName)
-                                                 .Get<TOptions>();
-
-                if (configOptions is not null) {
-                    return Options.Create(configOptions);
-                }
+            var fromConfiguration = configuration?.GetSection(sectionName).Get<TOptions>();
+            if (fromConfiguration is not null) {
+                return Options.Create(fromConfiguration);
             }
 
-            // whoops...if we reach this far, seems like we don't have
-            // the configuration set or missing this particular option.
-            // If we have the optionsFactory let's construct it.
-            var factoryOptions = optionsFactory.Invoke();
+            // 3rd attempt: from the factory
+            var fromFactory = factory?.Invoke();
+            if (fromFactory is not null) {
+                return Options.Create(fromFactory);
+            }
 
-            return Options.Create(factoryOptions);
+            // lastly, create from the parameterless constructor
+            return Options.Create(new TOptions());
         }
 
         private ILogger? GetLoggerCore(Type type) {

@@ -1,4 +1,6 @@
-﻿namespace Nameless.Lucene.Fixtures;
+﻿using Nameless.Lucene.Infrastructure;
+
+namespace Nameless.Lucene.Fixtures;
 
 public sealed class FakeAnalyzerSelector : IAnalyzerSelector {
     private readonly string _indexName;

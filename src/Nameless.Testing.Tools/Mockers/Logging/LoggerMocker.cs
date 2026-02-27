@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#pragma warning disable CA1873
+
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Nameless.Testing.Tools.Mockers.Logging;
@@ -42,24 +44,23 @@ public class LoggerMocker<T> : Mocker<ILogger<T>> {
         return this;
     }
 
-    public Mocker<ILogger<T>> VerifyDebugCall(Func<string, bool>? assertMessage = null, int times = 1) {
-        return VerifyCallFor(assertMessage, LogLevel.Debug, times);
+    public Mocker<ILogger<T>> VerifyDebug(Func<string, bool>? assertMessage = null, int times = 1, bool exactly = true) {
+        return VerifyCallFor(assertMessage, LogLevel.Debug, times, exactly);
     }
 
-    public Mocker<ILogger<T>> VerifyErrorCall(Func<string, bool>? assertMessage = null, int times = 1) {
-        return VerifyCallFor(assertMessage, LogLevel.Error, times);
+    public Mocker<ILogger<T>> VerifyError(Func<string, bool>? assertMessage = null, int times = 1, bool exactly = true) {
+        return VerifyCallFor(assertMessage, LogLevel.Error, times, exactly);
     }
 
-    public Mocker<ILogger<T>> VerifyInformationCall(Func<string, bool>? assertMessage = null, int times = 1) {
-        return VerifyCallFor(assertMessage, LogLevel.Information, times);
+    public Mocker<ILogger<T>> VerifyInformation(Func<string, bool>? assertMessage = null, int times = 1, bool exactly = true) {
+        return VerifyCallFor(assertMessage, LogLevel.Information, times, exactly);
     }
 
-    public Mocker<ILogger<T>> VerifyWarningCall(Func<string, bool>? assertMessage = null, int times = 1) {
-        return VerifyCallFor(assertMessage, LogLevel.Warning, times);
+    public Mocker<ILogger<T>> VerifyWarning(Func<string, bool>? assertMessage = null, int times = 1, bool exactly = true) {
+        return VerifyCallFor(assertMessage, LogLevel.Warning, times, exactly);
     }
 
-    public Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level = LogLevel.Debug,
-        int times = 1) {
+    private Mocker<ILogger<T>> VerifyCallFor(Func<string, bool>? assertMessage, LogLevel level, int times, bool exactly) {
         Func<object, Type, bool> state = (value, type)
             => (assertMessage ?? (_ => true)).Invoke(value.ToString() ?? string.Empty) &&
                type.Name.Contains(value: "LogValues", StringComparison.OrdinalIgnoreCase);
@@ -69,7 +70,8 @@ public class LoggerMocker<T> : Mocker<ILogger<T>> {
             It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((value, type) => state(value, type)),
             It.IsAny<Exception?>(),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.AtLeast(times));
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), exactly ? Times.Exactly(times) : Times.AtLeast(times));
 
         return this;
     }

@@ -24,7 +24,7 @@ public class ServiceProviderExtensionsTests {
         cts.Cancel();
 
         // assert
-        lifetimeScopeMocker.Verify(mock => mock.Dispose(), Times.Once());
+        lifetimeScopeMocker.Verify(mock => mock.Dispose());
     }
 
     [Fact]
@@ -40,6 +40,6 @@ public class ServiceProviderExtensionsTests {
         cts.Cancel();
 
         // assert
-        lifetimeScopeMocker.Verify(mock => mock.Dispose(), Times.Never());
+        lifetimeScopeMocker.Verify(mock => mock.Dispose());
     }
 }

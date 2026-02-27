@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Nameless.Testing.Tools.Mockers.Configuration;
 
 namespace Nameless.Data.SqlServer;
 
@@ -9,7 +10,7 @@ public class DbConnectionFactoryTests {
         // arrange
         const string Expected = "Microsoft SQL Server";
         var options = Options.Create(new SqlServerOptions());
-        var sut = new DbConnectionFactory(options);
+        var sut = new DbConnectionFactory(new ConfigurationSectionMocker().Build(), options);
 
         // act
         var actual = sut.ProviderName;
@@ -22,7 +23,8 @@ public class DbConnectionFactoryTests {
     public void GetDbConnection_Should_Return_A_SqlConnection() {
         // arrange
         var options = Options.Create(new SqlServerOptions());
-        var sut = new DbConnectionFactory(options);
+        var configuration = new ConfigurationMocker().Build();
+        var sut = new DbConnectionFactory(configuration, options);
 
         // act
         var actual = sut.CreateDbConnection();
@@ -35,7 +37,8 @@ public class DbConnectionFactoryTests {
     public void Two_Calls_To_GetDbConnection_Should_Return_Different_SqlConnection() {
         // arrange
         var options = Options.Create(new SqlServerOptions());
-        var sut = new DbConnectionFactory(options);
+        var configuration = new ConfigurationMocker().Build();
+        var sut = new DbConnectionFactory(configuration, options);
 
         // act
         var first = sut.CreateDbConnection();

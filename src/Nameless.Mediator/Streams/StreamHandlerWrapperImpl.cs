@@ -50,9 +50,8 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
         }
     }
 
-    private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items,
-        [EnumeratorCancellation] CancellationToken cancellationToken) {
-        var stream = items.WithCancellation(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+    private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items, [EnumeratorCancellation] CancellationToken cancellationToken) {
+        var stream = items.WithCancellation(cancellationToken);
 
         await foreach (var item in stream) {
             yield return item;

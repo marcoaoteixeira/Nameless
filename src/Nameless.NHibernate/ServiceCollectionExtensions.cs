@@ -31,8 +31,7 @@ public static class ServiceCollectionExtensions {
     /// <returns>
     ///     The current <see cref="IServiceCollection"/> so other actions can be chained. 
     /// </returns>
-    public static IServiceCollection RegisterNHibernate(this IServiceCollection self,
-        Action<NHibernateOptions>? configure = null) {
+    public static IServiceCollection RegisterNHibernate(this IServiceCollection self, Action<NHibernateOptions>? configure = null) {
         self.Configure(configure ?? (_ => { }));
 
         self.TryAddKeyedSingleton<IConfigurationFactory, ConfigurationFactory>(CONFIGURATION_FACTORY_KEY);

@@ -1,31 +1,77 @@
-﻿using Nameless.ObjectModel;
+﻿using Nameless.Lucene.Requests;
+using Nameless.ObjectModel;
 using Nameless.Results;
 
 namespace Nameless.Lucene.Responses;
 
-public record SearchDocumentsMetadata(ISearchHit[] Hits, int Count) {
-    public static SearchDocumentsMetadata Empty => new(Hits: [], Count: 0);
+/// <summary>
+///     Represents the <see cref="SearchDocumentsResponse{TDocument}"/> metadata.
+/// </summary>
+/// <typeparam name="TDocument">
+///     Type of the document.
+/// </typeparam>
+/// <param name="Documents">
+///     The documents.
+/// </param>
+/// <param name="TotalCount">
+///     The total number of documents for the search query.
+/// </param>
+public record SearchDocumentsMetadata<TDocument>(TDocument[] Documents, int TotalCount)
+    where TDocument : class, new() {
+    /// <summary>
+    ///     Gets an empty metadata.
+    /// </summary>
+    public static SearchDocumentsMetadata<TDocument> Empty => new(Documents: [], TotalCount: 0);
 }
 
-public class SearchDocumentsResponse : Result<SearchDocumentsMetadata> {
-    private SearchDocumentsResponse(SearchDocumentsMetadata value, Error[] errors)
+/// <summary>
+///     Represents the response for a <see cref="SearchDocumentsRequest"/>.
+/// </summary>
+public class SearchDocumentsResponse<TDocument> : Result<SearchDocumentsMetadata<TDocument>>
+    where TDocument : class, new() {
+    private SearchDocumentsResponse(SearchDocumentsMetadata<TDocument>? value, Error[] errors)
         : base(value, errors) { }
 
-    public static implicit operator SearchDocumentsResponse(SearchDocumentsMetadata value) {
-        return new SearchDocumentsResponse(value, errors: []);
+    /// <summary>
+    ///     Converts a <see cref="SearchDocumentsMetadata{TDocument}"/> into a
+    ///     <see cref="SearchDocumentsResponse{TDocument}"/>.
+    /// </summary>
+    /// <param name="value">
+    ///     The <see cref="SearchDocumentsMetadata{TDocument}"/> instance.
+    /// </param>
+    public static implicit operator SearchDocumentsResponse<TDocument>(SearchDocumentsMetadata<TDocument> value) {
+        return new SearchDocumentsResponse<TDocument>(value, errors: []);
     }
 
-    public static implicit operator SearchDocumentsResponse(Error error) {
-        return new SearchDocumentsResponse(value: SearchDocumentsMetadata.Empty, errors: [error]);
+    /// <summary>
+    ///     Converts an array of <see cref="Error"/> into a
+    ///     <see cref="SearchDocumentsResponse{TDocument}"/>.
+    /// </summary>
+    /// <param name="errors">
+    ///     The array of <see cref="Error"/> instance.
+    /// </param>
+    public static implicit operator SearchDocumentsResponse<TDocument>(Error[] errors) {
+        return new SearchDocumentsResponse<TDocument>(value: null, errors);
     }
 
-    public static Task<SearchDocumentsResponse> From(ISearchHit[] hits, int count) {
-        return Task.FromResult<SearchDocumentsResponse>(
-            new SearchDocumentsMetadata(hits, count)
+    /// <summary>
+    ///     Converts a <see cref="Error"/> into a
+    ///     <see cref="SearchDocumentsResponse{TDocument}"/>.
+    /// </summary>
+    /// <param name="error">
+    ///     The <see cref="Error"/> instance.
+    /// </param>
+    public static implicit operator SearchDocumentsResponse<TDocument>(Error error) {
+        return new SearchDocumentsResponse<TDocument>(value: null, errors: [error]);
+    }
+
+    internal static Task<SearchDocumentsResponse<TDocument>> From(TDocument[] documents, int totalCount) {
+        return Task.FromResult<SearchDocumentsResponse<TDocument>>(
+            new SearchDocumentsMetadata<TDocument>(documents, totalCount)
         );
     }
 
-    public static Task<SearchDocumentsResponse> From(Error error) {
-        return Task.FromResult<SearchDocumentsResponse>(error);
+    internal static Task<SearchDocumentsResponse<TDocument>> From(params Error[] errors) {
+        return Task.FromResult<SearchDocumentsResponse<TDocument>>(errors);
     }
 }

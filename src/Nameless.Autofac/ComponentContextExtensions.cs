@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Nameless.Attributes;
 
 namespace Nameless.Autofac;
 
@@ -24,8 +25,9 @@ public static class ComponentContextExtensions {
         ///     is available, otherwise; <see cref="NullLogger{T}" />.
         /// </returns>
         public ILogger<TCategoryName> GetLogger<TCategoryName>() {
-            return self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName>
-                   ?? NullLogger<TCategoryName>.Instance;
+            var logger = self.GetLoggerCore(typeof(TCategoryName)) as ILogger<TCategoryName>;
+
+            return logger ?? NullLogger<TCategoryName>.Instance;
         }
 
         /// <summary>
@@ -41,62 +43,35 @@ public static class ComponentContextExtensions {
         ///     if <paramref name="categoryType" /> is <see langword="null"/>.
         /// </exception>
         public ILogger GetLogger(Type categoryType) {
-            return self.GetLoggerCore(categoryType)
-                   ?? NullLogger.Instance;
+            var logger = self.GetLoggerCore(categoryType);
+
+            return logger ?? NullLogger.Instance;
         }
 
-        /// <summary>
-        ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current <see cref="IComponentContext" />.
-        /// </summary>
-        /// <typeparam name="TOptions">Type of the options.</typeparam>
-        /// <returns>
-        ///     An instance of <see cref="IOptions{TOptions}" />.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        ///     if <paramref name="self" /> is <see langword="null"/>.
-        /// </exception>
-        public IOptions<TOptions> GetOptions<TOptions>()
+        public IOptions<TOptions> GetOptions<TOptions>(Func<TOptions>? optionsFactory = null)
             where TOptions : class, new() {
-            return self.GetOptions(() => new TOptions());
-        }
-
-        /// <summary>
-        ///     Retrieves an <see cref="IOptions{TOptions}" /> from the current
-        ///     <see cref="IComponentContext" />.
-        /// </summary>
-        /// <typeparam name="TOptions">
-        ///     Type of the options.
-        /// </typeparam>
-        /// <param name="fallback">
-        ///     An options fallback, if the options were not to be found.
-        /// </param>
-        /// <returns>
-        ///     An instance of <see cref="IOptions{TOptions}" />.
-        /// </returns>
-        public IOptions<TOptions> GetOptions<TOptions>(Func<TOptions> fallback)
-            where TOptions : class {
-            // let's first check if our provider can resolve this option
-            if (self.TryResolve<IOptions<TOptions>>(out var options)) {
-                return options;
+            // 1st attempt: retrieve from the provider.
+            self.TryResolve<IOptions<TOptions>>(out var fromProvider);
+            if (fromProvider is not null) {
+                return fromProvider;
             }
 
-            // shoot, no good. let's try get from the configuration
-            if (self.TryResolve<IConfiguration>(out var configuration)) {
-                var sectionName = typeof(TOptions).Name;
-                var optionsFromConfiguration = configuration.GetSection(sectionName)
-                                                            .Get<TOptions>();
-
-                if (optionsFromConfiguration is not null) {
-                    return Options.Create(optionsFromConfiguration);
-                }
+            // 2nd attempt: retrieve from configuration
+            self.TryResolve<IConfiguration>(out var configuration);
+            var sectionName = ConfigurationSectionNameAttribute.GetSectionName<TOptions>();
+            var fromConfiguration = configuration?.GetSection(sectionName)?.Get<TOptions>();
+            if (fromConfiguration is not null) {
+                return Options.Create(fromConfiguration);
             }
 
-            // whoops...if we reach this far, seems like we don't have
-            // the configuration set or missing this particular option.
-            // If we have the fallback let's construct it.
-            var optionsFromFactory = fallback();
+            // 3rd attempt: retrieve it from the factory function
+            var fromFactory = optionsFactory?.Invoke();
+            if (fromFactory is not null) {
+                return Options.Create(fromFactory);
+            }
 
-            return Options.Create(optionsFromFactory);
+            // lastly, if everything failed, then construct the object
+            return Options.Create(new TOptions());
         }
 
         private ILogger? GetLoggerCore(Type type) {

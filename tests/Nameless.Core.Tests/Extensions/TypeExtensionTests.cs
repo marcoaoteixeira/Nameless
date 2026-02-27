@@ -15,7 +15,7 @@ public class TypeExtensionTests {
         // arrange
 
         // act
-        var actual = generic.IsAssignableFromGenericType(concrete);
+        var actual = generic.IsAssignableFromGeneric(concrete);
 
         var origin = generic.IsAssignableFrom(concrete);
         Console.WriteLine($"{generic.Name} is assignable from {concrete.Name}: {origin}");

@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Lucene.Fixtures;
+using Nameless.Lucene.Infrastructure.Implementations;
 using Nameless.Lucene.Mockers;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.IO;
+using Index = Nameless.Lucene.Infrastructure.Implementations.Index;
 
 namespace Nameless.Lucene;
 

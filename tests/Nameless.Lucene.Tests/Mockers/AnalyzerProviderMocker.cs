@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Moq;
+using Nameless.Lucene.Infrastructure;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Lucene.Mockers;
@@ -13,10 +14,6 @@ public class AnalyzerProviderMocker : Mocker<IAnalyzerProvider> {
     }
 
     public void VerifyGetAnalyzer(int times, bool exactly = false) {
-        var timesObj = times >= 0
-            ? exactly ? Times.Exactly(times) : Times.AtLeast(times)
-            : Times.Never();
-
-        Verify(mock => mock.GetAnalyzer(It.IsAny<string>()), timesObj);
+        Verify(mock => mock.GetAnalyzer(It.IsAny<string>()), times, exactly);
     }
 }

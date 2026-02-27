@@ -27,9 +27,8 @@ public static class ServiceCollectionExtensions {
         ///     can be chained.
         /// </returns>
         public IServiceCollection RegisterMailing(Action<MailingOptions>? configure = null) {
-            self.Configure(configure ?? (_ => { }));
-
-            return self.InnerRegisterMailing();
+            return self.Configure(configure ?? (_ => { }))
+                       .InnerRegisterMailing();
         }
 
         /// <summary>
@@ -46,9 +45,8 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterMailing(IConfiguration configuration) {
             var section = configuration.GetSection(nameof(MailingOptions));
 
-            self.Configure<MailingOptions>(section);
-
-            return self.InnerRegisterMailing();
+            return self.Configure<MailingOptions>(section)
+                       .InnerRegisterMailing();
         }
 
         private IServiceCollection InnerRegisterMailing() {
@@ -59,7 +57,7 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static IMailing ResolveMailing(IServiceProvider provider) {
+    private static MailingImpl ResolveMailing(IServiceProvider provider) {
         var smtpClientFactory = provider.GetRequiredKeyedService<ISmtpClientFactory>(SMTP_CLIENT_FACTORY_KEY);
         var logger = provider.GetLogger<MailingImpl>();
 

@@ -1,14 +1,17 @@
-﻿namespace Nameless.Localization.Json;
+﻿using Nameless.Attributes;
+
+namespace Nameless.Localization.Json;
 
 /// <summary>
 /// The localization options.
 /// </summary>
+[ConfigurationSectionName("Localization")]
 public class JsonLocalizationOptions {
     /// <summary>
     ///     Gets or sets the name of the directory where the
     ///     JSON resources files are stored.
     /// </summary>
-    public string ResourcesDirectoryName { get; set; } = "Localization";
+    public string DirectoryName { get; set; } = "l10n";
 
     /// <summary>
     ///     Whether it will watch the JSON resource files for changes

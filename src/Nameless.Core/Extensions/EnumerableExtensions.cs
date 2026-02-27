@@ -94,15 +94,6 @@ public static class EnumerableExtensions {
     /// <typeparam name="T">The type of the enumerable.</typeparam>
     extension<T>(IEnumerable<T> self) {
         /// <summary>
-        ///     <strong>(Syntax sugar)</strong> Converts an <see cref="IEnumerable{T}" /> instance into a
-        ///     <see cref="IReadOnlyCollection{T}" />.
-        /// </summary>
-        /// <returns>An <see cref="IReadOnlyCollection{T}" /> instance.</returns>
-        public ReadOnlyCollection<T> ToReadOnly() {
-            return new ReadOnlyCollection<T>([.. self]);
-        }
-
-        /// <summary>
         ///     Selects distinct the self <see cref="IEnumerable{T}" /> by an expression.
         /// </summary>
         /// <typeparam name="TKey">Type of the key.</typeparam>

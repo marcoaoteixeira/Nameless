@@ -14,7 +14,8 @@ namespace Nameless.Results;
 /// <typeparam name="TArg2">
 ///     Type of the third result.
 /// </typeparam>
-public class Switch<TArg0, TArg1, TArg2> {
+public class Switch<TArg0, TArg1, TArg2>
+{
     private readonly TArg0? _arg0;
     private readonly TArg1? _arg1;
     private readonly TArg2? _arg2;
@@ -45,7 +46,7 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// </exception>
     public TArg0 AsArg0 => IsArg0
         ? _arg0
-        : throw new InvalidOperationException(message: "Arg0 is not available");
+        : throw new InvalidOperationException("Arg0 is not available");
 
     /// <summary>
     ///     Gets the result as the second type.
@@ -55,7 +56,7 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// </exception>
     public TArg1 AsArg1 => IsArg1
         ? _arg1
-        : throw new InvalidOperationException(message: "Arg1 is not available");
+        : throw new InvalidOperationException("Arg1 is not available");
 
     /// <summary>
     ///     Gets the result as the third type.
@@ -65,12 +66,24 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// </exception>
     public TArg2 AsArg2 => IsArg2
         ? _arg2
-        : throw new InvalidOperationException(message: "Arg2 is not available");
+        : throw new InvalidOperationException("Arg2 is not available");
 
-    // Keep unused public constructor to avoid the use of parameterless
-    // constructor.
-    public Switch() {
-        throw new InvalidOperationException(message: "Do not use the parameterless constructor");
+    /// <summary>
+    ///     This constructor is not intended for use and will always throw
+    ///     an exception.
+    /// </summary>
+    /// <remarks>
+    ///     This constructor is provided to prevent instantiation without
+    ///     parameters, ensuring that the Switch class is always initialized
+    ///     with the required parameters.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when attempting to use the parameterless constructor,
+    ///     indicating that it should not be used.
+    /// </exception>
+    public Switch()
+    {
+        throw new InvalidOperationException("Do not use the parameterless constructor");
     }
 
     /// <summary>
@@ -89,7 +102,8 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <param name="arg2">
     ///     The third argument.
     /// </param>
-    protected Switch(int index, TArg0? arg0 = default, TArg1? arg1 = default, TArg2? arg2 = default) {
+    protected Switch(int index, TArg0? arg0 = default, TArg1? arg1 = default, TArg2? arg2 = default)
+    {
         Index = index;
 
         _arg0 = arg0;
@@ -100,16 +114,17 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <summary>
     ///     Gets the value for the current result.
     /// </summary>
-    public object? Value => Index switch {
+    public object? Value => Index switch
+    {
         0 => _arg0,
         1 => _arg1,
         2 => _arg2,
-        _ => throw new InvalidOperationException(message: "Invalid index for value.")
+        _ => throw new InvalidOperationException("Invalid index for value.")
     };
 
     /// <summary>
     ///     Gets the index of the current result.
-    ///     E.g., 0 for <see cref="TArg0"/>, 1 for <see cref="TArg1"/>, etc.
+    ///     E.g., 0 for <typeparamref name="TArg0"/>, 1 for <typeparamref name="TArg1"/>, etc.
     /// </summary>
     public int Index { get; }
 
@@ -117,28 +132,32 @@ public class Switch<TArg0, TArg1, TArg2> {
     ///     Executes the corresponding action given the result.
     /// </summary>
     /// <param name="onArg0">
-    ///     Action that will be executed for the argument of <see cref="TArg0"/>.
+    ///     Action that will be executed for the argument of <typeparamref name="TArg0"/>.
     /// </param>
     /// <param name="onArg1">
-    ///     Action that will be executed for the argument of <see cref="TArg1"/>.
+    ///     Action that will be executed for the argument of <typeparamref name="TArg1"/>.
     /// </param>
     /// <param name="onArg2">
-    ///     Action that will be executed for the argument of <see cref="TArg2"/>.
+    ///     Action that will be executed for the argument of <typeparamref name="TArg2"/>.
     /// </param>
-    public void Match(Action<TArg0> onArg0, Action<TArg1> onArg1, Action<TArg2> onArg2) {
-        if (IsArg0) {
+    public void Match(Action<TArg0> onArg0, Action<TArg1> onArg1, Action<TArg2> onArg2)
+    {
+        if (IsArg0)
+        {
             onArg0(AsArg0);
 
             return;
         }
 
-        if (IsArg1) {
+        if (IsArg1)
+        {
             onArg1(AsArg1);
 
             return;
         }
 
-        if (!IsArg2) {
+        if (!IsArg2)
+        {
             return;
         }
 
@@ -153,15 +172,15 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// </typeparam>
     /// <param name="onArg0">
     ///     Function that will be executed for the
-    ///     argument <see cref="TArg0"/>.
+    ///     argument <typeparamref name="TArg0"/>.
     /// </param>
     /// <param name="onArg1">
     ///     Function that will be executed for the
-    ///     argument <see cref="TArg1"/>.
+    ///     argument <typeparamref name="TArg1"/>.
     /// </param>
     /// <param name="onArg2">
     ///     Function that will be executed for the
-    ///     argument <see cref="TArg2"/>.
+    ///     argument <typeparamref name="TArg2"/>.
     /// </param>
     /// <returns>
     ///     The result of the corresponding function.
@@ -169,21 +188,24 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <exception cref="InvalidOperationException">
     ///     if there are no argument that matches the functions.
     /// </exception>
-    public TResult Match<TResult>(Func<TArg0, TResult> onArg0, Func<TArg1, TResult> onArg1,
-        Func<TArg2, TResult> onArg2) {
-        if (IsArg0) {
+    public TResult Match<TResult>(Func<TArg0, TResult> onArg0, Func<TArg1, TResult> onArg1, Func<TArg2, TResult> onArg2)
+    {
+        if (IsArg0)
+        {
             return onArg0(AsArg0);
         }
 
-        if (IsArg1) {
+        if (IsArg1)
+        {
             return onArg1(AsArg1);
         }
 
-        if (IsArg2) {
+        if (IsArg2)
+        {
             return onArg2(AsArg2);
         }
 
-        throw new InvalidOperationException(message: "Missing switch branch.");
+        throw new InvalidOperationException("Missing switch branch.");
     }
 
     /// <summary>
@@ -193,7 +215,8 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <param name="arg0">
     ///     The result.
     /// </param>
-    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg0 arg0) {
+    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg0 arg0)
+    {
         return new Switch<TArg0, TArg1, TArg2>(
             index: 0,
             arg0,
@@ -209,7 +232,8 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <param name="arg1">
     ///     The result.
     /// </param>
-    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg1 arg1) {
+    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg1 arg1)
+    {
         return new Switch<TArg0, TArg1, TArg2>(
             index: 1,
             arg0: default,
@@ -225,7 +249,8 @@ public class Switch<TArg0, TArg1, TArg2> {
     /// <param name="arg2">
     ///     The result.
     /// </param>
-    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg2 arg2) {
+    public static implicit operator Switch<TArg0, TArg1, TArg2>(TArg2 arg2)
+    {
         return new Switch<TArg0, TArg1, TArg2>(
             index: 2,
             arg0: default,

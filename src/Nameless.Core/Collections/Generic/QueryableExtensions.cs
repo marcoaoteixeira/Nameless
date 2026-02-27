@@ -5,30 +5,39 @@
 /// </summary>
 public static class QueryableExtensions {
     /// <param name="self">
-    ///     The current <see cref="IQueryable{T}" />
+    ///     The current <see cref="IQueryable{T}"/>.
     /// </param>
     /// <typeparam name="TItem">
-    ///     Type of the page item.
+    ///     Type of the queryable items.
     /// </typeparam>
     extension<TItem>(IQueryable<TItem> self) {
         /// <summary>
-        ///     Creates a page from the current <see cref="IQueryable{T}" />.
+        ///     Creates a paginated view of the items.
         /// </summary>
-        /// <param name="number">
-        ///     The page number.
+        /// <remarks>
+        ///     Use this method to implement pagination when working with
+        ///     large collections, allowing data to be retrieved and displayed
+        ///     in smaller, more manageable segments.
+        /// </remarks>
+        /// <param name="start">
+        ///     The zero-based index of the first item to include in the page.
+        ///     Must be greater than or equal to zero.
         /// </param>
-        /// <param name="size">
-        ///     The page size.
+        /// <param name="limit">
+        ///     The maximum number of items to include in the page. Must be
+        ///     greater than zero.
         /// </param>
         /// <returns>
-        ///     An <see cref="IPage{TItem}" /> representing the desired
-        ///     page from the query.
+        ///     An instance of <see cref="IPage{TItem}"/> that represents the
+        ///     requested page of items.
         /// </returns>
-        /// <exception cref="ArgumentNullException">
-        ///     If the current <paramref name="self"/> is <see langword="null"/>.
-        /// </exception>
-        public IPage<TItem> CreatePage(int number = 1, int size = 10) {
-            return new Page<TItem>(self, number, size);
+        public IPage<TItem> ToPage(int start = 0, int limit = 10) {
+            return new Page<TItem>(
+                items: self.Skip(start).Take(limit),
+                start: start,
+                limit: limit,
+                totalCount: self.Count()
+            );
         }
     }
 }

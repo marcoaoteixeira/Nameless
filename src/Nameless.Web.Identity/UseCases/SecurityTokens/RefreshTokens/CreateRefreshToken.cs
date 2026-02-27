@@ -50,10 +50,10 @@ public class CreateRefreshTokenRequestHandler : IRequestHandler<CreateRefreshTok
         ILogger<CreateRefreshTokenRequestHandler> logger) {
         _userRefreshTokenManager = userRefreshTokenManager;
         _userManager = userManager;
-        _httpContextAccessor = Guard.Against.Null(httpContextAccessor);
-        _timeProvider = Guard.Against.Null(timeProvider);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _httpContextAccessor = Throws.When.Null(httpContextAccessor);
+        _timeProvider = Throws.When.Null(timeProvider);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
@@ -67,26 +67,26 @@ public class CreateRefreshTokenRequestHandler : IRequestHandler<CreateRefreshTok
             return new CreateRefreshTokenResponse();
         }
 
-        Guard.Against.Null(request);
+        Throws.When.Null(request);
 
         var user = await _userManager.FindByIdAsync(request.UserID.ToString())
-                                     .ConfigureAwait(continueOnCapturedContext: false);
+                                     .SkipContextSync();
         if (user is null) {
             throw new UserNotFoundException();
         }
 
         var userRefreshToken = await _userRefreshTokenManager.CreateAsync(user, cancellationToken)
-                                                             .ConfigureAwait(continueOnCapturedContext: false);
+                                                             .SkipContextSync();
 
         var cleanUpCount = await _userRefreshTokenManager.CleanUpAsync(user, cancellationToken)
-                                                         .ConfigureAwait(continueOnCapturedContext: false);
+                                                         .SkipContextSync();
 
         var revokeMetadata = new RevokeUserRefreshTokenMetadata(_timeProvider.GetUtcNow(),
             _httpContextAccessor.HttpContext?.GetIPv4(), RevokeReason: "Creating new user refresh token.",
             userRefreshToken.Id.ToString());
 
         var revokeCount = await _userRefreshTokenManager.RevokeAsync(user, revokeMetadata, cancellationToken)
-                                                        .ConfigureAwait(continueOnCapturedContext: false);
+                                                        .SkipContextSync();
 
         return new CreateRefreshTokenResponse { Token = userRefreshToken.Token };
     }

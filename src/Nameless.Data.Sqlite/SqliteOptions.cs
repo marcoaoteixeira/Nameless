@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Attributes;
 
 namespace Nameless.Data.Sqlite;
 
 /// <summary>
 /// Sqlite options.
 /// </summary>
+[ConfigurationSectionName("Sqlite")]
 public class SqliteOptions {
     /// <summary>
     /// Whether it will use credentials to access the database.
@@ -27,4 +29,13 @@ public class SqliteOptions {
     /// Gets or sets the database password.
     /// </summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the connection string name.
+    /// </summary>
+    /// <remarks>
+    ///     If provided, it will be the preferred connection string over
+    ///     the current configuration.
+    /// </remarks>
+    public string? ConnectionStringName { get; set; }
 }

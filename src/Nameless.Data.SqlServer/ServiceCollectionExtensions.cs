@@ -25,9 +25,9 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterDataServices(Action<SqlServerOptions>? configure = null) {
+        public IServiceCollection RegisterSqlServer(Action<SqlServerOptions>? configure = null) {
             return self.Configure(configure ?? (_ => { }))
-                       .InnerRegisterDataServices();
+                       .InnerRegisterSqlServer();
         }
 
         /// <summary>
@@ -40,14 +40,14 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterDataServices(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(SqlServerOptions));
+        public IServiceCollection RegisterSqlServer(IConfiguration configuration) {
+            var section = configuration.GetSection<SqlServerOptions>();
 
             return self.Configure<SqlServerOptions>(section)
-                       .InnerRegisterDataServices();
+                       .InnerRegisterSqlServer();
         }
 
-        private IServiceCollection InnerRegisterDataServices() {
+        private IServiceCollection InnerRegisterSqlServer() {
             self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
             self.TryAddTransient(ResolveDatabase);
 

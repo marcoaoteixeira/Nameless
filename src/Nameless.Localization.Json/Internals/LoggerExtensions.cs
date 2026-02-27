@@ -4,153 +4,142 @@ using Nameless.Localization.Json.Infrastructure;
 namespace Nameless.Localization.Json.Internals;
 
 /// <summary>
-/// <see cref="ILogger"/> extensions.
+///     <see cref="ILogger"/> extension methods.
 /// </summary>
 internal static class LoggerExtensions {
+    #region ResourceManager
+
     private static readonly Action<ILogger, string, Exception?> GettingResourceForCultureDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Debug,
-            Events.GettingResourceForCultureEvent,
+            logLevel: LogLevel.Debug,
+            eventId: default,
             formatString: "Getting resource for culture '{CultureName}'");
 
     private static readonly Action<ILogger, string, Exception?> ResourceFileNotFoundDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Warning,
-            Events.ResourceFileNotFoundEvent,
+            logLevel: LogLevel.Warning,
+            eventId: default,
             formatString: "Resource file not found. Resource path: '{ResourcePath}'");
 
     private static readonly Action<ILogger, string, Exception?> ResourceFileContentIsEmptyDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Warning,
-            Events.ResourceFileContentIsEmptyEvent,
+            logLevel: LogLevel.Warning,
+            eventId: default,
             formatString: "Resource file seems empty. Resource path: '{ResourcePath}'");
 
     private static readonly Action<ILogger, string, Exception?> CreatingCacheEntryForResourceFileDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Debug,
-            Events.CreatingCacheEntryForResourceFileEvent,
+            logLevel: LogLevel.Debug,
+            eventId: default,
             formatString: "Creating new cache entry for resource file '{ResourcePath}'");
 
     private static readonly Action<ILogger, string, Exception?> SettingFileWatcherForResourceFileDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Debug,
-            Events.SettingFileWatcherForResourceFileEvent,
+            logLevel: LogLevel.Debug,
+            eventId: default,
             formatString: "Setting file watcher for resource file '{ResourcePath}'");
 
     private static readonly Action<ILogger, string, Exception?> ErrorReadingResourceFileDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Error,
-            Events.ErrorReadingResourceFileEvent,
+            logLevel: LogLevel.Error,
+            eventId: default,
             formatString: "An error occurs while reading resource file. Resource path: '{ResourcePath}'");
 
     private static readonly Action<ILogger, string, Exception?> ResourceDeserializationFailedDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Error,
-            Events.ResourceDeserializationFailedEvent,
+            logLevel: LogLevel.Error,
+            eventId: default,
             formatString:
             "An error occurs while deserializing resource file JSON content. Resource path: '{ResourcePath}'");
 
+    #endregion
+    
+    #region CultureProvider
+
     private static readonly Action<ILogger, string, string, Exception?> GettingCurrentCultureFromContextDelegate
         = LoggerMessage.Define<string, string>(
-            LogLevel.Debug,
-            Events.GettingCurrentCultureFromContextEvent,
+            logLevel: LogLevel.Debug,
+            eventId: default,
             formatString:
             "Getting current culture information from context. Context: '{Context}', Culture retrieved: '{CultureName}'");
 
+    #endregion
+
+    #region StringLocalizerFactory
+
     private static readonly Action<ILogger, string, Exception?> GettingResourceDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Debug,
-            Events.GettingResourceEvent,
+            logLevel: LogLevel.Debug,
+            eventId: default,
             formatString: "Getting resource '{ResourceName}'");
 
     private static readonly Action<ILogger, string, Exception?> ResourceNotAvailableDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Warning,
-            Events.ResourceNotAvailableEvent,
+            logLevel: LogLevel.Warning,
+            eventId: default,
             formatString: "Resource not available. Resource name: {ResourceName}");
+
+    #endregion
+
+    #region StringLocalizer
 
     private static readonly Action<ILogger, string, Exception?> MessageNotFoundDelegate
         = LoggerMessage.Define<string>(
-            LogLevel.Warning,
-            Events.MessageNotFoundEvent,
+            logLevel: LogLevel.Warning,
+            eventId: default,
             formatString: "Message with id '{MessageId}' not found.");
+
+    #endregion
 
     extension(ILogger<ResourceManager> self) {
         internal void GettingResourceForCulture(string cultureName) {
-            GettingResourceForCultureDelegate(self, cultureName, arg3: null /* exception */);
+            GettingResourceForCultureDelegate(self, cultureName, null /* exception */);
         }
 
         internal void ResourceFileNotFound(string resourcePath) {
-            ResourceFileNotFoundDelegate(self, resourcePath, arg3: null /* exception */);
+            ResourceFileNotFoundDelegate(self, resourcePath, null /* exception */);
         }
 
         internal void ResourceFileContentIsEmpty(string resourcePath) {
-            ResourceFileContentIsEmptyDelegate(self, resourcePath, arg3: null /* exception */);
+            ResourceFileContentIsEmptyDelegate(self, resourcePath, null /* exception */);
         }
 
         internal void CreatingCacheEntryForResourceFile(string resourcePath) {
-            CreatingCacheEntryForResourceFileDelegate(self, resourcePath, arg3: null /* exception */);
+            CreatingCacheEntryForResourceFileDelegate(self, resourcePath, null /* exception */);
         }
 
         internal void SettingFileWatcherForResourceFile(string resourcePath) {
-            SettingFileWatcherForResourceFileDelegate(self, resourcePath, arg3: null /* exception */);
+            SettingFileWatcherForResourceFileDelegate(self, resourcePath, null /* exception */);
         }
 
         internal void ErrorReadingResourceFile(string resourcePath, Exception exception) {
             ErrorReadingResourceFileDelegate(self, resourcePath, exception);
         }
 
-        internal void ResourceDeserializationFailed(string resourcePath,
-            Exception exception) {
+        internal void ResourceDeserializationFailed(string resourcePath, Exception exception) {
             ResourceDeserializationFailedDelegate(self, resourcePath, exception);
         }
     }
 
-    internal static void GettingCurrentCultureFromContext(this ILogger<CultureProvider> self, string context,
-        string cultureName) {
-        GettingCurrentCultureFromContextDelegate(self, context, cultureName, arg4: null /* exception */);
+    extension(ILogger<CultureProvider> self) {
+        internal void GettingCurrentCultureFromContext(string context, string cultureName) {
+            GettingCurrentCultureFromContextDelegate(self, context, cultureName, null /* exception */);
+        }
     }
 
     extension(ILogger<StringLocalizerFactory> self) {
         internal void GettingResource(string resourceName) {
-            GettingResourceDelegate(self, resourceName, arg3: null /* exception */);
+            GettingResourceDelegate(self, resourceName, null /* exception */);
         }
 
         internal void ResourceNotAvailable(string resourceName) {
-            ResourceNotAvailableDelegate(self, resourceName, arg3: null /* exception */);
+            ResourceNotAvailableDelegate(self, resourceName, null /* exception */);
         }
     }
 
-    internal static void MessageNotFound(this ILogger<StringLocalizer> self, string messageId) {
-        MessageNotFoundDelegate(self, messageId, arg3: null /* exception */);
-    }
-
-    internal static class Events {
-        internal static readonly EventId GettingResourceForCultureEvent =
-            new(id: 4001, nameof(GettingResourceForCulture));
-
-        internal static readonly EventId ResourceFileNotFoundEvent = new(id: 4002, nameof(ResourceFileNotFound));
-
-        internal static readonly EventId ResourceFileContentIsEmptyEvent =
-            new(id: 4003, nameof(ResourceFileContentIsEmpty));
-
-        internal static readonly EventId CreatingCacheEntryForResourceFileEvent =
-            new(id: 4004, nameof(CreatingCacheEntryForResourceFile));
-
-        internal static readonly EventId SettingFileWatcherForResourceFileEvent =
-            new(id: 4005, nameof(SettingFileWatcherForResourceFile));
-
-        internal static readonly EventId
-            ErrorReadingResourceFileEvent = new(id: 4006, nameof(ErrorReadingResourceFile));
-
-        internal static readonly EventId ResourceDeserializationFailedEvent =
-            new(id: 4007, nameof(ResourceDeserializationFailed));
-
-        internal static readonly EventId GettingCurrentCultureFromContextEvent =
-            new(id: 4008, nameof(GettingCurrentCultureFromContext));
-
-        internal static readonly EventId GettingResourceEvent = new(id: 4009, nameof(GettingResource));
-        internal static readonly EventId ResourceNotAvailableEvent = new(id: 4010, nameof(ResourceNotAvailable));
-        internal static readonly EventId MessageNotFoundEvent = new(id: 4011, nameof(MessageNotFound));
+    extension(ILogger<StringLocalizer> self) {
+        internal void MessageNotFound(string messageId) {
+            MessageNotFoundDelegate(self, messageId, null /* exception */);
+        }
     }
 }

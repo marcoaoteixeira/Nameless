@@ -18,11 +18,11 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
 
     public UserRefreshTokenManager(DbContext dbContext, IHttpContextAccessor httpContextAccessor,
         TimeProvider timeProvider, IOptions<RefreshTokenOptions> options, ILogger<UserRefreshTokenManager> logger) {
-        _dbContext = Guard.Against.Null(dbContext);
-        _httpContextAccessor = Guard.Against.Null(httpContextAccessor);
-        _timeProvider = Guard.Against.Null(timeProvider);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _dbContext = Throws.When.Null(dbContext);
+        _httpContextAccessor = Throws.When.Null(httpContextAccessor);
+        _timeProvider = Throws.When.Null(timeProvider);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
     }
 
     public async Task<UserRefreshToken> CreateAsync(User user, CancellationToken cancellationToken) {
@@ -44,7 +44,7 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
                                               .ConfigureAwait(continueOnCapturedContext: false);
 
             await _dbContext.SaveChangesAsync(cancellationToken)
-                            .ConfigureAwait(continueOnCapturedContext: false);
+                            .SkipContextSync();
 
             return entityEntry.Entity;
         }
@@ -60,7 +60,7 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
         var userRefreshTokenCount = await _dbContext.Set<UserRefreshToken>()
                                                     .CountAsync(userRefreshToken => userRefreshToken.UserId == user.Id,
                                                         cancellationToken)
-                                                    .ConfigureAwait(continueOnCapturedContext: false);
+                                                    .SkipContextSync();
 
         if (options.TokenRetentionLimit > userRefreshTokenCount) {
             return 0;
@@ -72,7 +72,7 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
                                    .OrderByDescending(item => item.CreatedAt)
                                    .Skip(options.TokenRetentionLimit)
                                    .ExecuteDeleteAsync(cancellationToken)
-                                   .ConfigureAwait(continueOnCapturedContext: false);
+                                   .SkipContextSync();
         }
         catch (Exception ex) {
             _logger.CleanUpUserRefreshTokensFailure(ex);
@@ -101,7 +101,7 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
                                                  .SetProperty(userRefreshToken => userRefreshToken.ReplacedByToken,
                                                      metadata.ReplacedByToken)
                                      , cancellationToken)
-                                   .ConfigureAwait(continueOnCapturedContext: false);
+                                   .SkipContextSync();
         }
         catch (Exception ex) {
             _logger.RevokeUserRefreshTokensFailure(ex);
@@ -111,7 +111,7 @@ public class UserRefreshTokenManager : IUserRefreshTokenManager {
     }
 
     public Task<UserRefreshToken?> GetAsync(string token, CancellationToken cancellationToken) {
-        Guard.Against.NullOrWhiteSpace(token);
+        Throws.When.NullOrWhiteSpace(token);
 
         return _dbContext.Set<UserRefreshToken>()
                          .AsNoTrackingWithIdentityResolution()

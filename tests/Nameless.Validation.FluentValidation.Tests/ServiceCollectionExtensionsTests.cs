@@ -11,7 +11,9 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(Quick.Mock<ILogger<ValidationService>>());
-        services.RegisterValidation();
+        services.RegisterValidation(
+            registration: _ => { }
+        );
 
         using var container = services.BuildServiceProvider();
 
@@ -27,7 +29,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.RegisterValidation(opts => {
-            opts.Assemblies = [typeof(ServiceCollectionExtensionsTests).Assembly];
+            opts.IncludeAssemblies(typeof(ServiceCollectionExtensionsTests).Assembly);
         });
 
         using var container = services.BuildServiceProvider();

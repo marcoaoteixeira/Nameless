@@ -9,7 +9,8 @@ namespace Nameless.Results;
 /// <typeparam name="T">
 ///     Type of the result.
 /// </typeparam>
-public class Result<T> {
+public class Result<T>
+{
     private readonly object? _value;
     private readonly Error[] _errors;
 
@@ -27,7 +28,7 @@ public class Result<T> {
     /// </exception>
     public T Value => Success
         ? (T)_value
-        : throw new InvalidOperationException(message: "Result is not available");
+        : throw new InvalidOperationException("Result is not available");
 
     /// <summary>
     ///     Gets the errors.
@@ -37,12 +38,24 @@ public class Result<T> {
     /// </exception>
     public Error[] Errors => !Success
         ? _errors
-        : throw new InvalidOperationException(message: "Errors are not available");
+        : throw new InvalidOperationException("Errors are not available");
 
-    // Keep unused public constructor to avoid the use of parameterless
-    // constructor.
-    public Result() {
-        throw new InvalidOperationException(message: "Do not use the parameterless constructor");
+    /// <summary>
+    ///     This constructor is not intended for use and will always throw
+    ///     an exception.
+    /// </summary>
+    /// <remarks>
+    ///     This constructor is provided to prevent instantiation without
+    ///     parameters, ensuring that the Result class is always initialized
+    ///     with the required parameters.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when attempting to use the parameterless constructor,
+    ///     indicating that it should not be used.
+    /// </exception>
+    public Result()
+    {
+        throw new InvalidOperationException("Do not use the parameterless constructor");
     }
 
     /// <summary>
@@ -55,7 +68,8 @@ public class Result<T> {
     /// <param name="errors">
     ///     The errors.
     /// </param>
-    protected Result(object? value, Error[] errors) {
+    protected Result(object? value, Error[] errors)
+    {
         _value = value;
         _errors = errors;
     }
@@ -64,13 +78,15 @@ public class Result<T> {
     ///     Executes the corresponding action given the result.
     /// </summary>
     /// <param name="onSuccess">
-    ///     Action that will be executed on <see cref="T"/>.
+    ///     Action that will be executed on <typeparamref name="T"/>.
     /// </param>
     /// <param name="onFailure">
     ///     Action that will be executed on errors.
     /// </param>
-    public void Match(Action<T> onSuccess, Action<Error[]> onFailure) {
-        if (Success) {
+    public void Match(Action<T> onSuccess, Action<Error[]> onFailure)
+    {
+        if (Success)
+        {
             onSuccess(Value);
 
             return;
@@ -83,12 +99,13 @@ public class Result<T> {
     ///     Executes the corresponding function given the value of the result.
     /// </summary>
     /// <param name="onSuccess">
-    ///     Function that will be executed on <see cref="T"/> result.
+    ///     Function that will be executed on <typeparamref name="T"/> result.
     /// </param>
     /// <param name="onFailure">
     ///     Function that will be executed on errors.
     /// </param>
-    public TReturnValue Match<TReturnValue>(Func<T, TReturnValue> onSuccess, Func<Error[], TReturnValue> onFailure) {
+    public TReturnValue Match<TReturnValue>(Func<T, TReturnValue> onSuccess, Func<Error[], TReturnValue> onFailure)
+    {
         return Success
             ? onSuccess(Value)
             : onFailure(Errors);
@@ -100,8 +117,20 @@ public class Result<T> {
     /// <param name="result">
     ///     The result.
     /// </param>
-    public static implicit operator Result<T>(T result) {
+    public static implicit operator Result<T>(T result)
+    {
         return new Result<T>(result, []);
+    }
+
+    /// <summary>
+    ///     Creates a new instance with the specified errors.
+    /// </summary>
+    /// <param name="errors">
+    ///     The errors.
+    /// </param>
+    public static implicit operator Result<T>(Error[] errors)
+    {
+        return new Result<T>(value: null, errors);
     }
 
     /// <summary>
@@ -112,15 +141,5 @@ public class Result<T> {
     /// </param>
     public static implicit operator Result<T>(Error error) {
         return new Result<T>(value: null, [error]);
-    }
-
-    /// <summary>
-    ///     Creates a new instance with the specified errors.
-    /// </summary>
-    /// <param name="errors">
-    ///     The errors.
-    /// </param>
-    public static implicit operator Result<T>(Error[] errors) {
-        return new Result<T>(value: null, errors);
     }
 }

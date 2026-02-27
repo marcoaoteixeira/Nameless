@@ -87,7 +87,7 @@ public static class AssemblyExtensions {
                        // inside the types, we will look for all types that
                        // are assignable to the service type
                        .Where(type => service.IsAssignableFrom(type) ||
-                                      service.IsAssignableFromGenericType(type));
+                                      service.IsAssignableFromGeneric(type));
         }
     }
 

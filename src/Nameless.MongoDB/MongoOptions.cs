@@ -1,19 +1,9 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using Nameless.Configuration;
-
-namespace Nameless.MongoDB;
+﻿namespace Nameless.MongoDB;
 
 /// <summary>
 /// Options for configuring the MongoDB connection.
 /// </summary>
 public class MongoOptions {
-    /// <summary>
-    ///     Gets or sets the assemblies to scan for document mappers.
-    /// </summary>
-    [TypeConverter(typeof(AssemblyTypeConverter))]
-    public Assembly[] Assemblies { get; set; } = [];
-
     /// <summary>
     ///     Gets or sets the host for the MongoDB connection.
     ///     Default is "localhost".

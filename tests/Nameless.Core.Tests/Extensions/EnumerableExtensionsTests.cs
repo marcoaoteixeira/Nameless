@@ -156,21 +156,6 @@ public class EnumerableExtensionsTests {
     }
 
     [Fact]
-    public void ToReadOnly_Should_Return_ReadOnlyCollection() {
-        // arrange
-        var array = new[] { 1, 2, 3, 4, 5 };
-
-        // act
-        var actual = array.ToReadOnly();
-
-        // assert
-        Assert.Multiple(() => {
-            Assert.IsType<ReadOnlyCollection<int>>(actual);
-            Assert.Equivalent(array, actual);
-        });
-    }
-
-    [Fact]
     public void DistinctBy_Should_Filter_Distinct_By_Property_Of_Object() {
         // arrange
         var array = new[] {

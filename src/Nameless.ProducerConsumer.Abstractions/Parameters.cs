@@ -20,8 +20,8 @@ public class Parameters : IEnumerable<KeyValuePair<string, object?>> {
     /// if <paramref name="name"/> is <see langword="null"/>.
     /// </exception>
     public object? this[string name] {
-        get => _data.GetValueOrDefault(Guard.Against.NullOrWhiteSpace(name));
-        set => _data[Guard.Against.NullOrWhiteSpace(name)] = value;
+        get => _data.GetValueOrDefault(Throws.When.NullOrWhiteSpace(name));
+        set => _data[Throws.When.NullOrWhiteSpace(name)] = value;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class Parameters : IEnumerable<KeyValuePair<string, object?>> {
     /// if <paramref name="kvp"/> Key is <see langword="null"/>.
     /// </exception>
     public void Add(KeyValuePair<string, object?> kvp) {
-        _data.Add(Guard.Against.NullOrWhiteSpace(kvp.Key), kvp.Value);
+        _data.Add(Throws.When.NullOrWhiteSpace(kvp.Key), kvp.Value);
     }
 
     /// <inheritdoc />

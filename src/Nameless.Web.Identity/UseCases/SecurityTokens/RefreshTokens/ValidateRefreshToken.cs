@@ -11,16 +11,16 @@ public class
 
     public ValidateRefreshTokenRequestHandler(IUserRefreshTokenManager userRefreshTokenManager,
         TimeProvider timeProvider) {
-        _userRefreshTokenManager = Guard.Against.Null(userRefreshTokenManager);
-        _timeProvider = Guard.Against.Null(timeProvider);
+        _userRefreshTokenManager = Throws.When.Null(userRefreshTokenManager);
+        _timeProvider = Throws.When.Null(timeProvider);
     }
 
     public async Task<ValidateRefreshTokenResponse> HandleAsync(ValidateRefreshTokenRequest request,
         CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
+        Throws.When.Null(request);
 
         var userRefreshToken = await _userRefreshTokenManager.GetAsync(request.Token, cancellationToken)
-                                                             .ConfigureAwait(continueOnCapturedContext: false);
+                                                             .SkipContextSync();
         if (userRefreshToken is null) {
             return new ValidateRefreshTokenResponse();
         }

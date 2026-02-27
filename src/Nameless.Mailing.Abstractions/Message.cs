@@ -91,10 +91,10 @@ public record Message {
         string? language = null,
         bool isBodyHtml = false,
         Priority priority = Priority.Normal) {
-        Subject = Guard.Against.NullOrWhiteSpace(subject);
-        From = Guard.Against.NullOrEmpty(from);
-        To = Guard.Against.NullOrEmpty(to);
-        Content = Guard.Against.NullOrWhiteSpace(content);
+        Subject = Throws.When.NullOrWhiteSpace(subject);
+        From = Throws.When.NullOrEmpty(from);
+        To = Throws.When.NullOrEmpty(to);
+        Content = Throws.When.NullOrWhiteSpace(content);
         Cc = cc ?? [];
         Bcc = bcc ?? [];
         Encoding = encoding ?? Defaults.Encoding;

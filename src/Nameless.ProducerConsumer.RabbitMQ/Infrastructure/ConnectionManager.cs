@@ -25,8 +25,8 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     /// <param name="options">The RabbitMQ options.</param>
     /// <param name="logger">The logger.</param>
     public ConnectionManager(IOptions<RabbitMQOptions> options, ILogger<ConnectionManager> logger) {
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
@@ -43,7 +43,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
 
         try {
             return _connection ??= await GetConnectionFactory().CreateConnectionAsync(cancellationToken)
-                                                               .ConfigureAwait(continueOnCapturedContext: false);
+                                                               .SkipContextSync();
         }
         catch (BrokerUnreachableException ex) {
             _logger.BrokerUnreachable(_options.Value.Server, ex);
@@ -86,7 +86,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     private async ValueTask DisposeAsyncCore() {
         if (_connection is not null) {
             await _connection.CloseAsync(Constants.ReplySuccess, reasonText: "Disposing RabbitMQ connection.")
-                             .ConfigureAwait(continueOnCapturedContext: false);
+                             .SkipContextSync();
 
             await _connection.DisposeAsync()
                              .ConfigureAwait(continueOnCapturedContext: false);

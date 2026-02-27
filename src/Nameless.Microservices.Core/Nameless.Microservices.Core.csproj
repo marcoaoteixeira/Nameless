@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Microservices</RootNamespace>
+		<InterceptorsNamespaces>$(InterInterceptorsNamespaces);Micorosoft.AspNetCore.AOpenApi.Generated</InterceptorsNamespaces>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="Scalar.AspNetCore.Microsoft" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Mediator.Abstractions\Nameless.Mediator.Abstractions.csproj" />
+		<ProjectReference Include="..\Nameless.Mediator\Nameless.Mediator.csproj" />
+		<ProjectReference Include="..\Nameless.Validation.FluentValidation\Nameless.Validation.FluentValidation.csproj" />
+		<ProjectReference Include="..\Nameless.Web.Core\Nameless.Web.Core.csproj" />
+	</ItemGroup>
+
+</Project>

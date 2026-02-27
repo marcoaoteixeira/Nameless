@@ -24,7 +24,7 @@ public class RequestHandlerInvoker : IRequestHandlerInvoker {
 
     /// <inheritdoc />
     public Task<TResponse> ExecuteAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
+        Throws.When.Null(request);
 
         var handler = _cache.GetOrAdd(request.GetType(), CreateRequestHandlerWrapper);
 

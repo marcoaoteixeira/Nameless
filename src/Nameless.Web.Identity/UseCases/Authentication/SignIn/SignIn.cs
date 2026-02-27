@@ -31,18 +31,18 @@ public class SignInRequestHandler : IRequestHandler<SignInRequest, SignInRespons
         IMediator mediator,
         SignInManager<User> signInManager,
         ILogger<SignInRequestHandler> logger) {
-        _mediator = Guard.Against.Null(mediator);
-        _signInManager = Guard.Against.Null(signInManager);
-        _logger = Guard.Against.Null(logger);
+        _mediator = Throws.When.Null(mediator);
+        _signInManager = Throws.When.Null(signInManager);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
     public async Task<SignInResponse> HandleAsync(SignInRequest request, CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
+        Throws.When.Null(request);
 
         var user = await _signInManager.UserManager
                                        .FindByEmailAsync(request.Email)
-                                       .ConfigureAwait(continueOnCapturedContext: false);
+                                       .SkipContextSync();
         if (user is null) {
             _logger.SignInUserNotFound(request.Email);
 
@@ -50,7 +50,7 @@ public class SignInRequestHandler : IRequestHandler<SignInRequest, SignInRespons
         }
 
         var signinResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true)
-                                               .ConfigureAwait(continueOnCapturedContext: false);
+                                               .SkipContextSync();
 
         if (signinResult.IsLockedOut) {
             _logger.SignInUserIsLockedOut(request.Email);

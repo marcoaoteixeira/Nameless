@@ -1,4 +1,7 @@
-﻿namespace Nameless.Bootstrap;
+﻿using Nameless.Bootstrap.Infrastructure;
+using Nameless.Bootstrap.Notification;
+
+namespace Nameless.Bootstrap;
 
 /// <summary>
 ///     Defines a contract for performing application startup or initialization
@@ -12,11 +15,15 @@ public interface IBootstrapper {
     ///     The context object that provides data and state information for
     ///     the steps execution.
     /// </param>
+    /// <param name="progress">
+    ///     A <see cref="IProgress{T}"/> to provide information regarding step
+    ///     execution.
+    /// </param>
     /// <param name="cancellationToken">
     ///     A cancellation token that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A task that represents the asynchronous execution operation.
     /// </returns>
-    Task ExecuteAsync(FlowContext context, CancellationToken cancellationToken);
+    Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken);
 }

@@ -61,7 +61,7 @@ public class ResourceManager : IResourceManager {
             : $".{cacheKey.Culture}.json";
 
         var parts = cacheKey.Path.Split(Separators.DOT)[..^1]
-                            .Prepend(_options.Value.ResourcesDirectoryName)
+                            .Prepend(_options.Value.DirectoryName)
                             .Append($"{cacheKey.Location}{extension}")
                             .ToArray();
 

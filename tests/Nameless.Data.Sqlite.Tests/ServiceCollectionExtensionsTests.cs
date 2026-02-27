@@ -9,7 +9,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<Database>().Build());
-        services.RegisterDatabaseServices(_ => { });
+        services.RegisterSqlite(_ => { });
 
         using var provider = services.BuildServiceProvider();
 
@@ -25,7 +25,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<Database>().Build());
-        services.RegisterDatabaseServices();
+        services.RegisterSqlite();
 
         using var provider = services.BuildServiceProvider();
 

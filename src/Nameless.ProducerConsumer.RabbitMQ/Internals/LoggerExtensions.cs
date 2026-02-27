@@ -101,7 +101,7 @@ internal static class LoggerExtensions {
         }
     }
 
-    internal static void BrokerUnreachable(this ILogger<ConnectionManager> self, ServerSettings server,
+    internal static void BrokerUnreachable(this ILogger<ConnectionManager> self, ServerOptions server,
         Exception exception) {
         BrokerUnreachableDelegate(self, new {
             server.Hostname,

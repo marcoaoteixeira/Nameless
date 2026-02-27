@@ -20,21 +20,13 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
     /// <param name="options">The RabbitMQ options.</param>
     /// <param name="logger">The logger.</param>
     public ChannelConfigurator(IOptions<RabbitMQOptions> options, ILogger<ChannelConfigurator> logger) {
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
-    public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch,
-        CancellationToken cancellationToken) {
-        Guard.Against.Null(channel);
-        Guard.Against.NullOrWhiteSpace(queueName);
-
-        if (!TryGetQueueSettings(queueName, out var queueSettings)) {
-            _logger.QueueSettingsNotFound(queueName);
-
-            return;
-        }
+    public async Task ConfigureAsync(IChannel channel, string queueName, bool usePrefetch, CancellationToken cancellationToken) {
+        if (!TryGetQueueSettings(queueName, out var queueSettings)) { return; }
 
         if (TryGetExchangeSettings(queueSettings.ExchangeName, out var exchangeSettings)) {
             await channel.ExchangeDeclareAsync(
@@ -45,53 +37,60 @@ public sealed class ChannelConfigurator : IChannelConfigurator {
                              exchangeSettings.Arguments,
                              passive: true,
                              cancellationToken: cancellationToken)
-                         .ConfigureAwait(continueOnCapturedContext: false);
+                         .SkipContextSync();
         }
 
-        var queueDeclareResult = await channel.QueueDeclareAsync(queueSettings.Name,
+        var queueDeclareResult = await channel.QueueDeclareAsync(
+                                                  queueSettings.Name,
                                                   queueSettings.Durable,
                                                   queueSettings.Exclusive,
                                                   queueSettings.AutoDelete,
                                                   queueSettings.Arguments,
                                                   cancellationToken: cancellationToken)
-                                              .ConfigureAwait(continueOnCapturedContext: false);
+                                              .SkipContextSync();
 
         foreach (var binding in queueSettings.Bindings) {
-            await channel.QueueBindAsync(queueDeclareResult.QueueName,
+            await channel.QueueBindAsync(
+                             queueDeclareResult.QueueName,
                              queueSettings.ExchangeName,
                              binding.RoutingKey,
                              binding.Arguments,
                              cancellationToken: cancellationToken)
-                         .ConfigureAwait(continueOnCapturedContext: false);
+                         .SkipContextSync();
         }
 
         if (usePrefetch) {
             var prefetch = _options.Value.Prefetch;
-            await channel.BasicQosAsync(prefetch.Size,
+            await channel.BasicQosAsync(
+                             prefetch.Size,
                              prefetch.Count,
                              prefetch.Global,
                              cancellationToken)
-                         .ConfigureAwait(continueOnCapturedContext: false);
+                         .SkipContextSync();
         }
     }
 
     private bool TryGetExchangeSettings(string exchangeName,
-        [NotNullWhen(returnValue: true)] out ExchangeSettings? output) {
+        [NotNullWhen(returnValue: true)] out ExchangeOptions? output) {
         output = _options.Value.Exchanges.SingleOrDefault(Filter);
 
         return output is not null;
 
-        bool Filter(ExchangeSettings exchange) {
+        bool Filter(ExchangeOptions exchange) {
             return string.Equals(exchange.Name, exchangeName, StringComparison.Ordinal);
         }
     }
 
-    private bool TryGetQueueSettings(string queueName, [NotNullWhen(returnValue: true)] out QueueSettings? output) {
+    private bool TryGetQueueSettings(string queueName, [NotNullWhen(returnValue: true)] out QueueOptions? output) {
         output = _options.Value.Queues.SingleOrDefault(Filter);
 
-        return output is not null;
+        var result = output is not null;
 
-        bool Filter(QueueSettings item) {
+        _logger.OnCondition(result).QueueSettingsNotFound(queueName);
+
+        return result;
+
+        bool Filter(QueueOptions item) {
             return string.Equals(item.Name, queueName, StringComparison.Ordinal);
         }
     }

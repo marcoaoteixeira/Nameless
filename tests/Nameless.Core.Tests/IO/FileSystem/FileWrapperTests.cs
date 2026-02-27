@@ -2,6 +2,7 @@
 using Nameless.Helpers;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
+using Nameless.Testing.Tools.Resources;
 
 namespace Nameless.IO.FileSystem;
 
@@ -19,8 +20,8 @@ public class FileWrapperTests {
     public void WhenGettingName_ThenReturnsFileNameFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
@@ -34,23 +35,23 @@ public class FileWrapperTests {
     public void WhenGettingPath_ThenReturnsFullPathFromUnderlyingFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
         var actual = sut.Path;
 
         // assert
-        Assert.Equal(path, actual);
+        Assert.Equal(resource.Path, actual);
     }
 
     [Fact]
     public void WhenCheckingFileExistence_WhenUnderlyingFileExists_ThenReturnsTrue() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
@@ -79,8 +80,8 @@ public class FileWrapperTests {
     public void WhenGettingLastWriteTime_ThenReturnsFileLastWriteTime() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
@@ -94,8 +95,8 @@ public class FileWrapperTests {
     public void WhenOpeningTheFile_ThenReturnsStreamToTheFile() {
         // arrange
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
@@ -110,8 +111,8 @@ public class FileWrapperTests {
         // arrange
         const string Expected = "This Is A Test";
         const string FileName = "ThisIsATest.txt";
-        var path = ResourcesHelper.GetFilePath(FileName);
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource(FileName);
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act
@@ -125,9 +126,8 @@ public class FileWrapperTests {
     [Fact]
     public void WhenDeletingFile_ThenFileShouldBeDeleted() {
         // arrange
-        var path = ResourcesHelper.CreateCopy(relativeFilePath: "ThisIsATest.txt",
-            newFileName: "0d8c7a52-11fb-4306-928c-98214d778666");
-        var file = new FileInfo(path);
+        using var resource = ResourcesHelper.GetResource("ThisIsATest.txt");
+        var file = new FileInfo(resource.Path);
         var sut = new FileWrapper(file, CreateOptions());
 
         // act

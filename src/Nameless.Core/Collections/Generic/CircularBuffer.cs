@@ -41,8 +41,8 @@ public class CircularBuffer<TElement> : ICircularBuffer<TElement> {
     ///     <paramref name="capacity" />.
     /// </exception>
     public CircularBuffer(int capacity, TElement[] items) {
-        Guard.Against.LowerThan(capacity, compare: 1);
-        Guard.Against.GreaterThan(
+        Throws.When.LowerThan(capacity, compare: 1);
+        Throws.When.GreaterThan(
             items.Length,
             paramName: nameof(items),
             compare: capacity,

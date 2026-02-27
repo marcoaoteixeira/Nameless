@@ -136,8 +136,6 @@ public static class GenericTypeHelper
         foreach (var type in allTypes)
         {
             try {
-                var typeName = type.Name;
-
                 if (SatisfiesParameterConstraints(genericArg, type))
                 {
                     discoveredTypes.Add(type);
@@ -225,7 +223,7 @@ public static class GenericTypeHelper
         }
 
         // Check value type constraint
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable()))
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable))
         {
             return false;
         }
@@ -268,7 +266,7 @@ public static class GenericTypeHelper
                 return constraint.IsAssignableFrom(candidateType);
             // Handle open generic type constraints
             case { IsGenericType: true, ContainsGenericParameters: true }:
-                return constraint.IsAssignableFromGenericType(candidateType);
+                return constraint.IsAssignableFromGeneric(candidateType);
         }
 
         // Handle generic constraints
@@ -396,7 +394,7 @@ public static class GenericTypeHelper
             return false;
         }
 
-        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable()))
+        if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0 && (!candidateType.IsValueType || candidateType.IsNullable))
         {
             return false;
         }

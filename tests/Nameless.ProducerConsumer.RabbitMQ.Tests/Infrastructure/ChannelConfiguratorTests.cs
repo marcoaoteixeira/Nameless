@@ -15,7 +15,7 @@ public class ChannelConfiguratorTests {
         const string QueueName = "test-queue";
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
             opts.Queues = [
-                new QueueSettings {
+                new QueueOptions {
                     Name = QueueName,
                     Durable = true,
                     Exclusive = false,
@@ -47,13 +47,13 @@ public class ChannelConfiguratorTests {
         const string ExchangeName = "test-exchange";
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
             opts.Exchanges = [
-                new ExchangeSettings {
+                new ExchangeOptions {
                     Name = ExchangeName, Type = ExchangeType.Direct, Durable = true, AutoDelete = false
                 }
             ];
 
             opts.Queues = [
-                new QueueSettings {
+                new QueueOptions {
                     Name = QueueName,
                     ExchangeName = ExchangeName,
                     Durable = true,
@@ -86,12 +86,12 @@ public class ChannelConfiguratorTests {
         const string RoutingKey = "test-routing-key";
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
             opts.Queues = [
-                new QueueSettings {
+                new QueueOptions {
                     Name = QueueName,
                     Durable = true,
                     Exclusive = false,
                     AutoDelete = false,
-                    Bindings = [new BindingSettings { RoutingKey = RoutingKey }]
+                    Bindings = [new BindingOptions { RoutingKey = RoutingKey }]
                 }
             ];
         });
@@ -117,7 +117,7 @@ public class ChannelConfiguratorTests {
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Queues = [new QueueSettings { Name = QueueName }];
+            opts.Queues = [new QueueOptions { Name = QueueName }];
         });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
 
@@ -141,7 +141,7 @@ public class ChannelConfiguratorTests {
         const string QueueName = "test-queue";
         const bool UsePrefetch = true;
         var options = OptionsHelper.Create<RabbitMQOptions>(opts => {
-            opts.Queues = [new QueueSettings { Name = QueueName }];
+            opts.Queues = [new QueueOptions { Name = QueueName }];
         });
         var channelMocker = new ChannelMocker().WithQueueDeclareAsync();
         var loggerMocker = new LoggerMocker<ChannelConfigurator>().WithAnyLogLevel();
@@ -158,7 +158,7 @@ public class ChannelConfiguratorTests {
             channelMocker.VerifyQueueDeclareAsync(Times.Never());
             channelMocker.VerifyQueueBindAsync(Times.Never());
             channelMocker.VerifyBasicQosAsync(Times.Never());
-            loggerMocker.VerifyWarningCall();
+            loggerMocker.VerifyWarning();
         });
     }
 }

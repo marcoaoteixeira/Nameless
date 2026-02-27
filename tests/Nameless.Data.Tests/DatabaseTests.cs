@@ -58,7 +58,7 @@ public class DatabaseTests {
                 new Parameter(name: "Param", value: 1, DbType.Int32)));
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMocker.VerifyErrorCall();
+            loggerMocker.VerifyError();
         });
     }
 
@@ -100,7 +100,7 @@ public class DatabaseTests {
             );
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMocker.VerifyErrorCall();
+            loggerMocker.VerifyError();
         });
     }
 
@@ -151,7 +151,7 @@ public class DatabaseTests {
             );
             dbCommandMocker.Verify(mock => mock.CreateParameter());
             dataParameterCollectionMocker.Verify(mock => mock.Add(It.IsAny<object>()));
-            loggerMocker.VerifyErrorCall();
+            loggerMocker.VerifyError();
         });
     }
 

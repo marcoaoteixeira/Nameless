@@ -3,46 +3,46 @@
 /// <summary>
 ///     Represents a page of items.
 /// </summary>
-/// <typeparam name="TItem">Type of the item</typeparam>
-public interface IPage<out TItem> {
+/// <typeparam name="TItem">
+///     Type of the item
+/// </typeparam>
+public interface IPage<out TItem> : IEnumerable<TItem> {
     /// <summary>
     ///     Gets the item at the specified index.
     /// </summary>
-    /// <param name="index">The index.</param>
+    /// <param name="index">
+    ///     The index.
+    /// </param>
     /// <returns>
     ///     The item at the specified index.
     /// </returns>
     TItem this[int index] { get; }
 
     /// <summary>
-    ///     Gets the page number.
+    ///     Gets the zero-based index at which the sequence starts.
+    /// </summary>
+    int Start { get; }
+
+    /// <summary>
+    ///     Gets the maximum number of items that can be included in
+    ///     a single page.
+    /// </summary>
+    int Limit { get; }
+
+    /// <summary>
+    ///     Gets the current page (1-based) number.
     /// </summary>
     int Number { get; }
 
     /// <summary>
-    ///     Gets the page size.
-    /// </summary>
-    int Size { get; }
-
-    /// <summary>
-    ///     Gets the total number of items considering all pages.
-    /// </summary>
-    int TotalItems { get; }
-
-    /// <summary>
     ///     Gets the total number of pages.
     /// </summary>
-    int TotalPages { get; }
+    int PageCount { get; }
 
     /// <summary>
-    ///     Gets the page items.
+    ///     Gets the total number of items represented by all pages.
     /// </summary>
-    TItem[] Items { get; }
-
-    /// <summary>
-    ///     Gets the total number of items for this page.
-    /// </summary>
-    int Count { get; }
+    int TotalCount { get; }
 
     /// <summary>
     ///     Whether it has previous page or not.
@@ -53,9 +53,4 @@ public interface IPage<out TItem> {
     ///     Whether it has next page or not.
     /// </summary>
     bool HasNext { get; }
-
-    /// <summary>
-    ///     Gets an enumerator for this page.
-    /// </summary>
-    IEnumerator<TItem> GetEnumerator();
 }

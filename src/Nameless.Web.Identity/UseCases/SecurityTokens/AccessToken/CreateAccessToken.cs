@@ -40,25 +40,25 @@ public class CreateAccessTokenRequestHandler : IRequestHandler<CreateAccessToken
         TimeProvider timeProvider,
         IOptions<JsonWebTokenOptions> options,
         ILogger<CreateAccessTokenRequestHandler> logger) {
-        _signInManager = Guard.Against.Null(signInManager);
-        _timeProvider = Guard.Against.Null(timeProvider);
-        _options = Guard.Against.Null(options);
-        _logger = Guard.Against.Null(logger);
+        _signInManager = Throws.When.Null(signInManager);
+        _timeProvider = Throws.When.Null(timeProvider);
+        _options = Throws.When.Null(options);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
     public async Task<CreateAccessTokenResponse> HandleAsync(CreateAccessTokenRequest request,
         CancellationToken cancellationToken) {
-        Guard.Against.Null(request);
+        Throws.When.Null(request);
 
         try {
             var user = await _signInManager.UserManager
                                            .FindByIdAsync(request.UserID.ToString())
-                                           .ConfigureAwait(continueOnCapturedContext: false)
+                                           .SkipContextSync()
                        ?? throw new UserNotFoundException();
 
             var principal = await _signInManager.CreateUserPrincipalAsync(user)
-                                                .ConfigureAwait(continueOnCapturedContext: false);
+                                                .SkipContextSync();
             var descriptor = CreateSecurityTokenDescriptor(principal.Claims);
             var tokenHandler = new JsonWebTokenHandler { MapInboundClaims = false };
 

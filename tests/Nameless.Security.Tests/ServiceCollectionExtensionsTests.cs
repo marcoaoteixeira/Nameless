@@ -9,7 +9,7 @@ public class ServiceCollectionExtensionsTests {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton(new LoggerMocker<RijndaelCrypto>().Build());
-        services.RegisterCrypto();
+        services.RegisterSecurity();
         using var provider = services.BuildServiceProvider();
 
         // act
@@ -23,7 +23,7 @@ public class ServiceCollectionExtensionsTests {
     public void WhenRegisteringPasswordGenerator_ThenResolvePasswordGenerator() {
         // arrange
         var services = new ServiceCollection();
-        services.RegisterPasswordGenerator();
+        services.RegisterSecurity();
         using var provider = services.BuildServiceProvider();
 
         // act

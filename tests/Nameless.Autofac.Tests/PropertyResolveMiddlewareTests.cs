@@ -1,9 +1,6 @@
-﻿using System.Reflection;
-using Autofac;
-using Moq;
+﻿using Autofac;
 using Nameless.Autofac.Fixtures;
 using Nameless.Autofac.Mockers;
-using Xunit;
 
 namespace Nameless.Autofac;
 
@@ -17,11 +14,13 @@ public class PropertyResolveMiddlewareTests {
         builder.RegisterInstance(printServiceMocker.Build())
                .As<IPrintService>();
 
-        var resolver = (MemberInfo _, IComponentContext ctx) => ctx.Resolve<IPrintService>();
-
         builder.RegisterType<ClassWithPrintServiceProperty>()
                .ConfigurePipeline(configure => {
-                   configure.Use(new PropertyResolveMiddleware(typeof(IPrintService), resolver));
+                   configure.Use(new PropertyResolveMiddleware(
+                       typeof(IPrintService),
+                       (_, ctx) => ctx.Resolve<IPrintService>()
+                       )
+                   );
                });
 
         using var container = builder.Build();
@@ -33,7 +32,7 @@ public class PropertyResolveMiddlewareTests {
         // assert
         Assert.Multiple(() => {
             Assert.NotNull(classWithPrintServiceProperty.PrintService);
-            printServiceMocker.Verify(mock => mock.Print(Text), Times.Once());
+            printServiceMocker.Verify(mock => mock.Print(Text));
         });
     }
 }

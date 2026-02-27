@@ -25,9 +25,9 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterDatabaseServices(Action<SqliteOptions>? configure = null) {
+        public IServiceCollection RegisterSqlite(Action<SqliteOptions>? configure = null) {
             return self.Configure(configure ?? (_ => { }))
-                       .InnerRegisterDataServices();
+                       .InnerRegisterSqlite();
         }
 
         /// <summary>
@@ -40,22 +40,22 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterDatabaseServices(IConfiguration configuration) {
-            var section = configuration.GetSection(nameof(SqliteOptions));
+        public IServiceCollection RegisterSqlite(IConfiguration configuration) {
+            var section = configuration.GetSection<SqliteOptions>();
 
             return self.Configure<SqliteOptions>(section)
-                       .InnerRegisterDataServices();
+                       .InnerRegisterSqlite();
         }
 
-        private IServiceCollection InnerRegisterDataServices() {
+        private IServiceCollection InnerRegisterSqlite() {
             self.TryAddKeyedSingleton<IDbConnectionFactory, DbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
-            self.TryAddTransient(ResolveDatabase);
+            self.TryAddTransient<IDatabase>(ResolveDatabase);
 
             return self;
         }
     }
 
-    private static IDatabase ResolveDatabase(IServiceProvider provider) {
+    private static Database ResolveDatabase(IServiceProvider provider) {
         var dbConnectionFactory = provider.GetRequiredKeyedService<IDbConnectionFactory>(DB_CONNECTION_FACTORY_KEY);
         var logger = provider.GetLogger<Database>();
 
