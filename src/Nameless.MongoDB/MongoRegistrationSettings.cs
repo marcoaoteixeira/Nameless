@@ -6,7 +6,7 @@ public class MongoRegistrationSettings : AssemblyScanAware<MongoRegistrationSett
     private readonly HashSet<Type> _documentMappings = [];
 
     public IReadOnlyCollection<Type> DocumentMappings => UseAssemblyScan
-        ? GetImplementationsFor<IDocumentMapping>(includeGenericDefinition: false)
+        ? DiscoverImplementationsFor<IDocumentMapping>()
         : _documentMappings;
 
     public MongoRegistrationSettings RegisterDocumentMapping<TDocumentMapping>()

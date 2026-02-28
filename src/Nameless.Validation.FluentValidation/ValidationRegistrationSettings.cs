@@ -10,7 +10,7 @@ public class ValidationRegistrationSettings : AssemblyScanAware<ValidationRegist
     private readonly HashSet<Type> _validators = [];
 
     public IReadOnlyCollection<Type> Validators => UseAssemblyScan
-        ? GetImplementationsFor<IValidator>(includeGenericDefinition: false)
+        ? DiscoverImplementationsFor<IValidator>(includeGenericDefinition: false)
         : _validators;
 
     public ValidationRegistrationSettings RegisterValidator<TValidator>()

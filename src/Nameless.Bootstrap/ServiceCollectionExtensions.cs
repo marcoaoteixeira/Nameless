@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Bootstrap.Infrastructure;
 using Nameless.Bootstrap.Resilience;
 using Nameless.Helpers;
-using Nameless.Registration;
 
 namespace Nameless.Bootstrap;
 
@@ -71,11 +70,8 @@ public static class ServiceCollectionExtensions {
 
     private static IEnumerable<ServiceDescriptor> CreateStepDescriptors(BootstrapRegistrationSettings settings) {
         var service = typeof(IStep);
-        var implementations = settings.UseAssemblyScan
-            ? settings.GetImplementationsFor(service)
-            : settings.Steps;
 
-        return implementations.Select(implementation => ServiceDescriptor.Transient(
+        return settings.Steps.Select(implementation => ServiceDescriptor.Transient(
             service,
             implementation
         ));

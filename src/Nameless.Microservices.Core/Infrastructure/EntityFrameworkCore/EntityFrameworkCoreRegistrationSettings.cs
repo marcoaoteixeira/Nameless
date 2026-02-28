@@ -7,12 +7,12 @@ public class EntityFrameworkCoreRegistrationSettings : AssemblyScanAware<EntityF
     private readonly HashSet<Type> _interceptors = [];
 
     public IReadOnlyCollection<Type> Interceptors => UseAssemblyScan
-        ? GetImplementationsFor<IInterceptor>(includeGenericDefinition: false)
+        ? DiscoverImplementationsFor<IInterceptor>(includeGenericDefinition: false)
         : _interceptors;
 
     public Type? DatabaseSeeder {
         get => UseAssemblyScan
-            ? GetImplementationsFor<IDatabaseSeeder>(includeGenericDefinition: false)
+            ? DiscoverImplementationsFor<IDatabaseSeeder>(includeGenericDefinition: false)
                 .FirstOrDefault(type => type != typeof(NullDatabaseSeeder))
             : field;
         set;

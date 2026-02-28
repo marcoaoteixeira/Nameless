@@ -9,11 +9,11 @@ public class LuceneRegistrationSettings : AssemblyScanAware<LuceneRegistrationSe
     private readonly HashSet<Type> _mappings = [];
 
     public IReadOnlyCollection<Type> AnalyzerSelectors => UseAssemblyScan
-        ? GetImplementationsFor<IAnalyzerSelector>(includeGenericDefinition: false)
+        ? DiscoverImplementationsFor<IAnalyzerSelector>()
         : _analyzerSelectors;
 
     public IReadOnlyCollection<Type> Mappings => UseAssemblyScan
-        ? GetImplementationsFor(typeof(EntityMapping<>), includeGenericDefinition: false)
+        ? DiscoverImplementationsFor(typeof(EntityMapping<>))
         : _mappings;
 
     public LuceneRegistrationSettings RegisterAnalyzerSelector<TAnalyzerSelector>()
