@@ -22,11 +22,35 @@ public abstract class AssemblyScanAware<TSelf> : IAssemblyScanAware<TSelf>
         return (TSelf)this;
     }
 
-    public IReadOnlyCollection<Type> GetImplementationsFor<TType>(bool includeGenericDefinition) {
-        return GetImplementationsFor(typeof(TType), includeGenericDefinition);
+    public Type DiscoverImplementationFor<TType>(bool includeGenericDefinition = false) {
+        var result = DiscoverImplementationsFor<TType>(includeGenericDefinition)
+            .SingleOrDefault();
+
+        return result ?? throw new TypeImplementationUnavailableException(typeof(TType));
     }
 
-    public IReadOnlyCollection<Type> GetImplementationsFor(Type type, bool includeGenericDefinition) {
+    public Type DiscoverImplementationFor(Type type, bool includeGenericDefinition = false) {
+        var result = DiscoverImplementationsFor(type, includeGenericDefinition: false)
+            .SingleOrDefault();
+
+        return result ?? throw new TypeImplementationUnavailableException(type);
+    }
+
+    public Type DiscoverImplementationFor<TType>(Type fallback, bool includeGenericDefinition = false) {
+        return DiscoverImplementationsFor<TType>(includeGenericDefinition)
+            .SingleOrDefault(fallback);
+    }
+
+    public Type DiscoverImplementationFor(Type type, Type fallback, bool includeGenericDefinition = false) {
+        return DiscoverImplementationsFor(type, includeGenericDefinition)
+            .SingleOrDefault(fallback);
+    }
+
+    public IReadOnlyCollection<Type> DiscoverImplementationsFor<TType>(bool includeGenericDefinition = false) {
+        return DiscoverImplementationsFor(typeof(TType), includeGenericDefinition);
+    }
+
+    public IReadOnlyCollection<Type> DiscoverImplementationsFor(Type type, bool includeGenericDefinition = false) {
         var assemblies = Assemblies.Count > 0 ? Assemblies : GetDefaultAssemblies();
         var result = assemblies.GetImplementations(type)
                                .Where(item => includeGenericDefinition

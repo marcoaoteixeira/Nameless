@@ -18,11 +18,11 @@ public class MediatorRegistrationSettings : AssemblyScanAware<MediatorRegistrati
     private readonly List<Type> _streamPipelineBehaviors = [];
 
     public IReadOnlyCollection<Type> EventHandlers => UseAssemblyScan
-        ? GetImplementationsFor(typeof(IEventHandler<>), includeGenericDefinition: true)
+        ? DiscoverImplementationsFor(typeof(IEventHandler<>), includeGenericDefinition: true)
         : _eventHandlers;
 
     public IReadOnlyCollection<Type> RequestHandlers => UseAssemblyScan
-        ? GetImplementationsFor(typeof(IRequestHandler<,>), includeGenericDefinition: true)
+        ? DiscoverImplementationsFor(typeof(IRequestHandler<,>), includeGenericDefinition: true)
         : _requestHandlers;
 
     /// <summary>
@@ -31,7 +31,7 @@ public class MediatorRegistrationSettings : AssemblyScanAware<MediatorRegistrati
     public IReadOnlyCollection<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
 
     public IReadOnlyCollection<Type> StreamHandlers => UseAssemblyScan
-        ? GetImplementationsFor(typeof(IStreamHandler<,>), includeGenericDefinition: true)
+        ? DiscoverImplementationsFor(typeof(IStreamHandler<,>), includeGenericDefinition: true)
         : _streamHandlers;
 
     /// <summary>
