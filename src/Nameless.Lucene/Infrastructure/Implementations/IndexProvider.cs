@@ -76,10 +76,10 @@ public class IndexProvider : IIndexProvider {
         if (_disposed) { return; }
 
         if (disposing) {
-            var repositories = _cache.Values.ToArray();
+            var indexes = _cache.Values.ToArray();
 
-            foreach (var repository in repositories) {
-                repository.Dispose();
+            foreach (var index in indexes) {
+                index.Dispose();
             }
         }
 
