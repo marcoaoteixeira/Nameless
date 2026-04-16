@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>ApplicationClient</AssemblyName>
+		<ApplicationIcon>application.ico</ApplicationIcon>
+		<OutputType>WinExe</OutputType>
+		<StartupObject>Nameless.WPF.Client.App</StartupObject>
+		<ApplicationManifest>App.manifest</ApplicationManifest>
+
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Nameless.Bootstrap" />
+		<PackageReference Include="Nameless.Lucene" />
+		<PackageReference Include="Nameless.Lucene.Repository" />
+		<PackageReference Include="Nameless.Mediator" />
+		<PackageReference Include="Nameless.Validation.FluentValidation" />
+		<PackageReference Include="NLog.Extensions.Logging" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Nameless.WPF\Nameless.WPF.csproj" />
+		<ProjectReference Include="..\Nameless.WPF.Client.Lucene\Nameless.WPF.Client.Lucene.csproj" />
+		<ProjectReference Include="..\Nameless.WPF.Client.Sqlite\Nameless.WPF.Client.Sqlite.csproj" />
+	</ItemGroup>
+
+	<!-- Resources -->
+	<ItemGroup>
+		<Resource Include="Resources\AlteHaasGroteskBold.ttf" />
+		<Resource Include="Resources\application_64x64.png" />
+		<Resource Include="Resources\loading_64x64.png" />
+		<Resource Include="Resources\splash_screen_256x256.png" />
+		<Resource Include="Resources\ValidationResourceDictionary.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Resource>
+	</ItemGroup>
+
+	<!-- Splash Screen -->
+
+	<!-- Output Folder Files -->
+	<ItemGroup>
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="application.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,95 @@
+﻿<Window x:Class="Nameless.WPF.TaskRunner.UI.TaskRunnerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="clr-namespace:Nameless.WPF.Resources"
+        xmlns:controls="clr-namespace:Nameless.WPF.Controls"
+
+        x:Name="TaskRunnerWindowRoot"
+        
+        d:DesignHeight="250"
+        d:DesignWidth="600"
+
+        mc:Ignorable="d"
+
+        Height="250"
+        Width="600"
+        ResizeMode="CanResize"
+
+        Loaded="StartupHandler"
+        Closing="ClosingHandler"
+
+        Background="{DynamicResource ApplicationBackgroundBrush}"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Progress -->
+        <ui:ProgressRing Foreground="CornflowerBlue"
+                         Grid.Column="0"
+                         Grid.Row="0"
+                         Grid.RowSpan="3"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         IsIndeterminate="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Running, Mode=OneWay}"
+                         Margin="0"
+                         Name="MainProgressRing" />
+
+        <!-- Title -->
+        <ui:TextBlock FontTypography="BodyStrong"
+                      FontSize="20"
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      HorizontalAlignment="Left"
+                      Margin="10 0 0 10"
+                      Name="TitleTextBlock"
+                      Text="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Title, Mode=OneWay }"
+                      VerticalAlignment="Center" />
+
+        <!-- Progress Notification -->
+        <controls:LoggerRichTextBox Margin="10 0 0 10"
+                                      Grid.Column="1"
+                                      Grid.Row="1"
+                                      Entries="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Entries, Mode=OneWay}"/>
+
+        <WrapPanel HorizontalAlignment="Right"
+                   Margin="0"
+                   Grid.Column="1"
+                   Grid.Row="2"
+                   VerticalAlignment="Bottom">
+            <!-- Cancel Button -->
+            <ui:Button Appearance="Danger"
+                       Command="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.CancelCommand}"
+                       Content="{x:Static loc:Strings.TaskRunnerWindow_CancelButton_Caption}"
+                       Cursor="Hand"
+                       Foreground="White"
+                       Icon="{ui:SymbolIcon HandLeft24}"
+                       IsEnabled="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Running, Mode=OneWay}"
+                       MinWidth="100"
+                       Name="CancelButton" />
+
+            <!-- Close Button -->
+            <ui:Button Appearance="Success"
+                       Click="CloseButtonHandler"
+                       Content="{x:Static loc:Strings.TaskRunnerWindow_CloseButton_Caption}"
+                       Cursor="Hand"
+                       Icon="{ui:SymbolIcon ArrowExit20}"
+                       IsEnabled="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Idle, Mode=OneWay}"
+                       Margin="10 0 0 0"
+                       MinWidth="100"
+                       Name="CloseButton"/>
+        </WrapPanel>
+    </Grid>
+</Window>

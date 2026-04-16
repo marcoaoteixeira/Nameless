@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CheckForUpdateNotification_Success_CurrentVersionUpToDate" xml:space="preserve">
+    <value>A versão instalada é a mais recente.</value>
+  </data>
+  <data name="CheckForUpdateNotification_Success_NewVersionAvailable" xml:space="preserve">
+    <value>Nova versão do aplicativo está disponível: {0}</value>
+  </data>
+  <data name="CheckForUpdateNotification_Title" xml:space="preserve">
+    <value>Verificar Atualização do Sistema</value>
+  </data>
+  <data name="CheckForUpdateRequestHandler_Starting" xml:space="preserve">
+    <value>Iniciando verificação por nova atualização do sistema...</value>
+  </data>
+  <data name="ComboBoxItemHelper_EmptyComboBoxItem_Content" xml:space="preserve">
+    <value>Selecione</value>
+  </data>
+  <data name="ControlAppearance_Caution" xml:space="preserve">
+    <value>Atenção</value>
+  </data>
+  <data name="ControlAppearance_Danger" xml:space="preserve">
+    <value>Erro</value>
+  </data>
+  <data name="ControlAppearance_Info" xml:space="preserve">
+    <value>Informação</value>
+  </data>
+  <data name="ControlAppearance_Success" xml:space="preserve">
+    <value>Sucesso</value>
+  </data>
+  <data name="DiscoverableNavigationViewItemProvider_CreateTuple_Missing_Attribute_Exception" xml:space="preserve">
+    <value>Missing '{0}' attribute.</value>
+  </data>
+  <data name="DownloadUpdateNotification_Starting" xml:space="preserve">
+    <value>Iniciando download da nova atualização do sistema...</value>
+  </data>
+  <data name="DownloadUpdateNotification_Success" xml:space="preserve">
+    <value>O download da atualização foi concluído. O arquivo está localizando em: {0}</value>
+  </data>
+  <data name="DownloadUpdateNotification_Title" xml:space="preserve">
+    <value>Download Atualização do Sistema</value>
+  </data>
+  <data name="DownloadUpdateNotification_WritingFile" xml:space="preserve">
+    <value>Gravando arquivo de atualização do sistema...</value>
+  </data>
+  <data name="EnsureApplicationDirectoriesExistenceStep_DisplayName" xml:space="preserve">
+    <value>Diretórios da Aplicação</value>
+  </data>
+  <data name="EnsureApplicationDirectoriesExistenceStep_Progress_CreateBackupDirectory" xml:space="preserve">
+    <value>Criando diretório dos arquivos de backup...</value>
+  </data>
+  <data name="EnsureApplicationDirectoriesExistenceStep_Progress_CreateDatabaseDirectory" xml:space="preserve">
+    <value>Criando diretórios das bases de dados...</value>
+  </data>
+  <data name="EnsureApplicationDirectoriesExistenceStep_Progress_CreateTemporaryDirectory" xml:space="preserve">
+    <value>Criando diretório dos arquivos temporários...</value>
+  </data>
+  <data name="EnsureApplicationDirectoriesExistenceStep_Progress_CreateUpdateDirectory" xml:space="preserve">
+    <value>Criando diretório dos arquivos de atualização...</value>
+  </data>
+  <data name="ExceptionWarden_MessageBox_Title" xml:space="preserve">
+    <value>Falha Catastrófica</value>
+  </data>
+  <data name="FetchNewVersionInformationNotification_Failure" xml:space="preserve">
+    <value>Ocorreu um erro ao tentar localizar os novos recursos da versão {0}. Erro: {1}</value>
+  </data>
+  <data name="FetchNewVersionInformationNotification_NotFound" xml:space="preserve">
+    <value>Não foi possível localizar os novos recursos.</value>
+  </data>
+  <data name="FetchNewVersionInformationNotification_Starting" xml:space="preserve">
+    <value>Iniciando localização de novos recursos...</value>
+  </data>
+  <data name="FetchNewVersionInformationNotification_Success" xml:space="preserve">
+    <value>Recursos localizados com sucesso!</value>
+  </data>
+  <data name="FetchNewVersionInformationNotification_Title" xml:space="preserve">
+    <value>Localizar Recursos da Nova Versão</value>
+  </data>
+  <data name="FileSystemDialog_OpenDirectory_Fallback_Title" xml:space="preserve">
+    <value>Selecionar diretório...</value>
+  </data>
+  <data name="FileSystemDialog_OpenDirectory_Fallback_Title_Plural" xml:space="preserve">
+    <value>Selecionar diretórios...</value>
+  </data>
+  <data name="FileSystemDialog_OpenFile_Fallback_Title" xml:space="preserve">
+    <value>Selecionar arquivo...</value>
+  </data>
+  <data name="FileSystemDialog_OpenFile_Fallback_Title_Plural" xml:space="preserve">
+    <value>Selecionar arquivos...</value>
+  </data>
+  <data name="FileSystemDialog_OpenSave_Fallback_Title" xml:space="preserve">
+    <value>Salvar arquivo...</value>
+  </data>
+  <data name="GetLastestReleaseResponse_DeserializationFailure_Message" xml:space="preserve">
+    <value>Não foi possível deserializar as informações do último release. Código de status: {0}</value>
+  </data>
+  <data name="GetLastestReleaseResponse_Failure_Message" xml:space="preserve">
+    <value>Ocorreu um erro ao tentar recuperar as informações do último release. Código de status: {0} | Erro: {1}</value>
+  </data>
+  <data name="GetReleaseAssetsResponse_DeserializationFailure_Message" xml:space="preserve">
+    <value>Não foi possível deserializar as informações de recursos da release. Código de status: {0}</value>
+  </data>
+  <data name="GetReleaseAssetsResponse_Failure_Message" xml:space="preserve">
+    <value>Ocorreu um erro ao tentar recuperar as informações de recursos da release. Código de status: {0} | Erro: {1}</value>
+  </data>
+  <data name="MessageDialogIcon_Attention" xml:space="preserve">
+    <value>Atenção</value>
+  </data>
+  <data name="MessageDialogIcon_Error" xml:space="preserve">
+    <value>Erro</value>
+  </data>
+  <data name="MessageDialogIcon_Information" xml:space="preserve">
+    <value>Informação</value>
+  </data>
+  <data name="MessageDialogIcon_Question" xml:space="preserve">
+    <value>Questão</value>
+  </data>
+  <data name="MessageDialogIcon_Warning" xml:space="preserve">
+    <value>Cuidado</value>
+  </data>
+  <data name="NavigationViewPageProvider_GetPage_Must_FrameworkElement_Exception" xml:space="preserve">
+    <value>The page element must be a FrameworkElement type.</value>
+  </data>
+  <data name="PerformApplicationBackup_Event_Message_CleanUp" xml:space="preserve">
+    <value>Executando limpeza pós backup...</value>
+  </data>
+  <data name="PerformApplicationBackup_Event_Message_Failure" xml:space="preserve">
+    <value>Ocorreu um erro ao executar o backup da aplicação. Para mais informações, acesse o log da aplicação.</value>
+  </data>
+  <data name="PerformApplicationBackup_Event_Message_Starting" xml:space="preserve">
+    <value>Iniciando backup da aplicação...</value>
+  </data>
+  <data name="PerformApplicationBackup_Event_Message_Success" xml:space="preserve">
+    <value>Backup da aplicação finalizado com sucesso. O arquivo de backup pode ser encontrado em {0}</value>
+  </data>
+  <data name="PerformApplicationBackup_Event_Message_Title" xml:space="preserve">
+    <value>Backup da Aplicação</value>
+  </data>
+  <data name="PerformApplicationRestore_Notify_Routine_Error" xml:space="preserve">
+    <value>Alguns erros ocorreram durante a execução da rotina de restauração:</value>
+  </data>
+  <data name="TaskRunnerBuilder_CreateTaskRunnerWindow_Unregistered_Window_Exception" xml:space="preserve">
+    <value>Couldn't create '{0}' instance.</value>
+  </data>
+  <data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Executando Tarefa...</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Escuro</value>
+  </data>
+  <data name="Theme_HighContrast" xml:space="preserve">
+    <value>Alto Contraste</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+</root>

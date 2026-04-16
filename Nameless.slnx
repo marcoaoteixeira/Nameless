@@ -1,0 +1,47 @@
+<Solution>
+  <Folder Name="/.solution/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".runsettings" />
+    <File Path="AGENTS.md" />
+    <File Path="CLAUDE.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/" />
+  <Folder Name="/.solution/.claude/agents/">
+    <File Path=".claude/agents/csharp.agent.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/skills/" />
+  <Folder Name="/.solution/.claude/skills/xunit/">
+    <File Path=".claude/skills/xunit/SKILL.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/skills/code-reviewer/">
+    <File Path=".claude/skills/code-reviewer/SKILL.md" />
+  </Folder>
+  <Folder Name="/.solution/build/">
+    <File Path="build/build.cake" />
+    <File Path="build/tools.sh" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Nameless.Core/Nameless.Core.csproj" />
+	<Project Path="src/Nameless.Impl/Nameless.Impl.csproj" Id="5e984eec-bc99-4956-88e3-2d63d427a918" />
+    <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
+	<Project Path="src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" Id="0b5f9b94-2064-468d-a34a-2acca7ac7628" />
+    <Project Path="src/Nameless.WPF/Nameless.WPF.csproj" Id="41200dd5-7c63-4ee7-a2ec-6122a10abb56" />
+  </Folder>
+  <Folder Name="/templates/" />
+  <Folder Name="/templates/Microservice/">
+    <Project Path="templates/Microservice/Nameless.Microservice.Api/Nameless.Microservice.Api.csproj" Id="1a7c0363-3c1b-4127-bb6e-3bbae8e8dc87" />
+    <Project Path="templates/Microservice/Nameless.Microservice.AppHost/Nameless.Microservice.AppHost.csproj" Id="ccf973a2-ec97-407f-9652-83211df6f2bf" />
+  </Folder>
+  <Folder Name="/templates/WinApp/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
+    <Project Path="tests/Nameless.Impl.Tests/Nameless.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
+  </Folder>
+</Solution>
