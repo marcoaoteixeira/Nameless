@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Infrastructure;
+using Nameless.IO.FileSystem.Impl;
 
 namespace Nameless.IO.FileSystem;
 
@@ -71,7 +72,7 @@ public static class ServiceCollectionExtensions {
         var applicationContext = provider.GetService<IApplicationContext>();
 
         var rootDirectoryPath = applicationContext is not null
-            ? applicationContext.DataDirectoryPath
+            ? applicationContext.FileSystem.Root
             : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
 
         options.Value.Root = Directory.CreateDirectory(rootDirectoryPath).FullName;

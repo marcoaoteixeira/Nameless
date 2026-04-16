@@ -8,9 +8,14 @@ namespace Nameless.Bootstrap;
 /// </summary>
 public interface IStep {
     /// <summary>
-    ///     Gets the name of the step.
+    ///     Gets the step identifier.
     /// </summary>
-    string Name { get; }
+    string ID { get; }
+
+    /// <summary>
+    ///     Gets the display name of the step.
+    /// </summary>
+    string DisplayName { get; }
 
     /// <summary>
     ///     Whether it should execute the step or not.

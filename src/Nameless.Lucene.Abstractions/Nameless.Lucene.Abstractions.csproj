@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Lucene Abstractions Library</Title>
+		<Description>
+			Lucene.NET Abstractions is a lightweight library that simplifies
+			working with Lucene.NET by providing clean, intuitive abstractions
+			for common indexing and search operations.
+
+			It offers an easy way to create and expose indexes, insert and
+			update documents, remove entries, and perform searches without
+			dealing directly with the lower-level Lucene APIs. The goal is to
+			reduce boilerplate code while keeping flexibility and performance.
+		</Description>
+		<RootNamespace>Nameless.Lucene</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Lucene.Net.Analysis.Common" />
+		<PackageReference Include="Lucene.Net.QueryParser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
+
+</Project>

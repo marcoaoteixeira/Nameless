@@ -2,9 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
-using Nameless.Lucene.Infrastructure;
-using Nameless.Lucene.Infrastructure.Implementations;
-using Nameless.Lucene.Mapping;
 
 namespace Nameless.Lucene;
 
@@ -60,38 +57,23 @@ public static class ServiceCollectionExtensions {
             // All analyzer selectors should be resolved by the same interface
             // IAnalyzerSelector, hence using TryAddEnumerable
             self.TryAddEnumerable(
-                descriptors: CreateAnalyzerSelectorDescriptors(settings)
+                descriptors: CreateAnalyzerSelectorServiceDescriptors(settings)
             );
-            // All entity mappings should be resolved by the same interface
-            // IEntityMapping, hence using TryAddEnumerable
-            self.TryAddEnumerable(
-                descriptors: CreateEntityMappingDescriptors(settings)
-            );
-
             self.TryAddSingleton<IAnalyzerProvider, AnalyzerProvider>();
             self.TryAddSingleton<IIndexProvider, IndexProvider>();
-            self.TryAddSingleton<EntityDocumentBuilder>();
-            self.TryAddSingleton<IRepository, Repository>();
 
             return self;
         }
     }
 
-    private static IEnumerable<ServiceDescriptor> CreateAnalyzerSelectorDescriptors(LuceneRegistrationSettings settings) {
-        return settings.AnalyzerSelectors.Select(implementation
-            => ServiceDescriptor.Singleton(
-                typeof(IAnalyzerSelector),
-                implementation
-            )
-        );
-    }
+    private static IEnumerable<ServiceDescriptor> CreateAnalyzerSelectorServiceDescriptors(LuceneRegistrationSettings settings) {
+        var service = typeof(IAnalyzerSelector);
+        var implementations = settings.UseAssemblyScan
+            ? settings.ExecuteAssemblyScan<IAnalyzerSelector>()
+            : settings.AnalyzerSelectors;
 
-    private static IEnumerable<ServiceDescriptor> CreateEntityMappingDescriptors(LuceneRegistrationSettings settings) {
-        return settings.Mappings.Select(implementation
-            => ServiceDescriptor.Singleton(
-                typeof(IEntityMapping),
-                implementation
-            )
+        return implementations.Select(
+            implementation => ServiceDescriptor.Singleton(service, implementation)
         );
     }
 }

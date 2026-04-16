@@ -4,8 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Infrastructure;
 using Nameless.IO.FileSystem;
-using Nameless.Lucene.Infrastructure.Implementations;
-using Index = Nameless.Lucene.Infrastructure.Implementations.Index;
+using Index = Nameless.Lucene.Index;
 
 namespace Nameless.Lucene;
 internal static class ServicesHelper {

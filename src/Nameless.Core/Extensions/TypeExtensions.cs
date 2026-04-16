@@ -113,7 +113,7 @@ public static class TypeExtensions {
         /// <param name="inherit">Whether the attribute is inherited.</param>
         /// <returns><see langword="true"/> if the type has the attribute; otherwise <see langword="false"/>.</returns>
         public bool HasAttribute(Type attributeType, bool inherit = false) {
-            return self.GetCustomAttribute(attributeType, inherit) is not null;
+            return self.GetCustomAttributes(attributeType, inherit).Length > 0;
         }
 
         /// <summary>

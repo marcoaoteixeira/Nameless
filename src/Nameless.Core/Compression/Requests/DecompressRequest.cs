@@ -7,7 +7,7 @@ public class DecompressRequest {
     /// <summary>
     ///     Gets or sets the source file path.
     /// </summary>
-    public required string SourceFilePath { get; set; }
+    public string SourceFilePath { get; set; }
 
     /// <summary>
     ///     Gets or sets the destination path.

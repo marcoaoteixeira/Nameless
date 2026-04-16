@@ -5,9 +5,7 @@ namespace Nameless.Bootstrap.Infrastructure;
 public class BootstrapRegistrationSettings : AssemblyScanAware<BootstrapRegistrationSettings> {
     private readonly HashSet<Type> _steps = [];
 
-    public IReadOnlyCollection<Type> Steps => UseAssemblyScan
-        ? DiscoverImplementationsFor<IStep>()
-        : _steps;
+    public IReadOnlyCollection<Type> Steps => _steps;
 
     public BootstrapRegistrationSettings RegisterStep<TStep>()
         where TStep : IStep {

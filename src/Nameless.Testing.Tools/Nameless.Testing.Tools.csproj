@@ -22,6 +22,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.Lucene.Abstractions\Nameless.Lucene.Abstractions.csproj" />
+		<ProjectReference Include="..\Nameless.Lucene.Repository\Nameless.Lucene.Repository.csproj" />
 	</ItemGroup>
 
 </Project>

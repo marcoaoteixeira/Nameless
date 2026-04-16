@@ -14,7 +14,7 @@ public class MinimalEndpointsRegistrationSettings : AssemblyScanAware<MinimalEnd
     private readonly HashSet<Type> _endpoints = [];
 
     public IReadOnlyCollection<Type> Endpoints => UseAssemblyScan
-        ? DiscoverImplementationsFor<IEndpoint>(includeGenericDefinition: false)
+        ? ExecuteAssemblyScan<IEndpoint>(includeGenericDefinition: false)
         : _endpoints;
 
     /// <summary>

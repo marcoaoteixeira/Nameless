@@ -1,8 +1,11 @@
-﻿namespace Nameless.ObjectModel;
+﻿using System.Diagnostics;
+
+namespace Nameless.ObjectModel;
 
 /// <summary>
 ///     Represents an error.
 /// </summary>
+[DebuggerDisplay("{Flatten,nq}")]
 public readonly record struct Error {
     /// <summary>
     ///     Gets the error message.
@@ -18,6 +21,13 @@ public readonly record struct Error {
     ///     Gets the error type.
     /// </summary>
     public ErrorType Type { get; }
+
+    /// <summary>
+    ///     Gets a readable version of the error.
+    /// </summary>
+    public string Flatten => string.IsNullOrWhiteSpace(Code)
+        ? $"[{Type}] {Message}"
+        : $"[{Type}] ({Code}) {Message}";
 
     /// <summary>
     ///     Do not use this type constructor.

@@ -4,12 +4,12 @@ using Nameless.Bootstrap.Notification;
 
 namespace Nameless.Bootstrap.Fixtures.Steps;
 
-[DebuggerDisplay("{Name,nq}")]
+[DebuggerDisplay("{DisplayName,nq}")]
 public class Step_Child_B : StepBase {
     public Step_Child_B(bool enabled = true) : base(enabled) { }
 
     public override Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        progress.ReportInformation(Name, "[Child B] Step: Executing...");
+        progress.ReportInformation(DisplayName, "[Child B] Step: Executing...");
 
         return Task.CompletedTask;
     }

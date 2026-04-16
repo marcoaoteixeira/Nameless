@@ -49,13 +49,15 @@ public static class WebApplicationBuilderExtensions {
 
             if (partitionKeyType is null) { return; }
 
-            var handler = typeof(RateLimiterOptions)
-                          .GetMethod(nameof(RateLimiterOptions.AddPolicy))?
-                          .MakeGenericMethod(partitionKeyType);
+            var handler = RateLimiterOptionsHandlerCache.Handler
+                                                        .MakeGenericMethod(partitionKeyType);
 
-            handler?.Invoke(
+            handler.Invoke(
                 obj: self,
-                parameters: [name, Activator.CreateInstance(policyType)]
+                parameters: [
+                    name,
+                    Activator.CreateInstance(policyType)
+                ]
             );
         }
     }

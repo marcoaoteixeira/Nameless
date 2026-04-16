@@ -9,7 +9,10 @@ namespace Nameless.Bootstrap;
 /// </summary>
 public abstract class StepBase : IStep {
     /// <inheritdoc />
-    public virtual string Name => GetType().Name;
+    public virtual string ID => GetType().Name;
+
+    /// <inheritdoc />
+    public virtual string DisplayName => GetType().Name;
 
     /// <inheritdoc />
     public virtual bool IsEnabled { get; }

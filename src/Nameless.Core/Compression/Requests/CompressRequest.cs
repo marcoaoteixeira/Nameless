@@ -24,7 +24,7 @@ public class CompressRequest {
     /// <summary>
     ///     Gets the collection of files to be added to the archive.
     /// </summary>
-    public IEnumerable<FileEntry> Files => _files;
+    public IReadOnlySet<FileEntry> Files => _files;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="CompressRequest"/>

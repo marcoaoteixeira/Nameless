@@ -20,6 +20,15 @@ public class FileSystemMocker : Mocker<IFileSystem> {
         return this;
     }
 
+    public FileSystemMocker WithGetDirectory<TException>(Func<TException> exceptionFactory)
+        where TException : Exception {
+        MockInstance
+            .Setup(mock => mock.GetDirectory(It.IsAny<string>()))
+            .Throws(exceptionFactory);
+
+        return this;
+    }
+
     public FileSystemMocker WithGetFile(IFile returnValue) {
         MockInstance
             .Setup(mock => mock.GetFile(It.IsAny<string>()))

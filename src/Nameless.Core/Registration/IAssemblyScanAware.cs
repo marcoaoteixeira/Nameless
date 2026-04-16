@@ -12,15 +12,7 @@ public interface IAssemblyScanAware<out TSelf>
 
     TSelf IncludeAssemblies(params IEnumerable<Assembly> assemblies);
 
-    Type DiscoverImplementationFor<TType>(bool includeGenericDefinition);
+    IReadOnlyCollection<Type> ExecuteAssemblyScan<TType>(bool includeGenericDefinition);
 
-    Type DiscoverImplementationFor(Type type, bool includeGenericDefinition);
-
-    Type DiscoverImplementationFor<TType>(Type fallback, bool includeGenericDefinition);
-
-    Type DiscoverImplementationFor(Type type, Type fallback, bool includeGenericDefinition);
-
-    IReadOnlyCollection<Type> DiscoverImplementationsFor<TType>(bool includeGenericDefinition);
-
-    IReadOnlyCollection<Type> DiscoverImplementationsFor(Type type, bool includeGenericDefinition);
+    IReadOnlyCollection<Type> ExecuteAssemblyScan(Type type, bool includeGenericDefinition);
 }

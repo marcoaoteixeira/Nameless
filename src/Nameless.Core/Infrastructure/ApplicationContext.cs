@@ -1,28 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Helpers;
-using Nameless.Internals;
+using Nameless.IO.FileSystem;
+using Nameless.IO.FileSystem.Impl;
 
 namespace Nameless.Infrastructure;
 
 public class ApplicationContext : IApplicationContext {
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
-    private readonly Lazy<string> _dataDirectoryPath;
+    private readonly Lazy<IFileSystem> _fileSystem;
     private readonly Lazy<string> _version;
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="ApplicationContext" />
-    /// </summary>
-    /// <param name="options">The application context options.</param>
-    /// <param name="logger">The logger.</param>
-    public ApplicationContext(IOptions<ApplicationContextOptions> options, ILogger<ApplicationContext> logger) {
-        _options = options;
-        _logger = logger;
-
-        _dataDirectoryPath = new Lazy<string>(GetDataDirectoryPath);
-        _version = new Lazy<string>(GetVersion);
-    }
 
     /// <inheritdoc />
     public string EnvironmentName => _options.Value.EnvironmentName;
@@ -34,27 +22,45 @@ public class ApplicationContext : IApplicationContext {
     public string BaseDirectoryPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <inheritdoc />
-    public string DataDirectoryPath => _dataDirectoryPath.Value;
+    public IFileSystem FileSystem => _fileSystem.Value;
 
     /// <inheritdoc />
     /// <remarks>The semantic version.</remarks>
     public string Version => _version.Value;
 
-    private string GetDataDirectoryPath() {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="ApplicationContext" />
+    /// </summary>
+    /// <param name="options">The application context options.</param>
+    /// <param name="logger">The logger.</param>
+    public ApplicationContext(IOptions<ApplicationContextOptions> options, ILogger<ApplicationContext> logger) {
+        _options = options;
+        _logger = logger;
+
+        _fileSystem = new Lazy<IFileSystem>(CreateFileSystemForDataDirectory);
+        _version = new Lazy<string>(GetVersion);
+    }
+
+    private FileSystemImpl CreateFileSystemForDataDirectory() {
         var options = _options.Value;
 
         var directoryPath = options.ApplicationDataLocation switch {
             ApplicationDataLocation.Machine => Environment.GetFolderPath(
-                Environment.SpecialFolder.CommonApplicationData),
-            ApplicationDataLocation.User => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                Environment.SpecialFolder.CommonApplicationData
+            ),
+            
+            ApplicationDataLocation.User => Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData
+            ),
+            
             _ => options.CustomApplicationDataDirectoryPath
         };
 
         if (string.IsNullOrWhiteSpace(directoryPath)) {
-            throw new InvalidOperationException(message: "Must provide application data directory path.");
+            throw new InvalidOperationException(
+                "Must provide application data directory path."
+            );
         }
-
-        directoryPath = PathHelper.Normalize(directoryPath);
 
         directoryPath = Path.IsPathRooted(directoryPath)
             ? Path.GetFullPath(directoryPath)
@@ -64,10 +70,16 @@ public class ApplicationContext : IApplicationContext {
             directoryPath = Path.Combine(directoryPath, ApplicationName);
         }
 
-        // Ensure directory existence
-        try { return Directory.CreateDirectory(directoryPath).FullName; }
+        directoryPath = PathHelper.Normalize(directoryPath);
+
+        try {
+            return new FileSystemImpl(Options.Create(new FileSystemOptions {
+                AllowOperationOutsideRoot = false,
+                Root = Directory.CreateDirectory(directoryPath).FullName // Ensure directory existence
+            }));
+        }
         catch (Exception ex) {
-            _logger.CreateDataDirectoryPathFailure(ex);
+            _logger.CreateFileSystemForDataDirectoryFailure(ex);
 
             throw;
         }

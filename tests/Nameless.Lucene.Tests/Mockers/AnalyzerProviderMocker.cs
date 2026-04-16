@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis;
 using Moq;
-using Nameless.Lucene.Infrastructure;
 using Nameless.Testing.Tools.Mockers;
 
 namespace Nameless.Lucene.Mockers;

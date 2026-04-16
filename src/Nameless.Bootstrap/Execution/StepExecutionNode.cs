@@ -7,7 +7,7 @@ public class StepExecutionNode {
     private readonly List<StepExecutionNode> _dependencies = [];
     private readonly List<StepExecutionNode> _dependents = [];
 
-    private string DebuggerDisplayValue => $"Step: {Step.Name}";
+    private string DebuggerDisplayValue => $"Step: {Step.DisplayName}";
 
     public IStep Step { get; }
 
@@ -19,7 +19,7 @@ public class StepExecutionNode {
 
     public StepExecutionNode(IStep step) {
         Step = step;
-        Result = new StepExecutionResult { StepName = step.Name };
+        Result = new StepExecutionResult { StepName = step.DisplayName };
     }
 
     public void AddDependency(StepExecutionNode node) {

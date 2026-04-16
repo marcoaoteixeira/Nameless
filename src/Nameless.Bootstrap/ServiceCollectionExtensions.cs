@@ -70,10 +70,12 @@ public static class ServiceCollectionExtensions {
 
     private static IEnumerable<ServiceDescriptor> CreateStepDescriptors(BootstrapRegistrationSettings settings) {
         var service = typeof(IStep);
+        var implementations = settings.UseAssemblyScan
+            ? settings.ExecuteAssemblyScan<IStep>()
+            : settings.Steps;
 
-        return settings.Steps.Select(implementation => ServiceDescriptor.Transient(
-            service,
-            implementation
-        ));
+        return implementations.Select(
+            implementation => ServiceDescriptor.Transient(service, implementation)
+        );
     }
 }

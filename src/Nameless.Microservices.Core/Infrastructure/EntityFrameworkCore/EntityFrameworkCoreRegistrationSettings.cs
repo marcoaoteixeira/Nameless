@@ -6,17 +6,9 @@ namespace Nameless.Microservices.Infrastructure.EntityFrameworkCore;
 public class EntityFrameworkCoreRegistrationSettings : AssemblyScanAware<EntityFrameworkCoreRegistrationSettings> {
     private readonly HashSet<Type> _interceptors = [];
 
-    public IReadOnlyCollection<Type> Interceptors => UseAssemblyScan
-        ? DiscoverImplementationsFor<IInterceptor>(includeGenericDefinition: false)
-        : _interceptors;
+    public IReadOnlyCollection<Type> Interceptors => _interceptors;
 
-    public Type? DatabaseSeeder {
-        get => UseAssemblyScan
-            ? DiscoverImplementationsFor<IDatabaseSeeder>(includeGenericDefinition: false)
-                .FirstOrDefault(type => type != typeof(NullDatabaseSeeder))
-            : field;
-        set;
-    }
+    public Type? DatabaseSeeder { get; private set; }
 
     public EntityFrameworkCoreRegistrationSettings RegisterInterceptor<TInterceptor>()
         where TInterceptor : IInterceptor {
@@ -24,7 +16,7 @@ public class EntityFrameworkCoreRegistrationSettings : AssemblyScanAware<EntityF
     }
 
     public EntityFrameworkCoreRegistrationSettings RegisterInterceptor(Type type) {
-        Throws.When.IsNotAssignableFromGeneric(type, typeof(IInterceptor));
+        Throws.When.IsNotAssignableFrom(type, typeof(IInterceptor));
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNonConcreteType(type);
 
@@ -39,7 +31,7 @@ public class EntityFrameworkCoreRegistrationSettings : AssemblyScanAware<EntityF
     }
 
     public EntityFrameworkCoreRegistrationSettings SetDatabaseSeeder(Type type) {
-        Throws.When.IsNotAssignableFromGeneric(type, typeof(IDatabaseSeeder));
+        Throws.When.IsNotAssignableFrom(type, typeof(IDatabaseSeeder));
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNonConcreteType(type);
 

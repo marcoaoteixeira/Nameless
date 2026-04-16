@@ -76,18 +76,20 @@ public static class EntityFrameworkCoreConfig {
 
     private static IEnumerable<ServiceDescriptor> CreateInterceptorDescriptors(EntityFrameworkCoreRegistrationSettings settings) {
         var service = typeof(IInterceptor);
+        var implementations = settings.UseAssemblyScan
+            ? settings.ExecuteAssemblyScan<IInterceptor>()
+            : settings.Interceptors;
 
-        return settings.Interceptors.Select(implementation
-            => ServiceDescriptor.Transient(
-                service,
-                implementation
-            )
+        return implementations.Select(
+            implementation => ServiceDescriptor.Transient(service, implementation)
         );
     }
 
     private static ServiceDescriptor CreateDatabaseSeederDescriptor(EntityFrameworkCoreRegistrationSettings settings) {
         var service = typeof(IDatabaseSeeder);
-        var implementation = settings.DatabaseSeeder;
+        var implementation = settings.UseAssemblyScan
+            ? settings.ExecuteAssemblyScan<IDatabaseSeeder>().SingleOrDefault()
+            : settings.DatabaseSeeder;
 
         return implementation is not null
             ? ServiceDescriptor.Transient(service, implementation)

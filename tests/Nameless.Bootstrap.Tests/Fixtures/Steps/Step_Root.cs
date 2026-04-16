@@ -4,7 +4,7 @@ using Nameless.Bootstrap.Notification;
 
 namespace Nameless.Bootstrap.Fixtures.Steps;
 
-[DebuggerDisplay("{Name,nq}")]
+[DebuggerDisplay("{DisplayName,nq}")]
 public class Step_Root : StepBase {
     public override IReadOnlyCollection<string> Dependencies => [
         nameof(Step_Child_A),
@@ -15,7 +15,7 @@ public class Step_Root : StepBase {
     public Step_Root(bool enabled = true) : base(enabled) { }
 
     public override Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        progress.ReportInformation(Name, "[Root] Step: Executing...");
+        progress.ReportInformation(DisplayName, "[Root] Step: Executing...");
 
         return Task.CompletedTask;
     }

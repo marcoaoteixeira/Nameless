@@ -42,7 +42,7 @@ public class ParallelBootstrapper : Bootstrapper {
     private async Task ExecuteSingleStepAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken) {
         var node = level.Single();
 
-        _logger.ExecutingOneStepInSequence(node.Step.Name);
+        _logger.ExecutingOneStepInSequence(node.Step.DisplayName);
 
         await ExecuteStepWithRetryAsync(
             context,
@@ -53,7 +53,7 @@ public class ParallelBootstrapper : Bootstrapper {
     }
 
     private async Task ExecuteMultipleStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken) {
-        _logger.ExecutingMultipleStepsInParallel([.. level.Select(node => node.Step.Name)]);
+        _logger.ExecutingMultipleStepsInParallel([.. level.Select(node => node.Step.DisplayName)]);
 
         var parallelOptions = new ParallelOptions {
             MaxDegreeOfParallelism = _options.Value.MaxDegreeOfParallelism,

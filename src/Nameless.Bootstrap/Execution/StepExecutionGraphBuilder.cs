@@ -18,16 +18,16 @@ public static class StepExecutionGraphBuilder {
             levels.Add(StepExecutionLevel.Create(nodes, currentLevel++));
 
             foreach (var node in nodes) {
-                processed.Add(node.Step.Name);
+                processed.Add(node.Step.ID);
             }
         }
 
         return StepExecutionGraph.Create(levels, hash.Count);
 
         bool Filter(StepExecutionNode node) {
-            return !processed.Contains(node.Step.Name)
+            return !processed.Contains(node.Step.ID)
                    && node.Dependencies.All(dependency
-                       => processed.Contains(dependency.Step.Name)
+                       => processed.Contains(dependency.Step.ID)
                    );
         }
     }
@@ -37,16 +37,16 @@ public static class StepExecutionGraphBuilder {
         var inner = steps.ToArray();
 
         foreach (var step in inner) {
-            nodes[step.Name] = new StepExecutionNode(step);
+            nodes[step.ID] = new StepExecutionNode(step);
         }
 
         // connect all dependencies
         foreach (var step in inner) {
-            var node = nodes[step.Name];
+            var node = nodes[step.ID];
 
             foreach (var dependency in step.Dependencies) {
                 if (!nodes.TryGetValue(dependency, out var dependencyNode)) {
-                    throw new MissingStepDependencyException(step.Name, dependency);
+                    throw new MissingStepDependencyException(step.ID, dependency);
                 }
 
                 node.AddDependency(dependencyNode);
@@ -65,21 +65,21 @@ public static class StepExecutionGraphBuilder {
 
         foreach (var node in nodes.Values) {
             if (HasReference(node, visited, recursionStack)) {
-                throw new StepCircularReferenceException(node.Step.Name);
+                throw new StepCircularReferenceException(node.Step.ID);
             }
         }
     }
 
     private static bool HasReference(StepExecutionNode node, HashSet<string> visited, HashSet<string> recursionStack) {
-        if (recursionStack.Contains(node.Step.Name)) {
+        if (recursionStack.Contains(node.Step.ID)) {
             return true;
         }
 
-        if (!visited.Add(node.Step.Name)) {
+        if (!visited.Add(node.Step.ID)) {
             return false;
         }
 
-        recursionStack.Add(node.Step.Name);
+        recursionStack.Add(node.Step.ID);
 
         foreach (var dependency in node.Dependencies) {
             if (HasReference(dependency, visited, recursionStack)) {
@@ -87,7 +87,7 @@ public static class StepExecutionGraphBuilder {
             }
         }
 
-        recursionStack.Remove(node.Step.Name);
+        recursionStack.Remove(node.Step.ID);
 
         return false;
     }

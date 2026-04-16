@@ -8,7 +8,7 @@ public class RateLimiterRegistrationSettings : AssemblyScanAware<RateLimiterRegi
     private readonly Dictionary<string, Type> _rateLimiterPolicies = [];
 
     public IReadOnlyDictionary<string, Type> RateLimiterPolicies => UseAssemblyScan
-        ? DiscoverImplementationsFor(typeof(IRateLimiterPolicy<>), includeGenericDefinition: false)
+        ? ExecuteAssemblyScan(typeof(IRateLimiterPolicy<>), includeGenericDefinition: false)
             .ToDictionary(
                 keySelector: PolicyNameAttribute.GetName,
                 elementSelector: type => type

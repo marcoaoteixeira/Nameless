@@ -25,6 +25,15 @@ public interface IDirectory {
     void Create();
 
     /// <summary>
+    ///     Retrieves a file that is inside the directory.
+    /// </summary>
+    /// <param name="fileName">The name of the file</param>
+    /// <returns>
+    ///     A <see cref="IFile"/> instance.
+    /// </returns>
+    IFile GetFile(string fileName);
+
+    /// <summary>
     ///     Retrieves files in the directory matching the
     ///     specified search pattern.
     /// </summary>
@@ -38,6 +47,21 @@ public interface IDirectory {
     ///     A collection of <see cref="IFile"/> objects
     /// </returns>
     IEnumerable<IFile> GetFiles(string searchPattern, bool recursive);
+
+    /// <summary>
+    ///     Retrieves subdirectories of the current directory matching the
+    ///     specified search pattern.
+    /// </summary>
+    /// <param name="searchPattern">
+    ///     The search pattern to match files.
+    /// </param>
+    /// <param name="recursive">
+    ///     Whether to search recursively in subdirectories.
+    /// </param>
+    /// <returns>
+    ///     A collection of <see cref="IDirectory"/> objects
+    /// </returns>
+    IEnumerable<IDirectory> GetDirectories(string searchPattern, bool recursive);
 
     /// <summary>
     ///     Deletes the directory.

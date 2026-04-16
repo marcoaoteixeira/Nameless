@@ -2,7 +2,18 @@
 
 	<PropertyGroup>
 		<Title>Nameless Lucene Library</Title>
-		<Description>Current implementation of Lucene Search Engine.</Description>
+		<Description>
+			Lucene.NET Abstractions Implementation provides the concrete
+			implementation for the Lucene.NET Abstractions library, delivering
+			a ready-to-use integration with Lucene.NET.
+
+			It implements the defined interfaces and contracts, handling index
+			creation, document insertion and updates, deletion, and search
+			operations using Lucene.NET under the hood. This package allows
+			you to plug in a fully functional search engine while keeping your
+			application clean, testable, and decoupled from Lucene-specific
+			details.
+		</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,6 +31,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+		<ProjectReference Include="..\Nameless.Lucene.Abstractions\Nameless.Lucene.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

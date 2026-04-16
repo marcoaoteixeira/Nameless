@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Nameless.Bootstrap.Infrastructure;
 using Nameless.Mediator;
 using Nameless.Microservices.Infrastructure.Auth;
+using Nameless.Microservices.Infrastructure.Scalar;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.HealthChecks;
 using Nameless.Web.MinimalEndpoints;
@@ -149,6 +150,11 @@ public class WebAppSettings {
     ///     Gets or sets a delegate for configure OpenAPI services.
     /// </summary>
     public Action<OpenApiRegistrationSettings>? ConfigureOpenApi { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a delegate for configure Scalar.
+    /// </summary>
+    public Action<ScalarRegistrationSettings>? ConfigureScalar { get; set; }
 
     /// <summary>
     ///     Whether it should disable OpenTelemetry services.

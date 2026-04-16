@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Nameless.Registration;
 
 namespace Nameless.Microservices.Infrastructure.EntityFrameworkCore;
 
+[AssemblyScan(Ignore = true)]
 public sealed class NullDatabaseSeeder : IDatabaseSeeder {
     public static IDatabaseSeeder Instance { get; } = new NullDatabaseSeeder();
 

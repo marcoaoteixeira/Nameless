@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using Nameless.Helpers;
+using Nameless.Microservices.Infrastructure.Scalar;
 using Nameless.Web.OpenApi;
 using Scalar.AspNetCore;
 
@@ -18,6 +21,7 @@ public static partial class WebAppExtensions {
             if (settings.DisableOpenApi) { return self; }
 
             self.RegisterOpenApi(settings.ConfigureOpenApi ?? DefaultConfiguration);
+            self.Services.RegisterScalar(settings.ConfigureScalar);
 
             return self;
 
@@ -50,16 +54,21 @@ public static partial class WebAppExtensions {
             self.MapOpenApi();
 
             // Do not expose Scalar on PROD environment
+            var scalar = ActionHelper.FromDelegate(settings.ConfigureScalar);
             if (self.Environment.IsDevelopment()) {
-                self.MapScalarApiReference(scalar =>
-                    scalar
-                        .WithTitle(self.Environment.ApplicationName)
-                        .WithTheme(ScalarTheme.BluePlanet)
-                        .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
+                self.MapScalarApiReference(
+                    self.DefaultScalarConfiguration + scalar.ConfigureScalar
                 );
             }
 
             return self;
+        }
+
+        private void DefaultScalarConfiguration(ScalarOptions options, HttpContext _) {
+            options
+                .WithTitle(self.Environment.ApplicationName)
+                .WithTheme(ScalarTheme.BluePlanet)
+                .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl);
         }
     }
 }

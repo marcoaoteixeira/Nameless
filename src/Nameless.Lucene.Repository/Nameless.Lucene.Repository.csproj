@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Title>Nameless Lucene Repository Library</Title>
+		<Description>
+			Lucene.NET Repository Pattern implementation.
+		</Description>
+		<RootNamespace>Nameless.Lucene.Repository</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Lucene.Repository.Abstractions\Nameless.Lucene.Repository.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
+
+</Project>

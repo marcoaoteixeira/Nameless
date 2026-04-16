@@ -88,7 +88,7 @@ public class Bootstrapper : IBootstrapper {
 
         foreach (var level in graph) {
             foreach (var node in level) {
-                _logger.ExecutingStepsStarting(++currentStep, totalSteps, node.Step.Name);
+                _logger.ExecutingStepsStarting(++currentStep, totalSteps, node.Step.DisplayName);
 
                 await ExecuteStepWithRetryAsync(
                     context,
@@ -101,14 +101,14 @@ public class Bootstrapper : IBootstrapper {
     }
 
     protected virtual async Task ExecuteStepWithRetryAsync(FlowContext context, StepExecutionNode node, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        _logger.StepStarting(node.Step.Name);
+        _logger.StepStarting(node.Step.DisplayName);
 
         var sw = Stopwatch.StartNew();
 
         node.Result.StartTime = _timeProvider.GetUtcNow();
         
         try {
-            progress.ReportStart(node.Step.Name);
+            progress.ReportStart(node.Step.DisplayName);
 
             var resiliencePipeline = CreateResiliencePipeline(node.Step, progress);
 
@@ -119,19 +119,19 @@ public class Bootstrapper : IBootstrapper {
                 cancellationToken
             ).ConfigureAwait(continueOnCapturedContext: false);
 
-            progress.ReportComplete(node.Step.Name);
+            progress.ReportComplete(node.Step.DisplayName);
         }
         catch (Exception ex) {
             node.Result.Exception = ex;
 
-            progress.ReportFailure(node.Step.Name, ex.Message, ex);
+            progress.ReportFailure(node.Step.DisplayName, ex.Message, ex);
 
-            _logger.StepFailure(node.Step.Name, ex);
+            _logger.StepFailure(node.Step.DisplayName, ex);
         }
         finally {
             node.Result.Duration = sw.Elapsed;
 
-            _logger.StepFinished(node.Step.Name, sw.ElapsedMilliseconds);
+            _logger.StepFinished(node.Step.DisplayName, sw.ElapsedMilliseconds);
         }
     }
 
@@ -145,11 +145,11 @@ public class Bootstrapper : IBootstrapper {
                 step.RetryPolicy.OnRetry.Invoke(ex, delay, attempt, maxAttempts);
 
                 // Report retry via progress
-                progress.ReportRetrying(step.Name, attempt, maxAttempts, delay);
+                progress.ReportRetrying(step.DisplayName, attempt, maxAttempts, delay);
             }
         };
 
-        return _retryPolicyFactory.CreateRetryPipeline(step.Name, policyWithProgress);
+        return _retryPolicyFactory.CreateRetryPipeline(step.DisplayName, policyWithProgress);
     }
 
     private IStep[] GetAvailableSteps() {
