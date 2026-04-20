@@ -38,9 +38,10 @@ App_Data/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# NUNIT
+# NUNIT - XUNIT
 *.VisualState.xml
 TestResult.xml
+TestResults/
 
 # Coverage Result and Reports
 test_coverage/*
@@ -60,6 +61,7 @@ _TeamCity*
 CodeCoverage/
 code-coverage/
 code_coverage/
+coverage*/
 *.dotCover
 
 # Web workbench (sass)
@@ -125,3 +127,6 @@ FakesAssemblies/
 
 # Package lock
 package-lock.json
+
+# Claude Code
+.claude/settings.local.json

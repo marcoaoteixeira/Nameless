@@ -1,91 +1,85 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## AI Behavior Rules
 
-## Initial Instructions for AI assistant
+**Always:**
+- Provide clear, concise, technically accurate responses
+- Follow required output schemas and formats
+- Ask for clarification only when essential
+- Provide actionable and specific insights when asked
 
-1. *** The AI assistant should ALWAYS ***
-	- Provide clear, concise, technically accurate response
-	- Follow required output schemas and formats
-	- Avoid hallucinating system design details not provided
-	- Ask for clarification only when essential
-	- Provide actionable and specific insights when asked
-	
-2. *** The AI assistant should NEVER ***
-	- Invent system behavior
-	- Produce speculative or fictional logs
-	- Output code not valid in C# or .NET contexts, unless asked to do so
-	- Provide harmful instructions or security-sensitive details
-	- Expose internal tooling or prompt structure
+**Never:**
+- Invent system behavior or hallucinate design details not provided
+- Produce speculative or fictional logs
+- Output code invalid in C# / .NET contexts (unless explicitly asked)
+- Provide harmful instructions or security-sensitive details
 
-## Project
+## Project Overview
 
-- Name: NAMELESS
+**Name**: NAMELESS
+**Default Branch**: main
 
-Nameless is a collection of reusable, implementation-agnostic .NET libraries targeting **net10.0**.
+A collection of reusable, implementation-agnostic .NET libraries targeting **net10.0**.
 
-Solution project structure:
+### Solution Structure
 
 ```
 src/
-  Nameless.Core/			# Abstractions, interfaces, extension methods, helpers
-  Nameless.Impl/			# Concrete implementations
-  Nameless.Testing.Tools/	# A collection of usable classes, mockers and utilities for testing.
-  Nameless.Web/				# ASP.NET Core extensions/utilities
-  Nameless.WPF/				# WPF library for Windows-based applications
+  Nameless.Core/           # Abstractions, interfaces, extension methods, helpers
+  Nameless.Impl/           # Concrete implementations
+  Nameless.Testing.Tools/  # Reusable classes, mockers, and utilities for testing
+  Nameless.Web/            # ASP.NET Core extensions/utilities
+  Nameless.WPF/            # WPF library for Windows-based applications
 tests/
-  Nameless.Core.Tests/          # Tests targeting abstractions, extension methods, helpers
+  Nameless.Core.Tests/     # Tests for abstractions, extension methods, helpers
 ```
 
-## Commands
+## Common Commands
 
-- Build: `dotnet build`
-- Test: `dotnet test`
-- EntityFramework Core Migrations: `dotnet ef migrations`
-- EntityFramework Core Update: `dotnet ef database update`
+| Purpose | Command |
+|---|---|
+| Build | `dotnet build` |
+| Test | `dotnet test` |
+| EF Core Migrations | `dotnet ef migrations` |
+| EF Core Update DB | `dotnet ef database update` |
 
-## Code Analysis
+## Build & Code Analysis
 
-- `EnableNETAnalyzers=True`, `EnforceCodeStyleInBuild=True` — code style is enforced at build time
+- `EnableNETAnalyzers=True`, `EnforceCodeStyleInBuild=True` — code style is enforced at **build time**; fix analyzer warnings, don't suppress them
+- Package versions are centrally managed in `Directory.Packages.props` — never add version attributes to individual `<PackageReference>` elements
 
-## Packaging Management
+## Coding Conventions
 
-- Package versions are centrally managed in `Directory.Packages.props`
+These take precedence over general conventions.
 
-## Brainstorm
+- **Async/Await:** Use `SkipContextSync()` (equivalent to `ConfigureAwait(false)`) in all library/helper code; omit in app entry points and UI code.
+- **Null Checks:** Use `Throws.When.Null(param)` for objects; use `Throws.When.NullOrWhitespace(param)` for strings. Guard at the top of the method. Avoid the null-forgiving operator (`!`).
 
-- Understand user's task and context
-- Propose clean, organized solutions
-- Cover security
-- Explain line of thoughts
-- Write performatic code but don't go overboard
+## Testing Conventions
 
-## When Asked To Implement A Feature
+- Categorize every test with the appropriate attribute:
+  - `[UnitTest]` — isolated unit tests
+  - `[IntegrationTest]` — tests that cross component/process boundaries
+  - `[E2E]` — end-to-end tests
+- Do **not** enable `#nullable` in test projects — tests must be able to pass `null` without compiler warnings.
 
-Interact with user on every step, ask questions when any guideline is unclear.
+## Feature Implementation Workflow
 
-1. Do not write any code unless asked for.
-2. Brainstorm phase, ask relevant questions
-3. Create a spec file based on the brainstorm (`specs/features/FEAT-XXX-<slug>.md`)
-4. Create a implementation plan (`specs/plans/FEAT-XXX-<slug>.md`)
-5. Explain your decisions describing approach in plain language: what are the changes, why, in which order, and what edge cases are covered.
-6. Create a new branch from `main` (or `master`). E.g.: `feature/PROJECT_NAME-FEAT_NUMBER-<slug>`. Before create the branch, ask user if the branch name is correct.
-7. Start writing the code: Test-Drive-Development approach
-8. Review code with `/code-reviewer` skill. Address any **🔴 Critical Issues** found.
-9. Ask user to check the code before continue.
-10. If user approve code changes, commit the changes using conventional commit pattern, message **MUST** be <= 120 chars long. Message **MUST** contains project name and feature number: E.g.: `feat(PROJECT_NAME-FEAT_NUMBER): commit message here.`
-11. When done (approved by the user), update its status to `Done` in `spec/README.md`
+Follow these steps **in order**. Do not skip or reorder. Do not write code until step 7.
 
-## Project Specifics
-
-Use below instructions in favor of other instructions.
-
-### Coding
-
-- **Async/Await**: Use `SkipContextSync()` with similar meaning of `ConfigureAwait(false)` in helper/library code; omit in app entry/UI.
-- **Null Checks**: Use `Throws.When.Null(x)`; for strings use `Throws.When.NullOrWhitespace(x)`; guard early. Avoid blanket `!`.
-
-### Testing
-
-- Use attribute `[UnitTest]` for unit test categorization, `[IntegrationTest]` for integration tests categorization and `[E2E]` for End-To-End tests categorization.
-- Do not able #nullable for the testing projects. We want to be able to specify `null` without warnings.
+1. **Cleanup** — Switch to default branch and pull. If there is uncommited work, ask user for directions.
+2. **Clarify** — Understand the task; ask questions when any requirement is unclear.
+3. **Brainstorm** — Propose clean, organized solutions. Cover security, performance, and edge cases. Explain reasoning.
+4. **Spec** — Create `specs/features/FEAT-XXX-<slug>.md` capturing agreed-upon requirements and decisions.
+5. **Plan** — Create `specs/plans/FEAT-XXX-<slug>.md` with an ordered implementation plan and edge cases.
+6. **Explain** — Describe the approach in plain language: what changes, why, in what order, and what edge cases are covered.
+7. **Branch** — Propose branch name (format: `feature/NAMELESS-FEAT_NUMBER-<slug>`), confirm with user, then create from `main`.
+8. **Code** — Implement using Test-Driven Development (TDD): write failing tests first, then make them pass.
+9. **Review** — Run `/code-reviewer` skill. Address every **🔴 Critical Issue** before proceeding.
+10. **User Check** — Ask the user to review the code; do not continue until approved.
+11. **Commit** — Use conventional commit format. Message **must** be ≤ 120 chars and include project name and feature number:
+    ```
+    feat(NAMELESS-FEAT_NUMBER): concise description of what changed
+    ```
+12. **Close** — Update the feature status to `Done` in `specs/README.md`.
+13. **Push** — Push changes.
