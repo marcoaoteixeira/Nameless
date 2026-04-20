@@ -1,5 +1,8 @@
 ﻿namespace Nameless.IO.FileSystem;
 
+/// <summary>
+///     <see cref="IDirectory"/> extension methods.
+/// </summary>
 public static class DirectoryExtensions {
     /// <param name="self">
     ///     The current <see cref="IDirectory"/>.

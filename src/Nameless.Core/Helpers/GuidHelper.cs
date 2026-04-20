@@ -14,6 +14,18 @@ public static class GuidHelper {
     private const char FORWARD_SLASH = '/';
     private const char PLUS = '+';
 
+    /// <summary>
+    ///     Encodes the <see cref="Guid"/> value as string.
+    /// </summary>
+    /// <param name="value">
+    ///     The <see cref="Guid"/>.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="string"/> representing the <see cref="Guid"/> value.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     If it was not possible to encode the value.
+    /// </exception>
     public static string Encode(Guid value) {
         // Why 16 bytes? See (Binary wire format): https://en.wikipedia.org/wiki/Universally_unique_identifier
 
@@ -48,6 +60,18 @@ public static class GuidHelper {
         return new string(chars);
     }
 
+    /// <summary>
+    ///     Decodes the span value into a <see cref="Guid"/> value.
+    /// </summary>
+    /// <param name="value">
+    ///     The span.
+    /// </param>
+    /// <returns>
+    ///     The decoded <see cref="Guid"/>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     If it was not possible to decode the value.
+    /// </exception>
     public static Guid Decode(ReadOnlySpan<char> value) {
         Span<char> base64Buffer = stackalloc char[24];
 
@@ -66,10 +90,10 @@ public static class GuidHelper {
 
         Span<byte> result = stackalloc byte[16];
 
-        if (!Convert.TryFromBase64Chars(base64Buffer, result, out _)) {
-            throw new InvalidOperationException(message: "Couldn't convert from Base64 chars.");
-        }
-
-        return new Guid(result);
+        return Convert.TryFromBase64Chars(base64Buffer, result, out _)
+            ? new Guid(result)
+            : throw new InvalidOperationException(
+                "Couldn't convert from Base64 chars."
+            );
     }
 }

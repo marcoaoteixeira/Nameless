@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions {
 
             var handlerService = typeof(IEventHandler<>);
             var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericDefinition: true)
+                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
                 : settings.EventHandlers;
 
             self.RegisterHandlers(handlerService, handlerImplementations);
@@ -53,7 +53,7 @@ public static class ServiceCollectionExtensions {
 
             var handlerService = typeof(IRequestHandler<,>);
             var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericDefinition: true)
+                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
                 : settings.RequestHandlers;
 
             self.RegisterHandlers(handlerService, handlerImplementations);
@@ -71,7 +71,7 @@ public static class ServiceCollectionExtensions {
 
             var handlerService = typeof(IStreamHandler<,>);
             var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericDefinition: true)
+                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
                 : settings.StreamHandlers;
 
             self.RegisterHandlers(handlerService, handlerImplementations);

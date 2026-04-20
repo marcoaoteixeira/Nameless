@@ -1,5 +1,8 @@
 ﻿namespace Nameless.Bootstrap.Notification;
 
+/// <summary>
+///     <see cref="IProgress{T}"/> of <see cref="StepProgress"/> extension methods.
+/// </summary>
 public static class StepProgressExtensions {
     extension(IProgress<StepProgress> self) {
         /// <summary>

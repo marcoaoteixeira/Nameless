@@ -1,9 +1,12 @@
-﻿namespace Nameless.Null;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless.Null;
 
 /// <summary>
 ///     Null implementation of <see cref="IServiceProvider"/> that does not
 ///     provide any services.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
 public sealed class NullServiceProvider : IServiceProvider {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullServiceProvider"/>.

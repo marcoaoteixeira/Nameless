@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Nameless.Null;
 
 /// <summary>
@@ -7,6 +9,7 @@ namespace Nameless.Null;
 /// <typeparam name="T">
 ///     Type of the progress value being reported.
 /// </typeparam>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
 public sealed class NullProgress<T> : IProgress<T> {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullProgress{T}" />.
@@ -40,6 +43,7 @@ public sealed class NullProgress<T> : IProgress<T> {
 ///         </item>
 ///     </list>
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
 public sealed class NullProgress : IProgress<int> {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullProgress" />.

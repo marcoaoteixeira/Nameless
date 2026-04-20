@@ -37,7 +37,7 @@ tests/
   Nameless.Core.Tests/          # Tests targeting abstractions, extension methods, helpers
 ```
 
-# Commands
+## Commands
 
 - Build: `dotnet build`
 - Test: `dotnet test`
@@ -60,7 +60,7 @@ tests/
 - Explain line of thoughts
 - Write performatic code but don't go overboard
 
-# When Asked To Implement A Feature
+## When Asked To Implement A Feature
 
 Interact with user on every step, ask questions when any guideline is unclear.
 
@@ -75,3 +75,17 @@ Interact with user on every step, ask questions when any guideline is unclear.
 9. Ask user to check the code before continue.
 10. If user approve code changes, commit the changes using conventional commit pattern, message **MUST** be <= 120 chars long. Message **MUST** contains project name and feature number: E.g.: `feat(PROJECT_NAME-FEAT_NUMBER): commit message here.`
 11. When done (approved by the user), update its status to `Done` in `spec/README.md`
+
+## Project Specifics
+
+Use below instructions in favor of other instructions.
+
+### Coding
+
+- **Async/Await**: Use `SkipContextSync()` with similar meaning of `ConfigureAwait(false)` in helper/library code; omit in app entry/UI.
+- **Null Checks**: Use `Throws.When.Null(x)`; for strings use `Throws.When.NullOrWhitespace(x)`; guard early. Avoid blanket `!`.
+
+### Testing
+
+- Use attribute `[UnitTest]` for unit test categorization, `[IntegrationTest]` for integration tests categorization and `[E2E]` for End-To-End tests categorization.
+- Do not able #nullable for the testing projects. We want to be able to specify `null` without warnings.

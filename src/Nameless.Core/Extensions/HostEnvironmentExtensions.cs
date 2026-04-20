@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿#pragma warning disable CA1822
+
+using Microsoft.Extensions.Hosting;
 
 namespace Nameless;
 
@@ -6,6 +8,9 @@ namespace Nameless;
 ///     <see cref="IHostEnvironment" /> extension methods.
 /// </summary>
 public static class HostEnvironmentExtensions {
+    /// <summary>
+    ///     Developer machine identifier.
+    /// </summary>
     public static readonly string DeveloperMachine = nameof(DeveloperMachine);
 
     /// <param name="self">

@@ -21,16 +21,59 @@ public static class CoreConstants {
     ///     Static class containing a list of strings with common separator values.
     /// </summary>
     public static class Separators {
+        /// <summary>
+        ///     Backward slash
+        /// </summary>
         public const string BackwardSlash = "\\";
+
+        /// <summary>
+        ///     Colon
+        /// </summary>
         public const string Colon = ":";
+
+        /// <summary>
+        ///     Comma
+        /// </summary>
         public const string Comma = ",";
+
+        /// <summary>
+        ///     Dash
+        /// </summary>
         public const string Dash = "-";
+
+        /// <summary>
+        ///     Dot
+        /// </summary>
         public const string Dot = ".";
+
+        /// <summary>
+        ///     Forward slash
+        /// </summary>
         public const string ForwardSlash = "/";
+
+        /// <summary>
+        ///     Pipe
+        /// </summary>
         public const string Pipe = "|";
+
+        /// <summary>
+        ///     Semicolon
+        /// </summary>
         public const string Semicolon = ";";
+
+        /// <summary>
+        ///     Sharp
+        /// </summary>
         public const string Sharp = "#";
+
+        /// <summary>
+        ///     Space
+        /// </summary>
         public const string Space = " ";
+
+        /// <summary>
+        ///     Underscore
+        /// </summary>
         public const string Underscore = "_";
     }
 

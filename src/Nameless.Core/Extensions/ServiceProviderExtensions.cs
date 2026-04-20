@@ -7,8 +7,13 @@ using Nameless.Attributes;
 
 namespace Nameless;
 
+/// <summary>
+///     <see cref="IServiceProvider" /> extension methods.
+/// </summary>
 public static class ServiceProviderExtensions {
-    /// <param name="self">The current <see cref="IServiceProvider" /></param>
+    /// <param name="self">
+    ///     The current <see cref="IServiceProvider" /> instance.
+    /// </param>
     extension(IServiceProvider self) {
         /// <summary>
         ///     Retrieves an instance of <see cref="ILogger{TCategoryName}" />

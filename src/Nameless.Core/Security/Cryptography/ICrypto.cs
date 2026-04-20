@@ -1,5 +1,8 @@
 ﻿namespace Nameless.Security.Cryptography;
 
+/// <summary>
+///     Represents a crypto service.
+/// </summary>
 public interface ICrypto {
     /// <summary>
     ///     Encrypts a <see cref="Stream" />.

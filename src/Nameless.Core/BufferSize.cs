@@ -1,5 +1,8 @@
 ﻿namespace Nameless;
 
+/// <summary>
+///     Represents different buffer sizes.
+/// </summary>
 public enum BufferSize {
     /// <summary>
     ///     1Kb

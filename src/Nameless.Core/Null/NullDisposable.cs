@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Nameless.Null;
 
 /// <summary>
@@ -17,6 +19,7 @@ namespace Nameless.Null;
 ///         </item>
 ///     </list>
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
 public sealed class NullDisposable : IDisposable {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullDisposable" />.
@@ -29,5 +32,6 @@ public sealed class NullDisposable : IDisposable {
 
     private NullDisposable() { }
 
+    /// <inheridoc />
     public void Dispose() { }
 }

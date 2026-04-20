@@ -4,16 +4,6 @@
 ///     Retry configuration
 /// </summary>
 public record RetryPolicyConfiguration {
-    public static RetryPolicyConfiguration Default => new() {
-        Tag = $"{Guid.CreateVersion7():N}",
-        RetryCount = 3,
-        InitialDelay = TimeSpan.FromMilliseconds(250),
-        BackoffType = BackoffType.Exponential,
-        MaxDelay = TimeSpan.FromSeconds(5),
-        UseJitter = true,
-        OnRetry = (_, _, _, _) => { }
-    };
-
     /// <summary>
     ///     Gets the tag.
     /// </summary>
@@ -55,4 +45,60 @@ public record RetryPolicyConfiguration {
     ///     attempts.
     /// </summary>
     public required Action<Exception?, TimeSpan, int, int> OnRetry { get; init; }
+
+    /// <summary>
+    ///     Gets a predefined retry policy configuration.
+    /// </summary>
+    /// <param name="onRetry">
+    ///     The retry delegate.
+    /// </param>
+    /// <returns>
+    ///     A new instance of <see cref="RetryPolicyConfiguration"/>.
+    /// </returns>
+    /// <remarks>
+    ///     The default parameters are:
+    ///     <list type="bullet">
+    ///         <item>
+    ///             <term>Tag</term>
+    ///             <description>
+    ///                 <c>Guid.CreateVersion7()</c>
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>RetryCount</term>
+    ///             <description>
+    ///                 <c>3</c>
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>InitialDelay</term>
+    ///             <description>
+    ///                 <c>250ms</c>
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>BackoffType</term>
+    ///             <description>
+    ///                 <c>Exponential</c>
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>UseJitter</term>
+    ///             <description>
+    ///                 <c>true</c>
+    ///             </description>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    public static RetryPolicyConfiguration CreateDefault(Action<Exception?, TimeSpan, int, int> onRetry) {
+        return new RetryPolicyConfiguration {
+            Tag = $"{Guid.CreateVersion7():N}",
+            RetryCount = 3,
+            InitialDelay = TimeSpan.FromMilliseconds(250),
+            BackoffType = BackoffType.Exponential,
+            MaxDelay = TimeSpan.FromSeconds(5),
+            UseJitter = true,
+            OnRetry = onRetry
+        };
+    }
 }

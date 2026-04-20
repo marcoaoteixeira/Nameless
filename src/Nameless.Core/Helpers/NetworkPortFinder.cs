@@ -3,7 +3,25 @@ using System.Net.Sockets;
 
 namespace Nameless.Helpers;
 
+/// <summary>
+///     Network related helper.
+/// </summary>
 public static class NetworkPortFinder {
+    /// <summary>
+    ///     Retrieves the first available port.
+    /// </summary>
+    /// <param name="start">
+    ///     The start range.
+    /// </param>
+    /// <param name="limit">
+    ///     The limit range.
+    /// </param>
+    /// <returns>
+    ///     The first available port number.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     If not port is available.
+    /// </exception>
     public static int GetFirstAvailablePort(int start = 10000, int limit = 100) {
         var port = ListAvailablePorts(start, limit).FirstOrDefault();
 
@@ -12,6 +30,22 @@ public static class NetworkPortFinder {
             : port;
     }
 
+    /// <summary>
+    ///     Returns a list of available ports.
+    /// </summary>
+    /// <param name="start">
+    ///     The start range.
+    /// </param>
+    /// <param name="limit">
+    ///     The limit range.
+    /// </param>
+    /// <returns>
+    ///     A list of available port numbers.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     if <paramref name="start"/> or <paramref name="limit"/> are
+    ///     out of the range for IP endpoint port.
+    /// </exception>
     public static IEnumerable<int> ListAvailablePorts(int start = 10000, int limit = 100) {
         var end = start + limit;
 

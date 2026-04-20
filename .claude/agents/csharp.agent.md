@@ -49,7 +49,7 @@ When invoked:
 
 ## Error Handling & Edge Cases
 
-- **Null checks**: use `Throws.When.Null(x)`; for strings use `Throws.When.NullOrWhitespace(x)`; guard early. Avoid blanket `!`.
+- **Null checks**: use `ArgumentNullException.ThrowIfNull(x)`; for strings use `ArgumentException.ThrowIfNullOrWhiteSpace(x)`; guard early. Avoid blanket `!`.
 - **Exceptions**: choose precise types (e.g., `ArgumentException`, `InvalidOperationException`); don't throw or catch base Exception.
 - **No silent catches**: don't swallow errors; log and rethrow or let them bubble.
 
@@ -114,7 +114,7 @@ When invoked:
 - **Always await:** no fire-and-forget; if timing out, **cancel the work**.
 - **Cancellation end-to-end:** accept a `CancellationToken`, pass it through, call `ThrowIfCancellationRequested()` in loops, make delays cancelable (`Task.Delay(ms, ct)`).
 - **Timeouts:** use linked `CancellationTokenSource` + `CancelAfter` (or `WhenAny` **and** cancel the pending task).
-- **Context:** use `SkipContextSync()` with similar meaning of `ConfigureAwait(false)` in helper/library code; omit in app entry/UI.
+- **Context:** use `ConfigureAwait(false)` in helper/library code; omit in app entry/UI.
 - **Stream JSON:** `GetAsync(..., ResponseHeadersRead)` → `ReadAsStreamAsync` → `JsonDocument.ParseAsync`; avoid `ReadAsStringAsync` when large.
 - **Exit code on cancel:** return non-zero (e.g., `130`).
 - **`ValueTask`:** use only when measured to help; default to `Task`.
@@ -129,33 +129,6 @@ When invoked:
 ## Immutability
 
 - Prefer records to classes for DTOs
-
-# Testing best practices
-
-## Test structure
-
-- Separate test project: **`[ProjectName].Tests`**.
-- Mirror classes: `CatDoor` -> `CatDoorTests`.
-- Name tests by behavior: `MethodName_WhenCondition_ThenExpectedResult`.
-- Follow existing naming conventions.
-- Use **public instance** classes; avoid **static** fields.
-- No branching/conditionals inside tests.
-
-## Unit Tests
-
-- One behavior per test;
-- Avoid Unicode symbols.
-- Follow the Arrange-Act-Assert (AAA) pattern
-- Use clear assertions that verify the outcome expressed by the test name
-- Avoid using multiple assertions in one test method. In this case, prefer multiple tests.
-- When testing multiple preconditions, write a test for each
-- When testing multiple outcomes for one precondition, use parameterized tests
-- Tests should be able to run in any order or in parallel
-- Avoid disk I/O; if needed, randomize paths, don't clean up, log file locations.
-- Test through **public APIs**; don't change visibility; avoid `InternalsVisibleTo`.
-- Require tests for new/changed **public APIs**.
-- Assert specific values and edge cases, not vague outcomes.
-- Focus on domain logic and business rules in isolation.
 
 ## CRITICAL REMINDERS
 

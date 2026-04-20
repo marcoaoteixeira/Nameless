@@ -1,5 +1,8 @@
 ﻿namespace Nameless.IO.FileSystem;
 
+/// <summary>
+///     Represents a file system provider.
+/// </summary>
 public interface IFileSystemProvider {
     /// <summary>
     ///     Gets the root directory for file system operations.

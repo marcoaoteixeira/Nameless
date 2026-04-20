@@ -6,6 +6,24 @@ using System.Runtime.CompilerServices;
 namespace Nameless;
 
 public sealed partial class Throws {
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> is non-concrete type.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type IsNonConcreteType(Type paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 
@@ -20,6 +38,24 @@ public sealed partial class Throws {
                   paramName);
     }
 
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> is non-open generic type.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type IsNonOpenGenericType(Type paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 
@@ -34,6 +70,24 @@ public sealed partial class Throws {
                   paramName);
     }
 
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> is open generic type.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type IsOpenGenericType(Type paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 
@@ -48,6 +102,28 @@ public sealed partial class Throws {
                   paramName);
     }
 
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> is not assignable
+    ///     from <paramref name="lhs"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="lhs">
+    ///     The left hand side type.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type IsNotAssignableFrom(Type paramValue, Type lhs, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 
@@ -62,6 +138,28 @@ public sealed partial class Throws {
                   paramName);
     }
 
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> is not assignable
+    ///     from generic <paramref name="lhs"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="lhs">
+    ///     The left hand side type.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type IsNotAssignableFromGeneric(Type paramValue, Type lhs, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 
@@ -76,6 +174,25 @@ public sealed partial class Throws {
                   paramName);
     }
 
+    /// <summary>
+    ///     Throws exception if <paramref name="paramValue"/> does not have
+    ///     a parameterless constructor.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception factory.
+    /// </param>
+    /// <returns>
+    ///     The current type if pass validation.
+    /// </returns>
     public Type HasNoParameterlessConstructor(Type paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         Null(paramValue, paramName, message, exceptionCreator);
 

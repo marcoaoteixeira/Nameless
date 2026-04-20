@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Nameless.Impl\Nameless.Impl.csproj" />
-		<ProjectReference Include="..\..\..\src\Nameless.Web.Core\Nameless.Web.csproj" />
 		<ProjectReference Include="..\..\..\src\Nameless.Web\Nameless.Web.csproj" />
 	</ItemGroup>
 </Project>

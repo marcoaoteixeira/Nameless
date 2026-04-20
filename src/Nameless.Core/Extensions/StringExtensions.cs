@@ -375,6 +375,13 @@ public static class StringExtensions {
             return self.Length > length ? self.Substring(start, length) : self;
         }
 
+        /// <summary>
+        ///     Converts the string value into a boolean value.
+        /// </summary>
+        /// <returns>
+        ///     <see langword="true"/> if the string value represents a boolean
+        ///     value <c>true</c>; otherwise, <see langword="false"/>.
+        /// </returns>
         public bool ToBoolean() {
             // ReSharper disable InconsistentNaming
             const string TrueAsYes = "Yes";

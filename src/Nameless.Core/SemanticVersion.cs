@@ -6,11 +6,41 @@ namespace Nameless;
 ///     Represents an immutable Semantic Version (https://semver.org/).
 /// </summary>
 public readonly record struct SemanticVersion: IComparable<SemanticVersion>, IComparable {
+    /// <summary>
+    ///     Gets the major value.
+    /// </summary>
     public int Major { get; init; }
+
+    /// <summary>
+    ///     Gets the minor value.
+    /// </summary>
     public int Minor { get; init; }
+
+    /// <summary>
+    ///     Gets the patch value.
+    /// </summary>
     public int Patch { get; init; }
+
+    /// <summary>
+    ///     Gets the build value.
+    /// </summary>
     public int? Build { get; init; }
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="SemanticVersion"/> class.
+    /// </summary>
+    /// <param name="major">
+    ///     The major value.
+    /// </param>
+    /// <param name="minor">
+    ///     The minor value.
+    /// </param>
+    /// <param name="patch">
+    ///     The patch value.
+    /// </param>
+    /// <param name="build">
+    ///     The build value.
+    /// </param>
     public SemanticVersion(int major, int minor, int patch, int? build = null) {
         Major = Throws.When.LowerThan(major, compare: 0);
         Minor = Throws.When.LowerThan(minor, compare: 0);

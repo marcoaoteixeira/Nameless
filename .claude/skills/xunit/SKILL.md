@@ -10,13 +10,16 @@ Your goal is to help me write effective unit tests with XUnit, covering both sta
 
 ## Project Setup
 
-- Use a separate test project with naming convention `[ProjectName].Tests`
 - Reference Microsoft.NET.Test.Sdk, xunit, and xunit.runner.visualstudio packages
-- Create test classes that match the classes being tested (e.g., `CalculatorTests` for `Calculator`)
 - Use .NET SDK test commands: `dotnet test` for running tests
 
 ## Test Structure
 
+- Separate test project: **`[ProjectName].Tests`**.
+- Mirror classes: `CatDoor` -> `CatDoorTests`.
+- Follow existing naming conventions.
+- Use **public instance** classes; avoid **static** fields.
+- No branching/conditionals inside tests.
 - No test class attributes required (unlike MSTest/NUnit)
 - Use fact-based tests with `[Fact]` attribute for simple tests
 - Follow the Arrange-Act-Assert (AAA) pattern
@@ -27,12 +30,17 @@ Your goal is to help me write effective unit tests with XUnit, covering both sta
 
 ## Standard Tests
 
+- Avoid Unicode symbols.
 - Keep tests focused on a single behavior
 - Avoid testing multiple behaviors in one test method
 - Use clear assertions that express intent
 - Include only the assertions needed to verify the test case
 - Make tests independent and idempotent (can run in any order)
-- Avoid test interdependencies
+- Tests should be able to run in any order or in parallel
+- When testing multiple outcomes for one precondition, use parameterized tests
+- Avoid disk I/O; if needed, randomize paths, don't clean up, log file locations.
+- Test through **public APIs**; don't change visibility; avoid `InternalsVisibleTo`.
+- Focus on domain logic and business rules in isolation.
 
 ## Data-Driven Tests
 
@@ -62,7 +70,6 @@ Your goal is to help me write effective unit tests with XUnit, covering both sta
 ## Test Organization
 
 - Group tests by feature or component
-- Use `[UnitTest]` for unit test categorization, `[IntegrationTest]` for integration tests categorization and `[E2E]` for End-To-End tests categorization.
 - Use collection fixtures to group tests with shared dependencies
 - Consider output helpers (`ITestOutputHelper`) for test diagnostics
 - Skip tests conditionally with `Skip = "reason"` in fact/theory attributes

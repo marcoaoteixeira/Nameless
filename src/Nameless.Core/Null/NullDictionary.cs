@@ -8,6 +8,7 @@ namespace Nameless.Null;
 /// </summary>
 /// <typeparam name="TKey">Type of the key.</typeparam>
 /// <typeparam name="TValue">Type of the value.</typeparam>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
 public sealed class NullDictionary<TKey, TValue> : IDictionary<TKey, TValue> {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullDictionary{TKey, TValue}"/>.

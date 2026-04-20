@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet test:*)"
+      "Bash(dotnet test:*)",
+      "Bash(xargs grep:*)",
+      "Bash(dotnet build:*)",
+      "Bash(xargs wc *)",
+      "Bash(mkdir -p /c/Workspace/Nameless/tests/Nameless.Core.Tests/Contracts)",
+      "Bash(mkdir -p /c/Workspace/Nameless/tests/Nameless.Core.Tests/ObjectModel)",
+      "Bash(mkdir -p /c/Workspace/Nameless/tests/Nameless.Core.Tests/Results)",
+      "Bash(mkdir -p /c/Workspace/Nameless/tests/Nameless.Core.Tests/Extensions)",
+      "Bash(mkdir -p /c/Workspace/Nameless/tests/Nameless.Core.Tests/Helpers)",
+      "Bash(grep 'Nameless.Core\\\\\\\\')"
     ]
   }
 }

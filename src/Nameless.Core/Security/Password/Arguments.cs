@@ -20,7 +20,7 @@ public record Arguments {
     ///     Gets or sets the symbols to use in the password.
     /// </summary>
     /// <remarks>
-    ///     Default is <c>*$-+?_&=!%{}/</c>.
+    ///     Default value is <![CDATA[* $ - + ? _ & = ! % { } /]]>
     /// </remarks>
     public string Symbols { get; init; } = "*$-+?_&=!%{}/";
 

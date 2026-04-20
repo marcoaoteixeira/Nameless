@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions {
         var service = typeof(IRateLimiterPolicy<>);
 
         return settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service, includeGenericDefinition: false)
+            ? settings.ExecuteAssemblyScan(service, includeGenericTypeDefinition: false)
                       .ToDictionary(
                           keySelector: RateLimiterPolicyAttribute.GetName,
                           elementSelector: type => type

@@ -383,9 +383,24 @@ public class SemanticVersionTests {
     [InlineData("1.2.3.4")]
     [InlineData("1.2.3+build.xyz")]
     [InlineData("1.2.3+notbuild.7")]
+    [InlineData("1.b.3")]
+    [InlineData("1.2.x")]
     public void Parse_WithInvalidInput_ShouldThrowFormatException(string input) {
         // act & assert
         Assert.Throws<FormatException>(() => SemanticVersion.Parse(input));
+    }
+
+    [Fact]
+    public void ImplicitOperator_FromString_ParsesCorrectly() {
+        // act
+        SemanticVersion version = "2.5.1";
+
+        // assert
+        Assert.Multiple(() => {
+            Assert.Equal(2, version.Major);
+            Assert.Equal(5, version.Minor);
+            Assert.Equal(1, version.Patch);
+        });
     }
 
     [Fact]
@@ -435,7 +450,7 @@ public class SemanticVersionTests {
     [InlineData("1")]
     [InlineData("1.2.3.4")]
     [InlineData("1.2.3+build.xyz")]
-    public void TryParse_WithInvalidOrEmptyInput_ShouldReturnFalseAndNullOutput(string input) {
+    public void TryParse_WithInvalidOrEmptyInput_ShouldReturnFalseAndNullOutput(string? input) {
         // act
         var success = SemanticVersion.TryParse(input, out var result);
 

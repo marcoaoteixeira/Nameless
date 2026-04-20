@@ -22,21 +22,21 @@
 
 	<!-- All projects must include these properties. -->
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>False</IsPackable>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<IsPackable>False</IsPackable>
+		<TargetFramework>net10.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<AnalysisLevel>latest</AnalysisLevel>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
-		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<!--
@@ -44,24 +44,25 @@
 		This will add the minimal properties for the NuGet package to be built.
 	-->
 	<PropertyGroup Condition="$(IncludeNuGetPackageInfo)">
-		<IsPackable>True</IsPackable>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
-		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless</RepositoryUrl>
-		<PackageReleaseNotes>https://github.com/marcoaoteixeira/nameless/releases</PackageReleaseNotes>
+		<EmbedUntrackedSources>True</EmbedUntrackedSources>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<IsPackable>True</IsPackable>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl>https://github.com/marcoaoteixeira/Nameless/tree/main/branding/icon.png</PackageIconUrl>
-		<Version>1.0.0</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IncludeSymbols>True</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReleaseNotes>https://github.com/marcoaoteixeira/nameless/releases</PackageReleaseNotes>
 		<PublishRepositoryUrl>True</PublishRepositoryUrl>
-		<EmbedUntrackedSources>True</EmbedUntrackedSources>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless</RepositoryUrl>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup Condition="$(IncludeNuGetPackageInfo)">
@@ -74,7 +75,6 @@
 
 	<!-- For test projects, use these properties -->
 	<PropertyGroup Condition="$(IsTestsProject)">
-		<Nullable>disable</Nullable>
 		<IsPackable>False</IsPackable>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>

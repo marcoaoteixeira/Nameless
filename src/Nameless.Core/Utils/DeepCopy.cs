@@ -2,6 +2,9 @@
 
 namespace Nameless.Utils;
 
+/// <summary>
+///     Helper that executes a deep copy of the specified object.
+/// </summary>
 public static class DeepCopy {
     /// <summary>
     ///     Performs a deep copy of an object, using JSON as a serialization
