@@ -129,4 +129,4 @@ FakesAssemblies/
 package-lock.json
 
 # Claude Code
-.claude/settings.local.json
+.claude/
