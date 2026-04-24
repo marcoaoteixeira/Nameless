@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class HostEnvironmentExtensionsTests {
     // --- IsDeveloperMachine ---

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Nameless.Helpers;
 
 namespace Nameless.Web.HealthCheck;
@@ -8,12 +7,12 @@ namespace Nameless.Web.HealthCheck;
 ///     Options for health checks.
 /// </summary>
 public class HealthCheckRegistration {
-    private readonly Dictionary<Type, Action<IHealthChecksBuilder>> _healthChecks = [];
+    private readonly Dictionary<Type, HealthCheckOptions> _healthChecks = [];
 
     /// <summary>
     ///     Gets the registered health checks.
     /// </summary>
-    internal IReadOnlyCollection<Action<IHealthChecksBuilder>> HealthChecks => _healthChecks.Values;
+    internal IReadOnlyDictionary<Type, HealthCheckOptions> HealthChecks => _healthChecks;
 
     /// <summary>
     ///     Registers a health check with the specified options.
@@ -22,7 +21,7 @@ public class HealthCheckRegistration {
     ///     Type of the health check.
     /// </typeparam>
     /// <param name="configure">
-    ///     The configuration delegate.
+    ///     The delegate to configure the health check.
     /// </param>
     /// <returns>
     ///     The current <see cref="HealthCheckRegistration"/> instance
@@ -30,16 +29,37 @@ public class HealthCheckRegistration {
     /// </returns>
     public HealthCheckRegistration RegisterHealthCheck<THealthCheck>(Action<HealthCheckOptions>? configure = null)
         where THealthCheck : class, IHealthCheck {
-        var info = ActionHelper.FromDelegate(configure);
+        var opts = ActionHelper.FromDelegate(configure);
 
-        _healthChecks[typeof(THealthCheck)] = builder
-            => builder.AddCheck<THealthCheck>(
-                info.Name ?? typeof(THealthCheck).Name,
-                info.FailureStatus,
-                info.Tags,
-                info.Timeout
-            );
+        _healthChecks[typeof(THealthCheck)] = opts;
 
         return this;
     }
+}
+
+/// <summary>
+///     Represents a health check registration options.
+/// </summary>
+public record HealthCheckOptions {
+    /// <summary>
+    ///     Gets the health check name, if not provided the health check type
+    ///     name will be used.
+    /// </summary>
+    public string? Name { get; init; }
+    /// <summary>
+    ///     Gets the <see cref="HealthStatus"/> that should be reported when
+    ///     the health check reports a failure. If the provided value is
+    ///     <see langword="null"/>, then <see cref="HealthStatus.Unhealthy"/>
+    ///     will be reported.
+    /// </summary>
+    public HealthStatus? FailureStatus { get; init; }
+    /// <summary>
+    ///     Gets the list of tags that can be used to filter health checks.
+    /// </summary>
+    public string[]? Tags { get; init; }
+    /// <summary>
+    ///     Gets the optional <see cref="TimeSpan"/> representing the timeout
+    ///     of the check.
+    /// </summary>
+    public TimeSpan? Timeout { get; init; }
 }

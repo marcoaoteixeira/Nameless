@@ -1,7 +1,6 @@
 using Moq;
-using Nameless.Xml;
 
-namespace Nameless;
+namespace Nameless.Xml;
 
 public class XmlSchemaValidatorExtensionTests {
     // --- Validate(byte[], byte[]) ---

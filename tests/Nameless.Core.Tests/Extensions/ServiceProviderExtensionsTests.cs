@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ServiceProviderExtensionsTests {
     // --- GetLogger<T> ---

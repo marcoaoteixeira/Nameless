@@ -1,7 +1,6 @@
 using System.Diagnostics;
-using Nameless.Diagnostics;
 
-namespace Nameless;
+namespace Nameless.Diagnostics;
 
 public class NullActivityTests {
     // --- Instance singleton ---

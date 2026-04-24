@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Nameless.Helpers;
+using MS_HealthCheckRegistration = Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckRegistration;
 
 namespace Nameless.Web.HealthCheck;
 
@@ -35,8 +37,16 @@ public static class ServiceCollectionExtensions {
                               );
 
             // Add other health checks.
-            foreach (var healthCheck in setting.HealthChecks) {
-                healthCheck(builder);
+            foreach (var kvp in setting.HealthChecks) {
+                self.TryAddSingleton(kvp.Key);
+
+                builder.Add(new MS_HealthCheckRegistration(
+                    name: kvp.Value.Name ?? kvp.Key.Name,
+                    factory: provider => (IHealthCheck)provider.GetRequiredService(kvp.Key),
+                    failureStatus: kvp.Value.FailureStatus,
+                    tags: kvp.Value.Tags,
+                    timeout: kvp.Value.Timeout
+                ));
             }
 
             return self;

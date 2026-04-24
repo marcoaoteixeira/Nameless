@@ -1,8 +1,7 @@
 using Moq;
-using Nameless.Bootstrap;
 using Nameless.Bootstrap.Notification;
 
-namespace Nameless;
+namespace Nameless.Bootstrap;
 
 public class BootstrapperExtensionsTests {
     // --- ExecuteAsync(CancellationToken) ---

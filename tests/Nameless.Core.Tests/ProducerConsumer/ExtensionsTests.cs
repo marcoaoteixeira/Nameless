@@ -1,7 +1,6 @@
 using Moq;
-using Nameless.ProducerConsumer;
 
-namespace Nameless;
+namespace Nameless.ProducerConsumer;
 
 public class ProducerConsumerExtensionsTests {
     // --- ConsumerExtensions.HandleAsync ---

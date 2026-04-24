@@ -1,7 +1,6 @@
 using Moq;
-using Nameless.Resilience;
 
-namespace Nameless;
+namespace Nameless.Resilience;
 
 public class RetryPipelineFactoryExtensionsTests {
     // --- Create(Action) ---

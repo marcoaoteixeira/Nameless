@@ -1,6 +1,4 @@
-using Nameless.ObjectModel;
-
-namespace Nameless;
+namespace Nameless.ObjectModel;
 
 public class ErrorExtensionsTests {
     // --- Flatten ---

@@ -1,6 +1,4 @@
-using Nameless.Attributes;
-
-namespace Nameless;
+namespace Nameless.Attributes;
 
 public class ConfigurationSectionNameAttributeTests {
     // ─── GetSectionName<T>() ─────────────────────────────────────────────────

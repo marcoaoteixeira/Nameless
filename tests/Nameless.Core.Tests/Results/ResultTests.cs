@@ -1,7 +1,6 @@
 using Nameless.ObjectModel;
-using Nameless.Results;
 
-namespace Nameless;
+namespace Nameless.Results;
 
 public class ResultTests {
     // ─── Parameterless constructor ───────────────────────────────────────────

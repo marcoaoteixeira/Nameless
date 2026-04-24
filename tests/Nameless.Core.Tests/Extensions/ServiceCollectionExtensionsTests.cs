@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Nameless.Attributes;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ServiceCollectionExtensionsTests {
     // ─── ConfigureOptions ────────────────────────────────────────────────────

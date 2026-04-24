@@ -1,8 +1,7 @@
 using Moq;
 using Nameless.ObjectModel;
-using Nameless.Validation;
 
-namespace Nameless;
+namespace Nameless.Validation;
 
 public class ValidationExtensionsTests {
     // --- ValidateAsync(object, CancellationToken) ---

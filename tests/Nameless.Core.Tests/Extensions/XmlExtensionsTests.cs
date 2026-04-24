@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class XmlExtensionsTests {
     // --- XContainerExtensions.HasElement(name) ---

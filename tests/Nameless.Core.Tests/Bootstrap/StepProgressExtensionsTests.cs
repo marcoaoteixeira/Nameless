@@ -1,6 +1,6 @@
 using Nameless.Bootstrap.Notification;
 
-namespace Nameless;
+namespace Nameless.Bootstrap;
 
 public class StepProgressExtensionsTests {
     // ─── ReportInformation ───────────────────────────────────────────────────

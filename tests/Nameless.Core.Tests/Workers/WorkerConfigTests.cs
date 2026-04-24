@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nameless.Workers;
 
-namespace Nameless;
+namespace Nameless.Workers;
 
 public class WorkerConfigTests {
     // ─── IsDisabled ──────────────────────────────────────────────────────────

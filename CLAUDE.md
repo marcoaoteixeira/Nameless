@@ -63,15 +63,16 @@ These take precedence over general conventions.
   - `[E2E]` — end-to-end tests
 - Do **not** enable `#nullable` in test projects — tests must be able to pass `null` without compiler warnings.
 
-## Feature Implementation Workflow
+## Feature Development Workflow
 
+**MUST** be followed always when developing a `new feature`.
 Follow these steps **in order**. Do not skip or reorder. Do not write code until step 7.
 
 1. **Cleanup** — Switch to default branch and pull. If there is uncommited work, ask user for directions.
 2. **Clarify** — Understand the task; ask questions when any requirement is unclear.
 3. **Brainstorm** — Propose clean, organized solutions. Cover security, performance, and edge cases. Explain reasoning.
-4. **Spec** — Create `specs/features/FEAT-XXX-<slug>.md` capturing agreed-upon requirements and decisions.
-5. **Plan** — Create `specs/plans/FEAT-XXX-<slug>.md` with an ordered implementation plan and edge cases.
+4. **Spec** — Create `.claude/specs/features/FEAT-XXX-<slug>.md` capturing agreed-upon requirements and decisions.
+5. **Plan** — Create `.claude/specs/plans/FEAT-XXX-<slug>.md` with an ordered implementation plan and edge cases.
 6. **Explain** — Describe the approach in plain language: what changes, why, in what order, and what edge cases are covered.
 7. **Branch** — Propose branch name (format: `feature/NAMELESS-FEAT_NUMBER-<slug>`), confirm with user, then create from `main`.
 8. **Code** — Implement using Test-Driven Development (TDD): write failing tests first, then make them pass.
@@ -81,5 +82,5 @@ Follow these steps **in order**. Do not skip or reorder. Do not write code until
     ```
     feat(NAMELESS-FEAT_NUMBER): concise description of what changed
     ```
-12. **Close** — Update the feature status to `Done` in `specs/README.md`.
+12. **Close** — Update the feature status to `Done` in `.claude/specs/README.md`.
 13. **Push** — Push changes.

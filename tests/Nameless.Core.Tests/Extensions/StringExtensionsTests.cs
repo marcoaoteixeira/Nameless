@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class StringExtensionsTests {
     // ─── RemoveDiacritics ────────────────────────────────────────────────────

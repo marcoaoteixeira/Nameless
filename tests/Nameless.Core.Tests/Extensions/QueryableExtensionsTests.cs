@@ -1,4 +1,4 @@
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class QueryableExtensionsTests {
     // ─── OrderBy ────────────────────────────────────────────────────────────

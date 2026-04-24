@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ObjectExtensionsTests {
     // ─── IsAnonymous ─────────────────────────────────────────────────────────

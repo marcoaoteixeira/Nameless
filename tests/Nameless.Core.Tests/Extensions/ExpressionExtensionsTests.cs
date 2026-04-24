@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ExpressionExtensionsTests {
     // ─── GetExpressionPath ──────────────────────────────────────────────────

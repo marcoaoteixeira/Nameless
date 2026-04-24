@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class LoggerExtensionsTests {
     // --- OnCondition ---

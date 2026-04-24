@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class EnumerableExtensionsTests {
     // ─── Each(Action<T>) ─────────────────────────────────────────────────────

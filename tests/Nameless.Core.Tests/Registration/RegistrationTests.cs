@@ -1,7 +1,4 @@
-using System.Reflection;
-using Nameless.Registration;
-
-namespace Nameless;
+namespace Nameless.Registration;
 
 public class RegistrationTests {
     // --- IgnoreAssemblyScanAttribute.IsNotPresent ---

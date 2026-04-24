@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nameless.Workers;
 
-namespace Nameless;
+namespace Nameless.Workers;
 
 public class WorkerStatusTests {
     private static IConfiguration CreateConfiguration(string workerName, bool isEnabled = true, string interval = "00:00:00.050") {

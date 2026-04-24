@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Nameless.Attributes;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ConfigurationExtensionsTests {
     // ─── GetOptions ──────────────────────────────────────────────────────────

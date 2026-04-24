@@ -1,10 +1,9 @@
 using System.IO.Compression;
-using Nameless.Compression;
 using Nameless.Compression.Requests;
 using Nameless.Compression.Responses;
 using Nameless.ObjectModel;
 
-namespace Nameless;
+namespace Nameless.Compression;
 
 public class CompressTests {
     // --- FileEntry ---

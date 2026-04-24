@@ -1,8 +1,7 @@
 using System.Diagnostics;
 using Moq;
-using Nameless.Diagnostics;
 
-namespace Nameless;
+namespace Nameless.Diagnostics;
 
 public class ActivityExtensionsTests {
     // --- ActivityExtensions.SetStatus(code) ---

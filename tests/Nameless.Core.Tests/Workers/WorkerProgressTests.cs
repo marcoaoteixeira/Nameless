@@ -1,10 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Null;
-using Nameless.Workers;
 using Nameless.Workers.Notification;
 
-namespace Nameless;
+namespace Nameless.Workers;
 
 public class WorkerProgressTests {
     private static IConfiguration CreateConfiguration(string workerName, string interval = "00:00:00.050") {

@@ -1,7 +1,7 @@
 using Nameless.Data.Responses;
 using Nameless.ObjectModel;
 
-namespace Nameless;
+namespace Nameless.Data;
 
 public class ResponsesTests {
     // --- ExecuteNonQueryResponse ---

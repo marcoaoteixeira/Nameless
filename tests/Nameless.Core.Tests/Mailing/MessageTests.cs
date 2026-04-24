@@ -1,7 +1,6 @@
 using System.Text;
-using Nameless.Mailing;
 
-namespace Nameless;
+namespace Nameless.Mailing;
 
 public class MessageTests {
     // --- Constructor ---

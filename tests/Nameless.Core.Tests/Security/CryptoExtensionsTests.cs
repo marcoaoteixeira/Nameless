@@ -1,7 +1,7 @@
 using Moq;
 using Nameless.Security.Cryptography;
 
-namespace Nameless;
+namespace Nameless.Security;
 
 public class CryptoExtensionsTests {
     // --- Encrypt ---

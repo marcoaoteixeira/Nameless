@@ -1,7 +1,6 @@
-using Nameless.Auth;
 using Nameless.ObjectModel;
 
-namespace Nameless;
+namespace Nameless.Auth;
 
 public class AuthorizationTokenTests {
     // --- AuthorizationTokenRequest ---

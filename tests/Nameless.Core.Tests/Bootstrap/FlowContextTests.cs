@@ -1,6 +1,4 @@
-using Nameless.Bootstrap;
-
-namespace Nameless;
+namespace Nameless.Bootstrap;
 
 public class FlowContextTests {
     // ─── Indexer set and get ─────────────────────────────────────────────────

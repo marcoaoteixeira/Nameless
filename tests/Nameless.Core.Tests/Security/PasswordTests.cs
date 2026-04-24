@@ -1,7 +1,7 @@
 using Moq;
 using Nameless.Security.Password;
 
-namespace Nameless;
+namespace Nameless.Security;
 
 public class PasswordTests {
     // --- Arguments defaults ---

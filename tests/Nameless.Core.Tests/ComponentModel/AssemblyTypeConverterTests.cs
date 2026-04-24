@@ -1,6 +1,4 @@
-using Nameless.ComponentModel;
-
-namespace Nameless;
+namespace Nameless.ComponentModel;
 
 public class AssemblyTypeConverterTests {
     private readonly AssemblyTypeConverter _converter = new();

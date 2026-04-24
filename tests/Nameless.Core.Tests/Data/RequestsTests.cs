@@ -1,7 +1,7 @@
 using System.Data;
 using Nameless.Data.Requests;
 
-namespace Nameless;
+namespace Nameless.Data;
 
 public class RequestsTests {
     // --- RequestBase ---

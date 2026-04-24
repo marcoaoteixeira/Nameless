@@ -4,6 +4,7 @@
 		<RootNamespace>Nameless.Web</RootNamespace>
 		<Title>Nameless Web Library</Title>
 		<Description>Nameless Web Library Description</Description>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,6 +1,4 @@
-using Nameless.ProducerConsumer;
-
-namespace Nameless;
+namespace Nameless.ProducerConsumer;
 
 public class ContextTests {
     // --- ConsumerContext ---

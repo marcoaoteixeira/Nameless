@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class ExceptionExtensionsTests {
     // ─── IsFatal ────────────────────────────────────────────────────────────

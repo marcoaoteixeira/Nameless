@@ -1,7 +1,6 @@
 using System.Data;
-using Nameless.Data;
 
-namespace Nameless;
+namespace Nameless.Data;
 
 public class ParameterCollectionTests {
     // --- Default constructor ---

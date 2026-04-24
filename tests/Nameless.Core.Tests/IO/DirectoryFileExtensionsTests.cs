@@ -1,7 +1,7 @@
 using Moq;
 using Nameless.IO.FileSystem;
 
-namespace Nameless;
+namespace Nameless.IO;
 
 public class DirectoryFileExtensionsTests {
     // --- DirectoryExtensions.IsEmpty ---

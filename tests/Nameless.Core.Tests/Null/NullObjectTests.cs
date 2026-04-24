@@ -1,6 +1,4 @@
-using Nameless.Null;
-
-namespace Nameless;
+namespace Nameless.Null;
 
 public class NullObjectTests {
     // ─── NullDisposable ──────────────────────────────────────────────────────

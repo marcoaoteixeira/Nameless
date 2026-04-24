@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class CultureInfoExtensionsTests {
     // ─── GetParents ─────────────────────────────────────────────────────────

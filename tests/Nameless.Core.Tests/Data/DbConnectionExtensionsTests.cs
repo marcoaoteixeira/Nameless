@@ -1,8 +1,7 @@
 using System.Data;
 using Moq;
-using Nameless.Data;
 
-namespace Nameless;
+namespace Nameless.Data;
 
 public class DbConnectionExtensionsTests {
     // --- EnsureOpen ---

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 
-namespace Nameless;
+namespace Nameless.Contracts;
 
 public class ThrowsTests {
     // ─── Singleton ─────────────────────────────────────────────────────────

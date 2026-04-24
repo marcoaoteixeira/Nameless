@@ -1,7 +1,6 @@
 using System.ComponentModel;
-using System.Reflection;
 
-namespace Nameless;
+namespace Nameless.Extensions;
 
 public class PropertyInfoExtensionsTests {
     // ─── GetDescription ──────────────────────────────────────────────────────

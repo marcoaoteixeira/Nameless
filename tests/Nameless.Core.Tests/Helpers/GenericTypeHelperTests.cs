@@ -1,6 +1,4 @@
-using Nameless.Helpers;
-
-namespace Nameless;
+namespace Nameless.Helpers;
 
 public class GenericTypeHelperTests {
     // --- GetArgumentsThatCloses ---
