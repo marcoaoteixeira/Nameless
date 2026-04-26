@@ -1,10 +1,12 @@
-﻿using Nameless.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Attributes;
 
 namespace Nameless.Application;
 
 /// <summary>
 ///     Application context options.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Poco)]
 [ConfigurationSectionName("ApplicationContext")]
 public record ApplicationContextOptions {
     /// <summary>

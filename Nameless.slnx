@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/.solution/">
+    <File Path=".claudeignore" />
     <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
@@ -25,11 +26,12 @@
   </Folder>
   <Folder Name="/.solution/build/">
     <File Path="build/build.cake" />
+    <File Path="build/build.sh" />
     <File Path="build/tools.sh" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Nameless.Core/Nameless.Core.csproj" />
-	<Project Path="src/Nameless.Impl/Nameless.Impl.csproj" Id="5e984eec-bc99-4956-88e3-2d63d427a918" />
+	<Project Path="src/Nameless.Core.Impl/Nameless.Core.Impl.csproj" Id="5e984eec-bc99-4956-88e3-2d63d427a918" />
     <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
 	<Project Path="src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" Id="0b5f9b94-2064-468d-a34a-2acca7ac7628" />
     <Project Path="src/Nameless.WPF/Nameless.WPF.csproj" Id="41200dd5-7c63-4ee7-a2ec-6122a10abb56" />
@@ -42,6 +44,6 @@
   <Folder Name="/templates/WinApp/" />
   <Folder Name="/tests/">
     <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
-    <Project Path="tests/Nameless.Impl.Tests/Nameless.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
+    <Project Path="tests/Nameless.Core.Impl.Tests/Nameless.Core.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
   </Folder>
 </Solution>

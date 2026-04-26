@@ -16,6 +16,10 @@
 		<PackageReference Include="Moq" />
 		<PackageReference Include="xunit.v3.extensibility.core" />
 	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="README.md">
@@ -24,9 +28,5 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Core\Nameless.Core.csproj" />
-	</ItemGroup>
-
+	
 </Project>

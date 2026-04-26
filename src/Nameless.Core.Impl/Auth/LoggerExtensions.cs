@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
 namespace Nameless.Auth;
 
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.InternalCode)]
 internal static class LoggerExtensions {
     extension<TRequest, TToken>(ILogger<AuthorizationTokenProvider<TRequest, TToken>> self)
         where TRequest : AuthorizationTokenRequest
