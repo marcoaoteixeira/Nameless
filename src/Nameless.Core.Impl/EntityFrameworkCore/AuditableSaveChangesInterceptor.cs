@@ -11,6 +11,7 @@ public class AuditableSaveChangesInterceptor : SaveChangesInterceptor {
         _timeProvider = timeProvider;
     }
 
+    /// <inheritdoc />
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default) {
         var dbContext = eventData.Context;
         if (dbContext is null) {

@@ -5,6 +5,9 @@ using Nameless.IO.FileSystem;
 
 namespace Nameless.Application;
 
+/// <summary>
+///     The application context.
+/// </summary>
 public class ApplicationContext : IApplicationContext {
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;

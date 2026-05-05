@@ -22,6 +22,9 @@ public sealed class ActivityWrapper : IActivity {
         _activity = activity;
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~ActivityWrapper() {
         Dispose(disposing: false);
     }

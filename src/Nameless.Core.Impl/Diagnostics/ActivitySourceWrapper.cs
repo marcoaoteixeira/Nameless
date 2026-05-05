@@ -11,6 +11,9 @@ public class ActivitySourceWrapper : IActivitySource {
 
     private bool _disposed;
 
+    /// <summary>
+    ///     The events that is triggered when <see cref="Dispose"/> occurs.
+    /// </summary>
     public event Action<IActivitySource>? OnDispose;
 
     /// <inheritdoc />

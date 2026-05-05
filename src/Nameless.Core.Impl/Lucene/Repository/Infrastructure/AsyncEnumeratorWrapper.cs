@@ -3,12 +3,19 @@ using Nameless.Lucene.Repository.Mappings;
 
 namespace Nameless.Lucene.Repository.Infrastructure;
 
+/// <summary>
+///     A wrapper for <see cref="IAsyncEnumerator{T}"/>.
+/// </summary>
+/// <typeparam name="TEntity">
+///     The type of the Lucene entity.
+/// </typeparam>
 public class AsyncEnumeratorWrapper<TEntity> : IAsyncEnumerator<TEntity>
     where TEntity : class {
     private readonly IEnumerable<ScoreDocument> _enumerable;
     private readonly IMapper _mapper;
     private readonly CancellationToken _cancellationToken;
 
+    /// <inheritdoc />
     public TEntity Current => GetCurrent();
 
     private IEnumerator<ScoreDocument> Inner {
@@ -19,12 +26,26 @@ public class AsyncEnumeratorWrapper<TEntity> : IAsyncEnumerator<TEntity>
     private TEntity? _current;
     private bool _disposed;
 
+    /// <summary>
+    ///     Initializes a new instance of
+    ///     <see cref="AsyncEnumeratorWrapper{TEntity}"/> class.
+    /// </summary>
+    /// <param name="enumerable">
+    ///     The enumerable to wrap.
+    /// </param>
+    /// <param name="mapper">
+    ///     The mapper.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token.
+    /// </param>
     public AsyncEnumeratorWrapper(IEnumerable<ScoreDocument> enumerable, IMapper mapper, CancellationToken cancellationToken) {
         _enumerable = enumerable;
         _mapper = mapper;
         _cancellationToken = cancellationToken;
     }
 
+    /// <inheritdoc />
     public ValueTask<bool> MoveNextAsync() {
         BlockAccessAfterDispose();
 
@@ -39,6 +60,7 @@ public class AsyncEnumeratorWrapper<TEntity> : IAsyncEnumerator<TEntity>
         return ValueTask.FromResult(result);
     }
 
+    /// <inheritdoc />
     public ValueTask DisposeAsync() {
         if (_disposed) { return ValueTask.CompletedTask; }
 

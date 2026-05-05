@@ -37,9 +37,6 @@ public abstract class RequestHandlerWrapper<TResponse> : RequestHandlerWrapper {
     /// <summary>
     ///     Handles the request.
     /// </summary>
-    /// <typeparam name="TResponse">
-    ///     Type of the response.
-    /// </typeparam>
     /// <param name="request">
     ///     The request to handle.
     /// </param>

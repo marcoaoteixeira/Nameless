@@ -4,7 +4,6 @@
 		<RootNamespace>Nameless</RootNamespace>
 		<Title>Nameless (Core Implementations) Library</Title>
 		<Description>Nameless (Core Implementations) Library Description</Description>
-		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
