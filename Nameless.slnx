@@ -24,6 +24,13 @@
   <Folder Name="/.solution/.claude/skills/code-reviewer/">
     <File Path=".claude/skills/code-reviewer/SKILL.md" />
   </Folder>
+  <Folder Name="/.solution/.github/" />
+  <Folder Name="/.solution/.github/workflows/">
+    <File Path=".github/workflows/develop-windows.yml" />
+    <File Path=".github/workflows/develop.yml" />
+    <File Path=".github/workflows/release-windows.yml" />
+    <File Path=".github/workflows/release.yml" />
+  </Folder>
   <Folder Name="/.solution/build/">
     <File Path="build/build.cake" />
     <File Path="build/build.sh" />
