@@ -6,12 +6,24 @@ using Nameless.Resilience;
 
 namespace Nameless.Bootstrap;
 
+/// <summary>
+///     A <see cref="Bootstrapper"/> implementation that executes steps within
+///     each dependency level in parallel.
+/// </summary>
 public class ParallelBootstrapper : Bootstrapper {
     private delegate Task RunStepExecutionLevelAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken);
 
     private readonly ILogger<ParallelBootstrapper> _logger;
     private readonly IOptions<BootstrapOptions> _options;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ParallelBootstrapper"/> class.
+    /// </summary>
+    /// <param name="steps">The collection of steps to execute.</param>
+    /// <param name="retryPipelineFactory">The retry policy factory.</param>
+    /// <param name="timeProvider">The time provider.</param>
+    /// <param name="logger">The logger.</param>
+    /// <param name="options">The bootstrap options (used to configure parallelism).</param>
     public ParallelBootstrapper(
         IEnumerable<IStep> steps,
         IRetryPipelineFactory retryPipelineFactory,
@@ -23,6 +35,7 @@ public class ParallelBootstrapper : Bootstrapper {
         _options = options;
     }
 
+    /// <inheritdoc />
     protected override async Task ExecuteStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionGraph graph, CancellationToken cancellationToken) {
         _logger.ExecutionMode("PARALLEL");
 

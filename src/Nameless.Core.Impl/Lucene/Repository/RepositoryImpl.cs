@@ -7,6 +7,10 @@ using Nameless.Results;
 
 namespace Nameless.Lucene.Repository;
 
+/// <summary>
+///     Default implementation of <see cref="IRepository"/> that persists and queries
+///     entities in a Lucene index via insert, delete, update, and search operations.
+/// </summary>
 public class RepositoryImpl : IRepository {
     private const string REQUEST_CANCELLED_ERROR = "Requested task was cancelled.";
 
@@ -14,6 +18,12 @@ public class RepositoryImpl : IRepository {
     private readonly IMapper _mapper;
     private readonly IIndexProvider _indexProvider;
 
+    /// <summary>
+    ///     Initializes a new <see cref="RepositoryImpl"/>.
+    /// </summary>
+    /// <param name="analyzerProvider">Provides the Lucene analyzer for building queries.</param>
+    /// <param name="indexProvider">Provides access to Lucene index instances.</param>
+    /// <param name="mapper">Maps entities to and from Lucene documents.</param>
     public RepositoryImpl(IAnalyzerProvider analyzerProvider, IIndexProvider indexProvider, IMapper mapper) {
         _analyzerProvider = analyzerProvider;
         _indexProvider = indexProvider;

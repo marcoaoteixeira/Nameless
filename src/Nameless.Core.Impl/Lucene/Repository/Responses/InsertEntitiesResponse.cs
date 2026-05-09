@@ -52,12 +52,22 @@ public class InsertEntitiesResponse : Result<InsertEntitiesMetadata> {
         return new InsertEntitiesResponse(value: default, errors: [error]);
     }
 
+    /// <summary>
+    ///     Creates a successful response with the number of inserted documents.
+    /// </summary>
+    /// <param name="count">The number of documents inserted.</param>
+    /// <returns>A <see cref="Task{TResult}"/> containing the successful response.</returns>
     public static Task<InsertEntitiesResponse> From(int count) {
         return Task.FromResult<InsertEntitiesResponse>(
             new InsertEntitiesMetadata(count)
         );
     }
 
+    /// <summary>
+    ///     Creates a failure response from the given errors.
+    /// </summary>
+    /// <param name="errors">One or more <see cref="Error"/> instances describing the failures.</param>
+    /// <returns>A <see cref="Task{TResult}"/> containing the failure response.</returns>
     public static Task<InsertEntitiesResponse> From(params Error[] errors) {
         return Task.FromResult<InsertEntitiesResponse>(errors);
     }

@@ -8,6 +8,11 @@ using RabbitMQ.Client.Events;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
+/// <summary>
+///     Abstract base class for RabbitMQ consumers that handles channel setup, message
+///     delivery, acknowledgement, and retry logic as a hosted background service.
+/// </summary>
+/// <typeparam name="TMessage">The message type this consumer processes.</typeparam>
 public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, IDisposable, IAsyncDisposable {
     private readonly IChannelFactory _channelFactory;
     private readonly IMessageSerializer _serializer;
@@ -20,10 +25,21 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
     private AsyncEventingBasicConsumer? _consumer;
     private bool _disposed;
 
+    /// <summary>
+    ///     Gets the consumer name used as the RabbitMQ consumer tag.
+    ///     When empty or whitespace, a unique name is generated automatically.
+    /// </summary>
     public abstract string Name { get; }
 
+    /// <summary>
+    ///     Gets the queue/topic name this consumer subscribes to.
+    /// </summary>
     public abstract string Topic { get; }
 
+    /// <summary>
+    ///     Gets the optional retry policy configuration for failed message processing.
+    ///     Returns <see langword="null"/> by default (no retries).
+    /// </summary>
     public virtual RetryPolicyConfiguration? RetryPolicy => null;
 
     private IRetryPipeline Retry => _retry.Value;
@@ -34,6 +50,13 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
             : Name;
     }
 
+    /// <summary>
+    ///     Initializes a new <see cref="Consumer{TMessage}"/>.
+    /// </summary>
+    /// <param name="channelFactory">Factory used to create the RabbitMQ channel.</param>
+    /// <param name="serializer">Serializer for deserializing incoming messages.</param>
+    /// <param name="retryPipelineFactory">Factory for creating the retry pipeline.</param>
+    /// <param name="logger">Logger for this consumer instance.</param>
     protected Consumer(IChannelFactory channelFactory, IMessageSerializer serializer, IRetryPipelineFactory retryPipelineFactory, ILogger<Consumer<TMessage>> logger) {
         _channelFactory = channelFactory;
         _serializer = serializer;
@@ -43,10 +66,20 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
         _retry = new Lazy<IRetryPipeline>(CreateRetryPipeline);
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~Consumer() {
         Dispose(disposing: false);
     }
 
+    /// <summary>
+    ///     Processes the deserialized <paramref name="message"/> received from RabbitMQ.
+    /// </summary>
+    /// <param name="message">The deserialized message payload.</param>
+    /// <param name="context">Contextual metadata about the delivery (headers, correlation ID, etc.).</param>
+    /// <param name="cancellationToken">Token to observe for cancellation.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous consume operation.</returns>
     public abstract Task ConsumeAsync(TMessage message, ConsumerContext context, CancellationToken cancellationToken);
 
     async Task IHostedService.StartAsync(CancellationToken cancellationToken) {
@@ -92,11 +125,13 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
         );
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
     public async ValueTask DisposeAsync() {
         await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
 
@@ -104,6 +139,13 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    ///     Releases managed and unmanaged resources held by this consumer.
+    /// </summary>
+    /// <param name="disposing">
+    ///     <see langword="true"/> when called from <see cref="Dispose()"/>;
+    ///     <see langword="false"/> when called from the finalizer.
+    /// </param>
     protected virtual void Dispose(bool disposing) {
         if (_disposed) { return; }
 
@@ -119,6 +161,9 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
         _disposed = true;
     }
 
+    /// <summary>
+    ///     Performs the asynchronous portion of resource cleanup, disposing the channel asynchronously.
+    /// </summary>
     protected virtual async ValueTask DisposeAsyncCore() {
         if (_channel is not null) {
             await _channel.DisposeAsync()

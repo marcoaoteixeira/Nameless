@@ -239,6 +239,13 @@ public class Index : IIndex {
         ObjectDisposedException.ThrowIf(_disposed, this);
     }
 
+    /// <summary>
+    ///     Releases the managed and unmanaged resources used by this instance.
+    /// </summary>
+    /// <param name="disposing">
+    ///     <see langword="true"/> to release both managed and unmanaged resources;
+    ///     <see langword="false"/> to release only unmanaged resources.
+    /// </param>
     protected virtual void Dispose(bool disposing) {
         if (_disposed) { return; }
 

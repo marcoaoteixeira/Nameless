@@ -9,10 +9,23 @@ namespace Nameless.Bootstrap;
 /// </summary>
 public static class HostExtensions {
     extension<THost>(THost self) where THost : IHost {
+        /// <summary>
+        ///     Synchronously executes the <see cref="IBootstrapper"/> warmup.
+        /// </summary>
+        /// <param name="execution">
+        ///     Optional delegate to configure <see cref="WarmupOptions"/>.
+        /// </param>
         public void Warmup(Action<WarmupOptions>? execution) {
             self.WarmupAsync(execution).GetAwaiter().GetResult();
         }
 
+        /// <summary>
+        ///     Asynchronously executes the <see cref="IBootstrapper"/> warmup.
+        /// </summary>
+        /// <param name="execution">
+        ///     Optional delegate to configure <see cref="WarmupOptions"/>.
+        /// </param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task WarmupAsync(Action<WarmupOptions>? execution) {
             var opts = ActionHelper.FromDelegate(execution);
             var bootstrapper = self.Services.GetRequiredService<IBootstrapper>();

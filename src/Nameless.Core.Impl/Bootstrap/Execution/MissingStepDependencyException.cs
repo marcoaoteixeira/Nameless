@@ -1,5 +1,9 @@
 ﻿namespace Nameless.Bootstrap.Execution;
 
+/// <summary>
+///     Exception thrown when a bootstrap step declares a dependency on another
+///     step that was not registered.
+/// </summary>
 public class MissingStepDependencyException : Exception {
     /// <summary>
     ///     Gets the name of the dependent step.

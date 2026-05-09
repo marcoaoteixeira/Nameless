@@ -11,7 +11,14 @@ namespace Nameless.Lucene.Repository;
 ///     Default implementation of <see cref="IQueryBuilder"/>.
 /// </summary>
 public sealed class QueryBuilder : IQueryBuilder {
+    /// <summary>
+    ///     The minimum allowed fuzziness value (exact match).
+    /// </summary>
     public const float MinimumFuzziness = 0F;
+
+    /// <summary>
+    ///     The maximum allowed fuzziness value for fuzzy queries.
+    /// </summary>
     public const float MaximumFuzziness = 2F;
 
     private const double EPSILON = 0.001D;
@@ -42,6 +49,11 @@ public sealed class QueryBuilder : IQueryBuilder {
         InitializePendingClause();
     }
 
+    /// <summary>
+    ///     Creates a new <see cref="QueryBuilder"/> with the specified Lucene analyzer.
+    /// </summary>
+    /// <param name="analyzer">The <see cref="Analyzer"/> used to tokenize query terms.</param>
+    /// <returns>A new <see cref="QueryBuilder"/> instance.</returns>
     public static QueryBuilder Create(Analyzer analyzer) {
         return new QueryBuilder(analyzer);
     }

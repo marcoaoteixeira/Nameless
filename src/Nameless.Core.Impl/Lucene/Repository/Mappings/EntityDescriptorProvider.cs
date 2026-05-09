@@ -3,15 +3,27 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Nameless.Lucene.Repository.Mappings;
 
+/// <summary>
+///     Default implementation of <see cref="IEntityDescriptorProvider"/> that resolves
+///     <see cref="IEntityMapping{TEntity}"/> from the DI container and caches descriptors.
+/// </summary>
 public class EntityDescriptorProvider : IEntityDescriptorProvider {
     private static readonly ConcurrentDictionary<Type, object> Cache = [];
 
     private readonly IServiceProvider _provider;
 
+    /// <summary>
+    ///     Initializes a new <see cref="EntityDescriptorProvider"/>.
+    /// </summary>
+    /// <param name="provider">The service provider used to resolve entity mappings.</param>
     public EntityDescriptorProvider(IServiceProvider provider) {
         _provider = provider;
     }
 
+    /// <inheritdoc />
+    /// <exception cref="MissingEntityIDException">
+    ///     if the resolved mapping does not define an ID property.
+    /// </exception>
     public IEntityDescriptor<TEntity> GetDescriptor<TEntity>() where TEntity : class {
         var descriptor = Cache.GetOrAdd(
             key: typeof(TEntity),

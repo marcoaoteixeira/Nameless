@@ -7,8 +7,22 @@ using Nameless.Helpers;
 
 namespace Nameless.EntityFrameworkCore;
 
+/// <summary>
+///     <see cref="IServiceCollection"/> extension methods for Entity Framework Core.
+/// </summary>
 public static class ServiceCollectionExtensions {
+    /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {
+        /// <summary>
+        ///     Registers Entity Framework Core services, interceptors, and the
+        ///     specified <typeparamref name="TDbContext"/>.
+        /// </summary>
+        /// <typeparam name="TDbContext">The <see cref="DbContext"/> type to register.</typeparam>
+        /// <param name="registration">Optional delegate to configure interceptors and seeder.</param>
+        /// <param name="configuration">Optional configuration for <see cref="EntityFrameworkCoreOptions"/>.</param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
+        /// </returns>
         public IServiceCollection RegisterEntityFrameworkCore<TDbContext>(Action<EntityFrameworkCoreRegistration>? registration = null, IConfiguration? configuration = null)
             where TDbContext : DbContext {
             var settings = ActionHelper.FromDelegate(registration);

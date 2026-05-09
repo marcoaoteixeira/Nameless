@@ -4,6 +4,9 @@ using Nameless.Attributes;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
+/// <summary>
+///     Represents the connection settings for a RabbitMQ server.
+/// </summary>
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 [ConfigurationSectionName("Server")]
 public record ServerOptions {

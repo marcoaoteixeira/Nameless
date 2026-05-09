@@ -10,6 +10,9 @@ namespace Nameless.Lucene;
 ///     Contains all defaults for the library.
 /// </summary>
 public static class LuceneDefaults {
+    /// <summary>
+    ///     Gets the default index name (Base64-encoded).
+    /// </summary>
     public static string IndexName => "ZGVmYXVsdC1sdWNlbmUtaW5kZXg=";
     
     /// <summary>

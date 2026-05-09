@@ -1,5 +1,9 @@
 ﻿namespace Nameless.Lucene.Repository;
 
+/// <summary>
+///     Defines a fluent builder for constructing Lucene search queries,
+///     including field filters, range clauses, sorting, and pagination.
+/// </summary>
 public interface IQueryBuilder {
     /// <summary>
     ///     Includes the specified fields and value to the search query.

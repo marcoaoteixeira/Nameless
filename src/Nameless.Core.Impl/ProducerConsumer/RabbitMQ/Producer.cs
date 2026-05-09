@@ -6,6 +6,10 @@ using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
+/// <summary>
+///     RabbitMQ implementation of <see cref="IProducer"/> that manages a per-topic channel
+///     cache and publishes serialized messages to the broker.
+/// </summary>
 public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
     private readonly IChannelFactory _channelFactory;
     private readonly IConfiguration _configuration;
@@ -17,6 +21,13 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
     private Dictionary<string, CacheEntry> _cache = [];
     private int _disposed;
 
+    /// <summary>
+    ///     Initializes a new <see cref="Producer"/>.
+    /// </summary>
+    /// <param name="channelFactory">Factory used to create RabbitMQ channels per topic.</param>
+    /// <param name="configuration">Application configuration used to resolve queue options.</param>
+    /// <param name="serializer">Serializer for encoding messages before publishing.</param>
+    /// <param name="logger">Logger for this producer instance.</param>
     public Producer(IChannelFactory channelFactory, IConfiguration configuration, IMessageSerializer serializer, ILogger<Producer> logger) {
         _channelFactory = channelFactory;
         _configuration = configuration;
@@ -24,21 +35,27 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
         _logger = logger;
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~Producer() {
         Dispose(disposing: false);
     }
 
+    /// <inheritdoc />
     public async Task ProduceAsync(string topic, object message, ProducerContext context, CancellationToken cancellationToken) {
         var entry = await FetchCacheEntryAsync(topic, cancellationToken).SkipContextSync();
 
         await InnerProduceAsync(entry, message, context, cancellationToken).SkipContextSync();
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
     public async ValueTask DisposeAsync() {
         await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
 

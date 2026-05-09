@@ -1,6 +1,23 @@
 ﻿namespace Nameless.Bootstrap.Execution;
 
+/// <summary>
+///     Builds a <see cref="StepExecutionGraph"/> from a flat collection of
+///     <see cref="IStep"/> instances by resolving their dependency order.
+/// </summary>
 public static class StepExecutionGraphBuilder {
+    /// <summary>
+    ///     Creates a <see cref="StepExecutionGraph"/> from the specified steps,
+    ///     arranging them into dependency-ordered execution levels.
+    /// </summary>
+    /// <param name="steps">The collection of steps to arrange.</param>
+    /// <returns>A <see cref="StepExecutionGraph"/> ready for execution.</returns>
+    /// <exception cref="MissingStepDependencyException">
+    ///     if a step declares a dependency on a step that is not in
+    ///     <paramref name="steps"/>.
+    /// </exception>
+    /// <exception cref="StepCircularReferenceException">
+    ///     if a circular dependency is detected among the steps.
+    /// </exception>
     public static StepExecutionGraph Create(IEnumerable<IStep> steps) {
         var hash = CreateStepExecutionNodes(steps);
 

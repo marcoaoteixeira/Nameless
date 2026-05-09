@@ -4,6 +4,10 @@ using Nameless.Lucene.ObjectModel;
 
 namespace Nameless.Lucene.Collections;
 
+/// <summary>
+///     Enumerates <see cref="ScoreDocument"/> results from a Lucene search, fetching
+///     documents in pages using search-after pagination.
+/// </summary>
 public sealed class SearchEnumerator : IEnumerator<ScoreDocument> {
     private readonly IndexSearcher _searcher;
     private readonly Query _query;
@@ -16,10 +20,24 @@ public sealed class SearchEnumerator : IEnumerator<ScoreDocument> {
 
     private bool _disposed;
 
+    /// <inheritdoc />
     public ScoreDocument Current => GetCurrent();
 
     object IEnumerator.Current => GetCurrent();
 
+    /// <summary>
+    ///     Initializes a new <see cref="SearchEnumerator"/> with the given search parameters.
+    /// </summary>
+    /// <param name="searcher">The <see cref="IndexSearcher"/> used to execute searches.</param>
+    /// <param name="query">The Lucene <see cref="Query"/> to execute.</param>
+    /// <param name="sort">The <see cref="Sort"/> order for results.</param>
+    /// <param name="limit">
+    ///     The maximum number of documents per page; must be between 1 and
+    ///     <see cref="LuceneConstants.MaximumQueryResults"/>.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     if <paramref name="limit"/> is out of the valid range.
+    /// </exception>
     public SearchEnumerator(IndexSearcher searcher, Query query, Sort sort, int limit) {
         _searcher = searcher;
         _query = query;
@@ -31,10 +49,14 @@ public sealed class SearchEnumerator : IEnumerator<ScoreDocument> {
         );
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~SearchEnumerator() {
         Dispose(disposing: false);
     }
 
+    /// <inheritdoc />
     public bool MoveNext() {
         BlockAccessAfterDispose();
 
@@ -45,6 +67,7 @@ public sealed class SearchEnumerator : IEnumerator<ScoreDocument> {
         return _current is not null;
     }
 
+    /// <inheritdoc />
     public void Reset() {
         BlockAccessAfterDispose();
 
@@ -53,6 +76,7 @@ public sealed class SearchEnumerator : IEnumerator<ScoreDocument> {
         _documents.Clear();
     }
 
+    /// <inheritdoc />
     public void Dispose() {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);

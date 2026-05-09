@@ -42,12 +42,33 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     /// </summary>
     public IReadOnlyList<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
     
+    /// <summary>
+    ///     Registers an event handler by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TEventHandler">The event handler type.</typeparam>
+    /// <typeparam name="TEvent">The event type handled.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
     public MediatorRegistration RegisterEventHandler<TEventHandler, TEvent>()
         where TEventHandler : IEventHandler<TEvent>
         where TEvent : IEvent {
         return RegisterEventHandler(typeof(TEventHandler));
     }
 
+    /// <summary>
+    ///     Registers an event handler by type.
+    /// </summary>
+    /// <param name="type">The event handler type.</param>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
+    ///     <see cref="IEventHandler{TEvent}"/>.
+    /// </exception>
     public MediatorRegistration RegisterEventHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IEventHandler<>));
@@ -57,12 +78,34 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
         return this;
     }
 
+    /// <summary>
+    ///     Registers a request handler by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TRequestHandler">The request handler type.</typeparam>
+    /// <typeparam name="TRequest">The request type handled.</typeparam>
+    /// <typeparam name="TResponse">The response type.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
     public MediatorRegistration RegisterRequestHandler<TRequestHandler, TRequest, TResponse>()
         where TRequestHandler : IRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
         return RegisterRequestHandler(typeof(TRequestHandler));
     }
 
+    /// <summary>
+    ///     Registers a request handler by type.
+    /// </summary>
+    /// <param name="type">The request handler type.</param>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
+    ///     <see cref="IRequestHandler{TRequest,TResponse}"/>.
+    /// </exception>
     public MediatorRegistration RegisterRequestHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IRequestHandler<,>));
@@ -72,6 +115,16 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
         return this;
     }
 
+    /// <summary>
+    ///     Registers a request pipeline behavior by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TRequestPipelineBehavior">The pipeline behavior type.</typeparam>
+    /// <typeparam name="TRequest">The request type.</typeparam>
+    /// <typeparam name="TResponse">The response type.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
     public MediatorRegistration RegisterRequestPipelineBehavior<TRequestPipelineBehavior, TRequest, TResponse>()
         where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
@@ -108,12 +161,34 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
         return this;
     }
 
+    /// <summary>
+    ///     Registers a stream handler by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TStreamHandler">The stream handler type.</typeparam>
+    /// <typeparam name="TStream">The stream request type handled.</typeparam>
+    /// <typeparam name="TResponse">The response type.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
     public MediatorRegistration RegisterStreamHandler<TStreamHandler, TStream, TResponse>()
         where TStreamHandler : IStreamHandler<TStream, TResponse>
         where TStream : IStream<TResponse> {
         return RegisterStreamHandler(typeof(TStreamHandler));
     }
 
+    /// <summary>
+    ///     Registers a stream handler by type.
+    /// </summary>
+    /// <param name="type">The stream handler type.</param>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
+    ///     <see cref="IStreamHandler{TStream,TResponse}"/>.
+    /// </exception>
     public MediatorRegistration RegisterStreamHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IStreamHandler<,>));
@@ -123,6 +198,16 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
         return this;
     }
 
+    /// <summary>
+    ///     Registers a stream pipeline behavior by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TStreamPipelineBehavior">The stream pipeline behavior type.</typeparam>
+    /// <typeparam name="TStream">The stream request type.</typeparam>
+    /// <typeparam name="TResponse">The response type.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
     public MediatorRegistration RegisterStreamPipelineBehavior<TStreamPipelineBehavior, TStream, TResponse>()
         where TStreamPipelineBehavior : IStreamPipelineBehavior<TStream, TResponse>
         where TStream : IStream<TResponse> {

@@ -4,7 +4,12 @@ using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
+/// <summary>
+///     An <see cref="IMessageSerializer"/> implementation that wraps messages in an
+///     <see cref="Envelope"/> and serializes them to and from UTF-8 JSON.
+/// </summary>
 public class JsonMessageSerializer : IMessageSerializer {
+    /// <inheritdoc />
     public Task<byte[]> SerializeAsync(object message, Context context, CancellationToken cancellationToken) {
         var envelope = new Envelope {
             Header = new Header {
@@ -21,6 +26,7 @@ public class JsonMessageSerializer : IMessageSerializer {
         return Task.FromResult(result);
     }
 
+    /// <inheritdoc />
     public Task<TMessage> DeserializeAsync<TMessage>(byte[] buffer, Context context, CancellationToken cancellationToken) {
         var envelope = JsonSerializer.Deserialize<Envelope>(buffer);
 

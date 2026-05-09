@@ -4,12 +4,22 @@ using System.Reflection;
 
 namespace Nameless.Lucene.Repository.Mappings;
 
+/// <summary>
+///     Default implementation of <see cref="IEntityDescriptor{TDocument}"/> that builds
+///     property descriptors from lambda expressions for Lucene document mapping.
+/// </summary>
+/// <typeparam name="TDocument">The entity/document type being described.</typeparam>
 public class EntityDescriptor<TDocument> : IEntityDescriptor<TDocument>
     where TDocument : class {
     private readonly Dictionary<string, PropertyDescriptor<TDocument>> _properties = [];
 
+    /// <inheritdoc />
     public IReadOnlyCollection<PropertyDescriptor> Properties => _properties.Values;
 
+    /// <inheritdoc />
+    /// <exception cref="InvalidOperationException">
+    ///     if an ID property has already been defined on this descriptor.
+    /// </exception>
     public IEntityDescriptor<TDocument> SetID<TProperty>(Expression<Func<TDocument, TProperty>> expression) {
         if (this.HasID) {
             throw new InvalidOperationException("An ID property was already defined.");
@@ -20,6 +30,7 @@ public class EntityDescriptor<TDocument> : IEntityDescriptor<TDocument>
         return this;
     }
 
+    /// <inheritdoc />
     public IEntityDescriptor<TDocument> SetProperty<TProperty>(Expression<Func<TDocument, TProperty>> expression, PropertyOptions options) {
         IncludeProperty(expression, isID: false, options);
 

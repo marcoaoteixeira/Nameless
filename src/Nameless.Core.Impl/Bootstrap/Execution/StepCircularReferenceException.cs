@@ -1,5 +1,9 @@
 ﻿namespace Nameless.Bootstrap.Execution;
 
+/// <summary>
+///     Exception thrown when a circular dependency is detected in the bootstrap
+///     step dependency graph.
+/// </summary>
 public class StepCircularReferenceException : Exception {
     /// <summary>
     ///     Gets the name of the step where the circular

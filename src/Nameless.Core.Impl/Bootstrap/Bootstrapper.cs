@@ -6,6 +6,10 @@ using Nameless.Resilience;
 
 namespace Nameless.Bootstrap;
 
+/// <summary>
+///     Default implementation of <see cref="IBootstrapper"/> that executes
+///     bootstrap steps sequentially.
+/// </summary>
 public class Bootstrapper : IBootstrapper {
     private readonly IStep[] _steps;
     private readonly IRetryPipelineFactory _retryPipelineFactory;
@@ -37,6 +41,9 @@ public class Bootstrapper : IBootstrapper {
     }
 
     /// <inheritdoc />
+    /// <exception cref="BootstrapException">
+    ///     if one or more steps fail during execution.
+    /// </exception>
     public async Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
         _logger.BootstrapStarting(_steps.Length);
 
@@ -74,6 +81,15 @@ public class Bootstrapper : IBootstrapper {
         }
     }
 
+    /// <summary>
+    ///     Executes all steps in the graph. Override this method to provide
+    ///     a custom execution strategy, such as parallel execution.
+    /// </summary>
+    /// <param name="context">The flow context shared across steps.</param>
+    /// <param name="progress">The progress reporter.</param>
+    /// <param name="graph">The execution graph that defines the order and dependencies of steps.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected virtual async Task ExecuteStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionGraph graph, CancellationToken cancellationToken) {
         _logger.ExecutionMode("SEQUENTIAL");
 
@@ -98,6 +114,14 @@ public class Bootstrapper : IBootstrapper {
         }
     }
 
+    /// <summary>
+    ///     Executes a single step with retry support.
+    /// </summary>
+    /// <param name="context">The flow context shared across steps.</param>
+    /// <param name="node">The execution node representing the step to run.</param>
+    /// <param name="progress">The progress reporter.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected async Task ExecuteStepWithRetryAsync(FlowContext context, StepExecutionNode node, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
         _logger.StepStarting(node.Step.DisplayName);
 

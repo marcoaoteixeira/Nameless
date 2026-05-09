@@ -41,6 +41,9 @@ public class RijndaelCrypto : ICrypto, IDisposable {
         InitializeCryptoTransform();
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~RijndaelCrypto() {
         Dispose(disposing: false);
     }
@@ -81,6 +84,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
         }
     }
 
+    /// <inheritdoc />
     public byte[] Decrypt(Stream stream) {
         BlockAccessAfterDispose();
         EnsureStreamAvailability(stream);

@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Application;
 
+/// <summary>
+///     <see cref="IServiceCollection"/> extension methods
+/// </summary>
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection" />.

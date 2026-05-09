@@ -1,5 +1,8 @@
 ﻿namespace Nameless.Lucene.Repository.Mappings;
 
+/// <summary>
+///     Controls how a property is stored and indexed in a Lucene document.
+/// </summary>
 [Flags]
 public enum PropertyOptions {
     /// <summary>

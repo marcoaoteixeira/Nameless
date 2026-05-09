@@ -3,9 +3,17 @@ using Lucene.Net.Documents;
 
 namespace Nameless.Lucene.Repository.Mappings;
 
+/// <summary>
+///     Default implementation of <see cref="IMapper"/> that converts between
+///     entity objects and Lucene <see cref="Document"/> instances.
+/// </summary>
 public class Mapper : IMapper {
     private readonly IEntityDescriptorProvider _provider;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Mapper"/> class.
+    /// </summary>
+    /// <param name="provider">The entity descriptor provider.</param>
     public Mapper(IEntityDescriptorProvider provider) {
         _provider = provider;
     }

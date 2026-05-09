@@ -4,13 +4,22 @@ using Polly.Retry;
 
 namespace Nameless.Resilience;
 
+/// <summary>
+///     Default implementation of <see cref="IRetryPipelineFactory"/> that builds Polly
+///     retry pipelines from a <see cref="RetryPolicyConfiguration"/>.
+/// </summary>
 public class RetryPipelineFactory : IRetryPipelineFactory {
     private readonly ILogger<RetryPipelineFactory> _logger;
 
+    /// <summary>
+    ///     Initializes a new <see cref="RetryPipelineFactory"/>.
+    /// </summary>
+    /// <param name="logger">Logger used to emit retry warning events.</param>
     public RetryPipelineFactory(ILogger<RetryPipelineFactory> logger) {
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public IRetryPipeline Create(RetryPolicyConfiguration configuration) {
         return configuration.RetryCount > 0
             ? CreateRetryPipeline(configuration)

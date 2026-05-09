@@ -24,14 +24,34 @@ public static class IndexExtensions {
             return self.Count(new MatchAllDocsQuery());
         }
 
+        /// <summary>
+        ///     Searches the index using the specified query, using default relevance
+        ///     sorting and the maximum query result limit.
+        /// </summary>
+        /// <param name="query">The search query.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="ScoreDocument"/>.</returns>
         public IEnumerable<ScoreDocument> Search(Query query) {
             return self.Search(query, Sort.RELEVANCE, LuceneConstants.MaximumQueryResults);
         }
 
+        /// <summary>
+        ///     Searches the index using the specified query and sort, using the
+        ///     maximum query result limit.
+        /// </summary>
+        /// <param name="query">The search query.</param>
+        /// <param name="sort">The sort options.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="ScoreDocument"/>.</returns>
         public IEnumerable<ScoreDocument> Search(Query query, Sort sort) {
             return self.Search(query, sort, LuceneConstants.MaximumQueryResults);
         }
 
+        /// <summary>
+        ///     Searches the index using the specified query with a result limit,
+        ///     using default relevance sorting.
+        /// </summary>
+        /// <param name="query">The search query.</param>
+        /// <param name="limit">The maximum number of results to return.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="ScoreDocument"/>.</returns>
         public IEnumerable<ScoreDocument> Search(Query query, int limit) {
             return self.Search(query, Sort.RELEVANCE, limit);
         }

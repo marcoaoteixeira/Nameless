@@ -44,6 +44,9 @@ public class IndexProvider : IIndexProvider {
         _logger = logger;
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~IndexProvider() {
         Dispose(disposing: false);
     }

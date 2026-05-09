@@ -94,6 +94,9 @@ public class Database : IDatabase, IDisposable {
         Dispose(disposing: true);
     }
 
+    /// <summary>
+    ///     Destructor
+    /// </summary>
     ~Database() {
         Dispose(disposing: false);
     }

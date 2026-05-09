@@ -48,5 +48,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
     <Project Path="tests/Nameless.Core.Impl.Tests/Nameless.Core.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
+    <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" Id="287c4892-3e77-473a-9a85-54683f6cdcfb" />
   </Folder>
 </Solution>

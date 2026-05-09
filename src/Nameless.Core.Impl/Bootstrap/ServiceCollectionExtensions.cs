@@ -10,6 +10,14 @@ namespace Nameless.Bootstrap;
 /// </summary>
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
+        /// <summary>
+        ///     Registers the bootstrapper and its steps in the service collection.
+        /// </summary>
+        /// <param name="registration">Optional delegate to register steps.</param>
+        /// <param name="configuration">Optional configuration for <see cref="BootstrapOptions"/>.</param>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
+        /// </returns>
         public IServiceCollection RegisterBootstrap(Action<BootstrapRegistration>? registration = null, IConfiguration? configuration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
