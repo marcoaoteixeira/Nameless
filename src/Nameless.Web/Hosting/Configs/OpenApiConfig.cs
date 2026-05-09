@@ -20,10 +20,10 @@ public static class OpenApiConfig {
             return self;
 
             static void DefaultOpenApiConfig(OpenApiRegistration opts) {
-                opts.RegisterOpenApiDocument("v1", options => {
-                    options.AddDocumentTransformer<BearerSecuritySchemeDocumentTransformer>();
-                    options.AddOperationTransformer<DeprecateOpenApiOperationTransformer>();
-                });
+                opts.RegisterOpenApiDocument(
+                    document: string.Empty,
+                    options: options => options.AddDocumentTransformer<BearerSecuritySchemeDocumentTransformer>()
+                );
             }
         }
     }

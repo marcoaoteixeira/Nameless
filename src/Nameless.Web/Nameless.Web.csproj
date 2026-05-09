@@ -39,9 +39,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub">
-	    <TreatAsUsed>true</TreatAsUsed>
-	  </PackageReference>
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<!-- Bundle generator DLL into analyzers/dotnet/cs/ at pack time -->
+	<ItemGroup>
+		<None Include="..\..\generators\Nameless.Web.Http.Endpoints.Generator\bin\$(Configuration)\netstandard2.0\Nameless.Web.Http.Endpoints.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="false" />
+		<None Include="Nameless.Web.Http.Endpoints.targets" Pack="true" PackagePath="build\" />
+		<None Include="Nameless.Web.Http.Endpoints.targets" Pack="true" PackagePath="buildTransitive\" />
 	</ItemGroup>
 
 </Project>

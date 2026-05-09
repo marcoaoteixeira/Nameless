@@ -4,9 +4,18 @@ using Nameless.EntityFrameworkCore.Entities;
 
 namespace Nameless.EntityFrameworkCore;
 
+/// <summary>
+///     Interceptor used to fill auditable properties for an entity.
+/// </summary>
 public class AuditableSaveChangesInterceptor : SaveChangesInterceptor {
     private readonly TimeProvider _timeProvider;
 
+    /// <summary>
+    ///     Initializes a new instance of <see cref="AuditableSaveChangesInterceptor"/> class.
+    /// </summary>
+    /// <param name="timeProvider">
+    ///     The time provider.
+    /// </param>
     public AuditableSaveChangesInterceptor(TimeProvider timeProvider) {
         _timeProvider = timeProvider;
     }

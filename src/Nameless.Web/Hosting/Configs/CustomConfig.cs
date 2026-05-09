@@ -17,7 +17,7 @@ public static class CustomConfig {
 
     extension(WebApplication self) {
         public WebApplication UseBeforeStartup(WebHostSettings settings) {
-            settings.UseBeforeStartup?.Invoke(self);
+            settings.UseBeforeStartup?.Invoke(self, self);
 
             return self;
         }

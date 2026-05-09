@@ -24,7 +24,7 @@ public static class ScalarConfig {
             var scalar = ActionHelper.FromDelegate(settings.ScalarRegistrationConfiguration);
             var combination = Delegate.Combine(DefaultScalarConfiguration, scalar.ConfigureScalar);
 
-            self.MapScalarApiReference((Action<ScalarOptions>)combination);
+            self.MapScalarApiReference((Action<ScalarOptions, HttpContext>)combination);
 
             return self;
 

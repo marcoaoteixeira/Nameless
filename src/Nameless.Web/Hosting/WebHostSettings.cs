@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,7 +10,6 @@ using Nameless.Logging.Serilog;
 using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.Auth;
-using Nameless.Web.Endpoints;
 using Nameless.Web.HealthCheck;
 using Nameless.Web.Observability;
 using Nameless.Web.OpenApi;
@@ -59,7 +59,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure middlewares before startup.
     /// </summary>
-    public Action<IApplicationBuilder> UseBeforeStartup { get; set; } = _ => { };
+    public Action<IApplicationBuilder, IEndpointRouteBuilder> UseBeforeStartup { get; set; } = (_, _) => { };
 
     /// <summary>
     ///     Whether it should disable antiforgery services.
@@ -150,16 +150,6 @@ public class WebHostSettings {
     ///     Gets or sets a delegate for configure mediator services.
     /// </summary>
     public Action<MediatorRegistration>? MediatorRegistrationConfiguration { get; set; }
-
-    /// <summary>
-    ///     Whether it should disable minimal endpoints services.
-    /// </summary>
-    public bool DisableMinimalEndpoints { get; set; }
-
-    /// <summary>
-    ///     Gets or sets a delegate for configure minimal endpoints services.
-    /// </summary>
-    public Action<EndpointsRegistration>? MinimalEndpointsRegistrationConfiguration { get; set; }
 
     /// <summary>
     ///     Whether it should disable OpenAPI services.

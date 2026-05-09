@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions {
                 var policies = configuration?.GetMultipleOptions<CorsPolicyOptions>() ?? [];
 
                 if (includeDefaultPolicies) { IncludeDefaultPolicies(policies);}
-
+                
                 foreach (var policy in policies.Where(item => !item.Value.Skip)) {
                     builder.AddPolicy(
                         policy.Key,

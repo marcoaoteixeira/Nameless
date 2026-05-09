@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.Helpers;
 
 namespace Nameless.Web.OpenApi;
@@ -40,7 +39,8 @@ public static class ServiceCollectionExtensions {
             }
 
             foreach (var document in settings.DocumentOptions) {
-                self.AddOpenApi(document.Key, document.Value);
+                if (string.IsNullOrWhiteSpace(document.Key)) { self.AddOpenApi(document.Value); }
+                else { self.AddOpenApi(document.Key, document.Value); }
             }
 
             return self;

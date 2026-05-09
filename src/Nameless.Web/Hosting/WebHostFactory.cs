@@ -87,7 +87,6 @@ public sealed class WebHostFactory {
             .ConfigureHttpRequestCorrelation(Settings)
             .ConfigureLogging(Settings)
             .ConfigureMediator(Settings)
-            .ConfigureMinimalEndpoints(Settings)
             .ConfigureOpenApi(Settings)
             .ConfigureOpenTelemetry(Settings)
             .ConfigureOutputCache(Settings)
@@ -127,7 +126,6 @@ public sealed class WebHostFactory {
             .UseAntiforgery(Settings)
             .UseOpenApi(Settings)
             .UseScalar(Settings)
-            .UseMinimalEndpoints(Settings)
             .UseHealthCheck(Settings)
 
             .UseBeforeStartup(Settings);
