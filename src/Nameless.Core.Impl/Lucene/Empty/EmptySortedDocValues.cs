@@ -6,6 +6,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="SortedDocValues" />.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptySortedDocValues : SortedDocValues {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptySortedDocValues" />.

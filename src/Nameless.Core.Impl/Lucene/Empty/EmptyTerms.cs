@@ -6,6 +6,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="Terms" />.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyTerms : Terms {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyTerms" />.

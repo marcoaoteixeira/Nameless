@@ -1,10 +1,12 @@
-﻿using Serilog;
+﻿using System.Diagnostics.CodeAnalysis;
+using Serilog;
 
 namespace Nameless.Logging.Serilog;
 
 /// <summary>
 ///     Registration options for the Serilog logging integration.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class SerilogRegistration {
     /// <summary>
     ///     Gets or sets an optional delegate to replace the default Serilog configuration

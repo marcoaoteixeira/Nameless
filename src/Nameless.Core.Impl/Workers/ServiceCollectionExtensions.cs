@@ -8,6 +8,7 @@ namespace Nameless.Workers;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for background worker services.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {

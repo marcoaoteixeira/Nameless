@@ -8,6 +8,7 @@ namespace Nameless.Bootstrap;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
         /// <summary>

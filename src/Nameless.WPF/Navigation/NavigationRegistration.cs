@@ -4,19 +4,19 @@ using Wpf.Ui.Abstractions.Controls;
 
 namespace Nameless.WPF.Navigation;
 
-public class NavigationRegistrationSettings : AssemblyScanAware<NavigationRegistrationSettings> {
+public class NavigationRegistration : AssemblyScanAware<NavigationRegistration> {
     private readonly HashSet<Type> _navigationViews = [];
 
     public Type? NavigationWindow { get; set; }
     
     public IReadOnlyCollection<Type> NavigationViews => _navigationViews;
 
-    public NavigationRegistrationSettings RegisterNavigationWindow<TNavigationWindow>()
+    public NavigationRegistration RegisterNavigationWindow<TNavigationWindow>()
         where TNavigationWindow : INavigationWindow {
         return RegisterNavigationWindow(typeof(TNavigationWindow));
     }
 
-    public NavigationRegistrationSettings RegisterNavigationWindow(Type type) {
+    public NavigationRegistration RegisterNavigationWindow(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFrom(type, typeof(INavigationWindow));
 
@@ -25,12 +25,12 @@ public class NavigationRegistrationSettings : AssemblyScanAware<NavigationRegist
         return this;
     }
 
-    public NavigationRegistrationSettings RegisterNavigationView<TNavigationView, TView>()
+    public NavigationRegistration RegisterNavigationView<TNavigationView, TView>()
         where TNavigationView : INavigableView<TView> {
         return RegisterNavigationView(typeof(TNavigationView));
     }
 
-    public NavigationRegistrationSettings RegisterNavigationView(Type type) {
+    public NavigationRegistration RegisterNavigationView(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(INavigableView<>));

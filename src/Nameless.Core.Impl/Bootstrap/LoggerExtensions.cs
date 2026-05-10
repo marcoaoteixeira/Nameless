@@ -3,6 +3,7 @@ using Nameless.Bootstrap.Execution;
 
 namespace Nameless.Bootstrap;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     #region Bootstrapper
 

@@ -5,6 +5,7 @@ namespace Nameless.Workers;
 /// <summary>
 ///     The registration configurator for Workers
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class WorkersRegistration : AssemblyScanAware<WorkersRegistration> {
     private readonly HashSet<Type> _workers = [];
 

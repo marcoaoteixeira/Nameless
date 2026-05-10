@@ -13,7 +13,7 @@ namespace Nameless.WPF.Navigation;
 /// </summary>
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
-        public IServiceCollection RegisterNavigation(Action<NavigationRegistrationSettings> registration) {
+        public IServiceCollection RegisterNavigation(Action<NavigationRegistration>? registration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
             self.RegisterNavigationService();
@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions {
             self.TryAddSingleton<INavigationService, NavigationService>();
         }
 
-        private void RegisterNavigationWindow(NavigationRegistrationSettings settings) {
+        private void RegisterNavigationWindow(NavigationRegistration settings) {
             var service = typeof(INavigationWindow);
             var implementation = settings.UseAssemblyScan
                 ? settings.ExecuteAssemblyScan(service).SingleOrDefault()
@@ -43,13 +43,13 @@ public static class ServiceCollectionExtensions {
             self.TryAdd(implementation.CreateServiceDescriptor(service));
         }
 
-        private void RegisterNavigationViewItemProvider(NavigationRegistrationSettings settings) {
+        private void RegisterNavigationViewItemProvider(NavigationRegistration settings) {
             self.TryAddSingleton<INavigationViewItemProvider>(
                 new AutoDiscoverableNavigationViewItemProvider(settings.Assemblies)
             );
         }
 
-        private void RegisterNavigableViews(NavigationRegistrationSettings settings) {
+        private void RegisterNavigableViews(NavigationRegistration settings) {
             var service = typeof(INavigableView<>);
             var implementations = settings.UseAssemblyScan
                 ? settings.ExecuteAssemblyScan(service)

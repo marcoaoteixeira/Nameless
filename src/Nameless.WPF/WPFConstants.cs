@@ -22,4 +22,15 @@ public static class WPFConstants {
     public static class Lucene {
         public const string UniqueIndexName = "78213cbeef85474686c80570279befd5";
     }
+
+    public static class WellKnownDocuments {
+        public static string[] AsArray { get; } = [Txt, Doc, Docx, Rtf, Pdf, Xps];
+
+        public const string Txt = ".txt";
+        public const string Doc = ".doc";
+        public const string Docx = ".docx";
+        public const string Rtf = ".rtf";
+        public const string Pdf = ".pdf";
+        public const string Xps = ".xps";
+    }
 }

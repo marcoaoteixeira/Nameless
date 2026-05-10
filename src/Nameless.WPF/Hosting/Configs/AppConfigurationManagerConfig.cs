@@ -1,0 +1,34 @@
+﻿using Microsoft.Extensions.Hosting;
+using Nameless.WPF.Configuration;
+
+namespace Nameless.WPF.Hosting.Configs;
+
+/// <summary>
+///     Application Configuration Manager Configuration
+/// </summary>
+public static class AppConfigurationManagerConfig {
+    /// <param name="self">
+    ///     The current <see cref="WinHostFactory"/> instance.
+    /// </param>
+    extension(WinHostBuilder self) {
+        /// <summary>
+        ///     Configures the Application Configuration Manager service.
+        /// </summary>
+        /// <param name="settings">
+        ///     The <see cref="WinHostSettings"/> instance.
+        /// </param>
+        /// <returns>
+        ///     The current <see cref="WinHostFactory"/> instance so other
+        ///     actions can be chained.
+        /// </returns>
+        public WinHostBuilder RegisterAppConfigurationManager(WinHostSettings settings) {
+            if (settings.DisableAppConfigurationManager) { return self; }
+
+            self.ConfigureServices(
+                services => services.RegisterAppConfigurationManager()
+            );
+
+            return self;
+        }
+    }
+}

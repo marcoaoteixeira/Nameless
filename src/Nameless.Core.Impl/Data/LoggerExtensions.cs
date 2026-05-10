@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Nameless.Data;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class DatabaseLoggerExtensions {
     private const string TAG = "ADO DATABASE";
 

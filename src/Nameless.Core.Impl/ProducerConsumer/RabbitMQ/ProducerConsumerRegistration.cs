@@ -5,6 +5,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 /// <summary>
 ///     Registration options for RabbitMQ producer/consumer services.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class ProducerConsumerRegistration : AssemblyScanAware<ProducerConsumerRegistration> {
     private readonly HashSet<Type> _consumers = [];
 

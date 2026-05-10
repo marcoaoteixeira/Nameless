@@ -5,6 +5,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="IBits" />.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyBits : IBits {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyBits" />.

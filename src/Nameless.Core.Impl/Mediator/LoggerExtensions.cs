@@ -7,6 +7,7 @@ using Nameless.Validation;
 
 namespace Nameless.Mediator;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     internal static void MissingEventHandler(this ILogger<EventHandlerWrapper> self, IEvent evt) {
         Log.MediatorMissingEventHandler(self, evt.GetType().GetPrettyName());

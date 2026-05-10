@@ -20,7 +20,10 @@ public static class TypeExtensions {
     ///     An instance of <see cref="ServiceDescriptor"/>.
     /// </returns>
     public static ServiceDescriptor CreateServiceDescriptor(this Type self, Type? service = null) {
-        var lifetime = ServiceLifetimeAttribute.GetLifetime(self, fallback: ServiceLifetime.Transient);
+        var lifetime = ServiceLifetimeAttribute.GetLifetime(
+            self,
+            fallback: ServiceLifetime.Transient
+        );
 
         return new ServiceDescriptor(service ?? self, self, lifetime);
     }

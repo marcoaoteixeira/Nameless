@@ -6,6 +6,7 @@ namespace Nameless.Validation.FluentValidation;
 /// <summary>
 ///     Validation registration options.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class ValidationRegistration : AssemblyScanAware<ValidationRegistration> {
     private readonly HashSet<Type> _validators = [];
 

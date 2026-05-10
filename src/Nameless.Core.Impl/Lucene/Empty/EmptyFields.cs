@@ -5,6 +5,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="Fields"/>.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyFields : Fields {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyFields"/>.

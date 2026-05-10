@@ -94,7 +94,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure bootstrap execution.
     /// </summary>
-    public Action<WarmupOptions>? BootstrapExecutionConfiguration { get; set; }
+    public Action<BootstrapWarmupOptions>? BootstrapExecutionConfiguration { get; set; }
 
     /// <summary>
     ///     Whether it should disable CORS services.

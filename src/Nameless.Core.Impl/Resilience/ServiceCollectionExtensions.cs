@@ -6,6 +6,7 @@ namespace Nameless.Resilience;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for resilience services.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {
@@ -15,7 +16,7 @@ public static class ServiceCollectionExtensions {
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterRetryPipelineFactory() {
+        public IServiceCollection RegisterResilience() {
             self.TryAddTransient<IRetryPipelineFactory, RetryPipelineFactory>();
 
             return self;

@@ -9,6 +9,7 @@ using Nameless.Resilience;
 
 namespace Nameless;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class Log {
     #region Common
 

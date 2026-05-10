@@ -5,6 +5,7 @@ using Nameless.ProducerConsumer.RabbitMQ.Options;
 
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     extension<TMessage>(ILogger<Consumer<TMessage>> self) {
         internal void Shutdown(string consumerTag, string replyText) {

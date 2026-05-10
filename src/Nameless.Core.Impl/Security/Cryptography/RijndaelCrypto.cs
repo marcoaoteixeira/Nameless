@@ -100,12 +100,6 @@ public class RijndaelCrypto : ICrypto, IDisposable {
             try {
                 var value = stream.GetContentAsByteArray();
 
-                // Since we do not know how big decrypted value will be, use the same
-                // size as cipher text. Cipher text is always longer than plain text
-                // (in block cipher encryption), so we will just use the number of
-                // decrypted data byte after we know how big it is.
-                decryptedBytes = new byte[value.Length];
-
                 // To perform decryption, we must use the Read mode.
                 using var memoryStream = new MemoryStream(value);
                 using var cryptoStream = new CryptoStream(
@@ -114,12 +108,14 @@ public class RijndaelCrypto : ICrypto, IDisposable {
                     mode: CryptoStreamMode.Read
                 );
 
-                // Decrypting data and get the count of plain text bytes.
-                decryptedByteCount = cryptoStream.Read(
-                    buffer: decryptedBytes,
-                    offset: 0,
-                    count: decryptedBytes.Length
-                );
+                // CryptoStream.Read in PKCS7-padded CBC mode holds back the last
+                // block until it can confirm there is no more input. A single Read
+                // call therefore never returns all plaintext bytes. CopyTo drains
+                // the stream correctly by reading until 0 bytes are returned.
+                using var resultStream = new MemoryStream();
+                cryptoStream.CopyTo(resultStream);
+                decryptedBytes = resultStream.ToArray();
+                decryptedByteCount = decryptedBytes.Length;
             }
             catch (Exception ex) {
                 // Re-initialize crypto transformers if was a CryptographicException.

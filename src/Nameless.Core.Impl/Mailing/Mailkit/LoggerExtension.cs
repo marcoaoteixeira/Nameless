@@ -5,6 +5,7 @@ namespace Nameless.Mailing.Mailkit;
 /// <summary>
 /// <see cref="ILogger"/> extension methods.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtension {
     extension(ILogger<MailingService> self) {
         internal void DeliverFailure(Exception exception) {

@@ -2,6 +2,7 @@
 
 namespace Nameless.Resilience;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     extension(ILogger<RetryPipelineFactory> self) {
         internal void WarningOnRetry(string? tag, int currentAttempt, int maxAttempts, double delay, Exception? exception) {

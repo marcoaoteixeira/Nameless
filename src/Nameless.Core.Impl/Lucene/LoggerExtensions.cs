@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Nameless.Lucene;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     private static readonly Action<ILogger, string, string, string, Exception> IndexActionFailureDelegate
         = LoggerMessage.Define<string, string, string>(

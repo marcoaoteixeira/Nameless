@@ -1,0 +1,145 @@
+Summary
+  Generated on: 10/05/2026 - 20:31:59
+  Coverage date: 10/05/2026 - 20:31:27
+  Parser: Cobertura
+  Assemblies: 1
+  Classes: 125
+  Files: 119
+  Line coverage: 84.6%
+  Covered lines: 2369
+  Uncovered lines: 428
+  Coverable lines: 2797
+  Total lines: 8366
+  Branch coverage: 69.4% (577 of 831)
+  Covered branches: 577
+  Total branches: 831
+  Method coverage: 86.8% (582 of 670)
+  Covered methods: 582
+  Total methods: 670
+
+Nameless.Core.Impl                                                                                                                                   84.6%
+  Nameless.Application.ApplicationContext                                                                                                            73.5%
+  Nameless.Auth.AuthorizationTokenProvider<T1, T2>                                                                                                  100.0%
+  Nameless.Auth.OAuth.OAuthAuthorizationToken                                                                                                       100.0%
+  Nameless.Auth.OAuth.OAuthAuthorizationTokenProvider                                                                                               100.0%
+  Nameless.Auth.OAuth.OAuthAuthorizationTokenRequest                                                                                                100.0%
+  Nameless.Auth.OAuth.OAuthOptions                                                                                                                    0.0%
+  Nameless.Bootstrap.BootstrapException                                                                                                             100.0%
+  Nameless.Bootstrap.BootstrapOptions                                                                                                               100.0%
+  Nameless.Bootstrap.Bootstrapper                                                                                                                    82.3%
+  Nameless.Bootstrap.BootstrapWarmupOptions                                                                                                           0.0%
+  Nameless.Bootstrap.Execution.MissingStepDependencyException                                                                                       100.0%
+  Nameless.Bootstrap.Execution.StepCircularReferenceException                                                                                        75.0%
+  Nameless.Bootstrap.Execution.StepExecutionGraph                                                                                                    90.0%
+  Nameless.Bootstrap.Execution.StepExecutionGraphBuilder                                                                                             97.8%
+  Nameless.Bootstrap.Execution.StepExecutionLevel                                                                                                    88.8%
+  Nameless.Bootstrap.Execution.StepExecutionNode                                                                                                     86.6%
+  Nameless.Bootstrap.Execution.StepExecutionResult                                                                                                  100.0%
+  Nameless.Bootstrap.ParallelBootstrapper                                                                                                           100.0%
+  Nameless.Collections.Generic.CircularBuffer<T>                                                                                                     98.3%
+  Nameless.Collections.Generic.Page<T>                                                                                                               95.8%
+  Nameless.Collections.Generic.QueryableExtensions                                                                                                    0.0%
+  Nameless.Compression.Zip.ZipCompressor                                                                                                             80.5%
+  Nameless.Data.Database                                                                                                                             79.6%
+  Nameless.Data.Sqlite.DbConnectionFactory                                                                                                           88.8%
+  Nameless.Data.Sqlite.SqliteOptions                                                                                                                100.0%
+  Nameless.Data.SqlServer.DbConnectionFactory                                                                                                       100.0%
+  Nameless.Data.SqlServer.SqlServerOptions                                                                                                          100.0%
+  Nameless.Diagnostics.ActivitySourceProvider                                                                                                       100.0%
+  Nameless.Diagnostics.ActivitySourceWrapper                                                                                                        100.0%
+  Nameless.Diagnostics.ActivityWrapper                                                                                                               91.6%
+  Nameless.EntityFrameworkCore.AuditableSaveChangesInterceptor                                                                                       92.8%
+  Nameless.EntityFrameworkCore.Entities.EntityBase<T>                                                                                               100.0%
+  Nameless.EntityFrameworkCore.EntityFrameworkCoreOptions                                                                                             0.0%
+  Nameless.EntityFrameworkCore.NullDatabaseSeeder                                                                                                   100.0%
+  Nameless.IO.FileSystem.DirectoryInfoExtensions                                                                                                    100.0%
+  Nameless.IO.FileSystem.DirectoryWrapper                                                                                                            87.5%
+  Nameless.IO.FileSystem.FileInfoExtensions                                                                                                         100.0%
+  Nameless.IO.FileSystem.FileSystemProvider                                                                                                          91.3%
+  Nameless.IO.FileSystem.FileSystemProviderOptions                                                                                                  100.0%
+  Nameless.IO.FileSystem.FileWrapper                                                                                                                 94.7%
+  Nameless.Lucene.AnalyzerProvider                                                                                                                   87.5%
+  Nameless.Lucene.AnalyzerSelectorResult                                                                                                            100.0%
+  Nameless.Lucene.Collections.SearchEnumerable                                                                                                       87.5%
+  Nameless.Lucene.Collections.SearchEnumerator                                                                                                       81.3%
+  Nameless.Lucene.Index                                                                                                                              73.4%
+  Nameless.Lucene.IndexExtensions                                                                                                                     0.0%
+  Nameless.Lucene.IndexProvider                                                                                                                      94.4%
+  Nameless.Lucene.IndexProviderExtensions                                                                                                             0.0%
+  Nameless.Lucene.LuceneDefaults                                                                                                                     81.8%
+  Nameless.Lucene.LuceneOptions                                                                                                                     100.0%
+  Nameless.Lucene.ObjectModel.DocumentCollection                                                                                                     63.6%
+  Nameless.Lucene.ObjectModel.ScoreDocument                                                                                                          92.8%
+  Nameless.Lucene.Repository.EntityDescriptorExtensions                                                                                             100.0%
+  Nameless.Lucene.Repository.EntityExtensions                                                                                                        90.9%
+  Nameless.Lucene.Repository.Infrastructure.AsyncEnumerableWrapper<T>                                                                               100.0%
+  Nameless.Lucene.Repository.Infrastructure.AsyncEnumeratorWrapper<T>                                                                               100.0%
+  Nameless.Lucene.Repository.LuceneDocumentExtensions                                                                                                78.7%
+  Nameless.Lucene.Repository.Mappings.EntityDescriptor<T>                                                                                            90.6%
+  Nameless.Lucene.Repository.Mappings.EntityDescriptorExtensions                                                                                    100.0%
+  Nameless.Lucene.Repository.Mappings.EntityDescriptorProvider                                                                                      100.0%
+  Nameless.Lucene.Repository.Mappings.Mapper                                                                                                        100.0%
+  Nameless.Lucene.Repository.Mappings.MissingEntityIDException                                                                                        0.0%
+  Nameless.Lucene.Repository.Mappings.PropertyDescriptor                                                                                            100.0%
+  Nameless.Lucene.Repository.Mappings.PropertyDescriptor<T>                                                                                         100.0%
+  Nameless.Lucene.Repository.PropertyDescriptorExtensions                                                                                            80.0%
+  Nameless.Lucene.Repository.QueryBuilder                                                                                                            99.4%
+  Nameless.Lucene.Repository.QueryDefinition                                                                                                        100.0%
+  Nameless.Lucene.Repository.RepositoryImpl                                                                                                          70.4%
+  Nameless.Lucene.Repository.Requests.DeleteEntitiesByQueryRequest                                                                                  100.0%
+  Nameless.Lucene.Repository.Requests.DeleteEntitiesRequest<T>                                                                                      100.0%
+  Nameless.Lucene.Repository.Requests.InsertEntitiesRequest<T>                                                                                      100.0%
+  Nameless.Lucene.Repository.Requests.RequestBase                                                                                                   100.0%
+  Nameless.Lucene.Repository.Requests.SearchEntitiesRequest                                                                                         100.0%
+  Nameless.Lucene.Repository.Requests.UpdateEntitiesRequest<T>                                                                                      100.0%
+  Nameless.Lucene.Repository.Responses.DeleteDocumentsByQueryMetadata                                                                                 0.0%
+  Nameless.Lucene.Repository.Responses.DeleteDocumentsMetadata                                                                                      100.0%
+  Nameless.Lucene.Repository.Responses.DeleteEntitiesByQueryResponse                                                                                 62.5%
+  Nameless.Lucene.Repository.Responses.DeleteEntitiesResponse                                                                                        62.5%
+  Nameless.Lucene.Repository.Responses.InsertEntitiesMetadata                                                                                       100.0%
+  Nameless.Lucene.Repository.Responses.InsertEntitiesResponse                                                                                        62.5%
+  Nameless.Lucene.Repository.Responses.UpdateDocumentsMetadata                                                                                        0.0%
+  Nameless.Lucene.Repository.Responses.UpdateEntitiesResponse                                                                                        62.5%
+  Nameless.Lucene.ScoreDocumentsExtensions                                                                                                          100.0%
+  Nameless.Lucene.TopDocsExtensions                                                                                                                 100.0%
+  Nameless.Mailing.Mailkit.AddressHelper                                                                                                            100.0%
+  Nameless.Mailing.Mailkit.MailingOptions                                                                                                             0.0%
+  Nameless.Mailing.Mailkit.MailingService                                                                                                            92.0%
+  Nameless.Mailing.Mailkit.MessageExtension                                                                                                          78.5%
+  Nameless.Mailing.Mailkit.SmtpClientExtensions                                                                                                       0.0%
+  Nameless.Mailing.Mailkit.SmtpClientFactory                                                                                                          0.0%
+  Nameless.Mediator.Events.EventHandlerInvoker                                                                                                      100.0%
+  Nameless.Mediator.Events.EventHandlerWrapperImpl<T>                                                                                                87.5%
+  Nameless.Mediator.MediatorImpl                                                                                                                    100.0%
+  Nameless.Mediator.Pipelines.PerformanceRequestPipelineBehavior<T1, T2>                                                                            100.0%
+  Nameless.Mediator.Pipelines.ValidateRequestPipelineBehavior<T1, T2>                                                                               100.0%
+  Nameless.Mediator.Requests.RequestHandlerInvoker                                                                                                  100.0%
+  Nameless.Mediator.Requests.RequestHandlerWrapperImpl<T1, T2>                                                                                       53.3%
+  Nameless.Mediator.Streams.StreamHandlerInvoker                                                                                                    100.0%
+  Nameless.Mediator.Streams.StreamHandlerWrapperImpl<T1, T2>                                                                                         52.6%
+  Nameless.ProducerConsumer.RabbitMQ.ConfigurationExtensions                                                                                         72.2%
+  Nameless.ProducerConsumer.RabbitMQ.Consumer<T>                                                                                                     56.4%
+  Nameless.ProducerConsumer.RabbitMQ.ConsumerContextExtensions                                                                                      100.0%
+  Nameless.ProducerConsumer.RabbitMQ.ContextExtensions                                                                                              100.0%
+  Nameless.ProducerConsumer.RabbitMQ.Infrastructure.ChannelFactory                                                                                   85.1%
+  Nameless.ProducerConsumer.RabbitMQ.Infrastructure.ConnectionManager                                                                                34.3%
+  Nameless.ProducerConsumer.RabbitMQ.Infrastructure.JsonMessageSerializer                                                                            90.4%
+  Nameless.ProducerConsumer.RabbitMQ.ObjectModel.Envelope                                                                                           100.0%
+  Nameless.ProducerConsumer.RabbitMQ.ObjectModel.Header                                                                                             100.0%
+  Nameless.ProducerConsumer.RabbitMQ.Options.BindingOptions                                                                                           0.0%
+  Nameless.ProducerConsumer.RabbitMQ.Options.CertificateOptions                                                                                       0.0%
+  Nameless.ProducerConsumer.RabbitMQ.Options.PrefetchOptions                                                                                        100.0%
+  Nameless.ProducerConsumer.RabbitMQ.Options.QueueOptions                                                                                           100.0%
+  Nameless.ProducerConsumer.RabbitMQ.Options.ServerOptions                                                                                           76.9%
+  Nameless.ProducerConsumer.RabbitMQ.Options.SslOptions                                                                                              14.2%
+  Nameless.ProducerConsumer.RabbitMQ.Producer                                                                                                        82.1%
+  Nameless.ProducerConsumer.RabbitMQ.ProducerContextExtensions                                                                                      100.0%
+  Nameless.Resilience.RetryPipeline                                                                                                                 100.0%
+  Nameless.Resilience.RetryPipelineFactory                                                                                                           88.5%
+  Nameless.Security.Cryptography.RijndaelCrypto                                                                                                      91.7%
+  Nameless.Security.Cryptography.RijndaelCryptoOptions                                                                                              100.0%
+  Nameless.Security.Password.RandomPassGenerator                                                                                                     95.4%
+  Nameless.Validation.FluentValidation.FluentValidationResultExtensions                                                                             100.0%
+  Nameless.Validation.FluentValidation.ValidationService                                                                                            100.0%
+  System.Text.RegularExpressions.Generated                                                                                                           77.0%
+  System.Text.RegularExpressions.Generated.<RegexGenerator_g>FE2CE3CDF27D039937743D288CD77793C65EF325DEE33C218B2A28E6CAFF3A50F__IndexNamePattern_0   76.0%

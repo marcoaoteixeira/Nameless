@@ -10,6 +10,7 @@ namespace Nameless.EntityFrameworkCore;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for Entity Framework Core.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {

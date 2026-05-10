@@ -2,17 +2,17 @@
 
 namespace Nameless.WPF.Windows;
 
-public class WindowFactoryRegistrationSettings : AssemblyScanAware<WindowFactoryRegistrationSettings> {
+public class WindowFactoryRegistration : AssemblyScanAware<WindowFactoryRegistration> {
     private readonly HashSet<Type> _windows = [];
 
     public IReadOnlyCollection<Type> Windows => _windows;
 
-    public WindowFactoryRegistrationSettings RegisterWindow<TWindow>()
+    public WindowFactoryRegistration RegisterWindow<TWindow>()
         where TWindow : class, IWindow {
         return RegisterWindow(typeof(TWindow));
     }
 
-    public WindowFactoryRegistrationSettings RegisterWindow(Type type) {
+    public WindowFactoryRegistration RegisterWindow(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNotAssignableFrom(type, typeof(IWindow));

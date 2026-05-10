@@ -3,4 +3,15 @@
     <NUnit>
         <AssemblySelectLimit>5000</AssemblySelectLimit>
     </NUnit>
+    <DataCollectionRunSettings>
+        <DataCollectors>
+            <DataCollector friendlyName="XPlat Code Coverage">
+                <Configuration>
+                    <!-- Exclude auto-generated source-generated Regex runner classes -->
+                    <ExcludeByAttribute>System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+                    <ExcludeByFile>**\*.g.cs</ExcludeByFile>
+                </Configuration>
+            </DataCollector>
+        </DataCollectors>
+    </DataCollectionRunSettings>
 </RunSettings>

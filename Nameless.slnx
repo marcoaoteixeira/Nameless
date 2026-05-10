@@ -51,7 +51,9 @@
     <Project Path="templates/Microservice/Nameless.Microservice.Api/Nameless.Microservice.Api.csproj" Id="1a7c0363-3c1b-4127-bb6e-3bbae8e8dc87" />
     <Project Path="templates/Microservice/Nameless.Microservice.AppHost/Nameless.Microservice.AppHost.csproj" Id="ccf973a2-ec97-407f-9652-83211df6f2bf" />
   </Folder>
-  <Folder Name="/templates/WinApp/" />
+  <Folder Name="/templates/WinApp/">
+    <Project Path="templates/Nameless.WinApp/Nameless.WinApp.csproj" Id="5dddafcb-04d1-4415-baef-f234e3256bf2" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
     <Project Path="tests/Nameless.Core.Impl.Tests/Nameless.Core.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />

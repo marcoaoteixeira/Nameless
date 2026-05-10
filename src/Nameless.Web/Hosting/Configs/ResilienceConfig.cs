@@ -15,7 +15,7 @@ public static class ResilienceConfig {
         public WebApplicationBuilder ConfigureResilience(WebHostSettings settings) {
             if (settings.DisableResilience) { return self; }
 
-            self.Services.RegisterRetryPipelineFactory();
+            self.Services.RegisterResilience();
 
             return self;
         }

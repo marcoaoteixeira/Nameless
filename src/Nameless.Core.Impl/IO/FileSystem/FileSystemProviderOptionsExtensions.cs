@@ -5,6 +5,7 @@ namespace Nameless.IO.FileSystem;
 /// <summary>
 ///     <see cref="FileSystemProviderOptions"/> extension methods.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class FileSystemProviderOptionsExtensions {
     /// <param name="self">
     ///     The current <see cref="FileSystemProviderOptions"/>.    

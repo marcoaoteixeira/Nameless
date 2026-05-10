@@ -16,29 +16,29 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers all view models.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings delegate.
         /// </param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterViewModels(Action<ViewModelRegistrationSettings> registration) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterViewModels(Action<ViewModelRegistration> configure) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.TryAdd(
-                descriptors: CreateViewModelServiceDescriptors(settings)
+                descriptors: CreateViewModelServiceDescriptors(registration)
             );
 
             return self;
         }
     }
 
-    private static IEnumerable<ServiceDescriptor> CreateViewModelServiceDescriptors(ViewModelRegistrationSettings settings) {
+    private static IEnumerable<ServiceDescriptor> CreateViewModelServiceDescriptors(ViewModelRegistration registration) {
         var service = typeof(ViewModel);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service)
-            : settings.ViewModels;
+        var implementations = registration.UseAssemblyScan
+            ? registration.ExecuteAssemblyScan(service)
+            : registration.ViewModels;
 
         return implementations.Select(
             implementation => implementation.CreateServiceDescriptor()

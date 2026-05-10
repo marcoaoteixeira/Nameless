@@ -6,6 +6,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="BinaryDocValues" />.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyBinaryDocValues : BinaryDocValues {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyBinaryDocValues" />.

@@ -7,6 +7,7 @@ namespace Nameless.Auth;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/> instance.

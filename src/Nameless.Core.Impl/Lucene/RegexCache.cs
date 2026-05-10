@@ -5,6 +5,7 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     Provides source-generated, cached <see cref="Regex"/> instances used across the Lucene library.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static partial class RegexCache {
     /// <summary>
     ///     Returns a compiled <see cref="Regex"/> that matches valid Lucene index names,

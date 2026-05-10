@@ -7,6 +7,7 @@ namespace Nameless.Lucene;
 ///     Registration options for the Lucene services, including analyzer selectors
 ///     and entity mappings.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     private readonly HashSet<Type> _analyzerSelectors = [];
     private readonly HashSet<Type> _mappings = [];

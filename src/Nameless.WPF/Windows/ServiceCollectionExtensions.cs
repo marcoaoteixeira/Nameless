@@ -17,18 +17,18 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers the window services.
         /// </summary>
-        /// <param name="registration">
-        ///     Configure action for <see cref="WindowFactoryRegistrationSettings"/>.
+        /// <param name="configure">
+        ///     Configure action for <see cref="WindowFactoryRegistration"/>.
         /// </param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterWindowFactory(Action<WindowFactoryRegistrationSettings> registration) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterWindowFactory(Action<WindowFactoryRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.TryAdd(
-                descriptors: CreateWindowServiceDescriptors(settings)
+                descriptors: CreateWindowServiceDescriptors(registration)
             );
 
             self.TryAddSingleton<IWindowFactory, WindowFactory>();
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static IEnumerable<ServiceDescriptor> CreateWindowServiceDescriptors(WindowFactoryRegistrationSettings settings) {
+    private static IEnumerable<ServiceDescriptor> CreateWindowServiceDescriptors(WindowFactoryRegistration settings) {
         var service = typeof(IWindow);
         var implementations = settings.UseAssemblyScan
             ? settings.ExecuteAssemblyScan(service)

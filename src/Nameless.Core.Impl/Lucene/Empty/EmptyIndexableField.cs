@@ -9,6 +9,7 @@ namespace Nameless.Lucene.Empty;
 /// <summary>
 ///     Empty implementation of <see cref="IIndexableField"/>.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyIndexableField : IIndexableField {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyIndexableField"/>.

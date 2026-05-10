@@ -2,6 +2,7 @@
 
 namespace Nameless.Security.Cryptography;
 
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class LoggerExtensions {
     extension(ILogger<RijndaelCrypto> self) {
         internal void EncryptionException(Exception exception) {

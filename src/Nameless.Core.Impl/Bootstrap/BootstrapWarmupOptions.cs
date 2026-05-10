@@ -3,7 +3,7 @@
 /// <summary>
 ///     The Bootstrap warmup options.
 /// </summary>
-public class WarmupOptions {
+public class BootstrapWarmupOptions {
     /// <summary>
     ///     Gets or sets the context for <see cref="Bootstrapper"/>.
     /// </summary>

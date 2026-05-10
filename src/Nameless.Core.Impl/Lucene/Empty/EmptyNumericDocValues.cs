@@ -6,6 +6,7 @@ namespace Nameless.Lucene.Empty;
 ///     Empty implementation of <see cref="NumericDocValues" />
 ///     that always returns 0.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class EmptyNumericDocValues : NumericDocValues {
     /// <summary>
     ///     Gets the singleton instance of <see cref="EmptyNumericDocValues" />.

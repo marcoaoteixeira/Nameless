@@ -7,6 +7,7 @@ namespace Nameless.Mailing.Mailkit;
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/> to register mailing services.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
