@@ -5,10 +5,11 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-ENDPOINTS002 | EndpointsGenerator | Error | MissingEndpointExecutionHandle
-ENDPOINTS003 | EndpointsGenerator | Error | InvalidVersionString
-ENDPOINTS005 | EndpointsGenerator | Warning | EndpointExecutionHandleNotAccessible
-ENDPOINTS006 | EndpointsGenerator | Info | ConflictingAuthAttributes
-ENDPOINTS007 | EndpointsGenerator | Error | EndpointGroupNotFound
-ENDPOINTS008 | EndpointsGenerator | Error | EndpointVersionNotInGroupVersionSet
-ENDPOINTS009 | EndpointsGenerator | Error | GroupMarkerEmptyName
+AEP002 | EndpointsGenerator | Error | MissingEndpointExecutionHandle
+AEP003 | EndpointsGenerator | Error | InvalidVersionString
+AEP005 | EndpointsGenerator | Warning | EndpointExecutionHandleNotAccessible
+AEP006 | EndpointsGenerator | Info | ConflictingAuthAttributes
+AEP007 | EndpointsGenerator | Error | EndpointGroupNotFound
+AEP008 | EndpointsGenerator | Error | EndpointVersionNotInGroupVersionSet
+AEP009 | EndpointsGenerator | Error | GroupMarkerEmptyName
+AEP010 | EndpointsGenerator | Error | ClassMustBePartial

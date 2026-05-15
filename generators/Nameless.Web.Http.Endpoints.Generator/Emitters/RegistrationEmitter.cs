@@ -22,6 +22,24 @@ internal static class RegistrationEmitter {
             return;
         }
 
+        // Emit per-endpoint partial classes
+        foreach (var group in groups) {
+            foreach (var endpoint in group.Endpoints) {
+                var (epHint, epSource) = EndpointEmitter.Emit(endpoint);
+                context.AddSource(epHint, epSource);
+            }
+
+            if (!group.IsExplicit) { continue; }
+
+            // Emit group partial class (explicit groups only)
+            var groupingMetadata = GroupEmitter.Emit(group);
+            context.AddSource(
+                groupingMetadata.HintName,
+                groupingMetadata.Source
+            );
+        }
+
+        // Emit the delegating registration extensions file
         var sb = new StringBuilder();
 
         EmitFileHeader(sb);
@@ -29,11 +47,10 @@ internal static class RegistrationEmitter {
         EmitMapEndpoints(sb, groups);
         EmitFileFooter(sb);
 
-        // Organize and indent the code
         var code = sb.ToString();
         var tree = CSharpSyntaxTree.ParseText(code);
         var root = tree.GetRoot().NormalizeWhitespace();
-        
+
         context.AddSource(
             hintName: $"{FQN.GENERATED_NAMESPACE}.g.cs",
             source: root.ToFullString()
@@ -68,7 +85,7 @@ internal static class RegistrationEmitter {
 
         foreach (var group in groups) {
             foreach (var endpoint in group.Endpoints) {
-                sb.AppendLine($"{SELF_REF}.TryAddTransient<global::{endpoint.FullClassName}>();");
+                sb.AppendLine($"global::{endpoint.FullClassName}.Register({SELF_REF});");
             }
         }
 
@@ -85,30 +102,16 @@ internal static class RegistrationEmitter {
 
     private static void EmitApiVersioningConfiguration(StringBuilder sb) {
         sb.Append($"{SELF_REF}");
-
         sb.Append($".AddApiVersioning({CONFIG_API_VERSIONING_ARG} ?? DefaultApiVersioningConfiguration)");
         sb.Append($".AddApiExplorer({CONFIG_API_EXPLORER_ARG} ?? DefaultApiExplorerConfiguration)");
-
         sb.Append(';');
     }
 
     private static void EmitDefaultApiVersioningConfiguration(StringBuilder sb) {
         sb.AppendLine("private static void DefaultApiVersioningConfiguration(ApiVersioningOptions options) {");
-        sb.AppendLine("// Add the headers \"api-supported-versions\" and \"api-deprecated-versions\"");
-        sb.AppendLine("// This is better for discoverability");
         sb.AppendLine("options.ReportApiVersions = true;");
-
-        sb.AppendLine("// AssumeDefaultVersionWhenUnspecified should only be enabled when");
-        sb.AppendLine("// supporting legacy services that did not previously support API");
-        sb.AppendLine("// versioning. Forcing existing clients to specify an explicit API");
-        sb.AppendLine("// version for an existing service introduces a breaking change.");
-        sb.AppendLine("// Conceptually, clients in this situation are bound to some API");
-        sb.AppendLine("// version of a service, but they don't know what it is and never");
-        sb.AppendLine("// explicit request it.");
         sb.AppendLine("options.AssumeDefaultVersionWhenUnspecified = true;");
         sb.AppendLine("options.DefaultApiVersion = new ApiVersion(majorVersion: 1);");
-        
-        sb.AppendLine("// Defines how an API version is read from the current HTTP request");
         sb.AppendLine("options.ApiVersionReader = ApiVersionReader.Combine(");
         sb.AppendLine("new UrlSegmentApiVersionReader(), new HeaderApiVersionReader(\"api-version\"));");
         sb.AppendLine("}");
@@ -116,15 +119,7 @@ internal static class RegistrationEmitter {
 
     private static void EmitDefaultApiExplorerConfiguration(StringBuilder sb) {
         sb.AppendLine("private static void DefaultApiExplorerConfiguration(ApiExplorerOptions options) {");
-        sb.AppendLine("// add the versioned api explorer, which also adds");
-        sb.AppendLine("// IApiVersionDescriptionProvider service");
-        sb.AppendLine("// note: the specified format code will format the version");
-        sb.AppendLine("// as \"'v'major[.minor][-status]\"");
         sb.AppendLine("options.GroupNameFormat = \"'v'VVV\";");
-        
-        sb.AppendLine("// note: this option is only necessary when versioning by url segment.");
-        sb.AppendLine("// The SubstitutionFormat can also be used to control the format of");
-        sb.AppendLine("// the API version in route templates.");
         sb.AppendLine("options.SubstituteApiVersionInUrl = false;");
         sb.AppendLine("}");
     }
@@ -133,12 +128,60 @@ internal static class RegistrationEmitter {
         sb.AppendLine($"internal static {FQN.ENDPOINT_ROUTE_BUILDER} {MAP_ENDPOINTS_METHOD_NAME}(this {FQN.ENDPOINT_ROUTE_BUILDER} {SELF_REF}) {{");
 
         foreach (var group in groups) {
-            GroupEmitter.Emit(sb, group);
+            if (group.IsExplicit) {
+                EmitExplicitGroup(sb, group);
+                continue;
+            }
+            
+            if (!string.IsNullOrEmpty(group.Name)) {
+                EmitSyntheticVersionedGroup(sb, group);
+                continue;
+            }
+
+            EmitUngroupedEndpoints(sb, group);
         }
 
         sb.AppendLine($"return {SELF_REF};");
         sb.AppendLine("}");
         sb.AppendLine();
+    }
+
+    private static void EmitExplicitGroup(StringBuilder sb, GroupModel group) {
+        var groupVar = $"__group_{Sanitize(group.Name)}";
+        sb.AppendLine($"var {groupVar} = global::{group.FullClassName}.Create({SELF_REF});");
+
+        foreach (var endpoint in group.Endpoints) {
+            sb.AppendLine($"global::{endpoint.FullClassName}.Map({groupVar});");
+        }
+    }
+
+    // Synthetic Versioned Groups are endpoints that have distinct versions but do not belong to
+    // a particular group. In that case, they need to be "grouped" under a group so they can
+    // be correctly versioned.
+    private static void EmitSyntheticVersionedGroup(StringBuilder sb, GroupModel group) {
+        var versionSetVar = $"_version_set_{Sanitize(group.Name)}";
+        var groupVar = $"_group_{Sanitize(group.Name)}";
+
+        sb.AppendLine($"var {versionSetVar} = {SELF_REF}.NewApiVersionSet()");
+
+        foreach (var version in group.Versions) {
+            var method = version.Deprecated ? "HasDeprecatedApiVersion" : "HasApiVersion";
+            sb.AppendLine($".{method}(new {FQN.API_VERSION}({version.Major}, {version.Minor}))");
+        }
+
+        sb.AppendLine(".ReportApiVersions().Build();");
+        sb.AppendLine($"var {groupVar} = {SELF_REF}.MapGroup(\"\");");
+        sb.AppendLine($"{groupVar}.WithApiVersionSet({versionSetVar});");
+
+        foreach (var endpoint in group.Endpoints) {
+            sb.AppendLine($"global::{endpoint.FullClassName}.Map({groupVar});");
+        }
+    }
+
+    private static void EmitUngroupedEndpoints(StringBuilder sb, GroupModel group) {
+        foreach (var endpoint in group.Endpoints) {
+            sb.AppendLine($"global::{endpoint.FullClassName}.Map({SELF_REF});");
+        }
     }
 
     private static void EmitFileFooter(StringBuilder sb) {

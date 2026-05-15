@@ -16,7 +16,7 @@ public sealed class ProducesMetadataTests
 
             [Endpoint<Get>("/users")]
             [Produces<string>(200)]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -40,7 +40,7 @@ public sealed class ProducesMetadataTests
 
             [Endpoint<Get>("/users")]
             [ProducesProblem(500)]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -63,7 +63,7 @@ public sealed class ProducesMetadataTests
 
             [Endpoint<Post>("/users")]
             [ProducesValidationProblem(400)]
-            public class CreateUserEndpoint
+            public partial class CreateUserEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -88,7 +88,7 @@ public sealed class ProducesMetadataTests
             [Produces<string>(200)]
             [ProducesProblem(500)]
             [ProducesValidationProblem(400)]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }

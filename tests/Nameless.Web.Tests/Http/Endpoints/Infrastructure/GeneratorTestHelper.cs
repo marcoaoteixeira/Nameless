@@ -15,7 +15,6 @@ internal static class GeneratorTestHelper
 
     private static List<MetadataReference> BuildReferences()
     {
-        // Locate the shared framework directory from a known ASP.NET Core type.
         var aspNetCoreDir = Path.GetDirectoryName(typeof(IEndpointFilter).Assembly.Location)!;
 
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -28,12 +27,10 @@ internal static class GeneratorTestHelper
             }
         }
 
-        // All DLLs in the ASP.NET Core shared framework folder.
         foreach (var dll in Directory.GetFiles(aspNetCoreDir, "*.dll")) {
             TryAdd(dll);
         }
 
-        // Everything currently loaded in the AppDomain (covers netstandard, System.*, our own libs).
         foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
         {
             if (!asm.IsDynamic) {
@@ -41,7 +38,6 @@ internal static class GeneratorTestHelper
             }
         }
 
-        // Our custom attribute assembly must always be present.
         TryAdd(typeof(EndpointAttribute<Get>).Assembly.Location);
 
         return refs;
@@ -66,9 +62,11 @@ internal static class GeneratorTestHelper
 
         var result = driver.GetRunResult();
 
-        var generatedSource = result.GeneratedTrees
-            .Select(static t => t.ToString())
-            .FirstOrDefault() ?? string.Empty;
+        // Concatenate all generated files so tests can Assert.Contains across the full output.
+        var generatedSource = string.Join(
+            separator: Environment.NewLine,
+            values: result.GeneratedTrees.Select(static t => t.ToString())
+        );
 
         return (result.Diagnostics, generatedSource);
     }

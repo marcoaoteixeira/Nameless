@@ -7,4 +7,12 @@ internal static class EmitterHelper {
     internal static string EscapeStringLiteral(string? value) {
         return (value ?? string.Empty).Replace("\\", @"\\").Replace("\"", "\\\"");
     }
+
+    // Converts an arbitrary string into a valid C# identifier fragment by replacing
+    // non-alphanumeric characters with underscores.
+    internal static string Sanitize(string value) {
+        return new string(
+            [.. value.Select(static @char => char.IsLetterOrDigit(@char) ? @char : '_')]
+        );
+    }
 }

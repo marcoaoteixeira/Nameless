@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 using Nameless.Web.Http.Endpoints.Generator.Models;
 
@@ -19,6 +21,18 @@ internal static class SemanticExtractor {
         var line = lineSpan.StartLinePosition.Line;
         var character = lineSpan.StartLinePosition.Character;
 
+        var classDeclaration = context.TargetNode as ClassDeclarationSyntax;
+        var isPartial = classDeclaration?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
+
+        if (!isPartial) {
+            return ExtractionResult.Failure([
+                new GeneratorDiagnostic(
+                    Descriptor: DiagnosticDescriptors.ClassMustBePartial,
+                    FilePath: filePath, StartLine: line, StartCharacter: character,
+                    MessageArgs: [classSymbol.Name])
+            ]);
+        }
+         
         var endpointAttr = classSymbol.GetEndpointAttribute();
         if (endpointAttr is null) {
             return ExtractionResult.Failure([]);
@@ -45,8 +59,6 @@ internal static class SemanticExtractor {
                 FilePath: filePath, StartLine: line, StartCharacter: character,
                 MessageArgs: [classSymbol.Name]
             ));
-
-            return ExtractionResult.Failure(diagnostics.ToImmutable());
         }
 
         var parameters = ExtractParameters(endpointExecutionHandle, cancellationToken);
@@ -55,7 +67,7 @@ internal static class SemanticExtractor {
         diagnostics.AddRange(versionMetadata.Diagnostics);
 
         var produces = ExtractProduces(classSymbol);
-        var filters = ExtractFilters(classSymbol);
+        var filters = classSymbol.GetFilterTypeNames();
 
         var groupTypeArg = endpointAttr.GetArg("Group");
         var groupTypeFqn = groupTypeArg is { Kind: TypedConstantKind.Type, Value: ITypeSymbol groupTypeSymbol }
@@ -72,7 +84,7 @@ internal static class SemanticExtractor {
         var outputCacheAttr = classSymbol.GetOutputCacheAttribute();
         var requestTimeoutAttr = classSymbol.GetRequestTimeoutAttribute();
         var disableMetricsAttr = classSymbol.GetDisableHttpMetricsAttribute();
-        var antiforgeryAttr = classSymbol.GetUseAntiforgeryAttribute();
+        var antiforgeryAttr = classSymbol.GetRequireAntiforgeryTokenAttribute();
 
         if (authorizeAttr is not null && allowAnonAttr is not null) {
             diagnostics.Add(new GeneratorDiagnostic(
@@ -82,14 +94,22 @@ internal static class SemanticExtractor {
             ));
         }
 
+        var accessModifier = classSymbol.DeclaredAccessibility switch {
+            Accessibility.Public => "public",
+            _ => "internal"
+        };
+
+        bool? requireAntiforgery = antiforgeryAttr is not null
+            ? (antiforgeryAttr.GetCtorArgValue<bool?>(index: 0) ?? true)
+            : null;
+
         var model = new EndpointModel(
             ClassName: classSymbol.Name,
             Namespace: classSymbol.ContainingNamespace.IsGlobalNamespace
                 ? string.Empty
                 : classSymbol.ContainingNamespace.ToDisplayString(),
-
+            AccessModifier: accessModifier,
             Metadata: endpointMetadata,
-
             GroupTypeFqn: groupTypeFqn,
             Versions: versionMetadata.Versions,
             Parameters: parameters,
@@ -97,7 +117,7 @@ internal static class SemanticExtractor {
             FilterTypeNames: filters,
             AcceptsTypeName: acceptsAttr.GetTypeArg(),
             AcceptsContentType: acceptsAttr.GetCtorArgValue<string?>(index: 0) ?? acceptsAttr.GetPropValue<string?>("ContentType"),
-            UseAntiforgery: antiforgeryAttr is not null,
+            RequireAntiforgery: requireAntiforgery,
             Summary: summary,
             Description: description,
             RequiresAuthorization: authorizeAttr is not null,
@@ -115,10 +135,10 @@ internal static class SemanticExtractor {
 
         return ExtractionResult.Success(model, diagnostics.ToImmutable());
     }
-    
+
     private static EndpointMetadata ExtractEndpointMetadata(AttributeData attributeData) {
         if (attributeData.AttributeClass is null) {
-            throw new InvalidOperationException("Endpoint attribute missing class data.");
+            return new EndpointMetadata(HttpVerbs.GET, string.Empty, null, []);
         }
 
         var httpVerb = attributeData.AttributeClass.TypeArguments.Length > 0
@@ -177,8 +197,7 @@ internal static class SemanticExtractor {
             string? bindingName = null;
 
             foreach (var attr in parameter.GetAttributes()) {
-                bindingName = attr.NamedArguments.FirstOrDefault(static arg => arg.Key == "Name").Value.Value as string;
-                bindingKind = attr.AttributeClass?.ToDisplayString() switch {
+                var candidate = attr.AttributeClass?.ToDisplayString() switch {
                     FQN.FROM_BODY_ATTRIBUTE => ParameterBindingKind.FromBody,
                     FQN.FROM_ROUTE_ATTRIBUTE => ParameterBindingKind.FromRoute,
                     FQN.FROM_QUERY_ATTRIBUTE => ParameterBindingKind.FromQuery,
@@ -187,9 +206,11 @@ internal static class SemanticExtractor {
                     _ => ParameterBindingKind.None
                 };
 
-                if (bindingKind != ParameterBindingKind.None) { continue; }
+                if (candidate == ParameterBindingKind.None) { continue; }
 
-                break; // binding sources are mutually exclusive; stop on first match
+                bindingKind = candidate;
+                bindingName = attr.NamedArguments.FirstOrDefault(static arg => arg.Key == "Name").Value.Value as string;
+                break;
             }
 
             result.Add(new ParameterModel(
@@ -257,36 +278,6 @@ internal static class SemanticExtractor {
                 result.Add(output);
             }
         }
-        
-        return [.. result];
-    }
-
-    private static ImmutableArray<string> ExtractFilters(INamedTypeSymbol classSymbol) {
-        var result = ImmutableArray.CreateBuilder<string>();
-
-        foreach (var attr in classSymbol.GetAttributes()) {
-            var attrClass = attr.AttributeClass;
-            if (attrClass is null) { continue; }
-
-            if (!attrClass.IsAssignableTo(FQN.FILTER_ATTRIBUTE)) {
-                continue;
-            }
-
-            // Generic usage [Filter<T>]: T is a type argument, not a ctor arg
-            if (attrClass.TypeArguments.Length > 0) {
-                result.Add(attrClass.TypeArguments[0].ToDisplayString(
-                    SymbolDisplayFormat.FullyQualifiedFormat
-                ));
-
-                continue;
-            }
-
-            if (attr.ConstructorArguments.Length > 0 && attr.ConstructorArguments[0].Value is INamedTypeSymbol filterType) {
-                result.Add(filterType.ToDisplayString(
-                    SymbolDisplayFormat.FullyQualifiedFormat
-                ));
-            }
-        }
 
         return [.. result];
     }
@@ -301,7 +292,6 @@ internal static class SemanticExtractor {
             return false;
         }
 
-        // Generic usage [Produces<T>(statusCode)]: type is a type argument, not a ctor arg
         string typeFqn;
         int statusCode;
 
@@ -324,12 +314,7 @@ internal static class SemanticExtractor {
             static constant => constant.Key == "ContentType"
         ).Value.Value as string;
 
-        output = new ProducesModel(
-            typeFqn,
-            statusCode,
-            contentType,
-            ProducesKind.Response
-        );
+        output = new ProducesModel(typeFqn, statusCode, contentType, ProducesKind.Response);
 
         return true;
     }
@@ -340,8 +325,7 @@ internal static class SemanticExtractor {
         var attrClass = attributeData.AttributeClass;
         if (attrClass is null) { return false; }
 
-        var fqn = attrClass.ToDisplayString();
-        if (fqn != FQN.PRODUCES_PROBLEM_ATTRIBUTE) { return false; }
+        if (attrClass.ToDisplayString() != FQN.PRODUCES_PROBLEM_ATTRIBUTE) { return false; }
 
         var statusCode = attributeData.ConstructorArguments.Length > 0 && attributeData.ConstructorArguments[0].Value is int statusCodeValue
             ? statusCodeValue
@@ -351,12 +335,7 @@ internal static class SemanticExtractor {
             static constant => constant.Key == "ContentType"
         ).Value.Value as string;
 
-        output = new ProducesModel(
-            string.Empty,
-            statusCode,
-            contentType,
-            ProducesKind.Problem
-        );
+        output = new ProducesModel(string.Empty, statusCode, contentType, ProducesKind.Problem);
 
         return true;
     }
@@ -367,8 +346,7 @@ internal static class SemanticExtractor {
         var attrClass = attributeData.AttributeClass;
         if (attrClass is null) { return false; }
 
-        var fqn = attrClass.ToDisplayString();
-        if (fqn != FQN.PRODUCES_VALIDATION_PROBLEM_ATTRIBUTE) { return false; }
+        if (attrClass.ToDisplayString() != FQN.PRODUCES_VALIDATION_PROBLEM_ATTRIBUTE) { return false; }
 
         var statusCode = attributeData.ConstructorArguments.Length > 0 && attributeData.ConstructorArguments[0].Value is int statusCodeValue
             ? statusCodeValue
@@ -378,12 +356,7 @@ internal static class SemanticExtractor {
             static constant => constant.Key == "ContentType"
         ).Value.Value as string;
 
-        output = new ProducesModel(
-            string.Empty,
-            statusCode,
-            contentType,
-            ProducesKind.ValidationProblem
-        );
+        output = new ProducesModel(string.Empty, statusCode, contentType, ProducesKind.ValidationProblem);
 
         return true;
     }

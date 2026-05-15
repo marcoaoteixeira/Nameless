@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 
 namespace Nameless.Web.Http.Endpoints.Generator;
 
@@ -65,6 +66,10 @@ internal static class NamedTypeSymbolExtensions {
         return self.GetAttribute(FQN.ENABLE_RATE_LIMITING_ATTRIBUTE);
     }
 
+    internal static AttributeData? GetDisableRateLimitingAttribute(this INamedTypeSymbol self) {
+        return self.GetAttribute(FQN.DISABLE_RATE_LIMITING_ATTRIBUTE);
+    }
+
     internal static AttributeData? GetOutputCacheAttribute(this INamedTypeSymbol self) {
         return self.GetAttribute(FQN.OUTPUT_CACHE_ATTRIBUTE);
     }
@@ -73,12 +78,43 @@ internal static class NamedTypeSymbolExtensions {
         return self.GetAttribute(FQN.REQUEST_TIMEOUT_ATTRIBUTE);
     }
 
+    internal static AttributeData? GetDisableRequestTimeoutAttribute(this INamedTypeSymbol self) {
+        return self.GetAttribute(FQN.DISABLE_REQUEST_TIMEOUT_ATTRIBUTE);
+    }
+
     internal static AttributeData? GetDisableHttpMetricsAttribute(this INamedTypeSymbol self) {
         return self.GetAttribute(FQN.DISABLE_HTTP_METRICS_ATTRIBUTE);
     }
 
-    internal static AttributeData? GetUseAntiforgeryAttribute(this INamedTypeSymbol self) {
-        return self.GetAttribute(FQN.USE_ANTI_FORGERY_ATTRIBUTE);
+    internal static AttributeData? GetRequireAntiforgeryTokenAttribute(this INamedTypeSymbol self) {
+        return self.GetAttribute(FQN.REQUIRE_ANTIFORGERY_TOKEN_ATTRIBUTE);
+    }
+
+    internal static AttributeData? GetAllowCookieRedirectAttribute(this INamedTypeSymbol self) {
+        return self.GetAttribute(FQN.ALLOW_COOKIE_REDIRECT_ATTRIBUTE);
+    }
+
+    internal static ImmutableArray<string> GetFilterTypeNames(this INamedTypeSymbol self) {
+        var result = ImmutableArray.CreateBuilder<string>();
+
+        foreach (var attr in self.GetAttributes()) {
+            var attrClass = attr.AttributeClass;
+            if (attrClass is null) { continue; }
+
+            if (!attrClass.IsAssignableTo(FQN.ENDPOINT_FILTER_ATTRIBUTE)) { continue; }
+
+            // Generic usage [EndpointFilter<T>]: T is a type argument, not a ctor arg
+            if (attrClass.TypeArguments.Length > 0) {
+                result.Add(attrClass.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                continue;
+            }
+
+            if (attr.ConstructorArguments.Length > 0 && attr.ConstructorArguments[0].Value is INamedTypeSymbol filterType) {
+                result.Add(filterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+            }
+        }
+
+        return [.. result];
     }
 
     private static AttributeData? GetAttribute(this INamedTypeSymbol self, string fullyQualifiedName) {

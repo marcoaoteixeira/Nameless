@@ -68,15 +68,31 @@ internal static class GroupCollector {
                                                       .Distinct()
                                                       .ToImmutableArray();
 
-                    // Non-empty name → GroupEmitter creates a version set + MapGroup("").
-                    // Empty name     → GroupEmitter maps directly on `self` (unchanged behavior).
+                    // Non-empty name → registration emitter creates a version set + MapGroup("").
+                    // Empty name     → registration emitter maps directly on `self` (unchanged behavior).
                     var syntheticName = routeVersions.IsEmpty ? string.Empty : routeGroup.Key;
 
                     groups.Add(new GroupModel(
                         Name: syntheticName,
                         Prefix: string.Empty,
+                        ClassName: null,
+                        Namespace: string.Empty,
+                        AccessModifier: string.Empty,
                         Versions: routeVersions,
-                        Endpoints: [.. routeEndpoints]
+                        Endpoints: [.. routeEndpoints],
+                        RateLimitingPolicy: null,
+                        DisableRateLimiting: false,
+                        RequireAntiforgery: null,
+                        DisableHttpMetrics: false,
+                        OutputCachePolicy: null,
+                        CorsPolicy: null,
+                        AllowAnonymous: false,
+                        RequireAuthorization: false,
+                        AuthorizationPolicy: null,
+                        RequestTimeoutPolicy: null,
+                        DisableRequestTimeout: false,
+                        AllowCookieRedirect: false,
+                        FilterTypeNames: []
                     ));
                 }
 
@@ -144,8 +160,24 @@ internal static class GroupCollector {
             groups.Add(new GroupModel(
                 Name: marker.Name,
                 Prefix: marker.Prefix,
+                ClassName: marker.ClassName,
+                Namespace: marker.Namespace,
+                AccessModifier: marker.AccessModifier,
                 Versions: versions,
-                Endpoints: [.. endpointsByGroup]
+                Endpoints: [.. endpointsByGroup],
+                RateLimitingPolicy: marker.RateLimitingPolicy,
+                DisableRateLimiting: marker.DisableRateLimiting,
+                RequireAntiforgery: marker.RequireAntiforgery,
+                DisableHttpMetrics: marker.DisableHttpMetrics,
+                OutputCachePolicy: marker.OutputCachePolicy,
+                CorsPolicy: marker.CorsPolicy,
+                AllowAnonymous: marker.AllowAnonymous,
+                RequireAuthorization: marker.RequireAuthorization,
+                AuthorizationPolicy: marker.AuthorizationPolicy,
+                RequestTimeoutPolicy: marker.RequestTimeoutPolicy,
+                DisableRequestTimeout: marker.DisableRequestTimeout,
+                AllowCookieRedirect: marker.AllowCookieRedirect,
+                FilterTypeNames: marker.FilterTypeNames
             ));
         }
 

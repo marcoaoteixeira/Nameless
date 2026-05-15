@@ -18,7 +18,7 @@ public sealed class ParameterBindingTests
                  public record SearchQuery(int Page);
 
                  [Endpoint<Post>("/test")]
-                 public class TestEndpoint
+                 public partial class TestEndpoint
                  {
                      public async Task<IResult> HandleAsync({{handleAsyncParams}}) => {{handleAsyncBody}};
                  }
@@ -118,6 +118,32 @@ public sealed class ParameterBindingTests
         Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromBody]", generated);
         Assert.DoesNotContain("[global::Microsoft.AspNetCore.Http.AsParameters]", generated);
         Assert.Contains("int id", generated);
+    }
+
+    [Fact]
+    public void Generate_WhenNonBindingAttributePrecedesBindingAttribute_ThenBindingIsStillEmitted()
+    {
+        // Verifies the binding-attribute loop skips non-binding attributes (e.g. [Required])
+        // rather than stopping at the first non-match.
+        const string source = """
+            using Nameless.Web.Http.Endpoints.Attributes;
+            using Microsoft.AspNetCore.Http;
+            using Microsoft.AspNetCore.Mvc;
+            using System.ComponentModel.DataAnnotations;
+            using System.Threading.Tasks;
+
+            namespace TestApp;
+
+            [Endpoint<Get>("/test")]
+            public partial class TestEndpoint
+            {
+                public async Task<IResult> HandleAsync([Required][FromQuery] int page) => Results.Ok();
+            }
+            """;
+
+        var generated = GeneratorTestHelper.GetGeneratedSource(source);
+
+        Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromQuery] int page", generated);
     }
 
     [Fact]

@@ -6,6 +6,7 @@ namespace Nameless.Web.Http.Endpoints.Generator.Models;
 internal sealed record EndpointModel(
     string ClassName,
     string Namespace,
+    string AccessModifier,
     EndpointMetadata Metadata,
     string? GroupTypeFqn,
     ImmutableArray<VersionModel> Versions,
@@ -14,7 +15,7 @@ internal sealed record EndpointModel(
     ImmutableArray<string> FilterTypeNames,
     string? AcceptsTypeName,
     string? AcceptsContentType,
-    bool UseAntiforgery,
+    bool? RequireAntiforgery,
     string? Summary,
     string? Description,
     bool RequiresAuthorization,

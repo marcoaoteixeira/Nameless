@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 using Nameless.Web.Http.Endpoints.Generator.Models;
 
@@ -19,8 +21,23 @@ internal static class GroupMarkerExtractor {
         var line = lineSpan.StartLinePosition.Line;
         var character = lineSpan.StartLinePosition.Character;
 
+        var classDeclaration = context.TargetNode as ClassDeclarationSyntax;
+        var isPartial = classDeclaration?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
+
+        if (!isPartial) {
+            return GroupMarkerExtractionResult.Failure([
+                new GeneratorDiagnostic(
+                    Descriptor: DiagnosticDescriptors.ClassMustBePartial,
+                    FilePath: filePath,
+                    StartLine: line,
+                    StartCharacter: character,
+                    MessageArgs: [classSymbol.Name]
+                )
+            ]);
+        }
+
         var groupAttr = context.Attributes.FirstOrDefault(
-            static attribute => attribute.AttributeClass?.ToDisplayString() == FQN.GROUP_ATTRIBUTE
+            static attribute => attribute.AttributeClass?.ToDisplayString() == FQN.ENDPOINT_GROUPING_ATTRIBUTE
         );
 
         if (groupAttr is null ||
@@ -33,30 +50,70 @@ internal static class GroupMarkerExtractor {
         if (string.IsNullOrWhiteSpace(name)) {
             return GroupMarkerExtractionResult.Failure([
                 new GeneratorDiagnostic(
-                    DiagnosticDescriptors.GroupMarkerEmptyName,
-                    filePath, line, character,
-                    [classSymbol.Name])
+                    Descriptor: DiagnosticDescriptors.GroupMarkerEmptyName,
+                    FilePath: filePath,
+                    StartLine: line,
+                    StartCharacter: character,
+                    MessageArgs: [classSymbol.Name]
+                )
             ]);
         }
 
         var typeFqn = classSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var className = classSymbol.Name;
+        var namespaceName = classSymbol.ContainingNamespace.IsGlobalNamespace
+            ? string.Empty
+            : classSymbol.ContainingNamespace.ToDisplayString();
+        var accessModifier = classSymbol.DeclaredAccessibility switch {
+            Accessibility.Public => "public",
+            _ => "internal"
+        };
 
-        var (versions, diagnostics) = ExtractDeclaredVersions(
-            groupAttr,
-            filePath,
-            line,
-            character,
-            cancellationToken
+        var (versions, versionDiagnostics) = ExtractDeclaredVersions(
+            groupAttr, filePath, line, character, cancellationToken
         );
+
+        var metadata = ExtractGroupMetadata(classSymbol);
+
+        var allDiagnostics = versionDiagnostics;
+
+        if (metadata is { RequireAuthorization: true, AllowAnonymous: true }) {
+            allDiagnostics = [
+                ..versionDiagnostics,
+                new GeneratorDiagnostic(
+                    Descriptor: DiagnosticDescriptors.ConflictingAuthAttributes,
+                    FilePath: filePath,
+                    StartLine: line,
+                    StartCharacter: character,
+                    MessageArgs: [classSymbol.Name]
+                )
+            ];
+        }
 
         return GroupMarkerExtractionResult.Success(
             new GroupMarkerModel(
                 Name: name,
                 Prefix: prefix,
                 TypeFqn: typeFqn,
-                DeclaredVersions: versions
+                ClassName: className,
+                Namespace: namespaceName,
+                AccessModifier: accessModifier,
+                DeclaredVersions: versions,
+                RateLimitingPolicy: metadata.RateLimitingPolicy,
+                DisableRateLimiting: metadata.DisableRateLimiting,
+                RequireAntiforgery: metadata.RequireAntiforgery,
+                DisableHttpMetrics: metadata.DisableHttpMetrics,
+                OutputCachePolicy: metadata.OutputCachePolicy,
+                CorsPolicy: metadata.CorsPolicy,
+                AllowAnonymous: metadata.AllowAnonymous,
+                RequireAuthorization: metadata.RequireAuthorization,
+                AuthorizationPolicy: metadata.AuthorizationPolicy,
+                RequestTimeoutPolicy: metadata.RequestTimeoutPolicy,
+                DisableRequestTimeout: metadata.DisableRequestTimeout,
+                AllowCookieRedirect: metadata.AllowCookieRedirect,
+                FilterTypeNames: metadata.FilterTypeNames
             ),
-            diagnostics
+            allDiagnostics
         );
     }
 
@@ -94,9 +151,58 @@ internal static class GroupMarkerExtractor {
             ));
         }
 
-        return new VersionMetadata(
-            [.. versions],
-            [.. diagnostics]
+        return new VersionMetadata([.. versions], [.. diagnostics]);
+    }
+
+    private static GroupMetadata ExtractGroupMetadata(INamedTypeSymbol classSymbol) {
+        var rateLimitAttr = classSymbol.GetEnableRateLimitingAttribute();
+        var disableRateLimitAttr = classSymbol.GetDisableRateLimitingAttribute();
+        var antiforgeryAttr = classSymbol.GetRequireAntiforgeryTokenAttribute();
+        var disableMetricsAttr = classSymbol.GetDisableHttpMetricsAttribute();
+        var outputCacheAttr = classSymbol.GetOutputCacheAttribute();
+        var corsAttr = classSymbol.GetEnableCorsAttribute();
+        var allowAnonAttr = classSymbol.GetAllowsAnonymousAttribute();
+        var authorizeAttr = classSymbol.GetAuthorizeAttribute();
+        var requestTimeoutAttr = classSymbol.GetRequestTimeoutAttribute();
+        var disableTimeoutAttr = classSymbol.GetDisableRequestTimeoutAttribute();
+        var allowCookieRedirectAttr = classSymbol.GetAllowCookieRedirectAttribute();
+
+        bool? requireAntiforgery = antiforgeryAttr is null
+            ? null
+            : (antiforgeryAttr.GetCtorArgValue<bool?>(0) ?? true);
+
+        var filterTypeNames = classSymbol.GetFilterTypeNames();
+
+        return new GroupMetadata(
+            RateLimitingPolicy: rateLimitAttr.GetCtorArgValue<string?>(0),
+            DisableRateLimiting: disableRateLimitAttr is not null,
+            RequireAntiforgery: requireAntiforgery,
+            DisableHttpMetrics: disableMetricsAttr is not null,
+            OutputCachePolicy: outputCacheAttr.GetPropValue<string?>("PolicyName"),
+            CorsPolicy: corsAttr.GetCtorArgValue<string?>(0),
+            AllowAnonymous: allowAnonAttr is not null,
+            RequireAuthorization: authorizeAttr is not null,
+            AuthorizationPolicy: authorizeAttr.GetCtorArgValue<string?>(0),
+            RequestTimeoutPolicy: requestTimeoutAttr.GetCtorArgValue<string?>(0),
+            DisableRequestTimeout: disableTimeoutAttr is not null,
+            AllowCookieRedirect: allowCookieRedirectAttr is not null,
+            FilterTypeNames: filterTypeNames
         );
     }
+
+    private readonly record struct GroupMetadata(
+        string? RateLimitingPolicy,
+        bool DisableRateLimiting,
+        bool? RequireAntiforgery,
+        bool DisableHttpMetrics,
+        string? OutputCachePolicy,
+        string? CorsPolicy,
+        bool AllowAnonymous,
+        bool RequireAuthorization,
+        string? AuthorizationPolicy,
+        string? RequestTimeoutPolicy,
+        bool DisableRequestTimeout,
+        bool AllowCookieRedirect,
+        ImmutableArray<string> FilterTypeNames
+    );
 }

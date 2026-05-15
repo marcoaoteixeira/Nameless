@@ -10,7 +10,7 @@ public sealed class EndpointsGenerator : IIncrementalGenerator {
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         var groupMarkers = context.SyntaxProvider
                                   .ForAttributeWithMetadataName(
-                                      fullyQualifiedMetadataName: FQN.GROUP_ATTRIBUTE,
+                                      fullyQualifiedMetadataName: FQN.ENDPOINT_GROUPING_ATTRIBUTE,
                                       predicate: static (node, _) => node is ClassDeclarationSyntax,
                                       transform: GroupMarkerExtractor.Extract)
                                   .Collect();

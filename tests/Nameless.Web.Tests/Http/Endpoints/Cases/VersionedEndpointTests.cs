@@ -12,12 +12,12 @@ public sealed class VersionedEndpointTests
 
         namespace TestApp;
 
-        [Group("Users", "/api/v{version:apiVersion}/users")]
-        public class UsersGroup;
+        [EndpointGrouping("Users", "/api/v{version:apiVersion}/users")]
+        public partial class UsersGroup;
 
         [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
         [Version("1.0.0")]
-        public class GetUserEndpoint
+        public partial class GetUserEndpoint
         {
             public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
         }
@@ -59,19 +59,19 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Users", "/api/v{version:apiVersion}/users")]
-            public class UsersGroup;
+            [EndpointGrouping("Users", "/api/v{version:apiVersion}/users")]
+            public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
             [Version("1.0.0")]
-            public class GetUserEndpointV1
+            public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
             [Version("2.0.0")]
-            public class GetUserEndpointV2
+            public partial class GetUserEndpointV2
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
@@ -93,19 +93,19 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0"])]
-            public class UsersGroup;
+            [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0"])]
+            public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
             [Version("1.0")]
-            public class GetUserEndpointV1
+            public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
             [Version("2.0")]
-            public class GetUserEndpointV2
+            public partial class GetUserEndpointV2
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
@@ -129,7 +129,7 @@ public sealed class VersionedEndpointTests
 
             [Endpoint<Get>("/users")]
             [Version("not-a-version")]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -150,11 +150,11 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Users", "/api/users")]
-            public class UsersGroup;
+            [EndpointGrouping("Users", "/api/users")]
+            public partial class UsersGroup;
 
             [Endpoint<Get>("/users", Group = typeof(UsersGroup))]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -176,11 +176,11 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Users", "/api/v{version:apiVersion}/users", Versions = ["bad-version"])]
-            public class UsersGroup;
+            [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["bad-version"])]
+            public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            public class GetUserEndpoint
+            public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
@@ -201,12 +201,12 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0", "3.0"])]
-            public class UsersGroup;
+            [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0", "3.0"])]
+            public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
             [Version("1.0")]
-            public class GetUserEndpointV1
+            public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
@@ -229,12 +229,12 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Group("Legacy", "/api/legacy/users")]
-            public class LegacyGroup;
+            [EndpointGrouping("Legacy", "/api/legacy/users")]
+            public partial class LegacyGroup;
 
             [Endpoint<Get>("/users", Group = typeof(LegacyGroup))]
             [Version("1.0.0", Deprecated = true)]
-            public class GetUsersV1Endpoint
+            public partial class GetUsersV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -257,7 +257,7 @@ public sealed class VersionedEndpointTests
 
             [Endpoint<Get>("/hello-world")]
             [Version("1.0")]
-            public class HelloWorldEndpoint
+            public partial class HelloWorldEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -283,14 +283,14 @@ public sealed class VersionedEndpointTests
 
             [Endpoint<Get>("/hello-world")]
             [Version("1.0")]
-            public class HelloWorldV1Endpoint
+            public partial class HelloWorldV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("v1");
             }
 
             [Endpoint<Get>("/hello-world")]
             [Version("2.0")]
-            public class HelloWorldV2Endpoint
+            public partial class HelloWorldV2Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("v2");
             }
@@ -317,14 +317,14 @@ public sealed class VersionedEndpointTests
 
             [Endpoint<Get>("/foo")]
             [Version("1.0")]
-            public class FooEndpoint
+            public partial class FooEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("foo");
             }
 
             [Endpoint<Get>("/bar")]
             [Version("2.0")]
-            public class BarEndpoint
+            public partial class BarEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("bar");
             }
@@ -346,7 +346,7 @@ public sealed class VersionedEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/health")]
-            public class HealthEndpoint
+            public partial class HealthEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("Healthy");
             }

@@ -28,7 +28,7 @@ public sealed class MultipleFiltersTests
 
                  [Endpoint<Get>("/users")]
                  {{filterAttributes}}
-                 public class GetUsersEndpoint
+                 public partial class GetUsersEndpoint
                  {
                      public async Task<IResult> HandleAsync() => Results.Ok();
                  }
@@ -36,9 +36,9 @@ public sealed class MultipleFiltersTests
     }
 
     [Fact]
-    public void Generate_WhenSingleFilterAttribute_ThenEmitsAddEndpointFilter()
+    public void Generate_WhenSingleEndpointFilterAttribute_ThenEmitsAddEndpointFilter()
     {
-        var source = BuildSourceWithFilters("[Filter<LoggingFilter>]");
+        var source = BuildSourceWithFilters("[EndpointFilter<LoggingFilter>]");
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
@@ -46,9 +46,9 @@ public sealed class MultipleFiltersTests
     }
 
     [Fact]
-    public void Generate_WhenMultipleFilterAttributes_ThenAllFiltersChained()
+    public void Generate_WhenMultipleEndpointFilterAttributes_ThenAllFiltersChained()
     {
-        var source = BuildSourceWithFilters("[Filter<LoggingFilter>]\n[Filter<AuthFilter>]");
+        var source = BuildSourceWithFilters("[EndpointFilter<LoggingFilter>]\n[EndpointFilter<AuthFilter>]");
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 

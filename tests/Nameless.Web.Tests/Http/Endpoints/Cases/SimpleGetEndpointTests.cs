@@ -12,7 +12,7 @@ public sealed class SimpleGetEndpointTests
         namespace TestApp;
 
         [Endpoint<Get>("/users")]
-        public class GetUsersEndpoint
+        public partial class GetUsersEndpoint
         {
             public async Task<IResult> HandleAsync()
                 => Results.Ok();
@@ -30,7 +30,7 @@ public sealed class SimpleGetEndpointTests
     }
 
     [Fact]
-    public void Generate_WhenMinimalGetEndpoint_ThenEmitsAddEndpoints()
+    public void Generate_WhenMinimalGetEndpoint_ThenEmitsRegisterMethod()
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
@@ -39,7 +39,7 @@ public sealed class SimpleGetEndpointTests
     }
 
     [Fact]
-    public void Generate_WhenMinimalGetEndpoint_ThenEmitsMapEndpoints()
+    public void Generate_WhenMinimalGetEndpoint_ThenEmitsMapMethod()
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
@@ -55,6 +55,25 @@ public sealed class SimpleGetEndpointTests
     }
 
     [Fact]
+    public void Generate_WhenMinimalGetEndpoint_ThenPartialClassEmitted()
+    {
+        var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
+
+        Assert.Contains("partial class GetUsersEndpoint", source);
+        Assert.Contains("internal static void Register(", source);
+        Assert.Contains("internal static void Map(", source);
+    }
+
+    [Fact]
+    public void Generate_WhenMinimalGetEndpoint_ThenRegistrationDelegates()
+    {
+        var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
+
+        Assert.Contains("global::TestApp.GetUsersEndpoint.Register(", source);
+        Assert.Contains("global::TestApp.GetUsersEndpoint.Map(", source);
+    }
+
+    [Fact]
     public void Generate_WhenEndpointHasCancellationToken_ThenLambdaIncludesCancellationTokenParam()
     {
         const string source = """
@@ -66,7 +85,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users")]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync(CancellationToken ct)
                     => Results.Ok();
@@ -89,7 +108,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users/{id}")]
-            public class GetUserEndpoint
+            public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id)
                     => Results.Ok(id);
@@ -111,7 +130,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users")]
-            public class GetUsersEndpoint { }
+            public partial class GetUsersEndpoint { }
             """;
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
@@ -120,8 +139,10 @@ public sealed class SimpleGetEndpointTests
     }
 
     [Fact]
-    public void Generate_WhenHandleAsyncIsPrivate_ThenNoMapGetEmitted()
+    public void Generate_WhenHandleAsyncIsPrivate_ThenMapGetStillEmitted()
     {
+        // ENDPOINTS005 is a warning, not a blocker — generation proceeds so the
+        // compiler produces the actionable "inaccessible member" error at the call site.
         const string source = """
             using Nameless.Web.Http.Endpoints.Attributes;
             using Microsoft.AspNetCore.Http;
@@ -130,7 +151,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users")]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 private async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -138,7 +159,7 @@ public sealed class SimpleGetEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.DoesNotContain("MapGet", generated);
+        Assert.Contains("MapGet", generated);
     }
 
     [Fact]
@@ -152,7 +173,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users/\"special\"")]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -160,17 +181,17 @@ public sealed class SimpleGetEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        // generated code must contain: "/users/\"special\""
         Assert.Contains("/users/\\\"special\\\"", generated);
     }
 
     [Fact]
-    public void Generate_WhenEndpointHasNoGroup_ThenRegisteredOnRootBuilder()
+    public void Generate_WhenEndpointHasNoGroup_ThenMappedOnRootBuilder()
     {
         var generated = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
         Assert.DoesNotContain("MapGroup", generated);
-        Assert.Contains("self.MapGet", generated);
+        // Registration delegates to the endpoint's static Map, passing self (root builder).
+        Assert.Contains("GetUsersEndpoint.Map(self)", generated);
     }
 
     [Fact]
@@ -200,7 +221,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users", Name = "ListUsers")]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -230,7 +251,7 @@ public sealed class SimpleGetEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users", Tags = ["Users", "Api"])]
-            public class GetUsersEndpoint
+            public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }

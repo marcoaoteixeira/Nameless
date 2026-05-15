@@ -5,7 +5,8 @@ namespace Nameless.Microservice.Api.Endpoints;
 
 [Endpoint<Get>("/api/v{version:apiVersion}/hello-world", Tags = ["Greetings"])]
 [Version("2")]
-public class HelloWorldV2Endpoint {
+[AllowCookieRedirect]
+public partial class HelloWorldV2Endpoint {
     public Task<IResult> HandleAsync() {
         IResult result = TypedResults.Ok(new { Message = "Hello World V2!" });
 

@@ -19,7 +19,7 @@ public sealed class KnownAttributePropagationTests
 
                  [Endpoint<Get>("/test")]
                  {{extraAttributes}}
-                 public class TestEndpoint
+                 public partial class TestEndpoint
                  {
                      public async Task<IResult> HandleAsync() => {{handleAsyncBody}};
                  }
@@ -108,7 +108,7 @@ public sealed class KnownAttributePropagationTests
 
             [Endpoint<Get>("/test")]
             [EndpointSummary("Returns all items")]
-            public class TestEndpoint
+            public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -131,7 +131,7 @@ public sealed class KnownAttributePropagationTests
 
             [Endpoint<Get>("/test")]
             [EndpointDescription("Detailed description here")]
-            public class TestEndpoint
+            public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -154,7 +154,7 @@ public sealed class KnownAttributePropagationTests
 
             [Endpoint<Get>("/test")]
             [EndpointSummary("Say \"hello\"")]
-            public class TestEndpoint
+            public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -162,18 +162,55 @@ public sealed class KnownAttributePropagationTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        // generated code must contain: .WithSummary("Say \"hello\"")
         Assert.Contains(".WithSummary(\"Say \\\"hello\\\"\")", generated);
     }
 
     [Fact]
-    public void Generate_WhenUseAntiforgeryAttribute_ThenEmitsWithAntiforgery()
+    public void Generate_WhenRequireAntiforgeryTokenAttribute_ThenEmitsRequireAntiforgery()
     {
-        var source = BuildSource("[UseAntiforgery]");
+        const string source = """
+            using Nameless.Web.Http.Endpoints.Attributes;
+            using Microsoft.AspNetCore.Http;
+            using Microsoft.AspNetCore.Antiforgery;
+            using System.Threading.Tasks;
+
+            namespace TestApp;
+
+            [Endpoint<Get>("/test")]
+            [RequireAntiforgeryToken]
+            public partial class TestEndpoint
+            {
+                public async Task<IResult> HandleAsync() => Results.Ok();
+            }
+            """;
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".WithMetadata(new global::Microsoft.AspNetCore.Antiforgery.RequireAntiforgeryTokenAttribute())", generated);
+        Assert.Contains(".RequireAntiforgery()", generated);
+    }
+
+    [Fact]
+    public void Generate_WhenRequireAntiforgeryTokenFalse_ThenEmitsDisableAntiforgery()
+    {
+        const string source = """
+            using Nameless.Web.Http.Endpoints.Attributes;
+            using Microsoft.AspNetCore.Http;
+            using Microsoft.AspNetCore.Antiforgery;
+            using System.Threading.Tasks;
+
+            namespace TestApp;
+
+            [Endpoint<Get>("/test")]
+            [RequireAntiforgeryToken(false)]
+            public partial class TestEndpoint
+            {
+                public async Task<IResult> HandleAsync() => Results.Ok();
+            }
+            """;
+
+        var generated = GeneratorTestHelper.GetGeneratedSource(source);
+
+        Assert.Contains(".DisableAntiforgery()", generated);
     }
 
     [Fact]
@@ -188,7 +225,7 @@ public sealed class KnownAttributePropagationTests
 
             [Endpoint<Get>("/test")]
             [DisableHttpMetrics]
-            public class TestEndpoint
+            public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }
@@ -213,7 +250,7 @@ public sealed class KnownAttributePropagationTests
 
             [Endpoint<Post>("/test")]
             [Accepts<CreateRequest>("application/json")]
-            public class TestEndpoint
+            public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
             }

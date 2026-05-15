@@ -5,7 +5,7 @@ namespace Nameless.Microservice.Api.Endpoints;
 
 [Endpoint<Get>("/api/v{version:apiVersion}/hello-world", Tags = ["Greetings"])]
 [Version("1", Deprecated = true)]
-public class HelloWorldV1Endpoint {
+public partial class HelloWorldV1Endpoint {
     public Task<IResult> HandleAsync() {
         IResult result = TypedResults.Ok(new { Message = "Hello World!" });
 
