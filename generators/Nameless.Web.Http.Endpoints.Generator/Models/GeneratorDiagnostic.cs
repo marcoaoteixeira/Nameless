@@ -12,6 +12,18 @@ internal sealed record GeneratorDiagnostic(
     int StartCharacter,
     ImmutableArray<string> MessageArgs
 ) {
+    internal static GeneratorDiagnostic Create(DiagnosticDescriptor descriptor, Location location, params string[] messageArgs) {
+        var line = location.GetLineSpan();
+
+        return new GeneratorDiagnostic(
+            Descriptor: descriptor,
+            FilePath: location.SourceTree?.FilePath ?? string.Empty,
+            StartLine: line.StartLinePosition.Line,
+            StartCharacter: line.StartLinePosition.Character,
+            MessageArgs: [.. messageArgs]
+        );
+    }
+
     internal Diagnostic ToDiagnostic() {
         var location = Location.Create(
             filePath: FilePath,

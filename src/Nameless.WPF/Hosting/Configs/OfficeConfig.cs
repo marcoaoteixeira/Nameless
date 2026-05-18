@@ -21,7 +21,7 @@ public static class OfficeConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterOffice(WinHostSettings settings) {
+        public WinHostBuilder ConfigureOfficeServices(WinHostSettings settings) {
             if (settings.DisableOffice) { return self; }
 
             self.ConfigureServices(

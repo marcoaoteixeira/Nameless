@@ -18,7 +18,7 @@ public static class AdditionalConfigurationConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterAdditionalConfigurations(WinHostSettings settings) {
+        public WinHostBuilder ConfigureAdditionalServices(WinHostSettings settings) {
             if (settings.AdditionalConfiguration is null) { return self; }
 
             self.ConfigureServices((ctx, services) => {

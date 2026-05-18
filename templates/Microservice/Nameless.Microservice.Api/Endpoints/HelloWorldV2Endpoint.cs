@@ -1,14 +1,16 @@
-﻿using Nameless.Web.Http.Endpoints;
+﻿using Microsoft.AspNetCore.Mvc;
+using Nameless.Web.Http.Endpoints;
 using Nameless.Web.Http.Endpoints.Attributes;
+using Nameless.Web.Http.Endpoints.Attributes.Versioning;
 
 namespace Nameless.Microservice.Api.Endpoints;
 
-[Endpoint<Get>("/api/v{version:apiVersion}/hello-world", Tags = ["Greetings"])]
+[Endpoint<Get>("/api/v{version:apiVersion}/hello-world/{name}", Tags = ["Greetings"])]
 [Version("2")]
 [AllowCookieRedirect]
 public partial class HelloWorldV2Endpoint {
-    public Task<IResult> HandleAsync() {
-        IResult result = TypedResults.Ok(new { Message = "Hello World V2!" });
+    public Task<IResult> HandleAsync([FromRoute] string name) {
+        IResult result = TypedResults.Ok(new { Message = $"Hello World {name}!" });
 
         return Task.FromResult(result);
     }

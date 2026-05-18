@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\generators\Nameless.Web.Http.Endpoints.Generator\Nameless.Web.Http.Endpoints.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+		<ProjectReference Include="..\..\..\generators\Nameless.Web.Http.Endpoints.Generator\Nameless.Web.Http.Endpoints.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\..\src\Nameless.Web\Nameless.Web.csproj" />
 	</ItemGroup>
 </Project>

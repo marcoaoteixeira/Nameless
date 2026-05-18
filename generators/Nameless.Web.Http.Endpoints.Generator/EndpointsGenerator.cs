@@ -8,25 +8,25 @@ namespace Nameless.Web.Http.Endpoints.Generator;
 [Generator(LanguageNames.CSharp)]
 public sealed class EndpointsGenerator : IIncrementalGenerator {
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-        var groupMarkers = context.SyntaxProvider
-                                  .ForAttributeWithMetadataName(
-                                      fullyQualifiedMetadataName: FQN.ENDPOINT_GROUPING_ATTRIBUTE,
-                                      predicate: static (node, _) => node is ClassDeclarationSyntax,
-                                      transform: GroupMarkerExtractor.Extract)
-                                  .Collect();
+        var groups = context.SyntaxProvider
+                            .ForAttributeWithMetadataName(
+                                fullyQualifiedMetadataName: NewFQN.EndpointGroupingAttribute,
+                                predicate: static (node, _) => node is ClassDeclarationSyntax,
+                                transform: GroupExtractor.Extract)
+                            .Collect();
 
         var endpoints = context.SyntaxProvider
                                .ForAttributeWithMetadataName(
-                                   fullyQualifiedMetadataName: FQN.ENDPOINT_ATTRIBUTE_WITH_ARITY,
+                                   fullyQualifiedMetadataName: NewFQN.EndpointAttributeWithArity,
                                    predicate: static (node, _) => node is ClassDeclarationSyntax,
-                                   transform: SemanticExtractor.Extract)
+                                   transform: EndpointExtractor.Extract)
                                .Collect();
 
-        var grouped = endpoints.Combine(groupMarkers)
+        var combine = endpoints.Combine(groups)
                                .Select(static (inputs, cancellationToken) =>
                                    GroupCollector.Collect(inputs.Left, inputs.Right, cancellationToken)
                                );
 
-        context.RegisterSourceOutput(grouped, RegistrationEmitter.Emit);
+        context.RegisterSourceOutput(combine, RegistrationEmitter.Emit);
     }
 }

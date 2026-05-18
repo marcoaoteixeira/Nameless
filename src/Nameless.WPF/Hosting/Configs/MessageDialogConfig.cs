@@ -21,7 +21,7 @@ public static class MessageDialogConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterMessageDialog(WinHostSettings settings) {
+        public WinHostBuilder ConfigureMessageDialog(WinHostSettings settings) {
             if (settings.DisableMessageDialog) { return self; }
 
             self.ConfigureServices(

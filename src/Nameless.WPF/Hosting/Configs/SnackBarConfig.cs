@@ -21,7 +21,7 @@ public static class SnackBarConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterSnackBar(WinHostSettings settings) {
+        public WinHostBuilder ConfigureSnackBar(WinHostSettings settings) {
             if (settings.DisableSnackBar) { return self; }
 
             self.ConfigureServices(

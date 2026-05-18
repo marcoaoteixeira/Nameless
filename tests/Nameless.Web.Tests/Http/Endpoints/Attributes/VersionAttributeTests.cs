@@ -1,3 +1,5 @@
+using Nameless.Web.Http.Endpoints.Attributes.Versioning;
+
 namespace Nameless.Web.Http.Endpoints.Attributes;
 
 public sealed class VersionAttributeTests

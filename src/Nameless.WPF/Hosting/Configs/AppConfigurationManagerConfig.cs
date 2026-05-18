@@ -21,7 +21,7 @@ public static class AppConfigurationManagerConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterAppConfigurationManager(WinHostSettings settings) {
+        public WinHostBuilder ConfigureAppConfigurationManager(WinHostSettings settings) {
             if (settings.DisableAppConfigurationManager) { return self; }
 
             self.ConfigureServices(

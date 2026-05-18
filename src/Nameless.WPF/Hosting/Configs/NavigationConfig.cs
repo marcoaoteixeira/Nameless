@@ -21,7 +21,7 @@ public static class NavigationConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterNavigation(WinHostSettings settings) {
+        public WinHostBuilder ConfigureNavigation(WinHostSettings settings) {
             if (settings.DisableNavigation) { return self; }
 
             self.ConfigureServices(services => services.RegisterNavigation(

@@ -21,7 +21,7 @@ public static class MediatorConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterMediator(WinHostSettings settings) {
+        public WinHostBuilder ConfigureMediator(WinHostSettings settings) {
             if (settings.DisableMediator) { return self; }
 
             self.ConfigureServices(services => {

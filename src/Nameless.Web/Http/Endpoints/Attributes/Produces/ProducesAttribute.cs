@@ -1,4 +1,4 @@
-namespace Nameless.Web.Http.Endpoints.Attributes;
+namespace Nameless.Web.Http.Endpoints.Attributes.Produces;
 
 /// <summary>
 ///     Declares a successful response type and HTTP status code for an
@@ -29,7 +29,7 @@ public class ProducesAttribute : Attribute {
     ///     (e.g., <c>"application/json"</c>). When <see langword="null"/>
     ///     the framework's default content type is used.
     /// </summary>
-    public string? ContentType { get; init; } = "application/json";
+    public string? ContentType { get; }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="ProducesAttribute"/>
@@ -41,9 +41,13 @@ public class ProducesAttribute : Attribute {
     /// <param name="statusCode">
     ///     The HTTP status code. Defaults to <c>200</c>.
     /// </param>
-    public ProducesAttribute(Type responseType, int statusCode = 200) {
+    /// <param name="contentType">
+    ///     The content type.
+    /// </param>
+    public ProducesAttribute(Type responseType, int statusCode = 200, string? contentType = Constants.ContentType) {
         ResponseType = responseType;
         StatusCode = statusCode;
+        ContentType = contentType ?? Constants.ContentType;
     }
 }
 
@@ -54,7 +58,7 @@ public class ProducesAttribute : Attribute {
 /// <typeparam name="T">
 ///     The CLR type of the response body.
 /// </typeparam>
-public sealed class ProducesAttribute<T> : ProducesAttribute {
+public class ProducesAttribute<T> : ProducesAttribute {
     /// <summary>
     ///     Initializes a new instance of <see cref="ProducesAttribute{T}"/>
     ///     with the specified status code and optional content type.
@@ -66,6 +70,6 @@ public sealed class ProducesAttribute<T> : ProducesAttribute {
     ///     The media type of the response body. When <see langword="null"/>
     ///     the framework default is used.
     /// </param>
-    public ProducesAttribute(int statusCode = 200, string? contentType = "application/json")
-        : base(typeof(T), statusCode) { ContentType = contentType; }
+    public ProducesAttribute(int statusCode = 200, string? contentType = Constants.ContentType)
+        : base(typeof(T), statusCode, contentType) { }
 }

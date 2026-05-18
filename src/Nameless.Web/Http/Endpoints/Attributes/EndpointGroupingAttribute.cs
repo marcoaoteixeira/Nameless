@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Web.Http.Endpoints.Attributes.Versioning;
+
 namespace Nameless.Web.Http.Endpoints.Attributes;
 
 /// <summary>
@@ -20,19 +23,35 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 ///         generator. Endpoint-level attributes always take precedence.
 ///     </para>
 /// </remarks>
+/// <param name="name">
+///     The logical group name shared by all endpoints in this group.
+/// </param>
+/// <param name="prefix">
+///     The route prefix applied to every endpoint in the group.
+/// </param>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public sealed class EndpointGroupingAttribute : Attribute {
+public sealed class EndpointGroupingAttribute(string name, [StringSyntax("Route")] string prefix) : Attribute {
     /// <summary>
     ///     Gets the logical name of the route group.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name;
+
+    /// <summary>
+    ///     Gets the OpenAPI description for the group.
+    /// </summary>
+    public string? Description { get; init; }
+
+    /// <summary>
+    ///     Gets the OpenAPI summary associated with the group.
+    /// </summary>
+    public string? Summary { get; init; }
 
     /// <summary>
     ///     Gets the route prefix applied to every endpoint in this group
     ///     (e.g., <c>"/api/users"</c> or
     ///     <c>"/api/v{version:apiVersion}/users"</c>).
     /// </summary>
-    public string Prefix { get; }
+    public string Prefix { get; } = prefix;
 
     /// <summary>
     ///     Gets or sets the API version strings supported by this group
@@ -48,19 +67,4 @@ public sealed class EndpointGroupingAttribute : Attribute {
     ///     member endpoints.
     /// </remarks>
     public string[]? Versions { get; init; }
-
-    /// <summary>
-    ///     Initializes a new instance of <see cref="EndpointGroupingAttribute"/> with
-    ///     the specified name and prefix.
-    /// </summary>
-    /// <param name="name">
-    ///     The logical group name shared by all endpoints in this group.
-    /// </param>
-    /// <param name="prefix">
-    ///     The route prefix applied to every endpoint in the group.
-    /// </param>
-    public EndpointGroupingAttribute(string name, string prefix) {
-        Name = name;
-        Prefix = prefix;
-    }
 }

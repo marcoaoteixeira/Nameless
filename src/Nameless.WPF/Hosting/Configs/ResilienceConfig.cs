@@ -21,7 +21,7 @@ public static class ResilienceConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterResilience(WinHostSettings settings) {
+        public WinHostBuilder ConfigureResilience(WinHostSettings settings) {
             if (settings.DisableResilience) { return self; }
 
             self.ConfigureServices(

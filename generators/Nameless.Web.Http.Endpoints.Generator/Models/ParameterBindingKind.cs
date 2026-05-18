@@ -6,5 +6,6 @@ internal enum ParameterBindingKind {
     FromRoute,
     FromQuery,
     FromHeader,
-    AsParameters
+    AsParameters,
+    FromForm
 }

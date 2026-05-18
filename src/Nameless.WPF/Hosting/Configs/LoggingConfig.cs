@@ -24,7 +24,7 @@ public static class LoggingConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterLogging(WinHostSettings settings) {
+        public WinHostBuilder ConfigureLogging(WinHostSettings settings) {
             if (settings.DisableLogging) { return self; }
 
             self.ConfigureServices(services => services.RegisterSerilog(

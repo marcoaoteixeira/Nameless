@@ -20,7 +20,7 @@ public static class GitHubHttpClientConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterGitHubHttpClient(WinHostSettings settings) {
+        public WinHostBuilder ConfigureGitHubHttpClient(WinHostSettings settings) {
             if (settings.DisableGitHubHttpClient) { return self; }
 
             self.ConfigureServices(

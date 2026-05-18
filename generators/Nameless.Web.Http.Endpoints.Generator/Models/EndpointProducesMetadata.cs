@@ -1,6 +1,6 @@
 namespace Nameless.Web.Http.Endpoints.Generator.Models;
 
-internal sealed record ProducesModel(
+internal sealed record EndpointProducesMetadata(
     string FullTypeName,
     int StatusCode,
     string? ContentType,

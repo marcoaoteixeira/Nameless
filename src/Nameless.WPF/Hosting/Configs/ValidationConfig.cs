@@ -21,7 +21,7 @@ public static class ValidationConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterValidation(WinHostSettings settings) {
+        public WinHostBuilder ConfigureValidation(WinHostSettings settings) {
             if (settings.DisableValidation) { return self; }
 
             self.ConfigureServices(services => {

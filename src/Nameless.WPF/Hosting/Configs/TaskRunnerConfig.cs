@@ -21,7 +21,7 @@ public static class TaskRunnerConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterTaskRunner(WinHostSettings settings) {
+        public WinHostBuilder ConfigureTaskRunner(WinHostSettings settings) {
             if (settings.DisableTaskRunner) { return self; }
 
             self.ConfigureServices(

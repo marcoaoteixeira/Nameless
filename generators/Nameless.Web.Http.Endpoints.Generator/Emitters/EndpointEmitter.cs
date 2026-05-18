@@ -2,23 +2,24 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Nameless.Web.Http.Endpoints.Generator.Models;
+using Nameless.Web.Http.Endpoints.Generator.Pipeline.Metadata;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Emitters;
 
 internal static class EndpointEmitter {
-    internal static (string HintName, string Source) Emit(EndpointModel endpoint) {
+    internal static (string HintName, string Source) Emit(EndpointModel model) {
         var sb = new StringBuilder();
 
         EmitFileHeader(sb);
-        EmitPartialClass(sb, endpoint);
+        EmitPartialClass(sb, model);
 
         var code = sb.ToString();
         var tree = CSharpSyntaxTree.ParseText(code);
         var root = tree.GetRoot().NormalizeWhitespace();
 
-        var hintName = string.IsNullOrEmpty(endpoint.Namespace)
-            ? $"{endpoint.ClassName}.g.cs"
-            : $"{endpoint.Namespace}.{endpoint.ClassName}.g.cs";
+        var hintName = string.IsNullOrEmpty(model.Namespace)
+            ? $"{model.ClassName}.g.cs"
+            : $"{model.Namespace}.{model.ClassName}.g.cs";
 
         return (hintName, root.ToFullString());
     }
@@ -41,7 +42,7 @@ internal static class EndpointEmitter {
             sb.AppendLine();
         }
 
-        sb.AppendLine($"{endpoint.AccessModifier} partial class {endpoint.ClassName}");
+        sb.AppendLine($"{endpoint.ClassAccessModifier} partial class {endpoint.ClassName}");
         sb.AppendLine("{");
         EmitRegister(sb, endpoint);
         EmitMap(sb, endpoint);
@@ -49,151 +50,60 @@ internal static class EndpointEmitter {
     }
 
     private static void EmitRegister(StringBuilder sb, EndpointModel endpoint) {
-        sb.AppendLine($"internal static void Register({FQN.SERVICE_COLLECTION} services)");
+        sb.AppendLine($"{endpoint.ClassAccessModifier} static void Register({NewFQN.ServiceCollection} services)");
         sb.AppendLine("{");
         sb.AppendLine($"services.TryAddTransient<global::{endpoint.FullClassName}>();");
         sb.AppendLine("}");
     }
 
-    private static void EmitMap(StringBuilder sb, EndpointModel endpoint) {
-        sb.AppendLine($"internal static void Map({FQN.ENDPOINT_ROUTE_BUILDER} {BUILDER_REF})");
+    private static void EmitMap(StringBuilder sb, EndpointModel model) {
+        sb.AppendLine($"internal static void Map({NewFQN.EndpointRouteBuilder} {BUILDER_REF})");
         sb.AppendLine("{");
 
-        var endpointVar = $"_ep_{endpoint.ClassName}";
-        var routeTemplate = EscapeStringLiteral(endpoint.Metadata.RouteTemplate);
+        var endpointVar = $"_ep_{model.ClassName}";
+        var routeTemplate = EscapeStringLiteral(model.Route);
 
         sb.AppendLine(
-            $"{BUILDER_REF}.Map{endpoint.Metadata.HttpMethod}(\"{routeTemplate}\", static async ("
+            $"{BUILDER_REF}.Map{model.HttpVerb}(\"{routeTemplate}\", static async ("
         );
 
-        var parameters = endpoint.Parameters
-                                 .Select(BuildParameterDeclaration)
-                                 .ToList();
-        parameters.Add($"[{FQN.FROM_SERVICES}] global::{endpoint.FullClassName} {endpointVar}");
+        var parameters = model.HandlerParameters.Select(BuildParameterDeclaration).ToList();
+        parameters.Add($"[{NewFQN.FromServices}] global::{model.FullClassName} {endpointVar}");
         sb.AppendLine(string.Join(", ", parameters));
 
         sb.AppendLine(") =>");
 
-        var callArgs = string.Join(", ", endpoint.Parameters.Select(static p => p.Name));
-        sb.Append($"await {endpointVar}.HandleAsync({callArgs}).ConfigureAwait(false))");
+        var callArgs = string.Join(", ", model.HandlerParameters.Select(static parameter => parameter.Name));
+        sb.Append($"await {endpointVar}.{model.Handler?.Name}({callArgs}).ConfigureAwait(false))");
 
-        foreach (var version in endpoint.Versions) {
-            sb.Append($".MapToApiVersion(new {FQN.API_VERSION}({version.Major}, {version.Minor}))");
-        }
-
-        foreach (var produces in endpoint.Produces) {
-            EmitProduces(sb, produces);
-        }
-
-        if (endpoint.AcceptsTypeName is not null) {
-            sb.Append($".Accepts<{endpoint.AcceptsTypeName}>(");
-            if (endpoint.AcceptsContentType is not null) {
-                sb.Append($"\"{EscapeStringLiteral(endpoint.AcceptsContentType)}\"");
-            }
-            sb.Append(')');
-        }
-
-        foreach (var filter in endpoint.FilterTypeNames) {
-            sb.Append($".AddEndpointFilter<{filter}>()");
-        }
-
-        if (endpoint.RequiresAuthorization) {
-            sb.Append(".RequireAuthorization(");
-            if (endpoint.AuthorizationPolicy is not null) {
-                sb.Append($"\"{EscapeStringLiteral(endpoint.AuthorizationPolicy)}\"");
-            }
-            sb.Append(')');
-        }
-
-        if (endpoint.AllowAnonymous) {
-            sb.Append(".AllowAnonymous()");
-        }
-
-        if (endpoint.CorsPolicy is not null) {
-            sb.Append($".RequireCors(\"{EscapeStringLiteral(endpoint.CorsPolicy)}\")");
-        }
-
-        if (endpoint.RateLimitingPolicy is not null) {
-            sb.Append($".RequireRateLimiting(\"{EscapeStringLiteral(endpoint.RateLimitingPolicy)}\")");
-        }
-
-        if (endpoint.OutputCachePolicy is not null) {
-            sb.Append($".CacheOutput(\"{EscapeStringLiteral(endpoint.OutputCachePolicy)}\")");
-        }
-
-        if (endpoint.RequestTimeoutPolicy is not null) {
-            sb.Append($".WithRequestTimeout(\"{EscapeStringLiteral(endpoint.RequestTimeoutPolicy)}\")");
-        }
-
-        if (endpoint.DisableHttpMetrics) {
-            sb.Append(".DisableHttpMetrics()");
-        }
-
-        if (endpoint.RequireAntiforgery == true) {
-            sb.Append(".RequireAntiforgery()");
-        }
-        else if (endpoint.RequireAntiforgery == false) {
-            sb.Append(".DisableAntiforgery()");
-        }
-
-        if (endpoint.Summary is not null) {
-            sb.Append($".WithSummary(\"{EscapeStringLiteral(endpoint.Summary)}\")");
-        }
-
-        if (endpoint.Description is not null) {
-            sb.Append($".WithDescription(\"{EscapeStringLiteral(endpoint.Description)}\")");
-        }
-
-        var endpointDisplayName = endpoint.Metadata.EndpointName ?? endpoint.ClassName;
-        sb.Append($".WithName(\"{EscapeStringLiteral(endpointDisplayName)}\")");
-
-        if (!endpoint.Metadata.Tags.IsEmpty) {
-            var tagLiterals = string.Join(
-                separator: ", ",
-                values: endpoint.Metadata.Tags.Select(static tag => $"\"{EscapeStringLiteral(tag)}\"")
-            );
-            sb.Append($".WithTags({tagLiterals})");
+        foreach (var convention in model.Conventions) {
+            sb.AppendLine($".{convention.Call}");
         }
 
         sb.AppendLine(";");
         sb.AppendLine("}");
     }
-
-    private static void EmitProduces(StringBuilder sb, ProducesModel produces) {
-        switch (produces.Kind) {
-            case ProducesKind.Response:
-                var ct = produces.ContentType ?? "application/json";
-                sb.Append($".Produces<{produces.FullTypeName}>(statusCode: {produces.StatusCode}, contentType: \"{ct}\")");
-                break;
-            case ProducesKind.Problem:
-                var pct = produces.ContentType ?? "application/problem+json";
-                sb.Append($".ProducesProblem(statusCode: {produces.StatusCode}, contentType: \"{pct}\")");
-                break;
-            case ProducesKind.ValidationProblem:
-                var vpct = produces.ContentType ?? "application/problem+json";
-                sb.Append($".ProducesValidationProblem(statusCode: {produces.StatusCode}, contentType: \"{vpct}\")");
-                break;
-        }
-    }
-
-    private static string BuildParameterDeclaration(ParameterModel param) {
+    
+    private static string BuildParameterDeclaration(HandlerParameterMetadata param) {
         var bindingName = EscapeStringLiteral(param.BindingName);
         var attrPrefix = param.BindingKind switch {
-            ParameterBindingKind.FromBody => $"[{FQN.FROM_BODY}] ",
+            ParameterBindingKind.AsParameters => $"[{NewFQN.AsParameters}] ",
 
-            ParameterBindingKind.FromRoute => string.IsNullOrWhiteSpace(bindingName)
-                    ? $"[{FQN.FROM_ROUTE}] "
-                    : $"[{FQN.FROM_ROUTE}(Name = \"{bindingName}\")] ",
+            ParameterBindingKind.FromBody => $"[{NewFQN.FromBody}] ",
 
-            ParameterBindingKind.FromQuery => string.IsNullOrWhiteSpace(bindingName)
-                    ? $"[{FQN.FROM_QUERY}] "
-                    : $"[{FQN.FROM_QUERY}(Name = \"{bindingName}\")] ",
+            ParameterBindingKind.FromForm => $"[{NewFQN.FromForm}] ",
 
             ParameterBindingKind.FromHeader => string.IsNullOrWhiteSpace(bindingName)
-                    ? $"[{FQN.FROM_HEADER}] "
-                    : $"[{FQN.FROM_HEADER}(Name = \"{bindingName}\")] ",
+                    ? $"[{NewFQN.FromHeader}] "
+                    : $"[{NewFQN.FromHeader}(Name = \"{bindingName}\")] ",
 
-            ParameterBindingKind.AsParameters => $"[{FQN.AS_PARAMETERS}] ",
+            ParameterBindingKind.FromQuery => string.IsNullOrWhiteSpace(bindingName)
+                    ? $"[{NewFQN.FromQuery}] "
+                    : $"[{NewFQN.FromQuery}(Name = \"{bindingName}\")] ",
+
+            ParameterBindingKind.FromRoute => string.IsNullOrWhiteSpace(bindingName)
+                    ? $"[{NewFQN.FromRoute}] "
+                    : $"[{NewFQN.FromRoute}(Name = \"{bindingName}\")] ",
 
             _ => string.Empty
         };

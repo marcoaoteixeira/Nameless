@@ -85,14 +85,8 @@ internal static class GroupEmitter {
             sb.AppendLine($"{groupVar}.DisableRateLimiting();");
         }
 
-        switch (group.RequireAntiforgery) {
-            case true:
-                sb.AppendLine($"{groupVar}.RequireAntiforgery();");
-                break;
-
-            case false:
-                sb.AppendLine($"{groupVar}.DisableAntiforgery();");
-                break;
+        if (group.DisableAntiforgery) {
+            sb.AppendLine($"{groupVar}.DisableAntiforgery();");
         }
 
         if (group.DisableHttpMetrics) {

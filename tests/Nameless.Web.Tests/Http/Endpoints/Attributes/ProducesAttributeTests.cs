@@ -1,3 +1,5 @@
+using Nameless.Web.Http.Endpoints.Attributes.Produces;
+
 namespace Nameless.Web.Http.Endpoints.Attributes;
 
 public sealed class ProducesAttributeTests

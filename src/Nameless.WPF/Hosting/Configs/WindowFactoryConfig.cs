@@ -22,7 +22,7 @@ public static class WindowFactoryConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterWindowFactory(WinHostSettings settings) {
+        public WinHostBuilder ConfigureWindowFactory(WinHostSettings settings) {
             if (settings.DisableWindowsFactory) { return self; }
 
             self.ConfigureServices(

@@ -21,7 +21,7 @@ public static class CompressorConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterCompressor(WinHostSettings settings) {
+        public WinHostBuilder ConfigureCompressorServices(WinHostSettings settings) {
             if (settings.DisableCompressor) { return self; }
 
             self.ConfigureServices(

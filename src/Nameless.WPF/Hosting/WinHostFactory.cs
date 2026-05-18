@@ -14,14 +14,9 @@ public sealed class WinHostFactory {
     }
 
     public static WinHost Create(Action<WinHostSettings>? configure = null) {
-        var factory = new WinHostFactory(
-            ActionHelper.FromDelegate(configure)
-        );
-
-        var host = factory.CreateBuilder()
-                          .Build();
-
-        return new WinHost(host);
+        return new WinHostFactory(ActionHelper.FromDelegate(configure)).CreateBuilder()
+                                                                       .Build()
+                                                                       .Wrap();
     }
 
     private WinHostBuilder CreateBuilder() {
@@ -39,31 +34,32 @@ public sealed class WinHostFactory {
 
                    .Wrap()
 
-                   .RegisterAppConfigurationManager(Settings)
-                   .RegisterBootstrap(Settings)
-                   .RegisterCommon()
-                   .RegisterCompressor(Settings)
-                   .RegisterContentDialogService(Settings)
-                   .RegisterDocumentServices(Settings)
-                   .RegisterFileSystemDialog(Settings)
-                   .RegisterFileSystemProvider(Settings)
-                   .RegisterGitHubHttpClient(Settings)
-                   .RegisterHttpClientDefaults(Settings)
-                   .RegisterLogging(Settings)
-                   .RegisterLucene(Settings)
-                   .RegisterMediator(Settings)
-                   .RegisterMessageDialog(Settings)
-                   .RegisterMessenger(Settings)
-                   .RegisterNavigation(Settings)
-                   .RegisterOffice(Settings)
-                   .RegisterResilience(Settings)
-                   .RegisterSnackBar(Settings)
-                   .RegisterTaskRunner(Settings)
-                   .RegisterValidation(Settings)
-                   .RegisterViewModels(Settings)
-                   .RegisterWindowFactory(Settings)
+                   .ConfigureAppConfigurationManager(Settings)
+                   .ConfigureBootstrap(Settings)
+                   .ConfigureCommonServices()
+                   .ConfigureCompressorServices(Settings)
+                   .ConfigureContentDialogService(Settings)
+                   .ConfigureDocumentServices(Settings)
+                   .ConfigureFileSystemDialog(Settings)
+                   .ConfigureFileSystemProvider(Settings)
+                   .ConfigureGitHubHttpClient(Settings)
+                   .ConfigureHttpClientDefaults(Settings)
+                   .ConfigureLogging(Settings)
+                   .ConfigureLucene(Settings)
+                   .ConfigureMediator(Settings)
+                   .ConfigureMessageDialog(Settings)
+                   .ConfigureMessenger(Settings)
+                   .ConfigureNavigation(Settings)
+                   .ConfigureOfficeServices(Settings)
+                   .ConfigureResilience(Settings)
+                   .ConfigureSnackBar(Settings)
+                   .ConfigureTaskRunner(Settings)
+                   .ConfigureValidation(Settings)
+                   .ConfigureViewModels(Settings)
+                   .ConfigureWindowFactory(Settings)
 
-                   // Intentionally placed last so it can override other services.
-                   .RegisterAdditionalConfigurations(Settings);
+                   // Intentionally placed last so it can override
+                   // other services.
+                   .ConfigureAdditionalServices(Settings);
     }
 }

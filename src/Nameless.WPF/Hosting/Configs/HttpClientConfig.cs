@@ -23,7 +23,7 @@ public static class HttpClientConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterHttpClientDefaults(WinHostSettings settings) {
+        public WinHostBuilder ConfigureHttpClientDefaults(WinHostSettings settings) {
             if (settings.DisableHttpClientDefaults) { return self; }
 
             self.ConfigureServices(services => services.ConfigureHttpClientDefaults(

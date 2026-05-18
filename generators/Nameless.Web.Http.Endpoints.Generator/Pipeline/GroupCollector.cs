@@ -5,7 +5,7 @@ using Nameless.Web.Http.Endpoints.Generator.Models;
 namespace Nameless.Web.Http.Endpoints.Generator.Pipeline;
 
 internal static class GroupCollector {
-    internal static GroupCollectionMetadata Collect(ImmutableArray<ExtractionResult> extractions, ImmutableArray<GroupMarkerExtractionResult> groupMarkerCollection, CancellationToken cancellationToken) {
+    internal static GroupCollectionMetadata Collect(ImmutableArray<EndpointExtractionResult> extractions, ImmutableArray<GroupExtractionResult> groupMarkerCollection, CancellationToken cancellationToken) {
         var diagnostics = ImmutableArray.CreateBuilder<GeneratorDiagnostic>();
         var endpoints = ImmutableArray.CreateBuilder<EndpointModel>();
 
@@ -28,10 +28,10 @@ internal static class GroupCollector {
             }
         }
 
-        // Group endpoints by GroupTypeFqn (null = ungrouped, sentinel = empty string).
+        // Group endpoints by Metadata.Group (null = ungrouped, sentinel = empty string).
         var groupByType = new Dictionary<string, List<EndpointModel>>(StringComparer.Ordinal);
         foreach (var endpoint in endpoints) {
-            var key = endpoint.GroupTypeFqn ?? string.Empty;
+            var key = endpoint.Group ?? string.Empty;
 
             if (!groupByType.TryGetValue(key, out var list)) {
                 list = [];
@@ -57,7 +57,7 @@ internal static class GroupCollector {
             // in the emitted code; this is an exotic edge case and is not guarded against.
             if (string.IsNullOrEmpty(groupKey)) {
                 var groupByRoute = endpointsByGroup.GroupBy(
-                    keySelector: static endpoint => endpoint.Metadata.RouteTemplate,
+                    keySelector: static endpoint => endpoint.Route,
                     comparer: StringComparer.Ordinal
                 );
 
@@ -82,7 +82,7 @@ internal static class GroupCollector {
                         Endpoints: [.. routeEndpoints],
                         RateLimitingPolicy: null,
                         DisableRateLimiting: false,
-                        RequireAntiforgery: null,
+                        DisableAntiforgery: false,
                         DisableHttpMetrics: false,
                         OutputCachePolicy: null,
                         CorsPolicy: null,
@@ -137,10 +137,10 @@ internal static class GroupCollector {
                             StartCharacter: endpoint.StartCharacter,
                             MessageArgs: [
                                 endpoint.ClassName,
-                                VersionParser.Format(version.Major, version.Minor, version.Patch),
+                                VersionParser.Format(version.Major, version.Minor),
                                 marker.Name,
                                 string.Join(", ", marker.DeclaredVersions.Select(
-                                    static version => VersionParser.Format(version.Major, version.Minor, version.Patch)
+                                    static version => VersionParser.Format(version.Major, version.Minor)
                                 ))
                             ]
                         ));
@@ -167,7 +167,7 @@ internal static class GroupCollector {
                 Endpoints: [.. endpointsByGroup],
                 RateLimitingPolicy: marker.RateLimitingPolicy,
                 DisableRateLimiting: marker.DisableRateLimiting,
-                RequireAntiforgery: marker.RequireAntiforgery,
+                DisableAntiforgery: marker.DisableAntiforgery,
                 DisableHttpMetrics: marker.DisableHttpMetrics,
                 OutputCachePolicy: marker.OutputCachePolicy,
                 CorsPolicy: marker.CorsPolicy,

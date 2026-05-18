@@ -20,7 +20,7 @@ public static class LuceneConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterLucene(WinHostSettings settings) {
+        public WinHostBuilder ConfigureLucene(WinHostSettings settings) {
             if (settings.DisableLucene) { return self;}
 
             self.ConfigureServices((ctx, services) => {

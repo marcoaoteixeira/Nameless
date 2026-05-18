@@ -22,7 +22,7 @@ public static class FileSystemProviderConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterFileSystemProvider(WinHostSettings settings) {
+        public WinHostBuilder ConfigureFileSystemProvider(WinHostSettings settings) {
             if (settings.DisableFileSystemProvider) { return self; }
 
             self.ConfigureServices(services => {

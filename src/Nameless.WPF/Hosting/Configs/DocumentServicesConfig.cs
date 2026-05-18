@@ -21,7 +21,7 @@ public static class DocumentServicesConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterDocumentServices(WinHostSettings settings) {
+        public WinHostBuilder ConfigureDocumentServices(WinHostSettings settings) {
             if (settings.DisableDocumentServices) { return self; }
 
             self.ConfigureServices(

@@ -21,7 +21,7 @@ public static class ViewModelsConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterViewModels(WinHostSettings settings) {
+        public WinHostBuilder ConfigureViewModels(WinHostSettings settings) {
             if (settings.DisableViewModels) { return self; }
 
             self.ConfigureServices(

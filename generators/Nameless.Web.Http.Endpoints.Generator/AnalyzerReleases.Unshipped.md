@@ -5,11 +5,14 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-AEP002 | EndpointsGenerator | Error | MissingEndpointExecutionHandle
-AEP003 | EndpointsGenerator | Error | InvalidVersionString
-AEP005 | EndpointsGenerator | Warning | EndpointExecutionHandleNotAccessible
-AEP006 | EndpointsGenerator | Info | ConflictingAuthAttributes
-AEP007 | EndpointsGenerator | Error | EndpointGroupNotFound
-AEP008 | EndpointsGenerator | Error | EndpointVersionNotInGroupVersionSet
-AEP009 | EndpointsGenerator | Error | GroupMarkerEmptyName
-AEP010 | EndpointsGenerator | Error | ClassMustBePartial
+AEP001 | AutoEndpointsGenerator | Error | WrongTargetSymbol
+AEP002 | AutoEndpointsGenerator | Error | MissingEndpointExecutionHandler
+AEP003 | AutoEndpointsGenerator | Error | InvalidVersionString
+AEP005 | AutoEndpointsGenerator | Error | EndpointExecutionHandlerNotAccessible
+AEP006 | AutoEndpointsGenerator | Error | ConflictingAuthAttributes
+AEP007 | AutoEndpointsGenerator | Error | EndpointGroupNotFound
+AEP008 | AutoEndpointsGenerator | Error | EndpointVersionNotInGroupVersionSet
+AEP009 | AutoEndpointsGenerator | Error | GroupMarkerEmptyName
+AEP010 | AutoEndpointsGenerator | Error | ClassMustBePartial
+AEP011 | AutoEndpointsGenerator | Error | ClassMustBePublicOrInternal
+AEP999 | AutoEndpointsGenerator | Error | MissingEndpointAttribute

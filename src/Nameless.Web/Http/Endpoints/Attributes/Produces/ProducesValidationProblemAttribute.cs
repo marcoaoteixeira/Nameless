@@ -1,4 +1,6 @@
-namespace Nameless.Web.Http.Endpoints.Attributes;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Nameless.Web.Http.Endpoints.Attributes.Produces;
 
 /// <summary>
 ///     Declares a <c>ValidationProblemDetails</c> response for an endpoint,
@@ -12,21 +14,8 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 ///     <c>ProducesValidationProblem(statusCode, contentType)</c> call on
 ///     the route handler builder.
 /// </remarks>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public sealed class ProducesValidationProblemAttribute : Attribute {
-    /// <summary>
-    ///     Gets the HTTP status code for this validation error response.
-    ///     Defaults to <c>400</c>.
-    /// </summary>
-    public int StatusCode { get; }
-
-    /// <summary>
-    ///     Gets or sets the media type of the response body
-    ///     (e.g., <c>"application/problem+json"</c>). When
-    ///     <see langword="null"/> the framework's default content type is used.
-    /// </summary>
-    public string? ContentType { get; init; } = "application/problem+json";
-
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public sealed class ProducesValidationProblemAttribute : ProducesAttribute<ProblemDetails> {
     /// <summary>
     ///     Initializes a new instance of
     ///     <see cref="ProducesValidationProblemAttribute"/> with the specified
@@ -35,7 +24,9 @@ public sealed class ProducesValidationProblemAttribute : Attribute {
     /// <param name="statusCode">
     ///     The HTTP status code. Defaults to <c>400</c>.
     /// </param>
-    public ProducesValidationProblemAttribute(int statusCode = 400) {
-        StatusCode = statusCode;
-    }
+    /// <param name="contentType">
+    ///     The content type.
+    /// </param>
+    public ProducesValidationProblemAttribute(int statusCode = 400, string contentType = Constants.ProblemContentType)
+        : base(statusCode, contentType) { }
 }

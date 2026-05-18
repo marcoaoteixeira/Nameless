@@ -21,7 +21,7 @@ public static class MessengerConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder RegisterMessenger(WinHostSettings settings) {
+        public WinHostBuilder ConfigureMessenger(WinHostSettings settings) {
             if (settings.DisableMessenger) { return self; }
 
             self.ConfigureServices(

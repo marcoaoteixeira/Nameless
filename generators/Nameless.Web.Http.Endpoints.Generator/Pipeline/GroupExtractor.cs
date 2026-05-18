@@ -4,13 +4,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 using Nameless.Web.Http.Endpoints.Generator.Models;
+using Nameless.Web.Http.Endpoints.Generator.Pipeline.Metadata;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Pipeline;
 
-internal static class GroupMarkerExtractor {
-    internal static GroupMarkerExtractionResult Extract(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken) {
+internal static class GroupExtractor {
+    internal static GroupExtractionResult Extract(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken) {
         if (context.TargetSymbol is not INamedTypeSymbol classSymbol) {
-            return GroupMarkerExtractionResult.Empty;
+            return GroupExtractionResult.Empty;
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -25,7 +26,7 @@ internal static class GroupMarkerExtractor {
         var isPartial = classDeclaration?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
 
         if (!isPartial) {
-            return GroupMarkerExtractionResult.Failure([
+            return GroupExtractionResult.Failure([
                 new GeneratorDiagnostic(
                     Descriptor: DiagnosticDescriptors.ClassMustBePartial,
                     FilePath: filePath,
@@ -44,11 +45,11 @@ internal static class GroupMarkerExtractor {
             groupAttr.ConstructorArguments.Length < 2 ||
             groupAttr.ConstructorArguments[0].Value is not string name ||
             groupAttr.ConstructorArguments[1].Value is not string prefix) {
-            return GroupMarkerExtractionResult.Empty;
+            return GroupExtractionResult.Empty;
         }
 
         if (string.IsNullOrWhiteSpace(name)) {
-            return GroupMarkerExtractionResult.Failure([
+            return GroupExtractionResult.Failure([
                 new GeneratorDiagnostic(
                     Descriptor: DiagnosticDescriptors.GroupMarkerEmptyName,
                     FilePath: filePath,
@@ -90,7 +91,7 @@ internal static class GroupMarkerExtractor {
             ];
         }
 
-        return GroupMarkerExtractionResult.Success(
+        return GroupExtractionResult.Success(
             new GroupMarkerModel(
                 Name: name,
                 Prefix: prefix,
@@ -101,7 +102,7 @@ internal static class GroupMarkerExtractor {
                 DeclaredVersions: versions,
                 RateLimitingPolicy: metadata.RateLimitingPolicy,
                 DisableRateLimiting: metadata.DisableRateLimiting,
-                RequireAntiforgery: metadata.RequireAntiforgery,
+                DisableAntiforgery: metadata.DisableAntiforgery,
                 DisableHttpMetrics: metadata.DisableHttpMetrics,
                 OutputCachePolicy: metadata.OutputCachePolicy,
                 CorsPolicy: metadata.CorsPolicy,
@@ -136,8 +137,8 @@ internal static class GroupMarkerExtractor {
                 continue;
             }
 
-            if (VersionParser.TryParse(versionString, out var major, out var minor, out var patch)) {
-                versions.Add(new VersionModel(major, minor, patch, Deprecated: false));
+            if (VersionParser.TryParse(versionString, out var major, out var minor)) {
+                versions.Add(new VersionModel(major, minor, Patch: 0, Deprecated: false));
 
                 continue;
             }
@@ -157,7 +158,6 @@ internal static class GroupMarkerExtractor {
     private static GroupMetadata ExtractGroupMetadata(INamedTypeSymbol classSymbol) {
         var rateLimitAttr = classSymbol.GetEnableRateLimitingAttribute();
         var disableRateLimitAttr = classSymbol.GetDisableRateLimitingAttribute();
-        var antiforgeryAttr = classSymbol.GetRequireAntiforgeryTokenAttribute();
         var disableMetricsAttr = classSymbol.GetDisableHttpMetricsAttribute();
         var outputCacheAttr = classSymbol.GetOutputCacheAttribute();
         var corsAttr = classSymbol.GetEnableCorsAttribute();
@@ -165,27 +165,22 @@ internal static class GroupMarkerExtractor {
         var authorizeAttr = classSymbol.GetAuthorizeAttribute();
         var requestTimeoutAttr = classSymbol.GetRequestTimeoutAttribute();
         var disableTimeoutAttr = classSymbol.GetDisableRequestTimeoutAttribute();
-        var allowCookieRedirectAttr = classSymbol.GetAllowCookieRedirectAttribute();
-
-        bool? requireAntiforgery = antiforgeryAttr is null
-            ? null
-            : (antiforgeryAttr.GetCtorArgValue<bool?>(0) ?? true);
 
         var filterTypeNames = classSymbol.GetFilterTypeNames();
 
         return new GroupMetadata(
             RateLimitingPolicy: rateLimitAttr.GetCtorArgValue<string?>(0),
             DisableRateLimiting: disableRateLimitAttr is not null,
-            RequireAntiforgery: requireAntiforgery,
+            DisableAntiforgery: classSymbol.DisableAntiforgery(),
             DisableHttpMetrics: disableMetricsAttr is not null,
-            OutputCachePolicy: outputCacheAttr.GetPropValue<string?>("PolicyName"),
+            OutputCachePolicy: outputCacheAttr.GetNamedArgumentValue<string?>("PolicyName"),
             CorsPolicy: corsAttr.GetCtorArgValue<string?>(0),
             AllowAnonymous: allowAnonAttr is not null,
             RequireAuthorization: authorizeAttr is not null,
             AuthorizationPolicy: authorizeAttr.GetCtorArgValue<string?>(0),
             RequestTimeoutPolicy: requestTimeoutAttr.GetCtorArgValue<string?>(0),
             DisableRequestTimeout: disableTimeoutAttr is not null,
-            AllowCookieRedirect: allowCookieRedirectAttr is not null,
+            AllowCookieRedirect: classSymbol.AllowCookieRedirect(),
             FilterTypeNames: filterTypeNames
         );
     }
@@ -193,7 +188,7 @@ internal static class GroupMarkerExtractor {
     private readonly record struct GroupMetadata(
         string? RateLimitingPolicy,
         bool DisableRateLimiting,
-        bool? RequireAntiforgery,
+        bool DisableAntiforgery,
         bool DisableHttpMetrics,
         string? OutputCachePolicy,
         string? CorsPolicy,

@@ -1,4 +1,6 @@
-namespace Nameless.Web.Http.Endpoints.Attributes;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Nameless.Web.Http.Endpoints.Attributes.Produces;
 
 /// <summary>
 ///     Declares a <c>ProblemDetails</c> error response for an endpoint.
@@ -11,20 +13,7 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 ///     handler builder.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public sealed class ProducesProblemAttribute : Attribute {
-    /// <summary>
-    ///     Gets the HTTP status code for this error response
-    ///     (e.g., <c>404</c>, <c>500</c>).
-    /// </summary>
-    public int StatusCode { get; }
-
-    /// <summary>
-    ///     Gets or sets the media type of the response body
-    ///     (e.g., <c>"application/problem+json"</c>). When
-    ///     <see langword="null"/> the framework's default content type is used.
-    /// </summary>
-    public string? ContentType { get; init; } = "application/problem+json";
-
+public sealed class ProducesProblemAttribute : ProducesAttribute<ProblemDetails> {
     /// <summary>
     ///     Initializes a new instance of
     ///     <see cref="ProducesProblemAttribute"/> with the specified status
@@ -33,7 +22,9 @@ public sealed class ProducesProblemAttribute : Attribute {
     /// <param name="statusCode">
     ///     The HTTP status code. Defaults to <c>500</c>.
     /// </param>
-    public ProducesProblemAttribute(int statusCode = 500) {
-        StatusCode = statusCode;
-    }
+    /// <param name="contentType">
+    ///     The content type.
+    /// </param>
+    public ProducesProblemAttribute(int statusCode = 500, string contentType = Constants.ProblemContentType)
+        : base(statusCode, contentType) { }
 }

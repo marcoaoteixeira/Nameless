@@ -12,7 +12,7 @@ internal sealed record GroupModel(
     ImmutableArray<EndpointModel> Endpoints,
     string? RateLimitingPolicy,
     bool DisableRateLimiting,
-    bool? RequireAntiforgery,
+    bool DisableAntiforgery,
     bool DisableHttpMetrics,
     string? OutputCachePolicy,
     string? CorsPolicy,

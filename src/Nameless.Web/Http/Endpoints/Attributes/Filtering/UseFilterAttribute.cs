@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Nameless.Web.Http.Endpoints.Attributes;
+namespace Nameless.Web.Http.Endpoints.Attributes.Filtering;
 
 /// <summary>
 ///     Registers an <see cref="IEndpointFilter"/> on an endpoint or group.
 /// </summary>
 /// <remarks>
-///     Multiple <see cref="EndpointFilterAttribute"/> instances may be applied
+///     Multiple <see cref="UseFilterAttribute"/> instances may be applied
 ///     to the same endpoint or group class. The source generator emits an
 ///     <c>AddEndpointFilter&lt;TFilter&gt;()</c> call for each attribute,
 ///     in the order they are declared.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public class EndpointFilterAttribute : Attribute {
+public class UseFilterAttribute : Attribute {
     /// <summary>
     ///     Gets the CLR type of the <see cref="IEndpointFilter"/>
     ///     implementation to register.
@@ -20,14 +20,14 @@ public class EndpointFilterAttribute : Attribute {
     public Type FilterType { get; }
 
     /// <summary>
-    ///     Initializes a new instance of <see cref="EndpointFilterAttribute"/>
+    ///     Initializes a new instance of <see cref="UseFilterAttribute"/>
     ///     with the specified filter type.
     /// </summary>
     /// <param name="filterType">
     ///     The CLR type of the <see cref="IEndpointFilter"/> implementation.
     ///     Must not be <see langword="null"/>.
     /// </param>
-    public EndpointFilterAttribute(Type filterType) {
+    public UseFilterAttribute(Type filterType) {
         FilterType = filterType;
     }
 }
@@ -39,9 +39,9 @@ public class EndpointFilterAttribute : Attribute {
 /// <typeparam name="T">
 ///     The <see cref="IEndpointFilter"/> implementation to register.
 /// </typeparam>
-public sealed class EndpointFilterAttribute<T> : EndpointFilterAttribute where T : IEndpointFilter {
+public sealed class UseFilterAttribute<T> : UseFilterAttribute where T : IEndpointFilter {
     /// <summary>
-    ///     Initializes a new instance of <see cref="EndpointFilterAttribute{T}"/>.
+    ///     Initializes a new instance of <see cref="UseFilterAttribute{T}"/>.
     /// </summary>
-    public EndpointFilterAttribute() : base(typeof(T)) { }
+    public UseFilterAttribute() : base(typeof(T)) { }
 }
