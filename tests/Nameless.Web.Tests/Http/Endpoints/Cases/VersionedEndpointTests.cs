@@ -16,7 +16,7 @@ public sealed class VersionedEndpointTests
         public partial class UsersGroup;
 
         [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-        [Version("1.0.0")]
+        [Deprecate("1.0.0")]
         public partial class GetUserEndpoint
         {
             public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -63,14 +63,14 @@ public sealed class VersionedEndpointTests
             public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("1.0.0")]
+            [Deprecate("1.0.0")]
             public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("2.0.0")]
+            [Deprecate("2.0.0")]
             public partial class GetUserEndpointV2
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -97,14 +97,14 @@ public sealed class VersionedEndpointTests
             public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("1.0")]
+            [Deprecate("1.0")]
             public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("2.0")]
+            [Deprecate("2.0")]
             public partial class GetUserEndpointV2
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -128,7 +128,7 @@ public sealed class VersionedEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/users")]
-            [Version("not-a-version")]
+            [Deprecate("not-a-version")]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -205,7 +205,7 @@ public sealed class VersionedEndpointTests
             public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("1.0")]
+            [Deprecate("1.0")]
             public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -233,7 +233,7 @@ public sealed class VersionedEndpointTests
             public partial class LegacyGroup;
 
             [Endpoint<Get>("/users", Group = typeof(LegacyGroup))]
-            [Version("1.0.0", Deprecated = true)]
+            [Deprecate("1.0.0", Deprecated = true)]
             public partial class GetUsersV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -256,7 +256,7 @@ public sealed class VersionedEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/hello-world")]
-            [Version("1.0")]
+            [Deprecate("1.0")]
             public partial class HelloWorldEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -282,14 +282,14 @@ public sealed class VersionedEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/hello-world")]
-            [Version("1.0")]
+            [Deprecate("1.0")]
             public partial class HelloWorldV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("v1");
             }
 
             [Endpoint<Get>("/hello-world")]
-            [Version("2.0")]
+            [Deprecate("2.0")]
             public partial class HelloWorldV2Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("v2");
@@ -316,14 +316,14 @@ public sealed class VersionedEndpointTests
             namespace TestApp;
 
             [Endpoint<Get>("/foo")]
-            [Version("1.0")]
+            [Deprecate("1.0")]
             public partial class FooEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("foo");
             }
 
             [Endpoint<Get>("/bar")]
-            [Version("2.0")]
+            [Deprecate("2.0")]
             public partial class BarEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("bar");

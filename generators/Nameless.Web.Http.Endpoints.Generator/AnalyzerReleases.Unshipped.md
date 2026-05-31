@@ -5,14 +5,23 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-AEP001 | AutoEndpointsGenerator | Error | WrongTargetSymbol
-AEP002 | AutoEndpointsGenerator | Error | MissingEndpointExecutionHandler
-AEP003 | AutoEndpointsGenerator | Error | InvalidVersionString
-AEP005 | AutoEndpointsGenerator | Error | EndpointExecutionHandlerNotAccessible
-AEP006 | AutoEndpointsGenerator | Error | ConflictingAuthAttributes
-AEP007 | AutoEndpointsGenerator | Error | EndpointGroupNotFound
-AEP008 | AutoEndpointsGenerator | Error | EndpointVersionNotInGroupVersionSet
-AEP009 | AutoEndpointsGenerator | Error | GroupMarkerEmptyName
-AEP010 | AutoEndpointsGenerator | Error | ClassMustBePartial
-AEP011 | AutoEndpointsGenerator | Error | ClassMustBePublicOrInternal
-AEP999 | AutoEndpointsGenerator | Error | MissingEndpointAttribute
+AEP001 | AutoEndpointsGenerator | Error | InvalidContextTargetSymbol
+AEP002 | AutoEndpointsGenerator | Error | ClassTypeModifierMustBePartial
+AEP003 | AutoEndpointsGenerator | Error | ClassAccessorModifierMustBePublicOrInternal
+AEP004 | AutoEndpointsGenerator | Error | ClassTypeModifierMustNotBeAbstract
+AEP005 | AutoEndpointsGenerator | Warning | ConflictingAllowAnonymousAndUseAuthorizationAttributes
+AEP006 | AutoEndpointsGenerator | Warning | ConflictingAllowAndDisableCookieRedirectAttributes
+AEP007 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseCorsAttributes
+AEP008 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseOutputCacheAttributes
+AEP009 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseRateLimitingAttributes
+AEP010 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseRequestTimeoutAttributes
+
+AEP101 | AutoEndpointsGenerator | Error | EndpointMissingEndpointAttribute
+AEP102 | AutoEndpointsGenerator | Error | EndpointHasMisplacedEndpointGroupAttribute
+AEP103 | AutoEndpointsGenerator | Error | EndpointMissingHandlerMethod
+AEP104 | AutoEndpointsGenerator | Error | EndpointHandlerMethodMustBePublic
+AEP105 | AutoEndpointsGenerator | Error | EndpointAttributeInvalidVersion
+
+AEP201 | AutoEndpointsGenerator | Error | EndpointGroupClassEmptyName
+AEP202 | AutoEndpointsGenerator | Error | EndpointGroupClassEmptyPrefix
+AEP203 | AutoEndpointsGenerator | Error | EndpointGroupNotFound

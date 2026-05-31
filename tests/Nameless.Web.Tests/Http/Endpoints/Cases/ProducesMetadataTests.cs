@@ -8,7 +8,9 @@ public sealed class ProducesMetadataTests
     public void Generate_WhenProducesAttribute_ThenEmitsProducesCall()
     {
         const string source = """
+            using Nameless.Web.Http.Endpoints;
             using Nameless.Web.Http.Endpoints.Attributes;
+            using Nameless.Web.Http.Endpoints.Attributes.Produces;
             using Microsoft.AspNetCore.Http;
             using System.Threading.Tasks;
 
@@ -32,6 +34,7 @@ public sealed class ProducesMetadataTests
     public void Generate_WhenProducesProblemAttribute_ThenEmitsProducesProblem()
     {
         const string source = """
+            using Nameless.Web.Http.Endpoints;
             using Nameless.Web.Http.Endpoints.Attributes;
             using Microsoft.AspNetCore.Http;
             using System.Threading.Tasks;
@@ -55,6 +58,7 @@ public sealed class ProducesMetadataTests
     public void Generate_WhenProducesValidationProblemAttribute_ThenEmitsProducesValidationProblem()
     {
         const string source = """
+            using Nameless.Web.Http.Endpoints;
             using Nameless.Web.Http.Endpoints.Attributes;
             using Microsoft.AspNetCore.Http;
             using System.Threading.Tasks;
@@ -78,6 +82,7 @@ public sealed class ProducesMetadataTests
     public void Generate_WhenMultipleProducesAttributes_ThenAllEmitted()
     {
         const string source = """
+            using Nameless.Web.Http.Endpoints;
             using Nameless.Web.Http.Endpoints.Attributes;
             using Microsoft.AspNetCore.Http;
             using System.Threading.Tasks;

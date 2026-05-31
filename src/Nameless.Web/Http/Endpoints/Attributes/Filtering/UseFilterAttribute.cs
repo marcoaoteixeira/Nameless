@@ -39,6 +39,7 @@ public class UseFilterAttribute : Attribute {
 /// <typeparam name="T">
 ///     The <see cref="IEndpointFilter"/> implementation to register.
 /// </typeparam>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 public sealed class UseFilterAttribute<T> : UseFilterAttribute where T : IEndpointFilter {
     /// <summary>
     ///     Initializes a new instance of <see cref="UseFilterAttribute{T}"/>.

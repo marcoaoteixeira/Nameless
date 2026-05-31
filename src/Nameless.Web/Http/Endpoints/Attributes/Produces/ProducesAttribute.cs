@@ -58,6 +58,7 @@ public class ProducesAttribute : Attribute {
 /// <typeparam name="T">
 ///     The CLR type of the response body.
 /// </typeparam>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
 public class ProducesAttribute<T> : ProducesAttribute {
     /// <summary>
     ///     Initializes a new instance of <see cref="ProducesAttribute{T}"/>

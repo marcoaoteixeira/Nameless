@@ -16,7 +16,7 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 ///     <c>Map[Verb](route, handler)</c> call inside the generated
 ///     <c>MapEndpoints()</c> extension method. Use <see cref="Group"/> to
 ///     place the endpoint inside a route group defined by a
-///     <see cref="EndpointGroupingAttribute"/> marker class.
+///     <see cref="EndpointGroupAttribute"/> marker class.
 /// </remarks>
 /// <param name="route">
 ///     The route pattern for this endpoint. May be empty when the
@@ -30,7 +30,7 @@ public sealed class EndpointAttribute<THttpVerb>([StringSyntax("Route")] string?
     ///     Gets the route pattern for this endpoint, relative to the group
     ///     prefix when <see cref="Group"/> is set.
     /// </summary>
-    public string Route { get; } = route ?? string.Empty;
+    public string Route { get; } = (route ?? string.Empty).Trim();
 
     /// <summary>
     ///     Gets or sets an optional name for the endpoint, used for
@@ -55,14 +55,18 @@ public sealed class EndpointAttribute<THttpVerb>([StringSyntax("Route")] string?
     public string[]? Tags { get; init; }
 
     /// <summary>
-    ///     Gets or sets the marker class that defines the route group this
-    ///     endpoint belongs to.
+    ///     Gets the endpoint version.
+    /// </summary>
+    public string? Version { get; init; }
+
+    /// <summary>
+    ///     Gets or sets the endpoint group class that defines the route group
+    ///     this endpoint belongs to.
     /// </summary>
     /// <remarks>
     ///     The referenced type must be a class decorated with
-    ///     <see cref="EndpointGroupingAttribute"/>. Use <c>typeof(MyGroup)</c> to assign
-    ///     membership (e.g., <c>Group = typeof(DemoGroup)</c>). Omit this
-    ///     property to leave the endpoint ungrouped.
+    ///     <see cref="EndpointGroupAttribute"/>. Use <c>typeof(MyGroup)</c> to
+    ///     assign membership (e.g., <c>Group = typeof(DemoGroup)</c>).
     /// </remarks>
     public Type? Group { get; init; }
 }

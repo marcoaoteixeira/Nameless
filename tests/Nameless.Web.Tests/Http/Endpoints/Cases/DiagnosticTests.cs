@@ -57,7 +57,7 @@ public sealed class DiagnosticTests
             namespace TestApp;
 
             [Endpoint<Get>("/items")]
-            [Version("bad-version")]
+            [Deprecate("bad-version")]
             public partial class GetItemsEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();

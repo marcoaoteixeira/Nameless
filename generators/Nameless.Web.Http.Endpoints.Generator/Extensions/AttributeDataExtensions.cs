@@ -1,101 +1,138 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.Generator;
 
-internal static class TypedConstantExtensions {
-    internal static T? GetValue<T>(this TypedConstant self) {
-        return self.GetValue<T?>(fallback: default);
-    }
+public static class AttributeDataExtensions {
+    extension(AttributeData? self) {
+        public AttributeDefinitions GetAttributeDefinition() {
+            var fqn = self?.AttributeClass?.GetFullyQualifiedName();
+            if (string.IsNullOrWhiteSpace(fqn)) { return AttributeDefinitions.None; }
 
-    internal static T GetValue<T>(this TypedConstant self, T fallback) {
-        return self is { Kind: TypedConstantKind.Primitive }
-            ? self.Value is not null ? (T)self.Value : fallback
-            : fallback;
-    }
+            if (RegexCache.Attributes.Endpoint.IsMatch(fqn)) {
+                return AttributeDefinitions.Endpoint;
+            }
 
-    internal static T[] GetValues<T>(this TypedConstant self) {
-        return self is { Kind: TypedConstantKind.Array }
-            ? [.. self.Values
-                      .Where(static constant => constant.Value is not null)
-                      .Select(static constant => (T)constant.Value!)]
-            : [];
-    }
+            if (RegexCache.Attributes.EndpointGroup.IsMatch(fqn)) {
+                return AttributeDefinitions.EndpointGroup;
+            }
 
-    internal static string? GetFullyQualifiedName(this TypedConstant self) {
-        return self is { Kind: TypedConstantKind.Type, Value: ITypeSymbol symbol }
-            ? symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-            : null;
-    }
-}
+            if (RegexCache.Attributes.DisableAntiforgery.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableAntiforgery;
+            }
 
-internal static class AttributeDataExtensions {
-    internal static bool TryGetNamedArgument(this AttributeData? self, string name, out TypedConstant output) {
-        output = default;
+            if (RegexCache.Attributes.AllowAnonymous.IsMatch(fqn)) {
+                return AttributeDefinitions.AllowAnonymous;
+            }
 
-        if (self is null) { return false; }
+            if (RegexCache.Attributes.UseAuthorization.IsMatch(fqn)) {
+                return AttributeDefinitions.UseAuthorization;
+            }
 
-        var arg = self.NamedArguments.FirstOrDefault(item => item.Key == name);
-        var success = !string.IsNullOrWhiteSpace(arg.Key);
+            if (RegexCache.Attributes.DisableCookieRedirect.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableCookieRedirect;
+            }
 
-        output = success ? arg.Value : default;
+            if (RegexCache.Attributes.AllowCookieRedirect.IsMatch(fqn)) {
+                return AttributeDefinitions.AllowCookieRedirect;
+            }
 
-        return success;
-    }
+            if (RegexCache.Attributes.DisableCors.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableCors;
+            }
 
-    internal static TypedConstant GetNamedArgument(this AttributeData? self, string name) {
-        if (self is null) { return default; }
+            if (RegexCache.Attributes.UseCors.IsMatch(fqn)) {
+                return AttributeDefinitions.UseCors;
+            }
 
-        var arg = self.NamedArguments.FirstOrDefault(item => item.Key == name);
+            if (RegexCache.Attributes.UseFilter.IsMatch(fqn)) {
+                return AttributeDefinitions.UseFilter;
+            }
 
-        return arg.Value;
-    }
+            if (RegexCache.Attributes.DisableHttpMetrics.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableHttpMetrics;
+            }
 
-    internal static T? GetNamedArgumentValue<T>(this AttributeData? self, string name) {
-        return (T?)self.GetNamedArgument(name).Value;
-    }
+            if (RegexCache.Attributes.DisableOutputCache.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableOutputCache;
+            }
 
-    internal static TypedConstant GetConstructorArguments(this AttributeData? self, int index) {
-        return self is not null && index < self.ConstructorArguments.Length
-            ? self.ConstructorArguments[index]
-            : default;
-    }
+            if (RegexCache.Attributes.UseOutputCache.IsMatch(fqn)) {
+                return AttributeDefinitions.UseOutputCache;
+            }
 
-    internal static bool TryGetConstructorArguments(this AttributeData? self, int index, out TypedConstant output) {
-        output = default;
+            if (RegexCache.Attributes.Produces.IsMatch(fqn)) {
+                return AttributeDefinitions.Produces;
+            }
 
-        if (self is null || index >= self.ConstructorArguments.Length) { return false; }
+            if (RegexCache.Attributes.ProducesProblem.IsMatch(fqn)) {
+                return AttributeDefinitions.ProducesProblem;
+            }
 
-        output = self.ConstructorArguments[index];
+            if (RegexCache.Attributes.ProducesValidationProblem.IsMatch(fqn)) {
+                return AttributeDefinitions.ProducesValidationProblem;
+            }
 
-        return true;
-    }
+            if (RegexCache.Attributes.DisableRateLimiting.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableRateLimiting;
+            }
 
-    internal static T? GetCtorArgValue<T>(this AttributeData? self, int index) {
-        if (self is null || self.ConstructorArguments.Length <= index) { return default; }
+            if (RegexCache.Attributes.UseRateLimiting.IsMatch(fqn)) {
+                return AttributeDefinitions.UseRateLimiting;
+            }
 
-        var arg = self.ConstructorArguments[index];
+            if (RegexCache.Attributes.DisableRequestTimeout.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableRequestTimeout;
+            }
 
-        return (T?)arg.Value;
-    }
+            if (RegexCache.Attributes.UseRequestTimeout.IsMatch(fqn)) {
+                return AttributeDefinitions.UseRequestTimeout;
+            }
 
-    internal static string? GetTypeArg(this AttributeData? self) {
-        if (self is null) { return null; }
+            if (RegexCache.Attributes.DisableValidation.IsMatch(fqn)) {
+                return AttributeDefinitions.DisableValidation;
+            }
 
-        // Generic usage [SomeAttribute<T>]: type is a type argument
-        if (self.AttributeClass?.TypeArguments.Length > 0) {
-            return self.AttributeClass.TypeArguments[0].ToDisplayString(
-                SymbolDisplayFormat.FullyQualifiedFormat
-            );
+            if (RegexCache.Attributes.Deprecate.IsMatch(fqn)) {
+                return AttributeDefinitions.Deprecate;
+            }
+
+            return AttributeDefinitions.None;
         }
 
-        // Non-generic usage [SomeAttribute(typeof(T))]: type is a ctor arg
-        if (self.ConstructorArguments.Length > 0 && self.ConstructorArguments[0].Value is INamedTypeSymbol symbol) {
-            return symbol.ToDisplayString(
-                SymbolDisplayFormat.FullyQualifiedFormat
-            );
+        public TypedConstant GetNamedArgument(string name) {
+            _ = self.TryGetNamedArgument(name, out var output);
+
+            return output;
         }
 
-        return null;
+        public bool TryGetNamedArgument(string name, out TypedConstant output) {
+            output = default;
+
+            if (self is null) { return false; }
+
+            var arg = self.NamedArguments.FirstOrDefault(item => item.Key == name);
+            var success = !string.IsNullOrWhiteSpace(arg.Key);
+
+            output = success ? arg.Value : default;
+
+            return success;
+        }
+
+        public TypedConstant GetConstructorArgument(int index) {
+            _ = self.TryGetConstructorArgument(index, out var output);
+
+            return output;
+        }
+
+        public bool TryGetConstructorArgument(int index, out TypedConstant output) {
+            output = default;
+
+            if (self is null || index >= self.ConstructorArguments.Length) { return false; }
+
+            output = self.ConstructorArguments[index];
+
+            return true;
+        }
     }
 }

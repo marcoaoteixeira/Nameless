@@ -134,7 +134,7 @@ public sealed class GroupedEndpointTests
             public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("3.0")]
+            [Deprecate("3.0")]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -160,7 +160,7 @@ public sealed class GroupedEndpointTests
             public partial class UsersGroup;
 
             [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
-            [Version("3.0")]
+            [Deprecate("3.0")]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);

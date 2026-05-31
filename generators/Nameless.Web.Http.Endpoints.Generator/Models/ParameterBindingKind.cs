@@ -1,11 +1,11 @@
 namespace Nameless.Web.Http.Endpoints.Generator.Models;
 
-internal enum ParameterBindingKind {
+public enum ParameterBindingKind {
     None,
-    FromBody,
-    FromRoute,
-    FromQuery,
-    FromHeader,
     AsParameters,
-    FromForm
+    FromBody,
+    FromForm,
+    FromHeader,
+    FromQuery,
+    FromRoute,
 }

@@ -5,6 +5,7 @@ namespace Nameless.Web.Http.Endpoints.Cases;
 public sealed class SimpleGetEndpointTests
 {
     private const string MinimalGetEndpoint = """
+        using Nameless.Web.Http.Endpoints;
         using Nameless.Web.Http.Endpoints.Attributes;
         using Microsoft.AspNetCore.Http;
         using System.Threading.Tasks;
