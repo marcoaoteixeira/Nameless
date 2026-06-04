@@ -7,21 +7,22 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 AEP001 | AutoEndpointsGenerator | Error | InvalidContextTargetSymbol
 AEP002 | AutoEndpointsGenerator | Error | ClassTypeModifierMustBePartial
-AEP003 | AutoEndpointsGenerator | Error | ClassAccessorModifierMustBePublicOrInternal
-AEP004 | AutoEndpointsGenerator | Error | ClassTypeModifierMustNotBeAbstract
-AEP005 | AutoEndpointsGenerator | Warning | ConflictingAllowAnonymousAndUseAuthorizationAttributes
-AEP006 | AutoEndpointsGenerator | Warning | ConflictingAllowAndDisableCookieRedirectAttributes
-AEP007 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseCorsAttributes
-AEP008 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseOutputCacheAttributes
-AEP009 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseRateLimitingAttributes
-AEP010 | AutoEndpointsGenerator | Warning | ConflictingDisableAndUseRequestTimeoutAttributes
+AEP003 | AutoEndpointsGenerator | Error | ClassTypeModifierMustNotBeAbstract
+AEP004 | AutoEndpointsGenerator | Error | ClassAccessorModifierMustBePublicOrInternal
+AEP005 | AutoEndpointsGenerator | Error | ConflictingEndpointVsEndpointGroupAttributes
+AEP006 | AutoEndpointsGenerator | Warning | ConflictingAllowAnonymousVsUseAuthorizationAttributes
+AEP007 | AutoEndpointsGenerator | Warning | ConflictingDisableCookieRedirectVsAllowCookieRedirectAttributes
+AEP008 | AutoEndpointsGenerator | Warning | ConflictingDisableCorsVsUseCorsAttributes
+AEP009 | AutoEndpointsGenerator | Warning | ConflictingDisableOutputCacheVsUseOutputCacheAttributes
+AEP010 | AutoEndpointsGenerator | Warning | ConflictingDisableRateLimitingVsUseRateLimitingAttributes
+AEP011 | AutoEndpointsGenerator | Warning | ConflictingDisableRequestTimeoutVsUseRequestTimeoutAttributes
 
-AEP101 | AutoEndpointsGenerator | Error | EndpointMissingEndpointAttribute
-AEP102 | AutoEndpointsGenerator | Error | EndpointHasMisplacedEndpointGroupAttribute
-AEP103 | AutoEndpointsGenerator | Error | EndpointMissingHandlerMethod
-AEP104 | AutoEndpointsGenerator | Error | EndpointHandlerMethodMustBePublic
-AEP105 | AutoEndpointsGenerator | Error | EndpointAttributeInvalidVersion
+AEP101 | AutoEndpointsGenerator | Error | ClassMissingEndpointAttribute
+AEP102 | AutoEndpointsGenerator | Error | ClassMustDeclareHandlerMethod
+AEP103 | AutoEndpointsGenerator | Error | ClassHandlerMethodMustBePublicOrInternal
+AEP104 | AutoEndpointsGenerator | Error | EndpointAttributeVersionArgumentIsInvalid
+AEP105 | AutoEndpointsGenerator | Error | EndpointGroupNotFound
 
-AEP201 | AutoEndpointsGenerator | Error | EndpointGroupClassEmptyName
-AEP202 | AutoEndpointsGenerator | Error | EndpointGroupClassEmptyPrefix
-AEP203 | AutoEndpointsGenerator | Error | EndpointGroupNotFound
+AEP201 | AutoEndpointsGenerator | Error | ClassMissingEndpointGroupAttribute
+AEP202 | AutoEndpointsGenerator | Error | EndpointGroupAttributeNameArgumentIsEmpty
+AEP203 | AutoEndpointsGenerator | Error | EndpointGroupAttributePrefixArgumentIsEmpty

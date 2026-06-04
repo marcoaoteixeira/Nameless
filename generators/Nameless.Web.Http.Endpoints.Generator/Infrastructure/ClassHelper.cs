@@ -2,10 +2,9 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
-using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 using Nameless.Web.Http.Endpoints.Generator.Models;
 
-namespace Nameless.Web.Http.Endpoints.Generator.Pipeline;
+namespace Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 
 public static class ClassHelper {
     public static DiagnosticAwareResult<ClassModel> ExtractClassModel(ClassDeclarationSyntax syntax, INamedTypeSymbol classSymbol, LocationModel location, CancellationToken cancellationToken) {
@@ -38,7 +37,7 @@ public static class ClassHelper {
                 ? string.Empty
                 : classSymbol.ContainingNamespace.ToDisplayString(),
             Name = classSymbol.Name,
-            AccessorModifier = accessibility ?? string.Empty,
+            Accessibility = accessibility ?? string.Empty,
         };
 
         return (model, [.. diagnostics]);
@@ -58,7 +57,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasAllowAnonymousAttribute() && classSymbol.HasUseAuthorizationAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingAllowAnonymousAndUseAuthorizationAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingAllowAnonymousVsUseAuthorizationAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -67,7 +66,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasDisableCookieRedirectAttribute() && classSymbol.HasAllowCookieRedirectAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingAllowAndDisableCookieRedirectAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableCookieRedirectVsAllowCookieRedirectAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -76,7 +75,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasDisableCorsAttribute() && classSymbol.HasUseCorsAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableAndUseCorsAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableCorsVsUseCorsAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -85,7 +84,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasDisableOutputCacheAttribute() && classSymbol.HasUseOutputCacheAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableAndUseOutputCacheAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableOutputCacheVsUseOutputCacheAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -94,7 +93,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasDisableRateLimitingAttribute() && classSymbol.HasUseRateLimitingAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableAndUseRateLimitingAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableRateLimitingVsUseRateLimitingAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -103,7 +102,7 @@ public static class ClassHelper {
         cancellationToken.ThrowIfCancellationRequested();
         if (classSymbol.HasDisableRequestTimeoutAttribute() && classSymbol.HasUseRequestTimeoutAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableAndUseRequestTimeoutAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableRequestTimeoutVsUseRequestTimeoutAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));

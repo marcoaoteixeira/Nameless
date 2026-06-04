@@ -2,10 +2,10 @@
 
 namespace Nameless.Web.Http.Endpoints.Generator.Models;
 
-public record LocationModel {
-    public string FilePath { get; init; }
-    public int StartLine { get; init; }
-    public int StartCharacter { get; init; }
+public readonly record struct LocationModel {
+    public string FilePath { get; }
+    public int StartLine { get; }
+    public int StartCharacter { get; }
 
     public LocationModel(Location location) {
         var startLinePosition = location.GetLineSpan().StartLinePosition;

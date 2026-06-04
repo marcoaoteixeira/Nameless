@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Nameless.Web.Http.Endpoints.Generator.Models;
@@ -11,9 +10,9 @@ public record GeneratorDiagnostic {
     public string FilePath { get; }
     public int StartLine { get; }
     public int StartCharacter { get; }
-    public ImmutableArray<string> MessageArgs { get; }
+    public string[] MessageArgs { get; }
 
-    private GeneratorDiagnostic(DiagnosticDescriptor descriptor, string filePath, int startLine, int startCharacter, ImmutableArray<string> messageArgs) {
+    private GeneratorDiagnostic(DiagnosticDescriptor descriptor, string filePath, int startLine, int startCharacter, string[] messageArgs) {
         Descriptor = descriptor;
         FilePath = filePath;
         StartLine = startLine;
@@ -27,7 +26,7 @@ public record GeneratorDiagnostic {
             filePath: location.FilePath,
             startLine: location.StartLine,
             startCharacter: location.StartCharacter,
-            messageArgs: [.. messageArgs]
+            messageArgs: messageArgs
         );
     }
 

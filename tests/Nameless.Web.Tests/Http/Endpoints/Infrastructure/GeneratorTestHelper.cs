@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Nameless.Web.Http.Endpoints.Attributes;
 using Nameless.Web.Http.Endpoints.Generator;
 
 namespace Nameless.Web.Http.Endpoints.Infrastructure;

@@ -41,12 +41,12 @@ public static class SymbolExtensions {
             return self.TryGetAttributes(RegexCache.Attributes.UseAuthorization, out _);
         }
 
-        public bool HasAllowCookieRedirectAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.AllowCookieRedirect, out _);
-        }
-
         public bool HasDisableCookieRedirectAttribute() {
             return self.TryGetAttributes(RegexCache.Attributes.DisableCookieRedirect, out _);
+        }
+
+        public bool HasAllowCookieRedirectAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.AllowCookieRedirect, out _);
         }
 
         public bool HasDisableCorsAttribute() {

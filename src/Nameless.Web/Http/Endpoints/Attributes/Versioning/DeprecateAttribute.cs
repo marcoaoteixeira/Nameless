@@ -41,7 +41,7 @@ public sealed class DeprecateAttribute : Attribute {
     ///     [Deprecate(Message = "Use /v2/users instead.")]
     /// </code>
     /// </example>
-    public string? Message { get; set; }
+    public string? Message { get; init; }
 
     /// <summary>
     ///     Gets or sets the date after which the endpoint will no longer be
@@ -66,5 +66,10 @@ public sealed class DeprecateAttribute : Attribute {
     ///     [Deprecate(Sunset = "Wed, 31 Dec 2025 00:00:00 GMT")]
     /// </code>
     /// </example>
-    public string? Sunset { get; set; }
+    public string? Sunset { get; init; }
+
+    /// <summary>
+    ///     Gets the link pointing to migration documentation.
+    /// </summary>
+    public string? Link { get; init; }
 }

@@ -1,6 +1,4 @@
-﻿using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
-
-namespace Nameless.Web.Http.Endpoints.Generator.Conventions;
+﻿namespace Nameless.Web.Http.Endpoints.Generator.Conventions;
 
 /// <summary>
 ///     One fluent call to chain on the route handler builder.

@@ -4,9 +4,9 @@ using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 namespace Nameless.Web.Http.Endpoints.Generator;
 
 public static class AttributeDataExtensions {
-    extension(AttributeData? self) {
+    extension(AttributeData self) {
         public AttributeDefinitions GetAttributeDefinition() {
-            var fqn = self?.AttributeClass?.GetFullyQualifiedName();
+            var fqn = self.AttributeClass?.GetFullyQualifiedName();
             if (string.IsNullOrWhiteSpace(fqn)) { return AttributeDefinitions.None; }
 
             if (RegexCache.Attributes.Endpoint.IsMatch(fqn)) {
@@ -101,22 +101,10 @@ public static class AttributeDataExtensions {
         }
 
         public TypedConstant GetNamedArgument(string name) {
-            _ = self.TryGetNamedArgument(name, out var output);
-
-            return output;
-        }
-
-        public bool TryGetNamedArgument(string name, out TypedConstant output) {
-            output = default;
-
-            if (self is null) { return false; }
-
-            var arg = self.NamedArguments.FirstOrDefault(item => item.Key == name);
+            var arg = self.NamedArguments.SingleOrDefault(item => item.Key == name);
             var success = !string.IsNullOrWhiteSpace(arg.Key);
 
-            output = success ? arg.Value : default;
-
-            return success;
+            return success ? arg.Value : default;
         }
 
         public TypedConstant GetConstructorArgument(int index) {
@@ -128,7 +116,7 @@ public static class AttributeDataExtensions {
         public bool TryGetConstructorArgument(int index, out TypedConstant output) {
             output = default;
 
-            if (self is null || index >= self.ConstructorArguments.Length) { return false; }
+            if (index >= self.ConstructorArguments.Length) { return false; }
 
             output = self.ConstructorArguments[index];
 

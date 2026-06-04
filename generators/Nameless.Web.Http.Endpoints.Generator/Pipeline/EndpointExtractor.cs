@@ -4,6 +4,8 @@ using Nameless.Web.Http.Endpoints.Generator.Conventions;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 using Nameless.Web.Http.Endpoints.Generator.Models;
+using ProjectFullyQualifiedNames = Nameless.Web.Http.Endpoints.Generator.Constants.Project.Classes.FullyQualifiedNames;
+using ThirdPartyFullyQualifiedNames = Nameless.Web.Http.Endpoints.Generator.Constants.ThirdParty.Classes.FullyQualifiedNames;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Pipeline;
 
@@ -23,7 +25,7 @@ public static class EndpointExtractor {
 
         if (classSymbol.HasEndpointGroupAttribute()) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.EndpointHasMisplacedEndpointGroupAttribute,
+                descriptor: DiagnosticDescriptors.ConflictingEndpointVsEndpointGroupAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -39,11 +41,11 @@ public static class EndpointExtractor {
         if (!classModelExtraction.Successful) {
             return classModelExtraction.Diagnostics;
         }
-         
+
         var endpointAttribute = classSymbol.GetEndpointAttribute();
         if (endpointAttribute is null) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.EndpointMissingEndpointAttribute,
+                descriptor: DiagnosticDescriptors.ClassMissingEndpointAttribute,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -83,19 +85,19 @@ public static class EndpointExtractor {
 
         return (model, conflicts.Diagnostics);
     }
-    
+
     private static DiagnosticAwareResult<EndpointArgumentsModel> ExtractEndpointArgumentsModel(AttributeData attributeData, INamedTypeSymbol classSymbol, LocationModel location) {
         if (attributeData.AttributeClass is null) {
             return new EndpointArgumentsModel();
         }
 
         var httpVerb = attributeData.AttributeClass.GetTypeArgument(index: 0)?.GetFullyQualifiedName() switch {
-            FQN.Nameless.HttpVerbPost => HttpVerbs.Post,
-            FQN.Nameless.HttpVerbPut => HttpVerbs.Put,
-            FQN.Nameless.HttpVerbPatch => HttpVerbs.Patch,
-            FQN.Nameless.HttpVerbDelete => HttpVerbs.Delete,
-            FQN.Nameless.HttpVerbHead => HttpVerbs.Head,
-            FQN.Nameless.HttpVerbOptions => HttpVerbs.Options,
+            ProjectFullyQualifiedNames.HttpVerbPost => HttpVerbs.Post,
+            ProjectFullyQualifiedNames.HttpVerbPut => HttpVerbs.Put,
+            ProjectFullyQualifiedNames.HttpVerbPatch => HttpVerbs.Patch,
+            ProjectFullyQualifiedNames.HttpVerbDelete => HttpVerbs.Delete,
+            ProjectFullyQualifiedNames.HttpVerbHead => HttpVerbs.Head,
+            ProjectFullyQualifiedNames.HttpVerbOptions => HttpVerbs.Options,
             _ => HttpVerbs.Get
         };
 
@@ -123,7 +125,7 @@ public static class EndpointExtractor {
 
         // Has version but was impossible to parse
         return GeneratorDiagnostic.Create(
-            descriptor: DiagnosticDescriptors.EndpointAttributeInvalidVersion,
+            descriptor: DiagnosticDescriptors.EndpointAttributeVersionArgumentIsInvalid,
             location: location,
             messageArgs: [classSymbol.Name, version]
         );
@@ -135,7 +137,7 @@ public static class EndpointExtractor {
 
         if (methodSymbol is not IMethodSymbol handler) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.EndpointMissingHandlerMethod,
+                descriptor: DiagnosticDescriptors.ClassMustDeclareHandlerMethod,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -143,7 +145,7 @@ public static class EndpointExtractor {
 
         if (handler.DeclaredAccessibility is not Accessibility.Public and not Accessibility.Internal) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.EndpointHandlerMethodMustBePublic,
+                descriptor: DiagnosticDescriptors.ClassHandlerMethodMustBePublicOrInternal,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -157,19 +159,19 @@ public static class EndpointExtractor {
             cancellationToken.ThrowIfCancellationRequested();
 
             var type = parameter.Type.GetFullyQualifiedName();
-            var isCancellationToken = type == FQN.System.CancellationToken;
+            var isCancellationToken = type == ThirdParty.Classes.FullyQualifiedNames.CancellationToken;
 
             var bindingKind = ParameterBindingKind.None;
             string? bindingName = null;
 
             foreach (var parameterAttribute in parameter.GetAttributes()) {
                 var candidate = parameterAttribute.AttributeClass?.ToDisplayString() switch {
-                    FQN.Microsoft.AsParametersAttribute => ParameterBindingKind.AsParameters,
-                    FQN.Microsoft.FromBodyAttribute => ParameterBindingKind.FromBody,
-                    FQN.Microsoft.FromFormAttribute => ParameterBindingKind.FromForm,
-                    FQN.Microsoft.FromHeaderAttribute => ParameterBindingKind.FromHeader,
-                    FQN.Microsoft.FromQueryAttribute => ParameterBindingKind.FromQuery,
-                    FQN.Microsoft.FromRouteAttribute => ParameterBindingKind.FromRoute,
+                    ThirdPartyFullyQualifiedNames.AsParametersAttribute => ParameterBindingKind.AsParameters,
+                    ThirdPartyFullyQualifiedNames.FromBodyAttribute => ParameterBindingKind.FromBody,
+                    ThirdPartyFullyQualifiedNames.FromFormAttribute => ParameterBindingKind.FromForm,
+                    ThirdPartyFullyQualifiedNames.FromHeaderAttribute => ParameterBindingKind.FromHeader,
+                    ThirdPartyFullyQualifiedNames.FromQueryAttribute => ParameterBindingKind.FromQuery,
+                    ThirdPartyFullyQualifiedNames.FromRouteAttribute => ParameterBindingKind.FromRoute,
                     _ => ParameterBindingKind.None
                 };
 

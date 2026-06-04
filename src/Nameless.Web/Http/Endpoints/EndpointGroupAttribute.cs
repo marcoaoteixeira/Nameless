@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nameless.Web.Http.Endpoints.Attributes;
+namespace Nameless.Web.Http.Endpoints;
 
 /// <summary>
 ///     Marks a class as the definition for a named route group.
@@ -45,4 +45,10 @@ public sealed class EndpointGroupAttribute(string name, [StringSyntax("Route")] 
     ///     Gets the OpenAPI summary associated with the group.
     /// </summary>
     public string? Summary { get; init; }
+
+    /// <summary>
+    ///     Gets or sets optional OpenAPI tags that categorise the endpoint
+    ///     in the generated API document.
+    /// </summary>
+    public string[]? Tags { get; init; }
 }

@@ -5,12 +5,12 @@ namespace Nameless.Web.Http.Endpoints.Generator;
 public static class RegexCache {
     public static class Attributes {
         public static readonly Regex Endpoint = new(
-            @"^global::Nameless\.Web\.Http\.Endpoints\.Attributes\.EndpointAttribute(?:<.*>)$",
+            @"^global::Nameless\.Web\.Http\.Endpoints\.EndpointAttribute(?:<.*>)$",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture
         );
 
         public static readonly Regex EndpointGroup = new(
-            @"^global::Nameless\.Web\.Http\.Endpoints\.Attributes\.EndpointGroupAttribute$",
+            @"^global::Nameless\.Web\.Http\.Endpoints\.EndpointGroupAttribute$",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture
         );
 

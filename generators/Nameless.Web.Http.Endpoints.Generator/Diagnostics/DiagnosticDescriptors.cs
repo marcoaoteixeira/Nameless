@@ -2,12 +2,12 @@ using Microsoft.CodeAnalysis;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 
-public static class DiagnosticDescriptors {
+internal static class DiagnosticDescriptors {
     private const string CATEGORY = "AutoEndpointsGenerator";
 
     #region Common diagnostics
 
-    public static readonly DiagnosticDescriptor InvalidContextTargetSymbol = new(
+    internal static readonly DiagnosticDescriptor InvalidContextTargetSymbol = new(
         id: "AEP001",
         title: "Type Symbol",
         messageFormat: "Symbol '{0}' is not a valid named type symbol",
@@ -15,74 +15,82 @@ public static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ClassTypeModifierMustBePartial = new(
+    internal static readonly DiagnosticDescriptor ClassTypeModifierMustBePartial = new(
         id: "AEP002",
-        title: "Class must be partial",
+        title: "Class type modifier must be partial",
         messageFormat: "Class '{0}' must be declared as 'partial' for the endpoint generator to properly emit the companion class",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ClassAccessorModifierMustBePublicOrInternal = new(
+    internal static readonly DiagnosticDescriptor ClassTypeModifierMustNotBeAbstract = new(
         id: "AEP003",
-        title: "Class must be public or internal",
-        messageFormat: "Class '{0}' must be declared as 'internal' or 'public' for the endpoint generator to properly emit the companion class registration methods",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
-    public static readonly DiagnosticDescriptor ClassTypeModifierMustNotBeAbstract = new(
-        id: "AEP004",
         title: "Class must not be abstract",
         messageFormat: "Class '{0}' must not be declared as 'abstract' since it needs to be instantiated eventually",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingAllowAnonymousAndUseAuthorizationAttributes = new(
+    internal static readonly DiagnosticDescriptor ClassAccessorModifierMustBePublicOrInternal = new(
+        id: "AEP004",
+        title: "Class accessor modifier must be internal or internal",
+        messageFormat: "Class '{0}' must be declared as 'internal' or 'public' for the endpoint generated companion class be accessible to other components",
+        category: CATEGORY,
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    internal static readonly DiagnosticDescriptor ConflictingEndpointVsEndpointGroupAttributes = new(
         id: "AEP005",
-        title: "Conflicting authorization attributes",
-        messageFormat: "'{0}' has both [AllowAnonymous] and [UseAuthorization]; [AllowAnonymous] takes precedence",
+        title: "Conflicting endpoint/group attributes",
+        messageFormat: $"Class '{{0}}' has both '{Project.Classes.Names.EndpointAttribute}' and '{Project.Classes.Names.EndpointGroupAttribute}'; Class must be marked with only one of them",
         category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Warning,
+        defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingAllowAndDisableCookieRedirectAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingAllowAnonymousVsUseAuthorizationAttributes = new(
         id: "AEP006",
-        title: "Conflicting cookie redirect attributes",
-        messageFormat: "'{0}' has both [AllowCookieRedirect] and [DisableCookieRedirect]; [AllowCookieRedirect] takes precedence",
+        title: "Conflicting authorization attributes",
+        messageFormat: "Class '{0}' has both [AllowAnonymous] and [UseAuthorization]; [AllowAnonymous] takes precedence",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingDisableAndUseCorsAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableCookieRedirectVsAllowCookieRedirectAttributes = new(
         id: "AEP007",
-        title: "Conflicting CORS attributes",
-        messageFormat: "'{0}' has both [DisableCors] and [UseCors]; [DisableCors] takes precedence",
+        title: "Conflicting cookie redirect attributes",
+        messageFormat: "Class '{0}' has both [DisableCookieRedirect] and [AllowCookieRedirect]; [AllowCookieRedirect] takes precedence",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingDisableAndUseOutputCacheAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableCorsVsUseCorsAttributes = new(
         id: "AEP008",
-        title: "Conflicting output cache attributes",
-        messageFormat: "'{0}' has both [DisableOutputCache] and [UseOutputCache]; [DisableOutputCache] takes precedence and places a policy preventing any cache logic",
+        title: "Conflicting CORS attributes",
+        messageFormat: "Class '{0}' has both [DisableCors] and [UseCors]; [DisableCors] takes precedence",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingDisableAndUseRateLimitingAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableOutputCacheVsUseOutputCacheAttributes = new(
         id: "AEP009",
-        title: "Conflicting rate limiting attributes",
-        messageFormat: "'{0}' has both [DisableRateLimiting] and [UseRateLimiting]; [DisableRateLimiting] takes precedence and places a policy preventing any rate limiting logic",
+        title: "Conflicting output cache attributes",
+        messageFormat: "Class '{0}' has both [DisableOutputCache] and [UseOutputCache]; [DisableOutputCache] takes precedence and places a policy preventing any cache logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor ConflictingDisableAndUseRequestTimeoutAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableRateLimitingVsUseRateLimitingAttributes = new(
         id: "AEP010",
+        title: "Conflicting rate limiting attributes",
+        messageFormat: "Class '{0}' has both [DisableRateLimiting] and [UseRateLimiting]; [DisableRateLimiting] takes precedence and places a policy preventing any rate limiting logic",
+        category: CATEGORY,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    internal static readonly DiagnosticDescriptor ConflictingDisableRequestTimeoutVsUseRequestTimeoutAttributes = new(
+        id: "AEP011",
         title: "Conflicting request timeout attributes",
-        messageFormat: "'{0}' has both [DisableRequestTimeout] and [UseRequestTimeout]; [DisableRequestTimeout] takes precedence and places a policy preventing any request timeout logic",
+        messageFormat: "Class '{0}' has both [DisableRequestTimeout] and [UseRequestTimeout]; [DisableRequestTimeout] takes precedence and places a policy preventing any request timeout logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -91,42 +99,42 @@ public static class DiagnosticDescriptors {
 
     #region Endpoint diagnostics
 
-    public static readonly DiagnosticDescriptor EndpointMissingEndpointAttribute = new(
+    internal static readonly DiagnosticDescriptor ClassMissingEndpointAttribute = new(
         id: "AEP101",
-        title: "Endpoint class missing endpoint attribute",
-        messageFormat: $"Endpoint class '{{0}}' must be annotated with attribute '{ClassNames.EndpointAttribute}'",
+        title: "Class missing endpoint attribute",
+        messageFormat: $"Class '{{0}}' must be marked with '{Project.Classes.Names.EndpointAttribute}' to be considered an endpoint",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor EndpointHasMisplacedEndpointGroupAttribute = new(
+    internal static readonly DiagnosticDescriptor ClassMustDeclareHandlerMethod = new(
         id: "AEP102",
-        title: "Endpoint class has misplaced endpoint group attribute",
-        messageFormat: $"Endpoint class '{{0}}' must not be annotated with attribute '{ClassNames.EndpointGroupAttribute}'",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
-    public static readonly DiagnosticDescriptor EndpointMissingHandlerMethod = new(
-        id: "AEP103",
-        title: "Endpoint class missing handler",
+        title: "Class must declare handler method",
         messageFormat: $"Endpoint class '{{0}}' must declare handler '{EndpointClass.HandlerMethodName}'",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor EndpointHandlerMethodMustBePublic = new(
-        id: "AEP104",
-        title: "Endpoint class handler must be public",
-        messageFormat: "Endpoint class '{0}' handler must be declared as 'public' to be accessible for execution and enable efficiently testing",
+    internal static readonly DiagnosticDescriptor ClassHandlerMethodMustBePublicOrInternal = new(
+        id: "AEP103",
+        title: "Class handler method must be public or internal",
+        messageFormat: "Endpoint class '{0}' handler must be declared as 'public' or 'internal' so it can be accessed by execution engine",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor EndpointAttributeInvalidVersion = new(
+    internal static readonly DiagnosticDescriptor EndpointAttributeVersionArgumentIsInvalid = new(
+        id: "AEP104",
+        title: "Endpoint attribute argument 'Version' has an invalid value",
+        messageFormat: "Endpoint attribute in class '{0}' declares Version argument with value '{1}', which is a invalid version value (expected formats: '1', '1.0', '1.0-alpha')",
+        category: CATEGORY,
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    internal static readonly DiagnosticDescriptor EndpointGroupNotFound = new(
         id: "AEP105",
-        title: "Endpoint attribute declares invalid version",
-        messageFormat: "Endpoint attribute in class '{0}' declares Version as '{1}' which is a invalid version value (expected formats: '1', '1.0', '1.0-alpha')",
+        title: "Endpoint attribute declare missing Endpoint group class",
+        messageFormat: $"Endpoint attribute in class '{{0}}' references group '{{1}}' which was not found; The endpoint group class may be missing '{Project.Classes.Names.EndpointGroupAttribute}'",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -135,42 +143,26 @@ public static class DiagnosticDescriptors {
 
     #region Endpoint Grouping diagnostics
 
-    public static readonly DiagnosticDescriptor EndpointGroupClassEmptyName = new(
+    internal static readonly DiagnosticDescriptor ClassMissingEndpointGroupAttribute = new(
         id: "AEP201",
-        title: "Endpoint group class has empty 'Name'",
-        messageFormat: "Endpoint group class '{0}' has an empty or whitespace 'Name'. The 'Name' must be a non-empty string.",
+        title: "Class missing endpoint group attribute",
+        messageFormat: $"Class '{{0}}' must be marked with '{Project.Classes.Names.EndpointGroupAttribute}' to be considered an endpoint group",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor EndpointGroupClassEmptyPrefix = new(
-        id: "AEP202",
-        title: "Endpoint group class has empty 'Prefix'",
-        messageFormat: "Endpoint group class '{0}' has an empty or whitespace 'Prefix'. The 'Prefix' must be a non-empty string.",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
-    public static readonly DiagnosticDescriptor EndpointGroupNotFound = new(
+    internal static readonly DiagnosticDescriptor EndpointGroupAttributeNameArgumentIsEmpty = new(
         id: "AEP203",
-        title: $"Endpoint group class not decorated with {ClassNames.EndpointGroupAttribute}",
-        messageFormat: $"Endpoint '{{0}}' references group type '{{1}}' which is not decorated with {ClassNames.EndpointGroupAttribute}",
+        title: "Endpoint group attribute argument 'name' is empty",
+        messageFormat: "Endpoint group class '{0}' has an empty or only whitespace 'name' argument. The 'name' argument must be a non-empty string.",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static readonly DiagnosticDescriptor MisplacedEndpointAttribute = new(
-        id: "AEP204",
-        title: $"Endpoint Group is annotated with '[{ClassNames.EndpointAttribute}]'",
-        messageFormat: $"Endpoint Group class '{{0}}' is annotated with '[{ClassNames.EndpointAttribute}]', remove the attribute as it is an endpoint group class",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
-    public static readonly DiagnosticDescriptor MissingEndpointGroupAttribute = new(
-        id: "AEP205",
-        title: $"Class is missing {ClassNames.EndpointGroupAttribute} annotation",
-        messageFormat: $"Type '{{0}}' must be annotated with {ClassNames.EndpointGroupAttribute}",
+    internal static readonly DiagnosticDescriptor EndpointGroupAttributePrefixArgumentIsEmpty = new(
+        id: "AEP202",
+        title: "Endpoint group attribute argument 'prefix' is empty",
+        messageFormat: "Endpoint group class '{0}' has an empty or only whitespace 'prefix'. The 'prefix' argument must be a non-empty string.",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);

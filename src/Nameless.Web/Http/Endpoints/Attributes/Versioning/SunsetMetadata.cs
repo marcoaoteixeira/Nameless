@@ -18,6 +18,11 @@ public record SunsetMetadata {
     public DateTimeOffset SunsetDate { get; }
 
     /// <summary>
+    ///     Gets the link pointing to migration documentation.
+    /// </summary>
+    public string? Link { get; set; }
+
+    /// <summary>
     ///     Initializes a new instance with an explicit
     ///     <see cref="DateTimeOffset"/> value.
     /// </summary>

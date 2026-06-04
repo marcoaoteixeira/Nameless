@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nameless.Web.Http.Endpoints.Attributes;
+namespace Nameless.Web.Http.Endpoints;
 
 /// <summary>
 ///     Declares a class as a Minimal API endpoint that handles HTTP requests
@@ -27,16 +27,32 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 public sealed class EndpointAttribute<THttpVerb>([StringSyntax("Route")] string? route = null) : Attribute
     where THttpVerb : IHttpVerb {
     /// <summary>
+    ///     Gets or sets an optional name for the endpoint, used for
+    ///     route-based link generation via <c>LinkGenerator</c>.
+    /// </summary>
+    public string? Name { get; init; }
+
+    /// <summary>
     ///     Gets the route pattern for this endpoint, relative to the group
     ///     prefix when <see cref="Group"/> is set.
     /// </summary>
     public string Route { get; } = (route ?? string.Empty).Trim();
 
     /// <summary>
-    ///     Gets or sets an optional name for the endpoint, used for
-    ///     route-based link generation via <c>LinkGenerator</c>.
+    ///     Gets or sets the endpoint group class that defines the route group
+    ///     this endpoint belongs to.
     /// </summary>
-    public string? Name { get; init; }
+    /// <remarks>
+    ///     The referenced type must be a class decorated with
+    ///     <see cref="EndpointGroupAttribute"/>. Use <c>typeof(MyGroup)</c> to
+    ///     assign membership (e.g., <c>Group = typeof(DemoGroup)</c>).
+    /// </remarks>
+    public Type? Group { get; init; }
+
+    /// <summary>
+    ///     Gets the endpoint version.
+    /// </summary>
+    public string? Version { get; init; }
 
     /// <summary>
     ///     Gets the OpenAPI description for the endpoint.
@@ -53,20 +69,4 @@ public sealed class EndpointAttribute<THttpVerb>([StringSyntax("Route")] string?
     ///     in the generated API document.
     /// </summary>
     public string[]? Tags { get; init; }
-
-    /// <summary>
-    ///     Gets the endpoint version.
-    /// </summary>
-    public string? Version { get; init; }
-
-    /// <summary>
-    ///     Gets or sets the endpoint group class that defines the route group
-    ///     this endpoint belongs to.
-    /// </summary>
-    /// <remarks>
-    ///     The referenced type must be a class decorated with
-    ///     <see cref="EndpointGroupAttribute"/>. Use <c>typeof(MyGroup)</c> to
-    ///     assign membership (e.g., <c>Group = typeof(DemoGroup)</c>).
-    /// </remarks>
-    public Type? Group { get; init; }
 }

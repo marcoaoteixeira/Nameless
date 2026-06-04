@@ -23,7 +23,7 @@ public static class EndpointGroupExtractor {
 
         if (classSymbol.HasEndpointAttribute()) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.MisplacedEndpointAttribute,
+                descriptor: DiagnosticDescriptors.ConflictingEndpointVsEndpointGroupAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -43,7 +43,7 @@ public static class EndpointGroupExtractor {
         var endpointGroupAttribute = classSymbol.GetEndpointGroupAttribute();
         if (endpointGroupAttribute is null) {
             return GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.MissingEndpointGroupAttribute,
+                descriptor: DiagnosticDescriptors.ClassMissingEndpointGroupAttribute,
                 location: location,
                 messageArgs: [classSymbol.Name]
             );
@@ -64,19 +64,24 @@ public static class EndpointGroupExtractor {
             Class = classModelExtraction.Model ?? throw new InvalidOperationException("Class model extraction failed."),
             Arguments = endpointGroupArgumentsModelExtraction.Model ?? throw new InvalidOperationException("Endpoint group arguments model extraction failed."),
             Conventions = conventions,
-            Location = location
+            Location = location,
+
+            // These two properties will be provided later in the
+            // extraction pipeline.
+            Endpoints = [],
+            ReportVersions = []
         };
 
         return (model, conflicts.Diagnostics);
     }
 
-    private static DiagnosticAwareResult<EndpointGroupArgumentsModel> ExtractEndpointGroupArgumentsModel(AttributeData? attribute, INamedTypeSymbol symbol, LocationModel location) {
+    private static DiagnosticAwareResult<EndpointGroupArgumentsModel> ExtractEndpointGroupArgumentsModel(AttributeData attribute, INamedTypeSymbol symbol, LocationModel location) {
         var diagnostics = new List<GeneratorDiagnostic>();
 
         var name = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
         if (string.IsNullOrWhiteSpace(name)) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                DiagnosticDescriptors.EndpointGroupClassEmptyName,
+                DiagnosticDescriptors.EndpointGroupAttributeNameArgumentIsEmpty,
                 location,
                 messageArgs: [symbol.Name]
             ));
@@ -85,7 +90,7 @@ public static class EndpointGroupExtractor {
         var prefix = attribute.GetConstructorArgument(index: 1).GetPrimitiveValue<string?>();
         if (string.IsNullOrWhiteSpace(prefix)) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                DiagnosticDescriptors.EndpointGroupClassEmptyPrefix,
+                DiagnosticDescriptors.EndpointGroupAttributePrefixArgumentIsEmpty,
                 location,
                 messageArgs: [symbol.Name]
             ));

@@ -102,7 +102,7 @@ public static class ConventionExtractor {
         }
 
         return new Convention(
-            call: $".RequireAuthorization(new {FQN.Microsoft.AuthorizeAttribute} {{ {string.Join(", ", properties)} }})"
+            call: $".RequireAuthorization(new AuthorizeAttribute {{ {string.Join(", ", properties)} }})"
         );
     }
 
@@ -120,18 +120,15 @@ public static class ConventionExtractor {
 
     private static Convention ExtractDisableCorsConvention() {
         return new Convention(
-            call: $".WithMetadata(new {FQN.Microsoft.DisableCorsAttribute}())"
+            call: ".WithMetadata(new DisableCorsAttribute())"
         );
     }
 
     private static Convention ExtractUseCorsConvention(AttributeData attribute) {
-        return attribute.TryGetConstructorArgument(index: 0, out var output) &&
-               output is { Value: string policyName } &&
-               !string.IsNullOrWhiteSpace(policyName)
-            ? new Convention(
-                call: $".RequireCors(\"{EscapeStringLiteral(policyName)}\")"
-            )
-            : default;
+        var policyName = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
+        var call = $".RequireCors(\"{EscapeStringLiteral(policyName)}\")";
+
+        return !string.IsNullOrWhiteSpace(policyName) ? new Convention(call) : default;
     }
 
     private static Convention ExtractUseFilterConvention(AttributeData attribute) {
@@ -141,21 +138,17 @@ public static class ConventionExtractor {
         string? filter = null;
 
         // Generic usage [UseFilter<T>]: T is a type argument, not a ctor arg
-        if (attributeClass.TryGetTypeArgument(index: 0, out var symbol)) {
-            filter = symbol!.ToDisplayString(
-                SymbolDisplayFormat.FullyQualifiedFormat
-            );
+        if (attributeClass.TryGetTypeArgument(index: 0, out var typeArg)) {
+            filter = typeArg.GetFullyQualifiedName();
         }
 
         // Usage [UseFilter(filterType: typeof(T))]: argument is a ctor arg
-        if (attribute.TryGetConstructorArgument(index: 0, out var constant)) {
-            filter = constant.GetFullyQualifiedName();
+        if (attribute.GetConstructorArgument(index: 0).GetSymbolValue() is { } ctorArg) {
+            filter = ctorArg.GetFullyQualifiedName();
         }
 
         return filter is not null
-            ? new Convention(
-                call: $".AddEndpointFilter<{filter}>()"
-            )
+            ? new Convention(call: $".AddEndpointFilter<{filter}>()")
             : default;
     }
 
@@ -172,35 +165,29 @@ public static class ConventionExtractor {
     }
 
     private static Convention ExtractUseOutputCacheConvention(AttributeData attribute) {
-        return attribute.TryGetConstructorArgument(index: 0, out var output) &&
-               output is { Value: string policyName } &&
-               !string.IsNullOrWhiteSpace(policyName)
-            ? new Convention(
-                call: $".CacheOutput(\"{EscapeStringLiteral(policyName)}\")"
-            )
-            : default;
+        var policyName = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
+        var call = $".CacheOutput(\"{EscapeStringLiteral(policyName)}\")";
+
+        return !string.IsNullOrWhiteSpace(policyName) ? new Convention(call) : default;
     }
 
     private static Convention ExtractProducesConvention(AttributeData attribute) {
         var attributeClass = attribute.AttributeClass;
         if (attributeClass is null) { return default; }
 
-        var responseType = FQN.System.Object;
+        var responseType = "object";
         var statusCode = 200;
         var contentType = ContentTypes.Json;
 
         // Generic usage [Produces<T>]: T is a type argument, not a ctor arg
         if (attributeClass.TryGetTypeArgument(index: 0, out var typeArg)) {
-            responseType = typeArg!.ToDisplayString(
-                SymbolDisplayFormat.FullyQualifiedFormat
-            );
-
+            responseType = typeArg.GetFullyQualifiedName();
             statusCode = GetStatusCode(attribute, index: 0);
             contentType = GetContentType(attribute, index: 1);
         }
         else {
-            if (attribute.TryGetConstructorArgument(index: 0, out var constructorArg)) {
-                responseType = constructorArg.GetFullyQualifiedName();
+            if (attribute.GetConstructorArgument(index: 0).GetSymbolValue() is { } ctorArg) {
+                responseType = ctorArg.GetFullyQualifiedName();
             }
 
             statusCode = GetStatusCode(attribute, index: 1);
@@ -249,13 +236,10 @@ public static class ConventionExtractor {
     }
 
     private static Convention ExtractUseRateLimitingConvention(AttributeData attribute) {
-        return attribute.TryGetConstructorArgument(index: 0, out var output) &&
-               output is { Value: string policyName } &&
-               !string.IsNullOrWhiteSpace(policyName)
-            ? new Convention(
-                call: $".RequireRateLimiting(\"{EscapeStringLiteral(policyName)}\")"
-            )
-            : default;
+        var policyName = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
+        var call = $".RequireRateLimiting(\"{EscapeStringLiteral(policyName)}\")";
+
+        return !string.IsNullOrWhiteSpace(policyName) ? new Convention(call) : default;
     }
 
     private static Convention ExtractDisableRequestTimeoutConvention() {
@@ -265,15 +249,10 @@ public static class ConventionExtractor {
     }
 
     private static Convention ExtractUseRequestTimeoutConvention(AttributeData attribute) {
-        var policyName = attribute.TryGetConstructorArgument(index: 0, out var output) && output is { Value: not null }
-            ? (string)output.Value
-            : null;
+        var policyName = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
+        var call = $".WithRequestTimeout(\"{EscapeStringLiteral(policyName)}\")";
 
-        return policyName is not null
-            ? new Convention(
-                call: $".WithRequestTimeout(\"{EscapeStringLiteral(policyName)}\")"
-            )
-            : default;
+        return !string.IsNullOrWhiteSpace(policyName) ? new Convention(call) : default;
     }
 
     private static Convention ExtractDisableValidationConvention() {
@@ -284,23 +263,33 @@ public static class ConventionExtractor {
 
     private static Convention ExtractDeprecateConvention(AttributeData attribute) {
         var message = attribute.GetNamedArgument("Message").GetPrimitiveValue<string?>();
-        var sunset = attribute.GetNamedArgument("Sunset").GetPrimitiveValue<string?>();
 
         var cw = new CodeWriter();
 
         using (cw.Block(".AddOpenApiOperationTransformer((op, _, _) => {", closing: "})")) {
             cw.WriteLine("op.Deprecated = true;");
+            
             if (!string.IsNullOrWhiteSpace(message)) {
                 cw.WriteLine($"op.Description = \"{EscapeStringLiteral(message)}\";");
             }
-            cw.WriteLine($"op.Extensions ??= new {FQN.System.Dictionary}<string, {FQN.Microsoft.OpenApiExtension}>();");
-            cw.WriteLine($"op.Extensions.TryAdd(\"x-scalar-stability\", new {FQN.Microsoft.JsonNodeExtension}(\"deprecated\"));");
+
+            cw.WriteLine("op.Extensions ??= new Dictionary<string, IOpenApiExtension>();");
+            cw.WriteLine("op.Extensions.TryAdd(\"x-scalar-stability\", new JsonNodeExtension(\"deprecated\"));");
             cw.WriteLine();
-            cw.WriteLine($"return {FQN.System.Task}.CompletedTask;");
+            cw.WriteLine("return Task.CompletedTask;");
         }
 
+        var sunset = attribute.GetNamedArgument("Sunset").GetPrimitiveValue<string?>();
+        var link = attribute.GetNamedArgument("Link").GetPrimitiveValue<string?>();
         if (!string.IsNullOrWhiteSpace(sunset)) {
-            cw.WriteLine($".WithMetadata(new {FQN.Nameless.SunsetMetadata}(\"{EscapeStringLiteral(sunset)}\"))");
+            cw.Write(".WithSunset(");
+            cw.Write($"DateTimeOffset.ParseExact(\"{EscapeStringLiteral(sunset)}\", \"R\", CultureInfo.InvariantCulture)");
+            
+            if (!string.IsNullOrWhiteSpace(link)) {
+                cw.Write($", link: \"{link}\"");
+            }
+
+            cw.WriteLine(")");
         }
 
         return new Convention(
@@ -349,7 +338,11 @@ public static class ConventionExtractor {
                     : default;
 
             if (version != default) {
-                cw.WriteLine($".MapToApiVersion(new {FQN.AspVersioning.ApiVersion}(majorVersion: {version.Major}, minorVersion: {(version.Minor.HasValue ? version.Minor.ToString() : "null")}, status: \"{version.Status ?? "null"}\"))");
+                var major = $"majorVersion: {version.Major}";
+                var minor = $"minorVersion: {(version.Minor is not null ? version.Minor : "null")}";
+                var status = $"status: {(version.Status is not null ? $"\"{EscapeStringLiteral(version.Status)}\"" : "null")}";
+
+                cw.WriteLine($".MapToApiVersion(new ApiVersion({major}, {minor}, {status}))");
             }
         }
 

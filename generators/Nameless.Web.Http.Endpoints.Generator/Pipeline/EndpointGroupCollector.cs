@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
-using Nameless.Web.Http.Endpoints.Generator.Conventions;
 using Nameless.Web.Http.Endpoints.Generator.Diagnostics;
-using Nameless.Web.Http.Endpoints.Generator.Extensions;
 using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 using Nameless.Web.Http.Endpoints.Generator.Models;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Pipeline;
 
-public static class GroupingCollector {
-    public static DiagnosticAwareResult<GroupingModel[]> Collect(ImmutableArray<DiagnosticAwareResult<EndpointModel>> endpointExtractionResults, ImmutableArray<DiagnosticAwareResult<EndpointGroupModel>> endpointGroupExtractionResults, CancellationToken cancellationToken) {
+public static class EndpointGroupCollector {
+    public static DiagnosticAwareResult<EndpointGroupModelCollection> Collect(ImmutableArray<DiagnosticAwareResult<EndpointModel>> endpointExtractionResults, ImmutableArray<DiagnosticAwareResult<EndpointGroupModel>> endpointGroupExtractionResults, CancellationToken cancellationToken) {
         var diagnostics = new List<GeneratorDiagnostic>();
         var endpoints = new List<EndpointModel>();
 
@@ -48,13 +46,13 @@ public static class GroupingCollector {
             }
         }
 
-        var groups = new List<GroupingModel>();
+        var groups = new List<EndpointGroupModel>();
         foreach (var endpointsByGroup in endpointsByGroupLookup) {
             cancellationToken.ThrowIfCancellationRequested();
             var group = endpointsByGroup.Key;
 
             // If an endpoint has no explicitly defined group, it is implicitly
-            // assigned to the built-in "__synthetic__" group, which acts as a
+            // assigned to the built-in "_SyntheticEndpointGroup_" group, which acts as a
             // catch-all for ungrouped endpoints.
             if (string.IsNullOrWhiteSpace(group)) {
                 groups.Add(
@@ -77,53 +75,43 @@ public static class GroupingCollector {
                 continue;
             }
 
-            // We need to add a new convention "WithGroupName" for each endpoint
-            // referencing the endpoint group
-            foreach (var endpoint in endpointsByGroup.Value) {
-                IncludeWithGroupNameConvention(endpoint, endpointGroup.Arguments.Name);
-            }
-
-            groups.Add(new GroupingModel {
-                Class = endpointGroup.Class,
-                Arguments = endpointGroup.Arguments,
-                ReportVersions = endpointsByGroup.Value.CollectVersions(),
+            groups.Add(endpointGroup with {
                 Endpoints = [.. endpointsByGroup.Value],
-                Conventions = endpointGroup.Conventions
+                ReportVersions = GetReportVersions(endpointsByGroup.Value)
             });
         }
 
         return ([.. groups], [.. diagnostics]);
     }
 
-    private static GroupingModel CreateSyntheticEndpointGroup(List<EndpointModel> endpoints) {
+    private static EndpointGroupModel CreateSyntheticEndpointGroup(List<EndpointModel> endpoints) {
         const string GroupName = EndpointGroupClass.ReservedName;
-        var versions = endpoints.CollectVersions();
+        var reportVersions = GetReportVersions(endpoints);
 
-        // We need to add a new convention "WithGroupName" for each endpoint
-        // referencing the synthetic endpoint group
-        foreach (var endpoint in endpoints) {
-            IncludeWithGroupNameConvention(endpoint, GroupName);
-        }
-        
-        return new GroupingModel {
+        return new EndpointGroupModel {
             Class = new ClassModel {
-                Namespace = $"{EndpointGroupClass.ReservedName}EndpointGroupNamespace",
-                Name = $"{EndpointGroupClass.ReservedName}EndpointGroupClassName",
-                AccessorModifier = "public"
+                Namespace = Project.Namespaces.Root,
+                Name = GroupName,
+                Accessibility = "public"
             },
             Arguments = new EndpointGroupArgumentsModel {
-                Name = GroupName, 
+                Name = GroupName,
                 Prefix = string.Empty
             },
-            ReportVersions = versions,
+            Conventions = [],
             Endpoints = [.. endpoints],
-            Conventions = []
+            ReportVersions = reportVersions,
+            Location = default
         };
     }
 
-    private static void IncludeWithGroupNameConvention(EndpointModel endpoint, string groupName) {
-        endpoint.Conventions.Add(new Convention(
-            call: $".WithGroupName(\"{EscapeStringLiteral(groupName)}\")"
-        ));
+    private static VersionModel[] GetReportVersions(IEnumerable<EndpointModel> endpoints) {
+        return [.. endpoints.Select(ExtractVersion).Distinct()];
+
+        static VersionModel ExtractVersion(EndpointModel endpoint) {
+            return endpoint.Arguments.Version != default
+                ? endpoint.Arguments.Version
+                : VersionModel.V1;
+        }
     }
 }

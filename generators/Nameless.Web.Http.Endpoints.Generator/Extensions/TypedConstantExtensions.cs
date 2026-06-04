@@ -22,12 +22,6 @@ public static class TypedConstantExtensions {
                 : [];
         }
 
-        public string? GetFullyQualifiedName() {
-            return self is { Kind: TypedConstantKind.Type, Value: ISymbol symbol }
-                ? symbol.GetFullyQualifiedName()
-                : null;
-        }
-
         public ISymbol? GetSymbolValue() {
             return self is { Kind: TypedConstantKind.Type, Value: ISymbol result }
                 ? result
