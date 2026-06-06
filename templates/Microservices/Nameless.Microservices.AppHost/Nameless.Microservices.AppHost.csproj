@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.Microservices.AppHost</RootNamespace>
 		<OutputType>Exe</OutputType>
+		<IsAspireHost>True</IsAspireHost>
 		<UserSecretsId>c106ace1-b41b-44b5-86e2-61a4604de345</UserSecretsId>
 	</PropertyGroup>
 

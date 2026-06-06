@@ -1,4 +1,6 @@
-﻿namespace Nameless.Microservices.AppHost.Infrastructure;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Nameless.Microservices.AppHost.Infrastructure;
 
 public static class DistributedApplicationBuilderExtensions {
     extension(IDistributedApplicationBuilder self) {
