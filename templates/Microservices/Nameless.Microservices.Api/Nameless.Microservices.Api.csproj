@@ -12,6 +12,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Nameless.Web\Nameless.Web.csproj" />
 		<ProjectReference Include="..\Nameless.Microservices.Contracts\Nameless.Microservices.Contracts.csproj" />
+		<!-- Local-dev only: wire the generator when UseAutoEndpoints=True. -->
+		<!-- NuGet consumers get this via Nameless.Web.targets (auto-imported from build/ folder). -->
+		<!-- ProjectReference targets are NOT auto-imported, so we must do this explicitly here. -->
+		<ProjectReference Include="..\..\..\generators\Nameless.Web.Http.Endpoints.Generator\Nameless.Web.Http.Endpoints.Generator.csproj"
+		                  OutputItemType="Analyzer"
+		                  ReferenceOutputAssembly="false"
+		                  Condition="'$(UseAutoEndpoints)' == 'True'" />
 	</ItemGroup>
 
 	<ItemGroup>

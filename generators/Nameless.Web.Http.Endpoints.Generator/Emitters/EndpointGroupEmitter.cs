@@ -14,7 +14,6 @@ public sealed class EndpointGroupEmitter : Emitter<EndpointGroupModel> {
     private EndpointGroupEmitter() { }
 
     protected override void EmitFileContent(CodeWriter cw, EndpointGroupModel model) {
-        cw.WriteLine();
         cw.WriteLine($"namespace {model.Class.Namespace};");
 
         cw.WriteLine();

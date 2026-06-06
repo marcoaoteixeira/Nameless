@@ -11,7 +11,6 @@ public sealed class EndpointEmitter : Emitter<EndpointModel> {
     private EndpointEmitter() { }
 
     protected override void EmitFileContent(CodeWriter cw, EndpointModel model) {
-        cw.WriteLine();
         cw.WriteLine($"namespace {model.Class.Namespace};");
 
         cw.WriteLine();
@@ -34,10 +33,12 @@ public sealed class EndpointEmitter : Emitter<EndpointModel> {
         const string BuilderArgName = "builder";
         const string EndpointVarName = "_ep_";
 
-        var routeTemplate = EscapeStringLiteral(model.Arguments.Route);
-
         using (cw.Block($"{model.Class.Accessibility} static void Map(IEndpointRouteBuilder {BuilderArgName}) {{")) {
-            cw.WriteLine($"{BuilderArgName}.Map{model.Arguments.HttpVerb}(\"{routeTemplate}\", static async (");
+            var routeTemplate = !string.IsNullOrWhiteSpace(model.Arguments.Route)
+                ? $"\"{EscapeStringLiteral(model.Arguments.Route)}\""
+                : "string.Empty";
+
+            cw.WriteLine($"{BuilderArgName}.Map{model.Arguments.HttpVerb}({routeTemplate}, static async (");
             cw.Indent().Indent();
 
             var parameters = model.Handler.Parameters.Select(CreateParameterDeclaration).ToList();
