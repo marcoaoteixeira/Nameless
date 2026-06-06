@@ -16,19 +16,11 @@ namespace Nameless.Web.Http.Endpoints;
 ///     constraint syntax, including the API versioning constraint
 ///     (e.g., <c>"/api/v{version:apiVersion}/users"</c>).
 /// </remarks>
-/// <param name="name">
-///     The logical name of the route group.
-/// </param>
 /// <param name="prefix">
 ///     The route prefix applied to every endpoint in the group.
 /// </param>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public sealed class EndpointGroupAttribute(string name, [StringSyntax("Route")] string prefix) : Attribute {
-    /// <summary>
-    ///     Gets the logical name of the route group.
-    /// </summary>
-    public string Name { get; } = name;
-
+public sealed class EndpointGroupAttribute([StringSyntax("Route")] string prefix) : Attribute {
     /// <summary>
     ///     Gets the route prefix applied to every endpoint in this group
     ///     (e.g., <c>"/api/users"</c> or

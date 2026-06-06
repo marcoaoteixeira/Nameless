@@ -47,16 +47,40 @@
     <Project Path="src/Nameless.WPF/Nameless.WPF.csproj" Id="41200dd5-7c63-4ee7-a2ec-6122a10abb56" />
   </Folder>
   <Folder Name="/templates/" />
-  <Folder Name="/templates/Microservice/">
-    <Project Path="templates/Microservice/Nameless.Microservice.Api/Nameless.Microservice.Api.csproj" Id="1a7c0363-3c1b-4127-bb6e-3bbae8e8dc87" />
-    <Project Path="templates/Microservice/Nameless.Microservice.AppHost/Nameless.Microservice.AppHost.csproj" Id="ccf973a2-ec97-407f-9652-83211df6f2bf" />
+  <Folder Name="/templates/Microservices/">
+    <Project Path="templates/Microservices/Nameless.Microservices.Api/Nameless.Microservices.Api.csproj" Id="a71c308d-7c61-4ece-8e29-a5797c76134b" />
+    <Project Path="templates/Microservices/Nameless.Microservices.AppHost/Nameless.Microservices.AppHost.csproj" Id="1d7328e6-541f-4b1e-9dc8-ab54c6dc37d5" />
+    <Project Path="templates/Microservices/Nameless.Microservices.Contracts/Nameless.Microservices.Contracts.csproj" Id="eb8089f6-af3b-4cdd-8c2b-d1e7f7f011a7" />
+    <Project Path="templates/Microservices/Nameless.Microservices.Frontend/" Type="Website" DisplayName="Nameless.Microservices.Frontend">
+      <BuildType Project="Debug" />
+      <Properties Name="WebsiteProperties">
+        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;templates\Microservices\Nameless.Microservices.Frontend\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_51968\&quot;" />
+        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_51968&quot;" />
+        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;templates\Microservices\Nameless.Microservices.Frontend\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_51968\&quot;" />
+        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_51968&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8&quot;" />
+        <Property Name="VWDPort" Value="&quot;51968&quot;" />
+      </Properties>
+    </Project>
+    <Project Path="templates/Microservices/Nameless.Microservices.Worker/Nameless.Microservices.Worker.csproj" Id="8b3ca237-3b04-4b49-a199-e780d5caada7" />
   </Folder>
   <Folder Name="/templates/WinApp/">
-    <Project Path="templates/Nameless.WinApp/Nameless.WinApp.csproj" Id="5dddafcb-04d1-4415-baef-f234e3256bf2" />
+    <Project Path="templates/WinApp/Nameless.WinApp/Nameless.WinApp.csproj" Id="5dddafcb-04d1-4415-baef-f234e3256bf2" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
     <Project Path="tests/Nameless.Core.Impl.Tests/Nameless.Core.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
     <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" Id="287c4892-3e77-473a-9a85-54683f6cdcfb" />
+    <Project Path="tests/Nameless.WPF.Tests/Nameless.WPF.Tests.csproj" Id="8316b9f3-b75d-405f-a89f-41c345fa8306" />
   </Folder>
 </Solution>

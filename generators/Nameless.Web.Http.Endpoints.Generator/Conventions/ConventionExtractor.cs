@@ -302,16 +302,6 @@ public static class ConventionExtractor {
 
         var cw = new CodeWriter();
 
-        var attributeDefinition = attribute.GetAttributeDefinition();
-        var name = attributeDefinition switch {
-            AttributeDefinitions.Endpoint => attribute.GetNamedArgument("Name").GetPrimitiveValue<string?>(),
-            AttributeDefinitions.EndpointGroup => attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>(),
-            _ => null
-        };
-        if (!string.IsNullOrWhiteSpace(name)) {
-            cw.WriteLine($".WithName(\"{EscapeStringLiteral(name)}\")");
-        }
-
         var description = attribute.GetNamedArgument("Description").GetPrimitiveValue<string?>();
         if (!string.IsNullOrWhiteSpace(description)) {
             cw.WriteLine($".WithDescription(\"{EscapeStringLiteral(description)}\")");
@@ -329,25 +319,38 @@ public static class ConventionExtractor {
             cw.WriteLine($".WithTags({string.Join(", ", values)})");
         }
 
-        if (attributeDefinition == AttributeDefinitions.Endpoint) {
-            var value = attribute.GetNamedArgument("Version").GetPrimitiveValue<string?>();
-            var version = string.IsNullOrWhiteSpace(value)
-                ? VersionModel.V1
-                : VersionModel.TryParse(value, out var output)
-                    ? output
-                    : default;
-
-            if (version != default) {
-                var major = $"majorVersion: {version.Major}";
-                var minor = $"minorVersion: {(version.Minor is not null ? version.Minor : "null")}";
-                var status = $"status: {(version.Status is not null ? $"\"{EscapeStringLiteral(version.Status)}\"" : "null")}";
-
-                cw.WriteLine($".MapToApiVersion(new ApiVersion({major}, {minor}, {status}))");
-            }
-        }
+        WriteEndpointSpecificConventions(cw, attribute);
 
         return new Convention(
             call: cw.GetCode()
         );
+    }
+
+    private static void WriteEndpointSpecificConventions(CodeWriter cw, AttributeData attribute) {
+        if (attribute.GetAttributeDefinition() != AttributeDefinitions.Endpoint) {
+            return;
+        }
+
+        var name = attribute.GetNamedArgument("Name").GetPrimitiveValue<string?>();
+        if (!string.IsNullOrWhiteSpace(name)) {
+            cw.WriteLine($".WithName(\"{EscapeStringLiteral(name)}\")");
+        }
+
+        var value = attribute.GetNamedArgument("Version").GetPrimitiveValue<string?>();
+        var version = string.IsNullOrWhiteSpace(value)
+            ? VersionModel.V1
+            : VersionModel.TryParse(value, out var output)
+                ? output
+                : default;
+
+        if (version == default) {
+            return;
+        }
+
+        var major = $"majorVersion: {version.Major}";
+        var minor = $"minorVersion: {(version.Minor is not null ? version.Minor : "null")}";
+        var status = $"status: {(version.Status is not null ? $"\"{EscapeStringLiteral(version.Status)}\"" : "null")}";
+
+        cw.WriteLine($".MapToApiVersion(new ApiVersion({major}, {minor}, {status}))");
     }
 }

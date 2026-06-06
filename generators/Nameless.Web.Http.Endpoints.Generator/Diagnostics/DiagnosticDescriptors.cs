@@ -151,14 +151,6 @@ internal static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor EndpointGroupAttributeNameArgumentIsEmpty = new(
-        id: "AEP203",
-        title: "Endpoint group attribute argument 'name' is empty",
-        messageFormat: "Endpoint group class '{0}' has an empty or only whitespace 'name' argument. The 'name' argument must be a non-empty string.",
-        category: CATEGORY,
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
     internal static readonly DiagnosticDescriptor EndpointGroupAttributePrefixArgumentIsEmpty = new(
         id: "AEP202",
         title: "Endpoint group attribute argument 'prefix' is empty",

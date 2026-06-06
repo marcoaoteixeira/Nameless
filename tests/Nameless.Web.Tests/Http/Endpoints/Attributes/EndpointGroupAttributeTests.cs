@@ -6,37 +6,29 @@ namespace Nameless.Web.Http.Endpoints.Attributes;
 [UnitTest]
 public sealed class EndpointGroupAttributeTests {
     [Fact]
-    public void WhenCreated_ThenNameAndPrefixAreStored() {
-        var attr = new EndpointGroupAttribute("Users", "/api/users");
-
-        Assert.Equal("Users", attr.Name);
-        Assert.Equal("/api/users", attr.Prefix);
-    }
-
-    [Fact]
     public void WhenDescriptionIsSet_ThenDescriptionIsStored() {
-        var attr = new EndpointGroupAttribute("Users", "/api/users") { Description = "Get user endpoint" };
+        var attr = new EndpointGroupAttribute("/api/users") { Description = "Get user endpoint" };
 
         Assert.Equal("Get user endpoint", attr.Description);
     }
 
     [Fact]
     public void WhenDescriptionIsNotSet_ThenDescriptionIsNull() {
-        var attr = new EndpointGroupAttribute("Users", "/api/users");
+        var attr = new EndpointGroupAttribute("/api/users");
 
         Assert.Null(attr.Description);
     }
 
     [Fact]
     public void WhenSummaryIsSet_ThenSummaryIsStored() {
-        var attr = new EndpointGroupAttribute("Users", "/api/users") { Summary = "Get user endpoint" };
+        var attr = new EndpointGroupAttribute("/api/users") { Summary = "Get user endpoint" };
 
         Assert.Equal("Get user endpoint", attr.Summary);
     }
 
     [Fact]
     public void WhenSummaryIsNotSet_ThenSummaryIsNull() {
-        var attr = new EndpointGroupAttribute("Users", "/api/users");
+        var attr = new EndpointGroupAttribute("/api/users");
 
         Assert.Null(attr.Summary);
     }

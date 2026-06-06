@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Microservices.Api</RootNamespace>
+		<UseAutoEndpoints>True</UseAutoEndpoints>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Web\Nameless.Web.csproj" />
+		<ProjectReference Include="..\Nameless.Microservices.Contracts\Nameless.Microservices.Contracts.csproj" />
+	</ItemGroup>
+
+</Project>

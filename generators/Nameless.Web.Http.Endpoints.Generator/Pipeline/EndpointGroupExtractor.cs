@@ -78,16 +78,7 @@ public static class EndpointGroupExtractor {
     private static DiagnosticAwareResult<EndpointGroupArgumentsModel> ExtractEndpointGroupArgumentsModel(AttributeData attribute, INamedTypeSymbol symbol, LocationModel location) {
         var diagnostics = new List<GeneratorDiagnostic>();
 
-        var name = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
-        if (string.IsNullOrWhiteSpace(name)) {
-            diagnostics.Add(GeneratorDiagnostic.Create(
-                DiagnosticDescriptors.EndpointGroupAttributeNameArgumentIsEmpty,
-                location,
-                messageArgs: [symbol.Name]
-            ));
-        }
-
-        var prefix = attribute.GetConstructorArgument(index: 1).GetPrimitiveValue<string?>();
+        var prefix = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
         if (string.IsNullOrWhiteSpace(prefix)) {
             diagnostics.Add(GeneratorDiagnostic.Create(
                 DiagnosticDescriptors.EndpointGroupAttributePrefixArgumentIsEmpty,
@@ -97,7 +88,6 @@ public static class EndpointGroupExtractor {
         }
 
         var model = new EndpointGroupArgumentsModel {
-            Name = name ?? string.Empty,
             Prefix = prefix ?? string.Empty
         };
 

@@ -27,6 +27,6 @@ public sealed class ProducesValidationProblemAttribute : ProducesAttribute<Probl
     /// <param name="contentType">
     ///     The content type.
     /// </param>
-    public ProducesValidationProblemAttribute(int statusCode = 400, string contentType = Constants.ProblemContentType)
+    public ProducesValidationProblemAttribute(int statusCode = 400, string contentType = ContentTypes.ProblemJson)
         : base(statusCode, contentType) { }
 }

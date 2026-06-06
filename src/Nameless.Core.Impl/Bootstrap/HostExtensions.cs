@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
 
@@ -7,7 +8,7 @@ namespace Nameless.Bootstrap;
 /// <summary>
 ///     Bootstrap <see cref="IHost"/> extension methods
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage]
 public static class HostExtensions {
     extension<THost>(THost self) where THost : IHost {
         /// <summary>

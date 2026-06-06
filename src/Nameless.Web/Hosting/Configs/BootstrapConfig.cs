@@ -38,7 +38,7 @@ public static class BootstrapConfig {
         public Task WarmupAsync(WebHostSettings settings) {
             return settings.DisableBootstrap
                 ? Task.CompletedTask
-                : self.WarmupAsync(settings.BootstrapExecutionConfiguration);
+                : self.WarmupAsync(settings.BootstrapWarmupConfiguration);
         }
     }
 }

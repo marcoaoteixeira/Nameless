@@ -25,6 +25,6 @@ public sealed class ProducesProblemAttribute : ProducesAttribute<ProblemDetails>
     /// <param name="contentType">
     ///     The content type.
     /// </param>
-    public ProducesProblemAttribute(int statusCode = 500, string contentType = Constants.ProblemContentType)
+    public ProducesProblemAttribute(int statusCode = 500, string contentType = ContentTypes.ProblemJson)
         : base(statusCode, contentType) { }
 }

@@ -11,27 +11,27 @@ public static class WebConstants {
         /// <summary>
         ///     Default content type text plain.
         /// </summary>
-        public const string DEFAULT = "text/plain; charset=utf-8";
+        public const string Text = "text/plain; charset=utf-8";
 
         /// <summary>
         ///     JSON content type.
         /// </summary>
-        public const string JSON = "application/json";
+        public const string Json = "application/json";
 
         /// <summary>
         ///     JSON content type with charset UTF-8.
         /// </summary>
-        public const string JSON_WITH_CHARSET = "application/json; charset=utf-8";
+        public const string JsonWithCharset = "application/json; charset=utf-8";
 
         /// <summary>
         ///     Problem content type.
         /// </summary>
-        public const string PROBLEM_DETAILS = "application/problem+json";
+        public const string ProblemJson = "application/problem+json";
 
         /// <summary>
         ///     Binary content type.
         /// </summary>
-        public const string BINARY = "application/octet-stream";
+        public const string Binary = "application/octet-stream";
     }
 
     /// <summary>
@@ -41,6 +41,6 @@ public static class WebConstants {
         /// <summary>
         ///     Route syntax.
         /// </summary>
-        public const string ROUTE = "Route";
+        public const string Route = "Route";
     }
 }

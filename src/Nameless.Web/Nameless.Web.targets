@@ -1,0 +1,12 @@
+<Project>
+    <!--
+		Wires the endpoint source generator as a Roslyn analyzer when the consuming
+		project opts in via <UseAutoEndpoints>True</UseAutoEndpoints>.
+		Without the opt-in the generator DLL is present in the package but never
+		loads, so it stays completely silent and does not affect the build.
+	-->
+  <ItemGroup Condition="'$(UseAutoEndpoints)' == 'True'">
+	  <Analyzer Include="$(MSBuildThisFileDirectory)..\build\generators\Nameless.Web.Http.Endpoints.Generator.dll"
+	            Condition="Exists('$(MSBuildThisFileDirectory)..\build\generators\Nameless.Web.Http.Endpoints.Generator.dll')" />
+  </ItemGroup>
+</Project>

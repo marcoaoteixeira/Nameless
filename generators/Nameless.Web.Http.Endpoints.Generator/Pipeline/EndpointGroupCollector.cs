@@ -95,7 +95,6 @@ public static class EndpointGroupCollector {
                 Accessibility = "public"
             },
             Arguments = new EndpointGroupArgumentsModel {
-                Name = GroupName,
                 Prefix = string.Empty
             },
             Conventions = [],

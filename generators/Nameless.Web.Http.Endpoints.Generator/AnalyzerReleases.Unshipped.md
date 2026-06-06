@@ -24,5 +24,4 @@ AEP104 | AutoEndpointsGenerator | Error | EndpointAttributeVersionArgumentIsInva
 AEP105 | AutoEndpointsGenerator | Error | EndpointGroupNotFound
 
 AEP201 | AutoEndpointsGenerator | Error | ClassMissingEndpointGroupAttribute
-AEP202 | AutoEndpointsGenerator | Error | EndpointGroupAttributeNameArgumentIsEmpty
-AEP203 | AutoEndpointsGenerator | Error | EndpointGroupAttributePrefixArgumentIsEmpty
+AEP202 | AutoEndpointsGenerator | Error | EndpointGroupAttributePrefixArgumentIsEmpty

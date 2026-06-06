@@ -44,10 +44,10 @@ public class ProducesAttribute : Attribute {
     /// <param name="contentType">
     ///     The content type.
     /// </param>
-    public ProducesAttribute(Type responseType, int statusCode = 200, string? contentType = Constants.ContentType) {
+    public ProducesAttribute(Type responseType, int statusCode = 200, string? contentType = ContentTypes.Json) {
         ResponseType = responseType;
         StatusCode = statusCode;
-        ContentType = contentType ?? Constants.ContentType;
+        ContentType = contentType ?? ContentTypes.Json;
     }
 }
 
@@ -71,6 +71,6 @@ public class ProducesAttribute<T> : ProducesAttribute {
     ///     The media type of the response body. When <see langword="null"/>
     ///     the framework default is used.
     /// </param>
-    public ProducesAttribute(int statusCode = 200, string? contentType = Constants.ContentType)
+    public ProducesAttribute(int statusCode = 200, string? contentType = ContentTypes.Json)
         : base(typeof(T), statusCode, contentType) { }
 }

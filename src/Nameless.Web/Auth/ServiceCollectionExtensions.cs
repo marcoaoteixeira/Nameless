@@ -11,51 +11,37 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterAuth(Action<AuthRegistration>? registration = null, IConfiguration? configuration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.AddAuthorization(settings.ConfigureAuthorization);
+            self.AddAuthorization(settings.ConfigureAuthorizationOptions ?? (_ => { }));
 
-            if (!settings.UseJwtBearer) {
-                self.AddAuthentication(settings.ConfigureAuthentication);
+            var authentication = new AuthenticationBuilderWrapper(self);
+            var configure = settings.ConfigureAuthentication ?? (builder => ConfigureDefaultAuthentication(builder, configuration));
 
-                return self;
-            }
+            configure(authentication);
 
-            var authentication = self.AddAuthentication(opts =>
-                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme
-            );
-
-            if (settings.UseJwtBearerDefaultConfiguration) {
-                authentication.AddJwtBearer(
-                    JwtBearerDefaults.AuthenticationScheme,
-                    opts => DefaultJwtBearerConfiguration(opts, configuration)
-                );
-            }
-
-            foreach (var jwtBearer in settings.JwtBearerConfigurations) {
-                authentication.AddJwtBearer(
-                    jwtBearer.Key,
-                    jwtBearer.Value
-                );
-            }
+            authentication.Apply();
 
             return self;
         }
     }
 
-    private static void DefaultJwtBearerConfiguration(JwtBearerOptions opts, IConfiguration? configuration) {
-        var jwt = configuration?.GetOptions<JsonWebTokenOptions>()
-            ?? throw new InvalidOperationException("JSON web token configuration is missing.");
+    private static void ConfigureDefaultAuthentication(IAuthenticationBuilder builder, IConfiguration? configuration) {
+        builder.Configure(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(opts => {
+                   var jwt = configuration?.GetOptions<JsonWebTokenOptions>() ??
+                             throw new InvalidOperationException("JSON Web Token configuration is missing.");
 
-        opts.Authority = jwt.Authority;
-        opts.TokenValidationParameters = new TokenValidationParameters {
-            ValidIssuers = jwt.Issuers,
-            ValidateIssuer = jwt.ValidateIssuer,
+                   opts.Authority = jwt.Authority;
+                   opts.TokenValidationParameters = new TokenValidationParameters {
+                       ValidIssuers = jwt.Issuers,
+                       ValidateIssuer = jwt.ValidateIssuer,
 
-            ValidAudiences = jwt.Audiences,
-            ValidateAudience = jwt.ValidateAudience,
+                       ValidAudiences = jwt.Audiences,
+                       ValidateAudience = jwt.ValidateAudience,
 
-            ValidateLifetime = jwt.ValidateLifetime,
+                       ValidateLifetime = jwt.ValidateLifetime,
 
-            ClockSkew = jwt.ClockSkew
-        };
+                       ClockSkew = jwt.ClockSkew
+                   };
+               });
     }
 }

@@ -5,6 +5,9 @@
 		<Title>Nameless Web Library</Title>
 		<Description>Nameless Web Library Description</Description>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<InterceptorsNamespaces>
+			$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated
+		</InterceptorsNamespaces>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -44,11 +47,13 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<!-- Bundle generator DLL into analyzers/dotnet/cs/ at pack time -->
+	<!-- Bundle generator DLL into build/generators/ at pack time -->
+	<!-- Do not put it inside analyzers/dotnet/cs so NuGet does not autoload it. -->
+	<!-- The .targets file controls loading conditionally via UseAutoEndpoints. -->
 	<ItemGroup>
-		<None Include="..\..\generators\Nameless.Web.Http.Endpoints.Generator\bin\$(Configuration)\netstandard2.0\Nameless.Web.Http.Endpoints.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs/" Visible="false" />
-		<None Include="Nameless.Web.Http.Endpoints.targets" Pack="true" PackagePath="build\" />
-		<None Include="Nameless.Web.Http.Endpoints.targets" Pack="true" PackagePath="buildTransitive\" />
+		<None Include="..\..\generators\Nameless.Web.Http.Endpoints.Generator\bin\$(Configuration)\netstandard2.0\Nameless.Web.Http.Endpoints.Generator.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
+		<None Include="Nameless.Web.targets" Pack="true" PackagePath="build/" />
+		<None Include="Nameless.Web.targets" Pack="true" PackagePath="buildTransitive/" />
 	</ItemGroup>
 
 </Project>

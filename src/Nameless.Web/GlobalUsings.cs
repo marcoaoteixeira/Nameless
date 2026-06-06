@@ -1,0 +1,1 @@
+﻿global using static Nameless.Web.WebConstants;
