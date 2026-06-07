@@ -98,8 +98,8 @@ public sealed class WebHostFactory {
             .ConfigureValidation(Settings)
             .ConfigureWorkers(Settings)
 
-            // Additional configuration should be the last one
-            // since it can replace previous registered services.
+            // Additional service registrations should be configured last,
+            // as they may override previously registered services.
             .ConfigureAdditionalServices(Settings);
     }
 
@@ -129,6 +129,6 @@ public sealed class WebHostFactory {
             .UseScalar(Settings)
             .UseHealthCheck(Settings)
 
-            .UseBeforeStartup(Settings);
+            .ExecuteBeforeStartup(Settings);
     }
 }

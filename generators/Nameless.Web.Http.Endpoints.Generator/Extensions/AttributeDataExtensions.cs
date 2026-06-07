@@ -25,8 +25,8 @@ public static class AttributeDataExtensions {
                 return AttributeDefinitions.AllowAnonymous;
             }
 
-            if (RegexCache.Attributes.UseAuthorization.IsMatch(fqn)) {
-                return AttributeDefinitions.UseAuthorization;
+            if (RegexCache.Attributes.Authorize.IsMatch(fqn)) {
+                return AttributeDefinitions.Authorize;
             }
 
             if (RegexCache.Attributes.DisableCookieRedirect.IsMatch(fqn)) {
@@ -41,8 +41,8 @@ public static class AttributeDataExtensions {
                 return AttributeDefinitions.DisableCors;
             }
 
-            if (RegexCache.Attributes.UseCors.IsMatch(fqn)) {
-                return AttributeDefinitions.UseCors;
+            if (RegexCache.Attributes.EnableCors.IsMatch(fqn)) {
+                return AttributeDefinitions.EnableCors;
             }
 
             if (RegexCache.Attributes.UseFilter.IsMatch(fqn)) {
@@ -57,40 +57,44 @@ public static class AttributeDataExtensions {
                 return AttributeDefinitions.DisableOutputCache;
             }
 
-            if (RegexCache.Attributes.UseOutputCache.IsMatch(fqn)) {
-                return AttributeDefinitions.UseOutputCache;
+            if (RegexCache.Attributes.OutputCache.IsMatch(fqn)) {
+                return AttributeDefinitions.OutputCache;
             }
 
-            if (RegexCache.Attributes.Produces.IsMatch(fqn)) {
-                return AttributeDefinitions.Produces;
+            if (RegexCache.Attributes.ProducesResponse.IsMatch(fqn)) {
+                return AttributeDefinitions.ProducesResponse;
             }
 
-            if (RegexCache.Attributes.ProducesProblem.IsMatch(fqn)) {
-                return AttributeDefinitions.ProducesProblem;
+            if (RegexCache.Attributes.ProducesProblemResponse.IsMatch(fqn)) {
+                return AttributeDefinitions.ProducesProblemResponse;
             }
 
-            if (RegexCache.Attributes.ProducesValidationProblem.IsMatch(fqn)) {
-                return AttributeDefinitions.ProducesValidationProblem;
+            if (RegexCache.Attributes.ProducesValidationProblemResponse.IsMatch(fqn)) {
+                return AttributeDefinitions.ProducesValidationProblemResponse;
             }
 
             if (RegexCache.Attributes.DisableRateLimiting.IsMatch(fqn)) {
                 return AttributeDefinitions.DisableRateLimiting;
             }
 
-            if (RegexCache.Attributes.UseRateLimiting.IsMatch(fqn)) {
-                return AttributeDefinitions.UseRateLimiting;
+            if (RegexCache.Attributes.EnableRateLimiting.IsMatch(fqn)) {
+                return AttributeDefinitions.EnableRateLimiting;
             }
 
             if (RegexCache.Attributes.DisableRequestTimeout.IsMatch(fqn)) {
                 return AttributeDefinitions.DisableRequestTimeout;
             }
 
-            if (RegexCache.Attributes.UseRequestTimeout.IsMatch(fqn)) {
-                return AttributeDefinitions.UseRequestTimeout;
+            if (RegexCache.Attributes.RequestTimeout.IsMatch(fqn)) {
+                return AttributeDefinitions.RequestTimeout;
             }
 
             if (RegexCache.Attributes.DisableValidation.IsMatch(fqn)) {
                 return AttributeDefinitions.DisableValidation;
+            }
+
+            if (RegexCache.Attributes.EnableValidation.IsMatch(fqn)) {
+                return AttributeDefinitions.EnableValidation;
             }
 
             if (RegexCache.Attributes.Deprecate.IsMatch(fqn)) {

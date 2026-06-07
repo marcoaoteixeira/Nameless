@@ -58,12 +58,22 @@ public static class EndpointGroupExtractor {
             return endpointGroupArgumentsModelExtraction.Diagnostics;
         }
         
-        var conventions = ConventionExtractor.Extract(classSymbol.GetAttributes(), cancellationToken);
-        var conflicts = ClassHelper.ExtractAttributeConflicts(classSymbol, location, cancellationToken);
+        var conventions = ConventionExtractor.Extract(
+            classSymbol,
+            location,
+            cancellationToken
+        );
+        
+        var conflicts = ClassHelper.ExtractAttributeConflicts(
+            classSymbol,
+            location,
+            cancellationToken
+        );
+        
         var model = new EndpointGroupModel {
             Class = classModelExtraction.Model ?? throw new InvalidOperationException("Class model extraction failed."),
             Arguments = endpointGroupArgumentsModelExtraction.Model ?? throw new InvalidOperationException("Endpoint group arguments model extraction failed."),
-            Conventions = conventions,
+            Conventions = conventions.Model ?? throw new InvalidOperationException("Conventions model extraction failed."),
             Location = location,
 
             // These two properties will be provided later in the
@@ -72,7 +82,12 @@ public static class EndpointGroupExtractor {
             ReportVersions = []
         };
 
-        return (model, conflicts.Diagnostics);
+        GeneratorDiagnostic[] diagnostics = [
+            .. conflicts.Diagnostics,
+            .. conventions.Diagnostics
+        ];
+
+        return (model, diagnostics);
     }
 
     private static DiagnosticAwareResult<EndpointGroupArgumentsModel> ExtractEndpointGroupArgumentsModel(AttributeData attribute, INamedTypeSymbol symbol, LocationModel location) {

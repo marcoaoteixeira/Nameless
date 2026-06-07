@@ -39,6 +39,7 @@ public abstract class Emitter<TModel> where TModel : IEmitModel {
     }
 
     protected virtual void EmitUsingBlock(CodeWriter cw, TModel model) {
+        cw.WriteLine("using global::System;");
         cw.WriteLine("using global::System.Collections.Generic;");
         cw.WriteLine("using global::System.Globalization;");
         cw.WriteLine("using global::System.Threading.Tasks;");
@@ -50,13 +51,17 @@ public abstract class Emitter<TModel> where TModel : IEmitModel {
         cw.WriteLine("using global::Microsoft.AspNetCore.Builder;");
         cw.WriteLine("using global::Microsoft.AspNetCore.Cors;");
         cw.WriteLine("using global::Microsoft.AspNetCore.Http;");
+        cw.WriteLine("using global::Microsoft.AspNetCore.Http.Timeouts;");
         cw.WriteLine("using global::Microsoft.AspNetCore.Mvc;");
+        cw.WriteLine("using global::Microsoft.AspNetCore.OutputCaching;");
+        cw.WriteLine("using global::Microsoft.AspNetCore.RateLimiting;");
         cw.WriteLine("using global::Microsoft.AspNetCore.Routing;");
         cw.WriteLine("using global::Microsoft.OpenApi;");
 
         cw.WriteLine("using global::Microsoft.Extensions.DependencyInjection;");
         cw.WriteLine("using global::Microsoft.Extensions.DependencyInjection.Extensions;");
 
+        cw.WriteLine("using Nameless.Web.Filters.Validation;");
         cw.WriteLine($"using global::{Project.Namespaces.Attributes.Versioning};");
         cw.WriteLine();
     }

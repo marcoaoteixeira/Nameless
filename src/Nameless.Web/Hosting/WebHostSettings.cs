@@ -48,18 +48,18 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure additional services.
     /// </summary>
-    public Action<IServiceCollection, IConfiguration, IHostEnvironment>? AdditionalServicesConfiguration { get; set; }
+    public Action<IServiceCollection, IConfiguration, IHostEnvironment>? ConfigureAdditionalServices { get; set; }
 
     /// <summary>
-    ///     Gets or sets a delegate for configure middlewares before Routing
-    ///     services.
+    ///     Gets or sets a delegate that executes before the <c>UseRouting</c>
+    ///     middleware configuration.
     /// </summary>
-    public Action<IApplicationBuilder> UseBeforeRouting { get; set; } = _ => { };
+    public Action<IApplicationBuilder> ExecuteBeforeRouting { get; set; } = _ => { };
 
     /// <summary>
-    ///     Gets or sets a delegate for configure middlewares before startup.
+    ///     Gets or sets a delegate that executes before the application startup.
     /// </summary>
-    public Action<IApplicationBuilder, IEndpointRouteBuilder> UseBeforeStartup { get; set; } = (_, _) => { };
+    public Action<IApplicationBuilder> ExecuteBeforeStartup { get; set; } = _ => { };
 
     /// <summary>
     ///     Whether it should disable antiforgery services.

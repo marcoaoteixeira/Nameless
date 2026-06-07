@@ -1,10 +1,21 @@
 using System.Collections.Immutable;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Nameless.Web.Http.Endpoints.Generator;
 
 namespace Nameless.Web.Http.Endpoints.Infrastructure;
+
+internal enum SourceType {
+    Unknown,
+
+    Registration,
+
+    Endpoint,
+
+    EndpointGroup
+}
 
 internal static class GeneratorTestHelper {
     // Collect references once: all assemblies in the ASP.NET Core shared
@@ -38,7 +49,7 @@ internal static class GeneratorTestHelper {
         }
     }
 
-    internal static (ImmutableArray<Diagnostic> Diagnostics, string GeneratedSource) RunGenerator(string source, string assemblyName = "TestAssembly") {
+    internal static (ImmutableArray<Diagnostic> Diagnostics, Dictionary<SourceType, string[]> Sources) RunGenerator(string source, string assemblyName = "TestAssembly") {
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
         var compilation = CSharpCompilation.Create(
             assemblyName: assemblyName,
@@ -57,14 +68,27 @@ internal static class GeneratorTestHelper {
 
         var result = driver.GetRunResult();
 
-        // Concatenate all generated files so tests can Assert.Contains across
-        // the full output.
-        var generatedSource = string.Join(
-            separator: Environment.NewLine,
-            values: result.GeneratedTrees.Select(static tree => tree.ToString())
+        var sources = result.GeneratedTrees.GroupBy(
+            keySelector: item => GetSourceType(item.ToString()),
+            elementSelector: item => item.ToString()
+        ).ToDictionary(
+            keySelector: item => item.Key,
+            elementSelector: item => item.ToArray()
         );
 
-        return (result.Diagnostics, generatedSource);
+        return (result.Diagnostics, sources);
+
+        static SourceType GetSourceType(string code) {
+            if (code.Contains("MapGroup")) {
+                return SourceType.EndpointGroup;
+            }
+
+            if (code.Contains("RegisterAutoEndpoints")) {
+                return SourceType.Registration;
+            }
+
+            return SourceType.Endpoint;
+        }
     }
 
     internal static ImmutableArray<Diagnostic> GetDiagnostics(string source) {
@@ -72,6 +96,15 @@ internal static class GeneratorTestHelper {
     }
 
     internal static string GetGeneratedSource(string source) {
-        return RunGenerator(source).GeneratedSource;
+        var (_, sources) = RunGenerator(source);
+
+        // Concatenate all generated files so tests can Assert.Contains across
+        // the full output.
+        var composite = string.Join(
+            separator: Environment.NewLine,
+            values: sources.Values.SelectMany(item => item)
+        );
+
+        return composite;
     }
 }

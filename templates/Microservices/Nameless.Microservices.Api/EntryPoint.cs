@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Nameless.Web;
 using Nameless.Web.Hosting;
+using Nameless.Web.Http.Endpoints;
 
 namespace Nameless.Microservices.Api;
 
@@ -17,10 +18,25 @@ public static class EntryPoint {
             settings.Args = args;
             settings.Assemblies = SupportAssemblies;
 
+            settings.ConfigureAdditionalServices = ConfigureAdditionalServices;
+            settings.ExecuteBeforeStartup = ExecuteBeforeStartup;
+
             DisableServices(settings);
         });
 
         host.Run();
+    }
+
+    private static void ConfigureAdditionalServices(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment) {
+        services.RegisterAutoEndpoints();
+    }
+
+    private static void ExecuteBeforeStartup(IApplicationBuilder app) {
+        const string EndpointRouteBuilderKey = "__EndpointRouteBuilder";
+
+        if (app.Properties.TryGetValue(EndpointRouteBuilderKey, out var output) && output is IEndpointRouteBuilder builder) {
+            builder.MapAutoEndpoints();
+        }
     }
 
     private static void DisableServices(WebHostSettings settings) {

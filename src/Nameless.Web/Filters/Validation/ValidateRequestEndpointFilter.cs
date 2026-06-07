@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using HttpResults = Microsoft.AspNetCore.Http.Results;
+using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Nameless.Web.Filters.Validation;
 
@@ -8,6 +8,11 @@ namespace Nameless.Web.Filters.Validation;
 /// </summary>
 public class ValidateRequestEndpointFilter : ValidationFilterBase, IEndpointFilter {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) {
+        var disableValidation = context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<IDisableValidationMetadata>();
+        if (disableValidation is not null) {
+            return await next(context);
+        }
+
         var result = await ValidateRequestObjectsAsync(
             context.HttpContext.RequestServices,
             context.Arguments,
@@ -17,7 +22,7 @@ public class ValidateRequestEndpointFilter : ValidationFilterBase, IEndpointFilt
         return await result.Match(
             onSuccess: _ => next(context),
             onFailure: errors => ValueTask.FromResult<object?>(
-                HttpResults.ValidationProblem(errors.ToDictionary())
+                TypedResults.ValidationProblem(errors.ToDictionary())
             )
         );
     }

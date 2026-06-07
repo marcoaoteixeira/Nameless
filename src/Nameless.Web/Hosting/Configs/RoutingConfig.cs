@@ -23,7 +23,7 @@ public static class RoutingConfig {
         public WebApplication UseRouting(WebHostSettings settings) {
             if (settings.DisableRouting) { return self; }
 
-            settings.UseBeforeRouting(self);
+            settings.ExecuteBeforeRouting(self);
 
             self.UseRouting();
 

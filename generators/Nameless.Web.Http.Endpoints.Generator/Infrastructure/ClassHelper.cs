@@ -55,9 +55,9 @@ public static class ClassHelper {
         var diagnostics = new List<GeneratorDiagnostic>();
 
         cancellationToken.ThrowIfCancellationRequested();
-        if (classSymbol.HasAllowAnonymousAttribute() && classSymbol.HasUseAuthorizationAttribute()) {
+        if (classSymbol.HasAllowAnonymousAttribute() && classSymbol.HasAuthorizeAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingAllowAnonymousVsUseAuthorizationAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingAllowAnonymousVsAuthorizeAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
@@ -73,36 +73,45 @@ public static class ClassHelper {
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        if (classSymbol.HasDisableCorsAttribute() && classSymbol.HasUseCorsAttribute()) {
+        if (classSymbol.HasDisableCorsAttribute() && classSymbol.HasEnableCorsAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableCorsVsUseCorsAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableCorsVsEnableCorsAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        if (classSymbol.HasDisableOutputCacheAttribute() && classSymbol.HasUseOutputCacheAttribute()) {
+        if (classSymbol.HasDisableOutputCacheAttribute() && classSymbol.HasOutputCacheAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableOutputCacheVsUseOutputCacheAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableOutputCacheVsOutputCacheAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        if (classSymbol.HasDisableRateLimitingAttribute() && classSymbol.HasUseRateLimitingAttribute()) {
+        if (classSymbol.HasDisableRateLimitingAttribute() && classSymbol.HasEnableRateLimitingAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableRateLimitingVsUseRateLimitingAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableRateLimitingVsEnableRateLimitingAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        if (classSymbol.HasDisableRequestTimeoutAttribute() && classSymbol.HasUseRequestTimeoutAttribute()) {
+        if (classSymbol.HasDisableRequestTimeoutAttribute() && classSymbol.HasRequestTimeoutAttribute()) {
             diagnostics.Add(GeneratorDiagnostic.Create(
-                descriptor: DiagnosticDescriptors.ConflictingDisableRequestTimeoutVsUseRequestTimeoutAttributes,
+                descriptor: DiagnosticDescriptors.ConflictingDisableRequestTimeoutVsRequestTimeoutAttributes,
+                location: location,
+                messageArgs: [classSymbol.Name]
+            ));
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        if (classSymbol.HasDisableValidationAttribute() && classSymbol.HasEnableValidationAttribute()) {
+            diagnostics.Add(GeneratorDiagnostic.Create(
+                descriptor: DiagnosticDescriptors.ConflictingDisableValidationVsEnableValidationAttributes,
                 location: location,
                 messageArgs: [classSymbol.Name]
             ));

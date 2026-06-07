@@ -20,23 +20,34 @@ internal static class SourceCodeHelper {
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Antiforgery;");
-        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Authorization;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.CookieRedirect;");
-        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Cors;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Filtering;");
-        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.HttpMetrics;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.OutputCache;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Produces;");
-        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.RateLimiting;");
-        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.RequestTimeout;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Validation;");
         sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Versioning;");
 
-        sb.AppendLine("using AllowCookieRedirectAttribute = global::Nameless.Web.Http.Endpoints.Attributes.CookieRedirect.AllowCookieRedirectAttribute;");
-        sb.AppendLine("using DisableHttpMetricsAttribute = global::Nameless.Web.Http.Endpoints.Attributes.HttpMetrics.DisableHttpMetricsAttribute;");
-        sb.AppendLine("using DeprecateAttribute = global::Nameless.Web.Http.Endpoints.Attributes.Versioning.DeprecateAttribute;");
+        sb.AppendLine("using global::System;");
+        sb.AppendLine("using global::System.Collections.Generic;");
+        sb.AppendLine("using global::System.Globalization;");
+        sb.AppendLine("using global::System.Threading.Tasks;");
 
-        sb.AppendLine("using Microsoft.AspNetCore.Http;");
+        sb.AppendLine("using global::Asp.Versioning;");
+        sb.AppendLine("using global::Asp.Versioning.ApiExplorer;");
+
+        sb.AppendLine("using global::Microsoft.AspNetCore.Authorization;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Builder;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Cors;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Http;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Http.Timeouts;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Mvc;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.OutputCaching;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.RateLimiting;");
+        sb.AppendLine("using global::Microsoft.AspNetCore.Routing;");
+        sb.AppendLine("using global::Microsoft.OpenApi;");
+
+        sb.AppendLine("using global::Microsoft.Extensions.DependencyInjection;");
+        sb.AppendLine("using global::Microsoft.Extensions.DependencyInjection.Extensions;");
 
         sb.AppendLine();
     }

@@ -37,8 +37,8 @@ public static class SymbolExtensions {
             return self.TryGetAttributes(RegexCache.Attributes.AllowAnonymous, out _);
         }
 
-        public bool HasUseAuthorizationAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.UseAuthorization, out _);
+        public bool HasAuthorizeAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.Authorize, out _);
         }
 
         public bool HasDisableCookieRedirectAttribute() {
@@ -53,34 +53,42 @@ public static class SymbolExtensions {
             return self.TryGetAttributes(RegexCache.Attributes.DisableCors, out _);
         }
 
-        public bool HasUseCorsAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.UseCors, out _);
+        public bool HasEnableCorsAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.EnableCors, out _);
         }
 
         public bool HasDisableOutputCacheAttribute() {
             return self.TryGetAttributes(RegexCache.Attributes.DisableOutputCache, out _);
         }
 
-        public bool HasUseOutputCacheAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.UseOutputCache, out _);
+        public bool HasOutputCacheAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.OutputCache, out _);
         }
 
         public bool HasDisableRateLimitingAttribute() {
             return self.TryGetAttributes(RegexCache.Attributes.DisableRateLimiting, out _);
         }
 
-        public bool HasUseRateLimitingAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.UseRateLimiting, out _);
+        public bool HasEnableRateLimitingAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.EnableRateLimiting, out _);
         }
 
         public bool HasDisableRequestTimeoutAttribute() {
             return self.TryGetAttributes(RegexCache.Attributes.DisableRequestTimeout, out _);
         }
 
-        public bool HasUseRequestTimeoutAttribute() {
-            return self.TryGetAttributes(RegexCache.Attributes.UseRequestTimeout, out _);
+        public bool HasRequestTimeoutAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.RequestTimeout, out _);
         }
-        
+
+        public bool HasDisableValidationAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.DisableValidation, out _);
+        }
+
+        public bool HasEnableValidationAttribute() {
+            return self.TryGetAttributes(RegexCache.Attributes.EnableValidation, out _);
+        }
+
         // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Local
         private bool TryGetAttributes(Regex regex, out AttributeData[] output) {
             output = [.. self.GetAttributes().Where(Filter)];

@@ -5,7 +5,7 @@ namespace Nameless.Web.Hosting.Configs;
 public static class CustomConfig {
     extension(WebApplicationBuilder self) {
         public WebApplicationBuilder ConfigureAdditionalServices(WebHostSettings settings) {
-            settings.AdditionalServicesConfiguration?.Invoke(
+            settings.ConfigureAdditionalServices?.Invoke(
                 self.Services,
                 self.Configuration,
                 self.Environment
@@ -16,8 +16,8 @@ public static class CustomConfig {
     }
 
     extension(WebApplication self) {
-        public WebApplication UseBeforeStartup(WebHostSettings settings) {
-            settings.UseBeforeStartup?.Invoke(self, self);
+        public WebApplication ExecuteBeforeStartup(WebHostSettings settings) {
+            settings.ExecuteBeforeStartup?.Invoke(self);
 
             return self;
         }

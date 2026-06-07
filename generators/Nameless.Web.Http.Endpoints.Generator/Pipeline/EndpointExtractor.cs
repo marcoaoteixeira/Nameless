@@ -74,16 +74,27 @@ public static class EndpointExtractor {
             location,
             cancellationToken
         );
-        var conventions = ConventionExtractor.Extract(classSymbol.GetAttributes(), cancellationToken);
+
+        var conventions = ConventionExtractor.Extract(
+            classSymbol,
+            location,
+            cancellationToken
+        );
+
         var model = new EndpointModel {
             Class = classModelExtraction.Model ?? throw new InvalidOperationException("Class model extraction failed."),
             Arguments = endpointArgumentsModelExtraction.Model ?? throw new InvalidOperationException("Endpoint arguments model extraction failed."),
-            Conventions = conventions,
+            Conventions = conventions.Model ?? throw new InvalidOperationException("Convention model extraction failed."),
             Handler = endpointHandlerModelExtraction.Model ?? throw new InvalidOperationException("Endpoint handler model extraction failed."),
             Location = location
         };
 
-        return (model, conflicts.Diagnostics);
+        GeneratorDiagnostic[] diagnostics = [
+            .. conflicts.Diagnostics,
+            .. conventions.Diagnostics
+        ];
+
+        return (model, diagnostics);
     }
 
     private static DiagnosticAwareResult<EndpointArgumentsModel> ExtractEndpointArgumentsModel(AttributeData attributeData, INamedTypeSymbol classSymbol, LocationModel location) {

@@ -8,7 +8,7 @@ public class WithProducesProblemConvention {
     private static string ProducesProblemWithDefaultsEndpoint => SourceCodeHelper.Write(
         """
         [Endpoint<Get>]
-        [ProducesProblem]
+        [ProducesProblemResponse]
         public partial class ProducesProblemWithDefaultsEndpoint {
             public Task<IResult> HandleAsync() {
                 return Task.FromResult<IResult>(TypedResults.Ok());
@@ -20,7 +20,7 @@ public class WithProducesProblemConvention {
     private static string ProducesProblemWithCustomStatusCodeEndpoint => SourceCodeHelper.Write(
         """
         [Endpoint<Get>]
-        [ProducesProblem(404)]
+        [ProducesProblemResponse(StatusCode = 404)]
         public partial class ProducesProblemWithCustomStatusCodeEndpoint {
             public Task<IResult> HandleAsync() {
                 return Task.FromResult<IResult>(TypedResults.Ok());

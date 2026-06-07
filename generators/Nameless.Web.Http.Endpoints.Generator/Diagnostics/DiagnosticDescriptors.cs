@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Nameless.Web.Http.Endpoints.Generator.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.Generator.Diagnostics;
 
@@ -47,10 +48,10 @@ internal static class DiagnosticDescriptors {
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor ConflictingAllowAnonymousVsUseAuthorizationAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingAllowAnonymousVsAuthorizeAttributes = new(
         id: "AEP006",
         title: "Conflicting authorization attributes",
-        messageFormat: "Class '{0}' has both [AllowAnonymous] and [UseAuthorization]; [AllowAnonymous] takes precedence",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.AllowAnonymous)}] and [{nameof(AttributeDefinitions.Authorize)}]; [{nameof(AttributeDefinitions.AllowAnonymous)}] takes precedence and places a policy preventing any authorization logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -58,41 +59,57 @@ internal static class DiagnosticDescriptors {
     internal static readonly DiagnosticDescriptor ConflictingDisableCookieRedirectVsAllowCookieRedirectAttributes = new(
         id: "AEP007",
         title: "Conflicting cookie redirect attributes",
-        messageFormat: "Class '{0}' has both [DisableCookieRedirect] and [AllowCookieRedirect]; [AllowCookieRedirect] takes precedence",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableCookieRedirect)}] and [{nameof(AttributeDefinitions.AllowCookieRedirect)}]; [{nameof(AttributeDefinitions.AllowCookieRedirect)}] takes precedence",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor ConflictingDisableCorsVsUseCorsAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableCorsVsEnableCorsAttributes = new(
         id: "AEP008",
         title: "Conflicting CORS attributes",
-        messageFormat: "Class '{0}' has both [DisableCors] and [UseCors]; [DisableCors] takes precedence",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableCors)}] and [{nameof(AttributeDefinitions.EnableCors)}]; [{nameof(AttributeDefinitions.DisableCors)}] takes precedence and places a policy preventing any CORS logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor ConflictingDisableOutputCacheVsUseOutputCacheAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableOutputCacheVsOutputCacheAttributes = new(
         id: "AEP009",
         title: "Conflicting output cache attributes",
-        messageFormat: "Class '{0}' has both [DisableOutputCache] and [UseOutputCache]; [DisableOutputCache] takes precedence and places a policy preventing any cache logic",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableOutputCache)}] and [{nameof(AttributeDefinitions.OutputCache)}]; [{nameof(AttributeDefinitions.DisableOutputCache)}] takes precedence and places a policy preventing any cache logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor ConflictingDisableRateLimitingVsUseRateLimitingAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableRateLimitingVsEnableRateLimitingAttributes = new(
         id: "AEP010",
         title: "Conflicting rate limiting attributes",
-        messageFormat: "Class '{0}' has both [DisableRateLimiting] and [UseRateLimiting]; [DisableRateLimiting] takes precedence and places a policy preventing any rate limiting logic",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableRateLimiting)}] and [{nameof(AttributeDefinitions.EnableRateLimiting)}]; [{nameof(AttributeDefinitions.DisableRateLimiting)}] takes precedence and places a policy preventing any rate limiting logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    internal static readonly DiagnosticDescriptor ConflictingDisableRequestTimeoutVsUseRequestTimeoutAttributes = new(
+    internal static readonly DiagnosticDescriptor ConflictingDisableRequestTimeoutVsRequestTimeoutAttributes = new(
         id: "AEP011",
         title: "Conflicting request timeout attributes",
-        messageFormat: "Class '{0}' has both [DisableRequestTimeout] and [UseRequestTimeout]; [DisableRequestTimeout] takes precedence and places a policy preventing any request timeout logic",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableRequestTimeout)}] and [{nameof(AttributeDefinitions.RequestTimeout)}]; [{nameof(AttributeDefinitions.DisableRequestTimeout)}] takes precedence and places a policy preventing any request timeout logic",
         category: CATEGORY,
         defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    internal static readonly DiagnosticDescriptor ConflictingDisableValidationVsEnableValidationAttributes = new(
+        id: "AEP012",
+        title: "Conflicting validation attributes",
+        messageFormat: $"Class '{{0}}' has both [{nameof(AttributeDefinitions.DisableValidation)}] and [{nameof(AttributeDefinitions.EnableValidation)}]; [{nameof(AttributeDefinitions.DisableValidation)}] takes precedence and places a policy preventing any validation logic",
+        category: CATEGORY,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    internal static readonly DiagnosticDescriptor ClassUnknownAttribute = new(
+        id: "AEP013",
+        title: "Unknown attribute",
+        messageFormat: "Unrecognized generator attribute {1} on class {0}; No action needed if intentional",
+        category: CATEGORY,
+        defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true);
 
     #endregion

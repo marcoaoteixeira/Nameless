@@ -9,32 +9,33 @@ public enum AttributeDefinitions {
     DisableAntiforgery,
 
     AllowAnonymous,
-    UseAuthorization,
+    Authorize,
 
     DisableCookieRedirect,
     AllowCookieRedirect,
 
     DisableCors,
-    UseCors,
+    EnableCors,
 
     UseFilter,
 
     DisableHttpMetrics,
 
     DisableOutputCache,
-    UseOutputCache,
+    OutputCache,
 
-    Produces,
-    ProducesProblem,
-    ProducesValidationProblem,
+    ProducesResponse,
+    ProducesProblemResponse,
+    ProducesValidationProblemResponse,
 
     DisableRateLimiting,
-    UseRateLimiting,
+    EnableRateLimiting,
 
     DisableRequestTimeout,
-    UseRequestTimeout,
+    RequestTimeout,
 
     DisableValidation,
+    EnableValidation,
 
     Deprecate
 }
