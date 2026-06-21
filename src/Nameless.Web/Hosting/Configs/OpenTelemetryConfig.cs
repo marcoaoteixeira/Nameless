@@ -16,7 +16,7 @@ public static class OpenTelemetryConfig {
             if (settings.DisableOpenTelemetry) { return self; }
 
             self.RegisterOpenTelemetry(
-                settings.OpenTelemetryRegistrationConfiguration
+                settings.ConfigureOpenTelemetry
             );
 
             return self;

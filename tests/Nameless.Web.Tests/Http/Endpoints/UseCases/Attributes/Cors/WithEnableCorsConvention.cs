@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Cors;
 public class WithEnableCorsConvention {
     private static string EnableCorsWithNoArgumentEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [EnableCors]
         public partial class EnableCorsWithNoArgumentEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithEnableCorsConvention {
 
     private static string EnableCorsWithPolicyNameEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [EnableCors("my-cors-policy")]
         public partial class EnableCorsWithPolicyNameEndpoint {
             public Task<IResult> HandleAsync() {

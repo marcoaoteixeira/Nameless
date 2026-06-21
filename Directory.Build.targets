@@ -1,0 +1,14 @@
+<Project>
+	<!--
+		In-solution equivalent of Nameless.Common.targets.
+		Wires the endpoint source generator for projects that set
+		<UseAutoEndpoints>true</UseAutoEndpoints> in their csproj.
+		Mirrors the same opt-in that the NuGet package enforces for external
+		consumers, so in-solution and package behaviour are identical.
+	-->
+	<ItemGroup Condition="'$(UseAutoEndpoints)' == 'True'">
+		<ProjectReference Include="$(MSBuildThisFileDirectory)generators\Nameless.Web.Generators\Nameless.Web.Generators.csproj"
+		                  OutputItemType="Analyzer"
+		                  ReferenceOutputAssembly="false" />
+	</ItemGroup>
+</Project>

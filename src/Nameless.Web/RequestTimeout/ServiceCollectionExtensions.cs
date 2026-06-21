@@ -49,31 +49,31 @@ public static class ServiceCollectionExtensions {
     }
 
     private static void IncludeDefaultPolicies(Dictionary<string, RequestTimeoutPolicyOptions> actual) {
-        actual[WebDefaults.RequestTimeoutPolicies.OneSecond] = new RequestTimeoutPolicyOptions {
+        actual[Policies.RequestTimeout.OneSecond] = new RequestTimeoutPolicyOptions {
             ExpiresIn = TimeSpan.FromSeconds(1),
             HttpStatusCode = StatusCodes.Status408RequestTimeout,
             Skip = false
         };
 
-        actual[WebDefaults.RequestTimeoutPolicies.FiveSeconds] = new RequestTimeoutPolicyOptions {
+        actual[Policies.RequestTimeout.FiveSeconds] = new RequestTimeoutPolicyOptions {
             ExpiresIn = TimeSpan.FromSeconds(5),
             HttpStatusCode = StatusCodes.Status408RequestTimeout,
             Skip = false
         };
 
-        actual[WebDefaults.RequestTimeoutPolicies.FifteenSeconds] = new RequestTimeoutPolicyOptions {
+        actual[Policies.RequestTimeout.FifteenSeconds] = new RequestTimeoutPolicyOptions {
             ExpiresIn = TimeSpan.FromSeconds(15),
             HttpStatusCode = StatusCodes.Status408RequestTimeout,
             Skip = false
         };
 
-        actual[WebDefaults.RequestTimeoutPolicies.ThirtySeconds] = new RequestTimeoutPolicyOptions {
+        actual[Policies.RequestTimeout.ThirtySeconds] = new RequestTimeoutPolicyOptions {
             ExpiresIn = TimeSpan.FromSeconds(30),
             HttpStatusCode = StatusCodes.Status408RequestTimeout,
             Skip = false
         };
 
-        actual[WebDefaults.RequestTimeoutPolicies.OneMinute] = new RequestTimeoutPolicyOptions {
+        actual[Policies.RequestTimeout.OneMinute] = new RequestTimeoutPolicyOptions {
             ExpiresIn = TimeSpan.FromMinutes(1),
             HttpStatusCode = StatusCodes.Status408RequestTimeout,
             Skip = false

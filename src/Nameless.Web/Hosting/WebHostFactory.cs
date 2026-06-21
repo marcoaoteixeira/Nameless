@@ -120,10 +120,10 @@ public sealed class WebHostFactory {
             .UseRouting(Settings)
 
             .UseCors(Settings)
+            .UseAuth(Settings)
             .UseRateLimiter(Settings)
             .UseOutputCache(Settings)
             .UseRequestTimeout(Settings)
-            .UseAuth(Settings)
             .UseAntiforgery(Settings)
             .UseOpenApi(Settings)
             .UseScalar(Settings)

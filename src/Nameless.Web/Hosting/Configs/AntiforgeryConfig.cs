@@ -19,12 +19,12 @@ public static class AntiforgeryConfig {
             if (settings.DisableAntiforgery) { return self; }
 
             self.Services.AddAntiforgery(
-                settings.AntiforgeryConfiguration ?? DefaultConfig
+                settings.ConfigureAntiforgery ?? DefaultConfig
             );
 
             return self;
 
-            void DefaultConfig(AntiforgeryOptions opts) {
+            static void DefaultConfig(AntiforgeryOptions opts) {
                 opts.HeaderName = "X-CSRF-TOKEN";
                 opts.Cookie.Name = "X-CSRF-TOKEN";
                 opts.Cookie.HttpOnly = true;

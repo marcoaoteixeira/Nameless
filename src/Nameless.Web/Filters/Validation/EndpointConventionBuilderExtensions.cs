@@ -17,7 +17,7 @@ public static class EndpointConventionBuilderExtensions {
     ///     The current <see cref="RouteHandlerBuilder"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public static RouteHandlerBuilder WithValidation(this RouteHandlerBuilder builder) {
+    public static RouteHandlerBuilder WithRequestValidation(this RouteHandlerBuilder builder) {
         return builder.AddEndpointFilter<ValidateRequestEndpointFilter>();
     }
 }

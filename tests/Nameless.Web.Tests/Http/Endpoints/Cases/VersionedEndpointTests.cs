@@ -15,7 +15,7 @@ public sealed class VersionedEndpointTests
         [EndpointGrouping("Users", "/api/v{version:apiVersion}/users")]
         public partial class UsersGroup;
 
-        [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+        [Endpoint("/{id}", Group = typeof(UsersGroup))]
         [Deprecate("1.0.0")]
         public partial class GetUserEndpoint
         {
@@ -62,14 +62,14 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users")]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("1.0.0")]
             public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("2.0.0")]
             public partial class GetUserEndpointV2
             {
@@ -96,14 +96,14 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0"])]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("1.0")]
             public partial class GetUserEndpointV1
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
             }
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("2.0")]
             public partial class GetUserEndpointV2
             {
@@ -127,7 +127,7 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             [Deprecate("not-a-version")]
             public partial class GetUsersEndpoint
             {
@@ -153,7 +153,7 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Users", "/api/users")]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/users", Group = typeof(UsersGroup))]
+            [Endpoint("/users", Group = typeof(UsersGroup))]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -179,7 +179,7 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["bad-version"])]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -204,7 +204,7 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0", "3.0"])]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("1.0")]
             public partial class GetUserEndpointV1
             {
@@ -232,7 +232,7 @@ public sealed class VersionedEndpointTests
             [EndpointGrouping("Legacy", "/api/legacy/users")]
             public partial class LegacyGroup;
 
-            [Endpoint<Get>("/users", Group = typeof(LegacyGroup))]
+            [Endpoint("/users", Group = typeof(LegacyGroup))]
             [Deprecate("1.0.0", Deprecated = true)]
             public partial class GetUsersV1Endpoint
             {
@@ -255,7 +255,7 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/hello-world")]
+            [Endpoint("/hello-world")]
             [Deprecate("1.0")]
             public partial class HelloWorldEndpoint
             {
@@ -281,14 +281,14 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/hello-world")]
+            [Endpoint("/hello-world")]
             [Deprecate("1.0")]
             public partial class HelloWorldV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("v1");
             }
 
-            [Endpoint<Get>("/hello-world")]
+            [Endpoint("/hello-world")]
             [Deprecate("2.0")]
             public partial class HelloWorldV2Endpoint
             {
@@ -315,14 +315,14 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/foo")]
+            [Endpoint("/foo")]
             [Deprecate("1.0")]
             public partial class FooEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("foo");
             }
 
-            [Endpoint<Get>("/bar")]
+            [Endpoint("/bar")]
             [Deprecate("2.0")]
             public partial class BarEndpoint
             {
@@ -345,7 +345,7 @@ public sealed class VersionedEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/health")]
+            [Endpoint("/health")]
             public partial class HealthEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok("Healthy");

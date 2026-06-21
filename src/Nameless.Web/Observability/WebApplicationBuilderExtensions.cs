@@ -48,7 +48,7 @@ public static class WebApplicationBuilderExtensions {
                               .ConfigureResource(settings.ConfigureResources);
 
             var openTelemetryEndpointUrl = self.Configuration[
-                CoreConstants.OpenTelemetry.ExporterEndpointConfigName
+                StaticData.OpenTelemetry.ExporterEndpointConfigKey
             ];
             if (!string.IsNullOrWhiteSpace(openTelemetryEndpointUrl)) {
                 builder.UseOtlpExporter();

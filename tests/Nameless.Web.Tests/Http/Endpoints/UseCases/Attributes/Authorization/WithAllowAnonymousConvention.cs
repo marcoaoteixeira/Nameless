@@ -9,7 +9,7 @@ public class WithAllowAnonymousConvention {
 
     public WithAllowAnonymousConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [AllowAnonymous]
                                        public partial class AllowAnonymousEndpoint {
                                            public Task<IResult> HandleAsync() {

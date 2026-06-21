@@ -27,7 +27,7 @@ public static class HealthCheckConfig {
             if (settings.DisableHealthChecks) { return self;}
 
             self.Services.RegisterHealthCheck(
-                settings.HealthCheckRegistrationConfiguration
+                settings.ConfigureHealthCheck
             );
 
             return self;

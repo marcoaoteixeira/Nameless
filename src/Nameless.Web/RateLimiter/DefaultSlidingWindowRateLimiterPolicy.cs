@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace Nameless.Web.RateLimiter;
 
-[RateLimiterPolicy(WebDefaults.RateLimiterPolicies.SlidingWindow)]
+[RateLimiterPolicy(Policies.RateLimiter.SlidingWindow)]
 public class DefaultSlidingWindowRateLimiterPolicy : IRateLimiterPolicy<string> {
     private readonly SlidingWindowRateLimiterOptions _options;
 
@@ -37,7 +37,7 @@ public class DefaultSlidingWindowRateLimiterPolicy : IRateLimiterPolicy<string> 
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
         await context.HttpContext.Response.WriteAsync(
-            "Too many requests. Please try again later.",
+            text: "Too many requests. Please try again later.",
             cancellationToken
         );
     }

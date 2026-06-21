@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Versioning;
 public class WithDeprecateConvention {
     private static string DeprecateWithNoArgumentsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Deprecate]
         public partial class DeprecateWithNoArgumentsEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithDeprecateConvention {
 
     private static string DeprecateWithMessageEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Deprecate(Message = "Use /v2/items instead.")]
         public partial class DeprecateWithMessageEndpoint {
             public Task<IResult> HandleAsync() {
@@ -31,7 +31,7 @@ public class WithDeprecateConvention {
 
     private static string DeprecateWithSunsetEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Deprecate(Sunset = "Wed, 31 Dec 2025 00:00:00 GMT")]
         public partial class DeprecateWithSunsetEndpoint {
             public Task<IResult> HandleAsync() {
@@ -43,7 +43,7 @@ public class WithDeprecateConvention {
 
     private static string DeprecateWithSunsetAndLinkEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Deprecate(Sunset = "Wed, 31 Dec 2025 00:00:00 GMT", Link = "https://example.com/migration")]
         public partial class DeprecateWithSunsetAndLinkEndpoint {
             public Task<IResult> HandleAsync() {

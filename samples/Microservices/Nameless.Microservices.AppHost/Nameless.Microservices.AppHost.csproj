@@ -1,0 +1,31 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.4.5">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Microservices.AppHost</RootNamespace>
+		<OutputType>Exe</OutputType>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>b4af70c6-e18f-48f2-9d95-13ae97b1994d</UserSecretsId>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="AppSettings.Development.json" />
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.JavaScript" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+		<PackageReference Include="MessagePack" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Microservices.Api\Nameless.Microservices.Api.csproj" />
+		<ProjectReference Include="..\Nameless.Microservices.Bff\Nameless.Microservices.Bff.csproj" />
+		<ProjectReference Include="..\Nameless.Microservices.Worker\Nameless.Microservices.Worker.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -15,13 +15,13 @@ public sealed class GroupedEndpointTests
         [EndpointGrouping("Users", "/api/users")]
         public partial class UsersGroup;
 
-        [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+        [Endpoint("/{id}", Group = typeof(UsersGroup))]
         public partial class GetUserEndpoint
         {
             public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
         }
 
-        [Endpoint<Post>("", Group = typeof(UsersGroup))]
+        [Endpoint(Verb = HttpVerbs.Post, Group = typeof(UsersGroup))]
         public partial class CreateUserEndpoint
         {
             public async Task<IResult> HandleAsync() => Results.Ok();
@@ -84,7 +84,7 @@ public sealed class GroupedEndpointTests
 
             public partial class NotAGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(NotAGroup))]
+            [Endpoint("/{id}", Group = typeof(NotAGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -108,7 +108,7 @@ public sealed class GroupedEndpointTests
 
             public partial class NotAGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(NotAGroup))]
+            [Endpoint("/{id}", Group = typeof(NotAGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -133,7 +133,7 @@ public sealed class GroupedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0"])]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("3.0")]
             public partial class GetUserEndpoint
             {
@@ -159,7 +159,7 @@ public sealed class GroupedEndpointTests
             [EndpointGrouping("Users", "/api/v{version:apiVersion}/users", Versions = ["1.0", "2.0"])]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             [Deprecate("3.0")]
             public partial class GetUserEndpoint
             {
@@ -185,7 +185,7 @@ public sealed class GroupedEndpointTests
             [EndpointGrouping("Users", "/api/users")]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public partial class GetItemsEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -210,7 +210,7 @@ public sealed class GroupedEndpointTests
             [EndpointGrouping("", "/api/users")]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);

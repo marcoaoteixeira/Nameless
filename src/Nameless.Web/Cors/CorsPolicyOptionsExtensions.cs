@@ -3,7 +3,7 @@
 namespace Nameless.Web.Cors;
 
 internal static class CorsPolicyOptionsExtensions {
-    private const string SEPARATOR = CoreConstants.Separators.Comma;
+    private const string SEPARATOR = Separators.Comma;
 
     extension(CorsPolicyOptions self) {
         internal CorsPolicy ToPolicy() {

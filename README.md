@@ -37,19 +37,6 @@ cross-platform developer, you can use it on any OS. Also, it provides a
 powerful set of tools for C# development, including code analysis, refactoring,
 and debugging. It also has a built-in terminal and support for Docker.
 
-## Starting Up
-
-Before you begin, make sure to run the `instrumentation.sh` script located in
-the `build` folder at the root of the solution. This script installs the
-necessary tools required to run the tests and generate the code coverage
-report. If you're running on Windows, you can use the
-[Git](https://git-scm.com/downloads) Bash to execute the script.
-
-It also installs [Cake](https://cakebuild.net/), a cross-platform build
-automation system that uses a C# DSL. With Cake, you can write build scripts
-in C# and execute them on any platform, ensuring a consistent experience
-across the team. It's an excellent tool for automating your build process.
-
 ## ASP.NET Core Dependency
 
 If your solution/project requires ASP.NET Core or has dependency on it, please
@@ -170,36 +157,6 @@ HTML report that you can open in any web browser.
 
 If you want to know more about the report tool, go to
 [ReportGenerator](https://reportgenerator.io/usage).
-
-### Bonus
-
-Now, as mentioned before, if you ran the `instrumentation.sh` script, you'll
-get all of the above for free. All you need to do is run this command in your
-`Terminal` at the root level of the solution:
-
-```
-dotnet cake .\build\build.cake --target CodeCoverage --working-dir ../ --rebuild
-```
-What this will do:
-- Clean the solution
-- Restore the NuGet packages
-- Build the solution
-- Run all tests
-- Generate the code coverage report
-
-Just in one go!
-
-## Logging
-
-To promote an easy way to identify log events, for specific log levels we add
-the `EventId` to the log message. This way, you can easily filter the logs.
-We'll attribute an range of `EventId`s to each projects, like:
-
-- Core project: 100000-199999
-- Autofac project: 200000-299999
-- Data SQLite project: 300000-399999
-- Data SQL Server project: 400000-499999
-
 
 ## Coding Styles
 

@@ -1,12 +1,17 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using Nameless.Diagnostics.CodeAnalysis;
+using Nameless.Registration;
 
 namespace Nameless.Web.Null;
 
 /// <summary>
 ///     Null implementation of <see cref="IQueryCollection"/> that does not store any query parameters.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[IgnoreAssemblyScan]
 public sealed class NullQueryCollection : IQueryCollection {
     public static IQueryCollection Instance { get; } = new NullQueryCollection();
 

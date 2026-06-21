@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Windows</RootNamespace>
+		<Title>Nameless Windows Library</Title>
+		<Description>
+			A C# library that provides foundational services and utilities for
+			building Windows applications. It leverages CommunityToolkit.Mvvm
+			for MVVM pattern implementation and WPF-UI for modern UI
+			components, enabling faster development with reduced boilerplate.
+		</Description>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<UseWPF>true</UseWPF>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591;NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+		<PackageReference Include="PdfPig" />
+		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="WPF-UI" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Common\Nameless.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Interop.Microsoft.Office.Core">
+			<HintPath>..\..\build\libs\Interop.Microsoft.Office.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Interop.Microsoft.Office.Interop.Word">
+			<HintPath>..\..\build\libs\Interop.Microsoft.Office.Interop.Word.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DependentUpon>Strings.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+			<Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="TaskRunner\UI\TaskRunnerWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -9,7 +9,7 @@ public static class AuthConfig {
             if (settings.DisableAuth) { return self; }
 
             self.Services.RegisterAuth(
-                settings.AuthRegistrationConfiguration,
+                settings.ConfigureAuth,
                 self.Configuration
             );
 

@@ -26,7 +26,7 @@ public sealed class MultipleFiltersTests
                          => next(ctx);
                  }
 
-                 [Endpoint<Get>("/users")]
+                 [Endpoint("/users")]
                  {{filterAttributes}}
                  public partial class GetUsersEndpoint
                  {

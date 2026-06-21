@@ -3,7 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Nameless.Web.Hosting.Configs;
 
-public static class Common {
+/// <summary>
+///     Common configurations
+/// </summary>
+public static class CommonConfig {
     extension(WebApplicationBuilder self) {
         public WebApplicationBuilder ConfigureCommon() {
             // Configures common services for the application.

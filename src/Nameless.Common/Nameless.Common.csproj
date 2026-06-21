@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless</RootNamespace>
+		<Title>Nameless (Common) Library</Title>
+		<Description>
+			A comprehensive .NET foundation library that provides essential
+			building blocks for modern ASP.NET Core applications and
+			microservices. Includes application bootstrapping, mediator pattern
+			implementation, validation services, resilience infrastructure,
+			OpenTelemetry observability, JWT authentication, API versioning,
+			and spreadsheet processing capabilities. Designed to accelerate
+			development with pre-configured infrastructure components, result
+			patterns, validation pipelines, and extensive extension methods for
+			common operations.
+		</Description>
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Lucene.Net.QueryParser" />
+		<PackageReference Include="MailKit" />
+		<PackageReference Include="Microsoft.Data.SqlClient" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+		<PackageReference Include="Polly.Core" />
+		<PackageReference Include="RabbitMQ.Client" />
+		<PackageReference Include="Serilog.Extensions.Hosting" />
+		<PackageReference Include="Serilog.Settings.Configuration" />
+		<PackageReference Include="Serilog.Sinks.Console" />
+		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Strings.Designer.cs">
+	    <DependentUpon>Strings.resx</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Strings.resx">
+	    <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+	    <Generator>ResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>

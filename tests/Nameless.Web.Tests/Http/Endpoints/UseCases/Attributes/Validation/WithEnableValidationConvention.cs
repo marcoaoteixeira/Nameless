@@ -9,7 +9,7 @@ public class WithEnableValidationConvention {
 
     public WithEnableValidationConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [EnableValidation]
                                        public partial class EnableValidationEndpoint {
                                            public Task<IResult> HandleAsync() {

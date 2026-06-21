@@ -36,7 +36,7 @@ public class UsingAllAttributesTests {
                               [EndpointGroup("MyGroup", "/api/v{version:apiVersion}/myeps")]
                               public partial class MyEndpointGroup;
                               
-                              [Endpoint<Get>("/users", Name = "Test", Description = "Test", Summary = "Test", Tags = ["Test"], Version = "1.2-alpha", Group = typeof(MyEndpointGroup))]
+                              [Endpoint("/users", Name = "Test", Description = "Test", Summary = "Test", Tags = ["Test"], Version = "1.2-alpha", Group = typeof(MyEndpointGroup))]
                               [DisableAntiforgery]
                               [AllowAnonymous]
                               [UseAuthorization]

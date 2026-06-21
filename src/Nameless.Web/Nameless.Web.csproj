@@ -5,6 +5,7 @@
 		<Title>Nameless Web Library</Title>
 		<Description>Nameless Web Library Description</Description>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
 		<InterceptorsNamespaces>
 			$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated
 		</InterceptorsNamespaces>
@@ -27,16 +28,13 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
 		<PackageReference Include="Scalar.AspNetCore.Microsoft" />
 		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nameless.Core.Impl\Nameless.Core.Impl.csproj" />
-		<!-- Build-order dependency only: ensures generator DLL exists before pack. -->
-		<!-- ReferenceOutputAssembly=false: does not add generator as a compile or analyzer reference. -->
-		<!-- SkipGetTargetFrameworkProperties=true: avoids TF mismatch (netstandard2.0 vs net10.0). -->
-		<ProjectReference Include="..\..\generators\Nameless.Web.Http.Endpoints.Generator\Nameless.Web.Http.Endpoints.Generator.csproj"
-		                  ReferenceOutputAssembly="false"
-		                  SkipGetTargetFrameworkProperties="true" />
+		<ProjectReference Include="..\Nameless.Common\Nameless.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,17 +45,11 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub">
-			<TreatAsUsed>true</TreatAsUsed>
-		</PackageReference>
-	</ItemGroup>
-
 	<!-- Bundle generator DLL into build/generators/ at pack time -->
 	<!-- Do not put it inside analyzers/dotnet/cs so NuGet does not autoload it. -->
 	<!-- The .targets file controls loading conditionally via UseAutoEndpoints. -->
 	<ItemGroup>
-		<None Include="..\..\generators\Nameless.Web.Http.Endpoints.Generator\bin\$(Configuration)\netstandard2.0\Nameless.Web.Http.Endpoints.Generator.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
+		<None Include="..\..\generators\Nameless.Web.Generators\bin\$(Configuration)\netstandard2.0\Nameless.Web.Generators.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="build/" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="buildTransitive/" />
 	</ItemGroup>

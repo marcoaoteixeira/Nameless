@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Testing.Tools</RootNamespace>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591;NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Microsoft.Data.Sqlite" />
+		<PackageReference Include="Npgsql" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
+		<PackageReference Include="Testcontainers.RabbitMq" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit.v3.extensibility.core" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Common\Nameless.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>

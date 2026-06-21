@@ -11,7 +11,7 @@ public class SimpleEndpointGroup {
                                          [EndpointGroup(prefix: "/api", Tags = "SimpleGroup")]
                                          public partial class SimpleGroupEndpointGroup;
                                          
-                                         [Endpoint<Get>(Group = typeof(SimpleGroupEndpointGroup))]
+                                         [Endpoint(Group = typeof(SimpleGroupEndpointGroup))]
                                          public partial class SimpleEndpoint {
                                             public Task<IResult> HandleAsync() {
                                                 throw new NotImplementedException();

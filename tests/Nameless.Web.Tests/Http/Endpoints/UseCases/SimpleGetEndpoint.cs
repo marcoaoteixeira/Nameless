@@ -9,7 +9,7 @@ public class SimpleGetEndpoint {
 
     public SimpleGetEndpoint() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        public partial class HelloWorldEndpoint {
                                            public Task<IResult> HandleAsync() {
                                                return Task.FromResult<IResult>(TypedResults.Ok("Hello World!"));

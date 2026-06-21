@@ -1,13 +1,18 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Nameless.Diagnostics.CodeAnalysis;
 using Nameless.Null;
+using Nameless.Registration;
 
 namespace Nameless.Web.Null;
 
 /// <summary>
 ///     Null implementation of <see cref="HttpContext"/> that does not store any request or response data.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[IgnoreAssemblyScan]
 public sealed class NullHttpContext : HttpContext {
     public static HttpContext Instance { get; } = new NullHttpContext();
 

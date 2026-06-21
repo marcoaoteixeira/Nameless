@@ -51,27 +51,27 @@ public static class ServiceCollectionExtensions {
     }
 
     private static void IncludeDefaultPolicies(Dictionary<string, OutputCachePolicyOptions> actual) {
-        actual[WebDefaults.OutputCachePolicies.OneSecond] = new OutputCachePolicyOptions {
+        actual[Policies.OutputCache.OneSecond] = new OutputCachePolicyOptions {
             Duration = TimeSpan.FromSeconds(1),
             Skip = false
         };
 
-        actual[WebDefaults.OutputCachePolicies.FiveSeconds] = new OutputCachePolicyOptions {
+        actual[Policies.OutputCache.FiveSeconds] = new OutputCachePolicyOptions {
             Duration = TimeSpan.FromSeconds(5),
             Skip = false
         };
 
-        actual[WebDefaults.OutputCachePolicies.FifteenSeconds] = new OutputCachePolicyOptions {
+        actual[Policies.OutputCache.FifteenSeconds] = new OutputCachePolicyOptions {
             Duration = TimeSpan.FromSeconds(15),
             Skip = false
         };
 
-        actual[WebDefaults.OutputCachePolicies.ThirtySeconds] = new OutputCachePolicyOptions {
+        actual[Policies.OutputCache.ThirtySeconds] = new OutputCachePolicyOptions {
             Duration = TimeSpan.FromSeconds(30),
             Skip = false
         };
 
-        actual[WebDefaults.OutputCachePolicies.OneMinute] = new OutputCachePolicyOptions {
+        actual[Policies.OutputCache.OneMinute] = new OutputCachePolicyOptions {
             Duration = TimeSpan.FromMinutes(1),
             Skip = false
         };

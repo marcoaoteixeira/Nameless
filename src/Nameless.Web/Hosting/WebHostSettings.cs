@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -69,7 +68,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure antiforgery.
     /// </summary>
-    public Action<AntiforgeryOptions>? AntiforgeryConfiguration { get; set; }
+    public Action<AntiforgeryOptions>? ConfigureAntiforgery { get; set; }
 
     /// <summary>
     ///     Whether it should disable authentication/authorization services.
@@ -79,7 +78,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure authentication/authorization.
     /// </summary>
-    public Action<AuthRegistration>? AuthRegistrationConfiguration { get; set; }
+    public Action<AuthRegistration>? ConfigureAuth { get; set; }
 
     /// <summary>
     ///     Whether it should disable bootstrap services.
@@ -89,12 +88,12 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure bootstrap.
     /// </summary>
-    public Action<BootstrapRegistration>? BootstrapRegistrationConfiguration { get; set; }
+    public Action<BootstrapRegistration>? ConfigureBootstrap { get; set; }
 
     /// <summary>
     ///     Gets or sets a delegate to configure bootstrap warmup.
     /// </summary>
-    public Action<BootstrapWarmupOptions>? BootstrapWarmupConfiguration { get; set; }
+    public Action<BootstrapWarmupOptions>? ConfigureBootstrapWarmup { get; set; }
 
     /// <summary>
     ///     Whether it should disable CORS services.
@@ -119,7 +118,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure health check services.
     /// </summary>
-    public Action<HealthCheckRegistration>? HealthCheckRegistrationConfiguration { get; set; }
+    public Action<HealthCheckRegistration>? ConfigureHealthCheck { get; set; }
 
     /// <summary>
     ///     Whether it should disable request correlation ID services.
@@ -139,7 +138,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure Serilog.
     /// </summary>
-    public Action<SerilogRegistration>? SerilogRegistrationConfiguration { get; set; }
+    public Action<SerilogRegistration>? ConfigureSerilog { get; set; }
 
     /// <summary>
     ///     Whether it should disable mediator services.
@@ -149,7 +148,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure mediator services.
     /// </summary>
-    public Action<MediatorRegistration>? MediatorRegistrationConfiguration { get; set; }
+    public Action<MediatorRegistration>? ConfigureMediator { get; set; }
 
     /// <summary>
     ///     Whether it should disable OpenAPI services.
@@ -159,7 +158,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure OpenAPI services.
     /// </summary>
-    public Action<OpenApiRegistration>? OpenApiRegistrationConfiguration { get; set; }
+    public Action<OpenApiRegistration>? ConfigureOpenApi { get; set; }
 
     /// <summary>
     ///     Whether it should disable Scalar feature.
@@ -169,7 +168,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure Scalar.
     /// </summary>
-    public Action<ScalarRegistration>? ScalarRegistrationConfiguration { get; set; }
+    public Action<ScalarRegistration>? ConfigureScalar { get; set; }
 
     /// <summary>
     ///     Whether it should disable OpenTelemetry services.
@@ -179,7 +178,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure OpenTelemetry services.
     /// </summary>
-    public Action<OpenTelemetryRegistration>? OpenTelemetryRegistrationConfiguration { get; set; }
+    public Action<OpenTelemetryRegistration>? ConfigureOpenTelemetry { get; set; }
 
     /// <summary>
     ///     Whether it should disable output cache services.
@@ -194,7 +193,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure request rate limiter services.
     /// </summary>
-    public Action<RateLimiterRegistration>? RateLimiterRegistrationConfiguration { get; set; }
+    public Action<RateLimiterRegistration>? ConfigureRateLimiter { get; set; }
 
     /// <summary>
     ///     Whether it should disable request timeouts services.
@@ -214,7 +213,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure service discover.
     /// </summary>
-    public Action<ServiceDiscoveryRegistration>? ServiceDiscoveryRegistrationConfiguration { get; set; }
+    public Action<ServiceDiscoveryRegistration>? ConfigureServiceDiscovery { get; set; }
 
     /// <summary>
     ///     Whether it should disable validation services.
@@ -224,7 +223,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure validation services.
     /// </summary>
-    public Action<ValidationRegistration>? ValidationRegistrationConfiguration { get; set; }
+    public Action<ValidationRegistration>? ConfigureValidation { get; set; }
 
     /// <summary>
     ///     Whether it should disable Workers feature.
@@ -234,7 +233,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure Workers feature.
     /// </summary>
-    public Action<WorkersRegistration>? WorkerRegistrationConfiguration { get; set; }
+    public Action<WorkersRegistration>? ConfigureWorkers { get; set; }
 
     /// <summary>
     ///     Whether it should disable Resilience feature.

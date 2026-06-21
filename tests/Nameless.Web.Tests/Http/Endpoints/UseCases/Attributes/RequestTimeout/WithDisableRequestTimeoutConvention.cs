@@ -9,7 +9,7 @@ public class WithDisableRequestTimeoutConvention {
 
     public WithDisableRequestTimeoutConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableRequestTimeout]
                                        public partial class DisableRequestTimeoutEndpoint {
                                            public Task<IResult> HandleAsync() {

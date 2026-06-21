@@ -17,7 +17,7 @@ public sealed class ParameterBindingTests
                  public record CreateRequest(string Name);
                  public record SearchQuery(int Page);
 
-                 [Endpoint<Post>("/test")]
+                 [Endpoint("/test", Verb = HttpVerbs.Post)]
                  public partial class TestEndpoint
                  {
                      public async Task<IResult> HandleAsync({{handleAsyncParams}}) => {{handleAsyncBody}};
@@ -134,7 +134,7 @@ public sealed class ParameterBindingTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             public partial class TestEndpoint
             {
                 public async Task<IResult> HandleAsync([Required][FromQuery] int page) => Results.Ok();

@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Nameless.Attributes;
+using Nameless.Configuration;
 using Nameless.Helpers;
 
 namespace Nameless.Web.Auth;
@@ -11,14 +13,17 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterAuth(Action<AuthRegistration>? registration = null, IConfiguration? configuration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.AddAuthorization(settings.ConfigureAuthorizationOptions ?? (_ => { }));
+            return self.AddAuthorization(settings.ConfigureAuthorization ?? (_ => { }))
+                       .AddAuthentication(settings, configuration);
+        }
 
-            var authentication = new AuthenticationBuilderWrapper(self);
+        private IServiceCollection AddAuthentication(AuthRegistration settings, IConfiguration? configuration) {
+            var wrapper = new AuthenticationBuilderWrapper(self);
             var configure = settings.ConfigureAuthentication ?? (builder => ConfigureDefaultAuthentication(builder, configuration));
 
-            configure(authentication);
+            configure(wrapper);
 
-            authentication.Apply();
+            wrapper.Apply();
 
             return self;
         }
@@ -27,8 +32,13 @@ public static class ServiceCollectionExtensions {
     private static void ConfigureDefaultAuthentication(IAuthenticationBuilder builder, IConfiguration? configuration) {
         builder.Configure(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(opts => {
-                   var jwt = configuration?.GetOptions<JsonWebTokenOptions>() ??
-                             throw new InvalidOperationException("JSON Web Token configuration is missing.");
+                   if (configuration is null) { return; }
+
+                   const string SectionName = "Default";
+                   var sectionPath = $"{ConfigurationSectionNameAttribute.GetSectionName<JsonWebTokenOptions>()}:{SectionName}";
+                   var jwt = configuration.GetMultipleOptions<JsonWebTokenOptions>()
+                                          .GetValueOrDefault(SectionName) ??
+                             throw new MissingConfigurationException(section: sectionPath);
 
                    opts.Authority = jwt.Authority;
                    opts.TokenValidationParameters = new TokenValidationParameters {

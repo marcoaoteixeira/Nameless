@@ -16,7 +16,7 @@ public sealed class ProducesMetadataTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             [Produces<string>(200)]
             public partial class GetUsersEndpoint
             {
@@ -41,7 +41,7 @@ public sealed class ProducesMetadataTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             [ProducesProblem(500)]
             public partial class GetUsersEndpoint
             {
@@ -65,7 +65,7 @@ public sealed class ProducesMetadataTests
 
             namespace TestApp;
 
-            [Endpoint<Post>("/users")]
+            [Endpoint("/users", Verb = HttpVerbs.Post)]
             [ProducesValidationProblem(400)]
             public partial class CreateUserEndpoint
             {
@@ -89,7 +89,7 @@ public sealed class ProducesMetadataTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             [Produces<string>(200)]
             [ProducesProblem(500)]
             [ProducesValidationProblem(400)]

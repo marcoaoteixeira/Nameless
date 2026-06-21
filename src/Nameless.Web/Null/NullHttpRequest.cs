@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
+using Nameless.Diagnostics.CodeAnalysis;
+using Nameless.Registration;
 
 namespace Nameless.Web.Null;
 
 /// <summary>
 ///     Null implementation of <see cref="HttpRequest"/> that does not perform any operations.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[IgnoreAssemblyScan]
 public sealed class NullHttpRequest : HttpRequest {
     public static HttpRequest Instance { get; } = new NullHttpRequest();
 

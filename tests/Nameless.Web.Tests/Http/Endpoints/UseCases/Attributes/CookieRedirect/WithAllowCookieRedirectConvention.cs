@@ -9,7 +9,7 @@ public class WithAllowCookieRedirectConvention {
 
     public WithAllowCookieRedirectConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [AllowCookieRedirect]
                                        public partial class AllowCookieRedirectEndpoint {
                                            public Task<IResult> HandleAsync() {

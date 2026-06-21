@@ -12,7 +12,7 @@ public class WithUseFilterConvention {
                 => next(context);
         }
 
-        [Endpoint<Get>]
+        [Endpoint]
         [UseFilter<MyEndpointFilter>]
         public partial class UseFilterWithGenericSyntaxEndpoint {
             public Task<IResult> HandleAsync() {
@@ -29,7 +29,7 @@ public class WithUseFilterConvention {
                 => next(context);
         }
 
-        [Endpoint<Get>]
+        [Endpoint]
         [UseFilter(typeof(AnotherEndpointFilter))]
         public partial class UseFilterWithTypeofSyntaxEndpoint {
             public Task<IResult> HandleAsync() {

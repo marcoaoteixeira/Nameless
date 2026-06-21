@@ -6,81 +6,73 @@
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
     <File Path=".runsettings" />
-    <File Path="AGENTS.md" />
     <File Path="CLAUDE.md" />
     <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
-    <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/.solution/.claude/" />
   <Folder Name="/.solution/.claude/agents/">
     <File Path=".claude/agents/csharp.agent.md" />
   </Folder>
-  <Folder Name="/.solution/.claude/skills/" />
-  <Folder Name="/.solution/.claude/skills/xunit/">
-    <File Path=".claude/skills/xunit/SKILL.md" />
+  <Folder Name="/.solution/.claude/prompts/">
+    <File Path=".claude/prompts/create-readme.prompt.md" />
   </Folder>
+  <Folder Name="/.solution/.claude/skills/" />
   <Folder Name="/.solution/.claude/skills/code-reviewer/">
     <File Path=".claude/skills/code-reviewer/SKILL.md" />
   </Folder>
-  <Folder Name="/.solution/.github/" />
-  <Folder Name="/.solution/.github/workflows/">
-    <File Path=".github/workflows/develop-windows.yml" />
-    <File Path=".github/workflows/develop.yml" />
-    <File Path=".github/workflows/release-windows.yml" />
-    <File Path=".github/workflows/release.yml" />
-  </Folder>
-  <Folder Name="/.solution/build/">
-    <File Path="build/build.cake" />
-    <File Path="build/build.sh" />
-    <File Path="build/tools.sh" />
+  <Folder Name="/.solution/.claude/skills/xunit/">
+    <File Path=".claude/skills/xunit/SKILL.md" />
   </Folder>
   <Folder Name="/generators/">
-    <Project Path="generators/Nameless.Web.Http.Endpoints.Generator/Nameless.Web.Http.Endpoints.Generator.csproj" Id="6482a4c2-ea5c-4e59-92dd-a697e8fa760a" />
+    <Project Path="generators/Nameless.Web.Generators/Nameless.Web.Generators.csproj" />
   </Folder>
-  <Folder Name="/src/">
-    <Project Path="src/Nameless.Core/Nameless.Core.csproj" />
-	<Project Path="src/Nameless.Core.Impl/Nameless.Core.Impl.csproj" Id="5e984eec-bc99-4956-88e3-2d63d427a918" />
-    <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
-	<Project Path="src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" Id="0b5f9b94-2064-468d-a34a-2acca7ac7628" />
-    <Project Path="src/Nameless.WPF/Nameless.WPF.csproj" Id="41200dd5-7c63-4ee7-a2ec-6122a10abb56" />
-  </Folder>
-  <Folder Name="/templates/" />
-  <Folder Name="/templates/Microservices/">
-    <Project Path="templates/Microservices/Nameless.Microservices.Api/Nameless.Microservices.Api.csproj" Id="a71c308d-7c61-4ece-8e29-a5797c76134b" />
-    <Project Path="templates/Microservices/Nameless.Microservices.AppHost/Nameless.Microservices.AppHost.csproj" Id="1d7328e6-541f-4b1e-9dc8-ab54c6dc37d5" />
-    <Project Path="templates/Microservices/Nameless.Microservices.Contracts/Nameless.Microservices.Contracts.csproj" Id="eb8089f6-af3b-4cdd-8c2b-d1e7f7f011a7" />
-    <Project Path="templates/Microservices/Nameless.Microservices.Frontend/" Type="Website" DisplayName="Nameless.Microservices.Frontend">
+  <Folder Name="/samples/" />
+  <Folder Name="/samples/Microservices/">
+    <Project Path="samples/Microservices/Nameless.Microservices.Api/Nameless.Microservices.Api.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.AppHost/Nameless.Microservices.AppHost.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Bff/Nameless.Microservices.Bff.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Common/Nameless.Microservices.Common.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Frontend/" Type="Website" DisplayName="Nameless.Microservices.Frontend(1)">
       <BuildType Project="Debug" />
       <Properties Name="WebsiteProperties">
         <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
         <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
         <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;templates\Microservices\Nameless.Microservices.Frontend\&quot;" />
-        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_51968\&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;samples\Microservices\Nameless.Microservices.Frontend\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_50377\&quot;" />
         <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_51968&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_50377&quot;" />
         <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
         <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
         <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;templates\Microservices\Nameless.Microservices.Frontend\&quot;" />
-        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_51968\&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;samples\Microservices\Nameless.Microservices.Frontend\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_50377\&quot;" />
         <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_51968&quot;" />
-        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8&quot;" />
-        <Property Name="VWDPort" Value="&quot;51968&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_50377&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv2.0&quot;" />
+        <Property Name="VWDPort" Value="&quot;50377&quot;" />
       </Properties>
     </Project>
-    <Project Path="templates/Microservices/Nameless.Microservices.Worker/Nameless.Microservices.Worker.csproj" Id="8b3ca237-3b04-4b49-a199-e780d5caada7" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Worker/Nameless.Microservices.Worker.csproj" />
   </Folder>
-  <Folder Name="/templates/WinApp/">
-    <Project Path="templates/WinApp/Nameless.WinApp/Nameless.WinApp.csproj" Id="5dddafcb-04d1-4415-baef-f234e3256bf2" />
+  <Folder Name="/samples/WinApp/">
+    <Project Path="samples/WinApp/Nameless.WinApp/Nameless.WinApp.csproj" />
+    <Project Path="samples/WinApp/Nameless.WinApp.Tests/Nameless.WinApp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Nameless.Common.Testing.Tools/Nameless.Common.Testing.Tools.csproj" />
+    <Project Path="src/Nameless.Common/Nameless.Common.csproj" />
+    <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
+    <Project Path="src/Nameless.Windows/Nameless.Windows.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Nameless.Core.Tests/Nameless.Core.Tests.csproj" Id="feec9665-5016-4492-aee9-cd2936ef62bd" />
-    <Project Path="tests/Nameless.Core.Impl.Tests/Nameless.Core.Impl.Tests.csproj" Id="2f7e08bf-7f2c-4cde-bac7-7aeb2427cc61" />
-    <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" Id="287c4892-3e77-473a-9a85-54683f6cdcfb" />
-    <Project Path="tests/Nameless.WPF.Tests/Nameless.WPF.Tests.csproj" Id="8316b9f3-b75d-405f-a89f-41c345fa8306" />
+    <Project Path="tests/Nameless.Common.Testing.Tools.Tests/Nameless.Common.Testing.Tools.Tests.csproj" />
+    <Project Path="tests/Nameless.Common.Tests/Nameless.Common.Tests.csproj" />
+    <Project Path="tests/Nameless.Web.Generators.Tests/Nameless.Web.Generators.Tests.csproj" Id="5526682d-2903-4ebb-9f0d-5223e0f5c3f8" />
+    <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" />
+    <Project Path="tests/Nameless.Windows.Tests/Nameless.Windows.Tests.csproj" Id="455b3641-dd7b-40c2-b44d-deae0823e35f" />
   </Folder>
 </Solution>

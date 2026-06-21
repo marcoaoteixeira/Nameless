@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Produces;
 public class WithProducesProblemConvention {
     private static string ProducesProblemWithDefaultsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [ProducesProblemResponse]
         public partial class ProducesProblemWithDefaultsEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithProducesProblemConvention {
 
     private static string ProducesProblemWithCustomStatusCodeEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [ProducesProblemResponse(StatusCode = 404)]
         public partial class ProducesProblemWithCustomStatusCodeEndpoint {
             public Task<IResult> HandleAsync() {

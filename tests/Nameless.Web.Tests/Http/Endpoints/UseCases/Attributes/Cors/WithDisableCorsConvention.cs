@@ -9,7 +9,7 @@ public class WithDisableCorsConvention {
 
     public WithDisableCorsConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableCors]
                                        public partial class DisableCorsEndpoint {
                                            public Task<IResult> HandleAsync() {

@@ -12,7 +12,7 @@ public sealed class SimpleGetEndpointTests
 
         namespace TestApp;
 
-        [Endpoint<Get>("/users")]
+        [Endpoint("/users")]
         public partial class GetUsersEndpoint
         {
             public async Task<IResult> HandleAsync()
@@ -85,7 +85,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync(CancellationToken ct)
@@ -108,7 +108,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users/{id}")]
+            [Endpoint("/users/{id}")]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id)
@@ -130,7 +130,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             public partial class GetUsersEndpoint { }
             """;
 
@@ -151,7 +151,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users")]
+            [Endpoint("/users")]
             public partial class GetUsersEndpoint
             {
                 private async Task<IResult> HandleAsync() => Results.Ok();
@@ -173,7 +173,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users/\"special\"")]
+            [Endpoint("/users/\"special\"")]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -221,7 +221,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users", Name = "ListUsers")]
+            [Endpoint("/users", Name = "ListUsers")]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -251,7 +251,7 @@ public sealed class SimpleGetEndpointTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/users", Tags = ["Users", "Api"])]
+            [Endpoint("/users", Tags = ["Users", "Api"])]
             public partial class GetUsersEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();

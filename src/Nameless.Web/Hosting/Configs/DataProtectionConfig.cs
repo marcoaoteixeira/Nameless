@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Attributes;
+using Nameless.Configuration;
 using Nameless.Web.Security;
 
 namespace Nameless.Web.Hosting.Configs;
@@ -10,7 +13,10 @@ public static class DataProtectionConfig {
         public WebApplicationBuilder ConfigureDataProtection(WebHostSettings settings) {
             if (settings.DisableDataProtection) { return self; }
 
-            var options = self.Configuration.GetOptions<AppDataProtectionOptions>();
+            var section = ConfigurationSectionNameAttribute.GetSectionName<AppDataProtectionOptions>();
+            var options = self.Configuration.GetSection<AppDataProtectionOptions>()
+                              .Get<AppDataProtectionOptions>() ?? 
+                          throw new MissingConfigurationException(section);
 
             var builder = self.Services
                               .AddDataProtection(opts => opts = options)

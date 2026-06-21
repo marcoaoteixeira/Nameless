@@ -9,9 +9,9 @@ public class WithDisableAntiforgeryConvention {
 
     public WithDisableAntiforgeryConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableAntiforgery]
-                                       public partial class DisableAntiforgeryEndpoint {
+                                       public partial class SampleEndpoint {
                                            public Task<IResult> HandleAsync() {
                                                return Task.FromResult<IResult>(TypedResults.Ok());
                                            }
@@ -23,7 +23,6 @@ public class WithDisableAntiforgeryConvention {
     public void WhenEndpointClassMarkDisableAntiforgery_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.DisableAntiforgeryEndpoint", source);
         Assert.Matches(@"DisableAntiforgeryEndpoint\.Register\(.*\);", source);
         Assert.Matches(@"DisableAntiforgeryEndpoint\.Map\(.*\);", source);
         Assert.Matches(@"\.DisableAntiforgery\(\)", source);

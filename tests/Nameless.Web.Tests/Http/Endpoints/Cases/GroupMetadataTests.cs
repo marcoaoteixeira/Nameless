@@ -22,7 +22,7 @@ public sealed class GroupMetadataTests
                  {{groupAttributes}}
                  public partial class ProductsGroup;
 
-                 [Endpoint<Get>("", Group = typeof(ProductsGroup))]
+                 [Endpoint("", Group = typeof(ProductsGroup))]
                  public partial class GetProductsEndpoint
                  {
                      public async Task<IResult> HandleAsync() => Results.Ok();
@@ -168,7 +168,7 @@ public sealed class GroupMetadataTests
             [EndpointFilter<LoggingFilter>]
             public partial class ProductsGroup;
 
-            [Endpoint<Get>("", Group = typeof(ProductsGroup))]
+            [Endpoint("", Group = typeof(ProductsGroup))]
             public partial class GetProductsEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -208,7 +208,7 @@ public sealed class GroupMetadataTests
             [EndpointFilter<GroupFilter>]
             public partial class ProductsGroup;
 
-            [Endpoint<Get>("", Group = typeof(ProductsGroup))]
+            [Endpoint("", Group = typeof(ProductsGroup))]
             [EndpointFilter<EndpointSpecificFilter>]
             public partial class GetProductsEndpoint
             {

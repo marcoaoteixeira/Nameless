@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.OutputCache;
 public class WithOutputCacheConvention {
     private static string OutputCacheWithNoArgsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache]
         public partial class OutputCacheWithNoArgsEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithOutputCacheConvention {
 
     private static string OutputCacheWithNoStoreEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache(NoStore = true)]
         public partial class OutputCacheWithNoStoreEndpoint {
             public Task<IResult> HandleAsync() {
@@ -31,7 +31,7 @@ public class WithOutputCacheConvention {
 
     private static string OutputCacheWithPolicyNameEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache(PolicyName = "my-cache-policy")]
         public partial class OutputCacheWithPolicyNameEndpoint {
             public Task<IResult> HandleAsync() {
@@ -43,7 +43,7 @@ public class WithOutputCacheConvention {
 
     private static string OutputCacheWithDurationEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache(Duration = 60)]
         public partial class OutputCacheWithDurationEndpoint {
             public Task<IResult> HandleAsync() {
@@ -55,7 +55,7 @@ public class WithOutputCacheConvention {
 
     private static string OutputCacheWithVaryByQueryKeysEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache(Duration = 120, VaryByQueryKeys = new[] { "search", "page" })]
         public partial class OutputCacheWithVaryByQueryKeysEndpoint {
             public Task<IResult> HandleAsync() {
@@ -67,7 +67,7 @@ public class WithOutputCacheConvention {
 
     private static string OutputCacheWithTagsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [OutputCache(Duration = 60, Tags = new[] { "products" })]
         public partial class OutputCacheWithTagsEndpoint {
             public Task<IResult> HandleAsync() {

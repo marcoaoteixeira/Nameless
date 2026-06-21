@@ -17,7 +17,7 @@ public sealed class DiagnosticTests
 
             public partial class NotAGroup;
 
-            [Endpoint<Get>("/a", Group = typeof(NotAGroup))]
+            [Endpoint("/a", Group = typeof(NotAGroup))]
             public partial class GetItemV1Endpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -37,7 +37,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public partial class GetItemsEndpoint { }
             """;
 
@@ -56,7 +56,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             [Deprecate("bad-version")]
             public partial class GetItemsEndpoint
             {
@@ -79,7 +79,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public partial class GetItemsEndpoint
             {
                 private async Task<IResult> HandleAsync() => Results.Ok();
@@ -102,7 +102,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             [Authorize]
             [AllowAnonymous]
             public partial class GetItemsEndpoint
@@ -126,7 +126,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public class GetItemsEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -151,7 +151,7 @@ public sealed class DiagnosticTests
             [EndpointGrouping("Users", "/api/users")]
             public class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);
@@ -173,7 +173,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public class GetItemsEndpoint
             {
                 public async Task<IResult> HandleAsync() => Results.Ok();
@@ -195,7 +195,7 @@ public sealed class DiagnosticTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/items")]
+            [Endpoint("/items")]
             public partial class GetItemsEndpoint
             {
                 private async Task<IResult> HandleAsync() => Results.Ok();
@@ -223,7 +223,7 @@ public sealed class DiagnosticTests
             [AllowAnonymous]
             public partial class UsersGroup;
 
-            [Endpoint<Get>("/{id}", Group = typeof(UsersGroup))]
+            [Endpoint("/{id}", Group = typeof(UsersGroup))]
             public partial class GetUserEndpoint
             {
                 public async Task<IResult> HandleAsync(int id) => Results.Ok(id);

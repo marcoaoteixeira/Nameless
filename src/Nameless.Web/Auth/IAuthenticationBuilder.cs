@@ -29,12 +29,12 @@ public interface IAuthenticationBuilder {
     /// <typeparam name="THandler">
     ///     The <see cref="AuthenticationHandler{TOptions}"/> used to handle this scheme.
     /// </typeparam>
-    /// <param name="configure">
-    ///     Used to configure the scheme options.
-    /// </param>
     /// <param name="authenticationScheme">
     ///     The name of this scheme. If no value is provided, default scheme
     ///     is <see cref="JwtBearerDefaults.AuthenticationScheme"/>.
+    /// </param>
+    /// <param name="configureOptions">
+    ///     Used to configure the scheme options.
     /// </param>
     /// <param name="displayName">
     ///     The display name of this scheme.
@@ -43,7 +43,7 @@ public interface IAuthenticationBuilder {
     ///     The current <see cref="IAuthenticationBuilder"/> instance so
     ///     other actions can be chained.
     /// </returns>
-    IAuthenticationBuilder AddScheme<TOptions, THandler>(Action<TOptions>? configure, string? authenticationScheme = null, string? displayName = null)
+    IAuthenticationBuilder AddScheme<TOptions, THandler>(string authenticationScheme, Action<TOptions>? configureOptions = null, string? displayName = null)
         where TOptions : AuthenticationSchemeOptions, new()
         where THandler : AuthenticationHandler<TOptions>;
 
@@ -52,12 +52,11 @@ public interface IAuthenticationBuilder {
     ///     handler which can be used to redirect to other authentication
     ///     schemes.
     /// </summary>
-    /// <param name="configure">
-    ///     Used to configure the scheme options.
-    /// </param>
     /// <param name="authenticationScheme">
-    ///     The name of this scheme. If no value is provided, default scheme
-    ///     is <see cref="JwtBearerDefaults.AuthenticationScheme"/>.
+    ///     The name of this scheme.
+    /// </param>
+    /// <param name="configureOptions">
+    ///     Used to configure the scheme options.
     /// </param>
     /// <param name="displayName">
     ///     The display name of this scheme.
@@ -66,7 +65,7 @@ public interface IAuthenticationBuilder {
     ///     The current <see cref="IAuthenticationBuilder"/> instance so
     ///     other actions can be chained.
     /// </returns>
-    IAuthenticationBuilder AddPolicyScheme(Action<PolicySchemeOptions> configure, string? authenticationScheme = null, string? displayName = null);
+    IAuthenticationBuilder AddPolicyScheme(string authenticationScheme, Action<PolicySchemeOptions> configureOptions, string? displayName = null);
 
     /// <summary>
     ///     Enables JWT-bearer authentication using the specified scheme.
@@ -76,7 +75,7 @@ public interface IAuthenticationBuilder {
     ///     header.
     /// </para>
     /// </summary>
-    /// <param name="configure">
+    /// <param name="configureOptions">
     ///     A delegate that allows configuring <see cref="JwtBearerOptions"/>.
     /// </param>
     /// <param name="authenticationScheme">
@@ -90,5 +89,5 @@ public interface IAuthenticationBuilder {
     ///     The current <see cref="IAuthenticationBuilder"/> instance so
     ///     other actions can be chained.
     /// </returns>
-    IAuthenticationBuilder AddJwtBearer(Action<JwtBearerOptions> configure, string? authenticationScheme = null, string? displayName = null);
+    IAuthenticationBuilder AddJwtBearer(Action<JwtBearerOptions> configureOptions, string? authenticationScheme = null, string? displayName = null);
 }

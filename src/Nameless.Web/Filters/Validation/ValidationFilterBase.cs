@@ -7,20 +7,17 @@ using Nameless.Validation;
 namespace Nameless.Web.Filters.Validation;
 
 public abstract class ValidationFilterBase {
-    protected static async Task<Result<bool>> ValidateRequestObjectsAsync(IServiceProvider provider, IEnumerable<object?> arguments, CancellationToken cancellationToken) {
+    protected static async Task<Result<Nothing>> ValidateRequestObjectsAsync(IServiceProvider provider, IEnumerable<object?> arguments, CancellationToken cancellationToken) {
         if (!TryResolveValidation(provider, out var validation)) {
-            return true;
+            return Nothing.Value;
         }
 
         var errors = new List<Error>();
 
-        foreach (var argument in arguments.Cast<object>()) {
-            if (!ValidateAttribute.IsPresent(argument)) { continue; }
+        foreach (var argument in arguments) {
+            if (argument is null) { continue; }
 
-            var result = await validation.ValidateAsync(
-                argument,
-                cancellationToken
-            );
+            var result = await validation.ValidateAsync(argument, cancellationToken);
 
             if (result.Failure) {
                 errors.AddRange(result.Errors);

@@ -9,7 +9,7 @@ public class WithDisableOutputCacheConvention {
 
     public WithDisableOutputCacheConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableOutputCache]
                                        public partial class DisableOutputCacheEndpoint {
                                            public Task<IResult> HandleAsync() {

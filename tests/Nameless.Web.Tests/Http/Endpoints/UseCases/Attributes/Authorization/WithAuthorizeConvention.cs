@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Authorization;
 public class WithAuthorizeConvention {
     private static string AuthorizeWithNoArgumentsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Authorize]
         public partial class AuthorizeWithNoArgumentsEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithAuthorizeConvention {
 
     private static string AuthorizeWithPolicyEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Authorize(Policy = "auth-policy")]
         public partial class AuthorizeWithPolicyEndpoint {
             public Task<IResult> HandleAsync() {
@@ -31,7 +31,7 @@ public class WithAuthorizeConvention {
 
     private static string AuthorizeWithPolicyRoleEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Authorize(Policy = "auth-policy", Roles = "Admin, User")]
         public partial class AuthorizeWithPolicyRoleEndpoint {
             public Task<IResult> HandleAsync() {
@@ -43,7 +43,7 @@ public class WithAuthorizeConvention {
 
     private static string AuthorizeWithPolicyRoleAuthenticationSchemesEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Authorize(Policy = "auth-policy", Roles = "Admin, User", AuthenticationSchemes = "Bearer, Cookie")]
         public partial class AuthorizeWithPolicyRoleAuthenticationSchemesEndpoint {
             public Task<IResult> HandleAsync() {
@@ -55,7 +55,7 @@ public class WithAuthorizeConvention {
 
     private static string AuthorizeWithPolicyAuthenticationSchemesEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [Authorize(Policy = "auth-policy", AuthenticationSchemes = "Bearer, Cookie")]
         public partial class AuthorizeWithPolicyAuthenticationSchemesEndpoint {
             public Task<IResult> HandleAsync() {

@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.RequestTimeout;
 public class WithRequestTimeoutConvention {
     private static string RequestTimeoutWithMillisecondsEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [RequestTimeout(milliseconds: 1234)]
         public partial class RequestTimeoutWithPolicyNameEndpoint {
             public Task<IResult> HandleAsync() {
@@ -19,7 +19,7 @@ public class WithRequestTimeoutConvention {
 
     private static string RequestTimeoutWithPolicyNameEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [RequestTimeout("my-timeout-policy")]
         public partial class RequestTimeoutWithPolicyNameEndpoint {
             public Task<IResult> HandleAsync() {

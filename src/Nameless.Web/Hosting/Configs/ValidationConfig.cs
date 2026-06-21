@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Nameless.Registration;
 using Nameless.Validation.FluentValidation;
 
 namespace Nameless.Web.Hosting.Configs;
@@ -16,8 +17,8 @@ public static class ValidationConfig {
             if (settings.DisableValidation) { return self; }
 
             self.Services.RegisterValidation(
-                WebHostSettingsHelper.Join(
-                    settings.ValidationRegistrationConfiguration,
+                AssemblyScanAwareHelper.Join(
+                    settings.ConfigureValidation,
                     settings.Assemblies
                 )
             );

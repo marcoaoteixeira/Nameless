@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Nameless.Mediator;
+using Nameless.Registration;
 
 namespace Nameless.Web.Hosting.Configs;
 
@@ -16,8 +17,8 @@ public static class MediatorConfig {
             if (settings.DisableMediator) { return self; }
 
             self.Services.RegisterMediator(
-                WebHostSettingsHelper.Join(
-                    settings.MediatorRegistrationConfiguration,
+                AssemblyScanAwareHelper.Join(
+                    settings.ConfigureMediator,
                     settings.Assemblies
                 )
             );

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Nameless.Registration;
 using Nameless.Web.RateLimiter;
 
 namespace Nameless.Web.Hosting.Configs;
@@ -16,8 +17,8 @@ public static class RateLimiterConfig {
             if (settings.DisableRateLimiter) { return self; }
 
             self.Services.RegisterRateLimiter(
-                WebHostSettingsHelper.Join(
-                    settings.RateLimiterRegistrationConfiguration,
+                AssemblyScanAwareHelper.Join(
+                    settings.ConfigureRateLimiter,
                     settings.Assemblies
                 )
             );

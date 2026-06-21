@@ -10,7 +10,7 @@ public class AuthRegistration {
     ///     Gets or sets the action used to configure authorization
     ///     options for the application.
     /// </summary>
-    public Action<AuthorizationOptions>? ConfigureAuthorizationOptions { get; set; }
+    public Action<AuthorizationOptions>? ConfigureAuthorization { get; set; }
 
     /// <summary>
     ///     Gets or sets the action used to configure authentication

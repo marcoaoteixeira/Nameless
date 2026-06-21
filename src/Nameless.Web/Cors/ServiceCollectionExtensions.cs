@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions {
     }
 
     private static void IncludeDefaultPolicies(Dictionary<string, CorsPolicyOptions> actual) {
-        actual[WebDefaults.CorsPolicies.AllowEverything] = new CorsPolicyOptions {
+        actual[Policies.Cors.AllowEverything] = new CorsPolicyOptions {
             Headers = "*",
             Methods = "*",
             Origins = "*",

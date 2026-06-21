@@ -10,14 +10,10 @@
 	<!-- Boolean variables -->
 	<PropertyGroup>
 		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
-		<IsTestsProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]tests[\\|\/]`))</IsTestsProject>
+		<IsTestsProject>$(MSBuildProjectFile.ToLower().EndsWith('.tests.csproj'))</IsTestsProject>
 
 		<EnableCodeAnalysis>False</EnableCodeAnalysis>
 		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
-
-		<!-- Pack only projects in "src" folder. -->
-		<IncludeNuGetPackageInfo>False</IncludeNuGetPackageInfo>
-		<IncludeNuGetPackageInfo Condition="$(IsSrcProject) == 'True'">True</IncludeNuGetPackageInfo>
 	</PropertyGroup>
 
 	<!-- All projects must include these properties. -->
@@ -43,7 +39,7 @@
 		Project that will be packed (NuGet) should inherit these properties.
 		This will add the minimal properties for the NuGet package to be built.
 	-->
-	<PropertyGroup Condition="$(IncludeNuGetPackageInfo)">
+	<PropertyGroup Condition="$(IsSrcProject)">
 		<Authors>Marco Antonio Orestes Teixeira</Authors>
 		<Company>Nameless</Company>
 		<Copyright>MIT</Copyright>
@@ -65,18 +61,20 @@
 		<Version>1.0.0</Version>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(IncludeNuGetPackageInfo)">
+	<ItemGroup Condition="$(IsSrcProject)">
 		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(IncludeNuGetPackageInfo)">
-		<None Include="..\..\branding\icon.png" Pack="true" PackagePath="" />
+	<ItemGroup Condition="$(IsSrcProject)">
+		<None Include="..\..\build\icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<!-- For test projects, use these properties -->
 	<PropertyGroup Condition="$(IsTestsProject)">
 		<IsPackable>False</IsPackable>
 		<OutputType>Exe</OutputType>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
 
 	<!-- Test projects must include these properties -->

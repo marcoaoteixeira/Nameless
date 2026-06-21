@@ -15,7 +15,7 @@ public static class OpenApiConfig {
         public WebApplicationBuilder ConfigureOpenApi(WebHostSettings settings) {
             if (settings.DisableOpenApi) { return self; }
 
-            self.Services.RegisterOpenApi(settings.OpenApiRegistrationConfiguration ?? DefaultOpenApiConfig);
+            self.Services.RegisterOpenApi(settings.ConfigureOpenApi ?? DefaultOpenApiConfig);
 
             return self;
 

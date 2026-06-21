@@ -32,7 +32,7 @@ public static class LoggingConfig {
             if (settings.DisableLogging) { return self; }
 
             self.Services.RegisterSerilog(
-                settings.SerilogRegistrationConfiguration ?? DefaultSerilogConfiguration
+                settings.ConfigureSerilog ?? DefaultSerilogConfiguration
             );
 
             return self;
@@ -58,7 +58,7 @@ public static class LoggingConfig {
 
                 // Write to OpenTelemetry sink
                 .WriteTo.OpenTelemetry(opts => opts.Endpoint = configuration[
-                    CoreConstants.OpenTelemetry.ExporterEndpointConfigName
+                    StaticData.OpenTelemetry.ExporterEndpointConfigKey
                 ])
 
                 // Override minimum levels

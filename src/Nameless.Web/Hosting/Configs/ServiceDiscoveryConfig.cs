@@ -16,7 +16,7 @@ public static class ServiceDiscoveryConfig {
             if (settings.DisableServiceDiscovery) { return self; }
 
             self.Services.RegisterServiceDiscovery(
-                settings.ServiceDiscoveryRegistrationConfiguration
+                settings.ConfigureServiceDiscovery
             );
 
             return self;

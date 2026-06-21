@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Nameless.Bootstrap;
+using Nameless.Registration;
 
 namespace Nameless.Web.Hosting.Configs;
 
+/// <summary>
+///     Bootstrap configuration.
+/// </summary>
 public static class BootstrapConfig {
     extension(WebApplicationBuilder self) {
         /// <summary>
@@ -16,8 +20,8 @@ public static class BootstrapConfig {
             if (settings.DisableBootstrap) { return self; }
 
             self.Services.RegisterBootstrap(
-                WebHostSettingsHelper.Join(
-                    settings.BootstrapRegistrationConfiguration,
+                AssemblyScanAwareHelper.Join(
+                    settings.ConfigureBootstrap,
                     settings.Assemblies
                 ),
                 self.Configuration
@@ -31,14 +35,30 @@ public static class BootstrapConfig {
     ///     The current <see cref="WebApplication"/> instance.
     /// </param>
     extension(WebApplication self) {
+        /// <summary>
+        ///     Executes Bootstrap warmup.
+        /// </summary>
+        /// <param name="settings">
+        ///     The <see cref="WebHostSettings"/> settings.
+        /// </param>
         public void Warmup(WebHostSettings settings) {
             self.WarmupAsync(settings).GetAwaiter().GetResult();
         }
 
+        /// <summary>
+        ///     Asynchronous executes Bootstrap warmup.
+        /// </summary>
+        /// <param name="settings">
+        ///     The <see cref="WebHostSettings"/> settings.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task"/> representing the method asynchronous
+        ///     execution.
+        /// </returns>
         public Task WarmupAsync(WebHostSettings settings) {
             return settings.DisableBootstrap
                 ? Task.CompletedTask
-                : self.WarmupAsync(settings.BootstrapWarmupConfiguration);
+                : self.WarmupAsync(settings.ConfigureBootstrapWarmup);
         }
     }
 }

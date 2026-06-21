@@ -7,7 +7,7 @@ namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.RateLimiting;
 public class WithEnableRateLimitingConvention {
     private static string EnableRateLimitingWithPolicyNameEndpoint => SourceCodeHelper.Write(
         """
-        [Endpoint<Get>]
+        [Endpoint]
         [EnableRateLimiting("my-rate-policy")]
         public partial class EnableRateLimitingWithPolicyNameEndpoint {
             public Task<IResult> HandleAsync() {

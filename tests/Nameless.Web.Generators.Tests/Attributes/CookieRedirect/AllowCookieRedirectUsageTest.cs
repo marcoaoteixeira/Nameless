@@ -1,0 +1,29 @@
+using Nameless.Testing.Tools.Attributes;
+
+namespace Nameless.Web.Generators.Attributes.CookieRedirect;
+
+[UnitTest]
+public class AllowCookieRedirectUsageTest {
+    private readonly string _code;
+
+    public AllowCookieRedirectUsageTest() {
+        _code = SourceCodeHelper.Write("""
+                                       [Endpoint]
+                                       [AllowCookieRedirect]
+                                       public partial class SampleEndpoint {
+                                           public Task<IResult> HandleAsync() {
+                                               return Task.FromResult<IResult>(TypedResults.Ok());
+                                           }
+                                       }
+                                       """);
+    }
+
+    [Fact]
+    public void WhenEndpointClassMarkAllowCookieRedirect_ThenEmitConvention() {
+        var source = CodeGeneratorHelper.GetCodeBySourceType(_code).SingleOrDefault();
+
+        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
+        Assert.Matches(@"MapGet\(.*", source);
+        Assert.Matches(@"\.AllowCookieRedirect\(\)", source);
+    }
+}

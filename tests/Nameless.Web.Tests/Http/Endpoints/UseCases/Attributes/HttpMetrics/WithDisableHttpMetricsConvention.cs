@@ -9,7 +9,7 @@ public class WithDisableHttpMetricsConvention {
 
     public WithDisableHttpMetricsConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableHttpMetrics]
                                        public partial class DisableHttpMetricsEndpoint {
                                            public Task<IResult> HandleAsync() {

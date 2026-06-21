@@ -9,7 +9,7 @@ public class WithDisableRateLimitingConvention {
 
     public WithDisableRateLimitingConvention() {
         _code = SourceCodeHelper.Write("""
-                                       [Endpoint<Get>]
+                                       [Endpoint]
                                        [DisableRateLimiting]
                                        public partial class DisableRateLimitingEndpoint {
                                            public Task<IResult> HandleAsync() {

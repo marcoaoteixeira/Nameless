@@ -17,7 +17,7 @@ public sealed class KnownAttributePropagationTests
 
                  namespace TestApp;
 
-                 [Endpoint<Get>("/test")]
+                 [Endpoint("/test")]
                  {{extraAttributes}}
                  public partial class TestEndpoint
                  {
@@ -106,7 +106,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [EndpointSummary("Returns all items")]
             public partial class TestEndpoint
             {
@@ -129,7 +129,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [EndpointDescription("Detailed description here")]
             public partial class TestEndpoint
             {
@@ -152,7 +152,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [EndpointSummary("Say \"hello\"")]
             public partial class TestEndpoint
             {
@@ -176,7 +176,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [RequireAntiforgeryToken]
             public partial class TestEndpoint
             {
@@ -200,7 +200,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [RequireAntiforgeryToken(false)]
             public partial class TestEndpoint
             {
@@ -223,7 +223,7 @@ public sealed class KnownAttributePropagationTests
 
             namespace TestApp;
 
-            [Endpoint<Get>("/test")]
+            [Endpoint("/test")]
             [DisableHttpMetrics]
             public partial class TestEndpoint
             {
@@ -248,7 +248,7 @@ public sealed class KnownAttributePropagationTests
 
             public record CreateRequest(string Name);
 
-            [Endpoint<Post>("/test")]
+            [Endpoint("/test", Verb = HttpVerbs.Post)]
             [Accepts<CreateRequest>("application/json")]
             public partial class TestEndpoint
             {

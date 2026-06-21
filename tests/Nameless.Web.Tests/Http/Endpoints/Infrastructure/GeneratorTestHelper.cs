@@ -1,9 +1,8 @@
 using System.Collections.Immutable;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Nameless.Web.Http.Endpoints.Generator;
+using Nameless.Web.Generators;
 
 namespace Nameless.Web.Http.Endpoints.Infrastructure;
 
@@ -38,7 +37,7 @@ internal static class GeneratorTestHelper {
             }
         }
 
-        TryAdd(typeof(EndpointAttribute<Get>).Assembly.Location);
+        TryAdd(typeof(EndpointAttribute).Assembly.Location);
 
         return refs;
 

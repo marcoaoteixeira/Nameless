@@ -7,8 +7,8 @@ namespace Nameless.Web.Auth;
 public class AuthenticationBuilderWrapper : IAuthenticationBuilder {
     private readonly IServiceCollection _services;
 
-    private Action<AuthenticationBuilder>? Compose { get; set; }
-    private Action<AuthenticationOptions>? Options { get; set; }
+    private Action<AuthenticationBuilder>? ConfigureBuilder { get; set; }
+    private Action<AuthenticationOptions>? ConfigureOptions { get; set; }
 
     /// <summary>
     ///     Initializes a new instance of
@@ -22,48 +22,42 @@ public class AuthenticationBuilderWrapper : IAuthenticationBuilder {
     }
 
     public IAuthenticationBuilder Configure(Action<AuthenticationOptions> configure) {
-        Options = configure;
+        ConfigureOptions = configure;
 
         return this;
     }
 
     /// <inheritdoc />
-    public IAuthenticationBuilder AddScheme<TOptions, THandler>(Action<TOptions>? configure, string? authenticationScheme = null, string? displayName = null)
+    public IAuthenticationBuilder AddScheme<TOptions, THandler>(string authenticationScheme, Action<TOptions>? configureOptions, string? displayName = null)
         where TOptions : AuthenticationSchemeOptions, new()
         where THandler : AuthenticationHandler<TOptions> {
-        Compose += builder => {
-            builder.AddScheme<TOptions, THandler>(
-                authenticationScheme: authenticationScheme ?? JwtBearerDefaults.AuthenticationScheme,
-                displayName,
-                configureOptions: configure
-            );
-        };
+        ConfigureBuilder += builder => builder.AddScheme<TOptions, THandler>(
+            authenticationScheme,
+            displayName,
+            configureOptions
+        );
 
         return this;
     }
 
     /// <inheritdoc />
-    public IAuthenticationBuilder AddPolicyScheme(Action<PolicySchemeOptions> configure, string? authenticationScheme = null, string? displayName = null) {
-        Compose += builder => {
-            builder.AddPolicyScheme(
-                authenticationScheme: authenticationScheme ?? JwtBearerDefaults.AuthenticationScheme,
-                displayName,
-                configureOptions: configure
-            );
-        };
+    public IAuthenticationBuilder AddPolicyScheme(string authenticationScheme, Action<PolicySchemeOptions> configureOptions, string? displayName = null) {
+        ConfigureBuilder += builder => builder.AddPolicyScheme(
+            authenticationScheme,
+            displayName,
+            configureOptions
+        );
 
         return this;
     }
 
     /// <inheritdoc />
-    public IAuthenticationBuilder AddJwtBearer(Action<JwtBearerOptions> configure, string? authenticationScheme = null, string? displayName = null) {
-        Compose += builder => {
-            builder.AddJwtBearer(
-                authenticationScheme: authenticationScheme ?? JwtBearerDefaults.AuthenticationScheme,
-                displayName,
-                configureOptions: configure
-            );
-        };
+    public IAuthenticationBuilder AddJwtBearer(Action<JwtBearerOptions> configureOptions, string? authenticationScheme = null, string? displayName = null) {
+        ConfigureBuilder += builder => builder.AddJwtBearer(
+            authenticationScheme ?? JwtBearerDefaults.AuthenticationScheme,
+            displayName,
+            configureOptions
+        );
 
         return this;
     }
@@ -72,9 +66,11 @@ public class AuthenticationBuilderWrapper : IAuthenticationBuilder {
     ///     Applies all configuration.
     /// </summary>
     public void Apply() {
-        var authentication = _services.AddAuthentication(Options ?? (_ => { }));
+        var authentication = _services.AddAuthentication(ConfigureOptions ?? (_ => { }));
 
-        Compose?.Invoke(authentication);
-        Compose = null;
+        ConfigureBuilder?.Invoke(authentication);
+
+        ConfigureBuilder = null;
+        ConfigureOptions = null;
     }
 }

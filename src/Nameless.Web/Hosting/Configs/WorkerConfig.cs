@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Nameless.Registration;
 using Nameless.Workers;
 
 namespace Nameless.Web.Hosting.Configs;
@@ -16,8 +17,8 @@ public static class WorkerConfig {
             if (settings.DisableWorkers) { return self; }
 
             self.Services.RegisterWorkers(
-                WebHostSettingsHelper.Join(
-                    settings.WorkerRegistrationConfiguration,
+                AssemblyScanAwareHelper.Join(
+                    settings.ConfigureWorkers,
                     settings.Assemblies
                 )
             );
