@@ -3,6 +3,7 @@ using Nameless.EntityFrameworkCore;
 using Nameless.Microservices.Api.Data;
 using Nameless.Web;
 using Nameless.Web.Hosting;
+using Nameless.Web.Http.Endpoints;
 using Nameless.Web.Scalar;
 
 namespace Nameless.Microservices.Api;

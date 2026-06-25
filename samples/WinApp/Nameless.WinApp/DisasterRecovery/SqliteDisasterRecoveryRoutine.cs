@@ -7,6 +7,7 @@ using Nameless.ObjectModel;
 using Nameless.Results;
 using Nameless.WinApp.Data;
 using Nameless.Windows.DisasterRecovery;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
 
 namespace Nameless.WinApp.DisasterRecovery;
@@ -17,16 +18,21 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
     private readonly IApplicationContext _applicationContext;
     private readonly AppDbContext _dbContext;
 
-    public override string Name => L10N.Instance["SqliteDisasterRecoveryRoutine_Name"];
+    private ILocalizer T { get; }
+
+    public override string Name => T["SqliteDisasterRecoveryRoutine_Name"];
 
     public SqliteDisasterRecoveryRoutine(
         IApplicationContext applicationContext,
         AppDbContext dbContext,
+        ILocalizer localizer,
         IMessenger messenger,
         ILogger<SqliteDisasterRecoveryRoutine> logger
         ) : base(messenger, logger) {
         _applicationContext = applicationContext;
         _dbContext = dbContext;
+
+        T = localizer;
     }
 
     public override async Task<BackupOutput> BackupAsync(BackupInput input, CancellationToken cancellationToken) {
@@ -70,7 +76,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         string destinationDirectoryPath,
         CancellationToken cancellationToken
     ) {
-        await NotifyInformationAsync(L10N.Instance[$"{CLASS}_{actionName}_Starting"]).SkipContextSync();
+        await NotifyInformationAsync(T[$"{CLASS}_{actionName}_Starting"]).SkipContextSync();
 
         var closeAppDbContextConnectionResult = await CloseAppDbContextConnectionAsync().SkipContextSync();
         if (closeAppDbContextConnectionResult.Failure) { return closeAppDbContextConnectionResult.Errors; }
@@ -85,7 +91,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         if (backupResult.Failure) { return backupResult.Errors; }
 
         await NotifySuccessAsync(
-            string.Format(L10N.Instance[$"{CLASS}_{actionName}_Success"], destinationFilePathResult.Value)
+            string.Format(T[$"{CLASS}_{actionName}_Success"], destinationFilePathResult.Value)
         ).SkipContextSync();
 
         // ok, everything is fine.
@@ -96,7 +102,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         const string ActionName = nameof(CloseAppDbContextConnectionAsync);
 
         await NotifyInformationAsync(
-            L10N.Instance[$"{CLASS}_{ActionName}_Starting"]
+            T[$"{CLASS}_{ActionName}_Starting"]
         ).SkipContextSync();
 
         try {
@@ -108,7 +114,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         }
         catch (Exception ex) {
             var message = string.Format(
-                L10N.Instance[$"{CLASS}_{ActionName}_Failure"],
+                T[$"{CLASS}_{ActionName}_Failure"],
                 ex.Message
             );
 
@@ -122,7 +128,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         const string ActionName = nameof(GetSqliteSourceFilePathAsync);
 
         await NotifyInformationAsync(
-            L10N.Instance[$"{CLASS}_{ActionName}_Starting"]
+            T[$"{CLASS}_{ActionName}_Starting"]
         ).SkipContextSync();
 
         var filePath = Path.Combine(sourceDirectoryPath, SqliteConstants.DatabaseFileName);
@@ -135,7 +141,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         Logger.MissingSourceFile(ActionName, file.Path);
 
         var message = string.Format(
-            L10N.Instance[$"{CLASS}_{ActionName}_Missing"],
+            T[$"{CLASS}_{ActionName}_Missing"],
             file.Path
         );
 
@@ -148,7 +154,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         const string ActionName = nameof(GetSqliteDestinationFilePathAsync);
 
         await NotifyInformationAsync(
-            L10N.Instance[$"{CLASS}_{ActionName}_Starting"]
+            T[$"{CLASS}_{ActionName}_Starting"]
         ).SkipContextSync();
 
         var filePath = Path.Combine(destinationDirectoryPath, SqliteConstants.DatabaseFileName);
@@ -163,7 +169,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         Logger.MissingSourceFile(ActionName, file.Path);
 
         var message = string.Format(
-            L10N.Instance[$"{CLASS}_{ActionName}_Missing"],
+            T[$"{CLASS}_{ActionName}_Missing"],
             file.Path
         );
 
@@ -180,7 +186,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         SqliteConnection? destinationDbConnection = null;
 
         await NotifyInformationAsync(
-            L10N.Instance[$"{CLASS}_{ActionName}_Starting"]
+            T[$"{CLASS}_{ActionName}_Starting"]
         ).SkipContextSync();
 
         try {
@@ -202,7 +208,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
             Logger.Failure(ActionName, ex);
 
             var message = string.Format(
-                L10N.Instance[$"{CLASS}_{ActionName}_Failure"],
+                T[$"{CLASS}_{ActionName}_Failure"],
                 ex.Message
             );
 

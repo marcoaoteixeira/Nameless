@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nameless.Windows.Controls;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
 using Nameless.Windows.Mvvm;
-using Nameless.Windows.Resources;
 
 namespace Nameless.Windows.TaskRunner.UI;
 
@@ -17,16 +17,18 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
     private TaskRunnerDelegate? _delegate;
 
     [ObservableProperty]
-    private string _title = Strings.TaskRunnerWindow_Title;
+    public partial string Title { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private bool _running;
+    public partial bool Running { get; set; }
 
     [ObservableProperty]
-    private bool _idle = true;
+    public partial bool Idle { get; set; } = true;
 
     [ObservableProperty]
-    private ObservableCollection<LoggerRichTextBoxEntry> _entries = [];
+    public partial ObservableCollection<LoggerRichTextBoxEntry> Entries { get; set; } = [];
+
+    public ILocalizer T { get; }
 
     /// <summary>
     ///     Initializes a new instance of
@@ -35,8 +37,13 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
     /// <param name="messenger">
     ///     The notification service.
     /// </param>
-    public TaskRunnerWindowViewModel(IMessenger messenger) {
+    /// <param name="localizer">
+    ///     The localizer.
+    /// </param>
+    public TaskRunnerWindowViewModel(IMessenger messenger, ILocalizer localizer) {
         _messenger = messenger;
+
+        T = localizer;
     }
 
     /// <summary>

@@ -4,7 +4,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:loc="clr-namespace:Nameless.WinApp"
+      xmlns:loc="clr-namespace:Nameless.Windows.Localization;assembly=Nameless.Windows"
 
       x:Name="AppConfigurationPageRoot"
 
@@ -14,7 +14,7 @@
     <StackPanel Margin="24">
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
-                      Text="{Binding [AppConfigurationPage_Title], Source={x:Static loc:L10N.Instance}}" />
+                      Text="{loc:L10N AppConfigurationPage_Title}" />
         <ui:CardControl Icon="{ui:ImageIcon '/Resources/application_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
@@ -25,14 +25,14 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_VersionCard_Title], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_VersionCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
                                   Text="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AppVersion, Mode=OneTime}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Primary"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformSystemUpdateCommand, Mode=OneTime}"
-                       Content="{Binding [AppConfigurationPage_VersionCard_Button_Caption], Source={x:Static loc:L10N.Instance}}"
+                       Content="{loc:L10N AppConfigurationPage_VersionCard_Button_Caption}"
                        Cursor="Hand"
                        Icon="{ui:SymbolIcon Globe32}"
                        Padding="30 8" />
@@ -48,14 +48,14 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_ApplicationBackupCard_Title], Source={x:Static loc:L10N.Instance}}" />
-                    <ui:TextBlock Grid.Row="1" Text="{Binding [AppConfigurationPage_ApplicationBackupCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ApplicationBackupCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{loc:L10N AppConfigurationPage_ApplicationBackupCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Success"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationBackupCommand, Mode=OneTime}"
-                       Content="{Binding [AppConfigurationPage_ApplicationBackupCard_Button_Caption], Source={x:Static loc:L10N.Instance}}"
+                       Content="{loc:L10N AppConfigurationPage_ApplicationBackupCard_Button_Caption}"
                        Icon="{ui:SymbolIcon DatabaseArrowDown20}"
                        Padding="30 8" />
         </ui:CardControl>
@@ -70,14 +70,14 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_ApplicationRestoreCard_Title], Source={x:Static loc:L10N.Instance}}" />
-                    <ui:TextBlock Grid.Row="1" Text="{Binding [AppConfigurationPage_ApplicationRestoreCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ApplicationRestoreCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{loc:L10N AppConfigurationPage_ApplicationRestoreCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Success"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.PerformApplicationRestoreCommand, Mode=OneTime}"
-                       Content="{Binding [AppConfigurationPage_ApplicationRestoreCard_Button_Caption], Source={x:Static loc:L10N.Instance}}"
+                       Content="{loc:L10N AppConfigurationPage_ApplicationRestoreCard_Button_Caption}"
                        Icon="{ui:SymbolIcon DatabaseArrowUp20}"
                        Padding="30 8" />
         </ui:CardControl>
@@ -92,9 +92,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_ThemeCard_Title], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ThemeCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{Binding [AppConfigurationPage_ThemeCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ThemeCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ComboBox Cursor="Hand"
@@ -114,9 +114,9 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_ExitBehaviorCard_Title], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ExitBehaviorCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{Binding [AppConfigurationPage_ExitBehaviorCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ExitBehaviorCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <CheckBox Cursor="Hand"
@@ -133,15 +133,15 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_AppDirectoryPathCard_Title], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_AppDirectoryPathCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{Binding [AppConfigurationPage_AppDirectoryPathCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_AppDirectoryPathCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Primary"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationDataDirectoryCommand, Mode=OneTime}"
-                       Content="{Binding [AppConfigurationPage_AppDirectoryPathCard_Button_Caption], Source={x:Static loc:L10N.Instance}}"
+                       Content="{loc:L10N AppConfigurationPage_AppDirectoryPathCard_Button_Caption}"
                        Icon="{ui:SymbolIcon Open48}"
                        Padding="30 8" />
         </ui:CardControl>
@@ -156,15 +156,15 @@
                     </Grid.RowDefinitions>
                     <ui:TextBlock FontTypography="BodyStrong"
                                   Grid.Row="0"
-                                  Text="{Binding [AppConfigurationPage_ApplicationLogCard_Title], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ApplicationLogCard_Title}" />
                     <ui:TextBlock Grid.Row="1"
-                                  Text="{Binding [AppConfigurationPage_ApplicationLogCard_Message], Source={x:Static loc:L10N.Instance}}" />
+                                  Text="{loc:L10N AppConfigurationPage_ApplicationLogCard_Message}" />
                 </Grid>
             </ui:CardControl.Header>
             <ui:Button Appearance="Primary"
                        Cursor="Hand"
                        Command="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.OpenApplicationLogFileCommand, Mode=OneTime}"
-                       Content="{Binding [AppConfigurationPage_ApplicationLogCard_Button_Caption], Source={x:Static loc:L10N.Instance}}"
+                       Content="{loc:L10N AppConfigurationPage_ApplicationLogCard_Button_Caption}"
                        Icon="{ui:SymbolIcon Open48}"
                        Padding="30 8" />
         </ui:CardControl>

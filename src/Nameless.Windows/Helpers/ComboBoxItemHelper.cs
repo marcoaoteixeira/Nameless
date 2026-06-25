@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
-using Nameless.Windows.Resources;
 
 namespace Nameless.Windows.Helpers;
 
 public static class ComboBoxItemHelper {
     public static ComboBoxItem EmptyComboBoxItem => new() {
-        Content = Strings.ComboBoxItemHelper_EmptyComboBoxItem_Content
+        Content = string.Empty
     };
 
     public static ComboBoxItem Create<TEnum>(TEnum value, string? displayText = null)
@@ -19,7 +18,9 @@ public static class ComboBoxItemHelper {
 
     public static bool TrySelect<TEnum>(ComboBoxItem[] items, TEnum value, [NotNullWhen(returnValue: true)] out ComboBoxItem? output)
         where TEnum : struct, Enum {
-        output = items.FirstOrDefault(item => Equals(item.Tag, value));
+        output = items.FirstOrDefault(
+            item => Equals(item.Tag, value)
+        );
 
         output?.IsSelected = true;
 

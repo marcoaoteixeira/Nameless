@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Nameless.Windows.Resources;
 using Wpf.Ui.Controls;
 
 namespace Nameless.Windows.Navigation;
@@ -34,7 +33,9 @@ public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemPro
 
         static Tuple<Type, NavigationViewItemAttribute> CreateTuple(Type type) {
             var attribute = type.GetCustomAttribute<NavigationViewItemAttribute>()
-                            ?? throw new InvalidOperationException(string.Format(Strings.DiscoverableNavigationViewItemProvider_CreateTuple_Missing_Attribute_Exception, nameof(NavigationViewItemAttribute)));
+                            ?? throw new InvalidOperationException(
+                                $"Type is missing attribute '{nameof(NavigationViewItemAttribute)}'."
+                            );
 
             return new Tuple<Type, NavigationViewItemAttribute>(type, attribute);
         }

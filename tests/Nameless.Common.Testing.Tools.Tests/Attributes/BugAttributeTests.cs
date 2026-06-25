@@ -11,7 +11,7 @@ public class BugAttributeTests
     public void WhenGetTraits_MustReturnCorrectCategoryTrait()
     {
         // arrange
-        var sut = new BugAttribute();
+        var sut = new BugAttribute("ISSUE-000");
 
         // act
         var trait = sut.GetTraits().SingleOrDefault(trait => trait.Key == "Category");
@@ -24,8 +24,8 @@ public class BugAttributeTests
     public void WhenGetTraits_ThenReturnsExpectedTraits()
     {
         // arrange
-        const string Expected = $"Category={CATEGORY_NAME};Identifier=;Author=";
-        var sut = new BugAttribute();
+        const string Expected = $"Category={CATEGORY_NAME};Issue=;Author=";
+        var sut = new BugAttribute(string.Empty);
 
         // act
         var traits = string.Join(";", sut.GetTraits().Select(trait => $"{trait.Key}={trait.Value}"));

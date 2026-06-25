@@ -4,6 +4,7 @@ using Nameless.Microservices.Bff.Domains.Chores.External;
 using Nameless.Web;
 using Nameless.Web.Auth;
 using Nameless.Web.Hosting;
+using Nameless.Web.Http.Endpoints;
 using Nameless.Web.Scalar;
 
 namespace Nameless.Microservices.Bff;

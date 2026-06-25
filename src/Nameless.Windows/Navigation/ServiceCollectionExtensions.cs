@@ -38,7 +38,9 @@ public static class ServiceCollectionExtensions {
                 : settings.NavigationWindow;
 
             if (implementation is null) {
-                throw new InvalidOperationException($"Unable to locate implementation for type '{service.Name}'.");
+                throw new InvalidOperationException(
+                    $"Unable to locate implementation for type '{service.Name}'."
+                );
             }
 
             self.TryAdd(implementation.CreateServiceDescriptor(service));

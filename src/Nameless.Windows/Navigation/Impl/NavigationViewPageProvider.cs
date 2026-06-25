@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Windows.Resources;
 using Wpf.Ui.Abstractions;
 
 namespace Nameless.Windows.Navigation.Impl;
@@ -28,6 +27,8 @@ public class NavigationViewPageProvider : INavigationViewPageProvider {
             return (FrameworkElement)_provider.GetRequiredService(pageType);
         }
 
-        throw new InvalidOperationException(Strings.NavigationViewPageProvider_GetPage_Must_FrameworkElement_Exception);
+        throw new InvalidOperationException(
+            $"Page type must be a '{nameof(FrameworkElement)}'."
+        );
     }
 }

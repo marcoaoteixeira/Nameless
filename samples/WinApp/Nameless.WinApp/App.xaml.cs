@@ -32,6 +32,9 @@ public partial class App {
         ];
 
         configure.ConfigureAdditionalServices = ConfigureAdditionalServices;
+        configure.ConfigureLocalization = localization => {
+            
+        };
     });
 
     public App() {

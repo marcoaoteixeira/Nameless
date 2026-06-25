@@ -3,10 +3,8 @@ using Microsoft.Extensions.Logging;
 using Nameless.Bootstrap;
 using Nameless.Data;
 using Nameless.Diagnostics.CodeAnalysis;
-using Nameless.Mailing;
 using Nameless.Mailing.Mailkit;
 using Nameless.Mediator.Events;
-using Nameless.ProducerConsumer;
 using Nameless.ProducerConsumer.RabbitMQ;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 using Nameless.Resilience;
@@ -21,7 +19,7 @@ internal static partial class Log {
     [LoggerMessage(level: LogLevel.Error, message: "[{Tag}] An error has occurred while executing action '{ActionName}'.")]
     internal static partial void Failure(ILogger logger, string tag, string actionName, Exception exception);
 
-    [LoggerMessage(level: LogLevel.Warning, message: "[{Tag}] An problem has occurred while executing action '{ActionName}'. Reason: {Reason}")]
+    [LoggerMessage(level: LogLevel.Warning, message: "[{Tag}] A problem has occurred while executing action '{ActionName}'. Reason: {Reason}")]
     internal static partial void Warning(ILogger logger, string tag, string actionName, string reason);
 
     #endregion

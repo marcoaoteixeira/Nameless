@@ -61,7 +61,7 @@ public abstract class Emitter<TModel> where TModel : IEmitModel {
         cw.WriteLine("using global::Microsoft.Extensions.DependencyInjection;");
         cw.WriteLine("using global::Microsoft.Extensions.DependencyInjection.Extensions;");
 
-        cw.WriteLine("using Nameless.Web.Filters.Validation;");
+        cw.WriteLine("using global::Nameless.Web.Filters.Validation;");
         cw.WriteLine($"using global::{Project.Namespaces.Attributes.Versioning};");
         cw.WriteLine();
     }

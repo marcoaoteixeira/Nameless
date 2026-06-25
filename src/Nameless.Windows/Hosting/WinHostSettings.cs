@@ -8,6 +8,7 @@ using Nameless.Lucene;
 using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
 using Nameless.Windows.Documents;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
 using Nameless.Windows.Navigation;
 using Nameless.Windows.UI;
@@ -73,4 +74,7 @@ public sealed class WinHostSettings {
     
     public bool DisableWindowsFactory { get; set; }
     public Action<WindowFactoryRegistration>? ConfigureWindowFactoryRegistration { get; set; }
+    
+    public bool DisableLocalization { get; set; }
+    public Action<LocalizationRegistration>? ConfigureLocalization { get; set; }
 }

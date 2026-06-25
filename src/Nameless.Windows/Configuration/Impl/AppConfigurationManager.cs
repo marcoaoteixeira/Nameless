@@ -40,19 +40,14 @@ public class AppConfigurationManager : IAppConfigurationManager {
         output = default;
 
         var element = AppConfiguration.GetValueOrDefault(name);
-        if (element.ValueKind == JsonValueKind.Undefined) {
-            return false;
-        }
+        if (element.ValueKind == JsonValueKind.Undefined) { return false; }
 
         try {
-            var value = element.Deserialize<TValue>();
-            if (value is not null) {
-                output = value;
+            output = element.Deserialize<TValue>();
 
-                return true;
-            }
+            return output is not null;
         }
-        catch (Exception ex) { _logger.TryGetValueFailure(name, typeof(TValue), ex); }
+        catch (Exception ex) { _logger.TryGetFailure(name, typeof(TValue), ex); }
 
         return false;
     }
@@ -71,7 +66,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
             await using var stream = file.Open(FileMode.Create);
             await stream.WriteAsync(json, cancellationToken);
         }
-        catch (Exception ex) { _logger.SaveAppConfigurationFailure(ex); }
+        catch (Exception ex) { _logger.SaveChangesAsyncFailure(ex); }
     }
 
     private Dictionary<string, JsonElement> GetAppConfiguration() {
@@ -82,7 +77,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
         using var stream = file.Open();
 
         try { return JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(stream) ?? []; }
-        catch (Exception ex) { _logger.LoadingConfigurationFailure(ex); }
+        catch (Exception ex) { _logger.GetAppConfigurationFailure(ex); }
 
         return [];
     }

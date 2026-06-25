@@ -9,13 +9,13 @@ using Nameless.Windows.Configuration;
 using Nameless.Windows.Dialogs.FileSystem;
 using Nameless.Windows.DisasterRecovery;
 using Nameless.Windows.Helpers;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
 using Nameless.Windows.TaskRunner;
 using Nameless.Windows.UI;
 using Nameless.Windows.UseCases;
 using Nameless.Windows.UseCases.Backup;
 using Wpf.Ui.Abstractions.Controls;
-using Wpf.Ui.Appearance;
 
 namespace Nameless.WinApp.ViewModels.Pages;
 
@@ -30,6 +30,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     private readonly ITaskRunner _taskRunner;
 
     private bool _initialized;
+
+    private ILocalizer T { get; }
 
     [ObservableProperty]
     public partial ComboBoxItem CurrentTheme { get; set; } = ComboBoxItemHelper.EmptyComboBoxItem;
@@ -49,6 +51,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IAppConfigurationManager appConfigurationManager,
         IApplicationContext applicationContext,
         IFileSystemDialog fileSystemDialog,
+        ILocalizer localizer,
         IMediator mediator,
         ITaskRunner taskRunner) {
         _appConfigurationManager = appConfigurationManager;
@@ -56,6 +59,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         _fileSystemDialog = fileSystemDialog;
         _mediator = mediator;
         _taskRunner = taskRunner;
+
+        T = localizer;
     }
 
     public Task OnNavigatedToAsync() {
@@ -84,7 +89,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     [RelayCommand]
     private Task PerformSystemUpdateAsync() {
         return _taskRunner.CreateBuilder()
-                          .SetName(L10N.Instance["AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title"])
+                          .SetName(T["AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title"])
                           .SubscribeFor<UseCaseMessage>()
                           .SetDelegate(ExecuteSystemUpdateAsync)
                           .RunAsync();
@@ -107,7 +112,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     [RelayCommand]
     private Task PerformApplicationBackupAsync() {
         return _taskRunner.CreateBuilder()
-                          .SetName(L10N.Instance["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                          .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
                           .SubscribeFor<UseCaseMessage>()
                           .SubscribeFor<DisasterRecoveryRoutineMessage>()
                           .SetDelegate(ExecuteApplicationBackupAsync)

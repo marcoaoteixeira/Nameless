@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Windows.Threading;
-using Nameless.Windows.Resources;
 
 namespace Nameless.Windows;
 
@@ -35,10 +34,10 @@ public static class ExceptionWarden {
         _last = exception;
 
         var messageBoxResult = SysMessageBox.Show(
-            exception.Message,
-            Strings.ExceptionWarden_MessageBox_Title,
-            SysMessageBoxButton.OK,
-            SysMessageBoxImage.Error
+            messageBoxText: exception.Message,
+            caption: exception.GetType().Name,
+            button: SysMessageBoxButton.OK,
+            icon: SysMessageBoxImage.Error
         );
 
         if (messageBoxResult == SysMessageBoxResult.OK) {

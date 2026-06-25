@@ -123,7 +123,7 @@ public class LoggerMocker<T> : Mocker<ILogger<T>> {
     }
     
     private static Entry CaptureEntryFromInvocation(IInvocation invocation) {
-        var level = (LogLevel)invocation.Arguments[index: 1];
+        var level = (LogLevel)invocation.Arguments[index: 0];
         var state = invocation.Arguments[index: 2];
         var exception = invocation.Arguments[index: 3] as Exception;
         var formatter = invocation.Arguments[index: 4];

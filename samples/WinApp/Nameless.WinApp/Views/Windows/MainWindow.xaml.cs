@@ -8,6 +8,7 @@ using Nameless.Windows;
 using Nameless.Windows.Configuration;
 using Nameless.Windows.DependencyInjection;
 using Nameless.Windows.Dialogs.Message;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
 using Nameless.Windows.Messaging.Impl;
 using Nameless.Windows.SnackBar;
@@ -31,22 +32,21 @@ public partial class MainWindow : INavigationWindow {
 
     private bool _initialized;
 
+    private ILocalizer T { get; }
+
     public MainWindowViewModel ViewModel { get; }
 
     public MainWindow(
         MainWindowViewModel viewModel,
         IAppConfigurationManager appConfigurationManager,
         IContentDialogService contentDialogService,
+        ILocalizer localizer,
         IMessageDialog messageDialog,
         INavigationService navigationService,
         INavigationViewPageProvider navigationViewPageProvider,
         IMessenger messenger,
         ISnackbarService snackBarService,
         ILogger<MainWindow> logger) {
-
-        ViewModel = viewModel;
-        DataContext = ViewModel;
-
         _appConfigurationManager = appConfigurationManager;
         _contentDialogService = contentDialogService;
         _messageDialog = messageDialog;
@@ -55,6 +55,10 @@ public partial class MainWindow : INavigationWindow {
         _messenger = messenger;
         _snackBarService = snackBarService;
         _logger = logger;
+
+        ViewModel = viewModel;
+        DataContext = ViewModel;
+        T = localizer;
 
         InitializeComponent();
         InitializeWindow();
@@ -90,8 +94,8 @@ public partial class MainWindow : INavigationWindow {
         }
 
         var result = _messageDialog.ShowQuestion(
-            title: L10N.Instance["MainWindow_ConfirmApplicationExit_MessageBox_Title"],
-            message: L10N.Instance["MainWindow_ConfirmApplicationExit_MessageBox_Message"],
+            title: T["MainWindow_ConfirmApplicationExit_MessageBox_Title"],
+            message: T["MainWindow_ConfirmApplicationExit_MessageBox_Message"],
             buttons: MessageBoxButtons.YesNoCancel);
 
         if (result == MessageBoxResult.No) {

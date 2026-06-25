@@ -4,8 +4,8 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:loc="clr-namespace:Nameless.Windows.Resources"
         xmlns:controls="clr-namespace:Nameless.Windows.Controls"
+        xmlns:loc="clr-namespace:Nameless.Windows.Localization"
 
         x:Name="TaskRunnerWindowRoot"
         
@@ -72,7 +72,7 @@
             <!-- Cancel Button -->
             <ui:Button Appearance="Danger"
                        Command="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.CancelCommand}"
-                       Content="{x:Static loc:Strings.TaskRunnerWindow_CancelButton_Caption}"
+                       Content="{loc:L10N TaskRunnerWindow_CancelButton_Caption}"
                        Cursor="Hand"
                        Foreground="White"
                        Icon="{ui:SymbolIcon HandLeft24}"
@@ -83,7 +83,7 @@
             <!-- Close Button -->
             <ui:Button Appearance="Success"
                        Click="CloseButtonHandler"
-                       Content="{x:Static loc:Strings.TaskRunnerWindow_CloseButton_Caption}"
+                       Content="{loc:L10N TaskRunnerWindow_CloseButton_Caption}"
                        Cursor="Hand"
                        Icon="{ui:SymbolIcon ArrowExit20}"
                        IsEnabled="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Idle, Mode=OneWay}"

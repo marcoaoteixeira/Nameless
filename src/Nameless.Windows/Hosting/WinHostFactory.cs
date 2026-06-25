@@ -45,6 +45,7 @@ public sealed class WinHostFactory {
                    .ConfigureFileSystemProvider(Settings)
                    .ConfigureGitHubHttpClient(Settings)
                    .ConfigureHttpClientDefaults(Settings)
+                   .ConfigureLocalization(Settings)
                    .ConfigureLogging(Settings)
                    .ConfigureLucene(Settings)
                    .ConfigureMediator(Settings)

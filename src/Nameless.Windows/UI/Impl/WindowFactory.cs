@@ -26,7 +26,7 @@ public class WindowFactory : IWindowFactory {
     public TWindow Create<TWindow>() where TWindow : IWindow {
         try { return _provider.GetRequiredService<TWindow>(); }
         catch (Exception ex) {
-            _logger.CreateWindowFailure(typeof(TWindow), ex);
+            _logger.CreateFailure(typeof(TWindow), ex);
 
             throw;
         }

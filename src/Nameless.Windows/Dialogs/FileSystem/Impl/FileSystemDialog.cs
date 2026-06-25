@@ -1,18 +1,24 @@
 ﻿using System.Windows;
 using Microsoft.Win32;
 using Nameless.Application;
-using Nameless.Windows.Resources;
+using Nameless.Windows.Localization;
 
 namespace Nameless.Windows.Dialogs.FileSystem.Impl;
 
 public class FileSystemDialog : IFileSystemDialog {
-    private readonly IApplicationContext _applicationContext;
+    private const string CLASS = nameof(FileSystemDialog);
 
-    public FileSystemDialog(IApplicationContext applicationContext) {
+    private readonly IApplicationContext _applicationContext;
+    private ILocalizer T { get; }
+
+    public FileSystemDialog(IApplicationContext applicationContext, ILocalizer localizer) {
         _applicationContext = applicationContext;
+        T = localizer;
     }
 
     public IEnumerable<string> OpenDirectory(Action<DirectorySelectionOptions> configure) {
+        const string ActionName = nameof(OpenDirectory);
+
         var options = new DirectorySelectionOptions();
 
         configure(options);
@@ -30,12 +36,14 @@ public class FileSystemDialog : IFileSystemDialog {
 
         string GetFallbackTitle() {
             return options.Multiselect
-                ? Strings.FileSystemDialog_OpenDirectory_Fallback_Title_Plural
-                : Strings.FileSystemDialog_OpenDirectory_Fallback_Title;
+                ? T[$"{CLASS}_{ActionName}_GetFallbackTitlePlural"]
+                : T[$"{CLASS}_{ActionName}_GetFallbackTitle"];
         }
     }
 
     public IEnumerable<string> OpenFile(Action<FileSelectionOptions> configure) {
+        const string ActionName = nameof(OpenFile);
+
         var options = new FileSelectionOptions();
 
         configure(options);
@@ -54,19 +62,21 @@ public class FileSystemDialog : IFileSystemDialog {
 
         string GetFallbackTitle() {
             return options.Multiselect
-                ? Strings.FileSystemDialog_OpenFile_Fallback_Title_Plural
-                : Strings.FileSystemDialog_OpenFile_Fallback_Title;
+                ? T[$"{CLASS}_{ActionName}_GetFallbackTitlePlural"]
+                : T[$"{CLASS}_{ActionName}_GetFallbackTitle"];
         }
     }
 
     public string OpenSave(Action<SaveSelectionOptions> configure) {
+        const string ActionName = nameof(OpenSave);
+
         var options = new SaveSelectionOptions();
 
         configure(options);
 
         var dialog = new SaveFileDialog {
             DefaultDirectory = options.Root ?? _applicationContext.FileSystemProvider.Root,
-            Title = options.Title ?? Strings.FileSystemDialog_OpenSave_Fallback_Title,
+            Title = options.Title ?? T[$"{CLASS}_{ActionName}_GetFallbackTitle"],
             CheckFileExists = options.EnsureFileExistence,
             Filter = options.Filter,
             OverwritePrompt = options.OverwriteWarning,

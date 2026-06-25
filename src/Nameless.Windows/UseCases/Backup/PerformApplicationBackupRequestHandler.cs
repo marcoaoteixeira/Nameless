@@ -7,34 +7,41 @@ using Nameless.IO.FileSystem;
 using Nameless.ObjectModel;
 using Nameless.Results;
 using Nameless.Windows.DisasterRecovery;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
-using Nameless.Windows.Resources;
 
 namespace Nameless.Windows.UseCases.Backup;
 
 public class PerformApplicationBackupRequestHandler : RequestHandlerBase<PerformApplicationBackupRequestHandler, PerformApplicationBackupRequest, PerformApplicationBackupResponse> {
+    private const string CLASS = nameof(PerformApplicationBackupRequestHandler);
+    
     private readonly IApplicationContext _applicationContext;
     private readonly ICompressor _compressor;
     private readonly IDisasterRecoveryRoutine[] _routines;
     private readonly TimeProvider _timeProvider;
+
+    private ILocalizer T { get; }
     
     public PerformApplicationBackupRequestHandler(
         IApplicationContext applicationContext,
         ICompressor compressor,
         IEnumerable<IDisasterRecoveryRoutine> disasterRecoveryRoutines,
+        ILocalizer localizer,
         IMessenger messenger,
         TimeProvider timeProvider
-        ) : base(messenger, NullLogger<PerformApplicationBackupRequestHandler>.Instance) {
+    ) : base(messenger, NullLogger<PerformApplicationBackupRequestHandler>.Instance) {
         _applicationContext = applicationContext;
         _compressor = compressor;
         _routines = [.. disasterRecoveryRoutines];
         _timeProvider = timeProvider;
+
+        T = localizer;
     }
 
     public override async Task<PerformApplicationBackupResponse> HandleAsync(PerformApplicationBackupRequest request, CancellationToken cancellationToken) {
-        await NotifyInformationAsync(
-            Strings.PerformApplicationBackup_Event_Message_Starting
-        ).SkipContextSync();
+        const string ResourcePrefix = $"{CLASS}_{nameof(HandleAsync)}";
+        
+        await NotifyInformationAsync(T[$"{ResourcePrefix}_Starting"]).SkipContextSync();
         
         var temporaryDirectory = CreateTemporaryDirectory(
             timestamp: _timeProvider.GetUtcNow()
@@ -61,10 +68,7 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
         }
 
         await CleanUpAsync(temporaryDirectory).SkipContextSync();
-
-        await NotifySuccessAsync(
-            string.Format(Strings.PerformApplicationBackup_Event_Message_Success, compressBackupFilesResult.Value)
-        ).SkipContextSync();
+        await NotifySuccessAsync(T[$"{ResourcePrefix}_Success", compressBackupFilesResult.Value]).SkipContextSync();
 
         return compressBackupFilesResult.Match<PerformApplicationBackupResponse>(
             onSuccess: value => new PerformApplicationBackupMetadata(value),
@@ -83,6 +87,8 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
     }
 
     private async Task<Result<string[]>> ExecuteBackupRoutinesAsync(IDirectory temporaryDirectory, CancellationToken cancellationToken) {
+        const string ResourcePrefix = $"{CLASS}_{nameof(ExecuteBackupRoutinesAsync)}";
+
         var input = new BackupInput {
             SourceDirectoryPath = FolderStructure.DatabaseDirectoryName,
             DestinationDirectoryPath = temporaryDirectory.Path
@@ -108,9 +114,7 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
             return fileCollection.ToArray();
         }
 
-        await NotifyFailureAsync(
-            Strings.PerformApplicationBackup_Event_Message_Failure
-        ).SkipContextSync();
+        await NotifyFailureAsync(T[$"{ResourcePrefix}_Failure"]).SkipContextSync();
 
         // if an error occur, drop all backup files
         await CleanUpAsync(temporaryDirectory).SkipContextSync();
@@ -119,10 +123,12 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
     }
 
     private async Task<Result<string>> CompressBackupFilesAsync(IDirectory temporaryDirectory, CancellationToken cancellationToken) {
+        const string ResourcePrefix = $"{CLASS}_{nameof(CompressBackupFilesAsync)}";
+
         _applicationContext.FileSystemProvider.GetBackupDirectory().Create(); // ensure existence
 
         // create a file that represents the temporary directory.
-        var backupFileName = $"{temporaryDirectory.Name}{WindowsConstants.BackupFileExtension}";
+        var backupFileName = $"{temporaryDirectory.Name}{BackupFileExtension}";
         var backupDirectory = _applicationContext.FileSystemProvider.GetBackupDirectory();
         var backupFile = _applicationContext.FileSystemProvider.GetFile(
             Path.Combine(backupDirectory.Path, backupFileName)
@@ -147,9 +153,7 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
             return response.Value.FilePath;
         }
 
-        await NotifyFailureAsync(
-            Strings.PerformApplicationBackup_Event_Message_Failure
-        ).SkipContextSync();
+        await NotifyFailureAsync(T[$"{ResourcePrefix}_Failure"]).SkipContextSync();
 
         // if an error occur, drop all backup files
         await CleanUpAsync(temporaryDirectory).SkipContextSync();
@@ -158,9 +162,9 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
     }
 
     private async Task CleanUpAsync(IDirectory outputDirectory) {
-        await NotifyInformationAsync(
-            Strings.PerformApplicationBackup_Event_Message_CleanUp
-        ).SkipContextSync();
+        const string ResourcePrefix = $"{CLASS}_{nameof(CleanUpAsync)}";
+
+        await NotifyInformationAsync(T[$"{ResourcePrefix}_Cleaning"]).SkipContextSync();
 
         // cleanup the temporary directory
         outputDirectory.Delete(recursive: true);
