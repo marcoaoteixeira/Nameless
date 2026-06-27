@@ -8,7 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Lucene.Collections;
 using Nameless.Lucene.Empty;
 using Nameless.Lucene.ObjectModel;

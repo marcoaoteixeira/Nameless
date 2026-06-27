@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nameless.Windows.Configuration;
 using Nameless.Windows.Documents;
 using Nameless.Windows.Documents.Impl;
+using Nameless.Windows.Localization;
 using Nameless.Windows.UI.Impl;
 
 namespace Nameless.Windows;
@@ -30,6 +31,13 @@ internal static partial class Log {
 
     [LoggerMessage(level: LogLevel.Error, message: "[DOCUMENT_READER] An error occurred while trying to read the document content. File: {FilePath}")]
     internal static partial void DocumentReaderGetContentFailure(ILogger<IDocumentReader> logger, string filePath, Exception exception);
+
+    #endregion
+
+    #region ResourceLocalizer
+
+    [LoggerMessage(level: LogLevel.Debug, message: "[LOCALIZER] Missing key '{Key}'.")]
+    internal static partial void ResourceLocalizerMissingKey(ILogger<ResourceLocalizer> logger, string key);
 
     #endregion
 

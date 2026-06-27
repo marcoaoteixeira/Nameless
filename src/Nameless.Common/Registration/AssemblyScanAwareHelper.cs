@@ -26,12 +26,12 @@ public static class AssemblyScanAwareHelper {
     /// </returns>
     public static Action<TSelf> Join<TSelf>(Action<TSelf>? configuration, IReadOnlyCollection<Assembly> assemblies)
         where TSelf : AssemblyScanAware<TSelf>, new() {
-        return (Action<AssemblyScanAware<TSelf>>)Delegate.Combine(
+        return (Action<TSelf>)Delegate.Combine(
             IncludeAssemblies,
             configuration
         );
 
-        void IncludeAssemblies(AssemblyScanAware<TSelf> opts) {
+        void IncludeAssemblies(TSelf opts) {
             opts.IncludeAssemblies(assemblies);
         }
     }

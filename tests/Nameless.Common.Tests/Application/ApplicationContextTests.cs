@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Application;

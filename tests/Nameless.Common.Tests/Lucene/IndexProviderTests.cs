@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.IO;

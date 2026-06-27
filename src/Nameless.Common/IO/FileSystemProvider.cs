@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 
-namespace Nameless.IO.FileSystem;
+namespace Nameless.IO;
 
 /// <summary>
 ///     Default implementation of <see cref="IFileSystemProvider"/>.

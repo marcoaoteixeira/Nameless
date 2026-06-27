@@ -1,6 +1,6 @@
 ﻿using Nameless.Helpers;
 
-namespace Nameless.IO.FileSystem;
+namespace Nameless.IO;
 
 /// <summary>
 ///     <see cref="FileSystemProviderOptions"/> extension methods.

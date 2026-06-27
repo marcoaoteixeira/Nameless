@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Options;
-using Nameless.IO.FileSystem;
 using Nameless.Testing.Tools.Attributes;
 
-namespace Nameless.IO.FileSystem;
+namespace Nameless.IO.Wrappers;
 
 [IntegrationTest]
 public class FileWrapperExtendedTests : IDisposable {

@@ -1,4 +1,4 @@
-﻿namespace Nameless.IO.FileSystem;
+﻿namespace Nameless.IO;
 
 /// <summary>
 ///     Defines a file in the file system.

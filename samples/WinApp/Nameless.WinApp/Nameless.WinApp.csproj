@@ -17,6 +17,16 @@
 		<ProjectReference Include="..\..\..\src\Nameless.Windows\Nameless.Windows.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Serilog.Formatting.Compact" />
+	</ItemGroup>
+
 	<!-- Resources -->
 	<ItemGroup>
 		<Resource Include="Resources\AlteHaasGroteskBold.ttf" />

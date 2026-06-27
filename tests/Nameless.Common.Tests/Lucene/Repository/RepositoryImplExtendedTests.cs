@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Lucene.Repository;
 using Nameless.Lucene.Repository.Mappings;

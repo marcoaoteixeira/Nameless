@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Windows.Hosting.Wrappers;
 
 namespace Nameless.Windows.Hosting.Configs;

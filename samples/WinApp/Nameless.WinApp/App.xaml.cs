@@ -12,6 +12,7 @@ using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
+using Nameless.Windows.Localization;
 using Wpf.Ui;
 
 namespace Nameless.WinApp;
@@ -32,9 +33,7 @@ public partial class App {
         ];
 
         configure.ConfigureAdditionalServices = ConfigureAdditionalServices;
-        configure.ConfigureLocalization = localization => {
-            
-        };
+        configure.ConfigureLocalizationRegistration = ConfigureLocalization;
     });
 
     public App() {
@@ -60,6 +59,11 @@ public partial class App {
     }
 
     private static Task ShowMainWindow(IServiceProvider provider, CancellationToken cancellationToken) {
+        // resolve translation
+        L10NExtension.SetLocalizer(
+            provider.GetService<ILocalizer>() ?? NullLocalizer.Instance
+        );
+
         var main = provider.GetRequiredService<INavigationWindow>();
 
         provider.GetRequiredService<ISplashScreenWindow>()
@@ -85,5 +89,9 @@ public partial class App {
                 ctx.UseSqlite(connStr);
             };
         }, configuration);
+    }
+
+    private static void ConfigureLocalization(LocalizationRegistration localization) {
+        localization.SetLocalizer(typeof(ResourceLocalizer));
     }
 }

@@ -76,5 +76,5 @@ public sealed class WinHostSettings {
     public Action<WindowFactoryRegistration>? ConfigureWindowFactoryRegistration { get; set; }
     
     public bool DisableLocalization { get; set; }
-    public Action<LocalizationRegistration>? ConfigureLocalization { get; set; }
+    public Action<LocalizationRegistration>? ConfigureLocalizationRegistration { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿using Nameless.Attributes;
 
-namespace Nameless.IO.FileSystem;
+namespace Nameless.IO;
 
 /// <summary>
 ///     The options for configuring the <see cref="IFileSystemProvider"/>.

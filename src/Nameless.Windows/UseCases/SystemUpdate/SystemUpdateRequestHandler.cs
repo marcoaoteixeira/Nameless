@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Nameless.Application;
 using Nameless.GitHub;
 using Nameless.GitHub.Requests;
-using Nameless.IO.FileSystem;
 using Nameless.ObjectModel;
 using Nameless.Results;
 using Nameless.Windows.Messaging;

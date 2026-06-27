@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+using Nameless.Registration;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
 
@@ -31,8 +32,14 @@ public static class LocalizationConfig {
                 return self;
             }
 
-            self.ConfigureServices((_, services) => {
-                services.RegisterLocalization(settings.ConfigureLocalization);
+            self.ConfigureServices((ctx, services) => {
+                services.RegisterLocalization(
+                    registration: AssemblyScanAwareHelper.Join(
+                        settings.ConfigureLocalizationRegistration,
+                        settings.Assemblies
+                    ),
+                    ctx.Configuration
+                );
             });
 
             return self;

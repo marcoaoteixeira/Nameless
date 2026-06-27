@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Nameless.Helpers;
 using SysPath = System.IO.Path;
 
-namespace Nameless.IO.FileSystem;
+namespace Nameless.IO.Wrappers;
 
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.

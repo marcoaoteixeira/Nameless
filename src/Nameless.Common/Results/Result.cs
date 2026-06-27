@@ -4,6 +4,111 @@ using Nameless.ObjectModel;
 namespace Nameless.Results;
 
 /// <summary>
+///     Represents an action result that can carry error
+/// 	information about the execution.
+/// </summary>
+public class Result {
+    private readonly Error[] _errors;
+
+    /// <summary>
+    ///     Indicates if there is a valid result value.
+    /// </summary>
+    public bool Success => _errors.Length == 0;
+
+    /// <summary>
+    ///     Gets the errors.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     When errors are not available.
+    /// </exception>
+    public Error[] Errors => !Success
+        ? _errors
+        : throw new InvalidOperationException("Errors are not available");
+
+    /// <summary>
+    ///     This constructor is not intended for use and will always throw
+    ///     an exception.
+    /// </summary>
+    /// <remarks>
+    ///     This constructor is provided to prevent instantiation without
+    ///     parameters, ensuring that the Result class is always initialized
+    ///     with the required parameters.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when attempting to use the parameterless constructor,
+    ///     indicating that it should not be used.
+    /// </exception>
+    public Result() {
+        throw new InvalidOperationException("Do not use the parameterless constructor");
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of
+    ///     <see cref="Result{TResult}"/> class.
+    /// </summary>
+    /// <param name="errors">
+    ///     The errors.
+    /// </param>
+    protected Result(Error[] errors) {
+        _errors = errors;
+    }
+
+    /// <summary>
+    ///     Executes the corresponding action given the result.
+    /// </summary>
+    /// <param name="onSuccess">
+    ///     Action that will be executed on success.
+    /// </param>
+    /// <param name="onFailure">
+    ///     Action that will be executed on errors.
+    /// </param>
+    public void Match(Action onSuccess, Action<Error[]> onFailure) {
+        if (Success) {
+            onSuccess();
+
+            return;
+        }
+
+        onFailure(Errors);
+    }
+
+    /// <summary>
+    ///     Executes the corresponding function given the value of the result.
+    /// </summary>
+    /// <param name="onSuccess">
+    ///     Function that will be executed on success.
+    /// </param>
+    /// <param name="onFailure">
+    ///     Function that will be executed on errors.
+    /// </param>
+    public TReturnValue Match<TReturnValue>(Func<TReturnValue> onSuccess, Func<Error[], TReturnValue> onFailure) {
+        return Success
+            ? onSuccess()
+            : onFailure(Errors);
+    }
+
+    /// <summary>
+    ///     Creates a new instance with the specified errors.
+    /// </summary>
+    /// <param name="errors">
+    ///     The errors.
+    /// </param>
+    public static implicit operator Result(Error[] errors) {
+        return new Result(errors);
+    }
+
+    /// <summary>
+    ///     Creates a new instance with the specified error.
+    /// </summary>
+    /// <param name="error">
+    ///     The error.
+    /// </param>
+    public static implicit operator Result(Error error) {
+        return new Result([error]);
+    }
+}
+
+/// <summary>
 ///     Represents a result or a list of errors.
 /// </summary>
 /// <typeparam name="T">

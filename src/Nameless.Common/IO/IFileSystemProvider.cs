@@ -1,4 +1,4 @@
-﻿namespace Nameless.IO.FileSystem;
+﻿namespace Nameless.IO;
 
 /// <summary>
 ///     Represents a file system provider.

@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Attributes;
 using Nameless.Configuration;
@@ -9,13 +10,23 @@ using Nameless.Configuration;
 namespace Nameless.Windows.Localization;
 
 /// <summary>
-///     Singleton localization manager that supports runtime culture switching.
-///     Bind to it in XAML via: {Binding [KeyName], Source={x:Static loc:L10N.Instance}}
+///     <see cref="ILocalizer"/> implementation backed by a .NET
+///     <see cref="System.Resources.ResourceManager"/>. Supports runtime
+///     culture switching: calling <see cref="SetCulture(CultureInfo)"/>
+///     raises <see cref="INotifyPropertyChanged.PropertyChanged"/> with
+///     <c>"Item[]"</c> so all WPF indexer bindings re-evaluate
+///     automatically.
 /// </summary>
+/// <remarks>
+///     Use <see cref="L10NExtension"/> in XAML to bind to this localizer.
+/// </remarks>
 public sealed class ResourceLocalizer : ILocalizer {
     // Cached event args — avoids allocating on every culture change
     private static readonly PropertyChangedEventArgs IndexerArgs = new("Item[]");
+    
+    private readonly ILogger<ResourceLocalizer> _logger;
     private readonly ResourceLocalizerOptions _options;
+    
     private readonly Lazy<ResourceManager> _resourceManager;
     private CultureInfo _currentCulture;
 
@@ -24,20 +35,16 @@ public sealed class ResourceLocalizer : ILocalizer {
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    /// <summary>
-    /// The currently active culture.
-    /// </summary>
+    /// <inheritdoc />
     public CultureInfo CurrentCulture {
         get => _currentCulture;
         private set => SetField(ref _currentCulture, value);
     }
 
+    /// <inheritdoc />
     public string this[string key] => this[key, parameters: []];
 
-    /// <summary>
-    ///     Indexer — the main binding target.
-    ///     Usage in XAML: {Binding [MyKey], Source={x:Static loc:L10N.Instance}}
-    /// </summary>
+    /// <inheritdoc />
     public string this[string key, params object[] parameters] {
         get {
             if (string.IsNullOrWhiteSpace(key)) {
@@ -47,11 +54,13 @@ public sealed class ResourceLocalizer : ILocalizer {
             // Retrieves the resource value or fallback makes missing
             // keys visible during development
             var resource = ResourceManager.GetString(key, _currentCulture);
-            if (string.IsNullOrWhiteSpace(resource)) { return $"[{key}]"; }
+            if (!string.IsNullOrWhiteSpace(resource)) {
+                return string.Format(resource, parameters);
+            }
 
-            return parameters.Length > 0
-                ? string.Format(resource, parameters)
-                : resource;
+            _logger.MissingKey(key);
+
+            return $"[{key}]";
         }
     }
 
@@ -62,15 +71,17 @@ public sealed class ResourceLocalizer : ILocalizer {
     /// <param name="options">
     ///     The options.
     /// </param>
-    public ResourceLocalizer(IOptions<ResourceLocalizerOptions> options) {
+    /// <param name="logger">
+    ///     The logger.
+    /// </param>
+    public ResourceLocalizer(IOptions<ResourceLocalizerOptions> options, ILogger<ResourceLocalizer> logger) {
         _options = options.Value;
+        _logger = logger;
         _currentCulture = CultureInfo.CurrentUICulture;
         _resourceManager = new Lazy<ResourceManager>(CreateResourceManager);
     }
 
-    /// <summary>
-    /// Switches the application culture at runtime and notifies all bindings.
-    /// </summary>
+    /// <inheritdoc />
     public void SetCulture(CultureInfo culture) {
         if (Equals(_currentCulture, culture)) {
             return;
@@ -85,9 +96,7 @@ public sealed class ResourceLocalizer : ILocalizer {
         PropertyChanged?.Invoke(this, IndexerArgs);
     }
 
-    /// <summary>
-    ///     Convenience overload accepting a culture string, e.g. "pt-PT".
-    /// </summary>
+    /// <inheritdoc />
     public void SetCulture(string cultureName) {
         SetCulture(CultureInfo.GetCultureInfo(cultureName));
     }
