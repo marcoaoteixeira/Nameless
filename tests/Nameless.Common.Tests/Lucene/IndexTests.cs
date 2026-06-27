@@ -3,7 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Lucene.ObjectModel;
 using Nameless.Testing.Tools.Attributes;

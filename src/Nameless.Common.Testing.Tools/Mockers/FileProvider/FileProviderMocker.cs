@@ -19,6 +19,20 @@ public class FileProviderMocker : Mocker<IFileProvider> {
         return this;
     }
 
+    public FileProviderMocker WithGetDirectoryContents(IDirectoryContents returnValue) {
+        MockInstance.Setup(mock => mock.GetDirectoryContents(It.IsAny<string>()))
+                    .Returns(returnValue);
+
+        return this;
+    }
+
+    public FileProviderMocker WithGetDirectoryContents(string subPath, IDirectoryContents returnValue) {
+        MockInstance.Setup(mock => mock.GetDirectoryContents(subPath))
+                    .Returns(returnValue);
+
+        return this;
+    }
+
     public FileProviderMocker WithWatch(IChangeToken returnValue) {
         MockInstance.Setup(mock => mock.Watch(It.IsAny<string>()))
                     .Returns(returnValue);
