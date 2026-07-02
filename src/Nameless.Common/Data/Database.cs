@@ -41,8 +41,7 @@ public class Database : IDatabase, IDisposable {
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
-            
-            _logger.ExecuteNonQueryFailure(ex);
+            Log.ExecuteNonQueryFailure(_logger, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -58,7 +57,7 @@ public class Database : IDatabase, IDisposable {
 
         try { reader = command.ExecuteReader(); }
         catch (Exception ex) {
-            _logger.ExecuteReaderFailure(ex);
+            Log.ExecuteReaderFailure(_logger, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -82,7 +81,7 @@ public class Database : IDatabase, IDisposable {
 
         try { return (TResult?)command.ExecuteScalar(); }
         catch (Exception ex) {
-            _logger.ExecuteScalarFailure(ex);
+            Log.ExecuteScalarFailure(_logger, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -147,7 +146,11 @@ public class Database : IDatabase, IDisposable {
             );
         }
 
-        _logger.OutputDbCommand(command);
+        Log.OutputDbCommandForDebug(
+            _logger,
+            command.CommandText,
+            command.Parameters
+        );
 
         return command;
     }

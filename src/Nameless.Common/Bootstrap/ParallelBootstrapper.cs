@@ -13,35 +13,29 @@ namespace Nameless.Bootstrap;
 public class ParallelBootstrapper : Bootstrapper {
     private delegate Task RunStepExecutionLevelAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken);
 
-    private readonly ILogger<ParallelBootstrapper> _logger;
     private readonly IOptions<BootstrapOptions> _options;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ParallelBootstrapper"/> class.
     /// </summary>
-    /// <param name="steps">The collection of steps to execute.</param>
     /// <param name="retryPipelineFactory">The retry policy factory.</param>
+    /// <param name="steps">The collection of steps to execute.</param>
     /// <param name="timeProvider">The time provider.</param>
-    /// <param name="logger">The logger.</param>
     /// <param name="options">The bootstrap options (used to configure parallelism).</param>
+    /// <param name="logger">The logger.</param>
     public ParallelBootstrapper(
-        IEnumerable<IStep> steps,
         IRetryPipelineFactory retryPipelineFactory,
+        IEnumerable<IStep> steps,
         TimeProvider timeProvider,
-        ILogger<ParallelBootstrapper> logger,
-        IOptions<BootstrapOptions> options)
-        : base(steps, retryPipelineFactory, timeProvider, logger) {
-        _logger = logger;
+        IOptions<BootstrapOptions> options,
+        ILogger<ParallelBootstrapper> logger)
+        : base(retryPipelineFactory, steps, timeProvider, logger) {
         _options = options;
     }
 
     /// <inheritdoc />
     protected override async Task ExecuteStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionGraph graph, CancellationToken cancellationToken) {
-        _logger.ExecutionMode("PARALLEL");
-
         foreach (var level in graph) {
-            _logger.ExecutingStepInLevel(level.Level, graph.LevelCount, level.Count);
-
             RunStepExecutionLevelAsync handler = level.Count switch {
                 1 => ExecuteSingleStepAsync,
                 _ => ExecuteMultipleStepsAsync,
@@ -52,21 +46,15 @@ public class ParallelBootstrapper : Bootstrapper {
     }
 
     private async Task ExecuteSingleStepAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken) {
-        var node = level.Single();
-
-        _logger.ExecutingSingleStepInLevel(node.Step.DisplayName);
-
         await ExecuteStepWithRetryAsync(
             context,
-            node,
+            node: level.Single(),
             progress,
             cancellationToken
         ).SkipContextSync();
     }
 
     private async Task ExecuteMultipleStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionLevel level, CancellationToken cancellationToken) {
-        _logger.ExecutingMultipleStepInLevel([.. level.Select(node => node.Step.DisplayName)]);
-
         var parallelOptions = new ParallelOptions {
             MaxDegreeOfParallelism = _options.Value.MaxDegreeOfParallelism,
             CancellationToken = cancellationToken

@@ -54,7 +54,7 @@ public class ZipCompressor : ICompressor {
             }
         }
         catch (Exception ex) {
-            _logger.CompressFailure(ex);
+            Log.CompressAsyncFailure(_logger, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -90,7 +90,7 @@ public class ZipCompressor : ICompressor {
 
         }
         catch (Exception ex) {
-            _logger.DecompressFailure(ex);
+            Log.DecompressAsyncFailure(_logger, ex);
 
             return Error.Failure(ex.Message);
         }

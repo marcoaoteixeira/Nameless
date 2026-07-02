@@ -46,14 +46,9 @@ public class MailingService : IMailingService {
         using var client = await _smtpClientFactory.CreateAsync(cancellationToken)
                                                    .SkipContextSync();
 
-        try {
-            var result = await client.SendAsync(mail, cancellationToken)
-                                     .SkipContextSync();
-
-            _logger.DeliverResult(result);
-        }
+        try { _ = await client.SendAsync(mail, cancellationToken).SkipContextSync(); }
         catch (Exception ex) {
-            _logger.DeliverFailure(ex);
+            Log.DeliverAsyncFailure(_logger, ex);
 
             throw;
         }

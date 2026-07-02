@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Options;
-using Nameless.Helpers;
 using SysPath = System.IO.Path;
 
 namespace Nameless.IO.Wrappers;

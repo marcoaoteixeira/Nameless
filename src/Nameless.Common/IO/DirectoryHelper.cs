@@ -1,4 +1,4 @@
-﻿namespace Nameless.Helpers;
+﻿namespace Nameless.IO;
 
 /// <summary>
 ///     Directory helper.

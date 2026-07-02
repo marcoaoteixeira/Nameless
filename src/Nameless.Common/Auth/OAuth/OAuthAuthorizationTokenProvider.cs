@@ -83,19 +83,19 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
     private Error GetDeserializeTokenWarningResult() {
         const string Message = $"Unable to deserialize response content JSON to '{nameof(OAuthAuthorizationToken)}'";
 
-        _logger.DeserializeTokenAsyncWarning(Message);
+        Log.DeserializeTokenAsyncWarning(_logger, Message);
 
         return Error.Conflict(Message);
     }
 
     private Error GetDeserializeTokenFailureResult(Exception exception) {
-        _logger.DeserializeTokenAsyncFailure(exception);
+        Log.DeserializeTokenAsyncFailure(_logger, exception);
 
         return Error.Failure(exception.Message);
     }
 
     private Error GetTokenFailureResult(Exception exception) {
-        _logger.GetTokenAsyncFailure(exception);
+        Log.GetTokenAsyncFailure(_logger, exception);
 
         return Error.Failure(exception.Message);
     }

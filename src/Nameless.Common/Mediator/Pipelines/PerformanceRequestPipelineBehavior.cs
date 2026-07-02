@@ -33,9 +33,7 @@ public class PerformanceRequestPipelineBehavior<TRequest, TResponse> : IRequestP
     public async Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
         var sw = Stopwatch.StartNew();
 
-        _logger.Starting();
-
         try { return await next(cancellationToken).SkipContextSync(); }
-        finally { _logger.Finished(sw.ElapsedMilliseconds); }
+        finally { Log.Complete(_logger, typeof(TRequest).GetPrettyName(), typeof(TResponse).GetPrettyName(), sw.ElapsedMilliseconds); }
     }
 }

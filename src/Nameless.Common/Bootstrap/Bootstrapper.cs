@@ -19,12 +19,12 @@ public class Bootstrapper : IBootstrapper {
     /// <summary>
     ///     Initializes a new instance of the <see cref="Bootstrapper"/> class.
     /// </summary>
+    /// <param name="retryPipelineFactory">
+    ///     The retry policy factory.
+    /// </param>
     /// <param name="steps">
     ///     The collection of steps to be executed during the bootstrap
     ///     process.
-    /// </param>
-    /// <param name="retryPipelineFactory">
-    ///     The retry policy factory.
     /// </param>
     /// <param name="timeProvider">
     ///     The time provider.
@@ -33,10 +33,10 @@ public class Bootstrapper : IBootstrapper {
     ///     The logger used to record execution details and diagnostic
     ///     information.
     /// </param>
-    public Bootstrapper(IEnumerable<IStep> steps, IRetryPipelineFactory retryPipelineFactory, TimeProvider timeProvider, ILogger<Bootstrapper> logger) {
+    public Bootstrapper(IRetryPipelineFactory retryPipelineFactory, IEnumerable<IStep> steps, TimeProvider timeProvider, ILogger<Bootstrapper> logger) {
+        _retryPipelineFactory = retryPipelineFactory;
         _steps = [.. steps];
         _timeProvider = timeProvider;
-        _retryPipelineFactory = retryPipelineFactory;
         _logger = logger;
     }
 
@@ -45,36 +45,11 @@ public class Bootstrapper : IBootstrapper {
     ///     if one or more steps fail during execution.
     /// </exception>
     public async Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        _logger.BootstrapStarting(_steps.Length);
-
-        var sw = Stopwatch.StartNew();
         var graph = StepExecutionGraphBuilder.Create(_steps);
 
-        _logger.StepDependencyGraphBuilt(graph.LevelCount, graph.TotalSteps);
-
-        try {
-            await ExecuteStepsAsync(
-                context,
-                progress,
-                graph,
-                cancellationToken
-            ).SkipContextSync();
-        }
-        catch (Exception ex) {
-            _logger.Failure(ex);
-
-            throw;
-        }
+        await ExecuteStepsAsync(context, progress, graph, cancellationToken).SkipContextSync();
 
         var results = graph.GetExecutionResults().ToArray();
-
-        _logger.BootstrapFinished(
-            sw.ElapsedMilliseconds,
-            results.Count(result => result.Success),
-            results.Length
-        );
-
-        _logger.WriteExecutionStatistics(results);
 
         if (results.Any(result => !result.Success)) {
             throw new BootstrapException("One or more steps failed.", results);
@@ -91,19 +66,8 @@ public class Bootstrapper : IBootstrapper {
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected virtual async Task ExecuteStepsAsync(FlowContext context, IProgress<StepProgress> progress, StepExecutionGraph graph, CancellationToken cancellationToken) {
-        _logger.ExecutionMode("SEQUENTIAL");
-
-        var currentStep = 0;
-        var totalSteps = _steps.Length;
-
         foreach (var level in graph) {
             foreach (var node in level) {
-                _logger.CurrentlyExecutingStep(
-                    ++currentStep,
-                    totalSteps,
-                    node.Step.DisplayName
-                );
-
                 await ExecuteStepWithRetryAsync(
                     context,
                     node,
@@ -123,8 +87,6 @@ public class Bootstrapper : IBootstrapper {
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected async Task ExecuteStepWithRetryAsync(FlowContext context, StepExecutionNode node, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        _logger.StepStarting(node.Step.DisplayName);
-
         var sw = Stopwatch.StartNew();
 
         node.Result.StartTime = _timeProvider.GetUtcNow();
@@ -133,8 +95,6 @@ public class Bootstrapper : IBootstrapper {
             progress.ReportStart(node.Step.DisplayName);
 
             if (node.Step.IsDisabled) {
-                _logger.StepDisabled(node.Step.DisplayName);
-
                 progress.ReportComplete(node.Step.DisplayName);
 
                 return;
@@ -156,13 +116,13 @@ public class Bootstrapper : IBootstrapper {
 
             progress.ReportFailure(node.Step.DisplayName, ex.Message, ex);
 
-            _logger.StepFailure(node.Step.DisplayName, ex);
+            Log.ExecuteStepWithRetryAsyncFailure(
+                _logger,
+                node.Step.DisplayName,
+                ex
+            );
         }
-        finally {
-            node.Result.Duration = sw.Elapsed;
-
-            _logger.StepFinished(node.Step.DisplayName, sw.ElapsedMilliseconds);
-        }
+        finally { node.Result.Duration = sw.Elapsed; }
     }
 
     private IRetryPipeline CreateRetryPipeline(IStep step, IProgress<StepProgress> progress) {

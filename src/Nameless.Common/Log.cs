@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using Nameless.Bootstrap;
 using Nameless.Data;
 using Nameless.Diagnostics.CodeAnalysis;
 using Nameless.Mailing.Mailkit;
@@ -49,57 +48,6 @@ internal static partial class Log {
 
     [LoggerMessage(level: LogLevel.Warning, message: "[{Tag}] Retrying due failure. Attempt {CurrentAttempt} of {MaxAttempts}. Waiting delay of {Delay}ms before retry.")]
     internal static partial void RetryPipelineWriteWarningOnRetry(ILogger<RetryPipelineFactory> logger, string? tag, int currentAttempt, int maxAttempts, double delay, Exception? exception);
-
-    #endregion
-
-    #region Bootstrap
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Starting Bootstrapper with {TotalSteps} available steps...")]
-    internal static partial void BootstrapStarting(ILogger<Bootstrapper> logger, int totalSteps);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Step dependency graph built: {LevelCount} execution levels with a total of {StepCount} steps.")]
-    internal static partial void BootstrapStepDependencyGraphBuilt(ILogger<Bootstrapper> logger, int levelCount, int stepCount);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Executing Bootstrap in '{Mode}' mode.")]
-    internal static partial void BootstrapExecutionMode(ILogger<Bootstrapper> logger, string mode);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Bootstrapper took {ElapsedMilliseconds}ms to complete with {SuccessCount}/{TotalSteps} steps executed.")]
-    internal static partial void BootstrapFinished(ILogger<Bootstrapper> logger, long elapsedMilliseconds, int successCount, int totalSteps);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Execution Statistics => Mean: {Avg:F2}ms, Max: {Max:F2}ms, Min: {Min:F2}ms")]
-    internal static partial void BootstrapWriteExecutionStatistics(ILogger<Bootstrapper> logger, double avg, double max, double min);
-
-    #endregion
-
-    #region Bootstrap - Step
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Now executing step {CurrentStep} of {TotalSteps}: '{StepName}'")]
-    internal static partial void BootstrapCurrentlyExecutingStep(ILogger<Bootstrapper> logger, int currentStep, int totalSteps, string stepName);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Step '{StepName}' starting...")]
-    internal static partial void BootstrapStepStarting(ILogger<Bootstrapper> logger, string stepName);
-
-    [LoggerMessage(level: LogLevel.Information, message: "[BOOTSTRAP] Step '{StepName}' will not execute since it is disabled.")]
-    internal static partial void BootstrapStepDisabled(ILogger<Bootstrapper> logger, string stepName);
-
-    [LoggerMessage(level: LogLevel.Error, message: "[BOOTSTRAP] An error has occurred while executing step '{StepName}'.")]
-    internal static partial void BootstrapStepFailure(ILogger<Bootstrapper> logger, string stepName, Exception exception);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Step '{StepName}' finished. Execution took {ElapsedMilliseconds}ms to complete.")]
-    internal static partial void BootstrapStepFinished(ILogger<Bootstrapper> logger, string stepName, long elapsedMilliseconds);
-
-    #endregion
-
-    #region Bootstrap (Parallel Mode)
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Executing step level {CurrentLevel} of {LevelCount} with {StepCount} step(s).")]
-    internal static partial void BootstrapExecutingStepInLevel(ILogger<ParallelBootstrapper> logger, int currentLevel, int levelCount, int stepCount);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Executing single step in the current level: '{StepName}'")]
-    internal static partial void BootstrapExecutingSingleStepInLevel(ILogger<ParallelBootstrapper> logger, string stepName);
-
-    [LoggerMessage(level: LogLevel.Debug, message: "[BOOTSTRAP] Executing {StepCount} steps in the current level: '{StepNames}'")]
-    internal static partial void BootstrapExecutingMultipleStepInLevel(ILogger<ParallelBootstrapper> logger, int stepCount, string stepNames);
 
     #endregion
 

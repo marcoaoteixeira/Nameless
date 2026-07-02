@@ -1,6 +1,4 @@
-﻿using Nameless.Helpers;
-
-namespace Nameless.IO;
+﻿namespace Nameless.IO;
 
 /// <summary>
 ///     <see cref="FileSystemProviderOptions"/> extension methods.

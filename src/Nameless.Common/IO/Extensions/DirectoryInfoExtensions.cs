@@ -1,6 +1,4 @@
-﻿using Nameless.Helpers;
-
-namespace Nameless.IO;
+﻿namespace Nameless.IO;
 
 internal static class DirectoryInfoExtensions {
     extension(DirectoryInfo self) {

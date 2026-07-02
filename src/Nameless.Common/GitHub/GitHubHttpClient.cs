@@ -48,9 +48,15 @@ public class GitHubHttpClient : IGitHubHttpClient {
 
             return release is not null
                 ? release
-                : GetLastestReleaseDeserializationFailureResponse(statusCode);
+                : UnableDeserializeResponse(nameof(Release), statusCode);
         }
-        catch (Exception ex) { return GetLastestReleaseUnknownFailureResponse(statusCode, ex); }
+        catch (Exception ex) {
+            Log.GetLastestReleaseAsyncFailure(_logger, statusCode, ex);
+
+            return Error.Failure(
+                $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}"
+            );
+        }
     }
 
     /// <inheritdoc />
@@ -72,40 +78,22 @@ public class GitHubHttpClient : IGitHubHttpClient {
 
             return assets is not null
                 ? assets
-                : GetReleaseAssetsDeserializationFailureResponse(statusCode);
+                : UnableDeserializeResponse(nameof(ReleaseAsset), statusCode);
         }
-        catch (Exception ex) { return GetReleaseAssetsUnknownFailureResponse(statusCode, ex); }
+        catch (Exception ex) {
+            Log.GetReleaseAssetsAsyncFailure(_logger, statusCode, ex);
+
+            return Error.Failure(
+                $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}"
+            );
+        }
     }
 
-    private Error GetLastestReleaseDeserializationFailureResponse(int statusCode) {
-        var message = $"Couldn't deserialize object '{nameof(Release)}' from response content. Status code: {statusCode}";
+    private Error UnableDeserializeResponse(string objectName, int statusCode) {
+        Log.ResponseDeserializationWarning(_logger, objectName, statusCode);
 
-        _logger.Warning(nameof(GetLastestReleaseAsync), message);
-
-        return Error.Conflict(message);
-    }
-
-    private Error GetLastestReleaseUnknownFailureResponse(int statusCode, Exception exception) {
-        var message = $"An error has occurred while executing call '{nameof(GetLastestReleaseAsync)}' in '{nameof(GitHubHttpClient)}'. Status code: {statusCode}. Reason: {exception.Message}";
-
-        _logger.Failure(nameof(GetLastestReleaseAsync), exception);
-
-        return Error.Failure(message);
-    }
-
-    private Error GetReleaseAssetsDeserializationFailureResponse(int statusCode) {
-        var message = $"Couldn't deserialize array of '{nameof(ReleaseAsset)}' from response content. Status code: {statusCode}";
-
-        _logger.Warning(nameof(GetReleaseAssetsAsync), message);
-
-        return Error.Conflict(message);
-    }
-
-    private Error GetReleaseAssetsUnknownFailureResponse(int statusCode, Exception exception) {
-        var message = $"An error has occurred while executing call '{nameof(GetReleaseAssetsAsync)}' in '{nameof(GitHubHttpClient)}'. Status code: {statusCode}. Reason: {exception.Message}";
-
-        _logger.Failure(nameof(GetReleaseAssetsAsync), exception);
-
-        return Error.Failure(message);
+        return Error.Conflict(
+            $"Unable to deserialize object '{objectName}' from response content. Status code: {statusCode}"
+        );
     }
 }

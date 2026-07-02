@@ -91,7 +91,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            _logger.InsertDocumentsFailure(Name, ex);
+            Log.InsertFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -109,7 +109,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            _logger.DeleteDocumentsFailure(Name, ex);
+            Log.DeleteFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -127,7 +127,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            _logger.UpdateDocumentFailure(Name, ex);
+            Log.UpdateFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -148,7 +148,7 @@ public class Index : IIndex {
             );
         }
         catch (Exception ex) {
-            _logger.SearchDocumentsFailure(Name, ex);
+            Log.SearchFailure(_logger, Name, ex);
 
             throw;
         }
@@ -167,7 +167,7 @@ public class Index : IIndex {
             return collector.TotalHits;
         }
         catch (Exception ex) {
-            _logger.CountDocumentsFailure(Name, ex);
+            Log.CountFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -183,7 +183,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            _logger.RollbackFailure(Name, ex);
+            Log.RollbackFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -199,7 +199,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            _logger.SaveChangesFailure(Name, ex);
+            Log.SaveChangesFailure(_logger, Name, ex);
 
             return Error.Failure(ex.Message);
         }
@@ -284,7 +284,7 @@ public class Index : IIndex {
             return FSDirectory.Open(directory.Path);
         }
         catch (Exception ex) {
-            _logger.CreateFSDirectoryFailure(Name, ex);
+            Log.CreateFSDirectoryFailure(_logger, Name, ex);
 
             throw;
         }
@@ -313,7 +313,7 @@ public class Index : IIndex {
             return EmptyIndexReader.Instance;
         }
         catch (Exception ex) {
-            _logger.GetIndexReaderFailure(Name, ex);
+            Log.GetIndexReaderFailure(_logger, Name, ex);
 
             throw;
         }

@@ -1,4 +1,4 @@
-namespace Nameless.Helpers;
+namespace Nameless.IO;
 
 public class PathHelperTests {
     // ─── Normalize ───────────────────────────────────────────────────────────

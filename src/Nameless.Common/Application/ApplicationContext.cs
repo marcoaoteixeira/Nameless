@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.Helpers;
 using Nameless.IO;
 using Nameless.ObjectModel;
 
@@ -70,7 +69,7 @@ public class ApplicationContext : IApplicationContext {
             return new FileSystemProvider(fspOptions);
         }
         catch (Exception ex) {
-            _logger.CreateFileSystemProviderFailure(ex);
+            Log.CreateFileSystemProviderFailure(_logger, ex);
 
             throw;
         }

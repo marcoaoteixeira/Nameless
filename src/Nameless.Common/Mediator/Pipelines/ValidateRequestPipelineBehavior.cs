@@ -32,7 +32,7 @@ public class ValidateRequestPipelineBehavior<TRequest, TResponse> : IRequestPipe
             return await next(cancellationToken);
         }
 
-        _logger.Failure(result);
+        Log.ValidationFailure(_logger, result.Errors);
 
         throw new ValidationException(result);
     }

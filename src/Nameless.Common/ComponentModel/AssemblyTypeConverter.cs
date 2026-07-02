@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.ComponentModel;
 
@@ -22,7 +23,13 @@ public class AssemblyTypeConverter : TypeConverter {
         }
 
         try { return Assembly.Load(assembly); }
-        catch (Exception ex) { context?.GetLogger<AssemblyTypeConverter>().Failure(ex); }
+        catch (Exception ex) {
+            Log.ConvertToFailure(
+                context?.GetLogger<AssemblyTypeConverter>() ?? NullLogger<AssemblyTypeConverter>.Instance,
+                assembly,
+                ex
+            );
+        }
 
         return null;
     }

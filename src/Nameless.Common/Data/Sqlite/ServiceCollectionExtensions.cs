@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterSqlite(IConfiguration? configuration = null) {
+        public IServiceCollection RegisterSqliteDatabase(IConfiguration? configuration = null) {
             self.ConfigureOptions<SqliteOptions>(configuration);
 
             self.TryAddSingleton<IDbConnectionFactory, DbConnectionFactory>();

@@ -1,5 +1,5 @@
 ﻿using System.IO.Compression;
-using Nameless.Helpers;
+using Nameless.IO;
 
 namespace Nameless.Compression.Requests;
 

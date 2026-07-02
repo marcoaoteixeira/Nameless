@@ -39,6 +39,17 @@ public static class ServiceCollectionExtensions {
             self.TryAdd(
                 descriptor: CreateDatabaseSeederServiceDescriptor(settings)
             );
+
+            if (settings.UseDbContextFactory) {
+                self.AddDbContextFactory<TDbContext>(
+                    (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
+                        DefaultConfiguration,
+                        settings.OverrideDbContextConfiguration ?? SqliteDbContextConfiguration
+                    )
+                );
+
+                return self;
+            }
             
             self.AddDbContext<TDbContext>(
                 (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Nameless.Helpers;
+namespace Nameless.IO;
 
 /// <summary>
 ///     Helper to deal with path related problems.

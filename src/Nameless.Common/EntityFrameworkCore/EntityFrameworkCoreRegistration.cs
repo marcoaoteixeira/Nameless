@@ -13,10 +13,17 @@ public class EntityFrameworkCoreRegistration : AssemblyScanAware<EntityFramework
     private readonly HashSet<Type> _interceptors = [];
 
     /// <summary>
+    ///     Whether it should register the Database Context Factory instead
+    ///     of the Database Context. Useful in situations where the dependency
+    ///     injection scope is not aligned with the context lifetime.
+    /// </summary>
+    public bool UseDbContextFactory { get; set; }
+
+    /// <summary>
     ///     Gets the registered EF Core interceptor types.
     /// </summary>
     public IReadOnlyCollection<Type> Interceptors => _interceptors;
-
+    
     /// <summary>
     ///     Gets the registered database seeder type, if any.
     /// </summary>

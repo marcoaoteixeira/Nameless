@@ -16,17 +16,10 @@ public class EventHandlerWrapperImpl<TEvent> : EventHandlerWrapper
     ///     <paramref name="provider"/>is <see langword="null"/>.
     /// </exception>
     public override Task HandleAsync(IEvent evt, IServiceProvider provider, CancellationToken cancellationToken) {
-        var logger = provider.GetLogger<EventHandlerWrapper>();
-        var handlers = provider.GetServices<IEventHandler<TEvent>>().ToArray();
-
-        if (handlers.Length == 0) {
-            logger.MissingEventHandler(evt);
-        }
-
-        var executions = handlers.Select(
+        var handlers = provider.GetServices<IEventHandler<TEvent>>().Select(
             handler => handler.HandleAsync((TEvent)evt, cancellationToken)
         );
 
-        return Task.WhenAll(executions);
+        return Task.WhenAll(handlers);
     }
 }

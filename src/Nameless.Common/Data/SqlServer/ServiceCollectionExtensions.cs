@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterSqlServer(IConfiguration? configuration = null) {
+        public IServiceCollection RegisterSqlServerDatabase(IConfiguration? configuration = null) {
             self.ConfigureOptions<SqlServerOptions>(configuration);
 
             self.TryAddSingleton<IDbConnectionFactory, DbConnectionFactory>();
