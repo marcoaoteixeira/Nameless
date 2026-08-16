@@ -9,7 +9,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="IFormFileCollection"/> that does not store any files.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullFormFileCollection : IFormFileCollection {
     public static IFormFileCollection Instance { get; } = new NullFormFileCollection();

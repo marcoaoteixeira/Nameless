@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Serilog;
+using Serilog.Configuration;
 
 namespace Nameless.Logging.Serilog;
 
@@ -9,8 +9,37 @@ namespace Nameless.Logging.Serilog;
 [ExcludeFromCodeCoverage]
 public class SerilogRegistration {
     /// <summary>
-    ///     Gets or sets an optional delegate to replace the default Serilog configuration
-    ///     (console, file, and OpenTelemetry sinks) with a custom one.
+    ///     Whether it should override the enrichment configuration or just
+    ///     append.
     /// </summary>
-    public Action<IServiceProvider, LoggerConfiguration>? OverrideSerilogConfiguration { get; set; }
+    public bool OverrideEnrichmentConfiguration { get; set; }
+
+    /// <summary>
+    ///     Gets or sets an optional delegate to configure Serilog enrichment
+    ///     options.
+    /// </summary>
+    public Action<IServiceProvider, LoggerEnrichmentConfiguration>? EnrichmentConfiguration { get; set; }
+
+    /// <summary>
+    ///     Whether it should override the sink configuration or just append.
+    /// </summary>
+    public bool OverrideSinkConfiguration { get; set; }
+
+    /// <summary>
+    ///     Gets or sets an optional delegate to configure Serilog sink
+    ///     options.
+    /// </summary>
+    public Action<IServiceProvider, LoggerSinkConfiguration>? SinkConfiguration { get; set; }
+
+    /// <summary>
+    ///     Whether it should override the minimum level configuration or
+    ///     just append.
+    /// </summary>
+    public bool OverrideMinimumLevelConfiguration { get; set; }
+
+    /// <summary>
+    ///     Gets or sets an optional delegate to configure Serilog minimum
+    ///     level options.
+    /// </summary>
+    public Action<IServiceProvider, LoggerMinimumLevelConfiguration>? MinimumLevelConfiguration { get; set; }
 }

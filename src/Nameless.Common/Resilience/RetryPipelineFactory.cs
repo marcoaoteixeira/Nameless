@@ -66,7 +66,8 @@ public class RetryPipelineFactory : IRetryPipelineFactory {
             },
 
             OnRetry = args => {
-                _logger.WarningOnRetry(
+                Log.WarningOnRetry(
+                    _logger,
                     configuration.Tag,
                     args.AttemptNumber,
                     configuration.RetryCount,

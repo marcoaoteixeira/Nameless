@@ -10,7 +10,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="IFormCollection"/> that does not store any form data.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullFormCollection : IFormCollection {
     public static IFormCollection Instance { get; } = new NullFormCollection();

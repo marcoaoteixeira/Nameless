@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions {
             var settings = ActionHelper.FromDelegate(registration);
 
             self.ConfigureOptions<BootstrapOptions>(configuration);
-
+            
             self.TryAddTransient<Bootstrapper>();
             self.TryAddTransient<ParallelBootstrapper>();
             self.TryAddTransient<IBootstrapper>(ResolveBootstrapper);

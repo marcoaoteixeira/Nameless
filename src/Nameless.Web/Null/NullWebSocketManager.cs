@@ -9,7 +9,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="WebSocketManager"/> that does not support WebSocket operations.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullWebSocketManager : WebSocketManager {
     public static WebSocketManager Instance { get; } = new NullWebSocketManager();

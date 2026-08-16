@@ -8,7 +8,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="HttpResponse"/> that does not perform any operations.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullHttpResponse : HttpResponse {
     public static HttpResponse Instance { get; } = new NullHttpResponse();

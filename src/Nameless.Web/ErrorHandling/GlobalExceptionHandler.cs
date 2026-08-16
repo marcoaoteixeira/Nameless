@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nameless.Registration;
 using Nameless.Validation;
 
 namespace Nameless.Web.ErrorHandling;
@@ -9,6 +10,7 @@ namespace Nameless.Web.ErrorHandling;
 /// <summary>
 ///     Represents a global exception handler for the application.
 /// </summary>
+[IgnoreAssemblyScan]
 public class GlobalExceptionHandler : IExceptionHandler {
     private readonly IProblemDetailsService _problemDetailsService;
     private readonly ILogger<GlobalExceptionHandler> _logger;
@@ -30,7 +32,7 @@ public class GlobalExceptionHandler : IExceptionHandler {
 
     /// <inheritdoc />
     public ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken) {
-        _logger.CaptureException(exception);
+        CommonLog.Failure(_logger, exception, tag: "GLOBAL_EXCEPTION_HANDLER");
 
         httpContext.Response.StatusCode = exception switch {
             ValidationException => StatusCodes.Status400BadRequest,

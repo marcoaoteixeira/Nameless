@@ -16,7 +16,7 @@ public static class RouteHelper {
     /// <returns>
     ///     An enumerable collection of route parameter names.
     /// </returns>
-    public static IEnumerable<string> GetRouteParameters([StringSyntax(WebConstants.Syntaxes.Route)] string routePattern) {
+    public static IEnumerable<string> GetRouteParameters([StringSyntax(Syntaxes.Route)] string routePattern) {
         Throws.When.NullOrWhiteSpace(routePattern);
 
         var matches = RegexCache.RoutePattern().Matches(routePattern);

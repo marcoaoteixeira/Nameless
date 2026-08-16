@@ -1,11 +1,12 @@
-﻿using Nameless.Registration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Registration;
 
 namespace Nameless.Bootstrap;
 
 /// <summary>
 ///     Configuration object used to register bootstrap steps.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage]
 public class BootstrapRegistration : AssemblyScanAware<BootstrapRegistration> {
     private readonly HashSet<Type> _steps = [];
 

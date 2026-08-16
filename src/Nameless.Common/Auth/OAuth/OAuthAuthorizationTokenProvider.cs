@@ -12,6 +12,8 @@ namespace Nameless.Auth.OAuth;
 ///     OAuth implementation of <see cref="IOAuthAuthorizationTokenProvider"/>
 /// </summary>
 public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider {
+    private const string LOG_TAG = "OAUTH_AUTHORIZATION_TOKEN_PROVIDER";
+
     private readonly HttpClient _client;
     private readonly OAuthOptions _options;
     private readonly ILogger<OAuthAuthorizationTokenProvider> _logger;
@@ -42,7 +44,7 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
         try {
             var content = CreateHttpContent(request);
             var response = await _client.PostAsync(_options.TokenEndpoint, content, cancellationToken)
-                                        .SkipContextSync();
+                .SkipContextSync();
 
             response.EnsureSuccessStatusCode();
 
@@ -53,7 +55,11 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
                 onFailure: failure => failure
             );
         }
-        catch (Exception ex) { return GetTokenFailureResult(ex); }
+        catch (Exception ex) {
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+
+            return Error.Failure(ex.Message);
+        }
     }
 
     private static FormUrlEncodedContent CreateHttpContent(OAuthAuthorizationTokenRequest request) {
@@ -70,33 +76,21 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
     private async Task<Result<OAuthAuthorizationToken>> DeserializeTokenAsync(HttpResponseMessage response, CancellationToken cancellationToken) {
         try {
             var result = await response.Content
-                                       .ReadFromJsonAsync<OAuthAuthorizationToken>(cancellationToken)
-                                       .SkipContextSync();
+                .ReadFromJsonAsync<OAuthAuthorizationToken>(cancellationToken)
+                .SkipContextSync();
 
-            return result is not null
-                ? result
-                : GetDeserializeTokenWarningResult();
+            if (result is not null) { return result;}
+
+            const string Reason = $"Unable to deserialize response content JSON to '{nameof(OAuthAuthorizationToken)}'";
+
+            CommonLog.Warning(_logger, Reason, tag: LOG_TAG);
+
+            return Error.Conflict(Reason);
         }
-        catch (Exception ex) { return GetDeserializeTokenFailureResult(ex); }
-    }
+        catch (Exception ex) {
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
-    private Error GetDeserializeTokenWarningResult() {
-        const string Message = $"Unable to deserialize response content JSON to '{nameof(OAuthAuthorizationToken)}'";
-
-        Log.DeserializeTokenAsyncWarning(_logger, Message);
-
-        return Error.Conflict(Message);
-    }
-
-    private Error GetDeserializeTokenFailureResult(Exception exception) {
-        Log.DeserializeTokenAsyncFailure(_logger, exception);
-
-        return Error.Failure(exception.Message);
-    }
-
-    private Error GetTokenFailureResult(Exception exception) {
-        Log.GetTokenAsyncFailure(_logger, exception);
-
-        return Error.Failure(exception.Message);
+            return Error.Failure(ex.Message);
+        }
     }
 }

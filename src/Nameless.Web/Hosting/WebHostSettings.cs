@@ -9,6 +9,7 @@ using Nameless.Logging.Serilog;
 using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.Auth;
+using Nameless.Web.ErrorHandling;
 using Nameless.Web.HealthCheck;
 using Nameless.Web.Observability;
 using Nameless.Web.OpenApi;
@@ -110,6 +111,11 @@ public class WebHostSettings {
     /// </summary>
     public bool DisableExceptionHandling { get; set; }
 
+    /// <summary>
+    ///     Gets or sets a delegate to configure the exception handling.
+    /// </summary>
+    public Action<ExceptionHandlerRegistration>? ConfigureExceptionHandling { get; set; }
+    
     /// <summary>
     ///     Whether it should disable health check services.
     /// </summary>

@@ -7,7 +7,7 @@
 		consumers, so in-solution and package behaviour are identical.
 	-->
 	<ItemGroup Condition="'$(UseAutoEndpoints)' == 'True'">
-		<ProjectReference Include="$(MSBuildThisFileDirectory)generators\Nameless.Web.Generators\Nameless.Web.Generators.csproj"
+		<ProjectReference Include="$(MSBuildThisFileDirectory)generators\Nameless.Generators\Nameless.Generators.csproj"
 		                  OutputItemType="Analyzer"
 		                  ReferenceOutputAssembly="false" />
 	</ItemGroup>

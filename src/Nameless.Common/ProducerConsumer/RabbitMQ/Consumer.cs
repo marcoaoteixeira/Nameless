@@ -107,7 +107,7 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
             cancellationToken
         ).SkipContextSync();
 
-        _logger.Started(ConsumerTag, reply);
+        Log.ConsumerStarted(_logger, ConsumerTag, reply);
     }
 
     Task IHostedService.StopAsync(CancellationToken cancellationToken) {
@@ -176,7 +176,7 @@ public abstract class Consumer<TMessage> : IConsumer<TMessage>, IHostedService, 
     }
 
     private Task ConsumerShutdownAsync(object sender, ShutdownEventArgs shutdownEventArgs) {
-        _logger.Shutdown(ConsumerTag, shutdownEventArgs.ReplyText);
+        Log.ConsumerShutdown(_logger, ConsumerTag, shutdownEventArgs.ReplyText);
 
         return Task.CompletedTask;
     }

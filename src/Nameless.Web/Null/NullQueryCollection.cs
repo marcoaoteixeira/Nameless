@@ -10,7 +10,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="IQueryCollection"/> that does not store any query parameters.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullQueryCollection : IQueryCollection {
     public static IQueryCollection Instance { get; } = new NullQueryCollection();

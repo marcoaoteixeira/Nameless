@@ -8,8 +8,7 @@ namespace Nameless.Auth.OAuth;
 /// </summary>
 public sealed class OAuthAuthorizationTokenResponse : Result<OAuthAuthorizationToken> {
     private OAuthAuthorizationTokenResponse(OAuthAuthorizationToken? value, Error[] errors)
-        : base(value, errors) {
-    }
+        : base(value, errors) { }
 
     /// <summary>
     ///     Converts a <see cref="OAuthAuthorizationToken"/> into a

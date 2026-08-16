@@ -11,7 +11,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="HttpContext"/> that does not store any request or response data.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullHttpContext : HttpContext {
     public static HttpContext Instance { get; } = new NullHttpContext();

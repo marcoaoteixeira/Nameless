@@ -82,13 +82,13 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
                 Options = options
             };
         }
-        catch (Exception ex) { _logger.Failure(ex); throw; }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: Log.Tag); throw; }
         finally { _semaphore.Release(); }
     }
 
     private async Task InnerProduceAsync(CacheEntry entry, object message, ProducerContext context, CancellationToken cancellationToken) {
         try { await entry.Lock.WaitAsync(cancellationToken); }
-        catch { _logger.ChannelSemaphoreDisposed(); return; }
+        catch(Exception ex) { Log.UnableAcquireProducerSemaphore(_logger, ex); return; }
 
         try {
             BlockAccessAfterDispose();
@@ -109,7 +109,7 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
                 cancellationToken
             ).ConfigureAwait(continueOnCapturedContext: false);
         }
-        catch (Exception ex) { _logger.Failure(ex); throw; }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: Log.Tag); throw; }
         finally { entry.Lock.Release(); }
     }
 

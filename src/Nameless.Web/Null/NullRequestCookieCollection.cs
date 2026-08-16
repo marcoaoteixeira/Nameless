@@ -9,7 +9,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="IRequestCookieCollection"/> that does not store any cookies.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullRequestCookieCollection : IRequestCookieCollection {
     public static IRequestCookieCollection Instance { get; } = new NullRequestCookieCollection();

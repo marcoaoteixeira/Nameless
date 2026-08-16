@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Nameless.Helpers;
 
@@ -34,7 +35,7 @@ public static class ServiceCollectionExtensions {
             var options = ActionHelper.FromDelegate(configure);
 
             services.ConfigureOptions(options);
-            services.AddSingleton<IFileSystemWatcher, SmartFileSystemWatcher>();
+            services.TryAddSingleton<IFileSystemWatcher, SmartFileSystemWatcher>();
 
             return services;
         }

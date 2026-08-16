@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Nameless.Helpers;
 using Nameless.Web.ErrorHandling;
 
 namespace Nameless.Web.Hosting.Configs;
@@ -16,7 +16,9 @@ public static class ExceptionHandlingConfig {
         public WebApplicationBuilder ConfigureExceptionHandling(WebHostSettings settings) {
             if (settings.DisableExceptionHandling) { return self; }
 
-            self.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            self.Services.RegisterExceptionHandlers(
+                settings.ConfigureExceptionHandling
+            );
 
             return self;
         }
@@ -39,7 +41,10 @@ public static class ExceptionHandlingConfig {
         public WebApplication UseExceptionHandling(WebHostSettings settings) {
             if (settings.DisableExceptionHandling) { return self; }
 
-            self.UseExceptionHandler();
+            var registration = ActionHelper.FromDelegate(settings.ConfigureExceptionHandling);
+            var opts = ActionHelper.FromDelegate(registration.ConfigureExceptionHandlerOptions);
+
+            self.UseExceptionHandler(opts);
 
             return self;
         }

@@ -8,7 +8,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="ISession"/> that does not store any session data.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullSession : ISession {
     public static ISession Instance { get; } = new NullSession();

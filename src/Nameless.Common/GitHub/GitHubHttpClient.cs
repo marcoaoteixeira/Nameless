@@ -11,6 +11,8 @@ namespace Nameless.GitHub;
 ///     Current implementation of <see cref="IGitHubHttpClient"/>
 /// </summary>
 public class GitHubHttpClient : IGitHubHttpClient {
+    private const string LOG_TAG = "GITHUB_HTTP_CLIENT";
+
     private readonly HttpClient _httpClient;
     private readonly ILogger<GitHubHttpClient> _logger;
 
@@ -51,7 +53,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(Release), statusCode);
         }
         catch (Exception ex) {
-            Log.GetLastestReleaseAsyncFailure(_logger, statusCode, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}"
@@ -81,7 +83,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(ReleaseAsset), statusCode);
         }
         catch (Exception ex) {
-            Log.GetReleaseAssetsAsyncFailure(_logger, statusCode, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}"

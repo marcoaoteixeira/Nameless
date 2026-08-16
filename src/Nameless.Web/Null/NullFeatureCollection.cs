@@ -9,7 +9,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="IFeatureCollection"/> that does not store any features.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullFeatureCollection : IFeatureCollection {
     public static IFeatureCollection Instance { get; } = new NullFeatureCollection();

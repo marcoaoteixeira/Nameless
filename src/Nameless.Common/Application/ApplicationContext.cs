@@ -9,6 +9,8 @@ namespace Nameless.Application;
 ///     The application context.
 /// </summary>
 public class ApplicationContext : IApplicationContext {
+    private const string LOG_TAG = "APPLICATION_CONTEXT";
+
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
     private readonly Lazy<IFileSystemProvider> _fileSystemProvider;
@@ -69,7 +71,7 @@ public class ApplicationContext : IApplicationContext {
             return new FileSystemProvider(fspOptions);
         }
         catch (Exception ex) {
-            Log.CreateFileSystemProviderFailure(_logger, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             throw;
         }

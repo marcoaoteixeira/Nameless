@@ -11,6 +11,8 @@ namespace Nameless.Workers;
 ///     Represents a worker that executes an action every defined interval.
 /// </summary>
 public abstract class Worker : BackgroundService {
+    private const string LOG_TAG = "WORKER";
+
     private readonly IConfiguration _configuration;
     private readonly ILogger<Worker> _logger;
     private readonly Lazy<WorkerOptions> _options;
@@ -73,22 +75,23 @@ public abstract class Worker : BackgroundService {
         try {
             while (await timer.WaitForNextTickAsync(stoppingToken)) {
                 SetStatus(WorkerStatus.Running);
-                _logger.StatusChanged(Name, WorkerStatus.Running);
+                Log.StatusChange(_logger, Name, WorkerStatus.Running, tag: LOG_TAG);
 
                 await DoWorkAsync(stoppingToken);
 
                 SetStatus(WorkerStatus.Idle);
-                _logger.StatusChanged(Name, WorkerStatus.Idle);
+                Log.StatusChange(_logger, Name, WorkerStatus.Idle, tag: LOG_TAG);
             }
         }
         catch (OperationCanceledException) {
             SetStatus(WorkerStatus.Stopped);
-            _logger.StatusChanged(Name, WorkerStatus.Stopped);
+            Log.StatusChange(_logger, Name, WorkerStatus.Stopped, tag: LOG_TAG);
         }
         catch (Exception ex) {
             SetStatus(WorkerStatus.Faulted);
-            _logger.StatusChanged(Name, WorkerStatus.Faulted);
-            _logger.Failure(ex);
+
+            Log.StatusChange(_logger, Name, WorkerStatus.Faulted, tag: LOG_TAG);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             throw;
         }

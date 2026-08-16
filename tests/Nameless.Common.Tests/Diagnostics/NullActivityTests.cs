@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Nameless.Diagnostics.ActivitySource;
 
 namespace Nameless.Diagnostics;
 

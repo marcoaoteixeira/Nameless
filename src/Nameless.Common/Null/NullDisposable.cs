@@ -20,7 +20,7 @@ namespace Nameless.Null;
 ///         </item>
 ///     </list>
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 public sealed class NullDisposable : IDisposable {
     /// <summary>
     ///     Gets the unique instance of <see cref="NullDisposable" />.

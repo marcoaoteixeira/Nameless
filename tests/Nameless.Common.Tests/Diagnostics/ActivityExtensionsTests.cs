@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Moq;
+using Nameless.Diagnostics.ActivitySource;
 
 namespace Nameless.Diagnostics;
 

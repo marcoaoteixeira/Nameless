@@ -27,8 +27,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\generators\Nameless.Web.Generators\Nameless.Web.Generators.csproj" />
-		<ProjectReference Include="..\..\src\Nameless.Common.Testing.Tools\Nameless.Common.Testing.Tools.csproj" />
 		<ProjectReference Include="..\..\src\Nameless.Web\Nameless.Web.csproj" />
 	</ItemGroup>
 

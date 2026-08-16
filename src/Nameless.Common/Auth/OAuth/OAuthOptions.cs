@@ -1,10 +1,13 @@
-﻿using Nameless.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Attributes;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Auth.OAuth;
 
 /// <summary>
 ///     Represents the OAuth configuration options.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainStructure)]
 [ConfigurationSectionName("OAuth")]
 public record OAuthOptions {
     /// <summary>

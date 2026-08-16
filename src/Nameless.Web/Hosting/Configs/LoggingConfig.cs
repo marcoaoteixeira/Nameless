@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Nameless.Logging.Serilog;
 using Nameless.Web.Serilog;
 using Serilog;
-using Serilog.Events;
 
 namespace Nameless.Web.Hosting.Configs;
 
@@ -40,31 +37,9 @@ public static class LoggingConfig {
     }
 
     private static void DefaultSerilogConfiguration(SerilogRegistration registration) {
-        registration.OverrideSerilogConfiguration = (provider, config) => {
-            var configuration = provider.GetRequiredService<IConfiguration>();
-
-            config
-                // Defines from where it should get its configurations.
-                .ReadFrom.Configuration(configuration)
-
-                // Enrich the log message with data from other locations.
-                .Enrich.FromLogContext()
-
-                // Enrich with request CorrelationId
-                .Enrich.WithCorrelationId(provider)
-
-                // Write to console sink
-                .WriteTo.Console()
-
-                // Write to OpenTelemetry sink
-                .WriteTo.OpenTelemetry(opts => opts.Endpoint = configuration[
-                    StaticData.OpenTelemetry.ExporterEndpointConfigKey
-                ])
-
-                // Override minimum levels
-                .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
+        registration.EnrichmentConfiguration = (provider, enrich) => {
+            // Enrich with request CorrelationId
+            enrich.WithCorrelationId(provider);
         };
     }
 

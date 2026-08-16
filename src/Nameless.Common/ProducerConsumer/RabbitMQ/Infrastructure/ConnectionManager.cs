@@ -49,7 +49,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
                                                                .SkipContextSync();
         }
         catch (BrokerUnreachableException ex) {
-            _logger.BrokerUnreachable(Server, ex);
+            Log.BrokerUnreachable(_logger, Server.Hostname, ex);
 
             throw;
         }

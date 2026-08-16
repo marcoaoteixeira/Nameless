@@ -1,14 +1,17 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Helpers;
 using Serilog;
+using Serilog.Configuration;
+using Serilog.Events;
 
 namespace Nameless.Logging.Serilog;
 
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for Serilog logging integration.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {
@@ -23,9 +26,17 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterSerilog(Action<SerilogRegistration>? registration) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.AddSerilog(
-                settings.OverrideSerilogConfiguration ?? DefaultSerilogConfiguration
-            );
+            self.AddSerilog((provider, config) => {
+                // Defines from where it should get its configurations.
+                config.ReadFrom.Configuration(
+                    provider.GetRequiredService<IConfiguration>(),
+                    readerOptions: null
+                );
+
+                GetEnrichmentConfigurator(settings).Invoke(provider, config.Enrich);
+                GetSinkConfigurator(settings).Invoke(provider, config.WriteTo);
+                GetMinimumLevelConfigurator(settings).Invoke(provider, config.MinimumLevel);
+            });
 
             return self.AddLogging(
                 builder => builder.AddSerilog()
@@ -33,29 +44,58 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static void DefaultSerilogConfiguration(IServiceProvider provider, LoggerConfiguration config) {
+    private static Action<IServiceProvider, LoggerEnrichmentConfiguration> GetEnrichmentConfigurator(SerilogRegistration registration) {
+        return registration.OverrideEnrichmentConfiguration
+            ? Throws.When.Null(registration.EnrichmentConfiguration)
+            : (Action<IServiceProvider, LoggerEnrichmentConfiguration>)Delegate.Combine(
+                DefaultEnrichmentConfiguration, registration.EnrichmentConfiguration
+            );
+    }
+
+    private static Action<IServiceProvider, LoggerSinkConfiguration> GetSinkConfigurator(SerilogRegistration registration) {
+        return registration.OverrideSinkConfiguration
+            ? Throws.When.Null(registration.SinkConfiguration)
+            : (Action<IServiceProvider, LoggerSinkConfiguration>)Delegate.Combine(
+                DefaultSinkConfiguration, registration.SinkConfiguration
+            );
+    }
+
+    private static Action<IServiceProvider, LoggerMinimumLevelConfiguration> GetMinimumLevelConfigurator(SerilogRegistration registration) {
+        return registration.OverrideMinimumLevelConfiguration
+            ? Throws.When.Null(registration.MinimumLevelConfiguration)
+            : (Action<IServiceProvider, LoggerMinimumLevelConfiguration>)Delegate.Combine(
+                DefaultMinimumLevelConfiguration, registration.MinimumLevelConfiguration
+            );
+    }
+
+    private static void DefaultEnrichmentConfiguration(IServiceProvider _, LoggerEnrichmentConfiguration config) {
+        // Enrich the log message with data from other locations.
+        config.FromLogContext();
+    }
+
+    private static void DefaultSinkConfiguration(IServiceProvider provider, LoggerSinkConfiguration config) {
+        // Write to console sink
+        config.Console();
+
+        // Write to file sink
+        config.File(
+            path: "app-.log",
+            rollingInterval: RollingInterval.Hour,
+            retainedFileCountLimit: 24
+        );
+
+        // Write to OpenTelemetry sink
         var configuration = provider.GetRequiredService<IConfiguration>();
-        
-        config
-            // Defines from where it should get its configurations.
-            .ReadFrom.Configuration(configuration, readerOptions: null)
+        var exporterUrl = configuration[StaticData.OpenTelemetry.ExporterEndpointConfigKey];
+        if (!string.IsNullOrWhiteSpace(exporterUrl)) {
+            config.OpenTelemetry(opts => opts.Endpoint = exporterUrl);
+        }
+    }
 
-            // Enrich the log message with data from other locations.
-            .Enrich.FromLogContext()
-
-            // Write to console sink
-            .WriteTo.Console()
-
-            // Write to file sink
-            .WriteTo.File(
-                path: "app-.log",
-                rollingInterval: RollingInterval.Hour,
-                retainedFileCountLimit: 24
-            )
-
-            // Write to OpenTelemetry sink
-            .WriteTo.OpenTelemetry(opts => opts.Endpoint = configuration[
-                StaticData.OpenTelemetry.ExporterEndpointConfigKey
-            ]);
+    private static void DefaultMinimumLevelConfiguration(IServiceProvider _, LoggerMinimumLevelConfiguration config) {
+        // Enrich the log message with data from other locations.
+        config.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning);
+        config.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning);
+        config.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
     }
 }

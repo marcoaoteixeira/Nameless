@@ -14,6 +14,8 @@ namespace Nameless.Security.Cryptography;
 ///     vector, and other parameters. This class is thread-safe.
 /// </summary>
 public class RijndaelCrypto : ICrypto, IDisposable {
+    private const string LOG_TAG = "RIJNDAEL_CRYPTO";
+
     private readonly Lock _lock = new();
 
     private readonly IOptions<RijndaelCryptoOptions> _options;
@@ -77,7 +79,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
                     InitializeCryptoTransform();
                 }
 
-                _logger.EncryptionException(ex);
+                CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
                 throw;
             }
@@ -123,7 +125,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
                     InitializeCryptoTransform();
                 }
 
-                _logger.DecryptionFailure(ex);
+                CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
                 throw;
             }

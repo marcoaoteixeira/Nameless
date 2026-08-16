@@ -10,6 +10,8 @@ namespace Nameless.Compression.Zip;
 ///     ZIP implementation of <see cref="ICompressor"/>.
 /// </summary>
 public class ZipCompressor : ICompressor {
+    private const string LOG_TAG = "ZIP_COMPRESSOR";
+
     private readonly ILogger<ZipCompressor> _logger;
 
     /// <summary>
@@ -54,7 +56,7 @@ public class ZipCompressor : ICompressor {
             }
         }
         catch (Exception ex) {
-            Log.CompressAsyncFailure(_logger, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }
@@ -90,7 +92,7 @@ public class ZipCompressor : ICompressor {
 
         }
         catch (Exception ex) {
-            Log.DecompressAsyncFailure(_logger, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }

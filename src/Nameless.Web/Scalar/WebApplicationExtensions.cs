@@ -17,6 +17,8 @@ namespace Nameless.Web.Scalar;
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
 public static class WebApplicationExtensions {
+    private const string LOG_TAG = "SCALAR";
+
     /// <param name="self">
     ///     The current instance of <see cref="WebApplication"/> class.
     /// </param>
@@ -37,7 +39,8 @@ public static class WebApplicationExtensions {
                 options
                     .WithTitle(self.Environment.ApplicationName)
                     .WithTheme(ScalarTheme.BluePlanet)
-                    .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl);
+                    .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
+                    .SortOperationsByMethod();
 
                 if (settings.UseDefaultHttpAuthentication) {
                     options.AddHttpAuthentication(
@@ -64,18 +67,16 @@ public static class WebApplicationExtensions {
                 onFailure: failure => {
                     scheme.WithToken(string.Empty);
 
-                    logger.UnableRetrieveAccessToken(
-                        actionName: nameof(ConfigureScalarHttpAuthentication),
-                        reason: failure.Flatten()
+                    CommonLog.Warning(
+                        logger,
+                        reason: failure.Flatten(),
+                        tag: LOG_TAG
                     );
                 }
             );
         }
         catch (Exception ex) {
-            logger.Failure(
-                actionName: nameof(ConfigureScalarHttpAuthentication),
-                exception: ex
-            );
+            CommonLog.Failure(logger, ex, tag: LOG_TAG);
 
             throw;
         }

@@ -37,5 +37,10 @@ public enum HttpVerbs {
     /// <summary>
     ///     HTTP PUT method.
     /// </summary>
-    Put
+    Put,
+    
+    /// <summary>
+    ///     HTTP QUERY method.
+    /// </summary>
+    Query
 }

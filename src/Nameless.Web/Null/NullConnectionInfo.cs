@@ -10,7 +10,7 @@ namespace Nameless.Web.Null;
 /// <summary>
 ///     Null implementation of <see cref="ConnectionInfo"/> that does not store any connection information.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.TrivialCode)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 [IgnoreAssemblyScan]
 public sealed class NullConnectionInfo : ConnectionInfo {
     public static ConnectionInfo Instance { get; } = new NullConnectionInfo();

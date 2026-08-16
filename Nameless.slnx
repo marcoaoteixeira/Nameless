@@ -27,7 +27,8 @@
     <File Path=".claude/skills/xunit/SKILL.md" />
   </Folder>
   <Folder Name="/generators/">
-    <Project Path="generators/Nameless.Web.Generators/Nameless.Web.Generators.csproj" />
+    <Project Path="generators/Nameless.Generators.Tests/Nameless.Generators.Tests.csproj" Id="8589f193-a3a7-4d01-882a-ec22411ef4af" />
+    <Project Path="generators/Nameless.Generators/Nameless.Generators.csproj" Id="b38151b0-8478-4fee-907f-9183fbd9c169" />
   </Folder>
   <Folder Name="/samples/" />
   <Folder Name="/samples/Microservices/">
@@ -35,27 +36,6 @@
     <Project Path="samples/Microservices/Nameless.Microservices.AppHost/Nameless.Microservices.AppHost.csproj" />
     <Project Path="samples/Microservices/Nameless.Microservices.Bff/Nameless.Microservices.Bff.csproj" />
     <Project Path="samples/Microservices/Nameless.Microservices.Common/Nameless.Microservices.Common.csproj" />
-    <Project Path="samples/Microservices/Nameless.Microservices.Frontend/" Type="Website" DisplayName="Nameless.Microservices.Frontend(1)">
-      <BuildType Project="Debug" />
-      <Properties Name="WebsiteProperties">
-        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
-        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
-        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;samples\Microservices\Nameless.Microservices.Frontend\&quot;" />
-        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_50377\&quot;" />
-        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_50377&quot;" />
-        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
-        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
-        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;samples\Microservices\Nameless.Microservices.Frontend\&quot;" />
-        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_50377\&quot;" />
-        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
-        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_50377&quot;" />
-        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv2.0&quot;" />
-        <Property Name="VWDPort" Value="&quot;50377&quot;" />
-      </Properties>
-    </Project>
     <Project Path="samples/Microservices/Nameless.Microservices.Worker/Nameless.Microservices.Worker.csproj" />
   </Folder>
   <Folder Name="/samples/WinApp/">
@@ -63,15 +43,14 @@
     <Project Path="samples/WinApp/Nameless.WinApp.Tests/Nameless.WinApp.Tests.csproj" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Nameless.Common.Testing.Tools/Nameless.Common.Testing.Tools.csproj" />
     <Project Path="src/Nameless.Common/Nameless.Common.csproj" />
+    <Project Path="src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" />
     <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
     <Project Path="src/Nameless.Windows/Nameless.Windows.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Nameless.Common.Testing.Tools.Tests/Nameless.Common.Testing.Tools.Tests.csproj" />
     <Project Path="tests/Nameless.Common.Tests/Nameless.Common.Tests.csproj" />
-    <Project Path="tests/Nameless.Web.Generators.Tests/Nameless.Web.Generators.Tests.csproj" Id="5526682d-2903-4ebb-9f0d-5223e0f5c3f8" />
+    <Project Path="tests/Nameless.Testing.Tools.Tests/Nameless.Testing.Tools.Tests.csproj" />
     <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" />
     <Project Path="tests/Nameless.Windows.Tests/Nameless.Windows.Tests.csproj" Id="455b3641-dd7b-40c2-b44d-deae0823e35f" />
   </Folder>

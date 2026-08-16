@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using Nameless.Web.HealthCheck.Reporting;
-using MS_HealthCheckOptions = Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions;
 
 namespace Nameless.Web.HealthCheck;
 
@@ -25,30 +25,31 @@ public static class WebApplicationExtensions {
         ///     Call this method after <c>UseRouting</c>.
         /// </remarks>
         public WebApplication UseHealthCheck() {
-            // Adding health checks endpoints to applications in non-development
-            // environments has security implications.
-            // See https://aka.ms/dotnet/aspire/healthchecks for details before
-            // enabling these endpoints in non-development environments.
-            if (!self.Environment.IsDevelopment()) {
-                return self;
-            }
+            var healthChecks = self.MapGroup(string.Empty);
+            var config = self.Configuration.GetOptions<HealthCheckConfiguration>();
 
-            // All health checks must pass for app to be considered ready
-            // to accept traffic after starting
-            self.MapHealthChecks(
-                pattern: "/health",
-                new MS_HealthCheckOptions {
-                    ResponseWriter = JsonReportWriter.WriteAsync
-                });
+            // Basic action to ensure security of the health check endpoints.
+            healthChecks
+                .WithRequestTimeout(HealthCheckConfiguration.TimeoutPolicyName)
+                .CacheOutput(HealthCheckConfiguration.TimeoutPolicyName);
 
-            // Only health checks tagged with the "live" tag must pass for
-            // app to be considered alive
-            self.MapHealthChecks(
-                pattern: "/alive",
-                new MS_HealthCheckOptions {
-                    Predicate = registration => registration.Tags.Contains("live"),
+            // Liveness: no checks at all, just "process is alive" (cheap, safe)
+            healthChecks.MapHealthChecks(
+                pattern: config.LivenessPath,
+                options: new HealthCheckOptions {
+                    Predicate = registration => registration.Tags.Contains("alive"),
                     ResponseWriter = JsonReportWriter.WriteAsync
-                });
+                }
+            );
+
+            // Readiness: real dependency checks, tagged
+            healthChecks.MapHealthChecks(
+                pattern: config.ReadinessPath,
+                options: new HealthCheckOptions {
+                    Predicate = registration => registration.Tags.Overlaps(config.ReadinessTags),
+                    ResponseWriter = JsonReportWriter.WriteAsync
+                }
+            );
 
             return self;
         }

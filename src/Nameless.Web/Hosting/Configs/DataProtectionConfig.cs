@@ -14,12 +14,13 @@ public static class DataProtectionConfig {
             if (settings.DisableDataProtection) { return self; }
 
             var section = ConfigurationSectionNameAttribute.GetSectionName<AppDataProtectionOptions>();
-            var options = self.Configuration.GetSection<AppDataProtectionOptions>()
+            var options = self.Configuration
+                              .GetSection<AppDataProtectionOptions>()
                               .Get<AppDataProtectionOptions>() ?? 
                           throw new MissingConfigurationException(section);
 
             var builder = self.Services
-                              .AddDataProtection(opts => opts = options)
+                              .AddDataProtection(opts => opts.ApplicationDiscriminator = options.ApplicationDiscriminator)
                               .SetApplicationName(self.Environment.ApplicationName);
 
             if (options.UseFileSystem && !string.IsNullOrWhiteSpace(options.FileSystemPath)) {

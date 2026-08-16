@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Nameless.Logging.Serilog;
 using Nameless.Windows.Hosting.Wrappers;
 using Serilog;
@@ -35,26 +33,14 @@ public static class LoggingConfig {
             return self;
 
             static void ConfigureDefaults(SerilogRegistration registration) {
-                registration.OverrideSerilogConfiguration = (provider, config) => {
-                    var configuration = provider.GetRequiredService<IConfiguration>();
-
-                    config
-                        // Defines from where it should get its configurations.
-                        .ReadFrom.Configuration(configuration)
-
-                        // Enrich the log message with data from other locations.
-                        .Enrich.FromLogContext()
-
-                        // Write to file sink
-                        .WriteTo.File(
-                            path: "app-.log",
-                            rollingInterval: RollingInterval.Day,
-                            fileSizeLimitBytes: 16_777_216,
-                            retainedFileCountLimit: 3
-                        )
-
-                        // Write to console sink
-                        .WriteTo.Console();
+                registration.SinkConfiguration = (_, config) => {
+                    // Write to file sink
+                    config.File(
+                        path: "app-.log",
+                        rollingInterval: RollingInterval.Day,
+                        fileSizeLimitBytes: 16_777_216,
+                        retainedFileCountLimit: 3
+                    );
                 };
             }
         }

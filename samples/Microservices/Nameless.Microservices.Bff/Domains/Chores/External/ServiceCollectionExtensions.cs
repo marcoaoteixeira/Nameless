@@ -23,8 +23,8 @@ public static class ServiceCollectionExtensions {
                 var scheme = request.Headers.Authorization?.Scheme;
 
                 return scheme == JwtBearerDefaults.AuthenticationScheme
-                    ? Task.FromResult(request.Headers.Authorization?.Parameter ?? string.Empty)
-                    : Task.FromResult(string.Empty);
+                    ? ValueTask.FromResult(request.Headers.Authorization?.Parameter ?? string.Empty)
+                    : ValueTask.FromResult(string.Empty);
             }
         };
     }

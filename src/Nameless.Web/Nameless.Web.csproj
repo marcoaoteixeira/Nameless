@@ -49,7 +49,7 @@
 	<!-- Do not put it inside analyzers/dotnet/cs so NuGet does not autoload it. -->
 	<!-- The .targets file controls loading conditionally via UseAutoEndpoints. -->
 	<ItemGroup>
-		<None Include="..\..\generators\Nameless.Web.Generators\bin\$(Configuration)\netstandard2.0\Nameless.Web.Generators.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
+		<None Include="..\..\generators\Nameless.Generators\bin\$(Configuration)\netstandard2.0\Nameless.Generators.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="build/" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="buildTransitive/" />
 	</ItemGroup>

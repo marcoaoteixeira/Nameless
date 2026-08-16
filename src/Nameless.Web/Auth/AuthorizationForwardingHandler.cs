@@ -25,8 +25,7 @@ namespace Nameless.Web.Auth;
 ///     the current request context. If no <see cref="HttpContext"/> is
 ///     available, the handler simply calls the base implementation.
 /// </remarks>
-public sealed class AuthorizationForwardingHandler : DelegatingHandler
-{
+public sealed class AuthorizationForwardingHandler : DelegatingHandler {
     /// <summary>
     ///     Accessor used to obtain the current <see cref="HttpContext"/> when
     ///     processing outgoing requests.
@@ -40,8 +39,7 @@ public sealed class AuthorizationForwardingHandler : DelegatingHandler
     /// <param name="httpContextAccessor">
     ///     The HTTP context accessor used to read the incoming request context.
     /// </param>
-    public AuthorizationForwardingHandler(IHttpContextAccessor httpContextAccessor)
-    {
+    public AuthorizationForwardingHandler(IHttpContextAccessor httpContextAccessor) {
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -65,12 +63,10 @@ public sealed class AuthorizationForwardingHandler : DelegatingHandler
     ///     running outside of an HTTP request), the outgoing request is sent
     ///     without modification.
     /// </remarks>
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
         var httpContext = _httpContextAccessor.HttpContext;
 
-        if (httpContext is null)
-        {
+        if (httpContext is null) {
             return await base.SendAsync(request, cancellationToken);
         }
 
@@ -102,13 +98,11 @@ public sealed class AuthorizationForwardingHandler : DelegatingHandler
     /// <returns>
     ///     A completed <see cref="Task"/> when the header has been set (or not).
     /// </returns>
-    private static async Task SetAuthorizationTokenAsync(HttpRequestMessage request, HttpContext httpContext)
-    {
+    private static async Task SetAuthorizationTokenAsync(HttpRequestMessage request, HttpContext httpContext) {
         // Forward the Authorization header from the incoming request
         var token = await httpContext.GetTokenAsync("access_token");
 
-        if (!string.IsNullOrEmpty(token))
-        {
+        if (!string.IsNullOrEmpty(token)) {
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 scheme: JwtBearerDefaults.AuthenticationScheme,
                 parameter: token
@@ -119,8 +113,7 @@ public sealed class AuthorizationForwardingHandler : DelegatingHandler
 
         // Fallback: forward the raw Authorization header if present
         var authHeader = httpContext.Request.Headers.Authorization.ToString();
-        if (!string.IsNullOrEmpty(authHeader))
-        {
+        if (!string.IsNullOrEmpty(authHeader)) {
             request.Headers.TryAddWithoutValidation(
                 name: "Authorization",
                 value: authHeader

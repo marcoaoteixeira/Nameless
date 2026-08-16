@@ -21,6 +21,8 @@ namespace Nameless.Lucene;
 ///     Default implementation of <see cref="IIndex"/>.
 /// </summary>
 public class Index : IIndex {
+    private string LogTag => $"INDEX::{Name}";
+
     private readonly Analyzer _analyzer;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IOptions<LuceneOptions> _options;
@@ -91,7 +93,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            Log.InsertFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -109,7 +111,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            Log.DeleteFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -127,7 +129,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            Log.UpdateFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -148,7 +150,7 @@ public class Index : IIndex {
             );
         }
         catch (Exception ex) {
-            Log.SearchFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             throw;
         }
@@ -167,7 +169,7 @@ public class Index : IIndex {
             return collector.TotalHits;
         }
         catch (Exception ex) {
-            Log.CountFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -183,7 +185,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            Log.RollbackFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -199,7 +201,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            Log.SaveChangesFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -284,7 +286,7 @@ public class Index : IIndex {
             return FSDirectory.Open(directory.Path);
         }
         catch (Exception ex) {
-            Log.CreateFSDirectoryFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             throw;
         }
@@ -313,7 +315,7 @@ public class Index : IIndex {
             return EmptyIndexReader.Instance;
         }
         catch (Exception ex) {
-            Log.GetIndexReaderFailure(_logger, Name, ex);
+            CommonLog.Failure(_logger, ex, tag: LogTag);
 
             throw;
         }

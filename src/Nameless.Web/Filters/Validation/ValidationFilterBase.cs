@@ -30,12 +30,13 @@ public abstract class ValidationFilterBase {
     protected static bool TryResolveValidation(IServiceProvider provider, [NotNullWhen(returnValue: true)] out IValidationService? output) {
         output = provider.GetService<IValidationService>();
 
-        var hasService = output is not null;
+        var isServiceUnavailable = output is not null;
+        if (!isServiceUnavailable) { return isServiceUnavailable; }
 
-        provider.GetLogger<ValidationFilterBase>()
-                .OnCondition(!hasService)
-                .ValidationServiceUnavailable();
+        var logger = provider.GetLogger<ValidationFilterBase>();
 
-        return hasService;
+        Log.ValidationServiceUnavailable(logger);
+
+        return isServiceUnavailable;
     }
 }

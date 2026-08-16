@@ -7,11 +7,13 @@ namespace Nameless.Mailing.Mailkit;
 /// Default implementation of <see cref="IMailingService"/> using MailKit for sending emails.
 /// </summary>
 public class MailingService : IMailingService {
+    private const string LOG_TAG = "MAILING_SERVICE";
+
     private readonly ILogger<MailingService> _logger;
     private readonly ISmtpClientFactory _smtpClientFactory;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MailingService"/> class.
+    ///     Initializes a new instance of the <see cref="MailingService"/> class.
     /// </summary>
     /// <param name="smtpClientFactory">The SMTP client factory.</param>
     /// <param name="logger">The logger.</param>
@@ -48,7 +50,7 @@ public class MailingService : IMailingService {
 
         try { _ = await client.SendAsync(mail, cancellationToken).SkipContextSync(); }
         catch (Exception ex) {
-            Log.DeliverAsyncFailure(_logger, ex);
+            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             throw;
         }
