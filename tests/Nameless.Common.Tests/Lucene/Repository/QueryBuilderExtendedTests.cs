@@ -722,16 +722,16 @@ public class QueryBuilderExtendedTests {
     [Fact]
     public void Slice_SetsOffset_LimitIsReflectedInDefinition() {
         // arrange
-        const int limit = 25;
+        const int Limit = 25;
         var builder = CreateBuilder();
 
         // act
         builder.WithField("name", "alice", useWildcard: false)
-               .Slice(limit);
+               .Slice(Limit);
         var definition = builder.Build();
 
         // assert
-        Assert.Equal(limit, definition.Limit);
+        Assert.Equal(Limit, definition.Limit);
     }
 
     [Fact]

@@ -10,7 +10,6 @@ namespace Nameless.Mediator;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.

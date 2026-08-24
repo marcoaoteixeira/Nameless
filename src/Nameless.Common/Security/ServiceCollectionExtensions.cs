@@ -9,7 +9,6 @@ namespace Nameless.Security;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extensions for security features.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/> instance.

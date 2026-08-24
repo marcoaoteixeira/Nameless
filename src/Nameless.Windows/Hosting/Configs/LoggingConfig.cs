@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Nameless.Logging.Serilog;
 using Nameless.Windows.Hosting.Wrappers;
-using Serilog;
 
 namespace Nameless.Windows.Hosting.Configs;
 
@@ -27,22 +26,10 @@ public static class LoggingConfig {
             if (settings.DisableLogging) { return self; }
 
             self.ConfigureServices(services => services.RegisterSerilog(
-                settings.ConfigureLoggingRegistration ?? ConfigureDefaults
+                settings.ConfigureLogging
             ));
 
             return self;
-
-            static void ConfigureDefaults(SerilogRegistration registration) {
-                registration.SinkConfiguration = (_, config) => {
-                    // Write to file sink
-                    config.File(
-                        path: "app-.log",
-                        rollingInterval: RollingInterval.Day,
-                        fileSizeLimitBytes: 16_777_216,
-                        retainedFileCountLimit: 3
-                    );
-                };
-            }
         }
     }
 }

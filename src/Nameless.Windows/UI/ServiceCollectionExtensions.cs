@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
-using Nameless.Windows.DependencyInjection;
 using Nameless.Windows.UI.Impl;
 
 namespace Nameless.Windows.UI;
@@ -44,7 +43,6 @@ public static class ServiceCollectionExtensions {
             : settings.Windows;
 
         foreach (var implementation in implementations) {
-            var lifetime = ServiceLifetimeAttribute.GetLifetime(implementation);
             var interfaces = implementation.GetInterfaces()
                                            .Where(service.IsAssignableFrom);
 
@@ -53,11 +51,11 @@ public static class ServiceCollectionExtensions {
                 if (@interface == service) { continue; }
 
                 // Register the service with its extended interface
-                yield return new ServiceDescriptor(@interface, implementation, lifetime);
+                yield return ServiceDescriptor.Transient(@interface, implementation);
             }
 
             // Register the service as concrete type
-            yield return new ServiceDescriptor(implementation, implementation, lifetime);
+            yield return ServiceDescriptor.Transient(implementation, implementation);
         }
     }
 }

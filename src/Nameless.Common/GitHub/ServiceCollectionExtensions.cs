@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Attributes;
 using Nameless.Configuration;
 
 namespace Nameless.GitHub;
@@ -25,7 +26,7 @@ public static class ServiceCollectionExtensions {
         /// </returns>
         public IServiceCollection RegisterGitHubHttpClient(Action<GitHubOptions>? configure = null) {
             return self.Configure(configure ?? (_ => { }))
-                       .InnerRegisterGitHubHttpClient();
+                       .RegisterGitHubClientCore();
         }
 
         /// <summary>
@@ -39,18 +40,18 @@ public static class ServiceCollectionExtensions {
         ///     can be chained.
         /// </returns>
         public IServiceCollection RegisterGitHubHttpClient(IConfiguration configuration) {
-            var section = configuration.GetSection<GitHubOptions>();
-
-            return self.Configure<GitHubOptions>(section)
-                       .InnerRegisterGitHubHttpClient();
+            return self.ConfigureOptions<GitHubOptions>(configuration)
+                       .RegisterGitHubClientCore();
         }
 
-        private IServiceCollection InnerRegisterGitHubHttpClient() {
+        private IServiceCollection RegisterGitHubClientCore() {
             self.AddHttpClient<IGitHubHttpClient, GitHubHttpClient>((provider, client) => {
                 var opts = provider.GetOptions<GitHubOptions>().Value;
 
                 if (string.IsNullOrWhiteSpace(opts.ApiBaseUrl)) {
-                    throw new MissingConfigurationException(section: "GitHub", key: nameof(GitHubOptions.ApiBaseUrl));
+                    throw new MissingConfigurationException(
+                        section: ConfigurationSectionNameAttribute.GetSectionName<GitHubOptions>(),
+                        key: nameof(GitHubOptions.ApiBaseUrl));
                 }
 
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));

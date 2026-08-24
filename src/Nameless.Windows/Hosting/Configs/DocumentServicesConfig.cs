@@ -29,7 +29,7 @@ public static class DocumentServicesConfig {
             self.ConfigureServices(
                 services => services.RegisterDocumentServices(
                     AssemblyScanAwareHelper.Join(
-                        settings.ConfigureDocumentServicesRegistration,
+                        settings.ConfigureDocumentServices,
                         settings.Assemblies
                     )
                 )

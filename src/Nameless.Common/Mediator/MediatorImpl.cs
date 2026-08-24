@@ -23,9 +23,7 @@ public class MediatorImpl : IMediator {
     ///     <paramref name="requestHandlerInvoker"/> or
     ///     <paramref name="streamHandlerInvoker"/> is <see langword="null"/>.
     /// </exception>
-    public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker,
-        IRequestHandlerInvoker requestHandlerInvoker,
-        IStreamHandlerInvoker streamHandlerInvoker) {
+    public MediatorImpl(IEventHandlerInvoker eventHandlerInvoker, IRequestHandlerInvoker requestHandlerInvoker, IStreamHandlerInvoker streamHandlerInvoker) {
         _eventHandlerInvoker = eventHandlerInvoker;
         _requestHandlerInvoker = requestHandlerInvoker;
         _streamHandlerInvoker = streamHandlerInvoker;

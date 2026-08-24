@@ -1,5 +1,5 @@
 using Nameless.Application;
-using Nameless.IO;
+using Nameless.IO.Explorer;
 
 namespace Nameless.Testing.Tools.Mockers.Infrastructure;
 
@@ -25,8 +25,8 @@ public class ApplicationContextMocker : Mocker<IApplicationContext> {
         return this;
     }
 
-    public ApplicationContextMocker WithFileSystemProvider(IFileSystemProvider returnValue) {
-        MockInstance.Setup(mock => mock.FileSystemProvider)
+    public ApplicationContextMocker WithFileSystemProvider(IFileExplorer returnValue) {
+        MockInstance.Setup(mock => mock.FileExplorer)
                     .Returns(returnValue);
 
         return this;

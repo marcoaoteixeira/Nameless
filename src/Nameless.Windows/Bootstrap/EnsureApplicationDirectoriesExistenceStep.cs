@@ -20,23 +20,23 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
         T = localizer;
     }
 
-    public override async Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
+    public override async Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
         const string ActionName = nameof(ExecuteAsync);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateBackupDirectory"]);
-        _applicationContext.FileSystemProvider.GetBackupDirectory().Create();
+        _applicationContext.FileExplorer.GetBackupDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateDatabaseDirectory"]);
-        _applicationContext.FileSystemProvider.GetDatabaseDirectory().Create();
+        _applicationContext.FileExplorer.GetDatabaseDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateTemporaryDirectory"]);
-        _applicationContext.FileSystemProvider.GetTemporaryDirectory().Create();
+        _applicationContext.FileExplorer.GetTemporaryDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateUpdateDirectory"]);
-        _applicationContext.FileSystemProvider.GetUpdateDirectory().Create();
+        _applicationContext.FileExplorer.GetUpdateDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
     }
 }

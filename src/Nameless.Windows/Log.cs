@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Nameless.Windows.Configuration;
 using Nameless.Windows.Documents;
-using Nameless.Windows.Documents.Impl;
 using Nameless.Windows.Localization;
 using Nameless.Windows.UI.Impl;
 

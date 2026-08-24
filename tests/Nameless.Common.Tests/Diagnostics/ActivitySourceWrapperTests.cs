@@ -19,9 +19,9 @@ public class ActivitySourceWrapperTests {
     [Fact]
     public void StartActivity_ReturnsIActivity() {
         // arrange
-        using var innerSource = new ActivitySource("test.source.start");
+        using var innerSource = new System.Diagnostics.ActivitySource("test.source.start");
         using var listener = CreateAcceptAllListener();
-        ActivitySource.AddActivityListener(listener);
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
 
         var sut = new ActivitySourceWrapper(innerSource);
 
@@ -35,7 +35,7 @@ public class ActivitySourceWrapperTests {
     [Fact]
     public void Dispose_FiresOnDisposeEvent() {
         // arrange
-        using var innerSource = new ActivitySource("test.source.dispose");
+        using var innerSource = new System.Diagnostics.ActivitySource("test.source.dispose");
         var sut = new ActivitySourceWrapper(innerSource);
 
         IActivitySource? capturedSource = null;
@@ -52,7 +52,7 @@ public class ActivitySourceWrapperTests {
     [Fact]
     public void Dispose_CalledTwice_DoesNotThrow() {
         // arrange
-        using var innerSource = new ActivitySource("test.source.double-dispose");
+        using var innerSource = new System.Diagnostics.ActivitySource("test.source.double-dispose");
         var sut = new ActivitySourceWrapper(innerSource);
 
         sut.Dispose(); // first call

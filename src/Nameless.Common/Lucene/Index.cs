@@ -8,7 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.Lucene.Collections;
 using Nameless.Lucene.Empty;
 using Nameless.Lucene.ObjectModel;
@@ -24,7 +24,7 @@ public class Index : IIndex {
     private string LogTag => $"INDEX::{Name}";
 
     private readonly Analyzer _analyzer;
-    private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IFileExplorer _fileSystemProvider;
     private readonly IOptions<LuceneOptions> _options;
     private readonly ILogger<Index> _logger;
 
@@ -65,7 +65,7 @@ public class Index : IIndex {
     /// </param>
     public Index(
         Analyzer analyzer,
-        IFileSystemProvider fileSystemProvider,
+        IFileExplorer fileSystemProvider,
         string name,
         IOptions<LuceneOptions> options,
         ILogger<Index> logger

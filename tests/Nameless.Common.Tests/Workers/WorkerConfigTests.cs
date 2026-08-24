@@ -10,7 +10,7 @@ public class WorkerConfigTests {
     [Fact]
     public void IsDisabled_WhenIsEnabledFalse_ReturnsTrue() {
         // arrange
-        var options = new WorkerOptions { IsEnabled = false, Interval = TimeSpan.FromMilliseconds(50) };
+        var options = new PeriodicWorkerOptions { IsEnabled = false, Interval = TimeSpan.FromMilliseconds(50) };
 
         // act & assert
         Assert.True(options.IsDisabled);
@@ -19,7 +19,7 @@ public class WorkerConfigTests {
     [Fact]
     public void IsDisabled_WhenIsEnabledTrue_ReturnsFalse() {
         // arrange
-        var options = new WorkerOptions { IsEnabled = true, Interval = TimeSpan.FromMilliseconds(50) };
+        var options = new PeriodicWorkerOptions { IsEnabled = true, Interval = TimeSpan.FromMilliseconds(50) };
 
         // act & assert
         Assert.False(options.IsDisabled);
@@ -33,9 +33,9 @@ public class WorkerConfigTests {
         var ct = TestContext.Current.CancellationToken;
         var workCalled = false;
 
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker), isEnabled: false),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker), isEnabled: false),
+            NullLogger<PeriodicWorker>.Instance,
             _ => {
                 workCalled = true;
                 return Task.CompletedTask;
@@ -63,7 +63,7 @@ public class WorkerConfigTests {
             .AddInMemoryCollection(new Dictionary<string, string?>())
             .Build();
 
-        var worker = new SimpleWorker(configuration, NullLogger<Worker>.Instance);
+        var worker = new SimplePeriodicWorker(configuration, NullLogger<PeriodicWorker>.Instance);
 
         // act
         await worker.StartAsync(ct);
@@ -87,9 +87,9 @@ public class WorkerConfigTests {
     public async Task StartAsync_WithZeroInterval_BackgroundTaskFaultsWithInvalidOperationException() {
         // arrange
         var ct = TestContext.Current.CancellationToken;
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker), isEnabled: true, interval: "00:00:00"),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker), isEnabled: true, interval: "00:00:00"),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act
@@ -124,18 +124,18 @@ public class WorkerConfigTests {
 
     // ─── test doubles ─────────────────────────────────────────────────────────
 
-    private sealed class SimpleWorker(IConfiguration configuration, Microsoft.Extensions.Logging.ILogger<Worker> logger)
-        : Worker(configuration, logger) {
-        public override string Name => nameof(SimpleWorker);
+    private sealed class SimplePeriodicWorker(IConfiguration configuration, Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger)
+        : PeriodicWorker(configuration, logger) {
+        public override string Name => nameof(SimplePeriodicWorker);
         public override Task DoWorkAsync(CancellationToken ct) => Task.Delay(Timeout.Infinite, ct);
     }
 
-    private sealed class ControllableWorker(
+    private sealed class ControllablePeriodicWorker(
         IConfiguration configuration,
-        Microsoft.Extensions.Logging.ILogger<Worker> logger,
+        Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger,
         Func<CancellationToken, Task> work)
-        : Worker(configuration, logger) {
-        public override string Name => nameof(ControllableWorker);
+        : PeriodicWorker(configuration, logger) {
+        public override string Name => nameof(ControllablePeriodicWorker);
         public override Task DoWorkAsync(CancellationToken ct) => work(ct);
     }
 }

@@ -34,17 +34,17 @@ public class DbConnectionFactoryTests {
     [Fact]
     public void CreateDbConnection_WithConnectionStringName_UsesConfiguration() {
         // arrange
-        const string connStringName = "MyDb";
-        const string connString = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Integrated Security=true;";
+        const string ConnStringName = "MyDb";
+        const string ConnString = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Integrated Security=true;";
 
         // ConfigurationHelper builds a real IConfiguration that properly
         // implements GetConnectionString (backed by the "ConnectionStrings" section).
         var configuration = ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
-            [$"ConnectionStrings:{connStringName}"] = connString
+            [$"ConnectionStrings:{ConnStringName}"] = ConnString
         });
 
         var options = new SqlServerOptions {
-            ConnectionStringName = connStringName
+            ConnectionStringName = ConnStringName
         };
 
         var sut = CreateSut(options, configuration);

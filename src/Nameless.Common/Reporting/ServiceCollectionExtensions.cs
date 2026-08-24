@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Nameless.Helpers;
 
 namespace Nameless.Reporting;
 
@@ -9,35 +11,85 @@ namespace Nameless.Reporting;
 /// </summary>
 public static class ServiceCollectionExtensions {
     // Not a security boundary - just keeps the concrete
-    // StatusReporter<TService> out of reach of plain constructor injection
+    // StatusReporterHub<TService> out of reach of plain constructor injection
     // or GetService<T>() call, so callers are steered toward
-    // IStatusReporter<TService> / IStatusMonitor<TService>.
-    private const string CONCRETE_REPORTER_KEY = "Reporting::internal::StatusReporter";
+    // IStatusReporterHub<TService> / IStatusMonitorHub<TService>
+    // (or IStatusReporter<TService> / IStatusMonitor<TService> for the
+    // single-channel case).
+    private const string CONCRETE_HUB_KEY = "::INTERNAL::STATUS::REPORTER::HUB";
 
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/> instance.
     /// </param>
     extension(IServiceCollection self) {
         /// <summary>
-        ///     Registers a <see cref="StatusReporter{TService}"/> singleton for
-        ///     <typeparamref name="TService"/>, exposed only via
-        ///     <see cref="IStatusReporter{TService}"/> (write+read) and
-        ///     <see cref="IStatusMonitor{TService}"/> (read-only) - both resolve
-        ///     to the same underlying instance. Safe to call more than once for
-        ///     the same <typeparamref name="TService"/>.
+        ///     Registers <see cref="StatusReporterHub"/> for all
+        ///     services defined by the <see cref="StatusReportingRegistration"/>
+        ///     delegate.
         /// </summary>
-        public IServiceCollection RegisterStatusReporter<TService>() {
-            self.TryAddKeyedSingleton<StatusReporter<TService>>(CONCRETE_REPORTER_KEY);
+        /// <param name="registration">
+        ///     The registration delegate.
+        /// </param>
+        /// <returns>
+        ///     The current instance of <see cref="IServiceCollection"/> so other
+        ///     actions can be chained.
+        /// </returns>
+        public IServiceCollection RegisterStatusReporting(Action<StatusReportingRegistration>? registration = null) {
+            var settings = ActionHelper.FromDelegate(registration);
 
-            self.TryAddSingleton<IStatusReporter<TService>>(
-                provider => provider.GetRequiredKeyedService<StatusReporter<TService>>(CONCRETE_REPORTER_KEY)
+            self.TryAddKeyedSingleton<StatusReporterHub>(
+                CONCRETE_HUB_KEY, (_, _) => new StatusReporterHub(settings.BufferSize)
             );
 
-            self.TryAddSingleton<IStatusMonitor<TService>>(
-                provider => provider.GetRequiredKeyedService<StatusReporter<TService>>(CONCRETE_REPORTER_KEY)
+            self.TryAddSingleton<IStatusReporterHub>(
+                provider => provider.GetRequiredKeyedService<StatusReporterHub>(CONCRETE_HUB_KEY)
             );
+
+            self.TryAddSingleton<IStatusMonitorHub>(
+                provider => provider.GetRequiredKeyedService<StatusReporterHub>(CONCRETE_HUB_KEY)
+            );
+
+            var services = settings.UseAssemblyScan
+                ? Scan(settings.Assemblies)
+                : settings.ForServices;
+
+            foreach (var service in services) {
+                self.RegisterStatusReportingForService(service);
+            }
 
             return self;
         }
+
+        private void RegisterStatusReportingForService(Type service) {
+            Throws.When.IsNonConcreteType(service);
+            Throws.When.IsOpenGenericType(service);
+
+            var statusReporterService = typeof(IStatusReporter<>).MakeGenericType(service);
+            self.TryAddSingleton(
+                service: statusReporterService,
+                implementationFactory: provider => CreateStatusReporterInstance(service, provider)
+            );
+
+            var statusMonitorService = typeof(IStatusMonitor<>).MakeGenericType(service);
+            self.TryAddSingleton(
+                service: statusMonitorService,
+                implementationFactory: provider => CreateStatusReporterInstance(service, provider)
+            );
+        }
+    }
+
+    private static object CreateStatusReporterInstance(Type service, IServiceProvider provider) {
+        var statusReporterHub = provider.GetRequiredService<IStatusReporterHub>();
+        var handler = typeof(IStatusReporterHub).GetMethod(nameof(IStatusReporterHub.GetOrCreate))
+                      ?? throw new InvalidOperationException($"Missing '{nameof(IStatusReporterHub.GetOrCreate)}' method.");
+
+        return handler.MakeGenericMethod(service)
+                      .Invoke(statusReporterHub, parameters: [string.Empty])
+               ?? throw new InvalidOperationException("Unable to initialize Status Monitor/Reporter.");
+    }
+
+    private static IEnumerable<Type> Scan(IEnumerable<Assembly> assemblies) {
+        return assemblies.SelectMany(assembly => assembly.GetExportedTypes())
+                         .Where(type => type.HasAttribute<StatusReportingAttribute>());
     }
 }

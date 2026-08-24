@@ -10,7 +10,6 @@ namespace Nameless.EntityFrameworkCore;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for Entity Framework Core.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">The current <see cref="IServiceCollection"/>.</param>
     extension(IServiceCollection self) {
@@ -30,60 +29,46 @@ public static class ServiceCollectionExtensions {
 
             self.ConfigureOptions<EntityFrameworkCoreOptions>(configuration);
 
-            // register interceptors, they might need injection.
-            self.TryAddEnumerable(
-                descriptors: CreateInterceptorServiceDescriptors(settings)
+            self.RegisterInterceptors(settings);
+            self.RegisterDataSeeder(settings);
+
+            var configure = (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
+                DefaultConfiguration,
+                settings.OverrideDbContextConfiguration ?? SqliteDbContextConfiguration
             );
 
-            // register database seeder
-            self.TryAdd(
-                descriptor: CreateDatabaseSeederServiceDescriptor(settings)
+            return settings.UseDbContextFactory
+                ? self.AddDbContextFactory<TDbContext>(configure)
+                : self.AddDbContext<TDbContext>(configure);
+        }
+
+        private void RegisterInterceptors(EntityFrameworkCoreRegistration settings) {
+            var service = typeof(IInterceptor);
+            var implementations = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan<IInterceptor>()
+                : settings.Interceptors;
+
+            var descriptors = implementations.Select(
+                implementation => ServiceDescriptor.Transient(service, implementation)
             );
 
-            if (settings.UseDbContextFactory) {
-                self.AddDbContextFactory<TDbContext>(
-                    (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
-                        DefaultConfiguration,
-                        settings.OverrideDbContextConfiguration ?? SqliteDbContextConfiguration
-                    )
-                );
+            self.TryAddEnumerable(descriptors);
+        }
 
-                return self;
-            }
-            
-            self.AddDbContext<TDbContext>(
-                (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
-                    DefaultConfiguration,
-                    settings.OverrideDbContextConfiguration ?? SqliteDbContextConfiguration
-                )
-            );
+        private void RegisterDataSeeder(EntityFrameworkCoreRegistration settings) {
+            var service = typeof(IDatabaseSeeder);
+            var implementation = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan<IDatabaseSeeder>().SingleOrDefault()
+                : settings.DatabaseSeeder;
 
-            return self;
+            var descriptor = implementation is not null
+                ? ServiceDescriptor.Transient(service, implementation)
+                : ServiceDescriptor.Singleton(NullDatabaseSeeder.Instance);
+
+            self.TryAdd(descriptor);
         }
     }
-
-    private static IEnumerable<ServiceDescriptor> CreateInterceptorServiceDescriptors(EntityFrameworkCoreRegistration settings) {
-        var service = typeof(IInterceptor);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan<IInterceptor>()
-            : settings.Interceptors;
-
-        return implementations.Select(
-            implementation => ServiceDescriptor.Transient(service, implementation)
-        );
-    }
-
-    private static ServiceDescriptor CreateDatabaseSeederServiceDescriptor(EntityFrameworkCoreRegistration settings) {
-        var service = typeof(IDatabaseSeeder);
-        var implementation = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan<IDatabaseSeeder>().SingleOrDefault()
-            : settings.DatabaseSeeder;
-
-        return implementation is not null
-            ? ServiceDescriptor.Transient(service, implementation)
-            : ServiceDescriptor.Singleton(NullDatabaseSeeder.Instance);
-    }
-
+    
     private static void SqliteDbContextConfiguration(IServiceProvider provider, DbContextOptionsBuilder builder) {
         // NOTE: If using Aspire, it's possible to retrieve the
         // connection string being used by the database resource in

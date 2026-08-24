@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Application;
@@ -29,14 +29,14 @@ public class ApplicationContextTests {
         Assert.Equal(AppDomain.CurrentDomain.BaseDirectory, sut.BaseDirectoryPath);
         Assert.Equal("v1.2.3", sut.Version);
 
-        // assert - FileSystemProvider created and cached
-        var fsp1 = sut.FileSystemProvider;
+        // assert - FileExplorer created and cached
+        var fsp1 = sut.FileExplorer;
         Assert.NotNull(fsp1);
-        Assert.IsType<FileSystemProvider>(fsp1);
+        Assert.IsType<FileExplorer>(fsp1);
         Assert.True(Directory.Exists(fsp1.Root));
         Assert.StartsWith(sut.BaseDirectoryPath, fsp1.Root, StringComparison.OrdinalIgnoreCase);
 
-        var fsp2 = sut.FileSystemProvider;
+        var fsp2 = sut.FileExplorer;
         Assert.Same(fsp1, fsp2);
     }
 }

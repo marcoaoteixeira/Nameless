@@ -7,7 +7,6 @@ namespace Nameless.Data.SqlServer;
 /// <summary>
 ///     Extension methods for <see cref="IServiceCollection" />.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.

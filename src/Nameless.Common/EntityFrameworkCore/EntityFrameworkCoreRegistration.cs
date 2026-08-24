@@ -8,7 +8,6 @@ namespace Nameless.EntityFrameworkCore;
 ///     Configuration object used to register Entity Framework Core interceptors
 ///     and database seeders.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class EntityFrameworkCoreRegistration : AssemblyScanAware<EntityFrameworkCoreRegistration> {
     private readonly HashSet<Type> _interceptors = [];
 

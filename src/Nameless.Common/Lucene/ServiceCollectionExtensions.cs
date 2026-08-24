@@ -10,7 +10,6 @@ namespace Nameless.Lucene;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
@@ -33,60 +32,51 @@ public static class ServiceCollectionExtensions {
             var settings = ActionHelper.FromDelegate(registration);
 
             self.ConfigureOptions<LuceneOptions>(configuration);
-
-            // All analyzer selectors should be resolved by the same interface
-            // IAnalyzerSelector, hence using TryAddEnumerable
-            self.TryAddEnumerable(
-                descriptors: CreateAnalyzerSelectorServiceDescriptors(settings)
-            );
-
+            self.RegisterAnalyzerSelectors(settings);
             self.TryAddSingleton<IAnalyzerProvider, AnalyzerProvider>();
             self.TryAddSingleton<IIndexProvider, IndexProvider>();
-
             self.RegisterLuceneRepository(settings);
 
             return self;
+        }
+        
+        private void RegisterAnalyzerSelectors(LuceneRegistration settings) {
+            var service = typeof(IAnalyzerSelector);
+            var implementations = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan<IAnalyzerSelector>()
+                : settings.AnalyzerSelectors;
+
+            var descriptors = implementations.Select(
+                implementation => ServiceDescriptor.Singleton(service, implementation)
+            );
+
+            // All analyzer selectors should be resolved by the same interface
+            // IAnalyzerSelector, hence using TryAddEnumerable
+            self.TryAddEnumerable(descriptors);
         }
 
         private void RegisterLuceneRepository(LuceneRegistration settings) {
             if (!settings.UseRepository) { return; }
 
-            self.TryAdd(
-                descriptors: CreateEntityMappingServiceDescriptors(settings)
-            );
-
+            self.RegisterEntityMappings(settings);
             self.TryAddTransient<IEntityDescriptorProvider, EntityDescriptorProvider>();
             self.TryAddTransient<IMapper, Mapper>();
             self.TryAddTransient<IRepository, RepositoryImpl>();
         }
-    }
 
-    private static IEnumerable<ServiceDescriptor> CreateAnalyzerSelectorServiceDescriptors(LuceneRegistration settings) {
-        var service = typeof(IAnalyzerSelector);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan<IAnalyzerSelector>()
-            : settings.AnalyzerSelectors;
+        private void RegisterEntityMappings(LuceneRegistration settings) {
+            var service = typeof(IEntityMapping<>);
+            var implementations = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan(typeof(IEntityMapping<>))
+                : settings.Mappings;
 
-        return implementations.Select(
-            implementation => ServiceDescriptor.Singleton(service, implementation)
-        );
-    }
+            var descriptors =
+                from mapping in implementations
+                let interfaces = mapping.GetInterfacesThatCloses(service)
+                from @interface in interfaces
+                select ServiceDescriptor.Transient(@interface.FixTypeReference(), mapping);
 
-    private static IEnumerable<ServiceDescriptor> CreateEntityMappingServiceDescriptors(LuceneRegistration settings) {
-        var service = typeof(IEntityMapping<>);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(typeof(IEntityMapping<>))
-            : settings.Mappings;
-
-        foreach (var mapping in implementations) {
-            var interfaces = mapping.GetInterfacesThatCloses(service);
-
-            foreach (var @interface in interfaces) {
-                yield return ServiceDescriptor.Transient(
-                    @interface.FixTypeReference(),
-                    mapping
-                );
-            }
+            self.TryAdd(descriptors);
         }
     }
 }

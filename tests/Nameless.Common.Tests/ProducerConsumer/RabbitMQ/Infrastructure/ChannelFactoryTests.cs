@@ -8,15 +8,15 @@ using RabbitMQ.Client;
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
 public class ChannelFactoryTests {
-    private const string QueueName = "test.queue";
+    private const string QUEUE_NAME = "test.queue";
 
     private static IConfiguration CreateConfiguration(bool prefetchEnabled = false) {
         return ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
             // queue section: RabbitMQ > Queues > <queueName>
-            [$"RabbitMQ:Queues:{QueueName}:Durable"] = "true",
-            [$"RabbitMQ:Queues:{QueueName}:Exclusive"] = "false",
-            [$"RabbitMQ:Queues:{QueueName}:AutoDelete"] = "false",
-            [$"RabbitMQ:Queues:{QueueName}:ExchangeName"] = "test.exchange",
+            [$"RabbitMQ:Queues:{QUEUE_NAME}:Durable"] = "true",
+            [$"RabbitMQ:Queues:{QUEUE_NAME}:Exclusive"] = "false",
+            [$"RabbitMQ:Queues:{QUEUE_NAME}:AutoDelete"] = "false",
+            [$"RabbitMQ:Queues:{QUEUE_NAME}:ExchangeName"] = "test.exchange",
             ["RabbitMQ:Prefetch:IsEnabled"] = prefetchEnabled ? "true" : "false",
             ["RabbitMQ:Prefetch:Count"] = "1",
             ["RabbitMQ:Prefetch:Size"] = "0",
@@ -30,7 +30,7 @@ public class ChannelFactoryTests {
         // QueueDeclareAsync must return a QueueDeclareOk with a non-empty QueueName
         channelMock
             .Setup(c => c.QueueDeclareAsync(
-                QueueName,
+                QUEUE_NAME,
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
@@ -38,7 +38,7 @@ public class ChannelFactoryTests {
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new QueueDeclareOk(QueueName, messageCount: 0, consumerCount: 0));
+            .ReturnsAsync(new QueueDeclareOk(QUEUE_NAME, messageCount: 0, consumerCount: 0));
 
         return channelMock;
     }
@@ -77,7 +77,7 @@ public class ChannelFactoryTests {
         var sut = new ChannelFactory(configuration, managerMock.Object);
 
         // act
-        var channel = await sut.CreateAsync(QueueName, CancellationToken.None);
+        var channel = await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
 
         // assert
         Assert.NotNull(channel);
@@ -96,12 +96,12 @@ public class ChannelFactoryTests {
         var sut = new ChannelFactory(configuration, managerMock.Object);
 
         // act
-        await sut.CreateAsync(QueueName, CancellationToken.None);
+        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
 
         // assert
         channelMock.Verify(
             c => c.QueueDeclareAsync(
-                QueueName,
+                QUEUE_NAME,
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
                 It.IsAny<bool>(),
@@ -133,7 +133,7 @@ public class ChannelFactoryTests {
         var sut = new ChannelFactory(configuration, managerMock.Object);
 
         // act
-        await sut.CreateAsync(QueueName, CancellationToken.None);
+        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
 
         // assert
         channelMock.Verify(
@@ -157,7 +157,7 @@ public class ChannelFactoryTests {
         var sut = new ChannelFactory(configuration, managerMock.Object);
 
         // act
-        await sut.CreateAsync(QueueName, CancellationToken.None);
+        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
 
         // assert
         channelMock.Verify(

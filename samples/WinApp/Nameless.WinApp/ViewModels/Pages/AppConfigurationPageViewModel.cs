@@ -97,7 +97,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
     [RelayCommand]
     private Task OpenApplicationDataDirectoryAsync() {
-        ProcessHelper.OpenDirectory(_applicationContext.FileSystemProvider.Root);
+        ProcessHelper.OpenDirectory(_applicationContext.FileExplorer.Root);
 
         return Task.CompletedTask;
     }

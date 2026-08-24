@@ -15,9 +15,9 @@ public static class HostExtensions {
         ///     Synchronously executes the <see cref="IBootstrapper"/> warmup.
         /// </summary>
         /// <param name="configure">
-        ///     Optional delegate to configure <see cref="BootstrapWarmupOptions"/>.
+        ///     Optional delegate to configure <see cref="BootstrapOptions"/>.
         /// </param>
-        public void Warmup(Action<BootstrapWarmupOptions>? configure) {
+        public void Warmup(Action<BootstrapOptions>? configure) {
             self.WarmupAsync(configure).GetAwaiter().GetResult();
         }
 
@@ -25,36 +25,33 @@ public static class HostExtensions {
         ///     Asynchronously executes the <see cref="IBootstrapper"/> warmup.
         /// </summary>
         /// <param name="configure">
-        ///     Optional delegate to configure <see cref="BootstrapWarmupOptions"/>.
+        ///     Optional delegate to configure <see cref="BootstrapOptions"/>.
         /// </param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task WarmupAsync(Action<BootstrapWarmupOptions>? configure) {
+        public Task WarmupAsync(Action<BootstrapOptions>? configure) {
             var opts = ActionHelper.FromDelegate(configure);
             var bootstrapper = self.Services.GetRequiredService<IBootstrapper>();
 
             using var cts = new CancellationTokenSource(
-                millisecondsDelay: opts.Timeout
+                millisecondsDelay: opts.WarmupTimeout
             );
 
-            return bootstrapper.ExecuteAsync(opts.Context, cts.Token);
+            return bootstrapper.RunAsync(cts.Token);
         }
 
         /// <summary>
         ///     Asynchronously executes the <see cref="IBootstrapper"/> warmup.
         /// </summary>
-        /// <param name="context">
-        ///     The Bootstrap flow context.
-        /// </param>
         /// <param name="cancellationToken">
         ///     The cancellation token.
         /// </param>
         /// <returns>
         ///     A <see cref="Task"/> representing the asynchronous operation.
         /// </returns>
-        public Task WarmupAsync(FlowContext? context = null, CancellationToken cancellationToken = default) {
+        public Task WarmupAsync(CancellationToken cancellationToken = default) {
             return self.Services
                        .GetRequiredService<IBootstrapper>()
-                       .ExecuteAsync(context ?? [], cancellationToken);
+                       .RunAsync(cancellationToken);
         }
     }
 }

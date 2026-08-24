@@ -28,12 +28,12 @@ public partial class App {
         configure.Args = Args;
         configure.Assemblies = [
             typeof(App).Assembly,
-                typeof(AssemblyMarker).Assembly,
+                typeof(AssemblyMarkerCommon).Assembly,
                 typeof(AssemblyMarkerWindows).Assembly
         ];
 
         configure.ConfigureAdditionalServices = ConfigureAdditionalServices;
-        configure.ConfigureLocalizationRegistration = ConfigureLocalization;
+        configure.ConfigureLocalization = ConfigureLocalization;
     });
 
     public App() {
@@ -78,9 +78,9 @@ public partial class App {
         services.RegisterEntityFrameworkCore<AppDbContext>(registration => {
             registration.OverrideDbContextConfiguration = (provider, ctx) => {
                 var applicationContext = provider.GetRequiredService<IApplicationContext>();
-                var databaseFile = applicationContext.FileSystemProvider.GetFile(
+                var databaseFile = applicationContext.FileExplorer.GetFile(
                     relativePath: Path.Combine(
-                        applicationContext.FileSystemProvider.GetDatabaseDirectory().Path,
+                        applicationContext.FileExplorer.GetDatabaseDirectory().Path,
                         SqliteConstants.DatabaseFileName
                     )
                 );

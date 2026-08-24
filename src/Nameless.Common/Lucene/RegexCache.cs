@@ -1,11 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Nameless.Lucene;
 
 /// <summary>
 ///     Provides source-generated, cached <see cref="Regex"/> instances used across the Lucene library.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage]
 public static partial class RegexCache {
     /// <summary>
     ///     Returns a compiled <see cref="Regex"/> that matches valid Lucene index names,

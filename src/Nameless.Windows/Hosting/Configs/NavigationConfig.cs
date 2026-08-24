@@ -28,7 +28,7 @@ public static class NavigationConfig {
 
             self.ConfigureServices(services => services.RegisterNavigation(
                 AssemblyScanAwareHelper.Join(
-                    settings.ConfigureNavigationRegistration,
+                    settings.ConfigureNavigation,
                     settings.Assemblies
                 )
             ));

@@ -1,5 +1,3 @@
-using Nameless.Bootstrap.Notification;
-
 namespace Nameless.Bootstrap;
 
 public class StepBaseTests {
@@ -94,11 +92,9 @@ public class StepBaseTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var step = new ConcreteStep();
-        var context = new FlowContext();
-        var progress = new NullProgress();
 
         // act
-        await step.ExecuteAsync(context, progress, ct);
+        await step.ExecuteAsync(ct);
 
         // assert
         Assert.True(step.WasExecuted);
@@ -109,24 +105,16 @@ public class StepBaseTests {
     private sealed class ConcreteStep : StepBase {
         public bool WasExecuted { get; private set; }
 
-        public override Task ExecuteAsync(
-            FlowContext context,
-            IProgress<StepProgress> progress,
-            CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
             WasExecuted = true;
+
             return Task.CompletedTask;
         }
     }
 
     private sealed class DisabledStep() : StepBase(isEnabled: false) {
-        public override Task ExecuteAsync(
-            FlowContext context,
-            IProgress<StepProgress> progress,
-            CancellationToken cancellationToken)
-            => Task.CompletedTask;
-    }
-
-    private sealed class NullProgress : IProgress<StepProgress> {
-        public void Report(StepProgress value) { }
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Extensions.Logging;
 
-namespace Nameless.Windows.Documents.Impl;
+namespace Nameless.Windows.Documents;
 
 public class PlainTextDocumentReader : IDocumentReader {
     private readonly ILogger<PlainTextDocumentReader> _logger;
@@ -24,7 +24,7 @@ public class PlainTextDocumentReader : IDocumentReader {
 
             }
         }
-        catch (Exception ex) { _logger.GetContentFailure(filePath, ex); }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: "TEXT_DOCUMENT_READER"); }
 
         return string.Empty;
     }

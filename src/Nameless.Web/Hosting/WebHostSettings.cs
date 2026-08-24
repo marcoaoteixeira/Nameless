@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Mediator;
+using Nameless.Reporting;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.Auth;
 using Nameless.Web.ErrorHandling;
@@ -94,7 +95,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure bootstrap warmup.
     /// </summary>
-    public Action<BootstrapWarmupOptions>? ConfigureBootstrapWarmup { get; set; }
+    public Action<BootstrapOptions>? ConfigureBootstrapWarmup { get; set; }
 
     /// <summary>
     ///     Whether it should disable CORS services.
@@ -114,7 +115,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate to configure the exception handling.
     /// </summary>
-    public Action<ExceptionHandlerRegistration>? ConfigureExceptionHandling { get; set; }
+    public Action<ErrorHandlingRegistration>? ConfigureExceptionHandling { get; set; }
     
     /// <summary>
     ///     Whether it should disable health check services.
@@ -224,25 +225,35 @@ public class WebHostSettings {
     /// <summary>
     ///     Whether it should disable validation services.
     /// </summary>
-    public bool DisableValidation { get; set; }
+    public bool DisableValidator { get; set; }
 
     /// <summary>
     ///     Gets or sets a delegate for configure validation services.
     /// </summary>
-    public Action<ValidationRegistration>? ConfigureValidation { get; set; }
+    public Action<ValidatorRegistration>? ConfigureValidation { get; set; }
 
     /// <summary>
-    ///     Whether it should disable Workers feature.
+    ///     Whether it should disable Periodic Workers feature.
     /// </summary>
-    public bool DisableWorkers { get; set; }
+    public bool DisablePeriodicWorkers { get; set; }
 
     /// <summary>
-    ///     Gets or sets a delegate to configure Workers feature.
+    ///     Gets or sets a delegate to configure Periodic Workers feature.
     /// </summary>
-    public Action<WorkersRegistration>? ConfigureWorkers { get; set; }
+    public Action<PeriodicWorkersRegistration>? ConfigurePeriodicWorkers { get; set; }
 
     /// <summary>
     ///     Whether it should disable Resilience feature.
     /// </summary>
     public bool DisableResilience { get; set; }
+
+    /// <summary>
+    ///     Whether it should disable Status Reporting feature.
+    /// </summary>
+    public bool DisableStatusReporting { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a delegate to configure Status Reporting feature.
+    /// </summary>
+    public Action<StatusReportingRegistration>? ConfigureStatusReporting { get; set; }
 }

@@ -8,7 +8,6 @@ namespace Nameless.Auth.OAuth;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/> instance.
@@ -25,7 +24,7 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> instance so other
         ///     action can be chained.
         /// </returns>
-        public IServiceCollection RegisterOAuthAuthenticationTokenProvider(IConfiguration configuration) {
+        public IServiceCollection RegisterOAuthAuthenticationTokenProvider(IConfiguration? configuration = null) {
             self.ConfigureOptions<OAuthOptions>(configuration);
             self.AddHttpClient<IOAuthAuthorizationTokenProvider, OAuthAuthorizationTokenProvider>((provider, client) => {
                 var opts = provider.GetOptions<OAuthOptions>().Value;

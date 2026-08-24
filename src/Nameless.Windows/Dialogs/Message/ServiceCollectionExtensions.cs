@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Nameless.Windows.Dialogs.Message.Impl;
 
 namespace Nameless.Windows.Dialogs.Message;
 

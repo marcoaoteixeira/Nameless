@@ -29,7 +29,7 @@ public static class ViewModelsConfig {
             self.ConfigureServices(
                 services => services.RegisterViewModels(
                     AssemblyScanAwareHelper.Join(
-                        settings.ConfigureViewModelRegistration,
+                        settings.ConfigureViewModel,
                         settings.Assemblies
                     )
                 )

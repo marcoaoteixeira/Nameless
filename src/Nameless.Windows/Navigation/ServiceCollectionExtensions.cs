@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
-using Nameless.Windows.DependencyInjection;
-using Nameless.Windows.Navigation.Impl;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
 using Wpf.Ui.Abstractions.Controls;
@@ -43,7 +41,7 @@ public static class ServiceCollectionExtensions {
                 );
             }
 
-            self.TryAdd(implementation.CreateServiceDescriptor(service));
+            self.TryAdd(ServiceDescriptor.Transient(service, implementation));
         }
 
         private void RegisterNavigationViewItemProvider(NavigationRegistration settings) {
@@ -59,21 +57,20 @@ public static class ServiceCollectionExtensions {
                 : settings.NavigationViews;
 
             foreach (var implementation in implementations) {
-                var lifetime = ServiceLifetimeAttribute.GetLifetime(implementation);
                 var interfaces = implementation.GetInterfaces()
                                                .Where(@interface => @interface.GenericTypeArguments.Length > 0 &&
                                                                     service.IsAssignableFromGeneric(@interface));
                 foreach (var @interface in interfaces) {
                     // Register the navigable view's interface.
-                    self.TryAdd(new ServiceDescriptor(@interface, implementation, lifetime));
+                    self.TryAdd(ServiceDescriptor.Transient(@interface, implementation));
 
                     // Register the navigable view viewmodel.
                     var viewModelType = @interface.GetGenericArguments().First();
-                    self.TryAdd(new ServiceDescriptor(viewModelType, viewModelType, lifetime));
+                    self.TryAdd(ServiceDescriptor.Transient(viewModelType, viewModelType));
                 }
 
                 // Register the navigable view concrete type.
-                self.TryAdd(new ServiceDescriptor(implementation, implementation, lifetime));
+                self.TryAdd(ServiceDescriptor.Transient(implementation, implementation));
             }
         }
     }

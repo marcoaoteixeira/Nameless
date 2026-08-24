@@ -26,7 +26,7 @@ public static class TaskExtensions {
         ///     <see cref="Task"/> to do not continue on captured context.
         /// </summary>
         /// <returns>
-        ///     An object used to await this task.
+        ///     The <see cref="ConfiguredTaskAwaitable"/> for the task.
         /// </returns>
         /// <remarks>
         ///     This extension method executes the
@@ -52,7 +52,7 @@ public static class TaskExtensions {
         ///     <see cref="Task{TResult}"/> to do not continue on captured context.
         /// </summary>
         /// <returns>
-        ///     An object used to await this task.
+        ///     The <see cref="ConfiguredTaskAwaitable{TResult}"/> for the task.
         /// </returns>
         /// <remarks>
         ///     This extension method executes the

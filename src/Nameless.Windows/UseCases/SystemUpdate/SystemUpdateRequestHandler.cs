@@ -150,10 +150,10 @@ public class SystemUpdateRequestHandler : RequestHandlerBase<SystemUpdateRequest
 
             response.EnsureSuccessStatusCode();
 
-            var updateDirectory = _applicationContext.FileSystemProvider.GetUpdateDirectory();
+            var updateDirectory = _applicationContext.FileExplorer.GetUpdateDirectory();
             var fileName = $"{_timeProvider.GetUtcNow():yyyyMMddHHmmss}_{info.AssetName}";
             var filePath = Path.Combine(updateDirectory.Path, fileName);
-            var file = _applicationContext.FileSystemProvider.GetFile(filePath);
+            var file = _applicationContext.FileExplorer.GetFile(filePath);
 
             await using var fileStream = file.Open();
             await using var httpStream = await response.Content

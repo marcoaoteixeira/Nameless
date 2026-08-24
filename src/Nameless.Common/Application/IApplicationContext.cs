@@ -1,4 +1,4 @@
-﻿using Nameless.IO;
+﻿using Nameless.IO.Explorer;
 
 namespace Nameless.Application;
 
@@ -23,11 +23,11 @@ public interface IApplicationContext {
     string BaseDirectoryPath { get; }
 
     /// <summary>
-    ///     Gets a <see cref="IFileSystemProvider"/> instance that is
+    ///     Gets a <see cref="IFileExplorer"/> instance that is
     ///     bounded to the application data directory, which contains
     ///     the application data files.
     /// </summary>
-    IFileSystemProvider FileSystemProvider { get; }
+    IFileExplorer FileExplorer { get; }
 
     /// <summary>
     ///     Gets the application version.

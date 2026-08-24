@@ -7,7 +7,7 @@ using System.Windows.Media;
 using System.Windows.Xps.Packaging;
 using Microsoft.Extensions.Logging;
 
-namespace Nameless.Windows.Documents.Impl;
+namespace Nameless.Windows.Documents;
 
 public class XpsDocumentReader : IDocumentReader {
     private readonly ILogger<XpsDocumentReader> _logger;
@@ -58,7 +58,7 @@ public class XpsDocumentReader : IDocumentReader {
                 }
             }
         }
-        catch (Exception ex) { _logger.GetContentFailure(filePath, ex); }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: "XPS_DOCUMENT_READER"); }
 
         return sb.ToString();
     }

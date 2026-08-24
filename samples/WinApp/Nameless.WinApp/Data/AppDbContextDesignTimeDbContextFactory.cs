@@ -30,9 +30,9 @@ public class AppDbContextDesignTimeDbContextFactory : DesignTimeDbContextFactory
 
     private string GetConnectionString() {
         var applicationContext = Services.GetRequiredService<IApplicationContext>();
-        var databaseFile = applicationContext.FileSystemProvider.GetFile(
+        var databaseFile = applicationContext.FileExplorer.GetFile(
             relativePath: Path.Combine(
-                applicationContext.FileSystemProvider.GetDatabaseDirectory().Path,
+                applicationContext.FileExplorer.GetDatabaseDirectory().Path,
                 SqliteConstants.DatabaseFileName
             )
         );

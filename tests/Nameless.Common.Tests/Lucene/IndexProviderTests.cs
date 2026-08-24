@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.Lucene;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.IO;
@@ -87,7 +88,7 @@ public class IndexProviderTests : IDisposable {
         // The file system provider must return a directory whose Path is a unique
         // sub-directory under tempDir for each call, so each index gets its own
         // directory.  We use a callback to materialise the correct path per call.
-        var fileSystemMock = new Mock<IFileSystemProvider>();
+        var fileSystemMock = new Mock<IFileExplorer>();
         fileSystemMock
             .Setup(fs => fs.GetDirectory(It.IsAny<string>()))
             .Returns((string relativePath) => {

@@ -13,7 +13,7 @@ public class ValidateRequestPipelineBehaviorTests {
     [Fact]
     public async Task HandleAsync_WithNoValidators_CallsNext() {
         // arrange
-        var validationServiceMock = new Mock<IValidationService>();
+        var validationServiceMock = new Mock<IValidator>();
         validationServiceMock
             .Setup(svc => svc.ValidateAsync(
                 It.IsAny<object>(),
@@ -49,7 +49,7 @@ public class ValidateRequestPipelineBehaviorTests {
     [Fact]
     public async Task HandleAsync_WithPassingValidator_CallsNext() {
         // arrange
-        var validationServiceMock = new Mock<IValidationService>();
+        var validationServiceMock = new Mock<IValidator>();
         validationServiceMock
             .Setup(svc => svc.ValidateAsync(
                 It.IsAny<object>(),
@@ -89,7 +89,7 @@ public class ValidateRequestPipelineBehaviorTests {
             Error.Validation("Name is required.", code: "Name")
         };
 
-        var validationServiceMock = new Mock<IValidationService>();
+        var validationServiceMock = new Mock<IValidator>();
         validationServiceMock
             .Setup(svc => svc.ValidateAsync(
                 It.IsAny<object>(),

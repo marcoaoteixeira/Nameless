@@ -10,14 +10,14 @@ using RabbitMQ.Client;
 namespace Nameless.ProducerConsumer.RabbitMQ;
 
 public class ProducerTests {
-    private const string Topic = "test.queue";
+    private const string TOPIC = "test.queue";
 
     private static IConfiguration CreateConfiguration() {
         return ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
-            [$"RabbitMQ:Queues:{Topic}:Durable"] = "true",
-            [$"RabbitMQ:Queues:{Topic}:Exclusive"] = "false",
-            [$"RabbitMQ:Queues:{Topic}:AutoDelete"] = "false",
-            [$"RabbitMQ:Queues:{Topic}:ExchangeName"] = "test.exchange"
+            [$"RabbitMQ:Queues:{TOPIC}:Durable"] = "true",
+            [$"RabbitMQ:Queues:{TOPIC}:Exclusive"] = "false",
+            [$"RabbitMQ:Queues:{TOPIC}:AutoDelete"] = "false",
+            [$"RabbitMQ:Queues:{TOPIC}:ExchangeName"] = "test.exchange"
         });
     }
 
@@ -83,7 +83,7 @@ public class ProducerTests {
         var context = new ProducerContext();
 
         // act
-        await sut.ProduceAsync(Topic, message: "hello", context, CancellationToken.None);
+        await sut.ProduceAsync(TOPIC, message: "hello", context, CancellationToken.None);
 
         // assert
         serializerMock.Verify(
@@ -118,12 +118,12 @@ public class ProducerTests {
         var context = new ProducerContext();
 
         // act — two publishes on the same topic should only create the channel once
-        await sut.ProduceAsync(Topic, "msg1", context, CancellationToken.None);
-        await sut.ProduceAsync(Topic, "msg2", context, CancellationToken.None);
+        await sut.ProduceAsync(TOPIC, "msg1", context, CancellationToken.None);
+        await sut.ProduceAsync(TOPIC, "msg2", context, CancellationToken.None);
 
         // assert
         factoryMock.Verify(
-            f => f.CreateAsync(Topic, It.IsAny<CancellationToken>()),
+            f => f.CreateAsync(TOPIC, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -172,7 +172,7 @@ public class ProducerTests {
 
         // act & assert
         await Assert.ThrowsAsync<ObjectDisposedException>(
-            () => sut.ProduceAsync(Topic, "msg", new ProducerContext(), CancellationToken.None)
+            () => sut.ProduceAsync(TOPIC, "msg", new ProducerContext(), CancellationToken.None)
         );
     }
 }

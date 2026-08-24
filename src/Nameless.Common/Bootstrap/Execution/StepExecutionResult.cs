@@ -1,4 +1,6 @@
-﻿namespace Nameless.Bootstrap.Execution;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Nameless.Bootstrap.Execution;
 
 /// <summary>
 ///     Contains the execution outcome for a single bootstrap step.
@@ -27,5 +29,17 @@ public class StepExecutionResult {
     /// <summary>
     ///     Gets a value indicating whether the step completed without error.
     /// </summary>
+    [MemberNotNullWhen(returnValue: false, nameof(Exception))]
     public bool Success => Exception is null;
+
+    internal string ToText() {
+        return $"""
+               ----------
+               Step name:  {StepName}
+               Outcome:    {(Success ? "Success" : "Failure")}
+               Start time: {StartTime:yyyy-MM-dd HH:mm:ss:fff}
+               Duration:   {Duration}
+               Exception:  {Exception?.Message ?? "NULL"}
+               """;
+    }
 }

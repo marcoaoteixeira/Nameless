@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
-namespace Nameless.Windows.Documents.Impl;
+namespace Nameless.Windows.Documents;
 
 public class PdfDocumentReader : IDocumentReader {
     private readonly ILogger<PdfDocumentReader> _logger;
@@ -28,7 +28,7 @@ public class PdfDocumentReader : IDocumentReader {
                 sb.Append(content);
             }
         }
-        catch (Exception ex) { _logger.GetContentFailure(filePath, ex); }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: "PDF_DOCUMENT_READER"); }
 
         return Task.FromResult(sb.ToString());
     }

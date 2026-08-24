@@ -9,6 +9,19 @@ namespace Nameless.Logging.Serilog;
 [ExcludeFromCodeCoverage]
 public class SerilogRegistration {
     /// <summary>
+    ///     Whether it should override the settings configuration.
+    ///     When <see langword="true"/>, override the settings configuration
+    ///     using the delegate <see cref="ConfigureSettings"/>; otherwise
+    ///     if the delegate is present it will append the extra configuration.
+    /// </summary>
+    public bool OverrideSettingsConfiguration { get; set; }
+
+    /// <summary>
+    ///     Gets or sets delegate to configure the settings.
+    /// </summary>
+    public Action<IServiceProvider, LoggerSettingsConfiguration>? ConfigureSettings { get; set; }
+
+    /// <summary>
     ///     Whether it should override the enrichment configuration or just
     ///     append.
     /// </summary>
@@ -18,7 +31,7 @@ public class SerilogRegistration {
     ///     Gets or sets an optional delegate to configure Serilog enrichment
     ///     options.
     /// </summary>
-    public Action<IServiceProvider, LoggerEnrichmentConfiguration>? EnrichmentConfiguration { get; set; }
+    public Action<IServiceProvider, LoggerEnrichmentConfiguration>? ConfigureEnrichment { get; set; }
 
     /// <summary>
     ///     Whether it should override the sink configuration or just append.
@@ -29,7 +42,7 @@ public class SerilogRegistration {
     ///     Gets or sets an optional delegate to configure Serilog sink
     ///     options.
     /// </summary>
-    public Action<IServiceProvider, LoggerSinkConfiguration>? SinkConfiguration { get; set; }
+    public Action<IServiceProvider, LoggerSinkConfiguration>? ConfigureSink { get; set; }
 
     /// <summary>
     ///     Whether it should override the minimum level configuration or
@@ -41,5 +54,5 @@ public class SerilogRegistration {
     ///     Gets or sets an optional delegate to configure Serilog minimum
     ///     level options.
     /// </summary>
-    public Action<IServiceProvider, LoggerMinimumLevelConfiguration>? MinimumLevelConfiguration { get; set; }
+    public Action<IServiceProvider, LoggerMinimumLevelConfiguration>? ConfigureMinimumLevel { get; set; }
 }

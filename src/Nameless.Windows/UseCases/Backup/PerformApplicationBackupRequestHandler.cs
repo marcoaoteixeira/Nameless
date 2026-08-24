@@ -77,7 +77,7 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
     }
 
     private IDirectory CreateTemporaryDirectory(DateTimeOffset timestamp) {
-        var result = _applicationContext.FileSystemProvider.GetTemporaryDirectory(
+        var result = _applicationContext.FileExplorer.GetTemporaryDirectory(
             timestamp
         );
 
@@ -125,12 +125,12 @@ public class PerformApplicationBackupRequestHandler : RequestHandlerBase<Perform
     private async Task<Result<string>> CompressBackupFilesAsync(IDirectory temporaryDirectory, CancellationToken cancellationToken) {
         const string ResourcePrefix = $"{CLASS}_{nameof(CompressBackupFilesAsync)}";
 
-        _applicationContext.FileSystemProvider.GetBackupDirectory().Create(); // ensure existence
+        _applicationContext.FileExplorer.GetBackupDirectory().Create(); // ensure existence
 
         // create a file that represents the temporary directory.
         var backupFileName = $"{temporaryDirectory.Name}{BackupFileExtension}";
-        var backupDirectory = _applicationContext.FileSystemProvider.GetBackupDirectory();
-        var backupFile = _applicationContext.FileSystemProvider.GetFile(
+        var backupDirectory = _applicationContext.FileExplorer.GetBackupDirectory();
+        var backupFile = _applicationContext.FileExplorer.GetFile(
             Path.Combine(backupDirectory.Path, backupFileName)
         );
         

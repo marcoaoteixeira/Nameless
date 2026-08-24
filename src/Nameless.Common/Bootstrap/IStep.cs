@@ -39,12 +39,8 @@ public interface IStep {
     ///     Asynchronously executes the step logic using
     ///     the specified flow context.
     /// </summary>
-    /// <param name="context">
-    ///     The context object that provides data and state information for
-    ///     the current step execution.
-    /// </param>
     /// <param name="progress">
-    ///     The progress notifier.
+    ///     The progress reporter.
     /// </param>
     /// <param name="cancellationToken">
     ///     A cancellation token that can be used to cancel the asynchronous
@@ -53,5 +49,5 @@ public interface IStep {
     /// <returns>
     ///     A task that represents the asynchronous operation.
     /// </returns>
-    Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken);
+    Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken);
 }

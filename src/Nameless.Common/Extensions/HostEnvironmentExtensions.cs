@@ -27,7 +27,7 @@ public static class HostEnvironmentExtensions {
         ///     Whether it is running inside a container.
         /// </summary>
         public bool IsRunningOnContainer => Environment.GetEnvironmentVariable(
-            StaticData.EnvironmentTokens.DotnetRunningInContainer
+            EnvironmentTokens.DotnetRunningInContainer
         ).ToBoolean();
 
         /// <summary>

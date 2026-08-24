@@ -23,8 +23,7 @@ public static class BootstrapConfig {
                 AssemblyScanAwareHelper.Join(
                     settings.ConfigureBootstrap,
                     settings.Assemblies
-                ),
-                self.Configuration
+                )
             );
 
             return self;

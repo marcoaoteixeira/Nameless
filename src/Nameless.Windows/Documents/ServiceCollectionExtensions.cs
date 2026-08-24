@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
-using Nameless.Windows.DependencyInjection;
-using Nameless.Windows.Documents.Impl;
 
 namespace Nameless.Windows.Documents;
 
@@ -11,9 +9,9 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterDocumentServices(Action<DocumentServicesRegistration>? configure = null) {
             var registration = ActionHelper.FromDelegate(configure);
 
+            self.TryAddSingleton<IDocumentService, DocumentService>();
             self.RegisterDocumentReaders(registration);
             self.RegisterDocumentConverters(registration);
-            self.TryAddSingleton<IDocumentService, DocumentService>();
 
             return self;
         }
@@ -25,7 +23,7 @@ public static class ServiceCollectionExtensions {
                 : registration.DocumentConverters;
 
             var descriptors = implementations.Select(
-                implementation => implementation.CreateServiceDescriptor(service)
+                implementation => ServiceDescriptor.Singleton(service, implementation)
             );
 
             self.TryAddEnumerable(descriptors);
@@ -38,7 +36,7 @@ public static class ServiceCollectionExtensions {
                 : registration.DocumentReaders;
 
             var descriptors = implementations.Select(
-                implementation => implementation.CreateServiceDescriptor(service)
+                implementation => ServiceDescriptor.Singleton(service, implementation)
             );
 
             self.TryAddEnumerable(descriptors);

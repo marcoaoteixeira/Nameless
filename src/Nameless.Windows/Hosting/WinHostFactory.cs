@@ -42,7 +42,7 @@ public sealed class WinHostFactory {
                    .ConfigureContentDialogService(Settings)
                    .ConfigureDocumentServices(Settings)
                    .ConfigureFileSystemDialog(Settings)
-                   .ConfigureFileSystemProvider(Settings)
+                   .ConfigureFileExplorer(Settings)
                    .ConfigureGitHubHttpClient(Settings)
                    .ConfigureHttpClientDefaults(Settings)
                    .ConfigureLocalization(Settings)
@@ -56,7 +56,7 @@ public sealed class WinHostFactory {
                    .ConfigureResilience(Settings)
                    .ConfigureSnackBar(Settings)
                    .ConfigureTaskRunner(Settings)
-                   .ConfigureValidation(Settings)
+                   .ConfigureValidator(Settings)
                    .ConfigureViewModels(Settings)
                    .ConfigureWindowFactory(Settings)
 

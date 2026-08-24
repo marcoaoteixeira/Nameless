@@ -1,23 +1,11 @@
-﻿using Nameless.Attributes;
-
-namespace Nameless.Bootstrap;
+﻿namespace Nameless.Bootstrap;
 
 /// <summary>
-///     Provides configuration options for registering and managing bootstrap
-///     steps in an application startup sequence.
+///     The Bootstrap warmup options.
 /// </summary>
-[ConfigurationSectionName("Bootstrap")]
-public record BootstrapOptions {
+public class BootstrapOptions {
     /// <summary>
-    ///     Whether it should execute the steps in parallel or not.
+    ///     Gets or sets the timeout in milliseconds for the warmup.
     /// </summary>
-    public bool EnableParallelExecution { get; init; }
-
-    /// <summary>
-    ///     Gets or sets the maximum degree of parallelism.
-    /// </summary>
-    /// <remarks>
-    ///     Set the value to <c>-1</c> to define it as unlimited.
-    /// </remarks>
-    public int MaxDegreeOfParallelism { get; init; } = Environment.ProcessorCount;
+    public int WarmupTimeout { get; set; } = -1;
 }

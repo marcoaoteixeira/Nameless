@@ -15,16 +15,16 @@ public class NetworkPortFinderTests {
     [Fact]
     public void ListAvailablePorts_AllPortsAreInRange() {
         // arrange
-        const int start = 20100;
-        const int limit = 20;
+        const int Start = 20100;
+        const int Limit = 20;
 
         // act
-        var ports = NetworkPortFinder.ListAvailablePorts(start, limit).ToList();
+        var ports = NetworkPortFinder.ListAvailablePorts(Start, Limit).ToList();
 
         // assert
         Assert.All(ports, p => {
-            Assert.True(p >= start);
-            Assert.True(p < start + limit);
+            Assert.True(p >= Start);
+            Assert.True(p < Start + Limit);
         });
     }
 

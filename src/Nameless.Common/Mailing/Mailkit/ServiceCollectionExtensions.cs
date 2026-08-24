@@ -7,7 +7,6 @@ namespace Nameless.Mailing.Mailkit;
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/> to register mailing services.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
@@ -24,11 +23,16 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterMailing(IConfiguration? configuration = null) {
+        public IServiceCollection RegisterMailkitMailing(IConfiguration? configuration = null) {
             self.ConfigureOptions<MailingOptions>(configuration);
-
-            self.TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
-            self.TryAddSingleton<IMailingService, MailingService>();
+            self.TryAddSingleton<IMailing>(
+                provider => new MailkitMailing(
+                    smtpClientFactory: new SmtpClientFactory(
+                        options: provider.GetOptions<MailingOptions>()
+                    ),
+                    logger: provider.GetLogger<MailkitMailing>()
+                )
+            );
 
             return self;
         }

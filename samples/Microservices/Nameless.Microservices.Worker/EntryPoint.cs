@@ -8,7 +8,7 @@ public class EntryPoint {
             settings.Args = args;
             settings.Assemblies = [
                 typeof(EntryPoint).Assembly,
-                typeof(AssemblyMarker).Assembly
+                typeof(AssemblyMarkerCommon).Assembly
             ];
 
             DisableServices(settings);
@@ -22,7 +22,7 @@ public class EntryPoint {
         settings.DisableMediator = false;
         settings.DisableOpenTelemetry = false;
         settings.DisableResilience = false;
-        settings.DisableValidation = false;
-        settings.DisableWorkers = false;
+        settings.DisableValidator = false;
+        settings.DisablePeriodicWorkers = false;
     }
 }

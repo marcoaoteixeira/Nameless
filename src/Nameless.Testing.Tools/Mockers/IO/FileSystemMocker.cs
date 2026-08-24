@@ -1,9 +1,10 @@
 ﻿using Moq;
 using Nameless.IO;
+using Nameless.IO.Explorer;
 
 namespace Nameless.Testing.Tools.Mockers.IO;
 
-public class FileSystemMocker : Mocker<IFileSystemProvider> {
+public class FileSystemMocker : Mocker<IFileExplorer> {
     public FileSystemMocker WithRoot(string returnValue) {
         MockInstance
             .Setup(mock => mock.Root)

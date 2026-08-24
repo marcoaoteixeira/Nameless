@@ -85,25 +85,14 @@ public abstract class AssemblyScanAware<TSelf> where TSelf : AssemblyScanAware<T
     ///     the <paramref name="type"/>.
     /// </returns>
     public IReadOnlyCollection<Type> ExecuteAssemblyScan(Type type, bool includeGenericTypeDefinition = false) {
-        var assemblies = InnerGetAssemblies();
+        var assemblies = Assemblies.Count == 0
+            ? [typeof(AssemblyMarkerCommon).Assembly]
+            : Assemblies;
+
         var result = assemblies.GetImplementations(type)
                                .Where(IgnoreAssemblyScanAttribute.IsNotPresent)
                                .Where(item => includeGenericTypeDefinition ? includeGenericTypeDefinition : !item.IsGenericTypeDefinition);
 
         return [.. result];
-    }
-
-    /// <summary>
-    ///     Retrieves the included assemblies; if no assembly was included,
-    ///     it returns the executing and calling assembly.
-    /// </summary>
-    /// <returns>
-    ///     The included assemblies to scan for implementations.
-    /// </returns>
-    protected virtual IReadOnlyCollection<Assembly> InnerGetAssemblies() {
-        return Assemblies.Count > 0 ? Assemblies : [
-            Assembly.GetExecutingAssembly(),
-            Assembly.GetCallingAssembly()
-        ];
     }
 }

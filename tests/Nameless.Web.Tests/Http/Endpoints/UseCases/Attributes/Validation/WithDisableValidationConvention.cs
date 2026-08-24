@@ -10,7 +10,7 @@ public class WithDisableValidationConvention {
     public WithDisableValidationConvention() {
         _code = SourceCodeHelper.Write("""
                                        [Endpoint]
-                                       [DisableValidation]
+                                       [DisableValidator]
                                        public partial class DisableValidationEndpoint {
                                            public Task<IResult> HandleAsync() {
                                                return Task.FromResult<IResult>(TypedResults.Ok());
@@ -26,6 +26,6 @@ public class WithDisableValidationConvention {
         Assert.Contains($"{SourceCodeHelper.Namespace}.DisableValidationEndpoint", source);
         Assert.Matches(@"DisableValidationEndpoint\.Register\(.*\);", source);
         Assert.Matches(@"DisableValidationEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.DisableValidation\(\)", source);
+        Assert.Matches(@"\.DisableValidator\(\)", source);
     }
 }

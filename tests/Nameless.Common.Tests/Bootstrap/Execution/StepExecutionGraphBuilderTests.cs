@@ -1,5 +1,4 @@
 using Moq;
-using Nameless.Bootstrap.Execution;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Bootstrap.Execution;
@@ -8,11 +7,13 @@ namespace Nameless.Bootstrap.Execution;
 public class StepExecutionGraphBuilderTests {
     // Creates a Mock<IStep> with the given name and dependencies wired up.
     private static IStep CreateStep(string name, params string[] dependencies) {
-        var mock = new Mock<IStep>();
-        mock.Setup(s => s.Name).Returns(name);
-        mock.Setup(s => s.DisplayName).Returns(name);
-        mock.Setup(s => s.Dependencies).Returns(dependencies);
-        return mock.Object;
+        var stepMocker = new Mock<IStep>();
+        
+        stepMocker.Setup(mock => mock.Name).Returns(name);
+        stepMocker.Setup(mock => mock.DisplayName).Returns(name);
+        stepMocker.Setup(mock => mock.Dependencies).Returns(dependencies);
+
+        return stepMocker.Object;
     }
 
     [Fact]

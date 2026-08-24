@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using Nameless.IO.Explorer;
+using Nameless.IO.Explorer.Wrappers;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.IO.Wrappers;
@@ -18,8 +20,8 @@ public class FileWrapperExtendedTests : IDisposable {
         }
     }
 
-    private IOptions<FileSystemProviderOptions> CreateOptions() {
-        return Options.Create(new FileSystemProviderOptions {
+    private IOptions<FileExplorerOptions> CreateOptions() {
+        return Options.Create(new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
         });
@@ -53,32 +55,32 @@ public class FileWrapperExtendedTests : IDisposable {
     [Fact]
     public void Copy_WithOverwriteFalse_CreatesFileAtDestination() {
         // arrange
-        const string sourceFile = "copy-source.txt";
-        const string destFile = "copy-dest.txt";
+        const string SourceFile = "copy-source.txt";
+        const string DestFile = "copy-dest.txt";
 
-        CreateTempFile(sourceFile, "copy content");
-        var sut = CreateWrapper(sourceFile);
+        CreateTempFile(SourceFile, "copy content");
+        var sut = CreateWrapper(SourceFile);
 
         // act
-        var copy = sut.Copy(destFile, overwrite: false);
+        var copy = sut.Copy(DestFile, overwrite: false);
 
         // assert
         Assert.True(copy.Exists);
-        Assert.Equal(Path.Combine(_root, destFile), copy.Path);
+        Assert.Equal(Path.Combine(_root, DestFile), copy.Path);
     }
 
     [Fact]
     public void Copy_WithOverwriteTrue_OverwritesExistingFile() {
         // arrange
-        const string sourceFile = "over-source.txt";
-        const string destFile = "over-dest.txt";
+        const string SourceFile = "over-source.txt";
+        const string DestFile = "over-dest.txt";
 
-        CreateTempFile(sourceFile, "new content");
-        CreateTempFile(destFile, "old content");
-        var sut = CreateWrapper(sourceFile);
+        CreateTempFile(SourceFile, "new content");
+        CreateTempFile(DestFile, "old content");
+        var sut = CreateWrapper(SourceFile);
 
         // act
-        var copy = sut.Copy(destFile, overwrite: true);
+        var copy = sut.Copy(DestFile, overwrite: true);
 
         // assert — the file at dest now contains the source content
         using var stream = copy.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -91,16 +93,16 @@ public class FileWrapperExtendedTests : IDisposable {
     [Fact]
     public void Copy_ReturnsFileWrapper_WithCorrectName() {
         // arrange
-        const string sourceFile = "nm-source.txt";
-        const string destFile = "nm-dest.txt";
+        const string SourceFile = "nm-source.txt";
+        const string DestFile = "nm-dest.txt";
 
-        CreateTempFile(sourceFile);
-        var sut = CreateWrapper(sourceFile);
+        CreateTempFile(SourceFile);
+        var sut = CreateWrapper(SourceFile);
 
         // act
-        var copy = sut.Copy(destFile, overwrite: false);
+        var copy = sut.Copy(DestFile, overwrite: false);
 
         // assert
-        Assert.Equal(destFile, copy.Name);
+        Assert.Equal(DestFile, copy.Name);
     }
 }

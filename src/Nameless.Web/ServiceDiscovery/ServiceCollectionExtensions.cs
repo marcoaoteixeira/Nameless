@@ -24,15 +24,22 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterServiceDiscovery(Action<ServiceDiscoveryRegistration>? registration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.AddServiceDiscovery(settings.ConfigureServiceDiscovery)
-                .ConfigureHttpClientDefaults(http => {
-                    // Turn on resilience by default
-                    http.AddStandardResilienceHandler(
-                        settings.ConfigureStandardResilienceHandler
-                    );
+            self
+                .AddServiceDiscovery(opts => {
+                    if (!settings.OverrideServiceDiscoveryConfiguration) {
+                        /* default service discovery configuration */
+                    }
 
-                    // Turn on service discovery by default
-                    http.AddServiceDiscovery();
+                    settings.ConfigureServiceDiscovery?.Invoke(opts);
+                })
+                .ConfigureHttpClientDefaults(builder => {
+                    // Turn on service discovery by default, no opt-out.
+                    builder.AddServiceDiscovery();
+
+                    // Turn on resilience by default
+                    _ = settings.OverrideHttpStandardResilience
+                        ? builder.AddStandardResilienceHandler(configure => settings.ConfigureHttpStandardResilience?.Invoke(configure))
+                        : builder.AddStandardResilienceHandler();
                 });
 
             return self;

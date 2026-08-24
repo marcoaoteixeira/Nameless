@@ -7,7 +7,7 @@ namespace Nameless.Mailing.Mailkit;
 /// <summary>
 ///     The configuration for mailing client.
 /// </summary>
-[ConfigurationSectionName("Mailing")]
+[ConfigurationSectionName("Mailkit")]
 public record MailingOptions {
     /// <summary>
     ///     Whether to use credentials for SMTP authentication.

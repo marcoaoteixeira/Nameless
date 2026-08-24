@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Windows.Media.Imaging;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nameless.WinApp.Internals;
 using Nameless.WinApp.ViewModels.Windows;
 using Nameless.Windows;
 using Nameless.Windows.Configuration;
-using Nameless.Windows.DependencyInjection;
 using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
@@ -19,7 +17,6 @@ using Wpf.Ui.Controls;
 
 namespace Nameless.WinApp.Views.Windows;
 
-[ServiceLifetime(Lifetime = ServiceLifetime.Singleton)]
 public partial class MainWindow : INavigationWindow {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IContentDialogService _contentDialogService;

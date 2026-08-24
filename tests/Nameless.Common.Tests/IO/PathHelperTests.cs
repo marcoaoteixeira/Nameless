@@ -6,10 +6,10 @@ public class PathHelperTests {
     [Fact]
     public void Normalize_ForwardSlashes_ReplacedWithDirectorySeparatorChar() {
         // arrange
-        const string input = "a/b/c";
+        const string Input = "a/b/c";
 
         // act
-        var result = PathHelper.Normalize(input);
+        var result = PathHelper.Normalize(Input);
 
         // assert
         Assert.Equal($"a{Path.DirectorySeparatorChar}b{Path.DirectorySeparatorChar}c", result);
@@ -32,13 +32,13 @@ public class PathHelperTests {
     [Fact]
     public void Sanitize_ValidPath_ReturnsSameString() {
         // arrange
-        const string valid = "valid_path";
+        const string Valid = "valid_path";
 
         // act
-        var result = PathHelper.Sanitize(valid);
+        var result = PathHelper.Sanitize(Valid);
 
         // assert
-        Assert.Equal(valid, result);
+        Assert.Equal(Valid, result);
     }
 
     [Fact]
@@ -53,13 +53,13 @@ public class PathHelperTests {
     [Fact]
     public void Sanitize_WithWhitespaceOnly_ReturnsWhitespace() {
         // arrange
-        const string whitespace = "   ";
+        const string Whitespace = "   ";
 
         // act
-        var result = PathHelper.Sanitize(whitespace);
+        var result = PathHelper.Sanitize(Whitespace);
 
         // assert
-        Assert.Equal(whitespace, result);
+        Assert.Equal(Whitespace, result);
     }
 
     [Fact]

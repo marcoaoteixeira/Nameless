@@ -18,7 +18,7 @@ public class ActivityWrapperTests {
 
     // Creates a real Activity via ActivitySource so that ActivityWrapper has a
     // non-null inner instance to work with.
-    private static Activity CreateRealActivity(ActivitySource source, string operationName = "test-op") {
+    private static Activity CreateRealActivity(System.Diagnostics.ActivitySource source, string operationName = "test-op") {
         var activity = source.StartActivity(operationName);
 
         // If StartActivity returns null (no listener registered), the test setup is wrong.
@@ -30,9 +30,9 @@ public class ActivityWrapperTests {
     [Fact]
     public void SetTag_DoesNotThrow() {
         // arrange
-        using var source = new ActivitySource("test.wrapper.settag");
+        using var source = new System.Diagnostics.ActivitySource("test.wrapper.settag");
         using var listener = CreateAcceptAllListener();
-        ActivitySource.AddActivityListener(listener);
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
 
         using var innerActivity = CreateRealActivity(source);
         var sut = new ActivityWrapper(innerActivity);
@@ -49,9 +49,9 @@ public class ActivityWrapperTests {
     [Fact]
     public void AddException_DoesNotThrow() {
         // arrange
-        using var source = new ActivitySource("test.wrapper.addexception");
+        using var source = new System.Diagnostics.ActivitySource("test.wrapper.addexception");
         using var listener = CreateAcceptAllListener();
-        ActivitySource.AddActivityListener(listener);
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
 
         using var innerActivity = CreateRealActivity(source);
         var sut = new ActivityWrapper(innerActivity);
@@ -68,9 +68,9 @@ public class ActivityWrapperTests {
     [Fact]
     public void SetStatus_WithOkStatus_DoesNotThrow() {
         // arrange
-        using var source = new ActivitySource("test.wrapper.setstatus");
+        using var source = new System.Diagnostics.ActivitySource("test.wrapper.setstatus");
         using var listener = CreateAcceptAllListener();
-        ActivitySource.AddActivityListener(listener);
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
 
         using var innerActivity = CreateRealActivity(source);
         var sut = new ActivityWrapper(innerActivity);
@@ -87,9 +87,9 @@ public class ActivityWrapperTests {
     [Fact]
     public void Dispose_DoesNotThrow() {
         // arrange
-        using var source = new ActivitySource("test.wrapper.dispose");
+        using var source = new System.Diagnostics.ActivitySource("test.wrapper.dispose");
         using var listener = CreateAcceptAllListener();
-        ActivitySource.AddActivityListener(listener);
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
 
         var innerActivity = CreateRealActivity(source);
         var sut = new ActivityWrapper(innerActivity);

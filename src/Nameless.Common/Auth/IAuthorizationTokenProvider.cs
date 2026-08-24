@@ -10,7 +10,7 @@
 ///     Type of the response.
 /// </typeparam>
 public interface IAuthorizationTokenProvider<in TRequest, TResponse>
-    where TRequest : IAuthorizationTokenRequest<TResponse>
+    where TRequest : notnull
     where TResponse : notnull {
     /// <summary>
     ///     Retrieves a token from the provider.

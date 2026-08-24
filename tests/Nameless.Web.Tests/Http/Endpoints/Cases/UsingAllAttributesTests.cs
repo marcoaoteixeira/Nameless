@@ -60,7 +60,7 @@ public class UsingAllAttributesTests {
                               [UseRateLimiting("policy-name")]
                               [DisableRequestTimeout]
                               [UseRequestTimeout("policy-name")]
-                              [DisableValidation]
+                              [DisableValidator]
                               [Deprecate(Message = "Use something else instead", Sunset = "Wed, 11 Nov 2026 11:11:11 GMT")]
                               public partial class AllAttributesEndpoint {
                                   public Task<IResult> HandleAsync() {

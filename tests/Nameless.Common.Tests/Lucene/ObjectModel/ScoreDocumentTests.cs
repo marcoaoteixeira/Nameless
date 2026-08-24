@@ -25,14 +25,14 @@ public class ScoreDocumentTests {
     [Fact]
     public void Score_ReturnsConstructedValue() {
         // Arrange
-        const float expected = 0.75f;
-        var sut = new ScoreDocument([], expected);
+        const float Expected = 0.75f;
+        var sut = new ScoreDocument([], Expected);
 
         // Act
         var actual = sut.Score;
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]

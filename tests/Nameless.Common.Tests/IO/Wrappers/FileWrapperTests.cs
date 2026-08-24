@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using Nameless.IO.Explorer;
+using Nameless.IO.Explorer.Wrappers;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.IO.Wrappers;
@@ -17,8 +19,8 @@ public class FileWrapperTests : IDisposable {
         }
     }
 
-    private IOptions<FileSystemProviderOptions> CreateOptions() {
-        return Options.Create(new FileSystemProviderOptions {
+    private IOptions<FileExplorerOptions> CreateOptions() {
+        return Options.Create(new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
         });
@@ -66,23 +68,23 @@ public class FileWrapperTests : IDisposable {
     [IntegrationTest]
     public void Name_ReturnsFileName() {
         // arrange
-        const string fileName = "named-file.txt";
-        var sut = CreateWrapper(fileName);
+        const string FileName = "named-file.txt";
+        var sut = CreateWrapper(FileName);
 
         // act
         var actual = sut.Name;
 
         // assert
-        Assert.Equal(fileName, actual);
+        Assert.Equal(FileName, actual);
     }
 
     [Fact]
     [IntegrationTest]
     public void Path_ReturnsFullPath() {
         // arrange
-        const string fileName = "path-file.txt";
-        var expected = System.IO.Path.Combine(_root, fileName);
-        var sut = CreateWrapper(fileName);
+        const string FileName = "path-file.txt";
+        var expected = System.IO.Path.Combine(_root, FileName);
+        var sut = CreateWrapper(FileName);
 
         // act
         var actual = sut.Path;
@@ -109,8 +111,8 @@ public class FileWrapperTests : IDisposable {
     [IntegrationTest]
     public void Open_ExistingFile_ReturnsReadableStream() {
         // arrange
-        const string content = "hello world";
-        CreateTempFile("readable.txt", content);
+        const string Content = "hello world";
+        CreateTempFile("readable.txt", Content);
         var sut = CreateWrapper("readable.txt");
 
         // act
@@ -119,6 +121,6 @@ public class FileWrapperTests : IDisposable {
         var actual = reader.ReadToEnd();
 
         // assert
-        Assert.Equal(content, actual);
+        Assert.Equal(Content, actual);
     }
 }

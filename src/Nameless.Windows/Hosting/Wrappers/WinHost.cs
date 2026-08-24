@@ -20,7 +20,7 @@ public sealed class WinHost : IHost {
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default) {
-        await _current.WarmupAsync(context: [], cancellationToken);
+        await _current.WarmupAsync(cancellationToken);
         await _current.StartAsync(cancellationToken);
 
         if (OnStart is not null) {

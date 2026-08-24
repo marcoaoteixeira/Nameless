@@ -1,4 +1,6 @@
-﻿namespace Nameless.Bootstrap.Notification;
+﻿using System.Text.Json;
+
+namespace Nameless.Bootstrap.Notification;
 
 /// <summary>
 ///     Report for step progress.
@@ -35,4 +37,16 @@ public record StepProgress {
     ///     Gets or init the progress type.
     /// </summary>
     public StepProgressType Type { get; init; }
+
+    internal string ToText() {
+        return $"""
+               ----------
+               Step name:  {StepName}
+               Timestamp:  {Timestamp:yyyy-MM-dd HH:mm:ss:fff}
+               Message:    {Message}
+               Percentage: {(PercentageComplete is not null ? $"{PercentageComplete:P2}" : string.Empty)}
+               Type:       {Type}
+               Metadata:   {JsonSerializer.Serialize(Metadata)}
+               """;
+    }
 }

@@ -14,12 +14,12 @@ public class EnvelopeTests {
             Timestamp = 1_700_000_000L
         };
 
-        const string payload = "hello";
+        const string Payload = "hello";
 
         // act
         var envelope = new Envelope {
             Header = header,
-            Message = payload
+            Message = Payload
         };
 
         // assert
@@ -28,7 +28,7 @@ public class EnvelopeTests {
             Assert.Equal("msg-001", envelope.Header.MessageID);
             Assert.Equal("corr-001", envelope.Header.CorrelationID);
             Assert.Equal(1_700_000_000L, envelope.Header.Timestamp);
-            Assert.Equal(payload, envelope.Message);
+            Assert.Equal(Payload, envelope.Message);
         });
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.IO;
+using Nameless.IO.Explorer;
 
 namespace Nameless.Lucene;
 
@@ -11,7 +11,7 @@ namespace Nameless.Lucene;
 public class IndexProvider : IIndexProvider {
     private readonly ConcurrentDictionary<string, Index> _cache = new(StringComparer.InvariantCulture);
     private readonly IAnalyzerProvider _analyzerProvider;
-    private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IFileExplorer _fileSystemProvider;
     private readonly IOptions<LuceneOptions> _options;
     private readonly ILogger<Index> _logger;
 
@@ -35,7 +35,7 @@ public class IndexProvider : IIndexProvider {
     /// </param>
     public IndexProvider(
         IAnalyzerProvider analyzerProvider,
-        IFileSystemProvider fileSystemProvider,
+        IFileExplorer fileSystemProvider,
         IOptions<LuceneOptions> options,
         ILogger<Index> logger) {
         _analyzerProvider = analyzerProvider;

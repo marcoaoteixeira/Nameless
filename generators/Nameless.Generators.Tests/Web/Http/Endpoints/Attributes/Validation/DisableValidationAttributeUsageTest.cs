@@ -11,7 +11,7 @@ public class DisableValidationAttributeUsageTest
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [DisableValidation]
+            [DisableValidator]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -26,6 +26,6 @@ public class DisableValidationAttributeUsageTest
 
         Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
         Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.DisableValidation\(\)", source);
+        Assert.Matches(@"\.DisableValidator\(\)", source);
     }
 }

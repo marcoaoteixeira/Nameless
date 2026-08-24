@@ -7,7 +7,7 @@ namespace Nameless.Auth.OAuth;
 /// <summary>
 ///     Represents the OAuth configuration options.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainStructure)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainCodeStructure)]
 [ConfigurationSectionName("OAuth")]
 public record OAuthOptions {
     /// <summary>
@@ -18,7 +18,7 @@ public record OAuthOptions {
     /// <summary>
     ///     Gets the token endpoint.
     /// </summary>
-    public string? TokenEndpoint { get; init; }
+    public string? TokenEndpoint { get; init; } = "/oauth/token";
     
     /// <summary>
     ///     Gets the timeout to request an authorization token.

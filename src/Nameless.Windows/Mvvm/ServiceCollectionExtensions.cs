@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
-using Nameless.Windows.DependencyInjection;
 
 namespace Nameless.Windows.Mvvm;
 
@@ -26,22 +25,18 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterViewModels(Action<ViewModelRegistration> configure) {
             var registration = ActionHelper.FromDelegate(configure);
 
-            self.TryAdd(
-                descriptors: CreateViewModelServiceDescriptors(registration)
+            var service = typeof(ViewModel);
+            var implementations = registration.UseAssemblyScan
+                ? registration.ExecuteAssemblyScan(service)
+                : registration.ViewModels;
+
+            var descriptors = implementations.Select(
+                implementation => ServiceDescriptor.Transient(implementation, implementation)
             );
+
+            self.TryAdd(descriptors);
 
             return self;
         }
-    }
-
-    private static IEnumerable<ServiceDescriptor> CreateViewModelServiceDescriptors(ViewModelRegistration registration) {
-        var service = typeof(ViewModel);
-        var implementations = registration.UseAssemblyScan
-            ? registration.ExecuteAssemblyScan(service)
-            : registration.ViewModels;
-
-        return implementations.Select(
-            implementation => implementation.CreateServiceDescriptor()
-        );
     }
 }

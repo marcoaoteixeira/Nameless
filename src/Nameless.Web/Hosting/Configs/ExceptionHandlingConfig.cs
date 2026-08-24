@@ -16,7 +16,7 @@ public static class ExceptionHandlingConfig {
         public WebApplicationBuilder ConfigureExceptionHandling(WebHostSettings settings) {
             if (settings.DisableExceptionHandling) { return self; }
 
-            self.Services.RegisterExceptionHandlers(
+            self.Services.RegisterErrorHandling(
                 settings.ConfigureExceptionHandling
             );
 

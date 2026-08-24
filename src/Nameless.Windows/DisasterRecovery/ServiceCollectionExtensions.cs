@@ -9,22 +9,18 @@ public static class ServiceCollectionExtensions {
         public IServiceCollection RegisterDisasterRecovery(Action<DisasterRecoveryRegistration> registration) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.TryAddEnumerable(
-                descriptors: CreateDisasterRecoveryRoutineServiceDescriptors(settings)
+            var service = typeof(IDisasterRecoveryRoutine);
+            var implementations = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan(service)
+                : settings.DisasterRecoveryRoutines;
+
+            var descriptors = implementations.Select(
+                implementation => ServiceDescriptor.Transient(service, implementation)
             );
+
+            self.TryAddEnumerable(descriptors);
 
             return self;
         }
-    }
-
-    private static IEnumerable<ServiceDescriptor> CreateDisasterRecoveryRoutineServiceDescriptors(DisasterRecoveryRegistration settings) {
-        var service = typeof(IDisasterRecoveryRoutine);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service)
-            : settings.DisasterRecoveryRoutines;
-
-        return implementations.Select(
-            implementation => ServiceDescriptor.Transient(service, implementation)
-        );
     }
 }

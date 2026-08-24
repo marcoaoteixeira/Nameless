@@ -5,7 +5,7 @@ using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Data;
 
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.AutoGen)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.AutoGenCode)]
 internal static partial class Log {
     private const string TAG = "DATABASE";
 

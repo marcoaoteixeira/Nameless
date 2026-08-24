@@ -11,7 +11,7 @@ namespace Nameless.Data;
 
 [IntegrationTest]
 public class DatabaseTests {
-    private const string CreateTableSql =
+    private const string CREATE_TABLE_SQL =
         "CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL)";
 
     private static Database CreateSut(string dbFileName, out IDbConnection connection) {
@@ -20,7 +20,7 @@ public class DatabaseTests {
 
         // initialise schema before the Database instance touches the connection
         using var cmd = connection.CreateCommand();
-        cmd.CommandText = CreateTableSql;
+        cmd.CommandText = CREATE_TABLE_SQL;
         cmd.ExecuteNonQuery();
         connection.Close();
 

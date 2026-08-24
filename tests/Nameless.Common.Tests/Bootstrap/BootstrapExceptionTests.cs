@@ -1,4 +1,3 @@
-using Nameless.Bootstrap;
 using Nameless.Bootstrap.Execution;
 using Nameless.Testing.Tools.Attributes;
 
@@ -19,13 +18,13 @@ public class BootstrapExceptionTests {
     [Fact]
     public void Constructor_WithMessage_SetsMessage() {
         // arrange
-        const string message = "custom bootstrap error";
+        const string Message = "custom bootstrap error";
 
         // act
-        var sut = new BootstrapException(message);
+        var sut = new BootstrapException(Message);
 
         // assert
-        Assert.Equal(message, sut.Message);
+        Assert.Equal(Message, sut.Message);
         Assert.Empty(sut.Results);
     }
 
@@ -55,7 +54,7 @@ public class BootstrapExceptionTests {
     [Fact]
     public void Constructor_WithMessageAndResults_SetsBoth() {
         // arrange
-        const string message = "pipeline failed";
+        const string Message = "pipeline failed";
         var results = new[] {
             new StepExecutionResult {
                 StepName = "StepA",
@@ -65,17 +64,17 @@ public class BootstrapExceptionTests {
         };
 
         // act
-        var sut = new BootstrapException(message, results);
+        var sut = new BootstrapException(Message, results);
 
         // assert
-        Assert.Equal(message, sut.Message);
+        Assert.Equal(Message, sut.Message);
         Assert.Single(sut.Results);
     }
 
     [Fact]
     public void Constructor_WithMessageResultsAndInnerException_SetsAll() {
         // arrange
-        const string message = "wrapped error";
+        const string Message = "wrapped error";
         var inner = new IOException("disk error");
         var results = new[] {
             new StepExecutionResult {
@@ -87,11 +86,11 @@ public class BootstrapExceptionTests {
         };
 
         // act
-        var sut = new BootstrapException(message, results, inner);
+        var sut = new BootstrapException(Message, results, inner);
 
         // assert
         Assert.Multiple(() => {
-            Assert.Equal(message, sut.Message);
+            Assert.Equal(Message, sut.Message);
             Assert.Same(inner, sut.InnerException);
             Assert.Single(sut.Results);
             Assert.Equal("StepB", sut.Results[0].StepName);
@@ -101,7 +100,7 @@ public class BootstrapExceptionTests {
     [Fact]
     public void Constructor_WithEmptyResults_ResultsIsEmpty() {
         // arrange & act
-        var sut = new BootstrapException(Enumerable.Empty<StepExecutionResult>());
+        var sut = new BootstrapException([]);
 
         // assert
         Assert.Empty(sut.Results);

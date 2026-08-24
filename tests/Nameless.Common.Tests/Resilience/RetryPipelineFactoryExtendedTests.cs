@@ -86,16 +86,16 @@ public class RetryPipelineFactoryExtendedTests {
         var sut = CreateSut();
         var config = BuildConfig(retryCount: 2, backoff: BackoffType.Exponential);
         var pipeline = sut.Create(config);
-        const string expected = "ok";
+        const string Expected = "ok";
 
         // act
         var actual = await pipeline.ExecuteAsync(
-            _ => ValueTask.FromResult(expected),
+            _ => ValueTask.FromResult(Expected),
             CancellationToken.None
         );
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -104,16 +104,16 @@ public class RetryPipelineFactoryExtendedTests {
         var sut = CreateSut();
         var config = BuildConfig(retryCount: 2, backoff: BackoffType.Linear);
         var pipeline = sut.Create(config);
-        const string expected = "linear";
+        const string Expected = "linear";
 
         // act
         var actual = await pipeline.ExecuteAsync(
-            _ => ValueTask.FromResult(expected),
+            _ => ValueTask.FromResult(Expected),
             CancellationToken.None
         );
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]

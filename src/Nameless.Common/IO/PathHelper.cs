@@ -27,8 +27,8 @@ public static class PathHelper {
     ///     </para>
     /// </remarks>
     public static string Normalize(string path) {
-        return path.Replace(StaticData.Separators.ForwardSlash[index: 0], Path.DirectorySeparatorChar)
-                   .Replace(StaticData.Separators.BackwardSlash[index: 0], Path.DirectorySeparatorChar);
+        return path.Replace(Separators.ForwardSlash[index: 0], Path.DirectorySeparatorChar)
+                   .Replace(Separators.BackwardSlash[index: 0], Path.DirectorySeparatorChar);
     }
 
     /// <summary>

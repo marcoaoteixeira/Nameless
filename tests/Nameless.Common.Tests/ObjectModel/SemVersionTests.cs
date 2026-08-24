@@ -8,7 +8,7 @@ public static class SemVersionTests {
     // Parse — happy path
     // =========================================================================
 
-    public class Parse_ValidInput {
+    public class ParseValidInput {
         [Theory]
         [InlineData("0.0.0", 0, 0, 0)]
         [InlineData("1.0.0", 1, 0, 0)]
@@ -66,7 +66,7 @@ public static class SemVersionTests {
     // Parse — invalid input / exceptions
     // =========================================================================
 
-    public class Parse_InvalidInput {
+    public class ParseInvalidInput {
         [Theory]
         [InlineData("", typeof(ArgumentException))]
         [InlineData(" ", typeof(ArgumentException))]
@@ -100,7 +100,7 @@ public static class SemVersionTests {
     // TryParse
     // =========================================================================
 
-    public class TryParse_Behaviour {
+    public class TryParseBehaviour {
         [Fact]
         public void ValidInput_ReturnsTrueAndOutputsInstance() {
             var ok = SemVersion.TryParse("2.4.6-rc.1+build.99", out var v);
@@ -139,7 +139,7 @@ public static class SemVersionTests {
     // Format / ToString
     // =========================================================================
 
-    public class Format_Behaviour {
+    public class FormatBehaviour {
         [Theory]
         [InlineData("1.2.3")]
         [InlineData("0.0.0")]
@@ -165,7 +165,7 @@ public static class SemVersionTests {
     // V1 static property
     // =========================================================================
 
-    public class V1_Property {
+    public class V1Property {
         [Fact]
         public void V1_HasExpectedValues() {
             var v = SemVersion.V1;
@@ -192,7 +192,7 @@ public static class SemVersionTests {
     // Equality (spec §10: build metadata MUST be ignored)
     // =========================================================================
 
-    public class Equality_Behaviour {
+    public class EqualityBehaviour {
         [Fact]
         public void SameVersion_AreEqual() {
             var a = SemVersion.Parse("1.2.3");
@@ -256,7 +256,7 @@ public static class SemVersionTests {
     // Comparison / ordering (spec §11)
     // =========================================================================
 
-    public class Comparison_Behaviour {
+    public class ComparisonBehaviour {
         // The ordering examples come directly from semver.org §11.4:
         // 1.0.0-alpha < 1.0.0-alpha.1 < 1.0.0-alpha.beta
         //   < 1.0.0-beta < 1.0.0-beta.2 < 1.0.0-beta.11
@@ -354,7 +354,7 @@ public static class SemVersionTests {
     // Prefix — parsing, formatting, and cosmetic-only semantics
     // =========================================================================
 
-    public class Prefix_Behaviour {
+    public class PrefixBehaviour {
         [Theory]
         [InlineData("v1.2.3", 'v')]
         [InlineData("V1.2.3", 'V')]

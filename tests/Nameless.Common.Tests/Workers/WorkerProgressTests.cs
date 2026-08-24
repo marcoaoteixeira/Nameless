@@ -20,9 +20,9 @@ public class WorkerProgressTests {
     [Fact]
     public void LastProgress_IsNull_BeforeAnyProgressIsReported() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // assert
@@ -36,9 +36,9 @@ public class WorkerProgressTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var progressReportedTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker)),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance,
             self => {
                 self.ReportInformation("step one", percentageComplete: 50);
                 progressReportedTcs.TrySetResult();
@@ -63,9 +63,9 @@ public class WorkerProgressTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var thirdTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker)),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance,
             self => {
                 self.ReportInformation("first");
                 self.ReportInformation("second");
@@ -94,9 +94,9 @@ public class WorkerProgressTests {
         var received = new List<WorkerProgress>();
         var doneTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker)),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance,
             self => {
                 self.ReportInformation("a");
                 self.ReportInformation("b");
@@ -128,9 +128,9 @@ public class WorkerProgressTests {
         var firstTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker)),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance,
             async self => {
                 self.ReportInformation("before-unsubscribe");
                 firstTcs.TrySetResult();
@@ -161,9 +161,9 @@ public class WorkerProgressTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var completedTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         using (worker.Progress.Subscribe(new CompletionObserver(completedTcs))) {
@@ -187,9 +187,9 @@ public class WorkerProgressTests {
         var goodReceived = new List<WorkerProgress>();
         var doneTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var worker = new ControllableWorker(
-            CreateConfiguration(nameof(ControllableWorker)),
-            NullLogger<Worker>.Instance,
+        var worker = new ControllablePeriodicWorker(
+            CreateConfiguration(nameof(ControllablePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance,
             self => {
                 self.ReportInformation("item");
                 doneTcs.TrySetResult();
@@ -217,9 +217,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportTickStarted_SetsCorrectTypeAndZeroPercent() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act
@@ -235,9 +235,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportTickCompleted_SetsCorrectTypeAndHundredPercent() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act
@@ -253,9 +253,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportTickFailed_SetsCorrectTypeAndMetadata() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
         var ex = new InvalidOperationException("test error");
 
@@ -275,9 +275,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportCancelled_SetsCorrectTypeAndDefaultMessage() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act
@@ -295,9 +295,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportCancelled_WithCustomMessage_UsesCustomMessage() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act
@@ -312,9 +312,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportInformation_WithMetadataAndPercentage_SetsAllProperties() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
         var metadata = new Dictionary<string, object> { ["key"] = "value" };
 
@@ -336,9 +336,9 @@ public class WorkerProgressTests {
     [Fact]
     public void ReportTickFailed_WithNullException_ThrowsArgumentNullException() {
         // arrange
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         // act & assert
@@ -354,9 +354,9 @@ public class WorkerProgressTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var completedTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         await worker.StartAsync(ct);
@@ -375,9 +375,9 @@ public class WorkerProgressTests {
     public void Progress_SubscribeAfterDispose_ImmediatelyCallsOnCompleted() {
         // arrange
         var completedTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var worker = new SimpleWorker(
-            CreateConfiguration(nameof(SimpleWorker)),
-            NullLogger<Worker>.Instance
+        var worker = new SimplePeriodicWorker(
+            CreateConfiguration(nameof(SimplePeriodicWorker)),
+            NullLogger<PeriodicWorker>.Instance
         );
 
         worker.Dispose();
@@ -411,22 +411,22 @@ public class WorkerProgressTests {
 
     // ─── test doubles ─────────────────────────────────────────────────────
 
-    private sealed class SimpleWorker(IConfiguration configuration, Microsoft.Extensions.Logging.ILogger<Worker> logger)
-        : Worker(configuration, logger) {
+    private sealed class SimplePeriodicWorker(IConfiguration configuration, Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger)
+        : PeriodicWorker(configuration, logger) {
 
-        public override string Name => nameof(SimpleWorker);
+        public override string Name => nameof(SimplePeriodicWorker);
 
         public override Task DoWorkAsync(CancellationToken cancellationToken)
             => Task.Delay(Timeout.Infinite, cancellationToken);
     }
 
-    private sealed class ControllableWorker(
+    private sealed class ControllablePeriodicWorker(
         IConfiguration configuration,
-        Microsoft.Extensions.Logging.ILogger<Worker> logger,
-        Func<Worker, Task> work)
-        : Worker(configuration, logger) {
+        Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger,
+        Func<PeriodicWorker, Task> work)
+        : PeriodicWorker(configuration, logger) {
 
-        public override string Name => nameof(ControllableWorker);
+        public override string Name => nameof(ControllablePeriodicWorker);
 
         public override Task DoWorkAsync(CancellationToken cancellationToken) => work(this);
     }

@@ -14,7 +14,7 @@ public class EntryPoint {
             settings.Args = args;
             settings.Assemblies = [
                 typeof(EntryPoint).Assembly,
-                typeof(AssemblyMarker).Assembly
+                typeof(AssemblyMarkerCommon).Assembly
             ];
 
             settings.ConfigureAdditionalServices = ConfigureAdditionalServices;

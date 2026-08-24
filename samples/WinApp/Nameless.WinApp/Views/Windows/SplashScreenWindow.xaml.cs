@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Nameless.Application;
 using Nameless.Bootstrap;
 using Nameless.Bootstrap.Notification;
+using Nameless.Reporting;
 using Nameless.Windows.UI;
 
 namespace Nameless.WinApp.Views.Windows;
@@ -11,17 +12,17 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
     private readonly IApplicationContext _applicationContext;
     private readonly IBootstrapper _bootstrapper;
     private readonly IConfiguration _configuration;
-    private readonly IProgress<StepProgress> _progress;
+    private readonly IStatusMonitor<Bootstrapper> _bootstrapperStatusMonitor;
 
     public SplashScreenWindow(
         IApplicationContext applicationContext,
         IBootstrapper bootstrapper,
-        IConfiguration configuration) {
+        IConfiguration configuration,
+        IStatusMonitor<Bootstrapper> bootstrapperStatusMonitor) {
         _applicationContext = applicationContext;
         _bootstrapper = bootstrapper;
         _configuration = configuration;
-
-        _progress = new Progress<StepProgress>(UpdateControls);
+        _bootstrapperStatusMonitor = bootstrapperStatusMonitor;
 
         InitializeComponent();
         Initialize();
@@ -29,6 +30,11 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
 
     private void Initialize() {
         ApplicationVersionTextBlock.Text = _applicationContext.Version;
+
+        _bootstrapperStatusMonitor.Status.Subscribe(
+            onNext: UpdateControls,
+
+        );
     }
 
     public void Show(WindowStartupLocation startupLocation) {
@@ -42,7 +48,7 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
         var timeout = GetBootstrapTimeout();
         using var cts = new CancellationTokenSource(timeout);
 
-        await _bootstrapper.ExecuteAsync(context: [], _progress, cts.Token)
+        await _bootstrapper.RunAsync(cts.Token)
                            .ContinueWith(_ => Dispatcher.Invoke(Close), cts.Token)
                            .SkipContextSync();
     }

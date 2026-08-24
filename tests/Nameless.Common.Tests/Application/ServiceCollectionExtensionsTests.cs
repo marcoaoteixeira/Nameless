@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Application;
@@ -36,8 +36,8 @@ public class ServiceCollectionExtensionsTests {
         Assert.Equal("svc.test.app", ctx.ApplicationName);
         Assert.Equal("svc-env", ctx.EnvironmentName);
 
-        // FileSystemProvider should be created under AppDomain base directory when Base is used
-        var fsp = ctx.FileSystemProvider as FileSystemProvider;
+        // FileExplorer should be created under AppDomain base directory when Base is used
+        var fsp = ctx.FileExplorer as FileExplorer;
         Assert.NotNull(fsp);
         Assert.StartsWith(ctx.BaseDirectoryPath, fsp.Root, StringComparison.OrdinalIgnoreCase);
         Assert.True(Directory.Exists(fsp.Root));

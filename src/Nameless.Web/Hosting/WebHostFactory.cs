@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
 using Nameless.Web.Hosting.Configs;
 
@@ -95,8 +94,9 @@ public sealed class WebHostFactory {
             .ConfigureRequestTimeout(Settings)
             .ConfigureResilience(Settings)
             .ConfigureServiceDiscovery(Settings)
-            .ConfigureValidation(Settings)
-            .ConfigureWorkers(Settings)
+            .ConfigureStatusReporting(Settings)
+            .ConfigureValidator(Settings)
+            .ConfigurePeriodicWorkers(Settings)
 
             // Additional service registrations should be configured last,
             // as they may override previously registered services.

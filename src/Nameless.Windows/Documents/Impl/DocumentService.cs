@@ -3,7 +3,7 @@ using Nameless.ObjectModel;
 using Nameless.Results;
 using Nameless.Windows.Localization;
 
-namespace Nameless.Windows.Documents.Impl;
+namespace Nameless.Windows.Documents;
 
 public class DocumentService : IDocumentService {
     private const string CLASS = nameof(DocumentService);

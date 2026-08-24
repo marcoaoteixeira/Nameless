@@ -66,14 +66,14 @@ public class StringExtensionsTests {
     [Fact]
     public void ToMemoryStream_ContentMatchesUtf8Bytes() {
         // arrange
-        const string value = "hello";
+        const string Value = "hello";
 
         // act
-        using var stream = value.ToMemoryStream();
+        using var stream = Value.ToMemoryStream();
         var bytes = stream.ToArray();
 
         // assert
-        Assert.Equal(Encoding.UTF8.GetBytes(value), bytes);
+        Assert.Equal(Encoding.UTF8.GetBytes(Value), bytes);
     }
 
     // ─── CamelFriendly ───────────────────────────────────────────────────────
@@ -259,14 +259,14 @@ public class StringExtensionsTests {
     [Fact]
     public void ToBase64_ThenFromBase64_RoundTrips() {
         // arrange
-        const string original = "hello world";
+        const string Original = "hello world";
 
         // act
-        var encoded = original.ToBase64();
+        var encoded = Original.ToBase64();
         var decoded = encoded.FromBase64();
 
         // assert
-        Assert.Equal(original, decoded);
+        Assert.Equal(Original, decoded);
     }
 
     // ─── GetBytes ────────────────────────────────────────────────────────────
@@ -274,13 +274,13 @@ public class StringExtensionsTests {
     [Fact]
     public void GetBytes_ReturnsUtf8Bytes() {
         // arrange
-        const string value = "hello";
+        const string Value = "hello";
 
         // act
-        var bytes = value.GetBytes();
+        var bytes = Value.GetBytes();
 
         // assert
-        Assert.Equal(Encoding.UTF8.GetBytes(value), bytes);
+        Assert.Equal(Encoding.UTF8.GetBytes(Value), bytes);
     }
 
     // ─── RemoveHtmlTags ──────────────────────────────────────────────────────

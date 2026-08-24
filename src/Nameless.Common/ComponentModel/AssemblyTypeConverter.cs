@@ -26,11 +26,10 @@ public class AssemblyTypeConverter : TypeConverter {
 
         try { return Assembly.Load(assembly); }
         catch (Exception ex) {
-            CommonLog.Failure(
-                context?.GetLogger<AssemblyTypeConverter>() ?? NullLogger<AssemblyTypeConverter>.Instance,
-                ex,
-                tag: LOG_TAG
-            );
+            var logger = context?.GetLogger<AssemblyTypeConverter>() ??
+                         NullLogger<AssemblyTypeConverter>.Instance;
+
+            CommonLog.Failure(logger, ex, tag: LOG_TAG);
         }
 
         return null;

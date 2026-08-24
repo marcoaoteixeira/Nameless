@@ -47,15 +47,15 @@ public class RetryPipelineFactoryTests {
         var sut = CreateSut();
         var configuration = CreateConfiguration();
         var pipeline = sut.Create(configuration);
-        const string expected = "executed";
+        const string Expected = "executed";
 
         // act
         var actual = await pipeline.ExecuteAsync(
-            _ => ValueTask.FromResult(expected),
+            _ => ValueTask.FromResult(Expected),
             CancellationToken.None
         );
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 }

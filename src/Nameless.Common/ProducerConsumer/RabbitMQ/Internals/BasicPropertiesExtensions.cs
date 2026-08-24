@@ -1,8 +1,10 @@
-﻿using RabbitMQ.Client;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Internals;
 
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class BasicPropertiesExtensions {
     extension(BasicProperties self) {
         internal BasicProperties FillWith(Context ctx) {

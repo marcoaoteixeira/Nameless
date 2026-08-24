@@ -27,15 +27,19 @@ public abstract class ValidationFilterBase {
         return errors.ToArray();
     }
 
-    protected static bool TryResolveValidation(IServiceProvider provider, [NotNullWhen(returnValue: true)] out IValidationService? output) {
-        output = provider.GetService<IValidationService>();
+    protected static bool TryResolveValidation(IServiceProvider provider, [NotNullWhen(returnValue: true)] out IValidator? output) {
+        output = provider.GetService<IValidator>();
 
         var isServiceUnavailable = output is not null;
         if (!isServiceUnavailable) { return isServiceUnavailable; }
 
         var logger = provider.GetLogger<ValidationFilterBase>();
 
-        Log.ValidationServiceUnavailable(logger);
+        CommonLog.Warning(
+            logger,
+            reason: $"Service '{nameof(IValidator)}' is unavailable.",
+            tag: "VALIDATION_FILTER"
+        );
 
         return isServiceUnavailable;
     }

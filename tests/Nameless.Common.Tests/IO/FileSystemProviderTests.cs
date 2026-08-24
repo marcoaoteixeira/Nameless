@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Nameless.IO.Explorer;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.IO;
@@ -17,13 +18,13 @@ public class FileSystemProviderTests : IDisposable {
         }
     }
 
-    private FileSystemProvider CreateSut(bool allowOutsideRoot = false) {
-        var options = Options.Create(new FileSystemProviderOptions {
+    private FileExplorer CreateSut(bool allowOutsideRoot = false) {
+        var options = Options.Create(new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = allowOutsideRoot
         });
 
-        return new FileSystemProvider(options);
+        return new FileExplorer(options);
     }
 
     [Fact]
@@ -31,11 +32,11 @@ public class FileSystemProviderTests : IDisposable {
     public void GetDirectory_WithRelativePath_ReturnsDirectoryWithCorrectPath() {
         // arrange
         var sut = CreateSut();
-        const string relativePath = "subdir";
-        var expected = Path.Combine(_root, relativePath);
+        const string RelativePath = "subdir";
+        var expected = Path.Combine(_root, RelativePath);
 
         // act
-        var directory = sut.GetDirectory(relativePath);
+        var directory = sut.GetDirectory(RelativePath);
 
         // assert
         Assert.Equal(expected, directory.Path);
@@ -46,11 +47,11 @@ public class FileSystemProviderTests : IDisposable {
     public void GetFile_WithRelativePath_ReturnsFileWithCorrectPath() {
         // arrange
         var sut = CreateSut();
-        const string relativePath = "test.txt";
-        var expected = Path.Combine(_root, relativePath);
+        const string RelativePath = "test.txt";
+        var expected = Path.Combine(_root, RelativePath);
 
         // act
-        var file = sut.GetFile(relativePath);
+        var file = sut.GetFile(RelativePath);
 
         // assert
         Assert.Equal(expected, file.Path);
@@ -61,11 +62,11 @@ public class FileSystemProviderTests : IDisposable {
     public void GetFullPath_WithRelativePath_ReturnsAbsolutePath() {
         // arrange
         var sut = CreateSut();
-        const string relativePath = "some/nested/file.txt";
-        var expected = Path.GetFullPath(relativePath, _root);
+        const string RelativePath = "some/nested/file.txt";
+        var expected = Path.GetFullPath(RelativePath, _root);
 
         // act
-        var actual = sut.GetFullPath(relativePath);
+        var actual = sut.GetFullPath(RelativePath);
 
         // assert
         Assert.Equal(expected, actual);

@@ -29,7 +29,7 @@ public static class MediatorConfig {
             self.ConfigureServices(services => {
                 services.RegisterMediator(
                     AssemblyScanAwareHelper.Join(
-                        settings.ConfigureMediatorRegistration,
+                        settings.ConfigureMediator,
                         settings.Assemblies
                     )
                 );

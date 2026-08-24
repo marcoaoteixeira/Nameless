@@ -43,8 +43,8 @@ public class JsonMessageSerializerTests {
     public async Task SerializeAsync_SetsMessageIdInContext() {
         // arrange
         var sut = CreateSut();
-        const string expectedMessageId = "msg-id-123";
-        var producerCtx = CreateContextWithMetadata(messageId: expectedMessageId);
+        const string ExpectedMessageId = "msg-id-123";
+        var producerCtx = CreateContextWithMetadata(messageId: ExpectedMessageId);
         var consumerCtx = new ConsumerContext();
 
         // act
@@ -52,7 +52,7 @@ public class JsonMessageSerializerTests {
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
-        Assert.Equal(expectedMessageId, consumerCtx.MessageId);
+        Assert.Equal(ExpectedMessageId, consumerCtx.MessageId);
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public class JsonMessageSerializerTests {
     public async Task SerializeAsync_SetsCorrelationIdInContext() {
         // arrange
         var sut = CreateSut();
-        const string expectedCorrelationId = "corr-id-456";
-        var producerCtx = CreateContextWithMetadata(correlationId: expectedCorrelationId);
+        const string ExpectedCorrelationId = "corr-id-456";
+        var producerCtx = CreateContextWithMetadata(correlationId: ExpectedCorrelationId);
         var consumerCtx = new ConsumerContext();
 
         // act
@@ -69,7 +69,7 @@ public class JsonMessageSerializerTests {
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
-        Assert.Equal(expectedCorrelationId, consumerCtx.CorrelationId);
+        Assert.Equal(ExpectedCorrelationId, consumerCtx.CorrelationId);
     }
 
     [Fact]
@@ -77,8 +77,8 @@ public class JsonMessageSerializerTests {
     public async Task SerializeAsync_SetsTimestampInContext() {
         // arrange
         var sut = CreateSut();
-        const long expectedUnixTime = 1_700_000_000L;
-        var producerCtx = CreateContextWithMetadata(unixTimestamp: expectedUnixTime);
+        const long ExpectedUnixTime = 1_700_000_000L;
+        var producerCtx = CreateContextWithMetadata(unixTimestamp: ExpectedUnixTime);
         var consumerCtx = new ConsumerContext();
 
         // act
@@ -86,7 +86,7 @@ public class JsonMessageSerializerTests {
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
-        Assert.Equal(expectedUnixTime, consumerCtx.Timestamp.UnixTime);
+        Assert.Equal(ExpectedUnixTime, consumerCtx.Timestamp.UnixTime);
     }
 
     [Fact]

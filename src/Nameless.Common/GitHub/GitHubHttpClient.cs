@@ -92,10 +92,10 @@ public class GitHubHttpClient : IGitHubHttpClient {
     }
 
     private Error UnableDeserializeResponse(string objectName, int statusCode) {
-        Log.ResponseDeserializationWarning(_logger, objectName, statusCode);
+        var reason = $"Unable to deserialize object '{objectName}' from response content. Status code: {statusCode}";
 
-        return Error.Conflict(
-            $"Unable to deserialize object '{objectName}' from response content. Status code: {statusCode}"
-        );
+        CommonLog.Warning(_logger, reason, tag: LOG_TAG);
+
+        return Error.Conflict(reason);
     }
 }

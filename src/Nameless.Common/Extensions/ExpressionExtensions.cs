@@ -158,7 +158,7 @@ public static class ExpressionExtensions {
                     builder.Insert(index: 0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(index: 0, StaticData.Separators.Dot);
+                        builder.Insert(index: 0, Separators.Dot);
                     }
 
                     part = memberExpression.Expression;
@@ -172,7 +172,7 @@ public static class ExpressionExtensions {
                     builder.Insert(index: 0, name);
                     if (segmentCount > 0) {
                         // One or more parts to the left of this part are coming.
-                        builder.Insert(index: 0, StaticData.Separators.Dot);
+                        builder.Insert(index: 0, Separators.Dot);
                     }
 
                     part = null;
@@ -192,7 +192,7 @@ public static class ExpressionExtensions {
         /// <param name="expression">The right expression.</param>
         /// <returns>An expression composition.</returns>
         public Expression<Func<T, bool>> And(Expression<Func<T, bool>> expression) {
-            var param = Expression.Parameter(typeof(T), StaticData.Separators.Underscore);
+            var param = Expression.Parameter(typeof(T), Separators.Underscore);
             var body = Expression.And(
                 Expression.Invoke(self, param),
                 Expression.Invoke(expression, param)
@@ -206,7 +206,7 @@ public static class ExpressionExtensions {
         /// <param name="expression">The right expression.</param>
         /// <returns>An expression composition.</returns>
         public Expression<Func<T, bool>> Or(Expression<Func<T, bool>> expression) {
-            var param = Expression.Parameter(typeof(T), StaticData.Separators.Underscore);
+            var param = Expression.Parameter(typeof(T), Separators.Underscore);
             var body = Expression.Or(
                 Expression.Invoke(self, param),
                 Expression.Invoke(expression, param)

@@ -26,7 +26,7 @@ public static class MeterExtensions {
         /// <returns>
         ///     An instance of <see cref="IDisposable"/>.
         /// </returns>
-        public IDisposable CreateStopwatchHistogram(string name, string? unit = null, string? description = null, IEnumerable<KeyValuePair<string, object?>>? tags = null) {
+        public StopwatchHistogram CreateStopwatchHistogram(string name, string? unit = null, string? description = null, IEnumerable<KeyValuePair<string, object?>>? tags = null) {
             var histogram = self.CreateHistogram<long>(name, unit, description, tags);
 
             return new StopwatchHistogram(histogram);

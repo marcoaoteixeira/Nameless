@@ -5,7 +5,7 @@ namespace Nameless.Auth.OAuth;
 /// <summary>
 ///     Represents an OAuth authorization token request.
 /// </summary>
-public sealed record OAuthAuthorizationTokenRequest : IAuthorizationTokenRequest<OAuthAuthorizationTokenResponse> {
+public sealed record OAuthAuthorizationTokenRequest {
     /// <summary>
     ///     Gets the client ID.
     /// </summary>
@@ -30,7 +30,10 @@ public sealed record OAuthAuthorizationTokenRequest : IAuthorizationTokenRequest
     [JsonPropertyName("audience")]
     public string? Audience { get; init; }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets or sets the authorization scheme.
+    /// </summary>
+    [JsonPropertyName("scheme")]
     public string? Scheme { get; init; }
 }
 

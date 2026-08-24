@@ -1,5 +1,4 @@
 using Moq;
-using Nameless.Bootstrap.Notification;
 using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
@@ -42,8 +41,8 @@ public class BootstrapperExtendedTests {
             .Returns(RetryPipeline.Empty);
 
         return new Bootstrapper(
-            steps,
             retryFactoryMock.Object,
+            steps,
             TimeProvider.System,
             new LoggerMocker<Bootstrapper>().WithAnyLogLevel().Build()
         );

@@ -6,6 +6,7 @@ using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Lucene;
 using Nameless.Mediator;
+using Nameless.Reporting;
 using Nameless.Validation.FluentValidation;
 using Nameless.Windows.Documents;
 using Nameless.Windows.Localization;
@@ -24,18 +25,18 @@ public sealed class WinHostSettings {
     public bool DisableAppConfigurationManager { get; set; }
     
     public bool DisableBootstrap { get; set; }
-    public Action<BootstrapRegistration>? ConfigureBootstrapRegistration { get; set; }
+    public Action<BootstrapRegistration>? ConfigureBootstrap { get; set; }
 
     public bool DisableCompressor { get; set; }
     
     public bool DisableContentDialogService { get; set; }
     
     public bool DisableDocumentServices { get; set; }
-    public Action<DocumentServicesRegistration>? ConfigureDocumentServicesRegistration { get; set; }
+    public Action<DocumentServicesRegistration>? ConfigureDocumentServices { get; set; }
 
     public bool DisableFileSystemDialog { get; set; }
     
-    public bool DisableFileSystemProvider { get; set; }
+    public bool DisableFileExplorer { get; set; }
     
     public bool DisableGitHubHttpClient { get; set; }
     
@@ -43,20 +44,20 @@ public sealed class WinHostSettings {
     public Action<IHttpClientBuilder>? ConfigureHttpClientDefaults { get; set; }
     
     public bool DisableLogging { get; set; }
-    public Action<SerilogRegistration>? ConfigureLoggingRegistration { get; set; }
+    public Action<SerilogRegistration>? ConfigureLogging { get; set; }
     
     public bool DisableLucene { get; set; }
-    public Action<LuceneRegistration>? ConfigureLuceneRegistration { get; set; }
+    public Action<LuceneRegistration>? ConfigureLucene { get; set; }
     
     public bool DisableMediator { get; set; }
-    public Action<MediatorRegistration>? ConfigureMediatorRegistration { get; set; }
+    public Action<MediatorRegistration>? ConfigureMediator { get; set; }
     
     public bool DisableMessageDialog { get; set; }
     
     public bool DisableMessenger { get; set; }
     
     public bool DisableNavigation { get; set; }
-    public Action<NavigationRegistration>? ConfigureNavigationRegistration { get; set; }
+    public Action<NavigationRegistration>? ConfigureNavigation { get; set; }
     
     public bool DisableOffice { get; set; }
     
@@ -66,15 +67,25 @@ public sealed class WinHostSettings {
     
     public bool DisableTaskRunner { get; set; }
     
-    public bool DisableValidation { get; set; }
-    public Action<ValidationRegistration>? ConfigureValidationRegistration { get; set; }
+    public bool DisableValidator { get; set; }
+    public Action<ValidatorRegistration>? ConfigureValidator { get; set; }
     
     public bool DisableViewModels { get; set; }
-    public Action<ViewModelRegistration>? ConfigureViewModelRegistration { get; set; }
+    public Action<ViewModelRegistration>? ConfigureViewModel { get; set; }
     
     public bool DisableWindowsFactory { get; set; }
-    public Action<WindowFactoryRegistration>? ConfigureWindowFactoryRegistration { get; set; }
+    public Action<WindowFactoryRegistration>? ConfigureWindowFactory { get; set; }
     
     public bool DisableLocalization { get; set; }
-    public Action<LocalizationRegistration>? ConfigureLocalizationRegistration { get; set; }
+    public Action<LocalizationRegistration>? ConfigureLocalization { get; set; }
+
+    /// <summary>
+    ///     Whether it should disable Status Reporting feature.
+    /// </summary>
+    public bool DisableStatusReporting { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a delegate to configure Status Reporting feature.
+    /// </summary>
+    public Action<StatusReportingRegistration>? ConfigureStatusReporting { get; set; }
 }

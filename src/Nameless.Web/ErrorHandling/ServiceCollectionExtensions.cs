@@ -7,11 +7,7 @@ namespace Nameless.Web.ErrorHandling;
 
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
-        public IServiceCollection RegisterExceptionHandlers(Action<ExceptionHandlerRegistration>? registration = null, bool useGlobalExceptionHandler = true) {
-            if (useGlobalExceptionHandler) {
-                self.AddExceptionHandler<GlobalExceptionHandler>();
-            }
-
+        public IServiceCollection RegisterErrorHandling(Action<ErrorHandlingRegistration>? registration = null) {
             var settings = ActionHelper.FromDelegate(registration);
             var implementations = settings.UseAssemblyScan
                 ? settings.ExecuteAssemblyScan<IExceptionHandler>()

@@ -29,23 +29,48 @@ public static class WebApplicationBuilderExtensions {
         public WebApplicationBuilder RegisterOpenTelemetry(Action<OpenTelemetryRegistration>? registration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.Logging.AddOpenTelemetry(settings.ConfigureLogger);
+            self.Logging.AddOpenTelemetry(options => {
+                if (!settings.OverrideOpenTelemetryLoggerConfiguration) {
+                    options.IncludeFormattedMessage = true;
+                    options.IncludeScopes = true;
+                }
+
+                settings.ConfigureOpenTelemetryLogger?.Invoke(options);
+            });
 
             // To add gRPC instrumentation for OpenTelemetry
             // Check: https://learn.microsoft.com/en-us/aspnet/core/grpc/diagnostics?view=aspnetcore-9.0
             var builder = self.Services
                               .AddOpenTelemetry()
 
-                              .WithMetrics(metrics => metrics.AddMeter(settings.MetricMeters)
-                                                             .AddHttpClientInstrumentation()
-                                                             .AddRuntimeInstrumentation()
-                                                             .AddAspNetCoreInstrumentation())
+                              .WithMetrics(metrics => {
+                                  if (!settings.OverrideMeterProviderConfiguration) {
+                                      metrics.AddMeter(settings.MetricMeters)
+                                             .AddHttpClientInstrumentation()
+                                             .AddRuntimeInstrumentation()
+                                             .AddAspNetCoreInstrumentation();
+                                  }
 
-                              .WithTracing(tracing => tracing.AddSource(settings.ActivitySources)
-                                                             .AddHttpClientInstrumentation(settings.ConfigureHttpClientTraceInstrumentation)
-                                                             .AddAspNetCoreInstrumentation(settings.ConfigureAspNetCoreTraceInstrumentation))
+                                  settings.ConfigureMeterProvider?.Invoke(metrics);
+                              })
 
-                              .ConfigureResource(settings.ConfigureResources);
+                              .WithTracing(tracing => {
+                                  if (!settings.OverrideTracerProviderConfiguration) {
+                                      tracing.AddSource(settings.ActivitySources)
+                                             .AddHttpClientInstrumentation(settings.ConfigureHttpClientTraceInstrumentation)
+                                             .AddAspNetCoreInstrumentation(settings.ConfigureAspNetCoreTraceInstrumentation);
+                                  }
+
+                                  settings.ConfigureTracerProvider?.Invoke(tracing);
+                              })
+
+                              .ConfigureResource(resources => {
+                                  if (!settings.OverrideResources) {
+                                      /* default resources configuration */
+                                  }
+
+                                  settings.ConfigureResources?.Invoke(resources);
+                              });
 
             var openTelemetryEndpointUrl = self.Configuration[
                 StaticData.OpenTelemetry.ExporterEndpointConfigKey

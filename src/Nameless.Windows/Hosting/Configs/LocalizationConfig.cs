@@ -2,6 +2,7 @@
 using Nameless.Registration;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
+using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Windows.Hosting.Configs;
 
@@ -26,7 +27,7 @@ public static class LocalizationConfig {
         public WinHostBuilder ConfigureLocalization(WinHostSettings settings) {
             if (settings.DisableLocalization) {
                 self.ConfigureServices(
-                    (_, services) => services.TryAddSingleton(NullLocalizer.Instance)
+                    services => services.TryAddSingleton(NullLocalizer.Instance)
                 );
 
                 return self;
@@ -35,7 +36,7 @@ public static class LocalizationConfig {
             self.ConfigureServices((ctx, services) => {
                 services.RegisterLocalization(
                     registration: AssemblyScanAwareHelper.Join(
-                        settings.ConfigureLocalizationRegistration,
+                        settings.ConfigureLocalization,
                         settings.Assemblies
                     ),
                     ctx.Configuration

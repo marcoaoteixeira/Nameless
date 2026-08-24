@@ -36,8 +36,8 @@ public static class ServiceCollectionExtensions {
 
                    const string SectionName = "Default";
                    var sectionPath = $"{ConfigurationSectionNameAttribute.GetSectionName<JsonWebTokenOptions>()}:{SectionName}";
-                   var jwt = configuration.GetMultipleOptions<JsonWebTokenOptions>()
-                                          .GetValueOrDefault(SectionName) ??
+                   var jwt = configuration.GetSection<JsonWebTokenOptions>()
+                                          .GetOptions<JsonWebTokenOptions>(SectionName) ??
                              throw new MissingConfigurationException(section: sectionPath);
 
                    opts.Authority = jwt.Authority;

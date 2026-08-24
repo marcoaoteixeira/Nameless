@@ -58,7 +58,7 @@ public sealed class ResourceLocalizer : ILocalizer {
                 return string.Format(resource, parameters);
             }
 
-            _logger.MissingKey(key);
+            CommonLog.Debug(_logger, message: $"Missing key '{key}'", tag: "RESOURCE_LOCALIZER");
 
             return $"[{key}]";
         }

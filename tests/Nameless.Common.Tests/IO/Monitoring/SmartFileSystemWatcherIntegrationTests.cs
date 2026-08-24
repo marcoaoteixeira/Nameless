@@ -21,16 +21,16 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         }
     }
 
-    private SmartFileSystemWatcher CreateSut(string filter = "*.txt", string subPath = "") {
+    private FileMonitor CreateSut(string filter = "*.txt", string subPath = "") {
         var fileProvider = new PhysicalFileProvider(_root);
-        var options = new SmartFileSystemWatcherOptions {
+        var options = new FileMonitorOptions {
             SubPath = subPath,
             Filter = filter,
             LockProbeDelay = TimeSpan.FromMilliseconds(50),
             LockProbeMaxAttempts = 20
         };
-        var logger = new Mock<ILogger<SmartFileSystemWatcher>>().Object;
-        return new SmartFileSystemWatcher(fileProvider, retryFactory: null, Options.Create(options), logger);
+        var logger = new Mock<ILogger<FileMonitor>>().Object;
+        return new FileMonitor(fileProvider, retryPipelineFactory: null, Options.Create(options), logger);
     }
 
     private static string WriteFile(string path, string content = "hello") {
@@ -44,7 +44,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
     public async Task WhenFileIsCreated_FiresOnCreateCallbackAfterWriteIsComplete() {
         // arrange
         var sut = CreateSut();
-        var tcs = new TaskCompletionSource<FileWatcherEventArgs>();
+        var tcs = new TaskCompletionSource<FileMonitorEventArgs>();
         sut.OnCreated((args, _) => { tcs.TrySetResult(args); return ValueTask.CompletedTask; });
         await sut.StartAsync(TestContext.Current.CancellationToken);
 
@@ -68,7 +68,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         // arrange
         var filePath = WriteFile(Path.Combine(_root, "to-delete.txt"));
         var sut = CreateSut();
-        var tcs = new TaskCompletionSource<FileWatcherEventArgs>();
+        var tcs = new TaskCompletionSource<FileMonitorEventArgs>();
         sut.OnDeleted((args, _) => { tcs.TrySetResult(args); return ValueTask.CompletedTask; });
         await sut.StartAsync(TestContext.Current.CancellationToken);
 
@@ -91,7 +91,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         var oldPath = WriteFile(Path.Combine(_root, "old-name.txt"));
         var newPath = Path.Combine(_root, "new-name.txt");
         var sut = CreateSut();
-        var tcs = new TaskCompletionSource<FileWatcherEventArgs>();
+        var tcs = new TaskCompletionSource<FileMonitorEventArgs>();
         sut.OnRenamed((args, _) => { tcs.TrySetResult(args); return ValueTask.CompletedTask; });
         await sut.StartAsync(TestContext.Current.CancellationToken);
 
@@ -113,7 +113,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         // arrange
         var filePath = WriteFile(Path.Combine(_root, "to-modify.txt"), "initial content");
         var sut = CreateSut();
-        var tcs = new TaskCompletionSource<FileWatcherEventArgs>();
+        var tcs = new TaskCompletionSource<FileMonitorEventArgs>();
         sut.OnChanged((args, _) => { tcs.TrySetResult(args); return ValueTask.CompletedTask; });
         await sut.StartAsync(TestContext.Current.CancellationToken);
 
@@ -135,14 +135,14 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
     [Fact]
     public async Task WhenMultipleFilesCreatedConcurrently_AllFireIndependently() {
         // arrange
-        const int fileCount = 5;
+        const int FileCount = 5;
         var sut = CreateSut();
         var received = new System.Collections.Concurrent.ConcurrentBag<string>();
         var allReceived = new TaskCompletionSource<bool>();
 
         sut.OnCreated((args, _) => {
             received.Add(args.CurrentFilePath);
-            if (received.Count >= fileCount) {
+            if (received.Count >= FileCount) {
                 allReceived.TrySetResult(true);
             }
 
@@ -152,7 +152,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         await sut.StartAsync(TestContext.Current.CancellationToken);
 
         // act — create all files concurrently
-        var tasks = Enumerable.Range(0, fileCount)
+        var tasks = Enumerable.Range(0, FileCount)
             .Select(i => Task.Run(
                 () => WriteFile(Path.Combine(_root, $"concurrent-{i}.txt")),
                 TestContext.Current.CancellationToken));
@@ -160,7 +160,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
 
         // assert
         await allReceived.Task.WaitAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(fileCount, received.Count);
+        Assert.Equal(FileCount, received.Count);
 
         await sut.StopAsync(TestContext.Current.CancellationToken);
     }
@@ -176,7 +176,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
         Directory.CreateDirectory(outsideDir);
 
         var sut = CreateSut(filter: "*.txt", subPath: "watched");
-        var tcs = new TaskCompletionSource<FileWatcherEventArgs>();
+        var tcs = new TaskCompletionSource<FileMonitorEventArgs>();
         sut.OnCreated((args, _) => { tcs.TrySetResult(args); return ValueTask.CompletedTask; });
         await sut.StartAsync(TestContext.Current.CancellationToken);
 

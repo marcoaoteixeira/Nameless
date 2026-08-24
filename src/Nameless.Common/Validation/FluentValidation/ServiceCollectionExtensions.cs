@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
 
@@ -8,7 +7,6 @@ namespace Nameless.Validation.FluentValidation;
 /// <summary>
 ///     <see cref="IServiceCollection" /> extension methods.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection" />.
@@ -24,27 +22,25 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection" /> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterValidation(Action<ValidationRegistration>? registration = null) {
+        public IServiceCollection RegisterValidator(Action<ValidatorRegistration>? registration = null) {
             var settings = ActionHelper.FromDelegate(registration);
 
-            self.TryAddEnumerable(
-                descriptors: CreateValidatorServiceDescriptors(settings)
-            );
-
-            self.TryAddTransient<IValidationService, ValidationService>();
+            self.TryAddTransient<IValidator, FluentValidationValidator>();
+            self.RegisterValidators(settings);
 
             return self;
         }
-    }
 
-    private static IEnumerable<ServiceDescriptor> CreateValidatorServiceDescriptors(ValidationRegistration settings) {
-        var service = typeof(IValidator);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service)
-            : settings.Validators;
+        private void RegisterValidators(ValidatorRegistration settings) {
+            var service = typeof(IFluentValidator);
+            var implementations = settings.UseAssemblyScan
+                ? settings.ExecuteAssemblyScan(service)
+                : settings.Validators;
+            var descriptors = implementations.Select(
+                implementation => ServiceDescriptor.Transient(service, implementation)
+            );
 
-        return implementations.Select(
-            implementation => ServiceDescriptor.Transient(service, implementation)
-        );
+            self.TryAddEnumerable(descriptors);
+        }
     }
 }

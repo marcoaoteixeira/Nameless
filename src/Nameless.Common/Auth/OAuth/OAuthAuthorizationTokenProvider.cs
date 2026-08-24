@@ -43,11 +43,7 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
 
         try {
             var content = CreateHttpContent(request);
-            var response = await _client.PostAsync(_options.TokenEndpoint, content, cancellationToken)
-                .SkipContextSync();
-
-            response.EnsureSuccessStatusCode();
-
+            var response = await RequestTokenAsync(content, cancellationToken).SkipContextSync();
             var result = await DeserializeTokenAsync(response, cancellationToken).SkipContextSync();
 
             return result.Match<OAuthAuthorizationTokenResponse>(
@@ -55,11 +51,27 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
                 onFailure: failure => failure
             );
         }
+        catch (OperationCanceledException) {
+            CommonLog.OperationCancelled(_logger, tag: LOG_TAG);
+
+            return Error.OperationCancelled();
+        }
         catch (Exception ex) {
             CommonLog.Failure(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }
+    }
+
+    private async Task<HttpResponseMessage> RequestTokenAsync(FormUrlEncodedContent content, CancellationToken cancellationToken) {
+        using var meter = DiagnosticsHelper.CreateStopwatchHistogram(Metrics.RequestTokenDuration);
+
+        var response = await _client.PostAsync(_options.TokenEndpoint, content, cancellationToken)
+                                    .SkipContextSync();
+
+        response.EnsureSuccessStatusCode();
+
+        return response;
     }
 
     private static FormUrlEncodedContent CreateHttpContent(OAuthAuthorizationTokenRequest request) {
@@ -79,7 +91,7 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
                 .ReadFromJsonAsync<OAuthAuthorizationToken>(cancellationToken)
                 .SkipContextSync();
 
-            if (result is not null) { return result;}
+            if (result is not null) { return result; }
 
             const string Reason = $"Unable to deserialize response content JSON to '{nameof(OAuthAuthorizationToken)}'";
 
@@ -92,5 +104,11 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
 
             return Error.Failure(ex.Message);
         }
+    }
+
+    internal static class Metrics {
+        private const string ROOT = "nameless.auth.token.provider";
+
+        internal const string RequestTokenDuration = $"{ROOT}.request.duration";
     }
 }

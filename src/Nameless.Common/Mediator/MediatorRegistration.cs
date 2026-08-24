@@ -8,7 +8,6 @@ namespace Nameless.Mediator;
 /// <summary>
 ///     Mediator options for configuring the mediator services.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     private readonly HashSet<Type> _eventHandlers = [];
 

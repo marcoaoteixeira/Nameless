@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.ObjectModel;
 
 namespace Nameless.Application;
@@ -13,7 +14,7 @@ public class ApplicationContext : IApplicationContext {
 
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
-    private readonly Lazy<IFileSystemProvider> _fileSystemProvider;
+    private readonly Lazy<IFileExplorer> _fileSystemProvider;
 
     /// <inheritdoc />
     public string EnvironmentName => _options.Value.EnvironmentName;
@@ -25,7 +26,7 @@ public class ApplicationContext : IApplicationContext {
     public string BaseDirectoryPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <inheritdoc />
-    public IFileSystemProvider FileSystemProvider => _fileSystemProvider.Value;
+    public IFileExplorer FileExplorer => _fileSystemProvider.Value;
 
     /// <inheritdoc />
     public string Version => GetVersion().Format(includePrefix: true);
@@ -39,10 +40,10 @@ public class ApplicationContext : IApplicationContext {
         _options = options;
         _logger = logger;
 
-        _fileSystemProvider = new Lazy<IFileSystemProvider>(CreateFileSystemProvider);
+        _fileSystemProvider = new Lazy<IFileExplorer>(CreateFileSystemProvider);
     }
 
-    private FileSystemProvider CreateFileSystemProvider() {
+    private FileExplorer CreateFileSystemProvider() {
         var options = _options.Value;
         var appName = PathHelper.Sanitize(ApplicationName);
         var directoryPath = options.ApplicationDataLocation switch {
@@ -63,12 +64,12 @@ public class ApplicationContext : IApplicationContext {
             // Ensure directory existence
             Directory.CreateDirectory(directoryPath);
 
-            var fspOptions = Options.Create(new FileSystemProviderOptions {
-                AllowOperationOutsideRoot = false,
-                Root = directoryPath
-            });
-
-            return new FileSystemProvider(fspOptions);
+            return new FileExplorer(
+                options: Options.Create(new FileExplorerOptions {
+                    AllowOperationOutsideRoot = false,
+                    Root = directoryPath
+                })
+            );
         }
         catch (Exception ex) {
             CommonLog.Failure(_logger, ex, tag: LOG_TAG);

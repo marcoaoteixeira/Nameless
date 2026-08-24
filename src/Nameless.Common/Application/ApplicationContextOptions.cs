@@ -7,7 +7,7 @@ namespace Nameless.Application;
 /// <summary>
 ///     Application context options.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainStructure)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainCodeStructure)]
 [ConfigurationSectionName("ApplicationContext")]
 public record ApplicationContextOptions {
     /// <summary>

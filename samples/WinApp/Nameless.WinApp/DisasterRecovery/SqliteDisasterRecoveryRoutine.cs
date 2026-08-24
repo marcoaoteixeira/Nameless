@@ -132,7 +132,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         ).SkipContextSync();
 
         var filePath = Path.Combine(sourceDirectoryPath, SqliteConstants.DatabaseFileName);
-        var file = _applicationContext.FileSystemProvider.GetFile(filePath);
+        var file = _applicationContext.FileExplorer.GetFile(filePath);
 
         if (file.Exists) { return file.Path; }
 
@@ -158,7 +158,7 @@ public class SqliteDisasterRecoveryRoutine : DisasterRecoveryRoutineBase<SqliteD
         ).SkipContextSync();
 
         var filePath = Path.Combine(destinationDirectoryPath, SqliteConstants.DatabaseFileName);
-        var file = _applicationContext.FileSystemProvider.GetFile(filePath);
+        var file = _applicationContext.FileExplorer.GetFile(filePath);
 
         if (file.Exists || actionType == ActionType.Backup) {
             return file.Path;

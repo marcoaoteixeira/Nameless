@@ -121,11 +121,11 @@ public class IndexExtendedTests : IDisposable {
     [Fact]
     public void Insert_MultipleDocuments_CountIsCorrect() {
         // Arrange
-        const string tag = "multi-insert-tag";
+        const string Tag = "multi-insert-tag";
         var collection = new DocumentCollection();
         for (var i = 0; i < 5; i++) {
             var doc = new Document();
-            doc.Add(new StringField("tag", tag, Field.Store.YES));
+            doc.Add(new StringField("tag", Tag, Field.Store.YES));
             collection.Add(doc);
         }
 
@@ -133,7 +133,7 @@ public class IndexExtendedTests : IDisposable {
         var insertResult = _sut.Insert(collection);
         _sut.SaveChanges();
 
-        var countResult = _sut.Count(new TermQuery(new Term("tag", tag)));
+        var countResult = _sut.Count(new TermQuery(new Term("tag", Tag)));
 
         // Assert
         Assert.True(insertResult.Success);

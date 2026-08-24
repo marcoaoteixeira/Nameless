@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Nameless.Windows.Office;
 
-namespace Nameless.Windows.Documents.Impl;
+namespace Nameless.Windows.Documents;
 
 public class WordDocumentReader : IDocumentReader {
     private readonly IWordApplication _wordApplication;
@@ -26,7 +26,7 @@ public class WordDocumentReader : IDocumentReader {
 
             return Task.FromResult(result);
         }
-        catch (Exception ex) { _logger.GetContentFailure(filePath, ex); }
+        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: "WORD_DOCUMENT_READER"); }
 
         return Task.FromResult(string.Empty);
     }

@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
+using Nameless.IO.Explorer;
 using Nameless.Lucene;
 using Nameless.Lucene.Repository;
 using Nameless.Lucene.Repository.Mappings;
@@ -176,7 +177,7 @@ public class RepositoryImplExtendedTests : IDisposable {
         dirMock.Setup(d => d.Path).Returns(tempDir);
         dirMock.Setup(d => d.Create()).Callback(() => Directory.CreateDirectory(tempDir));
 
-        var fileSystemMock = new Mock<IFileSystemProvider>();
+        var fileSystemMock = new Mock<IFileExplorer>();
         fileSystemMock
             .Setup(fs => fs.GetDirectory(It.IsAny<string>()))
             .Returns(dirMock.Object);

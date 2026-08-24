@@ -20,16 +20,16 @@ public class RetryPipelineTests {
     public async Task ExecuteAsync_ExecutesDelegate_ReturnsResult() {
         // arrange
         var sut = RetryPipeline.Empty;
-        const int expected = 42;
+        const int Expected = 42;
 
         // act
         var actual = await sut.ExecuteAsync(
-            _ => ValueTask.FromResult(expected),
+            _ => ValueTask.FromResult(Expected),
             CancellationToken.None
         );
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]
@@ -79,13 +79,13 @@ public class RetryPipelineTests {
     [UnitTest]
     public void Tag_IsSetCorrectly() {
         // arrange
-        const string expectedTag = "my-pipeline-tag";
-        var sut = new RetryPipeline(expectedTag, ResiliencePipeline.Empty);
+        const string ExpectedTag = "my-pipeline-tag";
+        var sut = new RetryPipeline(ExpectedTag, ResiliencePipeline.Empty);
 
         // act
         var actual = sut.Tag;
 
         // assert
-        Assert.Equal(expectedTag, actual);
+        Assert.Equal(ExpectedTag, actual);
     }
 }

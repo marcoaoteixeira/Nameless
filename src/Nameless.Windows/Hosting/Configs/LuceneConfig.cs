@@ -28,7 +28,7 @@ public static class LuceneConfig {
             self.ConfigureServices((ctx, services) => {
                 services.RegisterLucene(
                     AssemblyScanAwareHelper.Join(
-                        settings.ConfigureLuceneRegistration,
+                        settings.ConfigureLucene,
                         settings.Assemblies
                     ),
                     ctx.Configuration

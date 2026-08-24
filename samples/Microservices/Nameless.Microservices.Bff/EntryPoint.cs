@@ -27,7 +27,7 @@ public class EntryPoint
             settings.Args = args;
             settings.Assemblies = [
                 typeof(EntryPoint).Assembly,
-                typeof(AssemblyMarker).Assembly
+                typeof(AssemblyMarkerCommon).Assembly
             ];
 
             settings.ConfigureAdditionalServices = ConfigureAdditionalServices;
@@ -63,6 +63,6 @@ public class EntryPoint
         settings.DisableMediator = true;
         settings.DisableOutputCache = true;
         settings.DisableRequestTimeouts = true;
-        settings.DisableWorkers = true;
+        settings.DisablePeriodicWorkers = true;
     }
 }

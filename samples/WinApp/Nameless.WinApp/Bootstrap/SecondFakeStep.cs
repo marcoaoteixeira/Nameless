@@ -6,7 +6,7 @@ namespace Nameless.WinApp.Bootstrap;
 public class SecondFakeStep : StepBase {
     public override string DisplayName => "Second Fake Step";
 
-    public override async Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken) {
+    public override async Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
         progress.ReportInformation(DisplayName, "Initializing second fake step...");
 
         await Task.Delay(500, cancellationToken);

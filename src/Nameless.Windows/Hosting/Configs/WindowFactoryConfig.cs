@@ -29,7 +29,7 @@ public static class WindowFactoryConfig {
             self.ConfigureServices(
                 services => services.RegisterWindowFactory(
                     AssemblyScanAwareHelper.Join(
-                        settings.ConfigureWindowFactoryRegistration,
+                        settings.ConfigureWindowFactory,
                         settings.Assemblies
                     )
                 )

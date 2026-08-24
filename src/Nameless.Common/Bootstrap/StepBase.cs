@@ -34,5 +34,5 @@ public abstract class StepBase : IStep {
     }
     
     /// <inheritdoc />
-    public abstract Task ExecuteAsync(FlowContext context, IProgress<StepProgress> progress, CancellationToken cancellationToken);
+    public abstract Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken);
 }

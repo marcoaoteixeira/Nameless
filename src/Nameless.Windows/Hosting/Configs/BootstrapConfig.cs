@@ -25,12 +25,11 @@ public static class BootstrapConfig {
         public WinHostBuilder ConfigureBootstrap(WinHostSettings settings) {
             if (settings.DisableBootstrap) { return self; }
 
-            self.ConfigureServices((ctx, services) => services.RegisterBootstrap(
+            self.ConfigureServices((_, services) => services.RegisterBootstrap(
                 AssemblyScanAwareHelper.Join(
-                    settings.ConfigureBootstrapRegistration,
+                    settings.ConfigureBootstrap,
                     settings.Assemblies
-                ),
-                ctx.Configuration
+                )
             ));
 
             return self;

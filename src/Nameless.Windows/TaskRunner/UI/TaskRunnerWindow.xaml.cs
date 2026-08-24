@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using Nameless.Windows.DependencyInjection;
 using Nameless.Windows.Messaging;
 
 namespace Nameless.Windows.TaskRunner.UI;
@@ -9,7 +7,6 @@ namespace Nameless.Windows.TaskRunner.UI;
 /// <summary>
 ///     Action handler window.
 /// </summary>
-[ServiceLifetime(Lifetime = ServiceLifetime.Transient)]
 public partial class TaskRunnerWindow : ITaskRunnerWindow {
     private bool _canClose;
 

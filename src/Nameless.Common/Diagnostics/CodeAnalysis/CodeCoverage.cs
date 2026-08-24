@@ -12,7 +12,7 @@ public static class CodeCoverage {
         ///     Excluded from code coverage as it represents a plain data
         ///     structure with no business logic to validate.
         /// </summary>
-        public const string PlainStructure = "Excluded from code coverage as it represents a plain data structure with no business logic to validate.";
+        public const string PlainCodeStructure = "Excluded from code coverage as it represents a plain data structure with no business logic to validate.";
 
         /// <summary>
         ///     Excluded from code coverage because it consists of internal
@@ -30,6 +30,6 @@ public static class CodeCoverage {
         ///     Excluded from code coverage as it is automatically generated
         ///     and not intended to be manually maintained or tested.
         /// </summary>
-        public const string AutoGen = "Excluded from code coverage as it is automatically generated and not intended to be manually maintained or tested.";
+        public const string AutoGenCode = "Excluded from code coverage as it is automatically generated and not intended to be manually maintained or tested.";
     }
 }

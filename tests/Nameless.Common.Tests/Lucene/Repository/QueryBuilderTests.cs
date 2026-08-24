@@ -80,16 +80,16 @@ public class QueryBuilderTests {
     [Fact]
     public void Slice_SetsMaxDocCount() {
         // Arrange
-        const int limit = 10;
+        const int Limit = 10;
         var builder = CreateBuilder();
 
         // Act
         builder.WithField("name", "Alice", useWildcard: false)
-               .Slice(limit);
+               .Slice(Limit);
         var definition = builder.Build();
 
         // Assert
-        Assert.Equal(limit, definition.Limit);
+        Assert.Equal(Limit, definition.Limit);
     }
 
     [Fact]
