@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.Security.Cryptography;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Security.Cryptography;

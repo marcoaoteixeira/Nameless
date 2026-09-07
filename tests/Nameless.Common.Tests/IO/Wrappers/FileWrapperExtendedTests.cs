@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using Nameless.IO.Explorer;
 using Nameless.IO.Explorer.Wrappers;
 using Nameless.Testing.Tools.Attributes;
@@ -20,11 +19,11 @@ public class FileWrapperExtendedTests : IDisposable {
         }
     }
 
-    private IOptions<FileExplorerOptions> CreateOptions() {
-        return Options.Create(new FileExplorerOptions {
+    private FileExplorerOptions CreateOptions() {
+        return new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
-        });
+        };
     }
 
     private FileWrapper CreateWrapper(string fileName) {
@@ -32,10 +31,9 @@ public class FileWrapperExtendedTests : IDisposable {
         return new FileWrapper(info, CreateOptions());
     }
 
-    private string CreateTempFile(string fileName, string content = "content") {
+    private void CreateTempFile(string fileName, string content = "content") {
         var path = Path.Combine(_root, fileName);
         File.WriteAllText(path, content);
-        return path;
     }
 
     [Fact]

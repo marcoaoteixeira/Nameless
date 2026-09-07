@@ -1,4 +1,5 @@
-using Nameless.Generators.Infrastructure;
+using Nameless.Generators.Shared.Extensions;
+using Nameless.Generators.Shared.Infrastructure;
 using Nameless.Generators.Web.Http.Endpoints.Models;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Emitters;
@@ -10,7 +11,7 @@ public sealed class EndpointEmitter : Emitter<EndpointModel> {
 
     private EndpointEmitter() { }
 
-    protected override void EmitFileContent(CodeWriter cw, EndpointModel model) {
+    protected override void WriteFileContent(CodeWriter cw, EndpointModel model) {
         cw.WriteLine($"namespace {model.Class.Namespace};");
 
         cw.WriteLine();

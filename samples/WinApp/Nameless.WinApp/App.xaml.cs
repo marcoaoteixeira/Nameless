@@ -63,7 +63,7 @@ public partial class App {
         L10NExtension.SetLocalizer(
             provider.GetService<ILocalizer>() ?? NullLocalizer.Instance
         );
-
+        
         var main = provider.GetRequiredService<INavigationWindow>();
 
         provider.GetRequiredService<ISplashScreenWindow>()

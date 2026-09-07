@@ -11,7 +11,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache]
+            [OutputCache]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -35,7 +35,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(NoStore = true)]
+            [OutputCache(NoStore = true)]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -59,7 +59,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(PolicyName = "my-cache-policy")]
+            [OutputCache(PolicyName = "my-cache-policy")]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -83,7 +83,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(Duration = 60)]
+            [OutputCache(Duration = 60)]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -109,7 +109,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(Duration = 30, VaryByQueryKeys = new string[] { "page", "size" })]
+            [OutputCache(Duration = 30, VaryByQueryKeys = new string[] { "page", "size" })]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -133,7 +133,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(Duration = 30, VaryByHeaderNames = new string[] { "Accept-Language" })]
+            [OutputCache(Duration = 30, VaryByHeaderNames = new string[] { "Accept-Language" })]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();
@@ -157,7 +157,7 @@ public class UseOutputCacheAttributeUsageTests
         var code = SourceCodeHelper.Write(
             """
             [Endpoint]
-            [UseOutputCache(Duration = 30, Tags = new string[] { "products" })]
+            [OutputCache(Duration = 30, Tags = new string[] { "products" })]
             public partial class SampleEndpoint {
                 public Task<IResult> HandleAsync() {
                     throw new NotImplementedException();

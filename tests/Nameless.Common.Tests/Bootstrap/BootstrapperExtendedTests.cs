@@ -1,8 +1,9 @@
 using Moq;
+using Nameless.Bootstrap.Notification;
 using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
-using Nameless.Testing.Tools.Mockers.System;
+using Nameless.Testing.Tools.Mockers.StatusReporting;
 
 namespace Nameless.Bootstrap;
 
@@ -27,7 +28,6 @@ public class BootstrapperExtendedTests {
         mock.Setup(s => s.Dependencies).Returns([]);
         mock.Setup(s => s.RetryPolicy).Returns(default(RetryPolicyConfiguration));
         mock.Setup(s => s.ExecuteAsync(
-                It.IsAny<FlowContext>(),
                 It.IsAny<IProgress<StepProgress>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(executionTask ?? Task.CompletedTask);
@@ -40,12 +40,9 @@ public class BootstrapperExtendedTests {
             .Setup(f => f.Create(It.IsAny<RetryPolicyConfiguration>()))
             .Returns(RetryPipeline.Empty);
 
-        return new Bootstrapper(
-            retryFactoryMock.Object,
-            steps,
-            TimeProvider.System,
-            new LoggerMocker<Bootstrapper>().WithAnyLogLevel().Build()
-        );
+        return new Bootstrapper(retryFactoryMock.Object,
+            new StatusReporterMocker<Bootstrapper>(channelKey: null).Build(),
+            steps, TimeProvider.System, new LoggerMocker<Bootstrapper>().WithAnyLogLevel().Build());
     }
 
     [Fact]
@@ -53,16 +50,13 @@ public class BootstrapperExtendedTests {
         // arrange
         var disabledStep = CreateDisabledStep("DisabledStep");
         var sut = CreateSut([disabledStep.Object]);
-        var context = new FlowContext();
-        var progress = new ProgressMocker<StepProgress>().Build();
 
         // act
-        await sut.ExecuteAsync(context, progress, CancellationToken.None);
+        await sut.RunAsync(CancellationToken.None);
 
         // assert — ExecuteAsync on the step must never be called because IsDisabled = true
         disabledStep.Verify(
             s => s.ExecuteAsync(
-                It.IsAny<FlowContext>(),
                 It.IsAny<IProgress<StepProgress>>(),
                 It.IsAny<CancellationToken>()),
             Times.Never
@@ -75,23 +69,21 @@ public class BootstrapperExtendedTests {
         var stepA = CreateEnabledStep("StepA");
         var stepB = CreateEnabledStep("StepB");
         var sut = CreateSut([stepA.Object, stepB.Object]);
-        var context = new FlowContext();
-        var progress = new ProgressMocker<StepProgress>().Build();
 
         // act
         var exception = await Record.ExceptionAsync(() =>
-            sut.ExecuteAsync(context, progress, CancellationToken.None)
+            sut.RunAsync(CancellationToken.None)
         );
 
         // assert
         Assert.Null(exception);
 
         stepA.Verify(
-            s => s.ExecuteAsync(context, It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()),
+            s => s.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()),
             Times.Once
         );
         stepB.Verify(
-            s => s.ExecuteAsync(context, It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()),
+            s => s.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()),
             Times.Once
         );
     }
@@ -102,17 +94,15 @@ public class BootstrapperExtendedTests {
         var failA = CreateEnabledStep("FailA", Task.FromException(new InvalidOperationException("error A")));
         var failB = CreateEnabledStep("FailB", Task.FromException(new InvalidOperationException("error B")));
         var sut = CreateSut([failA.Object, failB.Object]);
-        var context = new FlowContext();
-        var progress = new ProgressMocker<StepProgress>().Build();
 
         // act
         var exception = await Record.ExceptionAsync(() =>
-            sut.ExecuteAsync(context, progress, CancellationToken.None)
+            sut.RunAsync(CancellationToken.None)
         );
 
         // assert
         var bootstrapEx = Assert.IsType<BootstrapException>(exception);
-        Assert.Contains(bootstrapEx.Results, r => !r.Success && r.StepName == "FailA");
-        Assert.Contains(bootstrapEx.Results, r => !r.Success && r.StepName == "FailB");
+        Assert.Contains(bootstrapEx.Results, r => r is { Success: false, StepName: "FailA" });
+        Assert.Contains(bootstrapEx.Results, r => r is { Success: false, StepName: "FailB" });
     }
 }

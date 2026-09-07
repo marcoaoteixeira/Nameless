@@ -2,7 +2,6 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.Data.SqlServer;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 

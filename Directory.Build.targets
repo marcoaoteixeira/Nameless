@@ -10,5 +10,6 @@
 		<ProjectReference Include="$(MSBuildThisFileDirectory)generators\Nameless.Generators\Nameless.Generators.csproj"
 		                  OutputItemType="Analyzer"
 		                  ReferenceOutputAssembly="false" />
+		<CompilerVisibleProperty Include="UseAutoEndpoints" />
 	</ItemGroup>
 </Project>

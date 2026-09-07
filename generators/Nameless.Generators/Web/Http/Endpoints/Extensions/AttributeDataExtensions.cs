@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Nameless.Generators.Shared.Extensions;
 using Nameless.Generators.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Generators.Web.Http.Endpoints;

@@ -1,5 +1,3 @@
-using Nameless.ProducerConsumer;
-using Nameless.ProducerConsumer.RabbitMQ;
 using Nameless.Testing.Tools.Attributes;
 using RabbitMQ.Client;
 

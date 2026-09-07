@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Mediator;
-using Nameless.Reporting;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.Auth;
 using Nameless.Web.ErrorHandling;
@@ -251,9 +250,4 @@ public class WebHostSettings {
     ///     Whether it should disable Status Reporting feature.
     /// </summary>
     public bool DisableStatusReporting { get; set; }
-
-    /// <summary>
-    ///     Gets or sets a delegate to configure Status Reporting feature.
-    /// </summary>
-    public Action<StatusReportingRegistration>? ConfigureStatusReporting { get; set; }
 }

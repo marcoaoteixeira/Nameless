@@ -10,7 +10,7 @@ namespace Nameless.Application;
 ///     The application context.
 /// </summary>
 public class ApplicationContext : IApplicationContext {
-    private const string LOG_TAG = "APPLICATION_CONTEXT";
+    private static string Tag { get; } = nameof(ApplicationContext).ToSnakeCase().ToUpperInvariant();
 
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
@@ -72,7 +72,7 @@ public class ApplicationContext : IApplicationContext {
             );
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, Tag);
 
             throw;
         }

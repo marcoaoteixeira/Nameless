@@ -26,7 +26,7 @@ public class WordDocumentReader : IDocumentReader {
 
             return Task.FromResult(result);
         }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: "WORD_DOCUMENT_READER"); }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: "WORD_DOCUMENT_READER"); }
 
         return Task.FromResult(string.Empty);
     }

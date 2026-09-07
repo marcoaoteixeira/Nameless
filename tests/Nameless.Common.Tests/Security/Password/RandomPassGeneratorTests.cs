@@ -1,11 +1,12 @@
-using Nameless.Security.Password;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Security.Password;
 
 [UnitTest]
 public class RandomPassGeneratorTests {
-    private static RandomPassGenerator CreateSut() => new();
+    private static RandomPassGenerator CreateSut() {
+        return new RandomPassGenerator();
+    }
 
     [Fact]
     public async Task GenerateAsync_WithDefaultArguments_ReturnsNonEmptyPassword() {

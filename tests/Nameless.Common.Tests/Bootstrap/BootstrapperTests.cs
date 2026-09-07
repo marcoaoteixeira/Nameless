@@ -1,7 +1,9 @@
 using Moq;
+using Nameless.Bootstrap.Notification;
 using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
+using Nameless.Testing.Tools.Mockers.StatusReporting;
 
 namespace Nameless.Bootstrap;
 
@@ -15,7 +17,7 @@ public class BootstrapperTests {
         mock.Setup(s => s.IsEnabled).Returns(true);
         mock.Setup(s => s.Dependencies).Returns([]);
         mock.Setup(s => s.RetryPolicy).Returns(default(RetryPolicyConfiguration));
-        mock.Setup(s => s.ExecuteAsync(It.IsAny<CancellationToken>()))
+        mock.Setup(s => s.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()))
             .Returns(executionTask ?? Task.CompletedTask);
         return mock;
     }
@@ -26,12 +28,9 @@ public class BootstrapperTests {
             .Setup(f => f.Create(It.IsAny<RetryPolicyConfiguration>()))
             .Returns(RetryPipeline.Empty);
 
-        return new Bootstrapper(
-            retryFactoryMock.Object,
-            steps,
-            TimeProvider.System,
-            new LoggerMocker<Bootstrapper>().WithAnyLogLevel().Build()
-        );
+        return new Bootstrapper(retryFactoryMock.Object,
+            new StatusReporterMocker<Bootstrapper>(channelKey: null).Build(),
+            steps, TimeProvider.System, new LoggerMocker<Bootstrapper>().WithAnyLogLevel().Build());
     }
 
     [Fact]
@@ -56,7 +55,7 @@ public class BootstrapperTests {
         await sut.RunAsync(CancellationToken.None);
 
         // assert
-        stepMocker.Verify(mock => mock.ExecuteAsync(It.IsAny<CancellationToken>()), Times.Once);
+        stepMocker.Verify(mock => mock.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -79,7 +78,7 @@ public class BootstrapperTests {
         Assert.Contains(bootstrapEx.Results, results => results is { Success: false, StepName: "FailingStep" });
 
         // The succeeding step still ran despite the preceding failure
-        succeedingStepMocker.Verify(mock => mock.ExecuteAsync(It.IsAny<CancellationToken>()), Times.Once);
+        succeedingStepMocker.Verify(mock => mock.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -87,12 +86,11 @@ public class BootstrapperTests {
         // arrange
         using var cts = new CancellationTokenSource();
 
-
         // The first step cancels the token when it executes; the second step (in a later
         // dependency level) will observe the cancellation and throw OperationCanceledException.
         var firstStepMocker = CreateEnabledStep("FirstStep");
         firstStepMocker
-            .Setup(mock => mock.ExecuteAsync(It.IsAny<CancellationToken>()))
+            .Setup(mock => mock.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>(_ => {
                 // ReSharper disable once AccessToDisposedClosure
                 cts.Cancel();
@@ -106,7 +104,7 @@ public class BootstrapperTests {
         secondStepMocker.Setup(mock => mock.Dependencies)
                         .Returns(["FirstStep"]);
 
-        secondStepMocker.Setup(mock => mock.ExecuteAsync(It.IsAny<CancellationToken>()))
+        secondStepMocker.Setup(mock => mock.ExecuteAsync(It.IsAny<IProgress<StepProgress>>(), It.IsAny<CancellationToken>()))
                         .Returns<CancellationToken>(token => {
                             token.ThrowIfCancellationRequested();
                             return Task.CompletedTask;

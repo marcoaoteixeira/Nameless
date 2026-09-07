@@ -1,6 +1,4 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Nameless.Lucene.ObjectModel;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.ObjectModel;

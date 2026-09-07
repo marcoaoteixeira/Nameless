@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using Nameless.IO.Explorer;
 using Nameless.IO.Explorer.Wrappers;
 using Nameless.Testing.Tools.Attributes;
@@ -19,11 +18,11 @@ public class DirectoryWrapperTests : IDisposable {
         }
     }
 
-    private IOptions<FileExplorerOptions> CreateOptions() {
-        return Options.Create(new FileExplorerOptions {
+    private FileExplorerOptions CreateOptions() {
+        return new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
-        });
+        };
     }
 
     private DirectoryWrapper CreateWrapper(string dirName) {
@@ -96,10 +95,10 @@ public class DirectoryWrapperTests : IDisposable {
         File.WriteAllText(Path.Combine(subDir, "a.txt"), "a");
         File.WriteAllText(Path.Combine(subDir, "b.txt"), "b");
 
-        var options = Options.Create(new FileExplorerOptions {
+        var options = new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
-        });
+        };
         var info = new DirectoryInfo(subDir);
         var sut = new DirectoryWrapper(info, options);
 
@@ -118,10 +117,10 @@ public class DirectoryWrapperTests : IDisposable {
         Directory.CreateDirectory(Path.Combine(parentDir, "child1"));
         Directory.CreateDirectory(Path.Combine(parentDir, "child2"));
 
-        var options = Options.Create(new FileExplorerOptions {
+        var options = new FileExplorerOptions {
             Root = _root,
             AllowOperationOutsideRoot = false
-        });
+        };
         var info = new DirectoryInfo(parentDir);
         var sut = new DirectoryWrapper(info, options);
 

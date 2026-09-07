@@ -1,5 +1,4 @@
 using Lucene.Net.Search;
-using Nameless.Lucene.Repository;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository;

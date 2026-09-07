@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using Nameless.EntityFrameworkCore.Entities;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Nameless.EntityFrameworkCore;
 

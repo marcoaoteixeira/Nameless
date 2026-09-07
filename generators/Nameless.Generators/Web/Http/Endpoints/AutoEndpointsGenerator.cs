@@ -23,11 +23,40 @@ public sealed class AutoEndpointsGenerator : IIncrementalGenerator {
                                    transform: EndpointExtractor.Extract)
                                .Collect();
 
-        var collection = endpoints.Combine(endpointGroups)
-                                  .Select(static (inputs, cancellationToken) =>
-                                      EndpointGroupCollector.Collect(inputs.Left, inputs.Right, cancellationToken)
-                                  );
+        var assemblyName = context.CompilationProvider.Select(
+            static (compilation, _) => compilation.AssemblyName ?? string.Empty
+        );
 
-        context.RegisterSourceOutput(collection, RegistrationEmitter.Instance.Emit);
+        var collection = endpoints.Combine(endpointGroups)
+                                  .Combine(assemblyName)
+                                  .Select(static (input, cancellationToken) => EndpointGroupCollector.Collect(
+                                      endpointExtractionResults: input.Left.Left,
+                                      endpointGroupExtractionResults: input.Left.Right,
+                                      assemblyName: input.Right,
+                                      cancellationToken
+                                  ));
+
+        // Defense-in-depth: even if the generator assembly ends up wired in
+        // as an analyzer for a project that never opted in (e.g. a stray
+        // <Analyzer> item, or a build-asset import bug), refuse to emit
+        // anything unless UseAutoEndpoints is explicitly "true" for the
+        // assembly currently being compiled. The primary opt-in gate is
+        // still whether the analyzer is referenced al all (see
+        // Directory.Build.Targets / Nameless.Common.targets).
+        var useAutoEndpointsProvider = context.AnalyzerConfigOptionsProvider.Select(
+            static (provider, _) => provider.GlobalOptions.TryGetValue("build_property.UseAutoEndpoints", out var output) &&
+                                    bool.TryParse(output, out var enabled) &&
+                                    enabled
+        );
+
+        context.RegisterSourceOutput(
+            source: collection.Combine(useAutoEndpointsProvider),
+            action: static (sourceContext, input) => {
+                var (groupings, useAutoEndpoints) = input;
+                if (!useAutoEndpoints) { return; }
+
+                RegistrationEmitter.Instance.Emit(sourceContext, groupings);
+            }
+        );
     }
 }

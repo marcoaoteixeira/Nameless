@@ -1,6 +1,6 @@
-using Nameless.Generators.Emitters;
 using Nameless.Generators.EventSourcing.Model;
-using Nameless.Generators.Infrastructure;
+using Nameless.Generators.Shared.Emitters;
+using Nameless.Generators.Shared.Infrastructure;
 
 namespace Nameless.Generators.EventSourcing.Emit;
 
@@ -15,7 +15,7 @@ public class WhenDispatchEmitter : EmitterBase<AggregateModel> {
 
     private WhenDispatchEmitter() { }
 
-    protected override void EmitFileContent(CodeWriter cw, AggregateModel model) {
+    protected override void WriteFileContent(CodeWriter cw, AggregateModel model) {
         using (cw.Block($"{model.Class.Accessibility} partial class {model.Class.Name} {{")) {
             using (cw.Block($"protected override void {EventSourcingConstants.AggregateRootClass.WhenMethodName}(global::{EventSourcingConstants.FQN.EventInterface} @event) {{")) {
                 using (cw.Block("switch (@event) {")) {

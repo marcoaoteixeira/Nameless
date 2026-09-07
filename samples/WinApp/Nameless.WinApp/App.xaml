@@ -8,7 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
-                <ResourceDictionary Source="pack://application:,,,/Resources/ValidationResourceDictionary.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/Xaml/ValidationResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:DateToStringValueConverter x:Key="DateToStringValueConverter" />
             <converters:TimeToStringValueConverter x:Key="TimeToStringValueConverter" />

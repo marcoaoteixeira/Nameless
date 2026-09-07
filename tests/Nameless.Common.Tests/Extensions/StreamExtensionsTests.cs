@@ -82,7 +82,7 @@ public class StreamExtensionsTests {
     [Fact]
     public void GetContentAsString_WithNonSeekableReadableStream_AndFromStartTrue_ThrowsInvalidOperationException() {
         // arrange
-        using var stream = new ReadableNonSeekableStream(new byte[] { 65, 66, 67 });
+        using var stream = new ReadableNonSeekableStream("ABC"u8.ToArray());
 
         // act & assert
         Assert.Throws<InvalidOperationException>(() => stream.GetContentAsString(fromStart: true));
@@ -160,8 +160,14 @@ public class StreamExtensionsTests {
         public override long Length => 0;
         public override long Position { get => 0; set { } }
         public override void Flush() { }
-        public override int Read(byte[] buffer, int offset, int count) => 0;
-        public override long Seek(long offset, SeekOrigin origin) => 0;
+        public override int Read(byte[] buffer, int offset, int count) {
+            return 0;
+        }
+
+        public override long Seek(long offset, SeekOrigin origin) {
+            return 0;
+        }
+
         public override void SetLength(long value) { }
         public override void Write(byte[] buffer, int offset, int count) { }
     }
@@ -184,9 +190,17 @@ public class StreamExtensionsTests {
         }
 
         public override void Flush() { }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-        public override void SetLength(long value) => throw new NotSupportedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override long Seek(long offset, SeekOrigin origin) {
+            throw new NotSupportedException();
+        }
+
+        public override void SetLength(long value) {
+            throw new NotSupportedException();
+        }
+
+        public override void Write(byte[] buffer, int offset, int count) {
+            throw new NotSupportedException();
+        }
     }
 
     private sealed class ReadableSeekableStream(byte[] data) : Stream {
@@ -216,7 +230,12 @@ public class StreamExtensionsTests {
             };
             return _position;
         }
-        public override void SetLength(long value) => throw new NotSupportedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override void SetLength(long value) {
+            throw new NotSupportedException();
+        }
+
+        public override void Write(byte[] buffer, int offset, int count) {
+            throw new NotSupportedException();
+        }
     }
 }

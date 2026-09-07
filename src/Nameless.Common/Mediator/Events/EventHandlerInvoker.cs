@@ -23,7 +23,7 @@ public class EventHandlerInvoker : IEventHandlerInvoker {
     /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IEvent {
-        var handler = _cache.GetOrAdd(typeof(TEvent), CreateEventHandlerWrapper);
+        var handler = _cache.GetOrAdd(evt.GetType(), CreateEventHandlerWrapper);
 
         return handler.HandleAsync(evt, _provider, cancellationToken);
     }

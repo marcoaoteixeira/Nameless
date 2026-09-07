@@ -1,11 +1,12 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Nameless.Generators.Diagnostics;
 using Nameless.Generators.EventSourcing.Diagnostics;
 using Nameless.Generators.EventSourcing.Model;
-using Nameless.Generators.Infrastructure;
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Diagnostics;
+using Nameless.Generators.Shared.Extensions;
+using Nameless.Generators.Shared.Infrastructure;
+using Nameless.Generators.Shared.Models;
 
 namespace Nameless.Generators.EventSourcing.Extractors;
 

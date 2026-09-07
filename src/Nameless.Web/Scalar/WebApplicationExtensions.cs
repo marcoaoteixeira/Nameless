@@ -69,14 +69,14 @@ public static class WebApplicationExtensions {
 
                     CommonLog.Warning(
                         logger,
-                        reason: failure.Flatten(),
+                        message: failure.Flatten(),
                         tag: LOG_TAG
                     );
                 }
             );
         }
         catch (Exception ex) {
-            CommonLog.Failure(logger, ex, tag: LOG_TAG);
+            CommonLog.Error(logger, ex, tag: LOG_TAG);
 
             throw;
         }

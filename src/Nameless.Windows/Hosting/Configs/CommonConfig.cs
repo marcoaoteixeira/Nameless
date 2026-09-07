@@ -20,7 +20,7 @@ public static class CommonConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureCommonServices() {
+        public WinHostBuilder ConfigureCommonFeature() {
             self.ConfigureServices((ctx, services) => {
                 services.AddOptions();
                 services.TryAddSingleton(TimeProvider.System);

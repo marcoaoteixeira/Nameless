@@ -14,7 +14,18 @@
 ///     to this interface - everyone else should depend on
 ///     <see cref="IStatusMonitor{TService}"/>.
 /// </remarks>
-public interface IStatusReporter<TService> : IStatusMonitor<TService> {
+public interface IStatusReporter<TService> : IStatusReporter;
+
+/// <summary>
+///     Provides way to write side of a service's status.
+/// </summary>
+/// <remarks>
+///     Write side of a service's status. Only the service that owns this
+///     status (e.g. the BackgroundService itself) should hold a reference
+///     to this interface - everyone else should depend on
+///     <see cref="IStatusMonitor"/>.
+/// </remarks>
+public interface IStatusReporter {
     /// <summary>
     ///     Publishes a new current status, replacing whatever was reported
     ///     before.
@@ -25,7 +36,10 @@ public interface IStatusReporter<TService> : IStatusMonitor<TService> {
     /// <param name="level">
     ///     The status level.
     /// </param>
-    void Report(string message, StatusLevel level);
+    /// <param name="metadata">
+    ///     The metadata.
+    /// </param>
+    void Report(string message, StatusLevel level, Dictionary<string, string>? metadata);
 
     /// <summary>
     ///     Signals that this channel has finished successfully. No further
@@ -46,7 +60,7 @@ public interface IStatusReporter<TService> : IStatusMonitor<TService> {
     /// <param name="code">
     ///     An optional machine-readable error code.
     /// </param>
-    void Fault(string reason, string? code = null);
+    void Fault(string reason, string? code);
 
     /// <summary>
     ///     Signals that this channel has finished with a failure. No further

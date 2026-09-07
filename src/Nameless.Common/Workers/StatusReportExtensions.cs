@@ -3,7 +3,7 @@
 namespace Nameless.Workers;
 
 internal static class StatusReportExtensions {
-    extension(IStatusReporter<PeriodicWorker> self) {
+    extension(IStatusReporter self) {
         internal void Idle(PeriodicWorker worker) {
             self.ReportInfo($"Periodic worker '{worker.Name}' is idle.");
         }

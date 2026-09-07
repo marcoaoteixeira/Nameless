@@ -19,7 +19,7 @@ public static class StatusReportingConfig {
             if (settings.DisableStatusReporting) { return self; }
 
             self.Services.RegisterStatusReporting(
-                settings.ConfigureStatusReporting
+                self.Configuration
             );
 
             return self;

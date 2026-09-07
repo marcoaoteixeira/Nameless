@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
-using Nameless.Generators.Infrastructure;
+using Nameless.Generators.Shared.Diagnostics;
+using Nameless.Generators.Shared.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Generators.Diagnostics;

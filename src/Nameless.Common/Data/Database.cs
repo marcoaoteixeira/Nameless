@@ -43,7 +43,7 @@ public class Database : IDatabase, IDisposable {
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }
@@ -55,24 +55,23 @@ public class Database : IDatabase, IDisposable {
 
         using var command = CreateCommand(request.Text, request.Type, request.Parameters);
 
-        IDataReader reader;
+        try {
+            var reader = command.ExecuteReader(); 
+            var result = new List<TResult>();
 
-        try { reader = command.ExecuteReader(); }
+            using (reader) {
+                while (reader.Read()) {
+                    result.Add(request.Mapper(reader));
+                }
+            }
+
+            return result.ToArray();
+        }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }
-
-        var result = new List<TResult>();
-
-        using (reader) {
-            while (reader.Read()) {
-                result.Add(request.Mapper(reader));
-            }
-        }
-
-        return result.ToArray();
     }
 
     /// <inheritdoc />
@@ -83,7 +82,7 @@ public class Database : IDatabase, IDisposable {
 
         try { return (TResult?)command.ExecuteScalar(); }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(ex.Message);
         }

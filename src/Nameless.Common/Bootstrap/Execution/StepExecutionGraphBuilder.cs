@@ -44,9 +44,9 @@ public static class StepExecutionGraphBuilder {
         return StepExecutionGraph.Create(levels, hash.Count);
 
         bool Filter(StepExecutionNode node) {
-            return !processed.Contains(node.Step.Name)
-                   && node.Dependencies.All(dependency
-                       => processed.Contains(dependency.Step.Name)
+            return !processed.Contains(node.Step.Name) &&
+                   node.Dependencies.All(
+                       dependency => processed.Contains(dependency.Step.Name)
                    );
         }
     }

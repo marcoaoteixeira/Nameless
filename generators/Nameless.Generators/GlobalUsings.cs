@@ -1,1 +1,1 @@
-﻿global using static Nameless.Generators.Infrastructure.StringHelpers;
+﻿global using static Nameless.Generators.Shared.Infrastructure.StringHelpers;

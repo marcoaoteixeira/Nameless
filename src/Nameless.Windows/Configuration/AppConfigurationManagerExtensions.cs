@@ -5,6 +5,7 @@ namespace Nameless.Windows.Configuration;
 public static class AppConfigurationManagerExtensions {
     private const string THEME_KEY = nameof(Theme);
     private const string CONFIRM_BEFORE_EXIT_KEY = "ConfirmBeforeExit";
+    private const string LANGUAGE_KEY = "Language";
 
     extension(IAppConfigurationManager self) {
         public Theme Theme {
@@ -15,6 +16,11 @@ public static class AppConfigurationManagerExtensions {
         public bool ConfirmBeforeExit {
             get => self.TryGet<bool>(CONFIRM_BEFORE_EXIT_KEY, out var output) && output;
             set => self.Set(CONFIRM_BEFORE_EXIT_KEY, value);
+        }
+
+        public string Language {
+            get => self.TryGet<string>(LANGUAGE_KEY, out var output) ? output : "pt-BR";
+            set => self.Set(LANGUAGE_KEY, value);
         }
     }
 }

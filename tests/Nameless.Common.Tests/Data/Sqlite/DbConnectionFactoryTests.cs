@@ -2,7 +2,6 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.Data.Sqlite;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Data.Sqlite;

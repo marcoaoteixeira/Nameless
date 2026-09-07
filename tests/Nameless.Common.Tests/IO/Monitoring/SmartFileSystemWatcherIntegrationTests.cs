@@ -2,6 +2,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.IO.Monitoring;
@@ -30,7 +31,7 @@ public class SmartFileSystemWatcherIntegrationTests : IDisposable {
             LockProbeMaxAttempts = 20
         };
         var logger = new Mock<ILogger<FileMonitor>>().Object;
-        return new FileMonitor(fileProvider, retryPipelineFactory: null, Options.Create(options), logger);
+        return new FileMonitor(fileProvider, NullRetryPipelineFactory.Instance, Options.Create(options), logger);
     }
 
     private static string WriteFile(string path, string content = "hello") {

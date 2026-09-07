@@ -14,6 +14,11 @@ public abstract class EntityBase<TID> : IAuditable
     /// </summary>
     public TID ID { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the entity state.
+    /// </summary>
+    public EntityState EntityState { get; set; }
+
     /// <inheritdoc />
     public DateTimeOffset? CreationDate { get; set; }
 

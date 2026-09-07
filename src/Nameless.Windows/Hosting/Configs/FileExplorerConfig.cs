@@ -22,7 +22,7 @@ public static class FileExplorerConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureFileExplorer(WinHostSettings settings) {
+        public WinHostBuilder ConfigureFileExplorerFeature(WinHostSettings settings) {
             if (settings.DisableFileExplorer) { return self; }
             
             self.ConfigureServices(

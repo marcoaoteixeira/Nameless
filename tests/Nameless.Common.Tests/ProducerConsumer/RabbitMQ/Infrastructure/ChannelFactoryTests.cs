@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using RabbitMQ.Client;

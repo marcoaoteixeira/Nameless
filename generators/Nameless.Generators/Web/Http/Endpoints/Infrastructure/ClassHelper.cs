@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Nameless.Generators.Diagnostics;
-using Nameless.Generators.Infrastructure;
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Diagnostics;
+using Nameless.Generators.Shared.Infrastructure;
+using Nameless.Generators.Shared.Models;
 using Nameless.Generators.Web.Http.Endpoints.Diagnostics;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Infrastructure;

@@ -20,13 +20,14 @@ public static class SourceCodeHelper
 
     private static void WriteUsingBlock(StringBuilder sb)
     {
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes.Filtering;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes.OutputCache;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes.Produces;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes.Validation;");
-        sb.AppendLine("using global::Nameless.Common.Http.Endpoints.Attributes.Versioning;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Antiforgery;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.CookieRedirect;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Filtering;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.OutputCache;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Produces;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Validation;");
+        sb.AppendLine("using global::Nameless.Web.Http.Endpoints.Attributes.Versioning;");
 
         sb.AppendLine("using global::System;");
         sb.AppendLine("using global::System.Collections.Generic;");

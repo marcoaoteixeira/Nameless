@@ -42,6 +42,7 @@ public readonly record struct VersionModel {
 
         // 'major' group is always present when the match succeeds.
         var major = int.Parse(match.Groups["major"].Value);
+        if (major == 0) { return false; }
 
         // 'minor' and 'status' are optional — check .Success before reading .Value.
         int? minor = match.Groups["minor"].Success ? int.Parse(match.Groups["minor"].Value) : null;

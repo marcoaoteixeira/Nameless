@@ -1,4 +1,4 @@
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Models;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Models;

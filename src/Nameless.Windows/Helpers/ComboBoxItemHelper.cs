@@ -8,6 +8,13 @@ public static class ComboBoxItemHelper {
         Content = string.Empty
     };
 
+    public static ComboBoxItem Create(string value, string? displayText = null) {
+        return new ComboBoxItem {
+            Content = displayText ?? value,
+            Tag = value
+        };
+    }
+
     public static ComboBoxItem Create<TEnum>(TEnum value, string? displayText = null)
         where TEnum : struct, Enum {
         return new ComboBoxItem {

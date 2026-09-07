@@ -2,9 +2,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
 using Nameless.IO.Explorer;
-using Nameless.Lucene;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Mockers.IO;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Lucene;

@@ -1,7 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
-using Nameless.Generators.Diagnostics;
-using Nameless.Generators.Infrastructure;
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Diagnostics;
+using Nameless.Generators.Shared.Extensions;
+using Nameless.Generators.Shared.Infrastructure;
+using Nameless.Generators.Shared.Models;
 using Nameless.Generators.Web.Http.Endpoints.Diagnostics;
 using Nameless.Generators.Web.Http.Endpoints.Infrastructure;
 using Nameless.Generators.Web.Http.Endpoints.Models;
@@ -108,7 +109,7 @@ public static class ConventionExtractor {
 
         var properties = new List<string>();
 
-        var policy = policyCtor ?? policyArg;
+        var policy = policyArg ?? policyCtor;
         if (!string.IsNullOrWhiteSpace(policy)) {
             properties.Add($"Policy = \"{EscapeStringLiteral(policy)}\"");
         }
@@ -323,7 +324,7 @@ public static class ConventionExtractor {
         var policyName = attribute.GetConstructorArgument(index: 0).GetPrimitiveValue<string?>();
 
         return !string.IsNullOrWhiteSpace(policyName)
-            ? new Convention($".RequireRateLimiting(policyName: \"{EscapeStringLiteral(policyName)}\")")
+            ? new Convention($".RequireRateLimiting(\"{EscapeStringLiteral(policyName)}\")")
             : default;
     }
 
@@ -338,10 +339,10 @@ public static class ConventionExtractor {
 
         return arg switch {
             { Kind: TypedConstantKind.Primitive, Value: int milliseconds and > 0 }
-                => new Convention($".WithRequestTimeout(timeout: TimeSpan.FromMilliseconds({milliseconds}))"),
+                => new Convention($".WithRequestTimeout(TimeSpan.FromMilliseconds({milliseconds}))"),
 
             { Kind: TypedConstantKind.Primitive, Value: string policyName }
-                => new Convention($".WithRequestTimeout(policyName: \"{EscapeStringLiteral(policyName)}\")"),
+                => new Convention($".WithRequestTimeout(\"{EscapeStringLiteral(policyName)}\")"),
 
             _ => default
         };

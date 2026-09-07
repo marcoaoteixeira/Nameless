@@ -16,7 +16,10 @@ public class DisableAntiforgeryUsageTest {
 
     [Fact]
     public void WhenEndpointClassMarkDisableAntiforgery_ThenEmitConvention() {
-        var source = CodeGeneratorHelper.GetCodeBySourceType(_code).SingleOrDefault();
+        var source = CodeGeneratorHelper.GetCodeBySourceType(
+            _code,
+            assemblyName: "Nameless.CodeGeneration"
+        ).SingleOrDefault();
 
         Assert.Matches(@"\.DisableAntiforgery\(\)", source);
     }

@@ -75,7 +75,7 @@ public class DeprecateAttributeUsageTests
 
         Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
         Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.WithSunset\(sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source);
+        Assert.Matches(@"\.WithSunset\(DateTimeOffset\.ParseExact\(""Fri, 31 Dec 2027 23:59:59 GMT""", source);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class DeprecateAttributeUsageTests
 
         Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
         Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source);
+        Assert.Matches(@"DateTimeOffset\.ParseExact\(""Fri, 31 Dec 2027 23:59:59 GMT""", source);
         Assert.Matches(@"link: ""https://example\.com/migration""", source);
     }
 }

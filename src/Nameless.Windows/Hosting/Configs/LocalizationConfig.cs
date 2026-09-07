@@ -24,7 +24,7 @@ public static class LocalizationConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureLocalization(WinHostSettings settings) {
+        public WinHostBuilder ConfigureLocalizationFeature(WinHostSettings settings) {
             if (settings.DisableLocalization) {
                 self.ConfigureServices(
                     services => services.TryAddSingleton(NullLocalizer.Instance)

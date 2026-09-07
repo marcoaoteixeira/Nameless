@@ -1,11 +1,11 @@
-﻿using Nameless.Generators.Emitters;
-using Nameless.Generators.Infrastructure;
+﻿using Nameless.Generators.Shared.Emitters;
+using Nameless.Generators.Shared.Infrastructure;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Emitters;
 
 public abstract class Emitter<TModel> : EmitterBase<TModel>
     where TModel : IEmitModel {
-    protected override void EmitUsingBlock(CodeWriter cw, TModel model) {
+    protected override void WriteNamespaceUsings(CodeWriter cw, TModel model) {
         cw.WriteLine("using global::Asp.Versioning;");
         cw.WriteLine("using global::Asp.Versioning.ApiExplorer;");
 
@@ -24,6 +24,6 @@ public abstract class Emitter<TModel> : EmitterBase<TModel>
         cw.WriteLine("using global::Nameless.Web.Filters.Validation;");
         cw.WriteLine($"using global::{Project.Namespaces.Attributes.Versioning};");
         
-        base.EmitUsingBlock(cw, model);
+        base.WriteNamespaceUsings(cw, model);
     }
 }

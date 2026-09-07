@@ -5,7 +5,7 @@ internal static class AutoEndpointsConstants {
         internal const string Name = "Nameless Auto Endpoints Generator";
 
         internal const string RegistrationClassName = "AutoEndpointsExtensions";
-        internal const string RegisterMethodName = "RegisterAutoEndpoints";
+        internal const string RegisterHandlerName = "RegisterAutoEndpoints";
         internal const string MapMethodName = "MapAutoEndpoints";
 
         internal static class Namespaces {

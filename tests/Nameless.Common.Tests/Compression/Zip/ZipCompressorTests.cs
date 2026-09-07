@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using Nameless.Compression.Requests;
-using Nameless.Compression.Zip;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 

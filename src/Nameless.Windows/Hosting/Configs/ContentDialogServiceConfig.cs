@@ -21,7 +21,7 @@ public static class ContentDialogServiceConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureContentDialogService(WinHostSettings settings) {
+        public WinHostBuilder ConfigureContentDialogFeature(WinHostSettings settings) {
             if (settings.DisableContentDialogService) { return self; }
 
             self.ConfigureServices(

@@ -93,7 +93,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -111,7 +111,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -129,7 +129,7 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -150,7 +150,7 @@ public class Index : IIndex {
             );
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             throw;
         }
@@ -169,7 +169,7 @@ public class Index : IIndex {
             return collector.TotalHits;
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -185,7 +185,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -201,7 +201,7 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             return Error.Failure(ex.Message);
         }
@@ -286,7 +286,7 @@ public class Index : IIndex {
             return FSDirectory.Open(directory.Path);
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             throw;
         }
@@ -315,7 +315,7 @@ public class Index : IIndex {
             return EmptyIndexReader.Instance;
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex, tag: LogTag);
 
             throw;
         }

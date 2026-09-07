@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nameless.Application;
 using Nameless.WinApp.DisasterRecovery;
 using Nameless.Windows;
-using Nameless.Windows.EntityFramework;
+using Nameless.Windows.EntityFrameworkCore;
 
 namespace Nameless.WinApp.Data;
 

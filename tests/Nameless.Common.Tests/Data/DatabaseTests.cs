@@ -1,7 +1,5 @@
 using System.Data;
-using Microsoft.Extensions.Logging;
 using Moq;
-using Nameless.Data;
 using Nameless.Data.Requests;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;

@@ -50,7 +50,7 @@ public class MailkitMailing : IMailing {
 
         try { _ = await client.SendAsync(mail, cancellationToken).SkipContextSync(); }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             throw;
         }

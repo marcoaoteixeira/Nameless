@@ -2,8 +2,6 @@ using MailKit;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Moq;
-using Nameless.Mailing;
-using Nameless.Mailing.Mailkit;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 

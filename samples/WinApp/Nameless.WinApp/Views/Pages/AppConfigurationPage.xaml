@@ -15,7 +15,7 @@
         <ui:TextBlock FontTypography="Title"
                       Margin="0 0 0 20"
                       Text="{loc:L10N AppConfigurationPage_Title}" />
-        <ui:CardControl Icon="{ui:ImageIcon '/Resources/application_64x64.png'}"
+        <ui:CardControl Icon="{ui:ImageIcon '/Resources/Images/application_64x64.png'}"
                         Margin="0 0 0 10">
             <ui:CardControl.Header>
                 <Grid>
@@ -36,6 +36,27 @@
                        Cursor="Hand"
                        Icon="{ui:SymbolIcon Globe32}"
                        Padding="30 8" />
+        </ui:CardControl>
+
+        <ui:CardControl Icon="{ui:SymbolIcon LocalLanguage28}"
+                        Margin="0 0 0 10">
+            <ui:CardControl.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ui:TextBlock FontTypography="BodyStrong"
+                                  Grid.Row="0"
+                                  Text="{loc:L10N AppConfigurationPage_ApplicationLanguageCard_Title}" />
+                    <ui:TextBlock Grid.Row="1" Text="{loc:L10N AppConfigurationPage_ApplicationLanguageCard_Message}" />
+                </Grid>
+            </ui:CardControl.Header>
+            <ComboBox Cursor="Hand"
+                      ItemsSource="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.AvailableLanguages, Mode=OneTime}"
+                      SelectedValue="{Binding ElementName=AppConfigurationPageRoot, Path=ViewModel.CurrentLanguage, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="True"
+                      MinWidth="200" />
         </ui:CardControl>
 
         <ui:CardControl Icon="{ui:SymbolIcon DatabaseMultiple20}"

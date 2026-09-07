@@ -1,4 +1,4 @@
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Models;
 
 namespace Nameless.Generators.EventSourcing.Model;
 

@@ -40,7 +40,7 @@
                      Name="TitleBarRoot"
                      Title="{Binding ElementName=MainWindowRoot, Path=ViewModel.AppTitle}">
             <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="/Resources/application_64x64.png" />
+                <ui:ImageIcon Source="/Resources/Images/application_64x64.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
 

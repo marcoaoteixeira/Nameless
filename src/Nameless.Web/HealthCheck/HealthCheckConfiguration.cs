@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nameless.Attributes;
+﻿using Nameless.Attributes;
 
 namespace Nameless.Web.HealthCheck;
 

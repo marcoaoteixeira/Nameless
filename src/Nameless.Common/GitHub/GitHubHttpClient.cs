@@ -53,7 +53,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(Release), statusCode);
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}"
@@ -83,7 +83,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(ReleaseAsset), statusCode);
         }
         catch (Exception ex) {
-            CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}"

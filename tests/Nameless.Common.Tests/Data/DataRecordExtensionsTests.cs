@@ -420,27 +420,92 @@ public class DataRecordExtensionsTests {
         public object this[string name] => data.TryGetValue(name, out var v) ? v ?? DBNull.Value : throw new IndexOutOfRangeException(name);
 
         public int FieldCount => data.Count;
-        public bool GetBoolean(int i) => (bool)data.Values.ElementAt(i)!;
-        public byte GetByte(int i) => (byte)data.Values.ElementAt(i)!;
-        public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferOffset, int length) => 0;
-        public char GetChar(int i) => (char)data.Values.ElementAt(i)!;
-        public long GetChars(int i, long fieldOffset, char[]? buffer, int bufferOffset, int length) => 0;
-        public IDataReader GetData(int i) => null!;
-        public string GetDataTypeName(int i) => string.Empty;
-        public DateTime GetDateTime(int i) => (DateTime)data.Values.ElementAt(i)!;
-        public decimal GetDecimal(int i) => (decimal)data.Values.ElementAt(i)!;
-        public double GetDouble(int i) => (double)data.Values.ElementAt(i)!;
-        public Type GetFieldType(int i) => data.Values.ElementAt(i)?.GetType() ?? typeof(object);
-        public float GetFloat(int i) => (float)data.Values.ElementAt(i)!;
-        public Guid GetGuid(int i) => (Guid)data.Values.ElementAt(i)!;
-        public short GetInt16(int i) => (short)data.Values.ElementAt(i)!;
-        public int GetInt32(int i) => (int)data.Values.ElementAt(i)!;
-        public long GetInt64(int i) => (long)data.Values.ElementAt(i)!;
-        public string GetName(int i) => data.Keys.ElementAt(i);
-        public int GetOrdinal(string name) => data.Keys.ToList().IndexOf(name);
-        public string GetString(int i) => (string)data.Values.ElementAt(i)!;
-        public object GetValue(int i) => data.Values.ElementAt(i) ?? DBNull.Value;
-        public int GetValues(object[] values) => 0;
-        public bool IsDBNull(int i) => data.Values.ElementAt(i) is null or DBNull;
+        public bool GetBoolean(int i) {
+            return (bool)data.Values.ElementAt(i)!;
+        }
+
+        public byte GetByte(int i) {
+            return (byte)data.Values.ElementAt(i)!;
+        }
+
+        public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferOffset, int length) {
+            return 0;
+        }
+
+        public char GetChar(int i) {
+            return (char)data.Values.ElementAt(i)!;
+        }
+
+        public long GetChars(int i, long fieldOffset, char[]? buffer, int bufferOffset, int length) {
+            return 0;
+        }
+
+        public IDataReader GetData(int i) {
+            return null!;
+        }
+
+        public string GetDataTypeName(int i) {
+            return string.Empty;
+        }
+
+        public DateTime GetDateTime(int i) {
+            return (DateTime)data.Values.ElementAt(i)!;
+        }
+
+        public decimal GetDecimal(int i) {
+            return (decimal)data.Values.ElementAt(i)!;
+        }
+
+        public double GetDouble(int i) {
+            return (double)data.Values.ElementAt(i)!;
+        }
+
+        public Type GetFieldType(int i) {
+            return data.Values.ElementAt(i)?.GetType() ?? typeof(object);
+        }
+
+        public float GetFloat(int i) {
+            return (float)data.Values.ElementAt(i)!;
+        }
+
+        public Guid GetGuid(int i) {
+            return (Guid)data.Values.ElementAt(i)!;
+        }
+
+        public short GetInt16(int i) {
+            return (short)data.Values.ElementAt(i)!;
+        }
+
+        public int GetInt32(int i) {
+            return (int)data.Values.ElementAt(i)!;
+        }
+
+        public long GetInt64(int i) {
+            return (long)data.Values.ElementAt(i)!;
+        }
+
+        public string GetName(int i) {
+            return data.Keys.ElementAt(i);
+        }
+
+        public int GetOrdinal(string name) {
+            return data.Keys.ToList().IndexOf(name);
+        }
+
+        public string GetString(int i) {
+            return (string)data.Values.ElementAt(i)!;
+        }
+
+        public object GetValue(int i) {
+            return data.Values.ElementAt(i) ?? DBNull.Value;
+        }
+
+        public int GetValues(object[] values) {
+            return 0;
+        }
+
+        public bool IsDBNull(int i) {
+            return data.Values.ElementAt(i) is null or DBNull;
+        }
     }
 }

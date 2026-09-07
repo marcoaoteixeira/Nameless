@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;

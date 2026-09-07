@@ -12,7 +12,7 @@ namespace Nameless.Workers;
 /// </summary>
 public abstract class PeriodicWorker : BackgroundService {
     private readonly IConfiguration _configuration;
-    private readonly IStatusReporter<PeriodicWorker> _statusReporter;
+    private readonly IStatusReporter _statusReporter;
     private readonly Lazy<PeriodicWorkerOptions> _options;
     private readonly Lazy<string> _logTag;
 
@@ -44,7 +44,7 @@ public abstract class PeriodicWorker : BackgroundService {
     /// <param name="logger">
     ///     The logger.
     /// </param>
-    protected PeriodicWorker(IConfiguration configuration, IStatusReporter<PeriodicWorker> statusReporter, ILogger logger) {
+    protected PeriodicWorker(IConfiguration configuration, IStatusReporter statusReporter, ILogger logger) {
         _configuration = configuration;
         _statusReporter = statusReporter;
         Logger = logger;
@@ -86,7 +86,7 @@ public abstract class PeriodicWorker : BackgroundService {
             _statusReporter.Fault(ex);
 
             Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Faulted, tag: LogTag);
-            CommonLog.Failure(Logger, ex, tag: LogTag);
+            CommonLog.Error(Logger, ex, tag: LogTag);
 
             throw;
         }

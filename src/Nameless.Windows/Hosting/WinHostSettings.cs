@@ -6,7 +6,6 @@ using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Lucene;
 using Nameless.Mediator;
-using Nameless.Reporting;
 using Nameless.Validation.FluentValidation;
 using Nameless.Windows.Documents;
 using Nameless.Windows.Localization;
@@ -83,9 +82,4 @@ public sealed class WinHostSettings {
     ///     Whether it should disable Status Reporting feature.
     /// </summary>
     public bool DisableStatusReporting { get; set; }
-
-    /// <summary>
-    ///     Gets or sets a delegate to configure Status Reporting feature.
-    /// </summary>
-    public Action<StatusReportingRegistration>? ConfigureStatusReporting { get; set; }
 }

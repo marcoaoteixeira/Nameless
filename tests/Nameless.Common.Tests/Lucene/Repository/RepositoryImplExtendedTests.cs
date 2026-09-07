@@ -3,8 +3,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
 using Nameless.IO.Explorer;
-using Nameless.Lucene;
-using Nameless.Lucene.Repository;
 using Nameless.Lucene.Repository.Mappings;
 using Nameless.Lucene.Repository.Requests;
 using Nameless.Testing.Tools.Attributes;

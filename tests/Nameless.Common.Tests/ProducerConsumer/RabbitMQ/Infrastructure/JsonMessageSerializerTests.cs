@@ -1,22 +1,23 @@
-using Nameless.ProducerConsumer;
-using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
 public class JsonMessageSerializerTests {
-    private static JsonMessageSerializer CreateSut() => new();
+    private static JsonMessageSerializer CreateSut() {
+        return new JsonMessageSerializer();
+    }
 
     private static ProducerContext CreateContextWithMetadata(
         string messageId = "test-msg-id",
         string correlationId = "test-corr-id",
         long unixTimestamp = 1_700_000_000L) {
 
-        var ctx = new ProducerContext();
-        ctx.MessageId = messageId;
-        ctx.CorrelationId = correlationId;
-        ctx.Timestamp = new AmqpTimestamp(unixTimestamp);
+        var ctx = new ProducerContext {
+            MessageId = messageId,
+            CorrelationId = correlationId,
+            Timestamp = new AmqpTimestamp(unixTimestamp)
+        };
 
         return ctx;
     }

@@ -16,6 +16,7 @@ using Nameless.Windows.UI;
 using Nameless.Windows.UseCases;
 using Nameless.Windows.UseCases.Backup;
 using Wpf.Ui.Abstractions.Controls;
+using Wpf.Ui.Appearance;
 
 namespace Nameless.WinApp.ViewModels.Pages;
 
@@ -37,6 +38,9 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     public partial ComboBoxItem CurrentTheme { get; set; } = ComboBoxItemHelper.EmptyComboBoxItem;
 
     [ObservableProperty]
+    public partial ComboBoxItem CurrentLanguage { get; set; } = ComboBoxItemHelper.EmptyComboBoxItem;
+
+    [ObservableProperty]
     public partial bool CurrentConfirmBeforeExit { get; set; }
 
     public string AppVersion { get; private set; } = string.Empty;
@@ -45,6 +49,11 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         Theme.Light.ToComboBoxItem(),
         Theme.Dark.ToComboBoxItem(),
         Theme.HighContrast.ToComboBoxItem()
+    ];
+
+    public ComboBoxItem[] AvailableLanguages { get; } = [
+        ComboBoxItemHelper.Create("pt-BR", "Português (Brasil)"),
+        ComboBoxItemHelper.Create("en-US", "English (United States)"),
     ];
 
     public AppConfigurationPageViewModel(
@@ -129,15 +138,25 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         return Task.CompletedTask;
     }
 
-    //partial void OnCurrentThemeChanged(ComboBoxItem? oldValue, ComboBoxItem newValue) {
-    //    if (!_initialized || oldValue?.Tag == newValue.Tag) { return; }
+    partial void OnCurrentThemeChanged(ComboBoxItem? oldValue, ComboBoxItem newValue) {
+        if (!_initialized || oldValue?.Tag == newValue.Tag) { return; }
 
-    //    var theme = (Theme)newValue.Tag;
+        var theme = (Theme)newValue.Tag;
 
-    //    ApplicationThemeManager.Apply(theme.ToApplicationTheme());
+        ApplicationThemeManager.Apply(theme.ToApplicationTheme());
 
-    //    _appConfigurationManager.Theme = theme;
-    //}
+        _appConfigurationManager.Theme = theme;
+    }
+
+    partial void OnCurrentLanguageChanged(ComboBoxItem? oldValue, ComboBoxItem newValue) {
+        if (!_initialized || oldValue?.Tag == newValue.Tag) { return; }
+
+        var isoCode = (string)newValue.Tag;
+
+        T.SetCulture(isoCode);
+
+        _appConfigurationManager.Language = isoCode;
+    }
 
     partial void OnCurrentConfirmBeforeExitChanged(bool oldValue, bool newValue) {
         if (!_initialized || oldValue == newValue) { return; }

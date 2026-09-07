@@ -82,7 +82,7 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
                 Options = options
             };
         }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: Log.Tag); throw; }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: Log.Tag); throw; }
         finally { _semaphore.Release(); }
     }
 
@@ -109,7 +109,7 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
                 cancellationToken
             ).ConfigureAwait(continueOnCapturedContext: false);
         }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: Log.Tag); throw; }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: Log.Tag); throw; }
         finally { entry.Lock.Release(); }
     }
 

@@ -1,5 +1,5 @@
-using Nameless.Generators.Emitters;
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Emitters;
+using Nameless.Generators.Shared.Models;
 using Nameless.Generators.Web.Http.Endpoints.Conventions;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Models;

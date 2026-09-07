@@ -1,13 +1,16 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Nameless.Web.Http.Endpoints;
 
 namespace Nameless.Generators.Web.Http.Endpoints;
 
-public static class CodeGeneratorHelper
-{
+public static class CodeGeneratorHelper {
+    private const string ASSEMBLY_NAME = "TestAssembly";
+
     // Collect references once: all assemblies in the ASP.NET Core shared
     // framework directory plus everything already loaded into the AppDomain.
     private static readonly IReadOnlyList<MetadataReference> References = CollectReferences();
@@ -49,17 +52,34 @@ public static class CodeGeneratorHelper
         }
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, Dictionary<SourceType, string[]> GeneratedSource) RunGenerator(string source, string assemblyName = "TestAssembly")
+    public static (ImmutableArray<Diagnostic> Diagnostics, Dictionary<SourceType, string[]> GeneratedSource) RunGenerator(string source, string? assemblyName = null, bool useAutoEndpoints = true)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
         var compilation = CSharpCompilation.Create(
-            assemblyName: assemblyName,
+            assemblyName: assemblyName ?? ASSEMBLY_NAME,
             syntaxTrees: [syntaxTree],
             references: References,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
         var generator = new AutoEndpointsGenerator();
-        var driver = CSharpGeneratorDriver.Create(generator);
+
+        // Mirrors what Directory.Build.targets / Nameless.Common.targets
+        // do for a real consumer that opted in: expose UseAutoEndpoints as 
+        // a compiler-visible build property so the generator's own
+        // defense-in-depth check (see AutoEndpointsGenerator.Initialize) sees it.
+        // 
+        var optionsProvider = new TestAnalyzerConfigOptionsProvider(
+            new TestAnalyzerConfigOptions(
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                    { "build_property.UseAutoEndpoints", useAutoEndpoints.ToString().ToLowerInvariant() }
+                }
+            )
+        );
+
+        var driver = CSharpGeneratorDriver.Create(
+            generators: [generator.AsSourceGenerator()],
+            optionsProvider: optionsProvider
+        );
 
         driver = (CSharpGeneratorDriver)driver.RunGeneratorsAndUpdateCompilation(
             compilation: compilation,
@@ -97,9 +117,9 @@ public static class CodeGeneratorHelper
         }
     }
 
-    public static ImmutableArray<Diagnostic> GetDiagnostics(string source)
+    public static ImmutableArray<Diagnostic> GetDiagnostics(string source, string? assemblyName = null)
     {
-        return RunGenerator(source).Diagnostics;
+        return RunGenerator(source, assemblyName: assemblyName).Diagnostics;
     }
 
     /// <summary>
@@ -107,12 +127,13 @@ public static class CodeGeneratorHelper
     ///     Assert.Contains across the full output.
     /// </summary>
     /// <param name="source">The source.</param>
+    /// <param name="assemblyName">Assembly name.</param>
     /// <returns>
     ///     The generated output
     /// </returns>
-    public static string GetCode(string source)
+    public static string GetCode(string source, string? assemblyName = null)
     {
-        var (_, sources) = RunGenerator(source);
+        var (_, sources) = RunGenerator(source, assemblyName: assemblyName);
 
         var composite = string.Join(
             separator: Environment.NewLine,
@@ -122,11 +143,29 @@ public static class CodeGeneratorHelper
         return composite;
     }
 
-    public static string[] GetCodeBySourceType(string source, SourceType type = SourceType.Endpoint)
+    public static string[] GetCodeBySourceType(string source, SourceType type = SourceType.Endpoint, string? assemblyName = null)
     {
-        var (_, sources) = RunGenerator(source);
+        var (_, sources) = RunGenerator(source, assemblyName: assemblyName);
 
         return sources.TryGetValue(type, out var output) ? output : [];
+    }
+
+    private sealed class TestAnalyzerConfigOptionsProvider(AnalyzerConfigOptions opts) : AnalyzerConfigOptionsProvider {
+        public override AnalyzerConfigOptions GlobalOptions { get; } = opts;
+        
+        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) {
+            return GlobalOptions;
+        }
+
+        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) {
+            return GlobalOptions;
+        }
+    }
+
+    private sealed class TestAnalyzerConfigOptions(Dictionary<string, string> values) : AnalyzerConfigOptions {
+        public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value) {
+            return values.TryGetValue(key, out value);
+        }
     }
 }
 

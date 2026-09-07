@@ -107,7 +107,7 @@ public sealed class FileMonitor : IFileMonitor {
         if (probes.Length > 0) {
             try { await Task.WhenAll(probes).WaitAsync(cancellationToken).SkipContextSync(); }
             catch (OperationCanceledException) { }
-            catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: LOG_TAG); }
+            catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
         }
 
         _activeProbes.Clear();
@@ -284,7 +284,7 @@ public sealed class FileMonitor : IFileMonitor {
         _ = Task.Run(async () => {
             try { await callback(args, cancellationToken).ConfigureAwait(false); }
             catch (OperationCanceledException) { }
-            catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: LOG_TAG); }
+            catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
         }, cancellationToken);
     }
 

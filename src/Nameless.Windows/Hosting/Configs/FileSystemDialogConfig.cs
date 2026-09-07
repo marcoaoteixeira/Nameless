@@ -22,7 +22,7 @@ public static class FileSystemDialogConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureFileSystemDialog(WinHostSettings settings) {
+        public WinHostBuilder ConfigureFileSystemDialogFeature(WinHostSettings settings) {
             if (settings.DisableFileSystemDialog) { return self; }
 
             self.ConfigureServices(

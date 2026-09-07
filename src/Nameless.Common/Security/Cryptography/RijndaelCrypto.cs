@@ -79,7 +79,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
                     InitializeCryptoTransform();
                 }
 
-                CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+                CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
                 throw;
             }
@@ -125,7 +125,7 @@ public class RijndaelCrypto : ICrypto, IDisposable {
                     InitializeCryptoTransform();
                 }
 
-                CommonLog.Failure(_logger, ex, tag: LOG_TAG);
+                CommonLog.Error(_logger, ex, tag: LOG_TAG);
 
                 throw;
             }

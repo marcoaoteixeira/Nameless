@@ -22,7 +22,7 @@ public static class BootstrapConfig {
         ///     The current <see cref="WinHostFactory"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WinHostBuilder ConfigureBootstrap(WinHostSettings settings) {
+        public WinHostBuilder ConfigureBootstrapFeature(WinHostSettings settings) {
             if (settings.DisableBootstrap) { return self; }
 
             self.ConfigureServices((_, services) => services.RegisterBootstrap(

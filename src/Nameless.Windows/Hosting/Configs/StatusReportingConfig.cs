@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Nameless.Registration;
-using Nameless.Reporting;
-using Nameless.Validation.FluentValidation;
+﻿using Nameless.Reporting;
 using Nameless.Windows.Hosting.Wrappers;
 
 namespace Nameless.Windows.Hosting.Configs;
@@ -27,12 +24,9 @@ public static class StatusReportingConfig {
         public WinHostBuilder ConfigureStatusReporting(WinHostSettings settings) {
             if (settings.DisableStatusReporting) { return self; }
 
-            self.ConfigureServices(services => services.RegisterStatusReporting(
-                AssemblyScanAwareHelper.Join(
-                    settings.ConfigureStatusReporting,
-                    settings.Assemblies
-                )
-            ));
+            self.ConfigureServices(
+                (ctx, services) => services.RegisterStatusReporting(ctx.Configuration)
+            );
 
             return self;
         }

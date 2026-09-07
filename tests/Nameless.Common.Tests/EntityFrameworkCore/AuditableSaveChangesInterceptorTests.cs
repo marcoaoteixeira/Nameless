@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Nameless.EntityFrameworkCore;
 using Nameless.EntityFrameworkCore.Entities;
 using Nameless.Testing.Tools.Attributes;
-using Xunit;
 
 namespace Nameless.EntityFrameworkCore;
 

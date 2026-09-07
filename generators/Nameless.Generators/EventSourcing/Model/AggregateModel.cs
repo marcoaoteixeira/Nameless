@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
-using Nameless.Generators.Emitters;
-using Nameless.Generators.Models;
+using Nameless.Generators.Shared.Emitters;
+using Nameless.Generators.Shared.Models;
 
 namespace Nameless.Generators.EventSourcing.Model;
 

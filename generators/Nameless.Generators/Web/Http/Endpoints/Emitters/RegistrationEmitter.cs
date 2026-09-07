@@ -1,6 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Nameless.Generators.Infrastructure;
+using Nameless.Generators.Shared.Infrastructure;
 using Nameless.Generators.Web.Http.Endpoints.Models;
 
 namespace Nameless.Generators.Web.Http.Endpoints.Emitters;
@@ -17,20 +17,23 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
 
     private RegistrationEmitter() { }
 
-    public override void Emit(SourceProductionContext context, DiagnosticAwareResult<EndpointGroupModelCollection> result, bool prettify = false) {
+    public override void Emit(SourceProductionContext context, DiagnosticAwareResult<EndpointGroupModelCollection> result, bool prettify) {
         base.Emit(context, result, prettify);
 
-        EmitAutoEndpointFiles(context, result.Model ?? []);
+        EmitAutoEndpointFiles(
+            context,
+            result.Model ?? []
+        );
     }
 
-    protected override void EmitFileContent(CodeWriter cw, EndpointGroupModelCollection model) {
+    protected override void WriteFileContent(CodeWriter cw, EndpointGroupModelCollection model) {
         cw.WriteLine();
-        cw.WriteLine($"namespace {Project.Namespaces.Root};");
+        cw.WriteLine($"namespace {model.Class.Namespace};");
 
         cw.WriteLine();
-        using (cw.Block($"public static class {Project.RegistrationClassName} {{")) {
-            EmitRegisterEndpointsMethod(cw, model);
-            EmitMapEndpointsMethod(cw, model);
+        using (cw.Block($"public static class {model.Class.Name} {{")) {
+            WriteRegisterHandler(cw, model);
+            WriteMapHandler(cw, model);
         }
     }
 
@@ -47,12 +50,12 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
         }
     }
 
-    private static void EmitRegisterEndpointsMethod(CodeWriter cw, EndpointGroupModelCollection model) {
+    private static void WriteRegisterHandler(CodeWriter cw, EndpointGroupModelCollection model) {
         var opening = new StringBuilder();
 
         cw.WriteLine();
 
-        opening.Append($"public static IServiceCollection {Project.RegisterMethodName}(");
+        opening.Append($"public static IServiceCollection {Project.RegisterHandlerName}(");
         opening.Append($"this IServiceCollection {SERVICES_ARG}, ");
         opening.Append($"Action<ApiVersioningOptions>? {CONFIG_API_VERSIONING_ARG} = null, ");
         opening.Append($"Action<ApiExplorerOptions>? {CONFIG_API_EXPLORER_ARG} = null");
@@ -65,16 +68,16 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
                 }
             }
 
-            EmitApiVersioningConfiguration(cw);
+            WriteApiVersioningConfigurationInstructions(cw);
 
             cw.WriteLine($"return {SERVICES_ARG};");
         }
 
-        EmitDefaultApiVersioningConfiguration(cw);
-        EmitDefaultApiExplorerConfiguration(cw);
+        WriteDefaultApiVersioningConfigurationInstructions(cw);
+        WriteDefaultApiExplorerConfigurationInstructions(cw);
     }
 
-    private static void EmitApiVersioningConfiguration(CodeWriter cw) {
+    private static void WriteApiVersioningConfigurationInstructions(CodeWriter cw) {
         cw.WriteLine();
 
         using (cw.Block(SERVICES_ARG, closing: string.Empty)) {
@@ -83,7 +86,7 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
         }
     }
 
-    private static void EmitDefaultApiVersioningConfiguration(CodeWriter cw) {
+    private static void WriteDefaultApiVersioningConfigurationInstructions(CodeWriter cw) {
         cw.WriteLine();
 
         using (cw.Block("private static void DefaultApiVersioningConfiguration(ApiVersioningOptions options) {")) {
@@ -98,7 +101,7 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
         }
     }
 
-    private static void EmitDefaultApiExplorerConfiguration(CodeWriter cw) {
+    private static void WriteDefaultApiExplorerConfigurationInstructions(CodeWriter cw) {
         cw.WriteLine();
 
         using (cw.Block("private static void DefaultApiExplorerConfiguration(ApiExplorerOptions options) {")) {
@@ -107,19 +110,19 @@ public sealed class RegistrationEmitter : Emitter<EndpointGroupModelCollection> 
         }
     }
 
-    private static void EmitMapEndpointsMethod(CodeWriter cw, EndpointGroupModelCollection model) {
+    private static void WriteMapHandler(CodeWriter cw, EndpointGroupModelCollection model) {
         cw.WriteLine();
 
         using (cw.Block($"public static IEndpointRouteBuilder {Project.MapMethodName}(this IEndpointRouteBuilder {BUILDER_ARG}) {{")) {
             foreach (var endpointGroup in model) {
-                EmitEndpointGroupMapping(cw, endpointGroup);
+                WriteEndpointGroupMapInstructions(cw, endpointGroup);
             }
 
             cw.WriteLine($"return {BUILDER_ARG};");
         }
     }
 
-    private static void EmitEndpointGroupMapping(CodeWriter cw, EndpointGroupModel endpointGroup) {
+    private static void WriteEndpointGroupMapInstructions(CodeWriter cw, EndpointGroupModel endpointGroup) {
         var groupVar = $"_g_{Sanitize(endpointGroup.Class.FullName)}";
         cw.WriteLine($"var {groupVar} = global::{endpointGroup.Class.FullName}.Create({BUILDER_ARG});");
 

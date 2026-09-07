@@ -1,5 +1,4 @@
 using Polly;
-using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Resilience;

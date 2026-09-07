@@ -135,7 +135,7 @@ public partial class MainWindow : INavigationWindow {
     }
 
     private void SetWindowIcon() {
-        try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/application_64x64.png")); }
+        try { Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/application_64x64.png")); }
         catch (Exception ex) { _logger.Failure(nameof(SetWindowIcon), ex); }
     }
 

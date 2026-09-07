@@ -1,5 +1,4 @@
 using Moq;
-using Nameless.Mediator.Pipelines;
 using Nameless.Mediator.Requests;
 using Nameless.ObjectModel;
 using Nameless.Testing.Tools.Attributes;

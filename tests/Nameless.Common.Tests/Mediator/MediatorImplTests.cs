@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Mediator;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
@@ -123,8 +122,9 @@ public class MediatorImplTests {
 public record MediatorTestRequest : IRequest<string>;
 
 public class MediatorTestRequestHandler : IRequestHandler<MediatorTestRequest, string> {
-    public Task<string> HandleAsync(MediatorTestRequest request, CancellationToken cancellationToken)
-        => Task.FromResult("ok");
+    public Task<string> HandleAsync(MediatorTestRequest request, CancellationToken cancellationToken) {
+        return Task.FromResult("ok");
+    }
 }
 
 public record MediatorTestEvent : IEvent;
@@ -132,7 +132,9 @@ public record MediatorTestEvent : IEvent;
 public class MediatorTestEventHandler : IEventHandler<MediatorTestEvent> {
     public static int InvocationCount;
 
-    public static void Reset() => InvocationCount = 0;
+    public static void Reset() {
+        InvocationCount = 0;
+    }
 
     public Task HandleAsync(MediatorTestEvent evt, CancellationToken cancellationToken) {
         Interlocked.Increment(ref InvocationCount);
@@ -143,7 +145,9 @@ public class MediatorTestEventHandler : IEventHandler<MediatorTestEvent> {
 public class MediatorSecondTestEventHandler : IEventHandler<MediatorTestEvent> {
     public static int InvocationCount;
 
-    public static void Reset() => InvocationCount = 0;
+    public static void Reset() {
+        InvocationCount = 0;
+    }
 
     public Task HandleAsync(MediatorTestEvent evt, CancellationToken cancellationToken) {
         Interlocked.Increment(ref InvocationCount);

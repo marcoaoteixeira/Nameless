@@ -1,133 +1,93 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Reporting;
 
+[UnitTest]
 public class ServiceCollectionExtensionsTests {
-    private class FakeWorker { }
-
-    private static ServiceProvider BuildProvider() {
+    private static IServiceCollection BuildServices(IConfiguration? configuration = null) {
         var services = new ServiceCollection();
-        services.RegisterStatusReporting<FakeWorker>();
-        return services.BuildServiceProvider();
+        services.AddSingleton(TimeProvider.System);
+        services.RegisterStatusReporting(configuration ?? new ConfigurationBuilder().Build());
+        return services;
     }
 
     [Fact]
-    public void WhenIStatusReporterAndIStatusMonitor_BothResolved_ThenTheyReturnTheSameUnderlyingInstance() {
-        using var provider = BuildProvider();
-
-        var reporter = provider.GetRequiredService<IStatusReporter<FakeWorker>>();
-        var monitor = provider.GetRequiredService<IStatusMonitor<FakeWorker>>();
-
-        StatusUpdate? received = null;
-        monitor.Status.Subscribe(update => received = update);
-
-        reporter.Report("Hello from the reporter");
-
-        Assert.Equal("Hello from the reporter", received!.Message);
-    }
-
-    [Fact]
-    public void WhenIStatusReporter_ResolvedTwice_ThenReturnsTheSameSingletonInstance() {
-        using var provider = BuildProvider();
-
-        var first = provider.GetRequiredService<IStatusReporter<FakeWorker>>();
-        var second = provider.GetRequiredService<IStatusReporter<FakeWorker>>();
-
-        Assert.Same(first, second);
-    }
-
-    [Fact]
-    public void WhenIStatusMonitor_ResolvedTwice_ThenReturnsTheSameSingletonInstance() {
-        using var provider = BuildProvider();
-
-        var first = provider.GetRequiredService<IStatusMonitor<FakeWorker>>();
-        var second = provider.GetRequiredService<IStatusMonitor<FakeWorker>>();
-
-        Assert.Same(first, second);
-    }
-
-    [Fact]
-    public void WhenConcreteStatusReporterType_ResolvedWithoutItsKey_ThenIsNotReachable() {
-        using var provider = BuildProvider();
-
-        var concrete = provider.GetService<StatusReporter<FakeWorker>>();
-
-        Assert.Null(concrete);
-    }
-
-    [Fact]
-    public void WhenRegisterStatusReporter_CalledTwiceForTheSameServiceType_ThenItDoesNotThrowAndKeepsIdentity() {
+    public void RegisterStatusReporting_ReturnsSameServiceCollection() {
         var services = new ServiceCollection();
-        services.RegisterStatusReporting<FakeWorker>();
-        services.RegisterStatusReporting<FakeWorker>(); // idempotent call, e.g. from two setup paths
+        services.AddSingleton(TimeProvider.System);
+        var config = new ConfigurationBuilder().Build();
 
-        using var provider = services.BuildServiceProvider();
+        var returned = services.RegisterStatusReporting(config);
 
-        var reporter = provider.GetRequiredService<IStatusReporter<FakeWorker>>();
-        var monitor = provider.GetRequiredService<IStatusMonitor<FakeWorker>>();
-
-        StatusUpdate? received = null;
-        monitor.Status.Subscribe(update => received = update);
-        reporter.Report("Still wired correctly");
-
-        Assert.Equal("Still wired correctly", received!.Message);
+        Assert.Same(services, returned);
     }
 
     [Fact]
-    public void WhenRegisterStatusReporter_CalledForDifferentServiceTypes_ThenTheirReportersAreIndependent() {
-        var services = new ServiceCollection();
-        services.RegisterStatusReporting<FakeWorker>();
-        services.RegisterStatusReporting<AnotherFakeWorker>();
-        using var provider = services.BuildServiceProvider();
+    public void RegisterStatusReporting_Registers_IStatusReportingHub_AsSingleton() {
+        var provider = BuildServices().BuildServiceProvider();
 
-        var workerReporter = provider.GetRequiredService<IStatusReporter<FakeWorker>>();
-        _ = provider.GetRequiredService<IStatusReporter<AnotherFakeWorker>>();
+        var a = provider.GetRequiredService<IStatusReportingHub>();
+        var b = provider.GetRequiredService<IStatusReportingHub>();
 
-        workerReporter.Report("Worker-specific message");
-
-        StatusUpdate? anotherReceived = null;
-
-        provider
-            .GetRequiredService<IStatusMonitor<AnotherFakeWorker>>()
-            .Status
-            .Subscribe(update => anotherReceived = update);
-
-        Assert.Equal("Idle", anotherReceived!.Message); // untouched by the other worker's report
+        Assert.Same(a, b);
+        Assert.IsType<StatusReportingHub>(a);
     }
 
     [Fact]
-    public void WhenRegisterStatusReporterHub_Resolved_ThenGetOrCreateProducesIndependentChannelsPerKey() {
-        var services = new ServiceCollection();
-        services.RegisterStatusReporting<FakeWorker>();
-        using var provider = services.BuildServiceProvider();
+    public void RegisterStatusReporting_Registers_IStatusReporter_Generic_AsSingleton() {
+        var provider = BuildServices().BuildServiceProvider();
 
-        var hub = provider.GetRequiredService<IStatusReporterHub<FakeWorker>>();
-        var monitorHub = provider.GetRequiredService<IStatusMonitorHub<FakeWorker>>();
+        var a = provider.GetRequiredService<IStatusReporter<SampleWorker>>();
+        var b = provider.GetRequiredService<IStatusReporter<SampleWorker>>();
 
-        var file1 = hub.GetOrCreate("file1.txt");
-        var file2 = hub.GetOrCreate("file2.txt");
-
-        Assert.NotSame(file1, file2);
-
-        StatusUpdate? received = null;
-        file1.Report("From file1");
-
-        Assert.True(monitorHub.TryGet("file1.txt", out var monitor));
-        monitor!.Status.Subscribe(update => received = update);
-
-        Assert.Equal("From file1", received!.Message);
+        Assert.Same(a, b);
+        Assert.IsType<StatusReporter<SampleWorker>>(a);
     }
 
     [Fact]
-    public void WhenConcreteStatusReporterHubType_ResolvedWithoutItsKey_ThenIsNotReachable() {
-        var services = new ServiceCollection();
-        services.RegisterStatusReporting<FakeWorker>();
-        using var provider = services.BuildServiceProvider();
+    public void RegisterStatusReporting_Registers_IStatusMonitor_Generic_AsSingleton() {
+        var provider = BuildServices().BuildServiceProvider();
 
-        var concrete = provider.GetService<StatusReporterHub<FakeWorker>>();
+        var a = provider.GetRequiredService<IStatusMonitor<SampleWorker>>();
+        var b = provider.GetRequiredService<IStatusMonitor<SampleWorker>>();
 
-        Assert.Null(concrete);
+        Assert.Same(a, b);
+        Assert.IsType<StatusMonitor<SampleWorker>>(a);
     }
 
-    private class AnotherFakeWorker { }
+    [Fact]
+    public void RegisterStatusReporting_IsIdempotent() {
+        var services = new ServiceCollection();
+        services.AddSingleton(TimeProvider.System);
+        var config = new ConfigurationBuilder().Build();
+        services.RegisterStatusReporting(config);
+        services.RegisterStatusReporting(config);
+
+        var provider = services.BuildServiceProvider();
+        var a = provider.GetRequiredService<IStatusReportingHub>();
+        var b = provider.GetRequiredService<IStatusReportingHub>();
+
+        Assert.Same(a, b);
+    }
+
+    [Fact]
+    public void RegisterStatusReporting_BindsBufferSize_FromConfiguration() {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?> {
+                ["StatusReporting:BufferSize"] = "25"
+            })
+            .Build();
+
+        var provider = BuildServices(config).BuildServiceProvider();
+        var options = provider.GetRequiredService<IOptions<StatusReportingOptions>>();
+
+        Assert.Equal(25, options.Value.BufferSize);
+    }
+
+    // ─── test doubles ─────────────────────────────────────────────────────────
+
+    private class SampleWorker { }
 }

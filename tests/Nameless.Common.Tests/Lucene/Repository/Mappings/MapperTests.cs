@@ -1,6 +1,5 @@
 using Lucene.Net.Documents;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Lucene.Repository.Mappings;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository.Mappings;

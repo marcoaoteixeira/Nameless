@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Moq;
+using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.IO.Monitoring;
@@ -20,7 +21,7 @@ public class FileSystemMonitorTests {
     };
 
     private FileMonitor CreateSut(FileMonitorOptions? options = null) {
-        return new FileMonitor(_fileProvider.Object, retryPipelineFactory: null, Options.Create(options ?? DefaultOptions), _logger.Object);
+        return new FileMonitor(_fileProvider.Object, retryPipelineFactory: NullRetryPipelineFactory.Instance, Options.Create(options ?? DefaultOptions), _logger.Object);
     }
 
     private static Mock<IFileInfo> CreateFileInfo(
@@ -70,19 +71,19 @@ public class FileSystemMonitorTests {
     [Fact]
     public void Constructor_WhenFileProviderIsNull_ThrowsArgumentNullException() {
         Assert.Throws<ArgumentNullException>(
-            () => new FileMonitor(null!, retryPipelineFactory: null, Options.Create(DefaultOptions), _logger.Object));
+            () => new FileMonitor(null!, NullRetryPipelineFactory.Instance, Options.Create(DefaultOptions), _logger.Object));
     }
 
     [Fact]
     public void Constructor_WhenOptionsIsNull_ThrowsArgumentNullException() {
         Assert.Throws<ArgumentNullException>(
-            () => new FileMonitor(_fileProvider.Object, retryPipelineFactory: null, null!, _logger.Object));
+            () => new FileMonitor(_fileProvider.Object, NullRetryPipelineFactory.Instance, null!, _logger.Object));
     }
 
     [Fact]
     public void Constructor_WhenLoggerIsNull_ThrowsArgumentNullException() {
         Assert.Throws<ArgumentNullException>(
-            () => new FileMonitor(_fileProvider.Object, retryPipelineFactory: null, Options.Create(DefaultOptions), null!));
+            () => new FileMonitor(_fileProvider.Object, NullRetryPipelineFactory.Instance, Options.Create(DefaultOptions), null!));
     }
 
     // ── OnXxx registration ────────────────────────────────────────────────────
@@ -352,8 +353,12 @@ public class FileSystemMonitorTests {
 
         public FakeDirectoryContents(params IFileInfo[] entries) { _entries = entries; }
 
-        public IEnumerator<IFileInfo> GetEnumerator() => ((IEnumerable<IFileInfo>)_entries).GetEnumerator();
+        public IEnumerator<IFileInfo> GetEnumerator() {
+            return ((IEnumerable<IFileInfo>)_entries).GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() {
+            return _entries.GetEnumerator();
+        }
     }
 }

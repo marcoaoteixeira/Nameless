@@ -1,4 +1,3 @@
-using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;

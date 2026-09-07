@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Nameless.Application;
 using Nameless.Bootstrap;
-using Nameless.Bootstrap.Notification;
 using Nameless.Reporting;
 using Nameless.Windows.UI;
 
@@ -32,8 +31,7 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
         ApplicationVersionTextBlock.Text = _applicationContext.Version;
 
         _bootstrapperStatusMonitor.Status.Subscribe(
-            onNext: UpdateControls,
-
+            onNext: UpdateControls
         );
     }
 
@@ -53,9 +51,9 @@ public partial class SplashScreenWindow : ISplashScreenWindow {
                            .SkipContextSync();
     }
 
-    private void UpdateControls(StepProgress report) {
+    private void UpdateControls(StatusUpdate report) {
         Dispatcher.Invoke(() => {
-            StepNameTextBlock.Text = report.StepName;
+            StepNameTextBlock.Text = string.Empty;
             StepMessageTextBlock.Text = report.Message;
         });
     }

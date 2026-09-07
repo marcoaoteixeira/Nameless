@@ -1,4 +1,3 @@
-using Nameless.Resilience;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 

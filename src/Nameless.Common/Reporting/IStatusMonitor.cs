@@ -13,7 +13,17 @@
 ///     (UI, SignalR hubs, health checks, etc.) should depend on - it exposes
 ///     no way to push a new status, only to observe the latest one.
 /// </remarks>
-public interface IStatusMonitor<TService> {
+public interface IStatusMonitor<TService> : IStatusMonitor;
+
+/// <summary>
+///     Provides view of a service's current status.
+/// </summary> 
+/// <remarks>
+///     Read-only view of a service's current status. This is what consumers
+///     (UI, SignalR hubs, health checks, etc.) should depend on - it exposes
+///     no way to push a new status, only to observe the latest one.
+/// </remarks>
+public interface IStatusMonitor {
     /// <summary>
     ///     Gets the name used to tag every <see cref="StatusUpdate"/> from
     ///     this source.
@@ -22,11 +32,11 @@ public interface IStatusMonitor<TService> {
 
     /// <summary>
     ///     Gets the key that identifies this specific channel among the
-    ///     possibly-many concurrent channels for <typeparamref name="TService"/>
-    ///     (e.g. the file name a file-processing worker instance is handling).
-    ///     Empty when the service only ever has a single channel.
+    ///     possibly-many concurrent channels for the service (e.g. the file
+    ///     name a file-processing worker instance is handling). Empty when
+    ///     the service only ever has a single channel.
     /// </summary>
-    string ChannelKey { get; }
+    string? ChannelKey { get; }
 
     /// <summary>
     ///     Gets the live status stream. Subscribing always immediately yields

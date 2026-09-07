@@ -29,7 +29,7 @@ public class AssemblyTypeConverter : TypeConverter {
             var logger = context?.GetLogger<AssemblyTypeConverter>() ??
                          NullLogger<AssemblyTypeConverter>.Instance;
 
-            CommonLog.Failure(logger, ex, tag: LOG_TAG);
+            CommonLog.Error(logger, ex, tag: LOG_TAG);
         }
 
         return null;

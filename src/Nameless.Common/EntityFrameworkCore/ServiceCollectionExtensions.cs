@@ -61,9 +61,9 @@ public static class ServiceCollectionExtensions {
                 ? settings.ExecuteAssemblyScan<IDatabaseSeeder>().SingleOrDefault()
                 : settings.DatabaseSeeder;
 
-            var descriptor = implementation is not null
-                ? ServiceDescriptor.Transient(service, implementation)
-                : ServiceDescriptor.Singleton(NullDatabaseSeeder.Instance);
+            if (implementation is null) { return;}
+
+            var descriptor = ServiceDescriptor.Transient(service, implementation);
 
             self.TryAdd(descriptor);
         }
@@ -86,8 +86,10 @@ public static class ServiceCollectionExtensions {
         var interceptors = provider.GetServices<IInterceptor>();
         builder.AddInterceptors(interceptors);
 
-        var databaseSeeder = provider.GetRequiredService<IDatabaseSeeder>();
-        builder.UseAsyncSeeding(databaseSeeder.ExecuteAsync)
-               .UseSeeding(databaseSeeder.Execute);
+        var databaseSeeder = provider.GetService<IDatabaseSeeder>();
+        if (databaseSeeder is not null) {
+            builder.UseAsyncSeeding(databaseSeeder.ExecuteAsync)
+                   .UseSeeding(databaseSeeder.Execute);
+        }
     }
 }

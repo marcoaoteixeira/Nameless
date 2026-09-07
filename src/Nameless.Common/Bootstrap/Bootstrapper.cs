@@ -11,7 +11,6 @@ namespace Nameless.Bootstrap;
 ///     Default implementation of <see cref="IBootstrapper"/> that executes
 ///     bootstrap steps sequentially.
 /// </summary>
-[StatusReporting]
 public class Bootstrapper : IBootstrapper, IDisposable {
     private readonly IStep[] _steps;
     private readonly IRetryPipelineFactory _retryPipelineFactory;
@@ -28,6 +27,9 @@ public class Bootstrapper : IBootstrapper, IDisposable {
     /// <param name="retryPipelineFactory">
     ///     The retry policy factory.
     /// </param>
+    /// <param name="statusReporter">
+    ///     The status reporter.
+    /// </param>
     /// <param name="steps">
     ///     The collection of steps to be executed during the bootstrap
     ///     process.
@@ -35,14 +37,11 @@ public class Bootstrapper : IBootstrapper, IDisposable {
     /// <param name="timeProvider">
     ///     The time provider.
     /// </param>
-    /// <param name="statusReporter">
-    ///     The status reporter.
-    /// </param>
     /// <param name="logger">
     ///     The logger used to record execution details and diagnostic
     ///     information.
     /// </param>
-    public Bootstrapper(IEnumerable<IStep> steps, IRetryPipelineFactory retryPipelineFactory, TimeProvider timeProvider, IStatusReporter<Bootstrapper> statusReporter, ILogger<Bootstrapper> logger) {
+    public Bootstrapper(IRetryPipelineFactory retryPipelineFactory, IStatusReporter<Bootstrapper> statusReporter, IEnumerable<IStep> steps, TimeProvider timeProvider, ILogger<Bootstrapper> logger) {
         _steps = [.. steps];
         _retryPipelineFactory = retryPipelineFactory;
         _timeProvider = timeProvider;
@@ -67,21 +66,21 @@ public class Bootstrapper : IBootstrapper, IDisposable {
 
         var graph = StepExecutionGraphBuilder.Create(_steps);
 
-        _statusReporter.ReportStart(time: _timeProvider.GetUtcNow());
+        _statusReporter.ReportBootstrapperStarting();
 
-        await ExecuteStepsAsync(graph, cancellationToken).SkipContextSync();
+        try {
+            await ExecuteStepsAsync(graph, cancellationToken).SkipContextSync();
 
-        var failures = graph.GetExecutionResults()
-                            .Where(result => !result.Success)
-                            .ToArray();
+            var failures = graph.GetExecutionResults()
+                                .Where(result => !result.Success)
+                                .ToArray();
 
-        if (failures.Length > 0) {
-            _statusReporter.Fault(time: _timeProvider.GetUtcNow(), failures);
-
-            throw new BootstrapException("One or more steps failed.", failures);
+            if (failures.Length > 0) {
+                throw new BootstrapException("One or more steps failed.", failures);
+            }
         }
-
-        _statusReporter.Complete(time: _timeProvider.GetUtcNow());
+        catch (Exception ex) { _statusReporter.ReportBootstrapperFault(ex); throw; }
+        finally { _statusReporter.ReportBootstrapperComplete(); }
     }
 
     /// <inheritdoc />
@@ -120,11 +119,6 @@ public class Bootstrapper : IBootstrapper, IDisposable {
 
         node.Result.StartTime = _timeProvider.GetUtcNow();
 
-        _statusReporter.ReportStepStarting(
-            time: node.Result.StartTime,
-            step: node.Step
-        );
-
         try {
             if (node.Step.IsDisabled) { return; }
 
@@ -145,22 +139,11 @@ public class Bootstrapper : IBootstrapper, IDisposable {
         catch (Exception ex) {
             node.Result.Exception = ex;
 
-            _statusReporter.ReportStepFailure(
-                time: _timeProvider.GetUtcNow(),
-                step: node.Step,
-                ex
-            );
+            CommonLog.Error(_logger, ex.Message, ex, tag: node.Step.DisplayName);
 
-            CommonLog.Failure(_logger, ex, tag: node.Step.DisplayName);
+            throw;
         }
-        finally {
-            node.Result.Duration = sw.Elapsed;
-
-            _statusReporter.ReportStepFinish(
-                time: _timeProvider.GetUtcNow(),
-                step: node.Step
-            );
-        }
+        finally { node.Result.Duration = sw.Elapsed; }
     }
 
     /// <summary>
@@ -200,10 +183,7 @@ public class Bootstrapper : IBootstrapper, IDisposable {
     }
 
     private void HandleStepProgress(StepProgress progress) {
-        _statusReporter.ReportStepProgress(
-            time: _timeProvider.GetUtcNow(),
-            progress
-        );
+        _statusReporter.ReportStepProgress(progress);
     }
 
     internal static class Metrics {

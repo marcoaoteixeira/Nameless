@@ -37,7 +37,7 @@ public abstract class ValidationFilterBase {
 
         CommonLog.Warning(
             logger,
-            reason: $"Service '{nameof(IValidator)}' is unavailable.",
+            message: $"Service '{nameof(IValidator)}' is unavailable.",
             tag: "VALIDATION_FILTER"
         );
 

@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
-using Nameless.Generators.Diagnostics;
 using Nameless.Generators.EventSourcing.Diagnostics;
 using Nameless.Generators.EventSourcing.Model;
-using Nameless.Generators.Infrastructure;
+using Nameless.Generators.Shared.Diagnostics;
+using Nameless.Generators.Shared.Infrastructure;
 
 namespace Nameless.Generators.EventSourcing.Pipeline;
 

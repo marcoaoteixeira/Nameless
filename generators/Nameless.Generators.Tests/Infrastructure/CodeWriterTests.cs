@@ -1,3 +1,4 @@
+using Nameless.Generators.Shared.Infrastructure;
 using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Generators.Infrastructure;

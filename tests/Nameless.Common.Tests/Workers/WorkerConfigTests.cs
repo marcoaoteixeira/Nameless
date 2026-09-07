@@ -1,6 +1,9 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Configuration;
+using Nameless.Reporting;
+using Nameless.Testing.Tools.Mockers.StatusReporting;
 
 namespace Nameless.Workers;
 
@@ -63,7 +66,11 @@ public class WorkerConfigTests {
             .AddInMemoryCollection(new Dictionary<string, string?>())
             .Build();
 
-        var worker = new SimplePeriodicWorker(configuration, NullLogger<PeriodicWorker>.Instance);
+        var worker = new SimplePeriodicWorker(
+            configuration,
+            new StatusReporterMocker<SimplePeriodicWorker>().Build(),
+            NullLogger<PeriodicWorker>.Instance
+        );
 
         // act
         await worker.StartAsync(ct);
@@ -89,6 +96,7 @@ public class WorkerConfigTests {
         var ct = TestContext.Current.CancellationToken;
         var worker = new SimplePeriodicWorker(
             CreateConfiguration(nameof(SimplePeriodicWorker), isEnabled: true, interval: "00:00:00"),
+            new StatusReporterMocker<SimplePeriodicWorker>().Build(),
             NullLogger<PeriodicWorker>.Instance
         );
 
@@ -124,18 +132,22 @@ public class WorkerConfigTests {
 
     // ─── test doubles ─────────────────────────────────────────────────────────
 
-    private sealed class SimplePeriodicWorker(IConfiguration configuration, Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger)
-        : PeriodicWorker(configuration, logger) {
+    private sealed class SimplePeriodicWorker(
+        IConfiguration configuration,
+        IStatusReporter<SimplePeriodicWorker> statusReporter,
+        ILogger<PeriodicWorker> logger)
+        : PeriodicWorker(configuration, statusReporter, logger) {
         public override string Name => nameof(SimplePeriodicWorker);
-        public override Task DoWorkAsync(CancellationToken ct) => Task.Delay(Timeout.Infinite, ct);
+        public override Task DoWorkAsync(CancellationToken ct) {
+            return Task.Delay(Timeout.Infinite, ct);
+        }
     }
 
-    private sealed class ControllablePeriodicWorker(
-        IConfiguration configuration,
-        Microsoft.Extensions.Logging.ILogger<PeriodicWorker> logger,
-        Func<CancellationToken, Task> work)
-        : PeriodicWorker(configuration, logger) {
+    private sealed class ControllablePeriodicWorker(IConfiguration configuration, ILogger<PeriodicWorker> logger, Func<CancellationToken, Task> work)
+        : PeriodicWorker(configuration, new StatusReporterMocker<ControllablePeriodicWorker>().Build(), logger) {
         public override string Name => nameof(ControllablePeriodicWorker);
-        public override Task DoWorkAsync(CancellationToken ct) => work(ct);
+        public override Task DoWorkAsync(CancellationToken ct) {
+            return work(ct);
+        }
     }
 }

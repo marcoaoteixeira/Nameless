@@ -1,6 +1,5 @@
 using FluentValidation.Results;
 using Nameless.Testing.Tools.Attributes;
-using Nameless.Validation.FluentValidation;
 using FvValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Nameless.Validation.FluentValidation;

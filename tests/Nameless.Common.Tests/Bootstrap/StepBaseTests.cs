@@ -1,3 +1,6 @@
+using Nameless.Bootstrap.Notification;
+using Nameless.Null;
+
 namespace Nameless.Bootstrap;
 
 public class StepBaseTests {
@@ -94,7 +97,7 @@ public class StepBaseTests {
         var step = new ConcreteStep();
 
         // act
-        await step.ExecuteAsync(ct);
+        await step.ExecuteAsync(NullProgress<StepProgress>.Instance, ct);
 
         // assert
         Assert.True(step.WasExecuted);
@@ -105,7 +108,7 @@ public class StepBaseTests {
     private sealed class ConcreteStep : StepBase {
         public bool WasExecuted { get; private set; }
 
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
             WasExecuted = true;
 
             return Task.CompletedTask;
@@ -113,7 +116,7 @@ public class StepBaseTests {
     }
 
     private sealed class DisabledStep() : StepBase(isEnabled: false) {
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
             return Task.CompletedTask;
         }
     }

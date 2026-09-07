@@ -48,7 +48,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
 
             return output is not null;
         }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: LOG_TAG); }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
 
         return false;
     }
@@ -67,7 +67,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
             await using var stream = file.Open(FileMode.Create);
             await stream.WriteAsync(json, cancellationToken);
         }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: LOG_TAG); }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
     }
 
     private Dictionary<string, JsonElement> GetAppConfiguration() {
@@ -78,7 +78,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
         using var stream = file.Open();
 
         try { return JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(stream) ?? []; }
-        catch (Exception ex) { CommonLog.Failure(_logger, ex, tag: LOG_TAG); }
+        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
 
         return [];
     }
