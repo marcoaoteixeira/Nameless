@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Cors;
@@ -33,19 +32,23 @@ public class WithEnableCorsConvention {
     public void WhenEndpointClassMarkEnableCorsWithNoArgument_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(EnableCorsWithNoArgumentEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.EnableCorsWithNoArgumentEndpoint", source);
-        Assert.Matches(@"EnableCorsWithNoArgumentEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"EnableCorsWithNoArgumentEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.RequireCors\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.EnableCorsWithNoArgumentEndpoint", source),
+            () => Assert.Matches(@"EnableCorsWithNoArgumentEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"EnableCorsWithNoArgumentEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.RequireCors\(\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkEnableCorsWithPolicyName_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(EnableCorsWithPolicyNameEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.EnableCorsWithPolicyNameEndpoint", source);
-        Assert.Matches(@"EnableCorsWithPolicyNameEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"EnableCorsWithPolicyNameEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.RequireCors\(""my-cors-policy""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.EnableCorsWithPolicyNameEndpoint", source),
+            () => Assert.Matches(@"EnableCorsWithPolicyNameEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"EnableCorsWithPolicyNameEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.RequireCors\(""my-cors-policy""\)", source)
+        );
     }
 }

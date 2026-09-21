@@ -20,18 +20,20 @@ public static class ServiceCollectionExtensions {
         ///     delegate or use the auto discover functionality. For more info
         ///     on rate limiting in ASP.NET Core, see <a href="https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit">Rate limiting middleware in ASP.NET Core</a>
         /// </remarks>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings delegate.
         /// </param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> instance so
         ///     other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterRateLimiter(Action<RateLimiterRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterRateLimiter(Action<RateLimiterRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.AddRateLimiter(opts => {
-                var policies = GetRateLimiterPolicies(settings);
+                var policies = GetRateLimiterPolicies(registration);
+
+                opts.AddPolicy<>()
 
                 foreach (var policy in policies) {
                     opts.AddPolicy(
@@ -45,16 +47,16 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static IReadOnlyDictionary<string, Type> GetRateLimiterPolicies(RateLimiterRegistration settings) {
+    private static IReadOnlyDictionary<string, Type> GetRateLimiterPolicies(RateLimiterRegistration registration) {
         var service = typeof(IRateLimiterPolicy<>);
 
-        return settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service, includeGenericTypeDefinition: false)
+        return registration.RateLimiterPolicies
+            ? registration.ExecuteAssemblyScan(service, includeGenericTypeDefinition: false)
                       .ToDictionary(
                           keySelector: RateLimiterPolicyAttribute.GetName,
                           elementSelector: type => type
                       )
-            : settings.RateLimiterPolicies;
+            : registration.RateLimiterPolicies;
     }
 
     extension(RateLimiterOptions self) {

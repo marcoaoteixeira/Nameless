@@ -1,7 +1,6 @@
 using System.Data;
 using Moq;
 using Nameless.Data.Requests;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;
 
@@ -48,10 +47,10 @@ public class DatabaseTests {
         var response = sut.ExecuteNonQuery(request);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(1, response.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(1, response.Value)
+        );
     }
 
     [Fact]
@@ -80,11 +79,11 @@ public class DatabaseTests {
         var readResponse = sut.ExecuteReader(selectRequest);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(readResponse.Success);
-            Assert.Single(readResponse.Value);
-            Assert.Equal("Gadget", readResponse.Value[0]);
-        });
+        Assert.Multiple(
+            () => Assert.True(readResponse.Success),
+            () => Assert.Single(readResponse.Value),
+            () => Assert.Equal("Gadget", readResponse.Value[0])
+        );
     }
 
     [Fact]
@@ -107,11 +106,11 @@ public class DatabaseTests {
         var response = sut.ExecuteReader(request);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(3, response.Value.Length);
-            Assert.Equal(["Alpha", "Beta", "Gamma"], response.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(3, response.Value.Length),
+            () => Assert.Equal(["Alpha", "Beta", "Gamma"], response.Value)
+        );
     }
 
     [Fact]
@@ -133,10 +132,10 @@ public class DatabaseTests {
         var response = sut.ExecuteScalar<long>(request);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(2L, response.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(2L, response.Value)
+        );
     }
 
     [Fact]

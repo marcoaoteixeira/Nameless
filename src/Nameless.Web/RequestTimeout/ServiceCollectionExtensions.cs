@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions {
         /// </returns>
         public IServiceCollection RegisterRequestTimeout(IConfiguration? configuration = null, bool includeDefaultPolicies = false) {
             self.AddRequestTimeouts(builder => {
-                var policies = configuration?.GetMultipleOptions<RequestTimeoutPolicyOptions>() ?? [];
+                var policies = configuration?.GetAll<RequestTimeoutPolicyOptions>() ?? [];
 
                 if (includeDefaultPolicies) { IncludeDefaultPolicies(policies); }
 

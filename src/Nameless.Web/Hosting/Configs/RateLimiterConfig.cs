@@ -17,7 +17,7 @@ public static class RateLimiterConfig {
             if (settings.DisableRateLimiter) { return self; }
 
             self.Services.RegisterRateLimiter(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigureRateLimiter,
                     settings.Assemblies
                 )

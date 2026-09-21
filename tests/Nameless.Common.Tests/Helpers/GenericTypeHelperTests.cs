@@ -50,10 +50,10 @@ public class GenericTypeHelperTests {
             .ToList();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Contains(typeof(OrderGenericEntity), types);
-            Assert.Contains(typeof(ProductGenericEntity), types);
-        });
+        Assert.Multiple(
+            () => Assert.Contains(typeof(OrderGenericEntity), types),
+            () => Assert.Contains(typeof(ProductGenericEntity), types)
+        );
     }
 }
 

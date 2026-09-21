@@ -26,12 +26,14 @@ public class ProducesResponseAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Contains(".Produces<", source);
-        Assert.Contains("SampleModel", source);
-        Assert.Contains("statusCode: 200", source);
-        Assert.Contains(@"contentType: ""application/json""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Contains(".Produces<", source),
+            () => Assert.Contains("SampleModel", source),
+            () => Assert.Contains("statusCode: 200", source),
+            () => Assert.Contains(@"contentType: ""application/json""", source)
+        );
     }
 
     [Fact]
@@ -55,11 +57,13 @@ public class ProducesResponseAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapPost\(.*", source);
-        Assert.Contains(".Produces<", source);
-        Assert.Contains("SampleModel", source);
-        Assert.Contains("statusCode: 201", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapPost\(.*", source),
+            () => Assert.Contains(".Produces<", source),
+            () => Assert.Contains("SampleModel", source),
+            () => Assert.Contains("statusCode: 201", source)
+        );
     }
 
     [Fact]
@@ -83,9 +87,11 @@ public class ProducesResponseAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Contains(".Produces<", source);
-        Assert.Contains(@"contentType: ""text/plain""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Contains(".Produces<", source),
+            () => Assert.Contains(@"contentType: ""text/plain""", source)
+        );
     }
 }

@@ -30,10 +30,10 @@ public class CircularBufferTests {
         var newCount = circularBuffer.Count;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(expected: 0, currentCount);
-            Assert.Equal(expected: 1, newCount);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(expected: 0, currentCount),
+            () => Assert.Equal(expected: 1, newCount)
+        );
     }
 
     [Fact]
@@ -69,10 +69,10 @@ public class CircularBufferTests {
         var countAfterClear = circularBuffer.Count;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(Total, countBeforeClear);
-            Assert.Equal(expected: 0, countAfterClear);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(Total, countBeforeClear),
+            () => Assert.Equal(expected: 0, countAfterClear)
+        );
     }
 
     [Fact]

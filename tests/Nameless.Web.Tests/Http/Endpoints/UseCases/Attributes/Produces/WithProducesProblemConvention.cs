@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Produces;
@@ -33,19 +32,23 @@ public class WithProducesProblemConvention {
     public void WhenEndpointClassMarkProducesProblemWithDefaults_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesProblemWithDefaultsEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesProblemWithDefaultsEndpoint", source);
-        Assert.Matches(@"ProducesProblemWithDefaultsEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesProblemWithDefaultsEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.ProducesProblem\(statusCode: 500, contentType: ""application/problem\+json""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesProblemWithDefaultsEndpoint", source),
+            () => Assert.Matches(@"ProducesProblemWithDefaultsEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesProblemWithDefaultsEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.ProducesProblem\(statusCode: 500, contentType: ""application/problem\+json""\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesProblemWithCustomStatusCode_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesProblemWithCustomStatusCodeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesProblemWithCustomStatusCodeEndpoint", source);
-        Assert.Matches(@"ProducesProblemWithCustomStatusCodeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesProblemWithCustomStatusCodeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.ProducesProblem\(statusCode: 404, contentType: ""application/problem\+json""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesProblemWithCustomStatusCodeEndpoint", source),
+            () => Assert.Matches(@"ProducesProblemWithCustomStatusCodeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesProblemWithCustomStatusCodeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.ProducesProblem\(statusCode: 404, contentType: ""application/problem\+json""\)", source)
+        );
     }
 }

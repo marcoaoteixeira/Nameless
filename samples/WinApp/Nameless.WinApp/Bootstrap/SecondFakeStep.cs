@@ -1,5 +1,5 @@
-﻿using Nameless.Bootstrap;
-using Nameless.Bootstrap.Notification;
+﻿using Nameless.Windows.Bootstrap;
+using Nameless.Windows.Bootstrap.Notification;
 
 namespace Nameless.WinApp.Bootstrap;
 

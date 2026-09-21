@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Microsoft.Extensions.Options;
 using Nameless.Lucene.ObjectModel;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.IO;
 using Nameless.Testing.Tools.Mockers.Logging;
 
@@ -15,8 +14,8 @@ public class IndexExtendedTests : IDisposable {
     private readonly Index _sut;
 
     public IndexExtendedTests() {
-        _tempDir = Path.Combine(Path.GetTempPath(), $"lucene-index-ext-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(_tempDir);
+        _tempDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-index-ext-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(_tempDir);
 
         _sut = CreateIndex(_tempDir);
     }
@@ -24,16 +23,16 @@ public class IndexExtendedTests : IDisposable {
     public void Dispose() {
         _sut.Dispose();
 
-        if (Directory.Exists(_tempDir)) {
-            Directory.Delete(_tempDir, recursive: true);
+        if (SysDirectory.Exists(_tempDir)) {
+            SysDirectory.Delete(_tempDir, recursive: true);
         }
     }
 
     [Fact]
     public void RegisterDisposeCallback_CalledOnDispose() {
         // Arrange
-        var indexDir = Path.Combine(Path.GetTempPath(), $"lucene-cb-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(indexDir);
+        var indexDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-cb-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(indexDir);
         var index = CreateIndex(indexDir);
 
         Index? capturedIndex = null;
@@ -43,19 +42,21 @@ public class IndexExtendedTests : IDisposable {
         index.Dispose();
 
         // Assert
-        Assert.NotNull(capturedIndex);
-        Assert.Same(index, capturedIndex);
+        Assert.Multiple(
+            () => Assert.NotNull(capturedIndex),
+            () => Assert.Same(index, capturedIndex)
+        );
 
-        if (Directory.Exists(indexDir)) {
-            Directory.Delete(indexDir, recursive: true);
+        if (SysDirectory.Exists(indexDir)) {
+            SysDirectory.Delete(indexDir, recursive: true);
         }
     }
 
     [Fact]
     public void UnregisterDisposeCallback_NotCalledAfterUnregister() {
         // Arrange
-        var indexDir = Path.Combine(Path.GetTempPath(), $"lucene-uncb-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(indexDir);
+        var indexDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-uncb-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(indexDir);
         var index = CreateIndex(indexDir);
 
         var callCount = 0;
@@ -69,8 +70,8 @@ public class IndexExtendedTests : IDisposable {
         // Assert
         Assert.Equal(0, callCount);
 
-        if (Directory.Exists(indexDir)) {
-            Directory.Delete(indexDir, recursive: true);
+        if (SysDirectory.Exists(indexDir)) {
+            SysDirectory.Delete(indexDir, recursive: true);
         }
     }
 
@@ -89,8 +90,10 @@ public class IndexExtendedTests : IDisposable {
 
         // confirm it's there first
         var countBefore = _sut.Count(query);
-        Assert.True(countBefore.Success);
-        Assert.Equal(1, countBefore.Value);
+        Assert.Multiple(
+            () => Assert.True(countBefore.Success),
+            () => Assert.Equal(1, countBefore.Value)
+        );
 
         // Act
         _sut.Delete(query);
@@ -99,8 +102,10 @@ public class IndexExtendedTests : IDisposable {
         var countAfter = _sut.Count(query);
 
         // Assert
-        Assert.True(countAfter.Success);
-        Assert.Equal(0, countAfter.Value);
+        Assert.Multiple(
+            () => Assert.True(countAfter.Success),
+            () => Assert.Equal(0, countAfter.Value)
+        );
     }
 
     [Fact]
@@ -133,9 +138,11 @@ public class IndexExtendedTests : IDisposable {
         var countResult = _sut.Count(new TermQuery(new Term("tag", Tag)));
 
         // Assert
-        Assert.True(insertResult.Success);
-        Assert.True(countResult.Success);
-        Assert.Equal(5, countResult.Value);
+        Assert.Multiple(
+            () => Assert.True(insertResult.Success),
+            () => Assert.True(countResult.Success),
+            () => Assert.Equal(5, countResult.Value)
+        );
     }
 
     [Fact]

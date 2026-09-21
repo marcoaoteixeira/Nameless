@@ -14,11 +14,11 @@ public class ExpressionExtensionsTests {
         var path = expr.GetExpressionPath();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.StartsWith("a", path);
-            Assert.Contains("[", path);
-            Assert.Contains("]", path);
-        });
+        Assert.Multiple(
+            () => Assert.StartsWith("a", path),
+            () => Assert.Contains("[", path),
+            () => Assert.Contains("]", path)
+        );
     }
 
     [Fact]
@@ -30,11 +30,11 @@ public class ExpressionExtensionsTests {
         var path = expr.GetExpressionPath();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.StartsWith("s", path);
-            Assert.Contains("[", path);
-            Assert.Contains("]", path);
-        });
+        Assert.Multiple(
+            () => Assert.StartsWith("s", path),
+            () => Assert.Contains("[", path),
+            () => Assert.Contains("]", path)
+        );
     }
 
     [Fact]
@@ -86,11 +86,11 @@ public class ExpressionExtensionsTests {
         var compiled = combined.Compile();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(compiled(5));
-            Assert.False(compiled(-1));
-            Assert.False(compiled(15));
-        });
+        Assert.Multiple(
+            () => Assert.True(compiled(5)),
+            () => Assert.False(compiled(-1)),
+            () => Assert.False(compiled(15))
+        );
     }
 
     // ─── Or ─────────────────────────────────────────────────────────────────
@@ -106,11 +106,11 @@ public class ExpressionExtensionsTests {
         var compiled = combined.Compile();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(compiled(-5));
-            Assert.True(compiled(200));
-            Assert.False(compiled(50));
-        });
+        Assert.Multiple(
+            () => Assert.True(compiled(-5)),
+            () => Assert.True(compiled(200)),
+            () => Assert.False(compiled(50))
+        );
     }
 
     // ─── test doubles ─────────────────────────────────────────────────────────

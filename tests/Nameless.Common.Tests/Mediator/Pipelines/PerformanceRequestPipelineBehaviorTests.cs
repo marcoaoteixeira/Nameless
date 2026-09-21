@@ -1,5 +1,4 @@
 using Nameless.Mediator.Requests;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Mediator.Pipelines;

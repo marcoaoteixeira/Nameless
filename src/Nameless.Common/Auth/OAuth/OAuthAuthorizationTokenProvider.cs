@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nameless.Diagnostics.ActivitySource;
 using Nameless.ObjectModel;
 using Nameless.Results;
 
@@ -12,8 +13,6 @@ namespace Nameless.Auth.OAuth;
 ///     OAuth implementation of <see cref="IOAuthAuthorizationTokenProvider"/>
 /// </summary>
 public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider {
-    private static string Tag { get; } = nameof(OAuthAuthorizationTokenProvider).ToSnakeCase().ToUpperInvariant();
-
     private readonly HttpClient _client;
     private readonly OAuthOptions _options;
     private readonly ILogger<OAuthAuthorizationTokenProvider> _logger;
@@ -43,9 +42,9 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
 
         try { return await GetTokenAsyncCore(request, cancellationToken).SkipContextSync(); }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex.Message, ex, Tag);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -61,7 +60,7 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
     }
 
     private async Task<HttpResponseMessage> RequestTokenAsync(FormUrlEncodedContent content, CancellationToken cancellationToken) {
-        using var meter = DiagnosticsHelper.CreateStopwatchHistogram(Metrics.RequestTokenDuration);
+        using var activity = Telemetry.ActivitySource.StartActivity($"{GetType().Name}.{nameof(RequestTokenAsync)}");
 
         var response = await _client.PostAsync(_options.TokenEndpoint, content, cancellationToken)
                                     .SkipContextSync();
@@ -89,16 +88,10 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
 
         if (result is not null) { return result; }
 
-        Log.DeserializationFailure(_logger, type: nameof(OAuthAuthorizationToken), Tag);
+        CommonLog.JsonDeserializationFailure(_logger, typeof(OAuthAuthorizationToken), tag: GetType().Tag);
 
         return Error.Failure(
-            $"Unable to deserialize JSON response content to '{nameof(OAuthAuthorizationToken)}'"
+            $"Unable to deserialize JSON content to '{nameof(OAuthAuthorizationToken)}'"
         );
-    }
-
-    internal static class Metrics {
-        private const string ROOT = "nameless.auth.token.provider";
-
-        internal const string RequestTokenDuration = $"{ROOT}.request.duration";
     }
 }

@@ -1,22 +1,13 @@
 ﻿namespace Nameless.EntityFrameworkCore.Entities;
 
 /// <summary>
-///     Base class for auditable entities with a strongly-typed identifier.
+///     Base class for entities with UUID identifier.
 /// </summary>
-/// <typeparam name="TID">
-///     The type of the entity identifier; must be a value type that implements
-///     <see cref="IEquatable{T}"/>.
-/// </typeparam>
-public abstract class EntityBase<TID> : IAuditable
-    where TID : struct, IEquatable<TID> {
-    /// <summary>
-    ///     Gets or sets the unique identifier of the entity.
-    /// </summary>
-    public TID ID { get; set; }
+public abstract class EntityBase : IEntity<Guid> {
+    /// <inheritdoc />
+    public Guid ID { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the entity state.
-    /// </summary>
+    /// <inheritdoc />
     public EntityState EntityState { get; set; }
 
     /// <inheritdoc />

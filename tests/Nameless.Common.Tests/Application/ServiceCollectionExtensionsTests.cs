@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.IO.Explorer;
-using Nameless.Testing.Tools.Attributes;
+using Nameless.IO.System;
 
 namespace Nameless.Application;
 
@@ -32,15 +31,19 @@ public class ServiceCollectionExtensionsTests {
         var provider = services.BuildServiceProvider();
 
         var ctx = provider.GetRequiredService<IApplicationContext>();
-        Assert.NotNull(ctx);
-        Assert.Equal("svc.test.app", ctx.ApplicationName);
-        Assert.Equal("svc-env", ctx.EnvironmentName);
+        Assert.Multiple(
+            () => Assert.NotNull(ctx),
+            () => Assert.Equal("svc.test.app", ctx.ApplicationName),
+            () => Assert.Equal("svc-env", ctx.EnvironmentName)
+        );
 
-        // FileExplorer should be created under AppDomain base directory when Base is used
-        var fsp = ctx.FileExplorer as FileExplorer;
-        Assert.NotNull(fsp);
-        Assert.StartsWith(ctx.BaseDirectoryPath, fsp.Root, StringComparison.OrdinalIgnoreCase);
-        Assert.True(Directory.Exists(fsp.Root));
+        // SystemFileExplorer should be created under AppDomain base directory when Base is used
+        var fsp = ctx.ApplicationDataFileProvider as FileProvider;
+        Assert.Multiple(
+            () => Assert.NotNull(fsp),
+            () => Assert.StartsWith(ctx.ApplicationDataDirectory, fsp.Root, StringComparison.OrdinalIgnoreCase),
+            () => Assert.True(SysDirectory.Exists(fsp.Root))
+        );
     }
 
     [Fact]

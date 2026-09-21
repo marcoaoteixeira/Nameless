@@ -11,8 +11,6 @@ namespace Nameless.ComponentModel;
 ///     a configuration value.
 /// </summary>
 public class AssemblyTypeConverter : TypeConverter {
-    private const string LOG_TAG = "ASSEMBLY_TYPE_CONVERTER";
-
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) {
         return sourceType == typeof(string);
@@ -29,7 +27,7 @@ public class AssemblyTypeConverter : TypeConverter {
             var logger = context?.GetLogger<AssemblyTypeConverter>() ??
                          NullLogger<AssemblyTypeConverter>.Instance;
 
-            CommonLog.Error(logger, ex, tag: LOG_TAG);
+            CommonLog.Error(logger, ex.Message, ex, GetType().Tag);
         }
 
         return null;

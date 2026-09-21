@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Nameless.Attributes;
 using Nameless.Configuration;
 using Nameless.Helpers;
 
@@ -10,16 +9,16 @@ namespace Nameless.Web.Auth;
 
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
-        public IServiceCollection RegisterAuth(Action<AuthRegistration>? registration = null, IConfiguration? configuration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterAuth(Action<AuthRegistration>? configure = null, IConfiguration? configuration = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
-            return self.AddAuthorization(settings.ConfigureAuthorization ?? (_ => { }))
-                       .AddAuthentication(settings, configuration);
+            return self.AddAuthorization(registration.ConfigureAuthorization ?? (_ => { }))
+                       .AddAuthentication(registration, configuration);
         }
 
-        private IServiceCollection AddAuthentication(AuthRegistration settings, IConfiguration? configuration) {
+        private IServiceCollection AddAuthentication(AuthRegistration registration, IConfiguration? configuration) {
             var wrapper = new AuthenticationBuilderWrapper(self);
-            var configure = settings.ConfigureAuthentication ?? (builder => ConfigureDefaultAuthentication(builder, configuration));
+            var configure = registration.ConfigureAuthentication ?? (builder => ConfigureDefaultAuthentication(builder, configuration));
 
             configure(wrapper);
 

@@ -1,5 +1,4 @@
 using FluentValidation;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Validation.FluentValidation;
 
@@ -83,11 +82,11 @@ public class FluentValidationValidatorTests {
         var actual = await sut.ValidateAsync(model, new Dictionary<string, object>(), CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(actual.Success);
-            Assert.NotEmpty(actual.Errors);
-            Assert.Equal("Name validation failed", actual.Errors[0].Message);
-        });
+        Assert.Multiple(
+            () => Assert.False(actual.Success),
+            () => Assert.NotEmpty(actual.Errors),
+            () => Assert.Equal("Name validation failed", actual.Errors[0].Message)
+        );
     }
 
     [Fact]
@@ -103,12 +102,12 @@ public class FluentValidationValidatorTests {
         var actual = await sut.ValidateAsync(model, new Dictionary<string, object>(), CancellationToken.None);
 
         // assert — each validator contributes at least one error; both messages must be present
-        Assert.Multiple(() => {
-            Assert.False(actual.Success);
-            Assert.True(actual.Errors.Length >= 2);
-            Assert.Contains(actual.Errors, e => e.Message == "Name validation failed");
-            Assert.Contains(actual.Errors, e => e.Message == "Age validation failed");
-        });
+        Assert.Multiple(
+            () => Assert.False(actual.Success),
+            () => Assert.True(actual.Errors.Length >= 2),
+            () => Assert.Contains(actual.Errors, e => e.Message == "Name validation failed"),
+            () => Assert.Contains(actual.Errors, e => e.Message == "Age validation failed")
+        );
     }
 
     [Fact]
@@ -126,11 +125,11 @@ public class FluentValidationValidatorTests {
         await sut.ValidateAsync(model, inputContext, CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(capturedContext.ContainsKey("TenantId"));
-            Assert.Equal("tenant-001", capturedContext["TenantId"]);
-            Assert.True(capturedContext.ContainsKey("UserId"));
-            Assert.Equal(42, capturedContext["UserId"]);
-        });
+        Assert.Multiple(
+            () => Assert.True(capturedContext.ContainsKey("TenantId")),
+            () => Assert.Equal("tenant-001", capturedContext["TenantId"]),
+            () => Assert.True(capturedContext.ContainsKey("UserId")),
+            () => Assert.Equal(42, capturedContext["UserId"])
+        );
     }
 }

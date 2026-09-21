@@ -1,6 +1,5 @@
 ﻿using Nameless.Application;
-using Nameless.Bootstrap;
-using Nameless.Bootstrap.Notification;
+using Nameless.Windows.Bootstrap.Notification;
 using Nameless.Windows.Localization;
 
 namespace Nameless.Windows.Bootstrap;
@@ -24,19 +23,19 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
         const string ActionName = nameof(ExecuteAsync);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateBackupDirectory"]);
-        _applicationContext.FileExplorer.GetBackupDirectory().Create();
+        _applicationContext.ApplicationDataFileProvider.GetBackupDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateDatabaseDirectory"]);
-        _applicationContext.FileExplorer.GetDatabaseDirectory().Create();
+        _applicationContext.ApplicationDataFileProvider.GetDatabaseDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateTemporaryDirectory"]);
-        _applicationContext.FileExplorer.GetTemporaryDirectory().Create();
+        _applicationContext.ApplicationDataFileProvider.GetTemporaryDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
         progress.ReportInformation(DisplayName, T[$"{CLASS}_{ActionName}_CreateUpdateDirectory"]);
-        _applicationContext.FileExplorer.GetUpdateDirectory().Create();
+        _applicationContext.ApplicationDataFileProvider.GetUpdateDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
     }
 }

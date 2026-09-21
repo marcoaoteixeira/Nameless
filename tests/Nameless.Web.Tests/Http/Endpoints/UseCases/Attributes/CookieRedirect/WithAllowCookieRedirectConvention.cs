@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.CookieRedirect;
@@ -23,9 +22,11 @@ public class WithAllowCookieRedirectConvention {
     public void WhenEndpointClassMarkAllowCookieRedirect_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.AllowCookieRedirectEndpoint", source);
-        Assert.Matches(@"AllowCookieRedirectEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"AllowCookieRedirectEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.AllowCookieRedirect\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.AllowCookieRedirectEndpoint", source),
+            () => Assert.Matches(@"AllowCookieRedirectEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"AllowCookieRedirectEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.AllowCookieRedirect\(\)", source)
+        );
     }
 }

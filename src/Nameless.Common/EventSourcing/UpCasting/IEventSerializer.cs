@@ -4,7 +4,7 @@ namespace Nameless.EventSourcing.UpCasting;
 
 /// <summary>
 ///     Converts between domain events and their persisted representation,
-///     transparently applying <see cref="IEventUpcaster"/>s when reading
+///     transparently applying <see cref="IEventUpCaster"/>s when reading
 ///     events stored under an older schema version.
 /// </summary>
 public interface IEventSerializer {

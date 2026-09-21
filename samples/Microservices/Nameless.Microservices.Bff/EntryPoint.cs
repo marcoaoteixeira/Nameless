@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Auth.OAuth;
+using Nameless.Microservices.Bff.AutoGenCode;
 using Nameless.Microservices.Bff.Domains.Chores.External;
 using Nameless.Web;
 using Nameless.Web.Auth;
 using Nameless.Web.Hosting;
-using Nameless.Web.Http.Endpoints;
 using Nameless.Web.Scalar;
 
 namespace Nameless.Microservices.Bff;
@@ -27,7 +27,7 @@ public class EntryPoint
             settings.Args = args;
             settings.Assemblies = [
                 typeof(EntryPoint).Assembly,
-                typeof(AssemblyMarkerCommon).Assembly
+                typeof(AssemblyMarker).Assembly
             ];
 
             settings.ConfigureAdditionalServices = ConfigureAdditionalServices;

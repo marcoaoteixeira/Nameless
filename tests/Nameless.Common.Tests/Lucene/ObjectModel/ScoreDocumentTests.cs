@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.ObjectModel;
 
@@ -16,8 +15,10 @@ public class ScoreDocumentTests {
         var fields = sut.ToList();
 
         // Assert
-        Assert.Single(fields);
-        Assert.Equal("id", fields[0].Name);
+        Assert.Multiple(
+            () => Assert.Single(fields),
+            () => Assert.Equal("id", fields[0].Name)
+        );
     }
 
     [Fact]
@@ -44,9 +45,11 @@ public class ScoreDocumentTests {
         var fields = scoreDoc.ToList();
 
         // Assert
-        Assert.Single(fields);
-        Assert.Equal("name", fields[0].Name);
-        Assert.Equal(0F, scoreDoc.Score);
+        Assert.Multiple(
+            () => Assert.Single(fields),
+            () => Assert.Equal("name", fields[0].Name),
+            () => Assert.Equal(0F, scoreDoc.Score)
+        );
     }
 
     [Fact]
@@ -60,7 +63,9 @@ public class ScoreDocumentTests {
         var field = document.GetField("city");
 
         // Assert
-        Assert.NotNull(field);
-        Assert.Equal("Lisbon", field.GetStringValue());
+        Assert.Multiple(
+            () => Assert.NotNull(field),
+            () => Assert.Equal("Lisbon", field.GetStringValue())
+        );
     }
 }

@@ -10,9 +10,11 @@ public class VersionModelTests {
     {
         var v = VersionModel.V1;
 
-        Assert.Equal(1, v.Major);
-        Assert.Null(v.Minor);
-        Assert.Null(v.Status);
+        Assert.Multiple(
+            () => Assert.Equal(1, v.Major),
+            () => Assert.Null(v.Minor),
+            () => Assert.Null(v.Status)
+        );
     }
 
     [Theory]
@@ -26,10 +28,12 @@ public class VersionModelTests {
     {
         var parsed = VersionModel.TryParse(input, out var result);
 
-        Assert.True(parsed);
-        Assert.Equal(major, result.Major);
-        Assert.Equal(minor, result.Minor);
-        Assert.Equal(status, result.Status);
+        Assert.Multiple(
+            () => Assert.True(parsed),
+            () => Assert.Equal(major, result.Major),
+            () => Assert.Equal(minor, result.Minor),
+            () => Assert.Equal(status, result.Status)
+        );
     }
 
     [Theory]

@@ -11,7 +11,7 @@ public class CompressRequest {
     private readonly HashSet<FileEntry> _files = [];
 
     /// <summary>
-    ///     Gets or sets the full file system path
+    ///     Gets or sets the full file system relativePath
     ///     where the output file will be saved.
     /// </summary>
     public string DestinationFilePath { get; }
@@ -31,21 +31,21 @@ public class CompressRequest {
     ///     class.
     /// </summary>
     /// <param name="destinationFilePath">
-    ///     The destination file path.
+    ///     The destination file relativePath.
     /// </param>
     public CompressRequest(string destinationFilePath) {
         DestinationFilePath = Throws.When.NullOrWhiteSpace(destinationFilePath);
     }
 
     /// <summary>
-    ///     Adds a file to the archive request, specifying its path and
-    ///     optional directory path within the archive.
+    ///     Adds a file to the archive request, specifying its relativePath and
+    ///     optional directory relativePath within the archive.
     /// </summary>
     /// <param name="path">
-    ///     The file path to the file to include in the archive.
+    ///     The file relativePath to the file to include in the archive.
     /// </param>
     /// <param name="directoryPath">
-    ///     The directory path within the archive where the file will be
+    ///     The directory relativePath within the archive where the file will be
     ///     placed. If <see langword="null"/> or white space, the file is
     ///     added to the root of the archive.
     /// </param>
@@ -56,8 +56,8 @@ public class CompressRequest {
     public CompressRequest IncludeFile(string path, string? directoryPath = null) {
         Throws.When.NullOrWhiteSpace(path);
 
-        if (!File.Exists(path)) {
-            throw new FileNotFoundException("Could not find the file.", Path.GetFileName(path));
+        if (!SysFile.Exists(path)) {
+            throw new FileNotFoundException("Could not find the file.", SysPath.GetFileName(path));
         }
 
         var entry = new FileEntry(
@@ -77,7 +77,7 @@ public class CompressRequest {
     ///     subdirectories in the archive request.
     /// </summary>
     /// <param name="path">
-    ///     The full path to the directory whose files are to be included.
+    ///     The full relativePath to the directory whose files are to be included.
     /// </param>
     /// <returns>
     ///     The current <see cref="CompressRequest"/> instance
@@ -94,7 +94,7 @@ public class CompressRequest {
 
         var directory = new DirectoryInfo(path);
         if (!directory.Exists) {
-            throw new DirectoryNotFoundException($"Directory '{path}' not found.");
+            throw new DirectoryNotFoundException($"SystemDirectory '{path}' not found.");
         }
 
         var root = directory.Parent is not null
@@ -103,11 +103,11 @@ public class CompressRequest {
 
         var files = directory.GetFiles("*", SearchOption.AllDirectories);
         foreach (var file in files) {
-            var relativeFilePath = Path.GetRelativePath(root, file.FullName);
+            var relativeFilePath = SysPath.GetRelativePath(root, file.FullName);
 
             IncludeFile(
                 path: file.FullName,
-                directoryPath: Path.GetDirectoryName(relativeFilePath)
+                directoryPath: SysPath.GetDirectoryName(relativeFilePath)
             );
         }
 

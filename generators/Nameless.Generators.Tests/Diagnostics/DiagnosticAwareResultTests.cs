@@ -57,16 +57,18 @@ public class DiagnosticAwareResultTests
         Assert.Single(result.Diagnostics);
     }
 
-    private static GeneratorDiagnostic CreateDiagnostic() => GeneratorDiagnostic.Create(
-        descriptor: new DiagnosticDescriptor(
-            id: "TEST001",
-            title: "Test",
-            messageFormat: "Test message",
-            category: "Test",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true
-        ),
-        location: default,
-        messageArgs: []
-    );
+    private static GeneratorDiagnostic CreateDiagnostic() {
+        return GeneratorDiagnostic.Create(
+            descriptor: new DiagnosticDescriptor(
+                id: "TEST001",
+                title: "Test",
+                messageFormat: "Test message",
+                category: "Test",
+                defaultSeverity: DiagnosticSeverity.Error,
+                isEnabledByDefault: true
+            ),
+            location: default,
+            messageArgs: []
+        );
+    }
 }

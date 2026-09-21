@@ -24,7 +24,7 @@ public class FileSystemDialog : IFileSystemDialog {
         configure(options);
 
         var dialog = new OpenFolderDialog {
-            DefaultDirectory = options.Root ?? _applicationContext.FileExplorer.Root,
+            DefaultDirectory = options.Root ?? _applicationContext.ApplicationDataFileProvider.Root,
             Title = options.Title ?? GetFallbackTitle(),
             Multiselect = options.Multiselect,
             ValidateNames = true
@@ -49,7 +49,7 @@ public class FileSystemDialog : IFileSystemDialog {
         configure(options);
 
         var dialog = new OpenFileDialog {
-            DefaultDirectory = options.Root ?? _applicationContext.FileExplorer.Root,
+            DefaultDirectory = options.Root ?? _applicationContext.ApplicationDataFileProvider.Root,
             Title = options.Title ?? GetFallbackTitle(),
             Multiselect = options.Multiselect,
             Filter = options.Filter,
@@ -75,7 +75,7 @@ public class FileSystemDialog : IFileSystemDialog {
         configure(options);
 
         var dialog = new SaveFileDialog {
-            DefaultDirectory = options.Root ?? _applicationContext.FileExplorer.Root,
+            DefaultDirectory = options.Root ?? _applicationContext.ApplicationDataFileProvider.Root,
             Title = options.Title ?? T[$"{CLASS}_{ActionName}_GetFallbackTitle"],
             CheckFileExists = options.EnsureFileExistence,
             Filter = options.Filter,

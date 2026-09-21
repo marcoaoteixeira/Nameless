@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Register the Producer/Consumer services for RabbitMQ.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration delegate.
         /// </param>
         /// <param name="configuration">
@@ -31,8 +31,8 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     ca be chained.
         /// </returns>
-        public IServiceCollection RegisterProducerConsumer(Action<ProducerConsumerRegistration>? registration = null, IConfiguration? configuration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterProducerConsumer(Action<ProducerConsumerRegistration>? configure = null, IConfiguration? configuration = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             //????
             self.ConfigureOptions<ServerOptions>(configuration);
@@ -41,25 +41,17 @@ public static class ServiceCollectionExtensions {
             self.TryAddSingleton<IChannelFactory, ChannelFactory>();
             self.TryAddSingleton<IProducer, Producer>();
             self.TryAddSingleton<IMessageSerializer, JsonMessageSerializer>();
-            
+
             self.TryAddEnumerable(
-                descriptors: CreateConsumerServiceDescriptors(settings)
+                registration.Consumers.Select(
+                    implementation => ServiceDescriptor.Singleton(
+                        typeof(IHostedService),
+                        implementation
+                    )
+                )
             );
 
             return self;
         }
-    }
-
-    private static IEnumerable<ServiceDescriptor> CreateConsumerServiceDescriptors(ProducerConsumerRegistration settings) {
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(typeof(Consumer<>))
-            : settings.Consumers;
-
-        return implementations.Select(
-            implementation => ServiceDescriptor.Singleton(
-                typeof(IHostedService),
-                implementation
-            )
-        );
     }
 }

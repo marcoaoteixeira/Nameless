@@ -19,23 +19,23 @@ public static class WebApplicationBuilderExtensions {
         /// <summary>
         ///     Registers OpenTelemetry services in the application builder.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings delegate.
         /// </param>
         /// <returns>
         ///     The current <see cref="WebApplicationBuilder"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public WebApplicationBuilder RegisterOpenTelemetry(Action<OpenTelemetryRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public WebApplicationBuilder RegisterOpenTelemetry(Action<OpenTelemetryRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.Logging.AddOpenTelemetry(options => {
-                if (!settings.OverrideOpenTelemetryLoggerConfiguration) {
+                if (!registration.OverrideOpenTelemetryLoggerConfiguration) {
                     options.IncludeFormattedMessage = true;
                     options.IncludeScopes = true;
                 }
 
-                settings.ConfigureOpenTelemetryLogger?.Invoke(options);
+                registration.ConfigureOpenTelemetryLogger?.Invoke(options);
             });
 
             // To add gRPC instrumentation for OpenTelemetry
@@ -44,32 +44,32 @@ public static class WebApplicationBuilderExtensions {
                               .AddOpenTelemetry()
 
                               .WithMetrics(metrics => {
-                                  if (!settings.OverrideMeterProviderConfiguration) {
-                                      metrics.AddMeter(settings.MetricMeters)
+                                  if (!registration.OverrideMeterProviderConfiguration) {
+                                      metrics.AddMeter(registration.MetricMeters)
                                              .AddHttpClientInstrumentation()
                                              .AddRuntimeInstrumentation()
                                              .AddAspNetCoreInstrumentation();
                                   }
 
-                                  settings.ConfigureMeterProvider?.Invoke(metrics);
+                                  registration.ConfigureMeterProvider?.Invoke(metrics);
                               })
 
                               .WithTracing(tracing => {
-                                  if (!settings.OverrideTracerProviderConfiguration) {
-                                      tracing.AddSource(settings.ActivitySources)
-                                             .AddHttpClientInstrumentation(settings.ConfigureHttpClientTraceInstrumentation)
-                                             .AddAspNetCoreInstrumentation(settings.ConfigureAspNetCoreTraceInstrumentation);
+                                  if (!registration.OverrideTracerProviderConfiguration) {
+                                      tracing.AddSource(registration.ActivitySources)
+                                             .AddHttpClientInstrumentation(registration.ConfigureHttpClientTraceInstrumentation)
+                                             .AddAspNetCoreInstrumentation(registration.ConfigureAspNetCoreTraceInstrumentation);
                                   }
 
-                                  settings.ConfigureTracerProvider?.Invoke(tracing);
+                                  registration.ConfigureTracerProvider?.Invoke(tracing);
                               })
 
                               .ConfigureResource(resources => {
-                                  if (!settings.OverrideResources) {
+                                  if (!registration.OverrideResources) {
                                       /* default resources configuration */
                                   }
 
-                                  settings.ConfigureResources?.Invoke(resources);
+                                  registration.ConfigureResources?.Invoke(resources);
                               });
 
             var openTelemetryEndpointUrl = self.Configuration[

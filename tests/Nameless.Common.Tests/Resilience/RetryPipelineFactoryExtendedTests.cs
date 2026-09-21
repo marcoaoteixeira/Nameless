@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Resilience;
@@ -75,8 +74,10 @@ public class RetryPipelineFactoryExtendedTests {
         );
 
         // assert
-        Assert.Null(exception);
-        Assert.Equal(4, attempts);
+        Assert.Multiple(
+            () => Assert.Null(exception),
+            () => Assert.Equal(4, attempts)
+        );
     }
 
     [Fact]
@@ -168,8 +169,10 @@ public class RetryPipelineFactoryExtendedTests {
         );
 
         // assert
-        Assert.Null(exception);
-        Assert.Equal(3, callCount);
+        Assert.Multiple(
+            () => Assert.Null(exception),
+            () => Assert.Equal(3, callCount)
+        );
     }
 
     [Fact]
@@ -211,8 +214,10 @@ public class RetryPipelineFactoryExtendedTests {
         );
 
         // assert — attempted exactly once; retry predicate returned false
-        Assert.NotNull(exception);
-        Assert.Equal(1, callCount);
+        Assert.Multiple(
+            () => Assert.NotNull(exception),
+            () => Assert.Equal(1, callCount)
+        );
     }
 
     [Fact]

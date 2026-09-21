@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.Web.Hosting.Configs;
 
@@ -22,6 +23,9 @@ public static class CommonConfig {
         ///             <item>
         ///                 <description>HttpContextAccessor</description>
         ///             </item>
+        ///             <item>
+        ///                 <description>TimeProvider (System)</description>
+        ///             </item>
         ///         </list>
         ///     </para>
         /// </summary>
@@ -42,6 +46,8 @@ public static class CommonConfig {
 
             // Adds the HttpContextAccessor service to access the current HTTP context.
             self.Services.AddHttpContextAccessor();
+
+            self.Services.TryAddSingleton(TimeProvider.System);
 
             return self;
         }

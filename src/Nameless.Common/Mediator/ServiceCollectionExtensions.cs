@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nameless.Helpers;
 using Nameless.Mediator.Events;
+using Nameless.Mediator.Pipelines;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 
@@ -18,68 +19,52 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers the mediator services.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The configuration action.
         /// </param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other
         ///     actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterMediator(Action<MediatorRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterMediator(Action<MediatorRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.TryAddTransient<IMediator, MediatorImpl>();
 
-            return self.RegisterEvents(settings)
-                       .RegisterRequests(settings)
-                       .RegisterStreams(settings);
+            return self.RegisterEvents(registration)
+                       .RegisterRequests(registration)
+                       .RegisterStreams(registration);
         }
 
-        private IServiceCollection RegisterEvents(MediatorRegistration settings) {
+        private IServiceCollection RegisterEvents(MediatorRegistration registration) {
             self.TryAddTransient<IEventHandlerInvoker, EventHandlerInvoker>();
-
-            var handlerService = typeof(IEventHandler<>);
-            var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
-                : settings.EventHandlers;
-
-            self.RegisterHandlers(handlerService, handlerImplementations);
+            self.RegisterHandlers(typeof(IEventHandler<>), registration.EventHandlers);
 
             return self;
         }
 
-        private IServiceCollection RegisterRequests(MediatorRegistration settings) {
+        private IServiceCollection RegisterRequests(MediatorRegistration registration) {
             self.TryAddTransient<IRequestHandlerInvoker, RequestHandlerInvoker>();
+            self.RegisterHandlers(typeof(IRequestHandler<,>), registration.RequestHandlers);
 
-            var handlerService = typeof(IRequestHandler<,>);
-            var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
-                : settings.RequestHandlers;
+            var pipelines = registration.UseValidateRequestPipelineBehavior
+                ? [typeof(ValidateRequestPipelineBehavior<,>), .. registration.RequestPipelineBehaviors]
+                : registration.RequestPipelineBehaviors;
 
-            self.RegisterHandlers(handlerService, handlerImplementations);
-
-            self.RegisterPipelineBehaviors(
-                service: typeof(IRequestPipelineBehavior<,>),
-                implementations: settings.RequestPipelineBehaviors
-            );
+            self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<,>), pipelines);
 
             return self;
         }
 
-        private IServiceCollection RegisterStreams(MediatorRegistration settings) {
+        private IServiceCollection RegisterStreams(MediatorRegistration registration) {
             self.TryAddTransient<IStreamHandlerInvoker, StreamHandlerInvoker>();
+            self.RegisterHandlers(typeof(IStreamHandler<,>), registration.StreamHandlers);
 
-            var handlerService = typeof(IStreamHandler<,>);
-            var handlerImplementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(handlerService, includeGenericTypeDefinition: true)
-                : settings.StreamHandlers;
+            var pipelines = registration.UseValidateStreamPipelineBehavior
+                ? [typeof(ValidateStreamPipelineBehavior<,>), .. registration.StreamPipelineBehaviors]
+                : registration.StreamPipelineBehaviors;
 
-            self.RegisterHandlers(handlerService, handlerImplementations);
-
-            self.RegisterPipelineBehaviors(
-                service: typeof(IStreamPipelineBehavior<,>),
-                implementations: settings.StreamPipelineBehaviors
-            );
+            self.RegisterPipelineBehaviors(typeof(IStreamPipelineBehavior<,>), pipelines);
 
             return self;
         }

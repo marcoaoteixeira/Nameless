@@ -7,7 +7,7 @@ namespace Nameless.EventSourcing.UpCasting;
 ///     next schema version, allowing the event store to keep persisted
 ///     events untouched while their CLR shape evolves.
 /// </summary>
-public interface IEventUpcaster {
+public interface IEventUpCaster {
     /// <summary>
     ///     Gets the stable name of the event type this upcaster applies
     ///     to, matching <see cref="EventTypeAttribute.Name"/>.

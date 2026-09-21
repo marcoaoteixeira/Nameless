@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Reporting;
 
@@ -32,8 +31,10 @@ public class ServiceCollectionExtensionsTests {
         var a = provider.GetRequiredService<IStatusReportingHub>();
         var b = provider.GetRequiredService<IStatusReportingHub>();
 
-        Assert.Same(a, b);
-        Assert.IsType<StatusReportingHub>(a);
+        Assert.Multiple(
+            () => Assert.Same(a, b),
+            () => Assert.IsType<StatusReportingHub>(a)
+        );
     }
 
     [Fact]

@@ -138,11 +138,10 @@ public class ResourcesHelperTests
         var actual = Record.Exception(() => ResourcesHelper.GetResource("../../../../../../something.dat", createCopy: false));
 
         // assert
-        Assert.Multiple(() =>
-        {
-            Assert.IsType<InvalidOperationException>(actual);
-            Assert.Contains("outside the root", actual.Message);
-        });
+        Assert.Multiple(
+            () => Assert.IsType<InvalidOperationException>(actual),
+            () => Assert.Contains("outside the root", actual.Message)
+        );
     }
 
     [Fact]

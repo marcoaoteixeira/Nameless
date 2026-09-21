@@ -1,5 +1,4 @@
 ﻿using Moq;
-using Nameless.Bootstrap;
 
 namespace Nameless.Testing.Tools.Mockers.Bootstrap;
 

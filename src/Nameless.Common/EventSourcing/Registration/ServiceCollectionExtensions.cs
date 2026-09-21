@@ -7,7 +7,6 @@ using Nameless.EventSourcing.EntityFrameworkCore;
 using Nameless.EventSourcing.Projections;
 using Nameless.EventSourcing.UpCasting;
 using Nameless.Helpers;
-using Nameless.Mediator.Events;
 
 namespace Nameless.EventSourcing.Registration;
 
@@ -32,7 +31,7 @@ public static class ServiceCollectionExtensions {
         ///     own <c>OnModelCreating</c>; this method does not register
         ///     <typeparamref name="TDbContext"/> itself.
         /// </remarks>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     An optional delegate to configure up-casters, projections,
         ///     or assembly scanning. If <see langword="null"/>, the
         ///     default configuration is used.
@@ -42,15 +41,19 @@ public static class ServiceCollectionExtensions {
         ///     other actions can be chained.
         /// </returns>
         public IServiceCollection RegisterEventSourcing<TDbContext>(
-            Action<EventSourcingRegistration>? registration = null)
+            Action<EventSourcingRegistration>? configure = null)
             where TDbContext : DbContext {
-            var settings = ActionHelper.FromDelegate(registration);
+            var registration = ActionHelper.FromDelegate(configure);
 
-            self.TryAddSingleton<IEventTypeCatalog>(_ =>
-                new EventTypeCatalog(settings.ExecuteAssemblyScan(typeof(IEvent))));
-
-            self.TryAddEnumerable(CreateServiceDescriptors<IEventUpcaster>(settings, settings.UpCasters));
-            self.TryAddEnumerable(CreateServiceDescriptors<IProjection>(settings, settings.Projections));
+            self.TryAddSingleton<IEventTypeCatalog>(_ => new EventTypeCatalog(registration.Events));
+            
+            self.TryAddEnumerable(registration.UpCasters.Select(
+                implementation => ServiceDescriptor.Transient(typeof(IEventUpCaster), implementation)
+            ));
+            
+            self.TryAddEnumerable(registration.Projections.Select(
+                implementation => ServiceDescriptor.Transient(typeof(IProjection), implementation)
+            ));
 
             self.TryAddSingleton<IEventSerializer, EventSerializer>();
             self.TryAddScoped<IEventStore, EventStore<TDbContext>>();
@@ -59,16 +62,5 @@ public static class ServiceCollectionExtensions {
 
             return self;
         }
-    }
-
-    private static IEnumerable<ServiceDescriptor> CreateServiceDescriptors<TService>(EventSourcingRegistration settings,
-        IReadOnlyCollection<Type> explicitTypes)
-        where TService : class {
-        var service = typeof(TService);
-        var implementations = settings.UseAssemblyScan
-            ? settings.ExecuteAssemblyScan(service)
-            : explicitTypes;
-
-        return implementations.Select(selector: implementation => ServiceDescriptor.Transient(service, implementation));
     }
 }

@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers health checks for the application.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings delegate.
         /// </param>
         /// <param name="configuration">
@@ -28,8 +28,8 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterHealthCheck(Action<HealthCheckRegistration>? registration = null, IConfiguration? configuration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterHealthCheck(Action<HealthCheckRegistration>? configure = null, IConfiguration? configuration = null) {
+            var registration = ActionHelper.FromDelegate(configure);
             var config = configuration?.GetOptions<HealthCheckConfiguration>() ?? new HealthCheckConfiguration();
 
             // Include the basic security for production environment
@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions {
             var builder = self.AddHealthChecks();
 
             // Add other health checks.
-            foreach (var kvp in settings.HealthChecks) {
+            foreach (var kvp in registration.HealthChecks) {
                 self.TryAddSingleton(kvp.Key);
 
                 builder.Add(new MS_HealthCheckRegistration(

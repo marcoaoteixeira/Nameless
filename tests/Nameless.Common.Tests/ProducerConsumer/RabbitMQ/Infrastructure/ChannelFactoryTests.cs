@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using RabbitMQ.Client;
 
@@ -79,8 +78,10 @@ public class ChannelFactoryTests {
         var channel = await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
 
         // assert
-        Assert.NotNull(channel);
-        Assert.Same(channelMock.Object, channel);
+        Assert.Multiple(
+            () => Assert.NotNull(channel),
+            () => Assert.Same(channelMock.Object, channel)
+        );
     }
 
     [Fact]

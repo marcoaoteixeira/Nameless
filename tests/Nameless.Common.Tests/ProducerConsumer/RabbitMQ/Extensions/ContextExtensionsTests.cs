@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Extensions;
@@ -461,12 +460,12 @@ public class ContextExtensionsTests {
         var props = ctx.CreateBasicProperties();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.NotNull(props);
-            Assert.Equal("test-app", props.AppId);
-            Assert.Equal("application/json", props.ContentType);
-            Assert.Equal("msg-123", props.MessageId);
-            Assert.True(props.Persistent);
-        });
+        Assert.Multiple(
+            () => Assert.NotNull(props),
+            () => Assert.Equal("test-app", props.AppId),
+            () => Assert.Equal("application/json", props.ContentType),
+            () => Assert.Equal("msg-123", props.MessageId),
+            () => Assert.True(props.Persistent)
+        );
     }
 }

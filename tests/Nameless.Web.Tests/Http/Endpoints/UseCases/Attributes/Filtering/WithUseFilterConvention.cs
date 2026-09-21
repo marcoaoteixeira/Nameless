@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Filtering;
@@ -43,19 +42,23 @@ public class WithUseFilterConvention {
     public void WhenEndpointClassMarkUseFilterWithGenericSyntax_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(UseFilterWithGenericSyntaxEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.UseFilterWithGenericSyntaxEndpoint", source);
-        Assert.Matches(@"UseFilterWithGenericSyntaxEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"UseFilterWithGenericSyntaxEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.AddEndpointFilter<global::Nameless\.Web\.Http\.Endpoint\.TestUseCases\.MyEndpointFilter>\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.UseFilterWithGenericSyntaxEndpoint", source),
+            () => Assert.Matches(@"UseFilterWithGenericSyntaxEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"UseFilterWithGenericSyntaxEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.AddEndpointFilter<global::Nameless\.Web\.Http\.Endpoint\.TestUseCases\.MyEndpointFilter>\(\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkUseFilterWithTypeofSyntax_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(UseFilterWithTypeofSyntaxEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.UseFilterWithTypeofSyntaxEndpoint", source);
-        Assert.Matches(@"UseFilterWithTypeofSyntaxEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"UseFilterWithTypeofSyntaxEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.AddEndpointFilter<global::Nameless\.Web\.Http\.Endpoint\.TestUseCases\.AnotherEndpointFilter>\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.UseFilterWithTypeofSyntaxEndpoint", source),
+            () => Assert.Matches(@"UseFilterWithTypeofSyntaxEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"UseFilterWithTypeofSyntaxEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.AddEndpointFilter<global::Nameless\.Web\.Http\.Endpoint\.TestUseCases\.AnotherEndpointFilter>\(\)", source)
+        );
     }
 }

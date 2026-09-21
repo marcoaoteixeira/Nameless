@@ -1,5 +1,4 @@
-﻿using Nameless.Testing.Tools.Attributes;
-using Nameless.Web.Http.Endpoints.Infrastructure;
+﻿using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Authorization;
 
@@ -23,9 +22,11 @@ public class WithAllowAnonymousConvention {
     public void WhenEndpointClassMarkAllowAnonymous_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.AllowAnonymousEndpoint", source);
-        Assert.Matches(@"AllowAnonymousEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"AllowAnonymousEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.AllowAnonymous\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.AllowAnonymousEndpoint", source),
+            () => Assert.Matches(@"AllowAnonymousEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"AllowAnonymousEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.AllowAnonymous\(\)", source)
+        );
     }
 }

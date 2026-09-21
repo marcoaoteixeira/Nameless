@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.RequestTimeout;
@@ -33,19 +32,23 @@ public class WithRequestTimeoutConvention {
     public void WhenEndpointClassMarkRequestTimeoutWithMilliseconds_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(RequestTimeoutWithMillisecondsEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.RequestTimeoutWithPolicyNameEndpoint", source);
-        Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.WithRequestTimeout\(timeout: TimeSpan.FromMilliseconds\(1234\)\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.RequestTimeoutWithPolicyNameEndpoint", source),
+            () => Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.WithRequestTimeout\(timeout: TimeSpan.FromMilliseconds\(1234\)\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkRequestTimeoutWithPolicyName_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(RequestTimeoutWithPolicyNameEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.RequestTimeoutWithPolicyNameEndpoint", source);
-        Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.WithRequestTimeout\(policyName: ""my-timeout-policy""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.RequestTimeoutWithPolicyNameEndpoint", source),
+            () => Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"RequestTimeoutWithPolicyNameEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.WithRequestTimeout\(policyName: ""my-timeout-policy""\)", source)
+        );
     }
 }

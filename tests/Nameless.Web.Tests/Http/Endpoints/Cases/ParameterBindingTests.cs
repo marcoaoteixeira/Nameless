@@ -112,12 +112,14 @@ public sealed class ParameterBindingTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromRoute]", generated);
-        Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromQuery]", generated);
-        Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromHeader]", generated);
-        Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromBody]", generated);
-        Assert.DoesNotContain("[global::Microsoft.AspNetCore.Http.AsParameters]", generated);
-        Assert.Contains("int id", generated);
+        Assert.Multiple(
+            () => Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromRoute]", generated),
+            () => Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromQuery]", generated),
+            () => Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromHeader]", generated),
+            () => Assert.DoesNotContain("[global::Microsoft.AspNetCore.Mvc.FromBody]", generated),
+            () => Assert.DoesNotContain("[global::Microsoft.AspNetCore.Http.AsParameters]", generated),
+            () => Assert.Contains("int id", generated)
+        );
     }
 
     [Fact]
@@ -163,9 +165,11 @@ public sealed class ParameterBindingTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromRoute]", generated);
-        Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromQuery]", generated);
-        Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromBody]", generated);
-        Assert.Contains("global::System.Threading.CancellationToken ct", generated);
+        Assert.Multiple(
+            () => Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromRoute]", generated),
+            () => Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromQuery]", generated),
+            () => Assert.Contains("[global::Microsoft.AspNetCore.Mvc.FromBody]", generated),
+            () => Assert.Contains("global::System.Threading.CancellationToken ct", generated)
+        );
     }
 }

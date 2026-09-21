@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions {
         /// </returns>
         public IServiceCollection RegisterCors(IConfiguration? configuration = null, bool includeDefaultPolicies = false) {
             self.AddCors(builder => {
-                var policies = configuration?.GetMultipleOptions<CorsPolicyOptions>() ?? [];
+                var policies = configuration?.GetAll<CorsPolicyOptions>() ?? [];
 
                 if (includeDefaultPolicies) { IncludeDefaultPolicies(policies);}
                 

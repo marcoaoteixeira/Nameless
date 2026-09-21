@@ -30,9 +30,9 @@ public class ResultExtensionsTests {
         Result<string> failure = Error.Missing("not found");
 
         // act & assert
-        Assert.Multiple(() => {
-            Assert.Equal(!success.Success, success.Failure);
-            Assert.Equal(!failure.Success, failure.Failure);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(!success.Success, success.Failure),
+            () => Assert.Equal(!failure.Success, failure.Failure)
+        );
     }
 }

@@ -1,6 +1,5 @@
 using Lucene.Net.Analysis.Standard;
 using Moq;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene;
 

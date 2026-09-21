@@ -79,8 +79,10 @@ public class WorkerConfigTests {
         await Task.Delay(200, ct);
 
         // assert: the background ExecuteTask is faulted with InvalidOperationException
-        Assert.NotNull(worker.ExecuteTask);
-        Assert.True(worker.ExecuteTask.IsFaulted);
+        Assert.Multiple(
+            () => Assert.NotNull(worker.ExecuteTask),
+            () => Assert.True(worker.ExecuteTask.IsFaulted)
+        );
         Assert.IsType<MissingConfigurationException>(
             worker.ExecuteTask.Exception!.InnerExceptions[0]
         );
@@ -107,8 +109,10 @@ public class WorkerConfigTests {
         await Task.Delay(200, ct);
 
         // assert: the background ExecuteTask is faulted with InvalidOperationException
-        Assert.NotNull(worker.ExecuteTask);
-        Assert.True(worker.ExecuteTask.IsFaulted);
+        Assert.Multiple(
+            () => Assert.NotNull(worker.ExecuteTask),
+            () => Assert.True(worker.ExecuteTask.IsFaulted)
+        );
         Assert.IsType<InvalidOperationException>(
             worker.ExecuteTask.Exception!.InnerExceptions[0]
         );

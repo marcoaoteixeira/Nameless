@@ -14,10 +14,10 @@ public class CompressTests {
         var entry = new FileEntry("/tmp/file.txt", "/archive/docs");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("/tmp/file.txt", entry.Path);
-            Assert.Equal("/archive/docs", entry.DirectoryPath);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("/tmp/file.txt", entry.Path),
+            () => Assert.Equal("/archive/docs", entry.DirectoryPath)
+        );
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class CompressTests {
     [Fact]
     public void CompressMetadata_IsFileAvailable_WhenFileExists_ReturnsTrue() {
         // arrange
-        var path = Path.GetTempFileName();
+        var path = SysPath.GetTempFileName();
         try {
             // act
             var meta = new CompressMetadata(path);
@@ -69,8 +69,8 @@ public class CompressTests {
     [Fact]
     public void DecompressMetadata_IsDirectoryAvailable_WhenDirectoryExists_ReturnsTrue() {
         // arrange
-        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(path);
+        var path = SysPath.Combine(SysPath.GetTempPath(), Guid.NewGuid().ToString());
+        SysDirectory.CreateDirectory(path);
         try {
             // act
             var meta = new DecompressMetadata(path);
@@ -78,7 +78,7 @@ public class CompressTests {
             // assert
             Assert.True(meta.IsDirectoryAvailable);
         } finally {
-            Directory.Delete(path);
+            SysDirectory.Delete(path);
         }
     }
 
@@ -117,7 +117,7 @@ public class CompressTests {
     [Fact]
     public void CompressRequest_IncludeFile_WhenFileExists_AddsToFiles() {
         // arrange
-        var tempFile = Path.GetTempFileName();
+        var tempFile = SysPath.GetTempFileName();
         try {
             var request = new CompressRequest("/output/archive.zip");
 
@@ -143,7 +143,7 @@ public class CompressTests {
     [Fact]
     public void CompressRequest_IncludeFile_ReturnsSameInstance() {
         // arrange
-        var tempFile = Path.GetTempFileName();
+        var tempFile = SysPath.GetTempFileName();
         try {
             var request = new CompressRequest("/output/archive.zip");
 
@@ -160,9 +160,9 @@ public class CompressTests {
     [Fact]
     public void CompressRequest_IncludeDirectory_WhenDirectoryExists_AddsFiles() {
         // arrange
-        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(dir);
-        var file = Path.Combine(dir, "test.txt");
+        var dir = SysPath.Combine(SysPath.GetTempPath(), Guid.NewGuid().ToString());
+        SysDirectory.CreateDirectory(dir);
+        var file = SysPath.Combine(dir, "test.txt");
         File.WriteAllText(file, "content");
         try {
             var request = new CompressRequest("/output/archive.zip");
@@ -174,7 +174,7 @@ public class CompressTests {
             Assert.NotEmpty(request.Files);
         } finally {
             File.Delete(file);
-            Directory.Delete(dir);
+            SysDirectory.Delete(dir);
         }
     }
 
@@ -235,10 +235,10 @@ public class CompressTests {
         CompressResponse response = Error.Failure("compress failed");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Single(response.Errors);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Single(response.Errors)
+        );
     }
 
     [Fact]
@@ -247,10 +247,10 @@ public class CompressTests {
         CompressResponse response = new[] { Error.Failure("err1"), Error.Failure("err2") };
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Equal(2, response.Errors.Length);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Equal(2, response.Errors.Length)
+        );
     }
 
     // --- DecompressResponse ---
@@ -273,10 +273,10 @@ public class CompressTests {
         DecompressResponse response = Error.Failure("decompress failed");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Single(response.Errors);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Single(response.Errors)
+        );
     }
 
     [Fact]

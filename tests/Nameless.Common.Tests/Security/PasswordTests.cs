@@ -39,8 +39,10 @@ public class PasswordTests {
         var args = new Arguments();
 
         // assert
-        Assert.Contains("0", args.Numerics);
-        Assert.Contains("9", args.Numerics);
+        Assert.Multiple(
+            () => Assert.Contains("0", args.Numerics),
+            () => Assert.Contains("9", args.Numerics)
+        );
     }
 
     // --- GeneratorExtensions.GenerateAsync ---

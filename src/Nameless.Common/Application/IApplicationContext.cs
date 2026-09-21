@@ -1,4 +1,4 @@
-﻿using Nameless.IO.Explorer;
+﻿using Nameless.IO;
 
 namespace Nameless.Application;
 
@@ -20,17 +20,29 @@ public interface IApplicationContext {
     ///     Gets the path to the application directory where all
     ///     application files reside.
     /// </summary>
-    string BaseDirectoryPath { get; }
+    string ApplicationDataDirectory { get; }
 
     /// <summary>
-    ///     Gets a <see cref="IFileExplorer"/> instance that is
-    ///     bounded to the application data directory, which contains
-    ///     the application data files.
+    ///     Gets a <see cref="IFileProvider"/> instance that is
+    ///     bounded to the application data directory.
     /// </summary>
-    IFileExplorer FileExplorer { get; }
+    IFileProvider ApplicationDataFileProvider { get; }
 
     /// <summary>
     ///     Gets the application version.
     /// </summary>
     string Version { get; }
+
+    /// <summary>
+    ///     Retrieves the environment variable associated with the specified
+    ///     key.
+    /// </summary>
+    /// <param name="key">
+    ///     The environment variable key.
+    /// </param>
+    /// <returns>
+    ///     If the environment variable is found, retrieves it; otherwise
+    ///     returns <see langword="null"/>.
+    /// </returns>
+    string? GetEnvironmentVariable(string key);
 }

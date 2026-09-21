@@ -41,7 +41,7 @@ public class RegistrationTests {
         var scanner = new ConcreteScanner();
 
         // act
-        scanner.IncludeAssemblyFrom<RegistrationTests>();
+        scanner.WithAssemblyFrom<RegistrationTests>();
 
         // assert
         Assert.Single(scanner.Assemblies);
@@ -57,7 +57,7 @@ public class RegistrationTests {
         };
 
         // act
-        scanner.IncludeAssemblies(assemblies);
+        scanner.WithAssemblies(assemblies);
 
         // assert
         Assert.Equal(2, scanner.Assemblies.Count);
@@ -69,7 +69,7 @@ public class RegistrationTests {
         var scanner = new ConcreteScanner();
 
         // act
-        var result = scanner.IncludeAssemblyFrom<RegistrationTests>();
+        var result = scanner.WithAssemblyFrom<RegistrationTests>();
 
         // assert
         Assert.Same(scanner, result);
@@ -79,16 +79,16 @@ public class RegistrationTests {
     public void ExecuteAssemblyScan_WithAssembly_FindsPublicImplementations() {
         // arrange
         var scanner = new ConcreteScanner();
-        scanner.IncludeAssemblyFrom<RegistrationTests>();
+        scanner.WithAssemblyFrom<RegistrationTests>();
 
         // act
-        var types = scanner.ExecuteAssemblyScan<IRegistrationTestMarker>();
+        var types = scanner.GetImplementations<IRegistrationTestMarker>();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Contains(typeof(IncludedScanType), types);
-            Assert.DoesNotContain(typeof(IgnoredScanType), types);
-        });
+        Assert.Multiple(
+            () => Assert.Contains(typeof(IncludedScanType), types),
+            () => Assert.DoesNotContain(typeof(IgnoredScanType), types)
+        );
     }
 
     // --- test doubles ---

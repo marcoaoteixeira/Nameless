@@ -1,3 +1,3 @@
-﻿namespace Nameless.Windows.Messaging.Impl;
+﻿namespace Nameless.Windows.Messaging;
 
 public record SnackBarMessage : Message;

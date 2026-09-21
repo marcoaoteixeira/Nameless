@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.RequestTimeout;
@@ -23,9 +22,11 @@ public class WithDisableRequestTimeoutConvention {
     public void WhenEndpointClassMarkDisableRequestTimeout_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.DisableRequestTimeoutEndpoint", source);
-        Assert.Matches(@"DisableRequestTimeoutEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"DisableRequestTimeoutEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.DisableRequestTimeout\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.DisableRequestTimeoutEndpoint", source),
+            () => Assert.Matches(@"DisableRequestTimeoutEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"DisableRequestTimeoutEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.DisableRequestTimeout\(\)", source)
+        );
     }
 }

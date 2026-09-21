@@ -54,8 +54,10 @@ public class CodeWriterTests
         }
 
         var code = writer.ToString();
-        Assert.Contains("inner {", code);
-        Assert.Contains("    body", code);
+        Assert.Multiple(
+            () => Assert.Contains("inner {", code),
+            () => Assert.Contains("    body", code)
+        );
         // closing brace must be at the outer level (no indent)
         Assert.Matches(@"(?m)^\}", code);
     }
@@ -81,7 +83,9 @@ public class CodeWriterTests
         writer.WriteLine("line2");
 
         var code = writer.GetCode();
-        Assert.Contains("line1", code);
-        Assert.Contains("line2", code);
+        Assert.Multiple(
+            () => Assert.Contains("line1", code),
+            () => Assert.Contains("line2", code)
+        );
     }
 }

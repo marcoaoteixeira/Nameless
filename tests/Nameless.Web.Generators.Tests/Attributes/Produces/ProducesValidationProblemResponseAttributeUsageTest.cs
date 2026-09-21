@@ -24,9 +24,11 @@ public class ProducesValidationProblemResponseAttributeUsageTest
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 400, contentType: ""application/problem\+json""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 400, contentType: ""application/problem\+json""\)", source)
+        );
     }
 
     [Fact]
@@ -48,8 +50,10 @@ public class ProducesValidationProblemResponseAttributeUsageTest
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 422,", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 422,", source)
+        );
     }
 }

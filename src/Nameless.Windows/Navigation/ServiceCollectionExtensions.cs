@@ -12,13 +12,13 @@ namespace Nameless.Windows.Navigation;
 /// </summary>
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
-        public IServiceCollection RegisterNavigation(Action<NavigationRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterNavigation(Action<NavigationRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.RegisterNavigationService();
-            self.RegisterNavigationWindow(settings);
-            self.RegisterNavigationViewItemProvider(settings);
-            self.RegisterNavigableViews(settings);
+            self.RegisterNavigationWindow(registration);
+            self.RegisterNavigationViewItemProvider(registration);
+            self.RegisterNavigableViews(registration);
 
             return self;
         }
@@ -29,11 +29,11 @@ public static class ServiceCollectionExtensions {
             self.TryAddSingleton<INavigationService, NavigationService>();
         }
 
-        private void RegisterNavigationWindow(NavigationRegistration settings) {
+        private void RegisterNavigationWindow(NavigationRegistration registration) {
             var service = typeof(INavigationWindow);
-            var implementation = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(service).SingleOrDefault()
-                : settings.NavigationWindow;
+            var implementation = registration.UseAssemblyScan
+                ? registration.ExecuteAssemblyScan(service).SingleOrDefault()
+                : registration.NavigationWindow;
 
             if (implementation is null) {
                 throw new InvalidOperationException(
@@ -44,17 +44,17 @@ public static class ServiceCollectionExtensions {
             self.TryAdd(ServiceDescriptor.Transient(service, implementation));
         }
 
-        private void RegisterNavigationViewItemProvider(NavigationRegistration settings) {
+        private void RegisterNavigationViewItemProvider(NavigationRegistration registration) {
             self.TryAddSingleton<INavigationViewItemProvider>(
-                new AutoDiscoverableNavigationViewItemProvider(settings.Assemblies)
+                new AutoDiscoverableNavigationViewItemProvider(registration.Assemblies)
             );
         }
 
-        private void RegisterNavigableViews(NavigationRegistration settings) {
+        private void RegisterNavigableViews(NavigationRegistration registration) {
             var service = typeof(INavigableView<>);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(service)
-                : settings.NavigationViews;
+            var implementations = registration.UseAssemblyScan
+                ? registration.ExecuteAssemblyScan(service)
+                : registration.NavigationViews;
 
             foreach (var implementation in implementations) {
                 var interfaces = implementation.GetInterfaces()

@@ -1,5 +1,5 @@
-﻿using Nameless.Bootstrap;
-using Nameless.Registration;
+﻿using Nameless.Registration;
+using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Hosting.Wrappers;
 
 namespace Nameless.Windows.Hosting.Configs;
@@ -26,7 +26,7 @@ public static class BootstrapConfig {
             if (settings.DisableBootstrap) { return self; }
 
             self.ConfigureServices((_, services) => services.RegisterBootstrap(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigureBootstrap,
                     settings.Assemblies
                 )

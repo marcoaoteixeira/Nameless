@@ -14,12 +14,29 @@ public abstract class AssemblyScanAware<TSelf> where TSelf : AssemblyScanAware<T
     /// <summary>
     ///     Whether it should use assembly scan to locate implementations.
     /// </summary>
-    public bool UseAssemblyScan { get; set; } = true;
+    public bool UseAssemblyScan { get; private set; } = true;
 
     /// <summary>
     ///     Gets the registered assemblies.
     /// </summary>
     public IReadOnlyCollection<Assembly> Assemblies => _assemblies;
+
+    /// <summary>
+    ///     Sets whether it should use assembly scan to locate the exported
+    ///     types from all defined assemblies.
+    /// </summary>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <returns>
+    ///     The current instance of <typeparamref name="TSelf"/> so other
+    ///     actions can be chained.
+    /// </returns>
+    public TSelf WithUseAssemblyScan(bool value) {
+        UseAssemblyScan = value;
+
+        return (TSelf)this;
+    }
 
     /// <summary>
     ///     Includes the assembly associated to the type.
@@ -30,8 +47,8 @@ public abstract class AssemblyScanAware<TSelf> where TSelf : AssemblyScanAware<T
     /// <returns>
     ///     The current <see cref="AssemblyScanAware{TSelf}"/> instance.
     /// </returns>
-    public TSelf IncludeAssemblyFrom<TType>() {
-        return IncludeAssemblies(typeof(TType).Assembly);
+    public TSelf WithAssemblyFrom<TType>() {
+        return WithAssemblies(typeof(TType).Assembly);
     }
 
     /// <summary>
@@ -43,38 +60,18 @@ public abstract class AssemblyScanAware<TSelf> where TSelf : AssemblyScanAware<T
     /// <returns>
     ///     The current <see cref="AssemblyScanAware{TSelf}"/> instance.
     /// </returns>
-    public TSelf IncludeAssemblies(params IEnumerable<Assembly> assemblies) {
+    public TSelf WithAssemblies(params IEnumerable<Assembly> assemblies) {
         foreach (var assembly in assemblies) {
             _assemblies.Add(assembly);
         }
 
         return (TSelf)this;
     }
-    
-    /// <summary>
-    ///     Executes the assembly scan over the included assemblies.
-    /// </summary>
-    /// <typeparam name="TType">
-    ///     The base type to scan for.
-    /// </typeparam>
-    /// <param name="includeGenericTypeDefinition">
-    ///     Whether it should include open generic types in the scan.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="IReadOnlyCollection{T}"/> of types that implements
-    ///     the <typeparamref name="TType"/>.
-    /// </returns>
-    public IReadOnlyCollection<Type> ExecuteAssemblyScan<TType>(bool includeGenericTypeDefinition = false) {
-        return ExecuteAssemblyScan(
-            typeof(TType),
-            includeGenericTypeDefinition
-        );
-    }
 
     /// <summary>
     ///     Executes the assembly scan over the included assemblies.
     /// </summary>
-    /// <param name="type">
+    /// <param name="service">
     ///     The base type to scan for.
     /// </param>
     /// <param name="includeGenericTypeDefinition">
@@ -82,14 +79,14 @@ public abstract class AssemblyScanAware<TSelf> where TSelf : AssemblyScanAware<T
     /// </param>
     /// <returns>
     ///     A <see cref="IReadOnlyCollection{T}"/> of types that implements
-    ///     the <paramref name="type"/>.
+    ///     the <paramref name="service"/>.
     /// </returns>
-    public IReadOnlyCollection<Type> ExecuteAssemblyScan(Type type, bool includeGenericTypeDefinition = false) {
+    protected Type[] ExecuteAssemblyScan(Type service, bool includeGenericTypeDefinition = false) {
         var assemblies = Assemblies.Count == 0
-            ? [typeof(AssemblyMarkerCommon).Assembly]
+            ? [typeof(AssemblyScanAware<>).Assembly]
             : Assemblies;
 
-        var result = assemblies.GetImplementations(type)
+        var result = assemblies.GetImplementations([service])
                                .Where(IgnoreAssemblyScanAttribute.IsNotPresent)
                                .Where(item => includeGenericTypeDefinition ? includeGenericTypeDefinition : !item.IsGenericTypeDefinition);
 

@@ -30,11 +30,11 @@ public class EnumerableExtensionsTests {
         items.Each((item, idx) => indexed.Add((item, idx)));
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(("a", 0), indexed[0]);
-            Assert.Equal(("b", 1), indexed[1]);
-            Assert.Equal(("c", 2), indexed[2]);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(("a", 0), indexed[0]),
+            () => Assert.Equal(("b", 1), indexed[1]),
+            () => Assert.Equal(("c", 2), indexed[2])
+        );
     }
 
     // ─── Non-generic Each(Action<object?>) ───────────────────────────────────
@@ -113,11 +113,11 @@ public class EnumerableExtensionsTests {
         var result = items.DistinctBy(s => s[0]).ToList();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(2, result.Count);
-            Assert.Contains("apple", result);
-            Assert.Contains("banana", result);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(2, result.Count),
+            () => Assert.Contains("apple", result),
+            () => Assert.Contains("banana", result)
+        );
     }
 
     // ─── WithIndex ───────────────────────────────────────────────────────────
@@ -131,10 +131,10 @@ public class EnumerableExtensionsTests {
         var result = items.WithIndex().ToList();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal((0, "a"), result[0]);
-            Assert.Equal((1, "b"), result[1]);
-            Assert.Equal((2, "c"), result[2]);
-        });
+        Assert.Multiple(
+            () => Assert.Equal((0, "a"), result[0]),
+            () => Assert.Equal((1, "b"), result[1]),
+            () => Assert.Equal((2, "c"), result[2])
+        );
     }
 }

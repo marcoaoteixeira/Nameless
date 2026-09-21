@@ -68,8 +68,10 @@ public class ContextTests {
         ctx["MyKey"] = "hello";
 
         // act & assert
-        Assert.Equal("hello", ctx["mykey"]);
-        Assert.Equal("hello", ctx["MYKEY"]);
+        Assert.Multiple(
+            () => Assert.Equal("hello", ctx["mykey"]),
+            () => Assert.Equal("hello", ctx["MYKEY"])
+        );
     }
 
     [Fact]

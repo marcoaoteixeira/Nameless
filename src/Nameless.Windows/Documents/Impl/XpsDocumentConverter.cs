@@ -3,19 +3,18 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Nameless.IO;
-using Nameless.IO.Explorer;
 using Nameless.Windows.Office;
 
 namespace Nameless.Windows.Documents;
 
 public class XpsDocumentConverter : IDocumentConverter {
-    private readonly IFileExplorer _fileSystemProvider;
+    private readonly IFileProvider _fileSystemProvider;
     private readonly IWordApplication _wordApplication;
     private readonly ILogger<XpsDocumentConverter> _logger;
 
     public DocumentType OutputType => DocumentType.XPS;
 
-    public XpsDocumentConverter(IFileExplorer fileSystemProvider, IWordApplication wordApplication, ILogger<XpsDocumentConverter> logger) {
+    public XpsDocumentConverter(IFileProvider fileSystemProvider, IWordApplication wordApplication, ILogger<XpsDocumentConverter> logger) {
         _fileSystemProvider = fileSystemProvider;
         _wordApplication = wordApplication;
         _logger = logger;

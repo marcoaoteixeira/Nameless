@@ -24,9 +24,11 @@ public class EnableCorsAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireCors\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireCors\(\)", source)
+        );
     }
 
     [Fact]
@@ -48,9 +50,11 @@ public class EnableCorsAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireCors\(""my-cors-policy""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireCors\(""my-cors-policy""\)", source)
+        );
     }
 
     [Fact]
@@ -72,8 +76,10 @@ public class EnableCorsAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireCors\(""named-cors-policy""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireCors\(""named-cors-policy""\)", source)
+        );
     }
 }

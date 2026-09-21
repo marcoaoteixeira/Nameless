@@ -7,11 +7,11 @@ namespace Nameless.Web.ErrorHandling;
 
 public static class ServiceCollectionExtensions {
     extension(IServiceCollection self) {
-        public IServiceCollection RegisterErrorHandling(Action<ErrorHandlingRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<IExceptionHandler>()
-                : settings.ExceptionHandlers;
+        public IServiceCollection RegisterErrorHandling(Action<ErrorHandlingRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
+            var implementations = registration.UseAssemblyScan
+                ? registration.GetImplementations<IExceptionHandler>()
+                : registration.ExceptionHandlers;
             var descriptions = implementations.Select(
                 implementation => ServiceDescriptor.Singleton(typeof(IExceptionHandler), implementation)
             );

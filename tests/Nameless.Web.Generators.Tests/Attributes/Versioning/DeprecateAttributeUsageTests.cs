@@ -24,10 +24,12 @@ public class DeprecateAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.AddOpenApiOperationTransformer\(", source);
-        Assert.Matches(@"op\.Deprecated = true", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.AddOpenApiOperationTransformer\(", source),
+            () => Assert.Matches(@"op\.Deprecated = true", source)
+        );
     }
 
     [Fact]
@@ -49,9 +51,11 @@ public class DeprecateAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"op\.Description = ""Use v2 instead\.""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"op\.Description = ""Use v2 instead\.""", source)
+        );
     }
 
     [Fact]
@@ -73,9 +77,11 @@ public class DeprecateAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.WithSunset\(sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.WithSunset\(sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source)
+        );
     }
 
     [Fact]
@@ -97,9 +103,11 @@ public class DeprecateAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source);
-        Assert.Matches(@"link: ""https://example\.com/migration""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"sunsetDate: ""Fri, 31 Dec 2027 23:59:59 GMT""", source),
+            () => Assert.Matches(@"link: ""https://example\.com/migration""", source)
+        );
     }
 }

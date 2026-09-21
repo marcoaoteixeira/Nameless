@@ -63,7 +63,7 @@ public static class CodeGeneratorHelper {
         );
         var generator = new AutoEndpointsGenerator();
 
-        // Mirrors what Directory.Build.targets / Nameless.Common.targets
+        // Mirrors what SystemDirectory.Build.targets / Nameless.Common.targets
         // do for a real consumer that opted in: expose UseAutoEndpoints as 
         // a compiler-visible build property so the generator's own
         // defense-in-depth check (see AutoEndpointsGenerator.Initialize) sees it.

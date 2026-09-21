@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
@@ -85,16 +84,6 @@ public class WebHostSettings {
     ///     Whether it should disable bootstrap services.
     /// </summary>
     public bool DisableBootstrap { get; set; }
-
-    /// <summary>
-    ///     Gets or sets a delegate to configure bootstrap.
-    /// </summary>
-    public Action<BootstrapRegistration>? ConfigureBootstrap { get; set; }
-
-    /// <summary>
-    ///     Gets or sets a delegate to configure bootstrap warmup.
-    /// </summary>
-    public Action<BootstrapOptions>? ConfigureBootstrapWarmup { get; set; }
 
     /// <summary>
     ///     Whether it should disable CORS services.
@@ -229,7 +218,7 @@ public class WebHostSettings {
     /// <summary>
     ///     Gets or sets a delegate for configure validation services.
     /// </summary>
-    public Action<ValidatorRegistration>? ConfigureValidation { get; set; }
+    public Action<FluentValidationValidatorRegistration>? ConfigureValidation { get; set; }
 
     /// <summary>
     ///     Whether it should disable Periodic Workers feature.

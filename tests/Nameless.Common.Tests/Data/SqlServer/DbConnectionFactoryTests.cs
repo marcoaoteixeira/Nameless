@@ -2,7 +2,6 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 
 namespace Nameless.Data.SqlServer;
@@ -52,8 +51,10 @@ public class DbConnectionFactoryTests {
         var connection = sut.CreateDbConnection();
 
         // assert
-        Assert.NotNull(connection);
-        Assert.Equal(ConnectionState.Closed, connection.State);
+        Assert.Multiple(
+            () => Assert.NotNull(connection),
+            () => Assert.Equal(ConnectionState.Closed, connection.State)
+        );
 
         connection.Dispose();
     }
@@ -73,8 +74,10 @@ public class DbConnectionFactoryTests {
         var connection = sut.CreateDbConnection();
 
         // assert
-        Assert.NotNull(connection);
-        Assert.Equal(ConnectionState.Closed, connection.State);
+        Assert.Multiple(
+            () => Assert.NotNull(connection),
+            () => Assert.Equal(ConnectionState.Closed, connection.State)
+        );
 
         connection.Dispose();
     }

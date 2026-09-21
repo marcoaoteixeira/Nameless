@@ -1,11 +1,10 @@
 ﻿using System.IO;
 using Nameless.IO;
-using Nameless.IO.Explorer;
 
 namespace Nameless.Windows;
 
 public static class FileSystemProviderExtensions {
-    extension(IFileExplorer self) {
+    extension(IFileProvider self) {
         public IDirectory GetBackupDirectory() {
             return self.InnerGetDirectory(
                 FolderStructure.BackupDirectoryName

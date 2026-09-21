@@ -11,8 +11,10 @@ public class EnumExtensionsTests {
         var attr = TestEnum.WithDescription.GetAttribute<DescriptionAttribute>();
 
         // assert
-        Assert.NotNull(attr);
-        Assert.Equal("Human-readable value", attr.Description);
+        Assert.Multiple(
+            () => Assert.NotNull(attr),
+            () => Assert.Equal("Human-readable value", attr.Description)
+        );
     }
 
     [Fact]

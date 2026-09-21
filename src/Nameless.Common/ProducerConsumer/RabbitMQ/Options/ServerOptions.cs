@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Nameless.Attributes;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
@@ -8,7 +7,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 ///     Represents the connection settings for a RabbitMQ server.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
-[ConfigurationSectionName("Server")]
 public record ServerOptions {
     private string DebuggerDisplayValue
         => UseCredentials
@@ -57,10 +55,10 @@ public record ServerOptions {
     /// <summary>
     ///     Gets or sets the SSL settings for the RabbitMQ connection.
     /// </summary>
-    public SslOptions Ssl { get; init; } = new();
+    public SslOptions? Ssl { get; init; }
 
     /// <summary>
     ///     Gets or sets the certificate settings for the RabbitMQ connection.
     /// </summary>
-    public CertificateOptions Certificate { get; init; } = new();
+    public CertificateOptions? Certificate { get; init; }
 }

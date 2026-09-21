@@ -12,19 +12,19 @@ public class PathHelperTests {
         var result = PathHelper.Normalize(Input);
 
         // assert
-        Assert.Equal($"a{Path.DirectorySeparatorChar}b{Path.DirectorySeparatorChar}c", result);
+        Assert.Equal($"a{SysPath.DirectorySeparatorChar}b{SysPath.DirectorySeparatorChar}c", result);
     }
 
     [Fact]
     public void Normalize_MixedSlashes_ReplacedWithDirectorySeparatorChar() {
         // arrange
-        var input = $"a{Path.AltDirectorySeparatorChar}b{Path.DirectorySeparatorChar}c";
+        var input = $"a{SysPath.AltDirectorySeparatorChar}b{SysPath.DirectorySeparatorChar}c";
 
         // act
         var result = PathHelper.Normalize(input);
 
         // assert
-        Assert.Equal($"a{Path.DirectorySeparatorChar}b{Path.DirectorySeparatorChar}c", result);
+        Assert.Equal($"a{SysPath.DirectorySeparatorChar}b{SysPath.DirectorySeparatorChar}c", result);
     }
 
     // ─── Sanitize ────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ public class PathHelperTests {
     [Fact]
     public void Sanitize_PathWithInvalidChars_ReplacesWithUnderscore() {
         // arrange
-        var invalidChar = Path.GetInvalidPathChars().First(c => c != '_');
+        var invalidChar = SysPath.GetInvalidPathChars().First(c => c != '_');
         var input = $"valid{invalidChar}path";
 
         // act
@@ -78,7 +78,7 @@ public class PathHelperTests {
     [Fact]
     public void Sanitize_ReplacementIsInvalidChar_ThrowsArgumentException() {
         // arrange
-        var invalidReplacement = Path.GetInvalidPathChars()[0];
+        var invalidReplacement = SysPath.GetInvalidPathChars()[0];
 
         // act & assert
         Assert.Throws<ArgumentException>(

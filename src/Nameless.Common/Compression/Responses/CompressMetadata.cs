@@ -11,5 +11,5 @@ public readonly record struct CompressMetadata(string FilePath) {
     ///     Whether the file specified by the current
     ///     file path exists or not.
     /// </summary>
-    public bool IsFileAvailable => File.Exists(FilePath);
+    public bool IsFileAvailable => SysFile.Exists(FilePath);
 }

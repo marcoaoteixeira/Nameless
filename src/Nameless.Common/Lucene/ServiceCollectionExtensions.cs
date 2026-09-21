@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers all the services required by Lucene.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings.
         /// </param>
         /// <param name="configuration">
@@ -28,50 +28,39 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterLucene(Action<LuceneRegistration>? registration = null, IConfiguration? configuration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterLucene(Action<LuceneRegistration>? configure = null, IConfiguration? configuration = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.ConfigureOptions<LuceneOptions>(configuration);
-            self.RegisterAnalyzerSelectors(settings);
+            self.RegisterAnalyzerSelectors(registration);
             self.TryAddSingleton<IAnalyzerProvider, AnalyzerProvider>();
             self.TryAddSingleton<IIndexProvider, IndexProvider>();
-            self.RegisterLuceneRepository(settings);
+            self.RegisterLuceneRepository(registration);
 
             return self;
         }
-        
-        private void RegisterAnalyzerSelectors(LuceneRegistration settings) {
-            var service = typeof(IAnalyzerSelector);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<IAnalyzerSelector>()
-                : settings.AnalyzerSelectors;
 
-            var descriptors = implementations.Select(
-                implementation => ServiceDescriptor.Singleton(service, implementation)
-            );
-
+        private void RegisterAnalyzerSelectors(LuceneRegistration registration) {
             // All analyzer selectors should be resolved by the same interface
             // IAnalyzerSelector, hence using TryAddEnumerable
-            self.TryAddEnumerable(descriptors);
+            self.TryAddEnumerable(registration.AnalyzerSelectors.Select(
+                implementation => ServiceDescriptor.Singleton(typeof(IAnalyzerSelector), implementation)
+            ));
         }
 
-        private void RegisterLuceneRepository(LuceneRegistration settings) {
-            if (!settings.UseRepository) { return; }
+        private void RegisterLuceneRepository(LuceneRegistration registration) {
+            if (!registration.UseRepository) { return; }
 
-            self.RegisterEntityMappings(settings);
+            self.RegisterEntityMappings(registration);
             self.TryAddTransient<IEntityDescriptorProvider, EntityDescriptorProvider>();
             self.TryAddTransient<IMapper, Mapper>();
             self.TryAddTransient<IRepository, RepositoryImpl>();
         }
 
-        private void RegisterEntityMappings(LuceneRegistration settings) {
+        private void RegisterEntityMappings(LuceneRegistration registration) {
             var service = typeof(IEntityMapping<>);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(typeof(IEntityMapping<>))
-                : settings.Mappings;
-
             var descriptors =
-                from mapping in implementations
+                from mapping in registration.Mappings
                 let interfaces = mapping.GetInterfacesThatCloses(service)
                 from @interface in interfaces
                 select ServiceDescriptor.Transient(@interface.FixTypeReference(), mapping);

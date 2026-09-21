@@ -12,10 +12,10 @@ public class ArrayExtensionsTests {
         var found = array.TryGetElementAt(index: 1, out var value);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(found);
-            Assert.Equal("b", value);
-        });
+        Assert.Multiple(
+            () => Assert.True(found),
+            () => Assert.Equal("b", value)
+        );
     }
 
     [Fact]
@@ -27,10 +27,10 @@ public class ArrayExtensionsTests {
         var found = array.TryGetElementAt(index: 0, out var value);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(found);
-            Assert.Null(value);
-        });
+        Assert.Multiple(
+            () => Assert.False(found),
+            () => Assert.Null(value)
+        );
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public class ArrayExtensionsTests {
         var found = array.TryGetElementAt(index: -1, out var value);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(found);
-            Assert.Null(value);
-        });
+        Assert.Multiple(
+            () => Assert.False(found),
+            () => Assert.Null(value)
+        );
     }
 
     [Fact]

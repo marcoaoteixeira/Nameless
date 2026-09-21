@@ -4,7 +4,6 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.Attributes;
 using Nameless.Configuration;
 
 namespace Nameless.Windows.Localization;

@@ -1,5 +1,4 @@
 using Lucene.Net.Search;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository;
 
@@ -465,8 +464,10 @@ public class QueryBuilderExtendedTests {
 
         // assert — with ExactMatch the clause should not be a PrefixQuery
         var boolQuery = Assert.IsType<BooleanQuery>(definition.Query);
-        Assert.Single(boolQuery.Clauses);
-        Assert.IsNotType<PrefixQuery>(boolQuery.Clauses[0].Query);
+        Assert.Multiple(
+            () => Assert.Single(boolQuery.Clauses),
+            () => Assert.IsNotType<PrefixQuery>(boolQuery.Clauses[0].Query)
+        );
     }
 
     [Fact]

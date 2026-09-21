@@ -24,8 +24,10 @@ public class EnableValidationAttributeUsageTest
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.WithRequestValidation\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.WithRequestValidation\(\)", source)
+        );
     }
 }

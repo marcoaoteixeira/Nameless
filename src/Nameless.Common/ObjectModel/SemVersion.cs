@@ -157,7 +157,7 @@ public sealed class SemVersion : IEquatable<SemVersion>, IComparable<SemVersion>
     }
 
     private static bool TryParseInternal(string value, [NotNullWhen(returnValue: true)] out SemVersion? result) {
-        var match = Infrastructure.RegexCache.SemVersionPattern().Match(value);
+        var match = RegexCache.SemVersionPattern().Match(value);
 
         if (!match.Success) {
             result = null;

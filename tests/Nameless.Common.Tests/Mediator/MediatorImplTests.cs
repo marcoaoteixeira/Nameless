@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Mediator;
 
@@ -51,10 +50,10 @@ public class MediatorImplTests {
         var second = await mediator.ExecuteAsync(new MediatorTestRequest(), CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("ok", first);
-            Assert.Equal("ok", second);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("ok", first),
+            () => Assert.Equal("ok", second)
+        );
     }
 
     [Fact]
@@ -88,10 +87,10 @@ public class MediatorImplTests {
         await mediator.PublishAsync(new MediatorTestEvent(), CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(1, MediatorTestEventHandler.InvocationCount);
-            Assert.Equal(1, MediatorSecondTestEventHandler.InvocationCount);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(1, MediatorTestEventHandler.InvocationCount),
+            () => Assert.Equal(1, MediatorSecondTestEventHandler.InvocationCount)
+        );
     }
 
     [Fact]

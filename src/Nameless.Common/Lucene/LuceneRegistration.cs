@@ -12,20 +12,37 @@ public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     private readonly HashSet<Type> _mappings = [];
 
     /// <summary>
-    ///     Gets or sets a value indicating whether the Lucene repository
-    ///     services should be registered.
+    ///     Gets whether it should use Lucene repository feature.
     /// </summary>
-    public bool UseRepository { get; set; }
+    public bool UseRepository { get; private set; }
 
     /// <summary>
     ///     Gets the registered analyzer selector types.
     /// </summary>
-    public IReadOnlyCollection<Type> AnalyzerSelectors => _analyzerSelectors;
+    public IReadOnlyCollection<Type> AnalyzerSelectors => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(IAnalyzerSelector))
+        : _analyzerSelectors;
 
     /// <summary>
     ///     Gets the registered entity mapping types.
     /// </summary>
-    public IReadOnlyCollection<Type> Mappings => _mappings;
+    public IReadOnlyCollection<Type> Mappings => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(IEntityMapping<>))
+        : _mappings;
+
+    /// <summary>
+    ///     Sets whether it should use Lucene repository feature.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>
+    ///     The current <see cref="LuceneRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    public LuceneRegistration WithUseRepository(bool value) {
+        UseRepository = value;
+
+        return this;
+    }
 
     /// <summary>
     ///     Registers an analyzer selector by generic type parameter.
@@ -35,9 +52,9 @@ public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     ///     The current <see cref="LuceneRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public LuceneRegistration RegisterAnalyzerSelector<TAnalyzerSelector>()
+    public LuceneRegistration WithAnalyzerSelector<TAnalyzerSelector>()
         where TAnalyzerSelector : IAnalyzerSelector {
-        return RegisterAnalyzerSelector(typeof(TAnalyzerSelector));
+        return WithAnalyzerSelector(typeof(TAnalyzerSelector));
     }
 
     /// <summary>
@@ -52,7 +69,7 @@ public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     ///     if <paramref name="type"/> is not assignable from <see cref="IAnalyzerSelector"/>,
     ///     is an open generic type, or is a non-concrete type.
     /// </exception>
-    public LuceneRegistration RegisterAnalyzerSelector(Type type) {
+    public LuceneRegistration WithAnalyzerSelector(Type type) {
         Throws.When.IsNotAssignableFrom(type, typeof(IAnalyzerSelector));
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNonConcreteType(type);
@@ -71,10 +88,10 @@ public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     ///     The current <see cref="LuceneRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public LuceneRegistration RegisterMappings<TEntityMapping, TEntity>()
+    public LuceneRegistration WithMapping<TEntityMapping, TEntity>()
         where TEntityMapping : IEntityMapping<TEntity>
         where TEntity : class, new() {
-        return RegisterMapping(typeof(TEntityMapping));
+        return WithMapping(typeof(TEntityMapping));
     }
 
     /// <summary>
@@ -89,7 +106,7 @@ public class LuceneRegistration : AssemblyScanAware<LuceneRegistration> {
     ///     if <paramref name="type"/> is not assignable from <see cref="IEntityMapping{TEntity}"/>,
     ///     is an open generic type, is a non-concrete type, or has no parameterless constructor.
     /// </exception>
-    public LuceneRegistration RegisterMapping(Type type) {
+    public LuceneRegistration WithMapping(Type type) {
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IEntityMapping<>));
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNonConcreteType(type);

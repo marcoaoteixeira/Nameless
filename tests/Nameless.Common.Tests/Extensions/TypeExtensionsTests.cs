@@ -165,10 +165,10 @@ public class TypeExtensionsTests {
         var result = typeof(List<>).GetPrettyName();
 
         // assert: contains the base name and angle brackets
-        Assert.Multiple(() => {
-            Assert.StartsWith("List<", result);
-            Assert.EndsWith(">", result);
-        });
+        Assert.Multiple(
+            () => Assert.StartsWith("List<", result),
+            () => Assert.EndsWith(">", result)
+        );
     }
 
     // ─── CanInstantiate ──────────────────────────────────────────────────────

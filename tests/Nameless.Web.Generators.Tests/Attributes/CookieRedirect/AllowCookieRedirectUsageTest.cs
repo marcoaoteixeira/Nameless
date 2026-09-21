@@ -22,8 +22,10 @@ public class AllowCookieRedirectUsageTest {
     public void WhenEndpointClassMarkAllowCookieRedirect_ThenEmitConvention() {
         var source = CodeGeneratorHelper.GetCodeBySourceType(_code).SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.AllowCookieRedirect\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.AllowCookieRedirect\(\)", source)
+        );
     }
 }

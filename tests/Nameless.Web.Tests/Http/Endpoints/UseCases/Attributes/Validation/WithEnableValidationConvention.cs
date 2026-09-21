@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Validation;
@@ -23,9 +22,11 @@ public class WithEnableValidationConvention {
     public void WhenEndpointClassMarkEnableValidation_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.EnableValidationEndpoint", source);
-        Assert.Matches(@"EnableValidationEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"EnableValidationEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.WithValidation\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.EnableValidationEndpoint", source),
+            () => Assert.Matches(@"EnableValidationEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"EnableValidationEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.WithValidation\(\)", source)
+        );
     }
 }

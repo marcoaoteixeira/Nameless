@@ -42,8 +42,19 @@ public static class TypeExtensions {
         /// <summary>
         ///     Can convert to <see cref="Nullable" /> type.
         /// </summary>
-        /// <returns><see langword="true"/>, if it can convert, otherwise, <see langword="false"/>.</returns>
+        /// <returns>
+        ///     <see langword="true"/>, if it can convert;
+        ///     otherwise, <see langword="false"/>.
+        /// </returns>
         public bool AllowNull => !self.IsValueType || self.IsNullable;
+
+        /// <summary>
+        ///     Gets a simple tag.
+        /// </summary>
+        /// <returns>
+        ///     A string representing the type tag.
+        /// </returns>
+        public string Tag => self.Name.ToSnakeCase().ToUpperInvariant();
 
         /// <summary>
         ///     Checks if the current open generic type is assignable from the <paramref name="type" />.
@@ -90,8 +101,8 @@ public static class TypeExtensions {
         /// <returns><see langword="true"/> if implements; otherwise <see langword="false"/>.</returns>
         public bool HasInterface(Type interfaceType) {
             return self.GetInterfaces()
-                       .Any(type =>
-                           interfaceType.IsAssignableFrom(type) || interfaceType.IsAssignableFromGeneric(type));
+                       .Any(type => interfaceType.IsAssignableFrom(type) ||
+                                    interfaceType.IsAssignableFromGeneric(type));
         }
 
         /// <summary>
@@ -120,7 +131,8 @@ public static class TypeExtensions {
         /// </summary>
         /// <returns><see langword="true"/> if the type has a parameterless constructor; otherwise <see langword="false"/>.</returns>
         public bool HasParameterlessConstructor() {
-            return self.GetConstructor(Type.EmptyTypes) is not null || self is { IsValueType: true, IsNullable: false };
+            return self.GetConstructor(Type.EmptyTypes) is not null ||
+                   self is { IsValueType: true, IsNullable: false };
         }
 
         /// <summary>

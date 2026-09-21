@@ -110,10 +110,10 @@ public class NullObjectTests {
         var found = NullDictionary<string, int>.Instance.TryGetValue("key", out var value);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(found);
-            Assert.Equal(default, value);
-        });
+        Assert.Multiple(
+            () => Assert.False(found),
+            () => Assert.Equal(default, value)
+        );
     }
 
     [Fact]

@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions {
         /// </returns>
         public IServiceCollection RegisterOutputCache(IConfiguration? configuration = null, bool includeDefaultPolicies = false) {
             self.AddOutputCache(builder => {
-                var policies = configuration?.GetMultipleOptions<OutputCachePolicyOptions>() ?? [];
+                var policies = configuration?.GetAll<OutputCachePolicyOptions>() ?? [];
 
                 if (includeDefaultPolicies) { IncludeDefaultPolicies(policies); }
 

@@ -44,9 +44,11 @@ public sealed class VersionedEndpointTests
     {
         var generated = GeneratorTestHelper.GetGeneratedSource(SingleVersionEndpoint);
 
-        Assert.Contains("NewApiVersionSet()", generated);
-        Assert.Contains("ReportApiVersions()", generated);
-        Assert.Contains(".Build()", generated);
+        Assert.Multiple(
+            () => Assert.Contains("NewApiVersionSet()", generated),
+            () => Assert.Contains("ReportApiVersions()", generated),
+            () => Assert.Contains(".Build()", generated)
+        );
     }
 
     [Fact]
@@ -79,8 +81,10 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated);
+        Assert.Multiple(
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated)
+        );
     }
 
     [Fact]
@@ -113,8 +117,10 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated);
+        Assert.Multiple(
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated)
+        );
     }
 
     [Fact]
@@ -162,8 +168,10 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.DoesNotContain("NewApiVersionSet()", generated);
-        Assert.DoesNotContain("WithApiVersionSet(", generated);
+        Assert.Multiple(
+            () => Assert.DoesNotContain("NewApiVersionSet()", generated),
+            () => Assert.DoesNotContain("WithApiVersionSet(", generated)
+        );
     }
 
     [Fact]
@@ -214,9 +222,11 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(3, 0))", generated);
+        Assert.Multiple(
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(3, 0))", generated)
+        );
     }
 
     [Fact]
@@ -265,10 +275,12 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("NewApiVersionSet()", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("WithApiVersionSet(", generated);
-        Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
+        Assert.Multiple(
+            () => Assert.Contains("NewApiVersionSet()", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("WithApiVersionSet(", generated),
+            () => Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated)
+        );
     }
 
     [Fact]
@@ -298,11 +310,13 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Equal(1, generated.Split("NewApiVersionSet()").Length - 1);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated);
-        Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated);
-        Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated);
+        Assert.Multiple(
+            () => Assert.Equal(1, generated.Split("NewApiVersionSet()").Length - 1),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("HasApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated),
+            () => Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(1, 0))", generated),
+            () => Assert.Contains("MapToApiVersion(new global::Asp.Versioning.ApiVersion(2, 0))", generated)
+        );
     }
 
     [Fact]
@@ -354,8 +368,10 @@ public sealed class VersionedEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.DoesNotContain("NewApiVersionSet()", generated);
-        Assert.DoesNotContain("WithApiVersionSet(", generated);
-        Assert.DoesNotContain("MapGroup(", generated);
+        Assert.Multiple(
+            () => Assert.DoesNotContain("NewApiVersionSet()", generated),
+            () => Assert.DoesNotContain("WithApiVersionSet(", generated),
+            () => Assert.DoesNotContain("MapGroup(", generated)
+        );
     }
 }

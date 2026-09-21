@@ -8,7 +8,6 @@ using Nameless.Windows.Configuration;
 using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;
-using Nameless.Windows.Messaging.Impl;
 using Nameless.Windows.SnackBar;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;

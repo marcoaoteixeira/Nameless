@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.ObjectModel;
 
@@ -35,8 +34,10 @@ public class DocumentCollectionTests {
         var list = sut.ToList();
 
         // Assert
-        Assert.Equal(2, list.Count);
-        Assert.Contains(list, d => d.GetField("id")?.GetStringValue() == "1");
-        Assert.Contains(list, d => d.GetField("id")?.GetStringValue() == "2");
+        Assert.Multiple(
+            () => Assert.Equal(2, list.Count),
+            () => Assert.Contains(list, d => d.GetField("id")?.GetStringValue() == "1"),
+            () => Assert.Contains(list, d => d.GetField("id")?.GetStringValue() == "2")
+        );
     }
 }

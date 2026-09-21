@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Produces;
@@ -105,79 +104,95 @@ public class WithProducesConvention {
     public void WhenEndpointClassMarkProducesWithGenericSyntaxDefaults_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithGenericSyntaxDefaultsEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxDefaultsEndpoint", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxDefaultsEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxDefaultsEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxDefaultsEndpoint", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxDefaultsEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxDefaultsEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithGenericSyntaxCustomStatusCode_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithGenericSyntaxCustomStatusCodeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxCustomStatusCodeEndpoint", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxCustomStatusCodeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxCustomStatusCodeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces<string>\(statusCode: 201, contentType: ""application/json"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxCustomStatusCodeEndpoint", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxCustomStatusCodeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxCustomStatusCodeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces<string>\(statusCode: 201, contentType: ""application/json"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithGenericSyntaxCustomContentType_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithGenericSyntaxCustomContentTypeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxCustomContentTypeEndpoint", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxCustomContentTypeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxCustomContentTypeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""text/plain"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxCustomContentTypeEndpoint", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxCustomContentTypeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxCustomContentTypeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""text/plain"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithGenericSyntaxAdditionalContentTypes_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithGenericSyntaxAdditionalContentTypesEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxAdditionalContentTypesEndpoint", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxAdditionalContentTypesEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithGenericSyntaxAdditionalContentTypesEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[""text/plain"", ""text/csv""\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithGenericSyntaxAdditionalContentTypesEndpoint", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxAdditionalContentTypesEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithGenericSyntaxAdditionalContentTypesEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces<string>\(statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[""text/plain"", ""text/csv""\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithTypeofSyntax_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithTypeofSyntaxEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxEndpoint", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxEndpoint", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithTypeofSyntaxCustomStatusCode_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithTypeofSyntaxCustomStatusCodeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxCustomStatusCodeEndpoint", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxCustomStatusCodeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxCustomStatusCodeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 201, contentType: ""application/json"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxCustomStatusCodeEndpoint", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxCustomStatusCodeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxCustomStatusCodeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 201, contentType: ""application/json"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithTypeofSyntaxCustomContentType_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithTypeofSyntaxCustomContentTypeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxCustomContentTypeEndpoint", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxCustomContentTypeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxCustomContentTypeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""text/plain"", additionalContentTypes: \[\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxCustomContentTypeEndpoint", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxCustomContentTypeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxCustomContentTypeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""text/plain"", additionalContentTypes: \[\]\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesWithTypeofSyntaxAdditionalContentTypes_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[""text/plain"", ""text/csv""\]\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesWithTypeofSyntaxAdditionalContentTypesEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.Produces\(responseType: typeof\(string\), statusCode: 200, contentType: ""application/json"", additionalContentTypes: \[""text/plain"", ""text/csv""\]\)", source)
+        );
     }
 }

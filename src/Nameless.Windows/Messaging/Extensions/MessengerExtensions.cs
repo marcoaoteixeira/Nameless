@@ -1,5 +1,4 @@
 ﻿using Nameless.Helpers;
-using Nameless.Windows.Messaging.Impl;
 
 namespace Nameless.Windows.Messaging;
 

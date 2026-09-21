@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Nameless.Diagnostics.ActivitySource;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Diagnostics;
 
@@ -44,8 +43,10 @@ public class ActivitySourceWrapperTests {
         sut.Dispose();
 
         // assert
-        Assert.NotNull(capturedSource);
-        Assert.Same(sut, capturedSource);
+        Assert.Multiple(
+            () => Assert.NotNull(capturedSource),
+            () => Assert.Same(sut, capturedSource)
+        );
     }
 
     [Fact]

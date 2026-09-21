@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
@@ -32,7 +31,7 @@ public class JsonMessageSerializerTests {
         var consumerCtx = new ConsumerContext();
 
         // act
-        var buffer = await sut.SerializeAsync(original, producerCtx, CancellationToken.None);
+        var buffer = await sut.Serialize(original, producerCtx, CancellationToken.None);
         var deserialized = await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
@@ -49,7 +48,7 @@ public class JsonMessageSerializerTests {
         var consumerCtx = new ConsumerContext();
 
         // act
-        var buffer = await sut.SerializeAsync("payload", producerCtx, CancellationToken.None);
+        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
@@ -66,7 +65,7 @@ public class JsonMessageSerializerTests {
         var consumerCtx = new ConsumerContext();
 
         // act
-        var buffer = await sut.SerializeAsync("payload", producerCtx, CancellationToken.None);
+        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
@@ -83,7 +82,7 @@ public class JsonMessageSerializerTests {
         var consumerCtx = new ConsumerContext();
 
         // act
-        var buffer = await sut.SerializeAsync("payload", producerCtx, CancellationToken.None);
+        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
         await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
 
         // assert
@@ -98,7 +97,7 @@ public class JsonMessageSerializerTests {
         var ctx = CreateContextWithMetadata();
 
         // act
-        var buffer = await sut.SerializeAsync("some message", ctx, CancellationToken.None);
+        var buffer = await sut.Serialize("some message", ctx, CancellationToken.None);
 
         // assert
         Assert.NotEmpty(buffer);

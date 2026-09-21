@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 
@@ -8,16 +8,20 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 /// Default implementation of <see cref="IChannelFactory"/> for creating RabbitMQ channels. 
 /// </summary>
 public sealed class ChannelFactory : IChannelFactory {
-    private readonly IConfiguration _configuration;
+    private readonly Dictionary<string, QueueOptions> _queues;
+
     private readonly IConnectionManager _connectionManager;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ChannelFactory"/>.
     /// </summary>
-    /// <param name="configuration">The configuration</param>
+    /// <param name="options">The RabbitMQ options</param>
     /// <param name="connectionManager">The connection manager.</param>
-    public ChannelFactory(IConfiguration configuration, IConnectionManager connectionManager) {
-        _configuration = configuration;
+    public ChannelFactory(IOptions<RabbitMQOptions> options, IConnectionManager connectionManager) {
+        _queues = options.Value.Queues.ToDictionary(
+            keySelector: queue => queue.Name,
+            elementSelector: queue => queue
+        );
         _connectionManager = connectionManager;
     }
 
@@ -48,37 +52,35 @@ public sealed class ChannelFactory : IChannelFactory {
     private async Task ConfigureChannelAsync(IChannel channel, string queueName, CancellationToken cancellationToken) {
         Throws.When.NullOrWhiteSpace(queueName);
 
-        var options = GetQueueOptions(queueName);
+        if (!_queues.TryGetValue(queueName, out var queue)) {
+            throw new MissingQueueConfigurationException(queueName);
+        }
 
-        await ConfigureQueueAsync(channel, queueName, options, cancellationToken).SkipContextSync();
-        await ConfigureQueueBindingsAsync(channel, queueName, options, cancellationToken).SkipContextSync();
-        await ConfigurePrefetchAsync(channel, cancellationToken).SkipContextSync();
+        await ConfigureQueueAsync(channel, queue, cancellationToken).SkipContextSync();
+        await ConfigureQueueBindingsAsync(channel, queue, cancellationToken).SkipContextSync();
+        await ConfigurePrefetchAsync(channel, queue.Prefetch, cancellationToken).SkipContextSync();
     }
 
-    private QueueOptions GetQueueOptions(string queueName) {
-        return _configuration.GetQueueOptions(queueName);
-    }
-
-    private static async Task ConfigureQueueAsync(IChannel channel, string queueName, QueueOptions options, CancellationToken cancellationToken) {
+    private static async Task ConfigureQueueAsync(IChannel channel, QueueOptions queue, CancellationToken cancellationToken) {
         var result = await channel.QueueDeclareAsync(
-            queueName,
-            options.Durable,
-            options.Exclusive,
-            options.AutoDelete,
-            options.Arguments,
+            queue.Name,
+            queue.Durable,
+            queue.Exclusive,
+            queue.AutoDelete,
+            queue.Arguments,
             cancellationToken: cancellationToken
         ).SkipContextSync();
 
         if (string.IsNullOrWhiteSpace(result.QueueName)) {
-            throw new InvalidOperationException($"Unable to declare named queue '{queueName}'.");
+            throw new InvalidOperationException($"Unable to declare named queue '{queue.Name}'.");
         }
     }
 
-    private static async Task ConfigureQueueBindingsAsync(IChannel channel, string queueName, QueueOptions options, CancellationToken cancellationToken) {
-        foreach (var binding in options.Bindings) {
+    private static async Task ConfigureQueueBindingsAsync(IChannel channel, QueueOptions queue, CancellationToken cancellationToken) {
+        foreach (var binding in queue.Bindings) {
             await channel.QueueBindAsync(
-                queueName,
-                options.ExchangeName,
+                queue.Name,
+                queue.ExchangeName,
                 binding.RoutingKey,
                 binding.Arguments,
                 cancellationToken: cancellationToken
@@ -86,10 +88,8 @@ public sealed class ChannelFactory : IChannelFactory {
         }
     }
 
-    private Task ConfigurePrefetchAsync(IChannel channel, CancellationToken cancellationToken) {
-        var prefetch = _configuration.GetPrefetchOptions();
-
-        if (!prefetch.IsEnabled) { return Task.CompletedTask; }
+    private static Task ConfigurePrefetchAsync(IChannel channel, PrefetchOptions? prefetch, CancellationToken cancellationToken) {
+        if (prefetch is null || !prefetch.IsEnabled) { return Task.CompletedTask; }
 
         return channel.BasicQosAsync(
             prefetch.Size,

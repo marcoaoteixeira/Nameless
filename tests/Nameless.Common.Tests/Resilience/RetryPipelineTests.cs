@@ -1,5 +1,4 @@
 using Polly;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Resilience;
 
@@ -70,8 +69,10 @@ public class RetryPipelineTests {
         }, CancellationToken.None);
 
         // assert
-        Assert.Equal(2, result);
-        Assert.Equal(2, attempts);
+        Assert.Multiple(
+            () => Assert.Equal(2, result),
+            () => Assert.Equal(2, attempts)
+        );
     }
 
     [Fact]

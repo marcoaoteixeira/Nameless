@@ -1,7 +1,6 @@
 using Moq;
 using Nameless.Mediator.Requests;
 using Nameless.ObjectModel;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 using Nameless.Validation;
 
@@ -39,10 +38,10 @@ public class ValidateRequestPipelineBehaviorTests {
         var result = await sut.HandleAsync(new ValidatePipelineTestRequest("Alice"), next, CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(nextCalled);
-            Assert.Equal("result", result);
-        });
+        Assert.Multiple(
+            () => Assert.True(nextCalled),
+            () => Assert.Equal("result", result)
+        );
     }
 
     [Fact]
@@ -75,10 +74,10 @@ public class ValidateRequestPipelineBehaviorTests {
         var result = await sut.HandleAsync(new ValidatePipelineTestRequest("Bob"), next, CancellationToken.None);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(nextCalled);
-            Assert.Equal("result", result);
-        });
+        Assert.Multiple(
+            () => Assert.True(nextCalled),
+            () => Assert.Equal("result", result)
+        );
     }
 
     [Fact]
@@ -117,10 +116,10 @@ public class ValidateRequestPipelineBehaviorTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(nextCalled);
-            Assert.IsType<ValidationException>(exception);
-        });
+        Assert.Multiple(
+            () => Assert.False(nextCalled),
+            () => Assert.IsType<ValidationException>(exception)
+        );
     }
 }
 

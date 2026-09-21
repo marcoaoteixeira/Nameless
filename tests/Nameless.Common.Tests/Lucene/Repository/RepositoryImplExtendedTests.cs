@@ -2,10 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
-using Nameless.IO.Explorer;
 using Nameless.Lucene.Repository.Mappings;
 using Nameless.Lucene.Repository.Requests;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Lucene.Repository;
@@ -29,8 +27,8 @@ public class RepositoryImplExtendedTests : IDisposable {
     }
 
     public RepositoryImplExtendedTests() {
-        _tempDir = Path.Combine(Path.GetTempPath(), $"lucene-repo-ext-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(_tempDir);
+        _tempDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-repo-ext-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(_tempDir);
 
         _index = CreateIndex(_tempDir);
 
@@ -56,8 +54,8 @@ public class RepositoryImplExtendedTests : IDisposable {
     public void Dispose() {
         _index.Dispose();
 
-        if (Directory.Exists(_tempDir)) {
-            Directory.Delete(_tempDir, recursive: true);
+        if (SysDirectory.Exists(_tempDir)) {
+            SysDirectory.Delete(_tempDir, recursive: true);
         }
     }
 
@@ -78,9 +76,11 @@ public class RepositoryImplExtendedTests : IDisposable {
         var found = await _sut.SearchAsync<RepoEntity>(searchRequest).ToListAsync(TestContext.Current.CancellationToken);
 
         // Assert — response.Value.Count reports the number of matched documents before deletion
-        Assert.True(response.Success);
-        Assert.Equal(1, response.Value.Count);
-        Assert.Empty(found);
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(1, response.Value.Count),
+            () => Assert.Empty(found)
+        );
     }
 
     [Fact]
@@ -102,8 +102,10 @@ public class RepositoryImplExtendedTests : IDisposable {
         var found = await _sut.SearchAsync<RepoEntity>(searchRequest).ToListAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.True(response.Success);
-        Assert.Empty(found);
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Empty(found)
+        );
     }
 
     [Fact]
@@ -123,9 +125,11 @@ public class RepositoryImplExtendedTests : IDisposable {
         var found = await _sut.SearchAsync<RepoEntity>(searchRequest).ToListAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.True(response.Success);
-        Assert.Single(found);
-        Assert.Equal("New Title", found[0].Title);
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Single(found),
+            () => Assert.Equal("New Title", found[0].Title)
+        );
     }
 
     [Fact]
@@ -163,8 +167,10 @@ public class RepositoryImplExtendedTests : IDisposable {
         var found = await _sut.SearchAsync<RepoEntity>(searchRequest).ToListAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Single(found);
-        Assert.Equal("Second", found[0].Title);
+        Assert.Multiple(
+            () => Assert.Single(found),
+            () => Assert.Equal("Second", found[0].Title)
+        );
     }
 
     private static Index CreateIndex(string tempDir) {
@@ -173,9 +179,9 @@ public class RepositoryImplExtendedTests : IDisposable {
 
         var dirMock = new Mock<IDirectory>();
         dirMock.Setup(d => d.Path).Returns(tempDir);
-        dirMock.Setup(d => d.Create()).Callback(() => Directory.CreateDirectory(tempDir));
+        dirMock.Setup(d => d.Create()).Callback(() => SysDirectory.CreateDirectory(tempDir));
 
-        var fileSystemMock = new Mock<IFileExplorer>();
+        var fileSystemMock = new Mock<IFileProvider>();
         fileSystemMock
             .Setup(fs => fs.GetDirectory(It.IsAny<string>()))
             .Returns(dirMock.Object);

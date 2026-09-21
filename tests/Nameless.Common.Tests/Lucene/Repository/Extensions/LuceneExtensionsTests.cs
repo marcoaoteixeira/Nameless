@@ -1,7 +1,6 @@
 using Lucene.Net.Documents;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Lucene.Repository.Mappings;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository.Extensions;
 
@@ -77,8 +76,10 @@ public class LuceneExtensionsTests {
         var nameProp = descriptor.Properties.SingleOrDefault(p => p.Name == "Name");
 
         // assert
-        Assert.NotNull(nameProp);
-        Assert.True(nameProp.Options.HasFlag(PropertyOptions.Store));
+        Assert.Multiple(
+            () => Assert.NotNull(nameProp),
+            () => Assert.True(nameProp.Options.HasFlag(PropertyOptions.Store))
+        );
     }
 
     // ── PropertyDescriptorExtensions.TryCreateField (via Mapper.Map entity→doc) ──
@@ -93,8 +94,10 @@ public class LuceneExtensionsTests {
         var doc = mapper.Map(entity);
 
         // assert
-        Assert.NotNull(doc.GetField("Name"));
-        Assert.Equal("Alice", doc.GetField("Name").GetStringValue());
+        Assert.Multiple(
+            () => Assert.NotNull(doc.GetField("Name")),
+            () => Assert.Equal("Alice", doc.GetField("Name").GetStringValue())
+        );
     }
 
     [Fact]
@@ -135,8 +138,10 @@ public class LuceneExtensionsTests {
 
         // assert
         var field = doc.GetField("Guid");
-        Assert.NotNull(field);
-        Assert.Equal(guid.ToString(), field.GetStringValue());
+        Assert.Multiple(
+            () => Assert.NotNull(field),
+            () => Assert.Equal(guid.ToString(), field.GetStringValue())
+        );
     }
 
     [Fact]
@@ -164,8 +169,10 @@ public class LuceneExtensionsTests {
 
         // assert
         var field = doc.GetField("DayOfWeek");
-        Assert.NotNull(field);
-        Assert.Equal(DayOfWeek.Wednesday.ToString(), field.GetStringValue());
+        Assert.Multiple(
+            () => Assert.NotNull(field),
+            () => Assert.Equal(DayOfWeek.Wednesday.ToString(), field.GetStringValue())
+        );
     }
 
     // ── LuceneDocumentExtensions.TryGetValue (via Mapper.Map doc→entity) ──────
@@ -232,12 +239,12 @@ public class LuceneExtensionsTests {
         var restored = mapper.Map<AllTypesEntity>(doc);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(original.Id, restored.Id);
-            Assert.Equal(original.Name, restored.Name);
-            Assert.Equal(original.Age, restored.Age);
-            Assert.Equal(original.IsActive, restored.IsActive);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(original.Id, restored.Id),
+            () => Assert.Equal(original.Name, restored.Name),
+            () => Assert.Equal(original.Age, restored.Age),
+            () => Assert.Equal(original.IsActive, restored.IsActive)
+        );
     }
 
     // ── EntityDescriptorExtensions.HasID (internal, exercised via public SetID) ──

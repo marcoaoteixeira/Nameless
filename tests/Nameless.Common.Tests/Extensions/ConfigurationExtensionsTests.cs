@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Configuration;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Extensions;
 
@@ -20,10 +20,10 @@ public class ConfigurationExtensionsTests {
         var opts = config.GetOptions<MyOptions>(sectionName: "MySection");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(42, opts.Value);
-            Assert.Equal("Hello", opts.Label);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(42, opts.Value),
+            () => Assert.Equal("Hello", opts.Label)
+        );
     }
 
     [Fact]
@@ -36,8 +36,10 @@ public class ConfigurationExtensionsTests {
         var opts = config.GetOptions<MyOptions>(sectionName: "MissingSection");
 
         // assert
-        Assert.NotNull(opts);
-        Assert.Equal(0, opts.Value);
+        Assert.Multiple(
+            () => Assert.NotNull(opts),
+            () => Assert.Equal(0, opts.Value)
+        );
     }
 
     [Fact]
@@ -71,14 +73,14 @@ public class ConfigurationExtensionsTests {
             .Build();
 
         // act
-        var opts = config.GetMultipleOptions<WorkerOptions>(sectionName: "Workers");
+        var opts = config.GetAll<WorkerOptions>(sectionName: "Workers");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(2, opts.Count);
-            Assert.True(opts["WorkerA"].IsEnabled);
-            Assert.False(opts["WorkerB"].IsEnabled);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(2, opts.Count),
+            () => Assert.True(opts["WorkerA"].IsEnabled),
+            () => Assert.False(opts["WorkerB"].IsEnabled)
+        );
     }
 
     // ─── test doubles ─────────────────────────────────────────────────────────

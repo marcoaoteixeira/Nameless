@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MailKit.Security;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Mailing.Mailkit;
 

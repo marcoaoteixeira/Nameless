@@ -1,4 +1,4 @@
-﻿using Nameless.Attributes;
+﻿using Nameless.Configuration;
 
 namespace Nameless.Web.OutputCache;
 

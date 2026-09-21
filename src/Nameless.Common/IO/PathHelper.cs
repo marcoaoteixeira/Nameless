@@ -7,7 +7,7 @@ namespace Nameless.IO;
 /// </summary>
 public static class PathHelper {
     private static readonly Regex InvalidPathCharsRegex = new(
-        pattern: $"[{Regex.Escape(new string(Path.GetInvalidPathChars()))}]",
+        pattern: $"[{Regex.Escape(new string(SysPath.GetInvalidPathChars()))}]",
         options: RegexOptions.Compiled,
         matchTimeout: TimeSpan.FromSeconds(1)
     );
@@ -27,8 +27,8 @@ public static class PathHelper {
     ///     </para>
     /// </remarks>
     public static string Normalize(string path) {
-        return path.Replace(Separators.ForwardSlash[index: 0], Path.DirectorySeparatorChar)
-                   .Replace(Separators.BackwardSlash[index: 0], Path.DirectorySeparatorChar);
+        return path.Replace(Separators.ForwardSlash[index: 0], SysPath.DirectorySeparatorChar)
+                   .Replace(Separators.BackwardSlash[index: 0], SysPath.DirectorySeparatorChar);
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ public static class PathHelper {
     public static string Sanitize(string value, char replacement = '_') {
         if (string.IsNullOrWhiteSpace(value)) { return value; }
 
-        if (Array.IndexOf(Path.GetInvalidPathChars(), replacement) >= 0) {
+        if (Array.IndexOf(SysPath.GetInvalidPathChars(), replacement) >= 0) {
             throw new ArgumentException(
                 message: $"Replacement character '{replacement}' is itself an invalid path character.",
                 paramName: nameof(replacement)

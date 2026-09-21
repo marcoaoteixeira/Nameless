@@ -10,8 +10,6 @@ namespace Nameless.Compression.Zip;
 ///     ZIP implementation of <see cref="ICompressor"/>.
 /// </summary>
 public class ZipCompressor : ICompressor {
-    private static string Tag { get; } = nameof(ZipCompressor).ToSnakeCase().ToUpperInvariant();
-
     private readonly ILogger<ZipCompressor> _logger;
 
     /// <summary>
@@ -26,13 +24,13 @@ public class ZipCompressor : ICompressor {
 
     /// <inheritdoc />
     public async Task<CompressResponse> CompressAsync(CompressRequest request, CancellationToken cancellationToken) {
-        var validation = ValidateCompressRequest(request);
+        var validation = ValidateCompressRequest(request).ToArray();
         if (validation.Length > 0) { return validation; }
 
         try
         {
-            Directory.CreateDirectory(
-                Path.GetDirectoryName(request.DestinationFilePath)!
+            SysDirectory.CreateDirectory(
+                SysPath.GetDirectoryName(request.DestinationFilePath)!
             );
 
             await using var zip = await ZipFile.OpenAsync(
@@ -42,9 +40,9 @@ public class ZipCompressor : ICompressor {
             );
 
             foreach (var file in request.Files) {
-                var fileName = Path.Combine(
+                var fileName = SysPath.Combine(
                     file.DirectoryPath ?? string.Empty,
-                    Path.GetFileName(file.Path)
+                    SysPath.GetFileName(file.Path)
                 );
 
                 await zip.CreateEntryFromFileAsync(
@@ -56,9 +54,9 @@ public class ZipCompressor : ICompressor {
             }
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex.Message, ex, Tag);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
 
         return new CompressMetadata(request.DestinationFilePath);
@@ -66,16 +64,16 @@ public class ZipCompressor : ICompressor {
 
     /// <inheritdoc />
     public async Task<DecompressResponse> DecompressAsync(DecompressRequest request, CancellationToken cancellationToken) {
-        var validation = ValidateDecompressRequest(request);
+        var validation = ValidateDecompressRequest(request).ToArray();
         if (validation.Length > 0) { return validation; }
 
         DirectoryInfo destinationDirectory;
 
         try {
             if (string.IsNullOrWhiteSpace(request.DestinationDirectoryPath)) {
-                var destinationDirectoryPath = Path.GetDirectoryName(request.SourceFilePath) ??
-                                               Path.GetPathRoot(request.SourceFilePath) ??
-                                               Path.GetTempPath();
+                var destinationDirectoryPath = SysPath.GetDirectoryName(request.SourceFilePath) ??
+                                               SysPath.GetPathRoot(request.SourceFilePath) ??
+                                               SysPath.GetTempPath();
 
                 destinationDirectory = new DirectoryInfo(destinationDirectoryPath);
             }
@@ -92,48 +90,40 @@ public class ZipCompressor : ICompressor {
 
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: Tag);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
 
         return new DecompressMetadata(destinationDirectory.FullName);
     }
 
-    private static Error[] ValidateCompressRequest(CompressRequest request) {
-        var result = new List<Error>();
-
+    private static IEnumerable<Error> ValidateCompressRequest(CompressRequest request) {
         if (string.IsNullOrWhiteSpace(request.DestinationFilePath)) {
-            result.Add(Error.Failure("Missing destination file path."));
+            yield return Error.Failure("Missing destination file path.");
         }
 
-        if (File.Exists(request.DestinationFilePath)) {
-            result.Add(Error.Failure("Destination file already exists."));
+        if (SysFile.Exists(request.DestinationFilePath)) {
+            yield return Error.Failure("Destination file already exists.");
         }
 
-        var destinationDirectoryPath = Path.GetDirectoryName(request.DestinationFilePath);
+        var destinationDirectoryPath = SysPath.GetDirectoryName(request.DestinationFilePath);
         if (string.IsNullOrWhiteSpace(destinationDirectoryPath)) {
-            result.Add(Error.Failure("Can't resolve destination directory path."));
+            yield return Error.Failure("Can't resolve destination directory path.");
         }
 
         if (!request.Files.Any()) {
-            result.Add(Error.Failure("No files to compress."));
+            yield return Error.Failure("No files to compress.");
         }
-
-        return [.. result];
     }
 
-    private static Error[] ValidateDecompressRequest(DecompressRequest request) {
-        var result = new List<Error>();
-
+    private static IEnumerable<Error> ValidateDecompressRequest(DecompressRequest request) {
         if (string.IsNullOrWhiteSpace(request.SourceFilePath)) {
-            result.Add(Error.Failure("Missing source file path."));
+            yield return Error.Failure("Missing source file path.");
         }
 
-        if (!File.Exists(request.SourceFilePath)) {
-            result.Add(Error.Failure("Source file does not exist."));
+        if (!SysFile.Exists(request.SourceFilePath)) {
+            yield return Error.Failure("Source file does not exist.");
         }
-
-        return [.. result];
     }
 }

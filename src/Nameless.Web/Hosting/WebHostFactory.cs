@@ -55,7 +55,6 @@ public sealed class WebHostFactory {
     ///     Initiates the synchronous execution of the application.
     /// </summary>
     public void Run() {
-        App.Warmup(Settings);
         App.Run();
     }
 
@@ -68,7 +67,6 @@ public sealed class WebHostFactory {
     ///     finished running.
     /// </returns>
     public async Task RunAsync() {
-        await App.WarmupAsync(Settings);
         await App.RunAsync();
     }
 
@@ -78,7 +76,6 @@ public sealed class WebHostFactory {
 
             .ConfigureAntiforgery(Settings)
             .ConfigureAuth(Settings)
-            .ConfigureBootstrap(Settings)
             .ConfigureCommon()
             .ConfigureCors(Settings)
             .ConfigureDataProtection(Settings)

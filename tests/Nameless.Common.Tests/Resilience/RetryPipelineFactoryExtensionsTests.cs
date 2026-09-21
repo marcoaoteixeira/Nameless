@@ -3,7 +3,7 @@ using Moq;
 namespace Nameless.Resilience;
 
 public class RetryPipelineFactoryExtensionsTests {
-    // --- Create(Action) ---
+    // --- GetOrCreate(Action) ---
 
     [Fact]
     public void Create_WithOnRetryAction_CallsCreateWithConfiguration() {

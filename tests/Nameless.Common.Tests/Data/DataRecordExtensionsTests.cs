@@ -149,10 +149,10 @@ public class DataRecordExtensionsTests {
         var found = record.TryGet<string>("Col", out var result);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(found);
-            Assert.Null(result);
-        });
+        Assert.Multiple(
+            () => Assert.False(found),
+            () => Assert.Null(result)
+        );
     }
 
     [Fact]
@@ -164,8 +164,10 @@ public class DataRecordExtensionsTests {
         var found = record.TryGet<string>("NonExistent", out var result);
 
         // assert
-        Assert.False(found);
-        Assert.Null(result);
+        Assert.Multiple(
+            () => Assert.False(found),
+            () => Assert.Null(result)
+        );
     }
 
     // --- GetChar ---

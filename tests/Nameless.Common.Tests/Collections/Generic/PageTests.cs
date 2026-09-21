@@ -1,5 +1,4 @@
-﻿using Nameless.Testing.Tools.Attributes;
-using Nameless.Testing.Tools.Objects;
+﻿using Nameless.Testing.Tools.Objects;
 using Nameless.Testing.Tools.Objects.Fakers;
 
 namespace Nameless.Collections.Generic;
@@ -26,17 +25,16 @@ public class PageTests
         var sut = new Page<Car>(set, Start, Limit, TotalCount);
 
         // assert
-        Assert.Multiple(() =>
-        {
-            Assert.Equal(set, sut);
-            Assert.Equal(Start, sut.Start);
-            Assert.Equal(Limit, sut.Limit);
-            Assert.Equal(Number, sut.Number);
-            Assert.Equal(TotalCount, sut.TotalCount);
-            Assert.Equal(PageCount, sut.PageCount);
-            Assert.Equal(HasPrevious, sut.HasPrevious);
-            Assert.Equal(HasNext, sut.HasNext);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(set, sut),
+            () => Assert.Equal(Start, sut.Start),
+            () => Assert.Equal(Limit, sut.Limit),
+            () => Assert.Equal(Number, sut.Number),
+            () => Assert.Equal(TotalCount, sut.TotalCount),
+            () => Assert.Equal(PageCount, sut.PageCount),
+            () => Assert.Equal(HasPrevious, sut.HasPrevious),
+            () => Assert.Equal(HasNext, sut.HasNext)
+        );
     }
 
     [Fact]

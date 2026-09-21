@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Produces;
@@ -33,19 +32,23 @@ public class WithProducesValidationProblemConvention {
     public void WhenEndpointClassMarkProducesValidationProblemWithDefaults_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesValidationProblemWithDefaultsEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesValidationProblemWithDefaultsEndpoint", source);
-        Assert.Matches(@"ProducesValidationProblemWithDefaultsEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesValidationProblemWithDefaultsEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 400, contentType: ""application/problem\+json""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesValidationProblemWithDefaultsEndpoint", source),
+            () => Assert.Matches(@"ProducesValidationProblemWithDefaultsEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesValidationProblemWithDefaultsEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 400, contentType: ""application/problem\+json""\)", source)
+        );
     }
 
     [Fact]
     public void WhenEndpointClassMarkProducesValidationProblemWithCustomStatusCode_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(ProducesValidationProblemWithCustomStatusCodeEndpoint);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesValidationProblemWithCustomStatusCodeEndpoint", source);
-        Assert.Matches(@"ProducesValidationProblemWithCustomStatusCodeEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"ProducesValidationProblemWithCustomStatusCodeEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 422, contentType: ""application/problem\+json""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.ProducesValidationProblemWithCustomStatusCodeEndpoint", source),
+            () => Assert.Matches(@"ProducesValidationProblemWithCustomStatusCodeEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"ProducesValidationProblemWithCustomStatusCodeEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.ProducesValidationProblem\(statusCode: 422, contentType: ""application/problem\+json""\)", source)
+        );
     }
 }

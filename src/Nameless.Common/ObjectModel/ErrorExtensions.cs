@@ -7,17 +7,17 @@ public static class ErrorExtensions {
     extension(Error) {
         /// <summary>
         ///     Creates an <see cref="Error"/> informing about the current
-        ///     operation cancellation.
+        ///     operation cancellation. Message defaults to
+        ///     <c>Operation was canceled unexpectedly.</c>
         /// </summary>
-        /// <param name="message">
-        ///     The message, if not provided the default message:
-        ///     <c>Operation was cancelled unexpectedly.</c> will be used.
+        /// <param name="exception">
+        ///     The operation canceled exception.
         /// </param>
         /// <returns>
         ///     An <see cref="Error"/> (Conflict) instance.
         /// </returns>
-        public static Error OperationCancelled(string? message = null) {
-            return Error.Conflict(message ?? "Operation was cancelled unexpectedly.");
+        public static Error OperationCanceled(OperationCanceledException? exception = null) {
+            return Error.Failure("Operation was canceled unexpectedly.", exception: exception);
         }
     }
 

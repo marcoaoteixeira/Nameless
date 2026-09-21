@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nameless.Bootstrap;
 using Nameless.Logging.Serilog;
 using Nameless.Lucene;
 using Nameless.Mediator;
 using Nameless.Validation.FluentValidation;
+using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Documents;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
@@ -67,7 +67,7 @@ public sealed class WinHostSettings {
     public bool DisableTaskRunner { get; set; }
     
     public bool DisableValidator { get; set; }
-    public Action<ValidatorRegistration>? ConfigureValidator { get; set; }
+    public Action<FluentValidationValidatorRegistration>? ConfigureValidator { get; set; }
     
     public bool DisableViewModels { get; set; }
     public Action<ViewModelRegistration>? ConfigureViewModel { get; set; }

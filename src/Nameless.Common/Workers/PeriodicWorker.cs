@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nameless.Attributes;
-using Nameless.Configuration;
 using Nameless.Reporting;
 
 namespace Nameless.Workers;
@@ -14,7 +12,6 @@ public abstract class PeriodicWorker : BackgroundService {
     private readonly IConfiguration _configuration;
     private readonly IStatusReporter _statusReporter;
     private readonly Lazy<PeriodicWorkerOptions> _options;
-    private readonly Lazy<string> _logTag;
 
     private bool _disposed;
 
@@ -29,8 +26,6 @@ public abstract class PeriodicWorker : BackgroundService {
     protected ILogger Logger { get; }
 
     private PeriodicWorkerOptions Options => _options.Value;
-
-    private string LogTag => _logTag.Value;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="PeriodicWorker"/> class.
@@ -50,43 +45,44 @@ public abstract class PeriodicWorker : BackgroundService {
         Logger = logger;
 
         _options = new Lazy<PeriodicWorkerOptions>(GetOptions);
-        _logTag = new Lazy<string>(() => GetType().Name.ToSnakeCase().ToUpperInvariant());
     }
 
     /// <inheritdoc />
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken) {
         if (Options.IsDisabled) { return; }
 
+        var tag = GetType().Tag;
+
         using var timer = new PeriodicTimer(Options.Interval);
         
         try {
             _statusReporter.Idle(this);
 
-            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Idle, tag: LogTag);
+            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Idle, tag);
 
             while (await timer.WaitForNextTickAsync(stoppingToken)) {
                 _statusReporter.Running(this);
 
-                Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Running, tag: LogTag);
+                Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Running, tag);
 
                 await DoWorkAsync(stoppingToken);
 
                 _statusReporter.Idle(this);
 
-                Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Idle, tag: LogTag);
+                Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Idle, tag);
             }
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException ex) {
             _statusReporter.Cancelled(this);
 
-            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Stopped, tag: LogTag);
-            CommonLog.OperationCancelled(Logger, tag: LogTag);
+            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Stopped, tag);
+            CommonLog.Info(Logger, ex.Message, tag);
         }
         catch (Exception ex) {
             _statusReporter.Fault(ex);
 
-            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Faulted, tag: LogTag);
-            CommonLog.Error(Logger, ex, tag: LogTag);
+            Log.StatusChange(Logger, Name, PeriodicWorkerStatus.Faulted, tag);
+            CommonLog.Error(Logger, ex.Message, ex, tag);
 
             throw;
         }
@@ -133,13 +129,7 @@ public abstract class PeriodicWorker : BackgroundService {
 
     private PeriodicWorkerOptions GetOptions() {
         var options = _configuration.GetSection<PeriodicWorkerOptions>()
-                                    .GetOptions<PeriodicWorkerOptions>(Name);
-
-        if (options is null) {
-            throw new MissingConfigurationException(
-                section: $"{ConfigurationSectionNameAttribute.GetSectionName<PeriodicWorkerOptions>()}:{Name}"
-            );
-        }
+                                    .GetOrThrow<PeriodicWorkerOptions>();
 
         if (options.Interval <= TimeSpan.Zero) {
             throw new InvalidOperationException(

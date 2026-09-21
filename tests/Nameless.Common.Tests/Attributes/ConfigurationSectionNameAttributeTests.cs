@@ -1,3 +1,5 @@
+using Nameless.Configuration;
+
 namespace Nameless.Attributes;
 
 public class ConfigurationSectionNameAttributeTests {

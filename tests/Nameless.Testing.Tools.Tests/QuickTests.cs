@@ -19,10 +19,9 @@ public class QuickTests
         var actual = Quick.Mock<IPrintService>();
 
         // assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(actual);
-            Assert.IsType<InterfaceProxy>(actual, exactMatch: false);
-        });
+        Assert.Multiple(
+            () => Assert.NotNull(actual),
+            () => Assert.IsType<InterfaceProxy>(actual, exactMatch: false)
+        );
     }
 }

@@ -8,6 +8,11 @@ namespace Nameless.EntityFrameworkCore;
 /// </summary>
 public interface IDatabaseSeeder {
     /// <summary>
+    ///     Gets the order in which the database seeder must be executed.
+    /// </summary>
+    int Order { get; }
+
+    /// <summary>
     ///     Asynchronously seeds the database.
     /// </summary>
     /// <param name="dbContext">The database context.</param>

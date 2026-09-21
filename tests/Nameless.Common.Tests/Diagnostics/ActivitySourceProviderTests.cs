@@ -1,5 +1,4 @@
 using Nameless.Diagnostics.ActivitySource;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Diagnostics;
 

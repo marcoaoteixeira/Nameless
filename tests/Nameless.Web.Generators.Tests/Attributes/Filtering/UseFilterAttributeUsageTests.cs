@@ -29,9 +29,11 @@ public class UseFilterAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.AddEndpointFilter<.*SampleFilter>\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.AddEndpointFilter<.*SampleFilter>\(\)", source)
+        );
     }
 
     [Fact]
@@ -58,8 +60,10 @@ public class UseFilterAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.AddEndpointFilter<.*SampleFilter>\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.AddEndpointFilter<.*SampleFilter>\(\)", source)
+        );
     }
 }

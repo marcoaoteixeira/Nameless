@@ -29,8 +29,7 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="provider"/> is <see langword="null"/>.
     /// </exception>
-    public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider,
-        [EnumeratorCancellation] CancellationToken cancellationToken) {
+    public override async IAsyncEnumerable<TResponse> HandleAsync(IStream<TResponse> request, IServiceProvider provider, [EnumeratorCancellation] CancellationToken cancellationToken) {
         var items = provider.GetServices<IStreamPipelineBehavior<TRequest, TResponse>>()
                             .Reverse()
                             .Aggregate(

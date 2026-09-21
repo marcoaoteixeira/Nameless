@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Web.Security;
 

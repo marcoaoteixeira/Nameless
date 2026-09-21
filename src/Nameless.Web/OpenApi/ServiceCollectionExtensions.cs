@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions {
         ///     Otherwise, each provided document option is registered
         ///     individually.
         /// </remarks>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     An action that configures the OpenAPI registration settings,
         ///     including document options for the API. Cannot be null.
         /// </param>
@@ -29,16 +29,16 @@ public static class ServiceCollectionExtensions {
         ///     The current instance of the <see cref="IServiceCollection"/>
         ///     so other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterOpenApi(Action<OpenApiRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterOpenApi(Action<OpenApiRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
-            if (settings.DocumentOptions.Count == 0) {
+            if (registration.DocumentOptions.Count == 0) {
                 self.AddOpenApi();
 
                 return self;
             }
 
-            foreach (var document in settings.DocumentOptions) {
+            foreach (var document in registration.DocumentOptions) {
                 if (string.IsNullOrWhiteSpace(document.Key)) { self.AddOpenApi(document.Value); }
                 else { self.AddOpenApi(document.Key, document.Value); }
             }

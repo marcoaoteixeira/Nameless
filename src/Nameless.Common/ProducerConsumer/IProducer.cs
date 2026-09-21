@@ -10,8 +10,8 @@ public interface IProducer {
     /// <param name="topic">
     ///     The topic.
     /// </param>
-    /// <param name="message">
-    ///     The message.
+    /// <param name="value">
+    ///     The value.
     /// </param>
     /// <param name="context">
     ///     The producer context.
@@ -22,5 +22,5 @@ public interface IProducer {
     /// <returns>
     ///     A <see cref="Task"/> representing the asynchronous execution.
     /// </returns>
-    Task ProduceAsync(string topic, object message, ProducerContext context, CancellationToken cancellationToken);
+    Task ProduceAsync<T>(string topic, T value, ProducerContext context, CancellationToken cancellationToken);
 }

@@ -111,10 +111,10 @@ public class ResultTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(successCalled);
-            Assert.False(failureCalled);
-        });
+        Assert.Multiple(
+            () => Assert.True(successCalled),
+            () => Assert.False(failureCalled)
+        );
     }
 
     [Fact]
@@ -131,10 +131,10 @@ public class ResultTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(successCalled);
-            Assert.True(failureCalled);
-        });
+        Assert.Multiple(
+            () => Assert.False(successCalled),
+            () => Assert.True(failureCalled)
+        );
     }
 
     // ─── Match(Func, Func) ───────────────────────────────────────────────────

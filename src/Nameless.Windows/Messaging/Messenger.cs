@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 
-namespace Nameless.Windows.Messaging.Impl;
+namespace Nameless.Windows.Messaging;
 
 public class Messenger : IMessenger {
     private readonly IMvvmMessenger _messenger;

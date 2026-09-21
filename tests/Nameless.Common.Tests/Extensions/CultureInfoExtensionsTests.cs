@@ -14,10 +14,10 @@ public class CultureInfoExtensionsTests {
         var parents = culture.GetParents().ToList();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.NotEmpty(parents);
-            Assert.Contains(parents, c => c.Name == "en-US");
-        });
+        Assert.Multiple(
+            () => Assert.NotEmpty(parents),
+            () => Assert.Contains(parents, c => c.Name == "en-US")
+        );
     }
 
     [Fact]
@@ -41,7 +41,9 @@ public class CultureInfoExtensionsTests {
         var parents = culture.GetParents().ToList();
 
         // assert
-        Assert.Single(parents);
-        Assert.Equal("en", parents[0].Name);
+        Assert.Multiple(
+            () => Assert.Single(parents),
+            () => Assert.Equal("en", parents[0].Name)
+        );
     }
 }

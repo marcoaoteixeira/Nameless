@@ -24,9 +24,11 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.CacheOutput\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.CacheOutput\(\)", source)
+        );
     }
 
     [Fact]
@@ -48,9 +50,11 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.CacheOutput\(policy => policy\.NoCache\(\)\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.CacheOutput\(policy => policy\.NoCache\(\)\)", source)
+        );
     }
 
     [Fact]
@@ -72,9 +76,11 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.CacheOutput\(""my-cache-policy""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.CacheOutput\(""my-cache-policy""\)", source)
+        );
     }
 
     [Fact]
@@ -96,11 +102,13 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.CacheOutput\(policy =>", source);
-        Assert.Matches(@"policy\.Cache\(\)", source);
-        Assert.Matches(@"policy\.Expire\(TimeSpan\.FromSeconds\(60\)\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.CacheOutput\(policy =>", source),
+            () => Assert.Matches(@"policy\.Cache\(\)", source),
+            () => Assert.Matches(@"policy\.Expire\(TimeSpan\.FromSeconds\(60\)\)", source)
+        );
     }
 
     [Fact]
@@ -122,9 +130,11 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"policy\.SetVaryByQuery\(""page"", ""size""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"policy\.SetVaryByQuery\(""page"", ""size""\)", source)
+        );
     }
 
     [Fact]
@@ -146,9 +156,11 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"policy\.SetVaryByHeader\(""Accept-Language""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"policy\.SetVaryByHeader\(""Accept-Language""\)", source)
+        );
     }
 
     [Fact]
@@ -170,8 +182,10 @@ public class UseOutputCacheAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"policy\.Tag\(""products""\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"policy\.Tag\(""products""\)", source)
+        );
     }
 }

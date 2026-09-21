@@ -17,11 +17,11 @@ public class UnionTests {
         Union<string, int> sw = "hello";
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(sw.IsValue0);
-            Assert.False(sw.IsValue1);
-            Assert.Equal(0, sw.Index);
-        });
+        Assert.Multiple(
+            () => Assert.True(sw.IsValue0),
+            () => Assert.False(sw.IsValue1),
+            () => Assert.Equal(0, sw.Index)
+        );
     }
 
     [Fact]
@@ -41,11 +41,11 @@ public class UnionTests {
         Union<string, int> sw = 42;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(sw.IsValue1);
-            Assert.False(sw.IsValue0);
-            Assert.Equal(1, sw.Index);
-        });
+        Assert.Multiple(
+            () => Assert.True(sw.IsValue1),
+            () => Assert.False(sw.IsValue0),
+            () => Assert.Equal(1, sw.Index)
+        );
     }
 
     [Fact]
@@ -93,10 +93,10 @@ public class UnionTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(value0Called);
-            Assert.False(value1Called);
-        });
+        Assert.Multiple(
+            () => Assert.True(value0Called),
+            () => Assert.False(value1Called)
+        );
     }
 
     [Fact]
@@ -113,10 +113,10 @@ public class UnionTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(value0Called);
-            Assert.True(value1Called);
-        });
+        Assert.Multiple(
+            () => Assert.False(value0Called),
+            () => Assert.True(value1Called)
+        );
     }
 
     // ─── Match(Func, Func) ───────────────────────────────────────────────────
@@ -165,13 +165,13 @@ public class UnionTests {
         Union<string, int, bool> sw = "hello";
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(sw.IsValue0);
-            Assert.False(sw.IsValue1);
-            Assert.False(sw.IsValue2);
-            Assert.Equal(0, sw.Index);
-            Assert.Equal("hello", sw.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(sw.IsValue0),
+            () => Assert.False(sw.IsValue1),
+            () => Assert.False(sw.IsValue2),
+            () => Assert.Equal(0, sw.Index),
+            () => Assert.Equal("hello", sw.Value)
+        );
     }
 
     [Fact]
@@ -180,13 +180,13 @@ public class UnionTests {
         Union<string, int, bool> sw = 42;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(sw.IsValue0);
-            Assert.True(sw.IsValue1);
-            Assert.False(sw.IsValue2);
-            Assert.Equal(1, sw.Index);
-            Assert.Equal(42, sw.Value);
-        });
+        Assert.Multiple(
+            () => Assert.False(sw.IsValue0),
+            () => Assert.True(sw.IsValue1),
+            () => Assert.False(sw.IsValue2),
+            () => Assert.Equal(1, sw.Index),
+            () => Assert.Equal(42, sw.Value)
+        );
     }
 
     [Fact]
@@ -195,13 +195,13 @@ public class UnionTests {
         Union<string, int, bool> sw = true;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(sw.IsValue0);
-            Assert.False(sw.IsValue1);
-            Assert.True(sw.IsValue2);
-            Assert.Equal(2, sw.Index);
-            Assert.Equal(true, sw.Value);
-        });
+        Assert.Multiple(
+            () => Assert.False(sw.IsValue0),
+            () => Assert.False(sw.IsValue1),
+            () => Assert.True(sw.IsValue2),
+            () => Assert.Equal(2, sw.Index),
+            () => Assert.Equal(true, sw.Value)
+        );
     }
 
     [Fact]

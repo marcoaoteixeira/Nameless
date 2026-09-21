@@ -15,32 +15,25 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers the validation services.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     The registration settings delegate.
         /// </param>
         /// <returns>
         ///     The current <see cref="IServiceCollection" /> so other actions
         ///     can be chained.
         /// </returns>
-        public IServiceCollection RegisterValidator(Action<ValidatorRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterValidator(Action<FluentValidationValidatorRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.TryAddTransient<IValidator, FluentValidationValidator>();
-            self.RegisterValidators(settings);
+            self.TryAddEnumerable(registration.Validators.Select(
+                implementation => ServiceDescriptor.Transient(
+                    typeof(IFluentValidationValidator),
+                    implementation
+                )
+            ));
 
             return self;
-        }
-
-        private void RegisterValidators(ValidatorRegistration settings) {
-            var service = typeof(IFluentValidator);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan(service)
-                : settings.Validators;
-            var descriptors = implementations.Select(
-                implementation => ServiceDescriptor.Transient(service, implementation)
-            );
-
-            self.TryAddEnumerable(descriptors);
         }
     }
 }

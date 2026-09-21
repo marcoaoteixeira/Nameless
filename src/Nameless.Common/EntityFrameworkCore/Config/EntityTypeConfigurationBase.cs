@@ -10,12 +10,8 @@ namespace Nameless.EntityFrameworkCore.Config;
 /// <typeparam name="TEntity">
 ///     The entity type to be configured.
 /// </typeparam>
-/// <typeparam name="TID">
-///     The type of the entity's ID.
-/// </typeparam>
-public abstract class EntityTypeConfigurationBase<TEntity, TID> : IEntityTypeConfiguration<TEntity>
-    where TEntity : EntityBase<TID>
-    where TID : struct, IEquatable<TID> {
+public abstract class EntityTypeConfigurationBase<TEntity> : IEntityTypeConfiguration<TEntity>
+    where TEntity : EntityBase {
     /// <summary>
     ///     Gets the entity's table name.
     /// </summary>
@@ -23,7 +19,7 @@ public abstract class EntityTypeConfigurationBase<TEntity, TID> : IEntityTypeCon
 
     /// <summary>
     ///     Initializes a new instance of
-    ///     <see cref="EntityTypeConfigurationBase{TEntity,TID}"/> class.
+    ///     <see cref="EntityTypeConfigurationBase{TEntity}"/> class.
     /// </summary>
     /// <param name="tableName">
     ///     The entity's table name.
@@ -42,7 +38,7 @@ public abstract class EntityTypeConfigurationBase<TEntity, TID> : IEntityTypeCon
                .HasConversion<string>();
 
         builder.Property(entity => entity.CreationDate)
-               .IsRequired(required: true);
+               .IsRequired(required: false);
 
         builder.Property(entity => entity.ModificationDate)
                .IsRequired(required: false);

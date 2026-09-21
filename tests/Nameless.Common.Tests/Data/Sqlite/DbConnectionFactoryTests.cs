@@ -2,7 +2,6 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Data.Sqlite;
 
@@ -38,11 +37,11 @@ public class DbConnectionFactoryTests {
         var exception = Record.Exception(connection.Open);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.NotNull(connection);
-            Assert.Null(exception);
-            Assert.Equal(ConnectionState.Open, connection.State);
-        });
+        Assert.Multiple(
+            () => Assert.NotNull(connection),
+            () => Assert.Null(exception),
+            () => Assert.Equal(ConnectionState.Open, connection.State)
+        );
 
         // cleanup
         connection.Dispose();

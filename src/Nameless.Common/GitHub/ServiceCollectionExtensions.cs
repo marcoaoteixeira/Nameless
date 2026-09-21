@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Attributes;
 using Nameless.Configuration;
 
 namespace Nameless.GitHub;

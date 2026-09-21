@@ -92,11 +92,11 @@ public class GuidHelperTests {
         var encoded = GuidHelper.Encode(original);
         var decoded = GuidHelper.Decode(encoded);
 
-        Assert.Multiple(() => {
-            Assert.Contains('_', encoded);
-            Assert.Contains('-', encoded);
-            Assert.Equal(original, decoded);
-        });
+        Assert.Multiple(
+            () => Assert.Contains('_', encoded),
+            () => Assert.Contains('-', encoded),
+            () => Assert.Equal(original, decoded)
+        );
     }
 
     [Fact]

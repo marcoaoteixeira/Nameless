@@ -96,9 +96,9 @@ public class RetryPolicyConfigurationTests {
         var modified = original with { RetryCount = 10 };
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(10, modified.RetryCount);
-            Assert.Equal(3, original.RetryCount); // original unchanged
-        });
+        Assert.Multiple(
+            () => Assert.Equal(10, modified.RetryCount),
+            () => Assert.Equal(3, original.RetryCount) // original unchanged
+        );
     }
 }

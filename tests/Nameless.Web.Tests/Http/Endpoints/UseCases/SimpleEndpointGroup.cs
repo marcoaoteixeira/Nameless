@@ -1,5 +1,4 @@
-﻿using Nameless.Testing.Tools.Attributes;
-using Nameless.Web.Http.Endpoints.Infrastructure;
+﻿using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases;
 

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Data.Sqlite;
 
@@ -23,7 +23,7 @@ public record SqliteOptions {
     /// <summary>
     /// Gets or sets the database path.
     /// </summary>
-    public string DatabaseFilePath { get; init; } = Path.Combine(".", "database.db");
+    public string DatabaseFilePath { get; init; } = SysPath.Combine(".", "database.db");
 
     /// <summary>
     /// Gets or sets the database password.

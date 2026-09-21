@@ -13,8 +13,10 @@ public class EndpointGroupModelCollectionTests
 
         var added = collection.Add(CreateGroup("Ns", "GroupA"));
 
-        Assert.True(added);
-        Assert.Equal(1, collection.Count);
+        Assert.Multiple(
+            () => Assert.True(added),
+            () => Assert.Equal(1, collection.Count)
+        );
     }
 
     [Fact]
@@ -24,8 +26,10 @@ public class EndpointGroupModelCollectionTests
 
         var added = collection.Add(CreateGroup("Ns", "GroupA"));
 
-        Assert.False(added);
-        Assert.Equal(1, collection.Count);
+        Assert.Multiple(
+            () => Assert.False(added),
+            () => Assert.Equal(1, collection.Count)
+        );
     }
 
     [Fact]
@@ -61,8 +65,10 @@ public class EndpointGroupModelCollectionTests
 
         var names = collection.Select(g => g.Class.Name).ToArray();
 
-        Assert.Contains("A", names);
-        Assert.Contains("B", names);
+        Assert.Multiple(
+            () => Assert.Contains("A", names),
+            () => Assert.Contains("B", names)
+        );
     }
 
     private static EndpointGroupModel CreateGroup(string ns, string name) {

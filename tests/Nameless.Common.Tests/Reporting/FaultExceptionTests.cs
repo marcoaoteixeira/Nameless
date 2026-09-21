@@ -1,5 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
-
 namespace Nameless.Reporting;
 
 [UnitTest]

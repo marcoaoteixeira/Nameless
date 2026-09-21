@@ -35,7 +35,7 @@ public static class LocalizationConfig {
 
             self.ConfigureServices((ctx, services) => {
                 services.RegisterLocalization(
-                    registration: AssemblyScanAwareHelper.Join(
+                    configure: AssemblyScanAwareHelper.MergeAssemblies(
                         settings.ConfigureLocalization,
                         settings.Assemblies
                     ),

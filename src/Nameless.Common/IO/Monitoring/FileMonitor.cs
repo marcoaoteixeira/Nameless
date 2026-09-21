@@ -1,312 +1,565 @@
-using System.Collections.Concurrent;
-using System.IO.Enumeration;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Nameless.Resilience;
+﻿using System.Threading.Channels;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nameless.IO.Monitoring;
 
 /// <summary>
-///     An improved file system watcher that uses <see cref="IFileProvider"/>
-///     change tokens and snapshot diffing to detect file events,
-///     firing callbacks only after write operations are fully complete
-///     (via exclusive-lock probing).
+///     <see cref="IFileMonitor" /> implementation on top of
+///     <see cref="IFileSystemWatcherAdapter" />.
 /// </summary>
+/// <remarks>
+///     Created and changed files are tracked per path. Each raw event restarts
+///     a quiet-period timer; once it elapses the file is probed for exclusive
+///     access, retrying with back-off (from
+///     <see cref="FileMonitorOptions.ProbeInterval" /> up to
+///     <see cref="FileMonitorOptions.MaxProbeInterval" />) for as long as it
+///     stays locked. Past <see cref="FileMonitorOptions.LockedTooLongAfter" />
+///     a <see cref="FileLockedTooLongException" /> is reported once and
+///     probing continues. Renamed and deleted events pass through.
+///     Notifications are queued in decision order and delivered one at a time
+///     by a single consumer, so handlers never overlap and a slow handler
+///     cannot stall the watcher.
+/// </remarks>
 public sealed class FileMonitor : IFileMonitor {
-    private const string LOG_TAG = "FILE_SYSTEM_WATCHER";
+    private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
+        ? StringComparer.OrdinalIgnoreCase
+        : StringComparer.Ordinal;
 
-    private readonly IFileProvider _fileProvider;
-    private readonly IRetryPipelineFactory _retryPipelineFactory;
+    private static readonly StringComparison MatcherComparison = OperatingSystem.IsWindows()
+        ? StringComparison.OrdinalIgnoreCase
+        : StringComparison.Ordinal;
+
+    private readonly IFileSystemWatcherAdapter _watcher;
+    private readonly IFileProbe _probe;
+    private readonly TimeProvider _timeProvider;
     private readonly FileMonitorOptions _options;
-    private readonly ILogger<FileMonitor> _logger;
+    private readonly Matcher _matcher;
+    private readonly bool _includeSubdirectories;
+    private readonly Dictionary<string, PendingFile> _pending = new(PathComparer);
+    private readonly Dictionary<string, VacatedPath> _vacated = new(PathComparer);
+    private readonly Lock _gate = new();
+    private readonly Channel<WorkItem> _queue = Channel.CreateUnbounded<WorkItem>(new UnboundedChannelOptions { SingleReader = true });
 
-    private FileMonitorDelegate<FileMonitorEventArgs>? _onCreated;
-    private FileMonitorDelegate<FileMonitorEventArgs>? _onDeleted;
-    private FileMonitorDelegate<FileMonitorEventArgs>? _onRenamed;
-    private FileMonitorDelegate<FileMonitorEventArgs>? _onChanged;
-    private FileMonitorDelegate<FileMonitorErrorEventArgs>? _onError;
-
-    private Dictionary<string, IFileInfo> _snapshot = [];
-    private readonly ConcurrentDictionary<string, Task> _activeProbes = new();
-    private IDisposable? _tokenRegistration;
-    private CancellationTokenSource? _cts;
+    private Action<FileCreatedEvent>? _onCreated;
+    private Action<FileChangedEvent>? _onChanged;
+    private Action<FileDeletedEvent>? _onDeleted;
+    private Action<FileRenamedEvent>? _onRenamed;
+    private Action<FileMonitorErrorEvent>? _onError;
+    private bool _started;
     private bool _disposed;
 
+    /// <inheritdoc />
+    public string Root { get; }
+
+    /// <inheritdoc />
+    public string Glob { get; }
+
     /// <summary>
-    ///     Initializes a new instance of <see cref="FileMonitor"/>.
+    ///     Initializes a new instance of the <see cref="FileMonitor" /> class.
     /// </summary>
-    /// <param name="fileProvider">
-    ///     The file provider used to watch for changes and enumerate files.
+    /// <param name="root">
+    ///     The folder to monitor.
     /// </param>
-    /// <param name="retryPipelineFactory">
-    ///     Optional factory for retry pipelines; required only when
-    ///     <see cref="FileMonitorOptions.EnableRetry"/>
-    ///     is <see langword="true"/>.
+    /// <param name="glob">
+    ///     The glob pattern, relative to <paramref name="root" />, that paths
+    ///     must match.
+    /// </param>
+    /// <param name="watcher">
+    ///     The watcher that supplies raw file system events.
+    /// </param>
+    /// <param name="probe">
+    ///     The probe used to check file availability.
+    /// </param>
+    /// <param name="timeProvider">
+    ///     The clock used for quiet-period and retry timers.
     /// </param>
     /// <param name="options">
-    ///     Configuration for this watcher instance.
+    ///     The tuning options; defaults are used when
+    ///     <see langword="null" />.
     /// </param>
-    /// <param name="logger">
-    ///     Logger for diagnostics.
-    /// </param>
-    public FileMonitor(IFileProvider fileProvider, IRetryPipelineFactory retryPipelineFactory, IOptions<FileMonitorOptions> options, ILogger<FileMonitor> logger) {
-        _fileProvider = Throws.When.Null(fileProvider);
-        _retryPipelineFactory = Throws.When.Null(retryPipelineFactory);
-        _options = Throws.When.Null(options).Value;
-        _logger = Throws.When.Null(logger);
-    }
+    /// <exception cref="ArgumentException">
+    ///     <paramref name="root" /> or <paramref name="glob" /> is null,
+    ///     empty or blank.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     A required dependency is <see langword="null" />.
+    /// </exception>
+    public FileMonitor(string root, string glob, IFileSystemWatcherAdapter watcher, IFileProbe probe, TimeProvider timeProvider, FileMonitorOptions? options = null) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(root);
+        ArgumentException.ThrowIfNullOrWhiteSpace(glob);
+        ArgumentNullException.ThrowIfNull(watcher);
+        ArgumentNullException.ThrowIfNull(probe);
+        ArgumentNullException.ThrowIfNull(timeProvider);
 
-    /// <inheritdoc />
-    public void OnCreated(FileMonitorDelegate<FileMonitorEventArgs> callback) {
-        _onCreated = Throws.When.Null(callback);
-    }
+        Root = SysPath.GetFullPath(root);
+        Glob = glob;
 
-    /// <inheritdoc />
-    public void OnDeleted(FileMonitorDelegate<FileMonitorEventArgs> callback) {
-        _onDeleted = Throws.When.Null(callback);
-    }
+        _watcher = watcher;
+        _probe = probe;
+        _timeProvider = timeProvider;
+        _options = options ?? new FileMonitorOptions();
 
-    /// <inheritdoc />
-    public void OnRenamed(FileMonitorDelegate<FileMonitorEventArgs> callback) {
-        _onRenamed = Throws.When.Null(callback);
-    }
+        _matcher = new Matcher(MatcherComparison);
+        _matcher.AddInclude(glob.Replace('\\', '/'));
 
-    /// <inheritdoc />
-    public void OnChanged(FileMonitorDelegate<FileMonitorEventArgs> callback) {
-        _onChanged = Throws.When.Null(callback);
-    }
-
-    /// <inheritdoc />
-    public void OnError(FileMonitorDelegate<FileMonitorErrorEventArgs> callback) {
-        _onError = Throws.When.Null(callback);
-    }
-
-    /// <inheritdoc />
-    public async Task StartAsync(CancellationToken cancellationToken = default) {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-
-        _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _snapshot = TakeSnapshot();
-
-        await RegisterWatchAsync(_cts.Token).ConfigureAwait(continueOnCapturedContext: false);
-    }
-
-    /// <inheritdoc />
-    public async Task StopAsync(CancellationToken cancellationToken = default) {
-        if (_disposed) { return; }
-
-        if (_cts is not null) {
-            await _cts.CancelAsync();
+        foreach (var pattern in _options.Excludes) {
+            _matcher.AddExclude(pattern.Replace('\\', '/'));
         }
 
-        _tokenRegistration?.Dispose();
-        _tokenRegistration = null;
+        _includeSubdirectories = glob.Contains("**") ||
+                                 glob.Contains('/') ||
+                                 glob.Contains('\\');
 
-        var probes = _activeProbes.Values.ToArray();
-        if (probes.Length > 0) {
-            try { await Task.WhenAll(probes).WaitAsync(cancellationToken).SkipContextSync(); }
-            catch (OperationCanceledException) { }
-            catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
-        }
-
-        _activeProbes.Clear();
+        _watcher.Created += HandleCreated;
+        _watcher.Changed += HandleChanged;
+        _watcher.Deleted += HandleDeleted;
+        _watcher.Renamed += HandleRenamed;
+        _watcher.Error += HandleError;
     }
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync() {
-        if (_disposed) { return; }
-
-        _disposed = true;
-
-        await StopAsync(CancellationToken.None).SkipContextSync();
-
-        _cts?.Dispose();
-        _cts = null;
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="action" /> is <see langword="null" />.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The monitoring already started or the event already has a handler.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">
+    ///     The monitoring was disposed.
+    /// </exception>
+    public void OnCreated(Action<FileCreatedEvent> action) {
+        SetHandler(ref _onCreated, action);
     }
 
-    private Task RegisterWatchAsync(CancellationToken cancellationToken) {
-        if (cancellationToken.IsCancellationRequested) { return Task.CompletedTask; }
-
-        if (!_options.EnableRetry) { return RegisterWatchAsyncCore(cancellationToken); }
-
-        var config = _options.RetryPolicy ?? RetryPolicyConfiguration.CreateDefault(onRetry: (_, _, _, _) => { });
-        var pipeline = _retryPipelineFactory.Create(config);
-
-        return pipeline.ExecuteAsync(
-                           token => new ValueTask(RegisterWatchAsyncCore(token)),
-                           cancellationToken)
-                       .AsTask();
+    /// <inheritdoc cref="OnCreated(Action{FileCreatedEvent})" />
+    public void OnRenamed(Action<FileRenamedEvent> action) {
+        SetHandler(ref _onRenamed, action);
     }
 
-    private Task RegisterWatchAsyncCore(CancellationToken cancellationToken) {
-        if (cancellationToken.IsCancellationRequested) { return Task.CompletedTask; }
+    /// <inheritdoc cref="OnCreated(Action{FileCreatedEvent})" />
+    public void OnDeleted(Action<FileDeletedEvent> action) {
+        SetHandler(ref _onDeleted, action);
+    }
 
-        var watchFilter = CreateWatchFilter();
-        var token = _fileProvider.Watch(watchFilter);
+    /// <inheritdoc cref="OnCreated(Action{FileCreatedEvent})" />
+    public void OnChanged(Action<FileChangedEvent> action) {
+        SetHandler(ref _onChanged, action);
+    }
 
-        if (!token.ActiveChangeCallbacks) {
-            throw new FileMonitorException(
-                $"""
-                 The file provider does not support active change callbacks for filter '{watchFilter}'.
-                 Use a provider that returns a change token with ActiveChangeCallbacks = true (e.g. PhysicalFileProvider).
-                 """
+    /// <inheritdoc cref="OnCreated(Action{FileCreatedEvent})" />
+    public void OnError(Action<FileMonitorErrorEvent> action) {
+        SetHandler(ref _onError, action);
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="ObjectDisposedException">
+    ///     The monitoring was disposed.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     The watcher rejected <see cref="Root" />, for example because it
+    ///     does not exist.
+    /// </exception>
+    public void Start() {
+        lock (_gate) {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            if (_started) { return; }
+
+            _watcher.Path = Root;
+            _watcher.IncludeSubdirectories = _includeSubdirectories;
+            _watcher.InternalBufferSize = _options.InternalBufferSize;
+            _watcher.EnableRaisingEvents = true;
+
+            _started = true;
+
+            _ = Task.Run(ConsumeAsync);
+        }
+    }
+
+    /// <inheritdoc />
+    public void Dispose() {
+        lock (_gate) {
+            if (_disposed) { return; }
+
+            _disposed = true;
+            _queue.Writer.TryComplete();
+
+            foreach (var pending in _pending.Values) {
+                pending.Timer.Dispose();
+            }
+
+            _pending.Clear();
+
+            foreach (var vacated in _vacated.Values) {
+                vacated.Timer!.Dispose();
+            }
+
+            _vacated.Clear();
+        }
+
+        _watcher.Created -= HandleCreated;
+        _watcher.Changed -= HandleChanged;
+        _watcher.Deleted -= HandleDeleted;
+        _watcher.Renamed -= HandleRenamed;
+        _watcher.Error -= HandleError;
+
+        _watcher.Dispose();
+    }
+
+    /// <summary>
+    ///     Completes when every notification queued before the call was
+    ///     delivered or discarded.
+    /// </summary>
+    /// <returns>
+    ///     A task that completes once the queue drained; already complete
+    ///     when not running.
+    /// </returns>
+    internal Task WhenIdleAsync() {
+        var idle = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        lock (_gate) {
+            if (!_started || _disposed) { return Task.CompletedTask; }
+
+            _queue.Writer.TryWrite(
+                new WorkItem(
+                    Run: () => idle.TrySetResult(),
+                    RunAfterDispose: true
+                )
             );
         }
 
-        _tokenRegistration?.Dispose();
-        _tokenRegistration = token.RegisterChangeCallback(OnChangeDetected, state: null);
-
-        return Task.CompletedTask;
+        return idle.Task;
     }
 
-    private void OnChangeDetected(object? state) {
-        if (_cts?.Token.IsCancellationRequested == true) { return; }
+    private void SetHandler<T>(ref Action<T>? slot, Action<T> action) {
+        ArgumentNullException.ThrowIfNull(action);
 
-        var cancellationToken = _cts?.Token ?? CancellationToken.None;
-        var newSnapshot = TakeSnapshot();
+        lock (_gate) {
+            ObjectDisposedException.ThrowIf(_disposed, this);
 
-        ProcessChanges(newSnapshot, cancellationToken);
+            if (_started) {
+                throw new InvalidOperationException(
+                    "Handlers cannot be registered after the monitoring started."
+                );
+            }
 
-        _snapshot = newSnapshot;
+            if (slot is not null) {
+                throw new InvalidOperationException(
+                    $"A handler for {typeof(T).Name} is already registered."
+                );
+            }
 
-        // Tokens are one-shot; re-arm for the next change.
-        _ = RegisterWatchAsync(cancellationToken);
-    }
-
-    private void ProcessChanges(Dictionary<string, IFileInfo> newSnapshot, CancellationToken cancellationToken) {
-        var added = newSnapshot.Keys.Except(_snapshot.Keys).ToList();
-        var removed = _snapshot.Keys.Except(newSnapshot.Keys).ToList();
-        var changed = newSnapshot.Keys
-            .Intersect(_snapshot.Keys)
-            .Where(name => {
-                var old = _snapshot[name];
-                var next = newSnapshot[name];
-                return old.Length != next.Length || old.LastModified != next.LastModified;
-            })
-            .ToList();
-
-        // Rename heuristic: exactly 1 added + 1 removed in the same batch.
-        if (added.Count == 1 && removed.Count == 1) {
-            var oldInfo = _snapshot[removed[0]];
-            var newInfo = newSnapshot[added[0]];
-            var args = new FileMonitorEventArgs(
-                CurrentFilePath: GetPath(newInfo),
-                PreviousFilePath: GetPath(oldInfo)
-            );
-
-            FireCallback(_onRenamed, args, cancellationToken);
-            added.Clear();
-            removed.Clear();
-        }
-
-        foreach (var name in removed) {
-            var info = _snapshot[name];
-
-            FireCallback(
-                callback: _onDeleted,
-                args: new FileMonitorEventArgs(GetPath(info), PreviousFilePath: null),
-                cancellationToken: cancellationToken
-            );
-        }
-
-        foreach (var name in added) {
-            ScheduleLockProbe(newSnapshot[name], EventKind.Created, cancellationToken);
-        }
-
-        foreach (var name in changed) {
-            ScheduleLockProbe(newSnapshot[name], EventKind.Changed, cancellationToken);
+            slot = action;
         }
     }
 
-    private void ScheduleLockProbe(IFileInfo fileInfo, EventKind kind, CancellationToken cancellationToken) {
-        var physicalPath = fileInfo.PhysicalPath;
+    private void HandleCreated(object? sender, FileSystemEventArgs args) {
+        if (!Matches(args.FullPath)) { return; }
 
-        if (physicalPath is null) {
-            // Cannot probe without a physical path; fire the callback immediately.
-            CommonLog.Debug(
-                logger: _logger,
-                message: $"File '{fileInfo.Name}' has no physical path. Firing callback without lock probe.",
-                tag: LOG_TAG
-            );
+        lock (_gate) {
+            // A path that was just vacated is being replaced, not created.
+            var pending = Reclaim(args.FullPath)
+                ? PendingKind.Changed
+                : PendingKind.Created;
 
-            var args = new FileMonitorEventArgs(fileInfo.Name, PreviousFilePath: null);
-            var callback = kind == EventKind.Created ? _onCreated : _onChanged;
+            Track(args.FullPath, pending);
+        }
+    }
 
-            FireCallback(callback, args, cancellationToken);
+    private void HandleChanged(object? sender, FileSystemEventArgs args) {
+        if (Matches(args.FullPath)) {
+            Track(args.FullPath, PendingKind.Changed);
+        }
+    }
 
+    private void HandleDeleted(object? sender, FileSystemEventArgs args) {
+        if (!Matches(args.FullPath)) { return; }
+
+        lock (_gate) {
+            if (_disposed) { return; }
+
+            // The file was never announced, so its deletion is not worth
+            // announcing either.
+            if (Discard(args.FullPath) == PendingKind.Created) { return; }
+
+            if (_options.ReplaceGracePeriod > TimeSpan.Zero) {
+                Vacate(args.FullPath, announceDeletion: true);
+                return;
+            }
+
+            Notify(_onDeleted, new FileDeletedEvent(args.FullPath));
+        }
+    }
+
+    private void HandleRenamed(object? sender, RenamedEventArgs args) {
+        lock (_gate) {
+            if (_disposed) { return; }
+
+            var dropped = Discard(args.OldFullPath);
+
+            if (_options.ReplaceGracePeriod > TimeSpan.Zero) {
+                if (dropped != PendingKind.Created && Matches(args.OldFullPath)) {
+                    Vacate(args.OldFullPath, announceDeletion: false);
+                }
+
+                if (Reclaim(args.FullPath)) {
+                    Track(args.FullPath, PendingKind.Changed);
+                    return;
+                }
+            }
+        }
+
+        if (!Matches(args.FullPath) || TryProbe(args.FullPath) is FileProbeResult.Directory) {
             return;
         }
 
-        // GetOrAdd ensures only one probe per physical path runs at a time.
-        _activeProbes.GetOrAdd(
-            physicalPath,
-            key => Task.Run(async () => {
-                try { await ProbeFileAsync(key, kind, cancellationToken).SkipContextSync(); }
-                finally { _activeProbes.TryRemove(key, out _); }
-            }, cancellationToken)
-        );
+        lock (_gate) {
+            if (!_disposed) {
+                Notify(_onRenamed, new FileRenamedEvent(args.OldFullPath, args.FullPath));
+            }
+        }
     }
 
-    private async Task ProbeFileAsync(string physicalPath, EventKind kind, CancellationToken cancellationToken) {
-        var attempts = 0;
+    private void HandleError(object? sender, ErrorEventArgs e) {
+        EnqueueError(e.GetException());
+    }
 
-        while (attempts < _options.LockProbeMaxAttempts && !cancellationToken.IsCancellationRequested) {
-            try {
-                await using (File.Open(physicalPath, FileMode.Open, FileAccess.Read, FileShare.None)) { }
+    private bool Matches(string path) {
+        const string Back = "..";
 
-                var args = new FileMonitorEventArgs(physicalPath, PreviousFilePath: null);
-                var callback = kind == EventKind.Created ? _onCreated : _onChanged;
+        var relative = SysPath.GetRelativePath(Root, path);
+        var outsideRoot = relative == Back
+                          || relative.StartsWith($"{Back}{SysPath.DirectorySeparatorChar}", StringComparison.Ordinal)
+                          || SysPath.IsPathRooted(relative);
 
-                FireCallback(callback, args, cancellationToken);
+        return !outsideRoot && _matcher.Match(Root, relative.Replace('\\', '/')).HasMatches;
+    }
 
+    private void Track(string path, PendingKind kind) {
+        lock (_gate) {
+            if (_disposed) { return; }
+
+            if (!_pending.TryGetValue(path, out var pending)) {
+                var timer = _timeProvider.CreateTimer(
+                    callback: OnTimer,
+                    state: path,
+                    dueTime: Timeout.InfiniteTimeSpan,
+                    period: Timeout.InfiniteTimeSpan
+                );
+
+                pending = new PendingFile(kind, timer);
+
+                _pending[path] = pending;
+            }
+            else if (kind == PendingKind.Created) {
+                pending.Kind = PendingKind.Created;
+            }
+
+            pending.LastActivity = _timeProvider.GetUtcNow();
+            pending.ProbingSince = null;
+            pending.NextProbeDelay = _options.ProbeInterval;
+            pending.LockedTooLongReported = false;
+            pending.Version++;
+            pending.Timer.Change(_options.QuietPeriod, Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private void OnTimer(object? state) {
+        var path = (string)state!;
+        long version;
+
+        lock (_gate) {
+            if (_disposed || !_pending.TryGetValue(path, out var pending)) {
                 return;
             }
-            catch (IOException) {
-                attempts++;
 
-                await Task.Delay(_options.LockProbeDelay, cancellationToken).SkipContextSync();
+            var now = _timeProvider.GetUtcNow();
+            if (pending.ProbingSince is null) {
+                // Timers are re-armed rather than recreated, so a stale
+                // firing can arrive early.
+                var remaining = pending.LastActivity + _options.QuietPeriod - now;
+                if (remaining > TimeSpan.Zero) {
+                    pending.Timer.Change(remaining, Timeout.InfiniteTimeSpan);
+                    return;
+                }
+
+                pending.ProbingSince = now;
+            }
+
+            version = pending.Version;
+        }
+
+        var result = TryProbe(path);
+
+        lock (_gate) {
+            // A newer raw event bumps the version and has already re-armed
+            // the timer.
+            if (_disposed || !_pending.TryGetValue(path, out var pending) || pending.Version != version) {
+                return;
+            }
+
+            switch (result) {
+                case FileProbeResult.Available:
+                    Discard(path);
+
+                    if (pending.Kind == PendingKind.Created) {
+                        Notify(_onCreated, new FileCreatedEvent(path));
+                    }
+                    else {
+                        Notify(_onChanged, new FileChangedEvent(path));
+                    }
+
+                    break;
+
+                case FileProbeResult.Locked:
+                    var lockedFor = _timeProvider.GetUtcNow() - pending.ProbingSince!.Value;
+                    if (!pending.LockedTooLongReported && lockedFor >= _options.LockedTooLongAfter) {
+                        pending.LockedTooLongReported = true;
+
+                        EnqueueError(new FileLockedTooLongException(path, lockedFor));
+                    }
+
+                    pending.Timer.Change(pending.NextProbeDelay, Timeout.InfiniteTimeSpan);
+                    pending.NextProbeDelay = Backoff(pending.NextProbeDelay);
+
+                    break;
+
+                default:
+                    Discard(path);
+                    break;
             }
         }
+    }
 
-        if (!cancellationToken.IsCancellationRequested) {
-            var error = new TimeoutException(
-                $"File '{physicalPath}' was not available after {_options.LockProbeMaxAttempts} exclusive-lock probe attempts."
-            );
+    private TimeSpan Backoff(TimeSpan delay) {
+        var doubled = Math.Min(delay.Ticks * 2, _options.MaxProbeInterval.Ticks);
 
-            FireCallback(_onError, new FileMonitorErrorEventArgs(error), cancellationToken);
+        return TimeSpan.FromTicks(Math.Max(delay.Ticks, doubled));
+    }
+
+    private void Vacate(string path, bool announceDeletion) {
+        Reclaim(path);
+
+        var vacated = new VacatedPath(path, announceDeletion);
+
+        vacated.Timer = _timeProvider.CreateTimer(
+            callback: OnVacatedExpired,
+            state: vacated,
+            dueTime: _options.ReplaceGracePeriod,
+            period: Timeout.InfiniteTimeSpan
+        );
+
+        _vacated[path] = vacated;
+    }
+
+    private bool Reclaim(string path) {
+        if (!_vacated.Remove(path, out var vacated)) {
+            return false;
+        }
+
+        vacated.Timer!.Dispose();
+
+        return true;
+    }
+
+    private void OnVacatedExpired(object? state) {
+        var expired = (VacatedPath)state!;
+
+        lock (_gate) {
+            // The entry may have been reclaimed or replaced while this firing was queued.
+            if (_disposed || !_vacated.TryGetValue(expired.FullPath, out var current) || !ReferenceEquals(current, expired)) {
+                return;
+            }
+
+            Reclaim(expired.FullPath);
+
+            if (expired.AnnounceDeletion) {
+                Notify(_onDeleted, new FileDeletedEvent(expired.FullPath));
+            }
         }
     }
 
-    private void FireCallback<TArgs>(FileMonitorDelegate<TArgs>? callback, TArgs args, CancellationToken cancellationToken) {
-        if (callback is null) { return; }
+    private PendingKind? Discard(string path) {
+        if (!_pending.Remove(path, out var pending)) {
+            return null;
+        }
 
-        _ = Task.Run(async () => {
-            try { await callback(args, cancellationToken).ConfigureAwait(false); }
-            catch (OperationCanceledException) { }
-            catch (Exception ex) { CommonLog.Error(_logger, ex, tag: LOG_TAG); }
-        }, cancellationToken);
+        pending.Timer.Dispose();
+
+        return pending.Kind;
     }
 
-    private Dictionary<string, IFileInfo> TakeSnapshot() {
-        return _fileProvider.GetDirectoryContents(_options.SubPath)
-                            .Where(file => !file.IsDirectory && MatchesFilter(file.Name))
-                            .ToDictionary(file => file.Name, file => file);
+    private FileProbeResult? TryProbe(string fullPath) {
+        try { return _probe.Probe(fullPath); }
+        catch (Exception ex) {
+            EnqueueError(ex);
+
+            return null;
+        }
     }
 
-    private bool MatchesFilter(string fileName) {
-        return FileSystemName.MatchesSimpleExpression(_options.Filter, fileName, ignoreCase: true);
+    // Callers that decide an outcome under _gate enqueue there too, so queue
+    // order is decision order.
+    private void Notify<T>(Action<T>? handler, T evt) {
+        Enqueue(() => Invoke(handler, evt));
     }
 
-    private string CreateWatchFilter() {
-        return string.IsNullOrEmpty(_options.SubPath)
-            ? _options.Filter
-            : $"{_options.SubPath.TrimEnd('/', '\\')}/{_options.Filter}";
+    private void EnqueueError(Exception exception) {
+        Enqueue(() => InvokeErrorHandler(exception));
     }
 
-    private static string GetPath(IFileInfo fileInfo) {
-        return fileInfo.PhysicalPath ?? fileInfo.Name;
+    private void Enqueue(Action work) {
+        _queue.Writer.TryWrite(new WorkItem(work, RunAfterDispose: false));
     }
 
-    private enum EventKind { Created, Changed }
+    private async Task ConsumeAsync() {
+        await foreach (var item in _queue.Reader.ReadAllAsync().ConfigureAwait(false)) {
+            if (Volatile.Read(ref _disposed) && !item.RunAfterDispose) {
+                continue;
+            }
+
+            item.Run();
+        }
+    }
+
+    private void Invoke<T>(Action<T>? handler, T evt) {
+        try { handler?.Invoke(evt); }
+        catch (Exception ex) { InvokeErrorHandler(ex); }
+    }
+
+    private void InvokeErrorHandler(Exception exception) {
+        try { _onError?.Invoke(new FileMonitorErrorEvent(exception)); }
+        catch { /* Nothing left to report to: the error handler itself failed. */ }
+    }
+
+    private readonly record struct WorkItem(Action Run, bool RunAfterDispose);
+
+    private enum PendingKind {
+        Created,
+        Changed
+    }
+
+    private sealed class VacatedPath(string fullPath, bool announceDeletion) {
+        public string FullPath { get; } = fullPath;
+
+        public bool AnnounceDeletion { get; } = announceDeletion;
+
+        public ITimer? Timer { get; set; }
+    }
+
+    private sealed class PendingFile(PendingKind kind, ITimer timer) {
+        public PendingKind Kind { get; set; } = kind;
+
+        public ITimer Timer { get; } = timer;
+
+        public DateTimeOffset LastActivity { get; set; }
+
+        public DateTimeOffset? ProbingSince { get; set; }
+
+        public TimeSpan NextProbeDelay { get; set; }
+
+        public bool LockedTooLongReported { get; set; }
+
+        public long Version { get; set; }
+    }
 }

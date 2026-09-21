@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Nameless.Bootstrap;
+using Nameless.Windows.Bootstrap;
 
 namespace Nameless.Windows.Hosting.Wrappers;
 

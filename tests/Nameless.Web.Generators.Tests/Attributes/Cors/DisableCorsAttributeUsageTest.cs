@@ -24,8 +24,10 @@ public class DisableCorsAttributeUsageTest
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.WithMetadata\(new DisableCorsAttribute\(\)\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.WithMetadata\(new DisableCorsAttribute\(\)\)", source)
+        );
     }
 }

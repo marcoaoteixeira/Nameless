@@ -12,9 +12,11 @@ public class DiagnosticAwareResultTests
     {
         DiagnosticAwareResult<string> result = "value";
 
-        Assert.True(result.Successful);
-        Assert.Equal("value", result.Model);
-        Assert.Empty(result.Diagnostics);
+        Assert.Multiple(
+            () => Assert.True(result.Successful),
+            () => Assert.Equal("value", result.Model),
+            () => Assert.Empty(result.Diagnostics)
+        );
     }
 
     [Fact]
@@ -22,9 +24,11 @@ public class DiagnosticAwareResultTests
     {
         DiagnosticAwareResult<string> result = CreateDiagnostic();
 
-        Assert.False(result.Successful);
-        Assert.Null(result.Model);
-        Assert.Single(result.Diagnostics);
+        Assert.Multiple(
+            () => Assert.False(result.Successful),
+            () => Assert.Null(result.Model),
+            () => Assert.Single(result.Diagnostics)
+        );
     }
 
     [Fact]
@@ -32,8 +36,10 @@ public class DiagnosticAwareResultTests
     {
         DiagnosticAwareResult<string> result = new[] { CreateDiagnostic(), CreateDiagnostic() };
 
-        Assert.False(result.Successful);
-        Assert.Equal(2, result.Diagnostics.Length);
+        Assert.Multiple(
+            () => Assert.False(result.Successful),
+            () => Assert.Equal(2, result.Diagnostics.Length)
+        );
     }
 
     [Fact]
@@ -41,8 +47,10 @@ public class DiagnosticAwareResultTests
     {
         DiagnosticAwareResult<string> result = ("value", []);
 
-        Assert.True(result.Successful);
-        Assert.Equal("value", result.Model);
+        Assert.Multiple(
+            () => Assert.True(result.Successful),
+            () => Assert.Equal("value", result.Model)
+        );
     }
 
     [Fact]
@@ -51,9 +59,11 @@ public class DiagnosticAwareResultTests
         DiagnosticAwareResult<string> result = ("value", [CreateDiagnostic()]);
 
         // Successful is driven solely by Diagnostics.Length == 0
-        Assert.False(result.Successful);
-        Assert.Equal("value", result.Model);
-        Assert.Single(result.Diagnostics);
+        Assert.Multiple(
+            () => Assert.False(result.Successful),
+            () => Assert.Equal("value", result.Model),
+            () => Assert.Single(result.Diagnostics)
+        );
     }
 
     private static GeneratorDiagnostic CreateDiagnostic() => GeneratorDiagnostic.Create(

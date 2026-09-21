@@ -1,12 +1,14 @@
-﻿using Nameless.Attributes;
-
-namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for a RabbitMQ queue.
 /// </summary>
-[ConfigurationSectionName("Queues")]
 public record QueueOptions {
+    /// <summary>
+    ///     Gets the queue name.
+    /// </summary>
+    public string Name { get; init; } = Constants.Queues.Default;
+
     /// <summary>
     ///     Whether the queue is durable.
     /// </summary>
@@ -36,4 +38,9 @@ public record QueueOptions {
     ///     Gets or sets the bindings associated with the queue.
     /// </summary>
     public BindingOptions[] Bindings { get; init; } = [];
+    
+    /// <summary>
+    ///     Gets or sets the prefetch options.
+    /// </summary>
+    public PrefetchOptions? Prefetch { get; init; }
 }

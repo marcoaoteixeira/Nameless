@@ -12,10 +12,10 @@ public class ResponsesTests {
         ExecuteNonQueryResponse response = 5;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(5, response.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(5, response.Value)
+        );
     }
 
     [Fact]
@@ -24,10 +24,10 @@ public class ResponsesTests {
         ExecuteNonQueryResponse response = Error.Failure("db error");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Single(response.Errors);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Single(response.Errors)
+        );
     }
 
     // --- ExecuteScalarResponse<T> ---
@@ -38,10 +38,10 @@ public class ResponsesTests {
         ExecuteScalarResponse<int> response = 42;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(42, response.Value);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(42, response.Value)
+        );
     }
 
     [Fact]
@@ -50,10 +50,10 @@ public class ResponsesTests {
         ExecuteScalarResponse<int> response = Error.Missing("not found");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Single(response.Errors);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Single(response.Errors)
+        );
     }
 
     // --- ExecuteReaderResponse<T> ---
@@ -67,10 +67,10 @@ public class ResponsesTests {
         ExecuteReaderResponse<string> response = rows;
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(response.Success);
-            Assert.Equal(2, response.Value.Length);
-        });
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(2, response.Value.Length)
+        );
     }
 
     [Fact]
@@ -79,9 +79,9 @@ public class ResponsesTests {
         ExecuteReaderResponse<string> response = Error.Failure("err");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(response.Success);
-            Assert.Single(response.Errors);
-        });
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.Single(response.Errors)
+        );
     }
 }

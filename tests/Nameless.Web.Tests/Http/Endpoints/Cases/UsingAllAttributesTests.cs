@@ -71,7 +71,9 @@ public class UsingAllAttributesTests {
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".Produces<", generated);
-        Assert.Contains("200", generated);
+        Assert.Multiple(
+            () => Assert.Contains(".Produces<", generated),
+            () => Assert.Contains("200", generated)
+        );
     }
 }

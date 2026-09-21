@@ -11,8 +11,6 @@
 public sealed class StatusMonitor<TService> : IStatusMonitor<TService> {
     private IStatusMonitor Monitor { get; }
 
-    private int MonitorHashCode => Monitor.GetHashCode();
-
     /// <inheritdoc />
     public string ServiceName => Monitor.ServiceName;
 

@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppConfigurationPage_AppDirectoryPathCard_Button_Caption" xml:space="preserve">
-    <value>Open Application Directory</value>
+    <value>Open Application SystemDirectory</value>
   </data>
   <data name="AppConfigurationPage_AppDirectoryPathCard_Message" xml:space="preserve">
     <value>The directory containing all application data, as well as configuration, support, and log files.</value>
   </data>
   <data name="AppConfigurationPage_AppDirectoryPathCard_Title" xml:space="preserve">
-    <value>Application Data Directory</value>
+    <value>Application Data SystemDirectory</value>
   </data>
   <data name="AppConfigurationPage_ApplicationBackupCard_Button_Caption" xml:space="preserve">
     <value>Create Application Backup</value>

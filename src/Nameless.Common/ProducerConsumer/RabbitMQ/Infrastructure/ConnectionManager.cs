@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -11,24 +11,20 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 ///     Default implementation of <see cref="IConnectionManager" /> for managing RabbitMQ connections.
 /// </summary>
 public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncDisposable {
-    private readonly IConfiguration _configuration;
+    private readonly ServerOptions _server;
     private readonly ILogger<ConnectionManager> _logger;
 
     private ConnectionFactory? _connectionFactory;
     private IConnection? _connection;
     private bool _disposed;
 
-    private ServerOptions Server {
-        get => field ??= _configuration.GetServerOptions();
-    }
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConnectionManager" /> class.
     /// </summary>
-    /// <param name="configuration">The configuration.</param>
+    /// <param name="options">The RabbitMQ options.</param>
     /// <param name="logger">The logger.</param>
-    public ConnectionManager(IConfiguration configuration, ILogger<ConnectionManager> logger) {
-        _configuration = configuration;
+    public ConnectionManager(IOptions<RabbitMQOptions> options, ILogger<ConnectionManager> logger) {
+        _server = options.Value.Server;
         _logger = logger;
     }
 
@@ -49,7 +45,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
                                                                .SkipContextSync();
         }
         catch (BrokerUnreachableException ex) {
-            Log.BrokerUnreachable(_logger, Server.Hostname, ex);
+            Log.BrokerUnreachable(_logger, _server.Hostname, ex);
 
             throw;
         }
@@ -88,7 +84,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
 
     private async ValueTask DisposeAsyncCore() {
         if (_connection is not null) {
-            await _connection.CloseAsync(Constants.ReplySuccess, reasonText: "Disposing RabbitMQ connection.")
+            await _connection.CloseAsync(RabbitConstants.ReplySuccess, reasonText: "Disposing RabbitMQ connection.")
                              .SkipContextSync();
 
             await _connection.DisposeAsync()
@@ -102,14 +98,14 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
         }
 
         _connectionFactory = new ConnectionFactory {
-            HostName = Server.Hostname,
-            Port = Server.Port,
-            VirtualHost = Server.VirtualHost
+            HostName = _server.Hostname,
+            Port = _server.Port,
+            VirtualHost = _server.VirtualHost
         };
 
-        SetCredentials(_connectionFactory, Server);
-        SetSslAuthentication(_connectionFactory, Server);
-        SetCertificateSelectionCallback(_connectionFactory, Server);
+        SetCredentials(_connectionFactory, _server);
+        SetSslAuthentication(_connectionFactory, _server);
+        SetCertificateSelectionCallback(_connectionFactory, _server);
 
         return _connectionFactory;
     }
@@ -122,7 +118,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     }
 
     private static void SetSslAuthentication(ConnectionFactory connectionFactory, ServerOptions opts) {
-        if (!opts.Ssl.IsAvailable) { return; }
+        if (opts.Ssl is null || !opts.Ssl.IsAvailable) { return; }
 
         connectionFactory.Ssl.Enabled = true;
         connectionFactory.Ssl.ServerName = opts.Ssl.ServerName;
@@ -131,7 +127,7 @@ public sealed class ConnectionManager : IConnectionManager, IDisposable, IAsyncD
     }
 
     private static void SetCertificateSelectionCallback(ConnectionFactory connectionFactory, ServerOptions opts) {
-        if (!opts.Certificate.IsAvailable) { return; }
+        if (opts.Certificate is null || !opts.Certificate.IsAvailable) { return; }
 
         connectionFactory.Ssl.CertificateSelectionCallback = (_, _, _, _, _)
             => X509CertificateLoader.LoadPkcs12FromFile(

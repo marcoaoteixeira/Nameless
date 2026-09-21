@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.Antiforgery;
@@ -23,8 +22,10 @@ public class WithDisableAntiforgeryConvention {
     public void WhenEndpointClassMarkDisableAntiforgery_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Matches(@"DisableAntiforgeryEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"DisableAntiforgeryEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.DisableAntiforgery\(\)", source);
+        Assert.Multiple(
+            () => Assert.Matches(@"DisableAntiforgeryEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"DisableAntiforgeryEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.DisableAntiforgery\(\)", source)
+        );
     }
 }

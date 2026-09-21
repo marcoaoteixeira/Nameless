@@ -1,5 +1,4 @@
-﻿using Nameless.Testing.Tools.Attributes;
-using Nameless.Web.Http.Endpoints.Infrastructure;
+﻿using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases;
 
@@ -22,8 +21,10 @@ public class SimpleGetEndpoint {
     public void WhenDeclareClassWithEndpointAttribute_ThenEmitCorrectMapMethod() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.HelloWorldEndpoint", source);
-        Assert.Matches(@"HelloWorldEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"HelloWorldEndpoint\.Map\(.*\);", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.HelloWorldEndpoint", source),
+            () => Assert.Matches(@"HelloWorldEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"HelloWorldEndpoint\.Map\(.*\);", source)
+        );
     }
 }

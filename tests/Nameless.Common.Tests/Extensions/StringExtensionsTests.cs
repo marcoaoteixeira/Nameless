@@ -104,8 +104,10 @@ public class StringExtensionsTests {
         var result = "hello world".Ellipsize(5);
 
         // assert
-        Assert.Contains("&#8230;", result);
-        Assert.True(result.Length < "hello world".Length + 20);
+        Assert.Multiple(
+            () => Assert.Contains("&#8230;", result),
+            () => Assert.True(result.Length < "hello world".Length + 20)
+        );
     }
 
     [Fact]
@@ -124,12 +126,12 @@ public class StringExtensionsTests {
         var result = "FF00AB".ToHexByteArray();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(3, result.Length);
-            Assert.Equal(0xFF, result[0]);
-            Assert.Equal(0x00, result[1]);
-            Assert.Equal(0xAB, result[2]);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(3, result.Length),
+            () => Assert.Equal(0xFF, result[0]),
+            () => Assert.Equal(0x00, result[1]),
+            () => Assert.Equal(0xAB, result[2])
+        );
     }
 
     // ─── ToTechnicalName ─────────────────────────────────────────────────────
@@ -512,12 +514,12 @@ public class StringExtensionsTests {
         var result = "MyClassName".SplitUpperCase();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(3, result.Length);
-            Assert.Equal("My", result[0]);
-            Assert.Equal("Class", result[1]);
-            Assert.Equal("Name", result[2]);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(3, result.Length),
+            () => Assert.Equal("My", result[0]),
+            () => Assert.Equal("Class", result[1]),
+            () => Assert.Equal("Name", result[2])
+        );
     }
 
     // ─── GetMD5 ──────────────────────────────────────────────────────────────

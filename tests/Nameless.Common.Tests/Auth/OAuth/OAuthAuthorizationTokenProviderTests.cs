@@ -4,7 +4,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Auth.OAuth;
@@ -58,8 +57,10 @@ public class OAuthAuthorizationTokenProviderTests {
         var response = await sut.GetTokenAsync(CreateRequest(), CancellationToken.None);
 
         // assert
-        Assert.True(response.Success);
-        Assert.Equal(token.AccessToken, response.Value.AccessToken);
+        Assert.Multiple(
+            () => Assert.True(response.Success),
+            () => Assert.Equal(token.AccessToken, response.Value.AccessToken)
+        );
     }
 
     [Fact]
@@ -85,7 +86,9 @@ public class OAuthAuthorizationTokenProviderTests {
         var response = await sut.GetTokenAsync(CreateRequest(), CancellationToken.None);
 
         // assert
-        Assert.False(response.Success);
-        Assert.NotEmpty(response.Errors);
+        Assert.Multiple(
+            () => Assert.False(response.Success),
+            () => Assert.NotEmpty(response.Errors)
+        );
     }
 }

@@ -7,13 +7,13 @@ namespace Nameless.Validation.FluentValidation;
 ///     FluentValidation for validation.
 /// </summary>
 public class FluentValidationValidator : IValidator {
-    private readonly IFluentValidator[] _validators;
+    private readonly IFluentValidationValidator[] _validators;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="FluentValidationValidator" />.
     /// </summary>
-    /// <param name="validators"> A collection of <see cref="IFluentValidator" />.</param>
-    public FluentValidationValidator(IEnumerable<IFluentValidator> validators) {
+    /// <param name="validators"> A collection of <see cref="global::FluentValidation.IValidator" />.</param>
+    public FluentValidationValidator(IEnumerable<IFluentValidationValidator> validators) {
         // we might need to iterate over it multiple times,
         // so we convert it to an array
         _validators = [.. validators];

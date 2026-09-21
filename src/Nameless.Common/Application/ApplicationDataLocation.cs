@@ -5,7 +5,7 @@
 /// </summary>
 public enum ApplicationDataLocation {
     /// <summary>
-    ///     Directory location that is common to all users in the current
+    ///     SystemDirectory location that is common to all users in the current
     ///     machine.
     /// </summary>
     /// <remarks>
@@ -23,7 +23,7 @@ public enum ApplicationDataLocation {
     Machine,
 
     /// <summary>
-    ///     Directory location that is specific to the current user,
+    ///     SystemDirectory location that is specific to the current user,
     ///     means non-roaming user.
     /// </summary>
     /// <remarks>

@@ -17,7 +17,7 @@ public static class MediatorConfig {
             if (settings.DisableMediator) { return self; }
 
             self.Services.RegisterMediator(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigureMediator,
                     settings.Assemblies
                 )

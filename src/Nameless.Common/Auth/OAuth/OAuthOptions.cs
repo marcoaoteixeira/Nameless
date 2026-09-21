@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Attributes;
+using Nameless.Configuration;
 using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Auth.OAuth;

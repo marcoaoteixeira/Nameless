@@ -123,9 +123,9 @@ public class NothingTests {
         var result = Nothing.Then(() => called = true);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(called);
-            Assert.Equal(Nothing.Value, result);
-        });
+        Assert.Multiple(
+            () => Assert.True(called),
+            () => Assert.Equal(Nothing.Value, result)
+        );
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Nameless.Application;
-using Nameless.Bootstrap;
 using Nameless.Reporting;
+using Nameless.Windows.Bootstrap;
 using Nameless.Windows.UI;
 
 namespace Nameless.WinApp.Views.Windows;

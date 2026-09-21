@@ -56,10 +56,10 @@ public class ParameterCollectionTests {
         collection.Add(new Parameter("p1", "second", DbType.String));
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Single(collection);
-            Assert.Equal("second", collection.First().Value);
-        });
+        Assert.Multiple(
+            () => Assert.Single(collection),
+            () => Assert.Equal("second", collection.First().Value)
+        );
     }
 
     [Fact]
@@ -89,8 +89,10 @@ public class ParameterCollectionTests {
         var names = collection.Select(p => p.Name).ToList();
 
         // assert
-        Assert.Contains("a", names);
-        Assert.Contains("b", names);
+        Assert.Multiple(
+            () => Assert.Contains("a", names),
+            () => Assert.Contains("b", names)
+        );
     }
 
     [Fact]

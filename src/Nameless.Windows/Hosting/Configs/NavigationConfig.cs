@@ -27,7 +27,7 @@ public static class NavigationConfig {
             if (settings.DisableNavigation) { return self; }
 
             self.ConfigureServices(services => services.RegisterNavigation(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigureNavigation,
                     settings.Assemblies
                 )

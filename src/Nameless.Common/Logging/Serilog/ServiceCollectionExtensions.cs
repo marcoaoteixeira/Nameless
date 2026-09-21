@@ -17,18 +17,18 @@ public static class ServiceCollectionExtensions {
         ///     Registers Serilog as the logging provider, applying either the default
         ///     configuration (console, file, OpenTelemetry) or a custom override.
         /// </summary>
-        /// <param name="registration">Optional delegate to configure Serilog options.</param>
+        /// <param name="configure">Optional delegate to configure Serilog options.</param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterSerilog(Action<SerilogRegistration>? registration) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterSerilog(Action<SerilogRegistration>? configure) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.AddSerilog((provider, config) => {
-                ConfigureSettings(provider, config.ReadFrom, settings);
-                ConfigureEnrichment(provider, config.Enrich, settings);
-                ConfigureSink(provider, config.WriteTo, settings);
-                ConfigureMinimumLevel(provider, config.MinimumLevel, settings);
+                ConfigureSettings(provider, config.ReadFrom, registration);
+                ConfigureEnrichment(provider, config.Enrich, registration);
+                ConfigureSink(provider, config.WriteTo, registration);
+                ConfigureMinimumLevel(provider, config.MinimumLevel, registration);
             });
 
             return self.AddLogging(
@@ -37,8 +37,8 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static void ConfigureSettings(IServiceProvider provider, LoggerSettingsConfiguration config, SerilogRegistration settings) {
-        if (!settings.OverrideSettingsConfiguration) {
+    private static void ConfigureSettings(IServiceProvider provider, LoggerSettingsConfiguration config, SerilogRegistration registration) {
+        if (!registration.OverwriteSettingsConfiguration) {
             // Defines from where it should get its configurations.
             config.Configuration(
                 provider.GetRequiredService<IConfiguration>(),
@@ -46,20 +46,20 @@ public static class ServiceCollectionExtensions {
             );
         }
 
-        settings.ConfigureSettings?.Invoke(provider, config);
+        registration.ConfigureSettings?.Invoke(provider, config);
     }
 
-    private static void ConfigureEnrichment(IServiceProvider provider, LoggerEnrichmentConfiguration config, SerilogRegistration settings) {
-        if (!settings.OverrideEnrichmentConfiguration) {
+    private static void ConfigureEnrichment(IServiceProvider provider, LoggerEnrichmentConfiguration config, SerilogRegistration registration) {
+        if (!registration.OverwriteEnrichmentConfiguration) {
             // Enrich the log message with data from other locations.
             config.FromLogContext();
         }
 
-        settings.ConfigureEnrichment?.Invoke(provider, config);
+        registration.ConfigureEnrichment?.Invoke(provider, config);
     }
 
-    private static void ConfigureSink(IServiceProvider provider, LoggerSinkConfiguration config, SerilogRegistration settings) {
-        if (!settings.OverrideSinkConfiguration) {
+    private static void ConfigureSink(IServiceProvider provider, LoggerSinkConfiguration config, SerilogRegistration registration) {
+        if (!registration.OverwriteSinkConfiguration) {
             // Enrich the log message with data from other locations.
             // Write to console sink
             config.Console();
@@ -80,17 +80,17 @@ public static class ServiceCollectionExtensions {
             }
         }
 
-        settings.ConfigureSink?.Invoke(provider, config);
+        registration.ConfigureSink?.Invoke(provider, config);
     }
 
-    private static void ConfigureMinimumLevel(IServiceProvider provider, LoggerMinimumLevelConfiguration config, SerilogRegistration settings) {
-        if (!settings.OverrideMinimumLevelConfiguration) {
+    private static void ConfigureMinimumLevel(IServiceProvider provider, LoggerMinimumLevelConfiguration config, SerilogRegistration registration) {
+        if (!registration.OverwriteMinimumLevelConfiguration) {
             // Enrich the log message with data from other locations.
             config.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning);
             config.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning);
             config.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
         }
 
-        settings.ConfigureMinimumLevel?.Invoke(provider, config);
+        registration.ConfigureMinimumLevel?.Invoke(provider, config);
     }
 }

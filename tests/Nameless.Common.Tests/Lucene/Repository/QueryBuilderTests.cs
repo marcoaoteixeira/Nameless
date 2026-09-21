@@ -1,5 +1,4 @@
 using Lucene.Net.Search;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository;
 
@@ -15,8 +14,10 @@ public class QueryBuilderTests {
         var builder = CreateBuilder();
 
         // Assert
-        Assert.NotNull(builder);
-        Assert.IsType<QueryBuilder>(builder);
+        Assert.Multiple(
+            () => Assert.NotNull(builder),
+            () => Assert.IsType<QueryBuilder>(builder)
+        );
     }
 
     [Fact]
@@ -29,8 +30,10 @@ public class QueryBuilderTests {
         var definition = builder.Build();
 
         // Assert
-        Assert.NotNull(definition);
-        Assert.NotNull(definition.Query);
+        Assert.Multiple(
+            () => Assert.NotNull(definition),
+            () => Assert.NotNull(definition.Query)
+        );
     }
 
     [Fact]
@@ -58,8 +61,10 @@ public class QueryBuilderTests {
 
         // Assert
         var boolQuery = Assert.IsType<BooleanQuery>(definition.Query);
-        Assert.Single(boolQuery.Clauses);
-        Assert.Equal(Occur.MUST, boolQuery.Clauses[0].Occur);
+        Assert.Multiple(
+            () => Assert.Single(boolQuery.Clauses),
+            () => Assert.Equal(Occur.MUST, boolQuery.Clauses[0].Occur)
+        );
     }
 
     [Fact]
@@ -100,8 +105,10 @@ public class QueryBuilderTests {
         var definition = builder.Build();
 
         // Assert
-        Assert.NotNull(definition);
-        Assert.IsType<MatchAllDocsQuery>(definition.Query);
-        Assert.Equal(LuceneConstants.MaximumQueryResults, definition.Limit);
+        Assert.Multiple(
+            () => Assert.NotNull(definition),
+            () => Assert.IsType<MatchAllDocsQuery>(definition.Query),
+            () => Assert.Equal(LuceneConstants.MaximumQueryResults, definition.Limit)
+        );
     }
 }

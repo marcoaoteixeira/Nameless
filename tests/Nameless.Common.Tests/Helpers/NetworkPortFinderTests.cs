@@ -23,8 +23,10 @@ public class NetworkPortFinderTests {
 
         // assert
         Assert.All(ports, p => {
-            Assert.True(p >= Start);
-            Assert.True(p < Start + Limit);
+            Assert.Multiple(
+                () => Assert.True(p >= Start),
+                () => Assert.True(p < Start + Limit)
+            );
         });
     }
 

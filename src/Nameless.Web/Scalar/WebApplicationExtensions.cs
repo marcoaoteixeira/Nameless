@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nameless.Attributes;
+using Nameless.Auth;
 using Nameless.Auth.OAuth;
 using Nameless.Configuration;
 using Nameless.Helpers;
@@ -23,13 +23,13 @@ public static class WebApplicationExtensions {
     ///     The current instance of <see cref="WebApplication"/> class.
     /// </param>
     extension(WebApplication self) {
-        public WebApplication UseScalar(Action<ScalarRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public WebApplication UseScalar(Action<ScalarRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
             // Do not expose Scalar on PROD environment
             if (self.Environment.IsProduction()) { return self; }
 
-            var combination = Delegate.Combine(DefaultScalarConfiguration, settings.ConfigureScalar);
+            var combination = Delegate.Combine(DefaultScalarConfiguration, registration.ConfigureScalar);
 
             self.MapScalarApiReference((Action<ScalarOptions, HttpContext>)combination);
 
@@ -42,7 +42,7 @@ public static class WebApplicationExtensions {
                     .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
                     .SortOperationsByMethod();
 
-                if (settings.UseDefaultHttpAuthentication) {
+                if (registration.UseDefaultHttpAuthentication) {
                     options.AddHttpAuthentication(
                         securitySchemeName: JwtBearerDefaults.AuthenticationScheme,
                         configureScheme: scheme => ConfigureScalarHttpAuthentication(scheme, context)

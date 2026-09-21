@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Web.RequestTimeout;
 

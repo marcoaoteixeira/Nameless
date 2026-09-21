@@ -70,10 +70,10 @@ public class IntegerExtensionsTests {
 
     [Fact]
     public void IsWithinRange_WithIncludeLimitFalse_ExcludesBoundaries() {
-        Assert.Multiple(() => {
-            Assert.False(1.IsWithinRange(1, 10, includeLimit: false));
-            Assert.False(10.IsWithinRange(1, 10, includeLimit: false));
-            Assert.True(5.IsWithinRange(1, 10, includeLimit: false));
-        });
+        Assert.Multiple(
+            () => Assert.False(1.IsWithinRange(1, 10, includeLimit: false)),
+            () => Assert.False(10.IsWithinRange(1, 10, includeLimit: false)),
+            () => Assert.True(5.IsWithinRange(1, 10, includeLimit: false))
+        );
     }
 }

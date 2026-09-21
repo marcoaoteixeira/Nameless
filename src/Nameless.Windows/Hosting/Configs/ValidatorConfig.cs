@@ -27,7 +27,7 @@ public static class ValidatorConfig {
             if (settings.DisableValidator) { return self; }
 
             self.ConfigureServices(services => services.RegisterValidator(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigureValidator,
                     settings.Assemblies
                 )

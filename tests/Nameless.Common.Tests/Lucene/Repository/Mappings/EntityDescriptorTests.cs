@@ -1,5 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
-
 namespace Nameless.Lucene.Repository.Mappings;
 
 [UnitTest]
@@ -20,8 +18,10 @@ public class EntityDescriptorTests {
         var idProperty = sut.Properties.SingleOrDefault(p => p.IsID);
 
         // Assert
-        Assert.NotNull(idProperty);
-        Assert.Equal("Id", idProperty.Name);
+        Assert.Multiple(
+            () => Assert.NotNull(idProperty),
+            () => Assert.Equal("Id", idProperty.Name)
+        );
     }
 
     [Fact]
@@ -36,9 +36,11 @@ public class EntityDescriptorTests {
         var property = sut.Properties.SingleOrDefault(p => p.Name == "Name");
 
         // Assert
-        Assert.NotNull(property);
-        Assert.False(property.IsID);
-        Assert.Equal(PropertyOptions.Store, property.Options);
+        Assert.Multiple(
+            () => Assert.NotNull(property),
+            () => Assert.False(property.IsID),
+            () => Assert.Equal(PropertyOptions.Store, property.Options)
+        );
     }
 
     [Fact]
@@ -52,10 +54,12 @@ public class EntityDescriptorTests {
         sut.SetProperty(e => e.Age, PropertyOptions.Store);
 
         // Assert
-        Assert.Equal(3, sut.Properties.Count);
-        Assert.Contains(sut.Properties, p => p.Name == "Id" && p.IsID);
-        Assert.Contains(sut.Properties, p => p.Name == "Name");
-        Assert.Contains(sut.Properties, p => p.Name == "Age");
+        Assert.Multiple(
+            () => Assert.Equal(3, sut.Properties.Count),
+            () => Assert.Contains(sut.Properties, p => p.Name == "Id" && p.IsID),
+            () => Assert.Contains(sut.Properties, p => p.Name == "Name"),
+            () => Assert.Contains(sut.Properties, p => p.Name == "Age")
+        );
     }
 
     [Fact]
@@ -73,7 +77,9 @@ public class EntityDescriptorTests {
         var nameProperty = sut.Properties.Single(p => p.Name == "Name");
 
         // Assert — only one entry exists and it has the updated options
-        Assert.Equal(PropertyOptions.Store | PropertyOptions.Analyze, nameProperty.Options);
-        Assert.Equal(2, sut.Properties.Count);
+        Assert.Multiple(
+            () => Assert.Equal(PropertyOptions.Store | PropertyOptions.Analyze, nameProperty.Options),
+            () => Assert.Equal(2, sut.Properties.Count)
+        );
     }
 }

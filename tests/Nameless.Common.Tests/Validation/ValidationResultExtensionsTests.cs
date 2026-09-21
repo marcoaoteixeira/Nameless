@@ -30,12 +30,12 @@ public class ValidationResultExtensionsTests {
         var dict = result.ToDictionary();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.True(dict.ContainsKey("Name"));
-            Assert.True(dict.ContainsKey("Email"));
-            Assert.Equal(2, dict["Name"].Length);
-            Assert.Single(dict["Email"]);
-        });
+        Assert.Multiple(
+            () => Assert.True(dict.ContainsKey("Name")),
+            () => Assert.True(dict.ContainsKey("Email")),
+            () => Assert.Equal(2, dict["Name"].Length),
+            () => Assert.Single(dict["Email"])
+        );
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public class ValidationResultExtensionsTests {
         var aggregated = results.Aggregate();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(aggregated.Success);
-            Assert.Equal(2, aggregated.Errors.Length);
-        });
+        Assert.Multiple(
+            () => Assert.False(aggregated.Success),
+            () => Assert.Equal(2, aggregated.Errors.Length)
+        );
     }
 
     [Fact]

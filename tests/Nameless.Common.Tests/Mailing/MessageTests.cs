@@ -16,12 +16,12 @@ public class MessageTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("Hello", msg.Subject);
-            Assert.Equal(["sender@test.com"], msg.From);
-            Assert.Equal(["recipient@test.com"], msg.To);
-            Assert.Equal("Body text", msg.Content);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("Hello", msg.Subject),
+            () => Assert.Equal(["sender@test.com"], msg.From),
+            () => Assert.Equal(["recipient@test.com"], msg.To),
+            () => Assert.Equal("Body text", msg.Content)
+        );
     }
 
     [Fact]
@@ -41,14 +41,14 @@ public class MessageTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(["cc@test.com"], msg.Cc);
-            Assert.Equal(["bcc@test.com"], msg.Bcc);
-            Assert.Same(Encoding.ASCII, msg.Encoding);
-            Assert.Equal("en-US", msg.Language);
-            Assert.True(msg.IsBodyHtml);
-            Assert.Equal(Priority.High, msg.Priority);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(["cc@test.com"], msg.Cc),
+            () => Assert.Equal(["bcc@test.com"], msg.Bcc),
+            () => Assert.Same(Encoding.ASCII, msg.Encoding),
+            () => Assert.Equal("en-US", msg.Language),
+            () => Assert.True(msg.IsBodyHtml),
+            () => Assert.Equal(Priority.High, msg.Priority)
+        );
     }
 
     [Fact]
@@ -82,12 +82,12 @@ public class MessageTests {
         );
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(Priority.Normal, msg.Priority);
-            Assert.Empty(msg.Cc);
-            Assert.Empty(msg.Bcc);
-            Assert.False(msg.IsBodyHtml);
-            Assert.Null(msg.Language);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(Priority.Normal, msg.Priority),
+            () => Assert.Empty(msg.Cc),
+            () => Assert.Empty(msg.Bcc),
+            () => Assert.False(msg.IsBodyHtml),
+            () => Assert.Null(msg.Language)
+        );
     }
 }

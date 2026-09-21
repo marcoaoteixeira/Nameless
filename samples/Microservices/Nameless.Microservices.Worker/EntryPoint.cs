@@ -8,7 +8,7 @@ public class EntryPoint {
             settings.Args = args;
             settings.Assemblies = [
                 typeof(EntryPoint).Assembly,
-                typeof(AssemblyMarkerCommon).Assembly
+                typeof(AssemblyMarker).Assembly
             ];
 
             DisableServices(settings);

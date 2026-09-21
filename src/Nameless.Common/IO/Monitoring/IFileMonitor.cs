@@ -1,69 +1,75 @@
 namespace Nameless.IO.Monitoring;
 
 /// <summary>
-///     Represents a smart file system watcher that monitors a directory for
-///     changes and fires typed callbacks only when file operations are fully
-///     complete.
+///     Watches a folder and raises glob-filtered, debounced file events.
 /// </summary>
-public interface IFileMonitor : IAsyncDisposable {
+/// <remarks>
+///     Only one handler is accepted per event, and handlers must be set
+///     before <see cref="Start" />. Handlers run on a thread-pool thread,
+///     one at a time and in event order. A slow handler delays later
+///     notifications but never the watcher.
+/// </remarks>
+public interface IFileMonitor : IDisposable {
     /// <summary>
-    ///     Registers the callback to invoke when a file is created.
-    ///     Calling this method again overwrites the previous callback.
+    ///     Gets the folder being monitored.
     /// </summary>
-    /// <param name="callback">
-    ///     The delegate to invoke.
-    /// </param>
-    void OnCreated(FileMonitorDelegate<FileMonitorEventArgs> callback);
+    string Root { get; }
 
     /// <summary>
-    ///     Registers the callback to invoke when a file is deleted.
-    ///     Calling this method again overwrites the previous callback.
+    ///     Gets the glob pattern, relative to <see cref="Root" />, that a
+    ///     path must match to be reported.
     /// </summary>
-    /// <param name="callback">
-    ///     The delegate to invoke.
-    /// </param>
-    void OnDeleted(FileMonitorDelegate<FileMonitorEventArgs> callback);
+    string Glob { get; }
 
     /// <summary>
-    ///     Registers the callback to invoke when a file is renamed.
-    ///     Calling this method again overwrites the previous callback.
+    ///     Sets the handler for created files. Raised once the file is
+    ///     available for exclusive access.
     /// </summary>
-    /// <param name="callback">
-    ///     The delegate to invoke.
+    /// <param name="action">
+    ///     The handler.
     /// </param>
-    void OnRenamed(FileMonitorDelegate<FileMonitorEventArgs> callback);
+    void OnCreated(Action<FileCreatedEvent> action);
 
     /// <summary>
-    ///     Registers the callback to invoke when a file is changed.
-    ///     Calling this method again overwrites the previous callback.
+    ///     Sets the handler for renamed or moved files. Raised immediately.
     /// </summary>
-    /// <param name="callback">
-    ///     The delegate to invoke.
+    /// <param name="action">
+    ///     The handler.
     /// </param>
-    void OnChanged(FileMonitorDelegate<FileMonitorEventArgs> callback);
+    void OnRenamed(Action<FileRenamedEvent> action);
 
     /// <summary>
-    ///     Registers the callback to invoke when a watcher error occurs.
-    ///     Calling this method again overwrites the previous callback.
+    ///     Sets the handler for deleted files.
     /// </summary>
-    /// <param name="callback">
-    ///     The delegate to invoke.
+    /// <param name="action">
+    ///     The handler.
     /// </param>
-    void OnError(FileMonitorDelegate<FileMonitorErrorEventArgs> callback);
+    /// <remarks>
+    ///     Raised after <see cref="FileMonitorOptions.ReplaceGracePeriod" />,
+    ///     unless the path is replaced meanwhile, in which case a single
+    ///     <see cref="FileChangedEvent" /> is raised instead.
+    /// </remarks>
+    void OnDeleted(Action<FileDeletedEvent> action);
 
     /// <summary>
-    ///     Starts watching the configured directory.
+    ///     Sets the handler for changed files. Raised once, after the changes
+    ///     settle and the file is available.
     /// </summary>
-    /// <param name="cancellationToken">
-    ///     Propagates notification that the operation should be cancelled.
+    /// <param name="action">
+    ///     The handler.
     /// </param>
-    Task StartAsync(CancellationToken cancellationToken = default);
+    void OnChanged(Action<FileChangedEvent> action);
 
     /// <summary>
-    ///     Stops watching and waits for any in-flight probes to complete.
+    ///     Sets the handler for monitoring errors.
     /// </summary>
-    /// <param name="cancellationToken">
-    ///     Propagates notification that the operation should be cancelled.
+    /// <param name="action">
+    ///     The handler.
     /// </param>
-    Task StopAsync(CancellationToken cancellationToken = default);
+    void OnError(Action<FileMonitorErrorEvent> action);
+
+    /// <summary>
+    ///     Starts raising events. Calling it again has no effect.
+    /// </summary>
+    void Start();
 }

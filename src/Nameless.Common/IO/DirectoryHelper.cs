@@ -1,7 +1,7 @@
 ﻿namespace Nameless.IO;
 
 /// <summary>
-///     Directory helper.
+///     SystemDirectory helper.
 /// </summary>
 public static class DirectoryHelper {
     /// <summary>
@@ -20,29 +20,29 @@ public static class DirectoryHelper {
     ///     When the source directory is not found.
     /// </exception>
     public static void CopyDirectory(string sourceDirectory, string destinationDirectory, CancellationToken cancellationToken = default) {
-        if (!Directory.Exists(sourceDirectory)) {
+        if (!SysDirectory.Exists(sourceDirectory)) {
             throw new DirectoryNotFoundException($"Source directory not found: {sourceDirectory}");
         }
 
         // ensure directory existence
-        Directory.CreateDirectory(destinationDirectory);
+        SysDirectory.CreateDirectory(destinationDirectory);
 
         // copy files
-        foreach (var file in Directory.EnumerateFiles(sourceDirectory)) {
+        foreach (var file in SysDirectory.EnumerateFiles(sourceDirectory)) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            File.Copy(
+            SysFile.Copy(
                 file,
-                Path.Combine(destinationDirectory, Path.GetFileName(file)),
+                SysPath.Combine(destinationDirectory, SysPath.GetFileName(file)),
                 overwrite: true
             );
         }
 
         // recursively copy directories
-        foreach (var directory in Directory.EnumerateDirectories(sourceDirectory)) {
+        foreach (var directory in SysDirectory.EnumerateDirectories(sourceDirectory)) {
             CopyDirectory(
                 sourceDirectory: directory,
-                destinationDirectory: Path.Combine(destinationDirectory, Path.GetFileName(directory)),
+                destinationDirectory: SysPath.Combine(destinationDirectory, SysPath.GetFileName(directory)),
                 cancellationToken
             );
         }

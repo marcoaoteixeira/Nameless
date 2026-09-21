@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository.Mappings;
 
@@ -34,8 +33,10 @@ public class EntityDescriptorProviderTests {
         var descriptor = sut.GetDescriptor<ProviderTestEntity>();
 
         // Assert
-        Assert.NotNull(descriptor);
-        Assert.Contains(descriptor.Properties, p => p.IsID && p.Name == "Id");
+        Assert.Multiple(
+            () => Assert.NotNull(descriptor),
+            () => Assert.Contains(descriptor.Properties, p => p.IsID && p.Name == "Id")
+        );
     }
 
     [Fact]

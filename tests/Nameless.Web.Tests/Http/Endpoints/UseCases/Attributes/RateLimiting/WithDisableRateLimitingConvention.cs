@@ -1,4 +1,3 @@
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Web.Http.Endpoints.Infrastructure;
 
 namespace Nameless.Web.Http.Endpoints.UseCases.Attributes.RateLimiting;
@@ -23,9 +22,11 @@ public class WithDisableRateLimitingConvention {
     public void WhenEndpointClassMarkDisableRateLimiting_ThenEmitConvention() {
         var source = GeneratorTestHelper.GetGeneratedSource(_code);
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.DisableRateLimitingEndpoint", source);
-        Assert.Matches(@"DisableRateLimitingEndpoint\.Register\(.*\);", source);
-        Assert.Matches(@"DisableRateLimitingEndpoint\.Map\(.*\);", source);
-        Assert.Matches(@"\.DisableRateLimiting\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.DisableRateLimitingEndpoint", source),
+            () => Assert.Matches(@"DisableRateLimitingEndpoint\.Register\(.*\);", source),
+            () => Assert.Matches(@"DisableRateLimitingEndpoint\.Map\(.*\);", source),
+            () => Assert.Matches(@"\.DisableRateLimiting\(\)", source)
+        );
     }
 }

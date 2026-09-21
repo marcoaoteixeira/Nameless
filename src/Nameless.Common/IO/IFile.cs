@@ -1,4 +1,6 @@
-﻿namespace Nameless.IO;
+﻿using Nameless.IO.Monitoring;
+
+namespace Nameless.IO;
 
 /// <summary>
 ///     Defines a file in the file system.
@@ -61,4 +63,12 @@ public interface IFile {
     ///     The copied <see cref="IFile"/>.
     /// </returns>
     IFile Copy(string destinationRelativePath, bool overwrite);
+
+    /// <summary>
+    ///     Creates a file monitor for this file.
+    /// </summary>
+    /// <returns>
+    ///     The file monitor.
+    /// </returns>
+    IFileMonitor Monitor();
 }

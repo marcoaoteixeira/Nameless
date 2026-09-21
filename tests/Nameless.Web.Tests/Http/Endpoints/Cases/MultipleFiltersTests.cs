@@ -52,7 +52,9 @@ public sealed class MultipleFiltersTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".AddEndpointFilter<global::TestApp.LoggingFilter>()", generated);
-        Assert.Contains(".AddEndpointFilter<global::TestApp.AuthFilter>()", generated);
+        Assert.Multiple(
+            () => Assert.Contains(".AddEndpointFilter<global::TestApp.LoggingFilter>()", generated),
+            () => Assert.Contains(".AddEndpointFilter<global::TestApp.AuthFilter>()", generated)
+        );
     }
 }

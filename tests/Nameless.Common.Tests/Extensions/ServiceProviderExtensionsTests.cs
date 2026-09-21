@@ -102,8 +102,10 @@ public class ServiceProviderExtensionsTests {
         var options = provider.GetOptions<SampleOptions>();
 
         // assert
-        Assert.NotNull(options.Value);
-        Assert.Equal(0, options.Value.Value);
+        Assert.Multiple(
+            () => Assert.NotNull(options.Value),
+            () => Assert.Equal(0, options.Value.Value)
+        );
     }
 
     // --- test doubles ---

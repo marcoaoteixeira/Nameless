@@ -61,7 +61,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
     /// <inheritdoc />
     public async Task SaveChangesAsync(CancellationToken cancellationToken) {
         try {
-            var file = _applicationContext.FileExplorer.GetFile(APP_CONFIGURATION_FILE);
+            var file = _applicationContext.ApplicationDataFileProvider.GetFile(APP_CONFIGURATION_FILE);
             var json = JsonSerializer.SerializeToUtf8Bytes(AppConfiguration);
 
             await using var stream = file.Open(FileMode.Create);
@@ -71,7 +71,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
     }
 
     private Dictionary<string, JsonElement> GetAppConfiguration() {
-        var file = _applicationContext.FileExplorer.GetFile(APP_CONFIGURATION_FILE);
+        var file = _applicationContext.ApplicationDataFileProvider.GetFile(APP_CONFIGURATION_FILE);
 
         if (!file.Exists) { return []; }
 

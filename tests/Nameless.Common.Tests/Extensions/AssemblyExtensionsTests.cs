@@ -31,8 +31,10 @@ public class AssemblyExtensionsTests {
         var name = assembly.GetSemanticName();
 
         // assert
-        Assert.NotEmpty(name);
-        Assert.Equal(assembly.GetName().Name, name);
+        Assert.Multiple(
+            () => Assert.NotEmpty(name),
+            () => Assert.Equal(assembly.GetName().Name, name)
+        );
     }
 
     // ─── GetSemanticVersion ──────────────────────────────────────────────────
@@ -49,7 +51,7 @@ public class AssemblyExtensionsTests {
         Assert.NotEmpty(version);
     }
 
-    // ─── GetImplementations(Type) ────────────────────────────────────────────
+    // ─── ExecuteAssemblyScan(Type) ────────────────────────────────────────────
 
     [Fact]
     public void GetImplementations_FindsConcreteImplementationsOfInterface() {
@@ -75,7 +77,7 @@ public class AssemblyExtensionsTests {
         Assert.DoesNotContain(typeof(AbstractTestImpl), results);
     }
 
-    // ─── IEnumerable<Assembly>.GetImplementations ────────────────────────────
+    // ─── IEnumerable<Assembly>.ExecuteAssemblyScan ────────────────────────────
 
     [Fact]
     public void GetImplementations_OnAssemblyCollection_AggregatesResults() {
@@ -83,7 +85,7 @@ public class AssemblyExtensionsTests {
         var assemblies = new[] { typeof(AssemblyExtensionsTests).Assembly };
 
         // act
-        var results = assemblies.GetImplementations(typeof(IAssemblyExtTestMarker)).ToList();
+        var results = assemblies.GetImplementations([typeof(IAssemblyExtTestMarker)]).ToList();
 
         // assert
         Assert.NotEmpty(results);

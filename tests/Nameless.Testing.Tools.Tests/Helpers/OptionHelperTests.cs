@@ -22,14 +22,13 @@ public class OptionHelperTests
         var opts = OptionsHelper.Create<TestOptions>();
 
         // assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(opts);
-            Assert.NotNull(opts.Value);
-            Assert.Null(opts.Value.ValueA);
-            Assert.Null(opts.Value.ValueB);
-            Assert.Null(opts.Value.ValueC);
-        });
+        Assert.Multiple(
+            () => Assert.NotNull(opts),
+            () => Assert.NotNull(opts.Value),
+            () => Assert.Null(opts.Value.ValueA),
+            () => Assert.Null(opts.Value.ValueB),
+            () => Assert.Null(opts.Value.ValueC)
+        );
     }
 
     [Fact]
@@ -42,13 +41,12 @@ public class OptionHelperTests
         var opts = OptionsHelper.Create<TestOptions>(config => config.ValueB = Message);
 
         // assert
-        Assert.Multiple(() =>
-        {
-            Assert.NotNull(opts);
-            Assert.NotNull(opts.Value);
-            Assert.Null(opts.Value.ValueA);
-            Assert.Equal(Message, opts.Value.ValueB);
-            Assert.Null(opts.Value.ValueC);
-        });
+        Assert.Multiple(
+            () => Assert.NotNull(opts),
+            () => Assert.NotNull(opts.Value),
+            () => Assert.Null(opts.Value.ValueA),
+            () => Assert.Equal(Message, opts.Value.ValueB),
+            () => Assert.Null(opts.Value.ValueC)
+        );
     }
 }

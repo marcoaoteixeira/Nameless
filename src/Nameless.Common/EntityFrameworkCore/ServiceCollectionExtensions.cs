@@ -18,54 +18,51 @@ public static class ServiceCollectionExtensions {
         ///     specified <typeparamref name="TDbContext"/>.
         /// </summary>
         /// <typeparam name="TDbContext">The <see cref="DbContext"/> type to register.</typeparam>
-        /// <param name="registration">Optional delegate to configure interceptors and seeder.</param>
+        /// <param name="configure">Optional delegate to configure interceptors and seeder.</param>
         /// <param name="configuration">Optional configuration for <see cref="EntityFrameworkCoreOptions"/>.</param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterEntityFrameworkCore<TDbContext>(Action<EntityFrameworkCoreRegistration>? registration = null, IConfiguration? configuration = null)
+        public IServiceCollection RegisterEntityFrameworkCore<TDbContext>(Action<EntityFrameworkCoreRegistration>? configure = null, IConfiguration? configuration = null)
             where TDbContext : DbContext {
-            var settings = ActionHelper.FromDelegate(registration);
+            var registration = ActionHelper.FromDelegate(configure);
 
             self.ConfigureOptions<EntityFrameworkCoreOptions>(configuration);
 
-            self.RegisterInterceptors(settings);
-            self.RegisterDataSeeder(settings);
+            self.RegisterInterceptors(registration);
+            self.RegisterDataSeeders(registration);
 
-            var configure = (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
+            var configureDbContext = (Action<IServiceProvider, DbContextOptionsBuilder>)Delegate.Combine(
                 DefaultConfiguration,
-                settings.OverrideDbContextConfiguration ?? SqliteDbContextConfiguration
+                registration.DbContextConfiguration ?? SqliteDbContextConfiguration
             );
 
-            return settings.UseDbContextFactory
-                ? self.AddDbContextFactory<TDbContext>(configure)
-                : self.AddDbContext<TDbContext>(configure);
+            return registration.UseDbContextFactory
+                ? self.AddDbContextFactory<TDbContext>(configureDbContext)
+                : self.AddDbContext<TDbContext>(configureDbContext);
         }
 
-        private void RegisterInterceptors(EntityFrameworkCoreRegistration settings) {
-            var service = typeof(IInterceptor);
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<IInterceptor>()
-                : settings.Interceptors;
+        private void RegisterInterceptors(EntityFrameworkCoreRegistration registration) {
+            self.TryAddEnumerable(registration.Interceptors.Select(
+                implementation => ServiceDescriptor.Transient(typeof(IInterceptor), implementation)
+            ));
+        }
 
-            var descriptors = implementations.Select(
-                implementation => ServiceDescriptor.Transient(service, implementation)
+        private void RegisterDataSeeders(EntityFrameworkCoreRegistration registration) {
+            const string Key = "::database:seeder::dd499dc3-f896-4030-ba59-00f8bb2647e9";
+
+            self.TryAddTransient<DatabaseSeederAggregator>(provider => new DatabaseSeederAggregator(
+                seeders: provider.GetKeyedServices<IDatabaseSeeder>(Key),
+                logger: provider.GetLogger<DatabaseSeederAggregator>()
+            ));
+
+            self.TryAddEnumerable(
+                registration.DatabaseSeeders.Select(
+                    implementation => ServiceDescriptor.KeyedTransient(
+                        typeof(IDatabaseSeeder), Key, implementation
+                    )
+                )
             );
-
-            self.TryAddEnumerable(descriptors);
-        }
-
-        private void RegisterDataSeeder(EntityFrameworkCoreRegistration settings) {
-            var service = typeof(IDatabaseSeeder);
-            var implementation = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<IDatabaseSeeder>().SingleOrDefault()
-                : settings.DatabaseSeeder;
-
-            if (implementation is null) { return;}
-
-            var descriptor = ServiceDescriptor.Transient(service, implementation);
-
-            self.TryAdd(descriptor);
         }
     }
     
@@ -83,13 +80,12 @@ public static class ServiceCollectionExtensions {
     }
 
     private static void DefaultConfiguration(IServiceProvider provider, DbContextOptionsBuilder builder) {
-        var interceptors = provider.GetServices<IInterceptor>();
-        builder.AddInterceptors(interceptors);
+        builder.AddInterceptors(
+            provider.GetServices<IInterceptor>()
+        );
 
-        var databaseSeeder = provider.GetService<IDatabaseSeeder>();
-        if (databaseSeeder is not null) {
-            builder.UseAsyncSeeding(databaseSeeder.ExecuteAsync)
-                   .UseSeeding(databaseSeeder.Execute);
-        }
+        var aggregator = provider.GetRequiredService<DatabaseSeederAggregator>();
+        builder.UseAsyncSeeding(aggregator.ExecuteAsync)
+               .UseSeeding(aggregator.Execute);
     }
 }

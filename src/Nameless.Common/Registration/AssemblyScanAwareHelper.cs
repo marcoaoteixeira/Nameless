@@ -24,7 +24,7 @@ public static class AssemblyScanAwareHelper {
     ///     A delegate of the same type that includes the assemblies into
     ///     the registration object.
     /// </returns>
-    public static Action<TSelf> Join<TSelf>(Action<TSelf>? configuration, IReadOnlyCollection<Assembly> assemblies)
+    public static Action<TSelf> MergeAssemblies<TSelf>(Action<TSelf>? configuration, IReadOnlyCollection<Assembly> assemblies)
         where TSelf : AssemblyScanAware<TSelf>, new() {
         return (Action<TSelf>)Delegate.Combine(
             IncludeAssemblies,
@@ -32,7 +32,7 @@ public static class AssemblyScanAwareHelper {
         );
 
         void IncludeAssemblies(TSelf opts) {
-            opts.IncludeAssemblies(assemblies);
+            opts.WithAssemblies(assemblies);
         }
     }
 }

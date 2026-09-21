@@ -1,6 +1,4 @@
-﻿using Nameless.Testing.Tools.Attributes;
-
-namespace Nameless.Reporting;
+﻿namespace Nameless.Reporting;
 
 [UnitTest]
 public class StatusUpdateTests {

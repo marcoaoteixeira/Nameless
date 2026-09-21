@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless;
 
@@ -10,22 +10,25 @@ public static class ConfigurationExtensions {
     extension(IConfiguration self) {
         /// <summary>
         ///     Retrieves the configuration section related to the
-        ///     <typeparamref name="TOptions"/> type. To discover
+        ///     <typeparamref name="T"/> type. To discover
         ///     the section name, it looks for the attribute
         ///     <see cref="ConfigurationSectionNameAttribute"/> in the type.
         /// </summary>
-        /// <typeparam name="TOptions">
+        /// <typeparam name="T">
         ///     Type which is attributed to the configuration section.
         /// </typeparam>
         /// <param name="sectionName">
-        ///     The section name.
+        ///     The configuration section name. If not provided, tries to
+        ///     check if <typeparamref name="T"/> has attribute
+        ///     <see cref="ConfigurationSectionNameAttribute"/>. If not,
+        ///     defaults to the <typeparamref name="T"/> type name.
         /// </param>
         /// <returns>
         ///     The configuration section for the type or an empty section;
         ///     if not found.
         /// </returns>
-        public IConfigurationSection GetSection<TOptions>(string? sectionName = null) {
-            sectionName ??= ConfigurationSectionNameAttribute.GetSectionName<TOptions>();
+        public IConfigurationSection GetSection<T>(string? sectionName = null) {
+            sectionName ??= ConfigurationSectionNameAttribute.GetSectionName<T>();
 
             if (self is IConfigurationSection section && section.Key == sectionName) {
                 return section;
@@ -35,32 +38,54 @@ public static class ConfigurationExtensions {
         }
 
         /// <summary>
-        ///     Retrieves a POCO representing an option object from the
-        ///     configuration.
+        ///     Tries to get an instance of <typeparamref name="T"/> from the
+        ///     current configuration section. If unable to bind, then throws
+        ///     <see cref="ConfigurationBindingException"/>.
         /// </summary>
-        /// <typeparam name="TOptions">
-        ///     Type of the options.
+        /// <typeparam name="T">
+        ///     Type to bind.
         /// </typeparam>
-        /// <param name="sectionName">
-        ///     When provided, use it to locate the corresponding configuration
-        ///     section. Otherwise; it tries to get the configuration section
-        ///     name from the type using
-        ///     the <see cref="ConfigurationSectionNameAttribute"/>.
-        /// </param>
         /// <returns>
-        ///     The options object.
+        ///     An instance of <typeparamref name="T"/> that reflects the
+        ///     configuration section.
         /// </returns>
-        public TOptions GetOptions<TOptions>(string? sectionName = null)
-            where TOptions : new() {
-            return self.GetSection<TOptions>(sectionName)
-                       .Get<TOptions>() ?? new TOptions();
+        /// <exception cref="ConfigurationBindingException">
+        ///     If not able to bind configuration section to
+        ///     <typeparamref name="T"/>
+        /// </exception>
+        public T GetOrThrow<T>() where T : class {
+            return self.Get<T>() ?? throw new ConfigurationBindingException(
+                path: ((IConfigurationSection)self).Path,
+                bindingType: typeof(T)
+            );
+        }
+
+        /// <summary>
+        ///     Gets an instance of <typeparamref name="T"/> from the
+        ///     current configuration section. If unable to bind, then creates
+        ///     a new instance and uses the <paramref name="configure"/>
+        ///     delegate, if provided.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     Type to bind.
+        /// </typeparam>
+        /// <returns>
+        ///     An instance of <typeparamref name="T"/> that reflects the
+        ///     configuration section.
+        /// </returns>
+        public T GetOrCreate<T>(Action<T>? configure = null) where T : class, new() {
+            var instance = self.Get<T>() ?? new T();
+
+            configure?.Invoke(instance);
+
+            return instance;
         }
 
         /// <summary>
         ///     Retrieves all options from a configuration section looking
         ///     into its children.
         /// </summary>
-        /// <typeparam name="TOptions">
+        /// <typeparam name="T">
         ///     Type of the option.
         /// </typeparam>
         /// <param name="sectionName">
@@ -72,14 +97,14 @@ public static class ConfigurationExtensions {
         /// </returns>
         /// <exception cref="InvalidOperationException">
         ///     If it was not able to convert the section into an instance
-        ///     of <typeparamref name="TOptions"/>
+        ///     of <typeparamref name="T"/>
         /// </exception>
-        public Dictionary<string, TOptions> GetMultipleOptions<TOptions>(string? sectionName = null) {
-            return self.GetSection<TOptions>(sectionName)
+        public Dictionary<string, T> GetAll<T>(string? sectionName = null) where T : class {
+            return self.GetSection<T>(sectionName)
                        .GetChildren()
                        .ToDictionary(
                            section => section.Key,
-                           section => section.Get<TOptions>() ?? throw new InvalidOperationException($"Unable to convert configuration section '{sectionName}' to '{typeof(TOptions).Name}'.")
+                           section => section.GetOrThrow<T>()
                        );
         }
     }

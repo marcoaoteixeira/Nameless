@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
@@ -12,26 +12,29 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 /// </summary>
 public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
     private readonly IChannelFactory _channelFactory;
-    private readonly IConfiguration _configuration;
     private readonly IMessageSerializer _serializer;
+    private readonly Dictionary<string, QueueOptions> _queues;
     private readonly ILogger<Producer> _logger;
 
     private readonly SemaphoreSlim _semaphore = new(initialCount: 1, maxCount: 1);
 
-    private Dictionary<string, CacheEntry> _cache = [];
+    private Dictionary<string, ChannelCacheEntry> _cache = [];
     private int _disposed;
 
     /// <summary>
     ///     Initializes a new <see cref="Producer"/>.
     /// </summary>
     /// <param name="channelFactory">Factory used to create RabbitMQ channels per topic.</param>
-    /// <param name="configuration">Application configuration used to resolve queue options.</param>
+    /// <param name="options">RabbitMQ options.</param>
     /// <param name="serializer">Serializer for encoding messages before publishing.</param>
     /// <param name="logger">Logger for this producer instance.</param>
-    public Producer(IChannelFactory channelFactory, IConfiguration configuration, IMessageSerializer serializer, ILogger<Producer> logger) {
+    public Producer(IChannelFactory channelFactory, IMessageSerializer serializer, IOptions<RabbitMQOptions> options, ILogger<Producer> logger) {
         _channelFactory = channelFactory;
-        _configuration = configuration;
         _serializer = serializer;
+        _queues = options.Value.Queues.ToDictionary(
+            keySelector: queue => queue.Name,
+            elementSelector: queue => queue
+        );
         _logger = logger;
     }
 
@@ -43,10 +46,12 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
     }
 
     /// <inheritdoc />
-    public async Task ProduceAsync(string topic, object message, ProducerContext context, CancellationToken cancellationToken) {
-        var entry = await FetchCacheEntryAsync(topic, cancellationToken).SkipContextSync();
+    public async Task ProduceAsync<T>(string topic, T value, ProducerContext context, CancellationToken cancellationToken) {
+        BlockAccessAfterDispose();
 
-        await InnerProduceAsync(entry, message, context, cancellationToken).SkipContextSync();
+        var entry = await GetChannelCacheEntryAsync(topic, cancellationToken).SkipContextSync();
+
+        await InnerProduceAsync(entry, value, context, cancellationToken).SkipContextSync();
     }
 
     /// <inheritdoc />
@@ -63,42 +68,38 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
         GC.SuppressFinalize(this);
     }
 
-    private async Task<CacheEntry> FetchCacheEntryAsync(string topic, CancellationToken cancellationToken) {
+    private async Task<ChannelCacheEntry> GetChannelCacheEntryAsync(string topic, CancellationToken cancellationToken) {
         await _semaphore.WaitAsync(cancellationToken);
 
         try {
-            BlockAccessAfterDispose();
-
             if (_cache.TryGetValue(topic, out var entry)) {
                 return entry;
             }
 
-            var options = _configuration.GetQueueOptions(topic);
-            var channel = await _channelFactory.CreateAsync(topic, cancellationToken).SkipContextSync();
+            if (!_queues.TryGetValue(topic, out var queue)) {
+                throw new MissingQueueConfigurationException(topic);
+            }
 
-            return _cache[topic] = new CacheEntry {
+            var channel = await _channelFactory.CreateAsync(topic, cancellationToken)
+                                               .SkipContextSync();
+
+            return _cache[topic] = new ChannelCacheEntry {
                 Topic = topic,
                 Channel = channel,
-                Options = options
+                Options = queue
             };
         }
-        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: Log.Tag); throw; }
+        catch (Exception ex) { CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag); throw; }
         finally { _semaphore.Release(); }
     }
 
-    private async Task InnerProduceAsync(CacheEntry entry, object message, ProducerContext context, CancellationToken cancellationToken) {
+    private async Task InnerProduceAsync<T>(ChannelCacheEntry entry, T value, ProducerContext context, CancellationToken cancellationToken) {
         try { await entry.Lock.WaitAsync(cancellationToken); }
-        catch(Exception ex) { Log.UnableAcquireProducerSemaphore(_logger, ex); return; }
+        catch(Exception ex) { Log.UnableAcquireProducerSemaphore(_logger, ex, GetType().Tag); return; }
 
         try {
-            BlockAccessAfterDispose();
-
             var properties = context.CreateBasicProperties();
-            var buffer = await _serializer.SerializeAsync(
-                message,
-                context,
-                cancellationToken
-            ).SkipContextSync();
+            var buffer = _serializer.Serialize(value, context);
 
             await entry.Channel.BasicPublishAsync(
                 entry.Options.ExchangeName,
@@ -109,7 +110,7 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
                 cancellationToken
             ).ConfigureAwait(continueOnCapturedContext: false);
         }
-        catch (Exception ex) { CommonLog.Error(_logger, ex, tag: Log.Tag); throw; }
+        catch (Exception ex) { CommonLog.Error(_logger, ex.Message, ex, GetType().Tag); throw; }
         finally { entry.Lock.Release(); }
     }
 
@@ -167,8 +168,8 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
         _semaphore.Dispose();
     }
 
-    private Dictionary<string, CacheEntry> SwapCache() {
-        return Interlocked.Exchange(ref _cache, new Dictionary<string, CacheEntry>());
+    private Dictionary<string, ChannelCacheEntry> SwapCache() {
+        return Interlocked.Exchange(ref _cache, new Dictionary<string, ChannelCacheEntry>());
     }
 
     private void BlockAccessAfterDispose() {
@@ -177,7 +178,7 @@ public sealed class Producer : IProducer, IDisposable, IAsyncDisposable {
         }
     }
 
-    internal class CacheEntry {
+    internal class ChannelCacheEntry {
         internal required string Topic { get; init; }
         internal required QueueOptions Options { get; init; }
         internal required IChannel Channel { get; init; }

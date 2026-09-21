@@ -11,20 +11,22 @@ public class ProducerConsumerRegistration : AssemblyScanAware<ProducerConsumerRe
     /// <summary>
     ///     Gets the registered consumer types.
     /// </summary>
-    public IReadOnlyCollection<Type> Consumers => _consumers;
+    public IReadOnlyCollection<Type> Consumers => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(Consumer<>))
+        : _consumers;
 
     /// <summary>
     ///     Registers a consumer by generic type parameters.
     /// </summary>
     /// <typeparam name="TConsumer">The consumer type.</typeparam>
-    /// <typeparam name="TMessage">The message type the consumer handles.</typeparam>
+    /// <typeparam name="T">The message type the consumer handles.</typeparam>
     /// <returns>
     ///     The current <see cref="ProducerConsumerRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public ProducerConsumerRegistration RegisterConsumer<TConsumer, TMessage>()
-        where TConsumer : Consumer<TMessage> {
-        return RegisterConsumer(typeof(TConsumer));
+    public ProducerConsumerRegistration WithConsumer<TConsumer, T>()
+        where TConsumer : Consumer<T> {
+        return WithConsumer(typeof(TConsumer));
     }
 
     /// <summary>
@@ -39,7 +41,7 @@ public class ProducerConsumerRegistration : AssemblyScanAware<ProducerConsumerRe
     ///     if <paramref name="type"/> is non-concrete, an open generic, or does not
     ///     derive from <see cref="Consumer{TMessage}"/>.
     /// </exception>
-    public ProducerConsumerRegistration RegisterConsumer(Type type) {
+    public ProducerConsumerRegistration WithConsumer(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNotAssignableFromGeneric(type, lhs: typeof(Consumer<>));

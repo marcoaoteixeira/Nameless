@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.5">
+<Project Sdk="Aspire.AppHost.Sdk/13.5.4">
 
 	<PropertyGroup>
 		<RootNamespace>Nameless.Microservices.AppHost</RootNamespace>
@@ -7,6 +7,7 @@
 		<UserSecretsId>b4af70c6-e18f-48f2-9d95-13ae97b1994d</UserSecretsId>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<AspireUseCliBundle>true</AspireUseCliBundle>
 	</PropertyGroup>
 
 	<ItemGroup>

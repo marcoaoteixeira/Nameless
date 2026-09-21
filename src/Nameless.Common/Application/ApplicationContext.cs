@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.IO;
-using Nameless.IO.Explorer;
+using Nameless.IO.System;
 using Nameless.ObjectModel;
 
 namespace Nameless.Application;
@@ -10,11 +10,8 @@ namespace Nameless.Application;
 ///     The application context.
 /// </summary>
 public class ApplicationContext : IApplicationContext {
-    private static string Tag { get; } = nameof(ApplicationContext).ToSnakeCase().ToUpperInvariant();
-
     private readonly IOptions<ApplicationContextOptions> _options;
     private readonly ILogger<ApplicationContext> _logger;
-    private readonly Lazy<IFileExplorer> _fileSystemProvider;
 
     /// <inheritdoc />
     public string EnvironmentName => _options.Value.EnvironmentName;
@@ -23,13 +20,13 @@ public class ApplicationContext : IApplicationContext {
     public string ApplicationName => _options.Value.ApplicationName;
 
     /// <inheritdoc />
-    public string BaseDirectoryPath => AppDomain.CurrentDomain.BaseDirectory;
+    public string ApplicationDataDirectory { get; }
 
     /// <inheritdoc />
-    public IFileExplorer FileExplorer => _fileSystemProvider.Value;
+    public IFileProvider ApplicationDataFileProvider { get; }
 
     /// <inheritdoc />
-    public string Version => GetVersion().Format(includePrefix: true);
+    public string Version { get; }
 
     /// <summary>
     ///     Initializes a new instance of <see cref="ApplicationContext" />
@@ -40,47 +37,57 @@ public class ApplicationContext : IApplicationContext {
         _options = options;
         _logger = logger;
 
-        _fileSystemProvider = new Lazy<IFileExplorer>(CreateFileSystemProvider);
+        ApplicationDataDirectory = GetApplicationDataDirectory();
+        ApplicationDataFileProvider = CreateApplicationDataFileExplorer();
+        Version = GetVersion();
     }
 
-    private FileExplorer CreateFileSystemProvider() {
-        var options = _options.Value;
+    /// <inheritdoc />
+    public string? GetEnvironmentVariable(string key) {
+        return Environment.GetEnvironmentVariable(key);
+    }
+
+    private string GetApplicationDataDirectory() {
         var appName = PathHelper.Sanitize(ApplicationName);
-        var directoryPath = options.ApplicationDataLocation switch {
-            ApplicationDataLocation.Machine => Path.Combine(Environment.GetFolderPath(
+
+        var applicationDataDirectory = _options.Value.ApplicationDataLocation switch {
+            ApplicationDataLocation.Machine => SysPath.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.CommonApplicationData
             ), appName),
-            
-            ApplicationDataLocation.User => Path.Combine(Environment.GetFolderPath(
+
+            ApplicationDataLocation.User => SysPath.Combine(Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData
             ), appName),
-            
-            _ => Path.Combine(BaseDirectoryPath, "App_Data")
+
+            _ => SysPath.Combine(AppContext.BaseDirectory, "App_Data")
         };
 
-        directoryPath = PathHelper.Normalize(directoryPath);
+        return SysDirectory.CreateDirectory(applicationDataDirectory).FullName;
+    }
+
+    private FileProvider CreateApplicationDataFileExplorer() {
+        var directoryPath = PathHelper.Normalize(ApplicationDataDirectory);
 
         try {
-            // Ensure directory existence
-            Directory.CreateDirectory(directoryPath);
-
-            return new FileExplorer(
-                options: Options.Create(new FileExplorerOptions {
+            return new FileProvider(
+                options: Options.Create(new FileProviderOptions {
                     AllowOperationOutsideRoot = false,
                     Root = directoryPath
                 })
             );
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex.Message, ex, Tag);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
             throw;
         }
     }
 
-    private SemVersion GetVersion() {
-        return SemVersion.TryParse(_options.Value.Version, out var output)
+    private string GetVersion() {
+        var version = SemVersion.TryParse(_options.Value.Version, out var output)
             ? output
             : SemVersion.V1;
+
+        return version.Format(includePrefix: true);
     }
 }

@@ -12,11 +12,11 @@ public class VersionExtensionsTests {
         var semVer = version.ToSemVersion();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(1, semVer.Major);
-            Assert.Equal(2, semVer.Minor);
-            Assert.Equal(3, semVer.Patch);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(1, semVer.Major),
+            () => Assert.Equal(2, semVer.Minor),
+            () => Assert.Equal(3, semVer.Patch)
+        );
     }
 
     [Fact]
@@ -28,10 +28,10 @@ public class VersionExtensionsTests {
         var semVer = version.ToSemVersion();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(0, semVer.Major);
-            Assert.Equal(0, semVer.Minor);
-            Assert.Equal(0, semVer.Patch);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(0, semVer.Major),
+            () => Assert.Equal(0, semVer.Minor),
+            () => Assert.Equal(0, semVer.Patch)
+        );
     }
 }

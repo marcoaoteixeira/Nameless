@@ -20,28 +20,56 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     /// <summary>
     ///     Gets the registered event handlers.
     /// </summary>
-    public IReadOnlyCollection<Type> EventHandlers => _eventHandlers;
+    public IReadOnlyCollection<Type> EventHandlers => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(IEventHandler<>), includeGenericTypeDefinition: true)
+        : _eventHandlers;
 
     /// <summary>
     ///     Gets the registered request handlers.
     /// </summary>
-    public IReadOnlyCollection<Type> RequestHandlers => _requestHandlers;
+    public IReadOnlyCollection<Type> RequestHandlers => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(IRequestHandler<,>), includeGenericTypeDefinition: true)
+        : _requestHandlers;
 
     /// <summary>
     ///     Gets the registered request pipeline behaviors.
     /// </summary>
+    /// <remarks>
+    ///     <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/> cannot
+    ///     be retrieved using assembly scan since the order in which they are
+    ///     registered matters.
+    /// </remarks>
     public IReadOnlyCollection<Type> RequestPipelineBehaviors => _requestPipelineBehaviors;
+
+    /// <summary>
+    ///     Whether it should use the validate request pipeline behavior.
+    ///     This will be the first pipeline to be executed during request.
+    /// </summary>
+    public bool UseValidateRequestPipelineBehavior { get; private set; }
 
     /// <summary>
     ///     Gets the registered stream handlers.
     /// </summary>
-    public IReadOnlyCollection<Type> StreamHandlers => _streamHandlers;
+    public IReadOnlyCollection<Type> StreamHandlers => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(IStreamHandler<,>), includeGenericTypeDefinition: true)
+        : _streamHandlers;
 
     /// <summary>
     ///     Gets the registered stream pipeline behaviors.
     /// </summary>
+    /// <remarks>
+    ///     <see cref="IStreamPipelineBehavior{TRequest,TResponse}"/> cannot
+    ///     be retrieved using assembly scan since the order in which they are
+    ///     registered matters.
+    /// </remarks>
     public IReadOnlyList<Type> StreamPipelineBehaviors => _streamPipelineBehaviors;
-    
+
+    /// <summary>
+    ///     Whether it should use the validate stream pipeline behavior.
+    ///     This will be the first pipeline to be executed during streaming.
+    /// </summary>
+    public bool UseValidateStreamPipelineBehavior { get; private set; }
+
     /// <summary>
     ///     Registers an event handler by generic type parameters.
     /// </summary>
@@ -51,10 +79,10 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     The current <see cref="MediatorRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public MediatorRegistration RegisterEventHandler<TEventHandler, TEvent>()
+    public MediatorRegistration WithEventHandler<TEventHandler, TEvent>()
         where TEventHandler : IEventHandler<TEvent>
         where TEvent : IEvent {
-        return RegisterEventHandler(typeof(TEventHandler));
+        return WithEventHandler(typeof(TEventHandler));
     }
 
     /// <summary>
@@ -69,7 +97,7 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
     ///     <see cref="IEventHandler{TEvent}"/>.
     /// </exception>
-    public MediatorRegistration RegisterEventHandler(Type type) {
+    public MediatorRegistration WithEventHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IEventHandler<>));
 
@@ -88,10 +116,10 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     The current <see cref="MediatorRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public MediatorRegistration RegisterRequestHandler<TRequestHandler, TRequest, TResponse>()
+    public MediatorRegistration WithRequestHandler<TRequestHandler, TRequest, TResponse>()
         where TRequestHandler : IRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
-        return RegisterRequestHandler(typeof(TRequestHandler));
+        return WithRequestHandler(typeof(TRequestHandler));
     }
 
     /// <summary>
@@ -106,7 +134,7 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
     ///     <see cref="IRequestHandler{TRequest,TResponse}"/>.
     /// </exception>
-    public MediatorRegistration RegisterRequestHandler(Type type) {
+    public MediatorRegistration WithRequestHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IRequestHandler<,>));
 
@@ -125,10 +153,10 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     The current <see cref="MediatorRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public MediatorRegistration RegisterRequestPipelineBehavior<TRequestPipelineBehavior, TRequest, TResponse>()
+    public MediatorRegistration WithRequestPipelineBehavior<TRequestPipelineBehavior, TRequest, TResponse>()
         where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
-        return RegisterRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
+        return WithRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
     }
 
     /// <summary>
@@ -150,13 +178,29 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     service collection, that's because the pipeline behaviors need to
     ///     be registered in order so the execution of the pipeline is correct.
     /// </remarks>
-    public MediatorRegistration RegisterRequestPipelineBehavior(Type type) {
+    public MediatorRegistration WithRequestPipelineBehavior(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IRequestPipelineBehavior<,>));
 
         if (!_requestPipelineBehaviors.Contains(type)) {
             _requestPipelineBehaviors.Add(type);
         }
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets whether it should use the validate request pipeline behavior.
+    /// </summary>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    public MediatorRegistration WithValidateRequestPipelineBehavior(bool value) {
+        UseValidateRequestPipelineBehavior = value;
 
         return this;
     }
@@ -171,10 +215,10 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     The current <see cref="MediatorRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public MediatorRegistration RegisterStreamHandler<TStreamHandler, TStream, TResponse>()
+    public MediatorRegistration WithStreamHandler<TStreamHandler, TStream, TResponse>()
         where TStreamHandler : IStreamHandler<TStream, TResponse>
         where TStream : IStream<TResponse> {
-        return RegisterStreamHandler(typeof(TStreamHandler));
+        return WithStreamHandler(typeof(TStreamHandler));
     }
 
     /// <summary>
@@ -189,7 +233,7 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     if <paramref name="type"/> is a non-concrete type or is not assignable from
     ///     <see cref="IStreamHandler{TStream,TResponse}"/>.
     /// </exception>
-    public MediatorRegistration RegisterStreamHandler(Type type) {
+    public MediatorRegistration WithStreamHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IStreamHandler<,>));
 
@@ -208,10 +252,10 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     The current <see cref="MediatorRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public MediatorRegistration RegisterStreamPipelineBehavior<TStreamPipelineBehavior, TStream, TResponse>()
+    public MediatorRegistration WithStreamPipelineBehavior<TStreamPipelineBehavior, TStream, TResponse>()
         where TStreamPipelineBehavior : IStreamPipelineBehavior<TStream, TResponse>
         where TStream : IStream<TResponse> {
-        return RegisterStreamPipelineBehavior(typeof(TStreamPipelineBehavior));
+        return WithStreamPipelineBehavior(typeof(TStreamPipelineBehavior));
     }
 
     /// <summary>
@@ -234,13 +278,29 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     need to be registered in order so the execution of the pipeline
     ///     is correct.
     /// </remarks>
-    public MediatorRegistration RegisterStreamPipelineBehavior(Type type) {
+    public MediatorRegistration WithStreamPipelineBehavior(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsNotAssignableFromGeneric(type, typeof(IStreamPipelineBehavior<,>));
 
         if (!_streamPipelineBehaviors.Contains(type)) {
             _streamPipelineBehaviors.Add(type);
         }
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets whether it should use the validate stream pipeline behavior.
+    /// </summary>
+    /// <param name="value">
+    ///     The value.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    public MediatorRegistration WithValidateStreamPipelineBehavior(bool value) {
+        UseValidateStreamPipelineBehavior = value;
 
         return this;
     }

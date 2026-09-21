@@ -28,7 +28,7 @@ public static class MediatorConfig {
 
             self.ConfigureServices(services => {
                 services.RegisterMediator(
-                    AssemblyScanAwareHelper.Join(
+                    AssemblyScanAwareHelper.MergeAssemblies(
                         settings.ConfigureMediator,
                         settings.Assemblies
                     )

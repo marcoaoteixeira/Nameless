@@ -11,7 +11,9 @@ public class PeriodicWorkersRegistration : AssemblyScanAware<PeriodicWorkersRegi
     /// <summary>
     ///     Gets the registered workers.
     /// </summary>
-    public IReadOnlyCollection<Type> Workers => _workers;
+    public IReadOnlyCollection<Type> Workers => UseAssemblyScan
+        ? ExecuteAssemblyScan(typeof(PeriodicWorker))
+        : _workers;
 
     /// <summary>
     ///     Registers a periodic worker.
@@ -23,9 +25,9 @@ public class PeriodicWorkersRegistration : AssemblyScanAware<PeriodicWorkersRegi
     ///     The current <see cref="PeriodicWorkersRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public PeriodicWorkersRegistration RegisterPeriodicWorker<TPeriodicWorker>()
+    public PeriodicWorkersRegistration WithPeriodicWorker<TPeriodicWorker>()
         where TPeriodicWorker : PeriodicWorker {
-        return RegisterPeriodicWorker(typeof(TPeriodicWorker));
+        return WithPeriodicWorker(typeof(TPeriodicWorker));
     }
 
     /// <summary>
@@ -38,7 +40,7 @@ public class PeriodicWorkersRegistration : AssemblyScanAware<PeriodicWorkersRegi
     ///     The current <see cref="PeriodicWorkersRegistration"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public PeriodicWorkersRegistration RegisterPeriodicWorker(Type type) {
+    public PeriodicWorkersRegistration WithPeriodicWorker(Type type) {
         Throws.When.IsNonConcreteType(type);
         Throws.When.IsOpenGenericType(type);
         Throws.When.IsNotAssignableFrom(type, typeof(PeriodicWorker));

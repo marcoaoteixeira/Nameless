@@ -75,7 +75,7 @@ public class RetryPipelineFactory : IRetryPipelineFactory {
                     args.Outcome.Exception
                 );
 
-                configuration.OnRetry.Invoke(
+                configuration.OnRetry(
                     args.Outcome.Exception,
                     args.RetryDelay,
                     args.AttemptNumber,

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Nameless.Attributes;
+using Nameless.Configuration;
 
 namespace Nameless.Extensions;
 
@@ -19,8 +19,10 @@ public class ServiceCollectionExtensionsTests {
         var opts = provider.GetRequiredService<IOptions<SampleOptions>>().Value;
 
         // assert
-        Assert.NotNull(opts);
-        Assert.Equal(0, opts.Value);
+        Assert.Multiple(
+            () => Assert.NotNull(opts),
+            () => Assert.Equal(0, opts.Value)
+        );
     }
 
     [Fact]

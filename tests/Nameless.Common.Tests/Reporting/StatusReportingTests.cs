@@ -1,6 +1,4 @@
-using System.Reactive.Linq;
 using Moq;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Data;
 using Nameless.Testing.Tools.Helpers;
 
@@ -48,9 +46,11 @@ public class StatusReportingTests {
         var received = new List<StatusUpdate>();
         sut.Status.Subscribe(received.Add);
 
-        Assert.Single(received);
-        Assert.Equal("Idle", received[0].Message);
-        Assert.Equal(StatusLevel.Info, received[0].Level);
+        Assert.Multiple(
+            () => Assert.Single(received),
+            () => Assert.Equal("Idle", received[0].Message),
+            () => Assert.Equal(StatusLevel.Info, received[0].Level)
+        );
     }
 
     // ─── Report ───────────────────────────────────────────────────────────────
@@ -63,8 +63,10 @@ public class StatusReportingTests {
 
         sut.Report("Working", StatusLevel.Info, metadata: null);
 
-        Assert.Equal(2, received.Count);
-        Assert.Equal("Working", received[1].Message);
+        Assert.Multiple(
+            () => Assert.Equal(2, received.Count),
+            () => Assert.Equal("Working", received[1].Message)
+        );
     }
 
     [Theory]
@@ -146,8 +148,10 @@ public class StatusReportingTests {
         sut.Fault("Something went wrong", "ERR_001");
 
         var fault = Assert.IsType<FaultException>(captured);
-        Assert.Equal("Something went wrong", fault.Message);
-        Assert.Equal("ERR_001", fault.Code);
+        Assert.Multiple(
+            () => Assert.Equal("Something went wrong", fault.Message),
+            () => Assert.Equal("ERR_001", fault.Code)
+        );
     }
 
     [Fact]
@@ -187,9 +191,11 @@ public class StatusReportingTests {
         sut.Status.Subscribe(received.Add);
 
         Assert.Equal(3, received.Count); // Idle + A + B
-        Assert.Equal("Idle", received[0].Message);
-        Assert.Equal("A", received[1].Message);
-        Assert.Equal("B", received[2].Message);
+        Assert.Multiple(
+            () => Assert.Equal("Idle", received[0].Message),
+            () => Assert.Equal("A", received[1].Message),
+            () => Assert.Equal("B", received[2].Message)
+        );
     }
 
     // ─── Dispose ──────────────────────────────────────────────────────────────

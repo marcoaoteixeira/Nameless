@@ -11,8 +11,6 @@ namespace Nameless.Reporting;
 public sealed class StatusReporter<TService> : IStatusReporter<TService>, IDisposable {
     private IStatusReporter Reporter { get; }
 
-    private int ReporterHashCode => Reporter.GetHashCode();
-
     /// <summary>
     ///     Initializes a new instance of
     ///     <see cref="StatusReporter{TService}"/> class.

@@ -26,8 +26,10 @@ public sealed class ProducesMetadataTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".Produces<", generated);
-        Assert.Contains("200", generated);
+        Assert.Multiple(
+            () => Assert.Contains(".Produces<", generated),
+            () => Assert.Contains("200", generated)
+        );
     }
 
     [Fact]
@@ -101,8 +103,10 @@ public sealed class ProducesMetadataTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".Produces<", generated);
-        Assert.Contains(".ProducesProblem(statusCode: 500", generated);
-        Assert.Contains(".ProducesValidationProblem(statusCode: 400", generated);
+        Assert.Multiple(
+            () => Assert.Contains(".Produces<", generated),
+            () => Assert.Contains(".ProducesProblem(statusCode: 500", generated),
+            () => Assert.Contains(".ProducesValidationProblem(statusCode: 400", generated)
+        );
     }
 }

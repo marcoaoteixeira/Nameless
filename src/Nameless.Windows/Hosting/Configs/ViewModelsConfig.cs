@@ -28,7 +28,7 @@ public static class ViewModelsConfig {
 
             self.ConfigureServices(
                 services => services.RegisterViewModels(
-                    AssemblyScanAwareHelper.Join(
+                    AssemblyScanAwareHelper.MergeAssemblies(
                         settings.ConfigureViewModel,
                         settings.Assemblies
                     )

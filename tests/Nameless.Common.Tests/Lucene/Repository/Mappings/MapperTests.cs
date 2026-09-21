@@ -1,6 +1,5 @@
 using Lucene.Net.Documents;
 using Microsoft.Extensions.DependencyInjection;
-using Nameless.Testing.Tools.Attributes;
 
 namespace Nameless.Lucene.Repository.Mappings;
 
@@ -38,9 +37,11 @@ public class MapperTests {
         var document = mapper.Map(entity);
 
         // Assert
-        Assert.NotNull(document.GetField("Id"));
-        Assert.NotNull(document.GetField("Name"));
-        Assert.NotNull(document.GetField("Age"));
+        Assert.Multiple(
+            () => Assert.NotNull(document.GetField("Id")),
+            () => Assert.NotNull(document.GetField("Name")),
+            () => Assert.NotNull(document.GetField("Age"))
+        );
     }
 
     [Fact]
@@ -56,9 +57,11 @@ public class MapperTests {
         var entity = mapper.Map<MapperTestEntity>(document);
 
         // Assert
-        Assert.Equal("42", entity.Id);
-        Assert.Equal("Bob", entity.Name);
-        Assert.Equal(25, entity.Age);
+        Assert.Multiple(
+            () => Assert.Equal("42", entity.Id),
+            () => Assert.Equal("Bob", entity.Name),
+            () => Assert.Equal(25, entity.Age)
+        );
     }
 
     [Fact]
@@ -70,9 +73,11 @@ public class MapperTests {
         var found = mapper.TryGetID<MapperTestEntity>(out var descriptor);
 
         // Assert
-        Assert.True(found);
-        Assert.NotNull(descriptor);
-        Assert.Equal("Id", descriptor.Name);
-        Assert.True(descriptor.IsID);
+        Assert.Multiple(
+            () => Assert.True(found),
+            () => Assert.NotNull(descriptor),
+            () => Assert.Equal("Id", descriptor.Name),
+            () => Assert.True(descriptor.IsID)
+        );
     }
 }

@@ -25,9 +25,11 @@ public sealed class SimpleGetEndpointTests
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
-        Assert.Contains("MapGet", source);
-        Assert.Contains("\"/users\"", source);
-        Assert.Contains("global::TestApp.GetUsersEndpoint", source);
+        Assert.Multiple(
+            () => Assert.Contains("MapGet", source),
+            () => Assert.Contains("\"/users\"", source),
+            () => Assert.Contains("global::TestApp.GetUsersEndpoint", source)
+        );
     }
 
     [Fact]
@@ -35,8 +37,10 @@ public sealed class SimpleGetEndpointTests
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
-        Assert.Contains("RegisterAutoEndpoints", source);
-        Assert.Contains("TryAddTransient<global::TestApp.GetUsersEndpoint>", source);
+        Assert.Multiple(
+            () => Assert.Contains("RegisterAutoEndpoints", source),
+            () => Assert.Contains("TryAddTransient<global::TestApp.GetUsersEndpoint>", source)
+        );
     }
 
     [Fact]
@@ -60,9 +64,11 @@ public sealed class SimpleGetEndpointTests
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
-        Assert.Contains("partial class GetUsersEndpoint", source);
-        Assert.Contains("internal static void Register(", source);
-        Assert.Contains("internal static void Map(", source);
+        Assert.Multiple(
+            () => Assert.Contains("partial class GetUsersEndpoint", source),
+            () => Assert.Contains("internal static void Register(", source),
+            () => Assert.Contains("internal static void Map(", source)
+        );
     }
 
     [Fact]
@@ -70,8 +76,10 @@ public sealed class SimpleGetEndpointTests
     {
         var source = GeneratorTestHelper.GetGeneratedSource(MinimalGetEndpoint);
 
-        Assert.Contains("global::TestApp.GetUsersEndpoint.Register(", source);
-        Assert.Contains("global::TestApp.GetUsersEndpoint.Map(", source);
+        Assert.Multiple(
+            () => Assert.Contains("global::TestApp.GetUsersEndpoint.Register(", source),
+            () => Assert.Contains("global::TestApp.GetUsersEndpoint.Map(", source)
+        );
     }
 
     [Fact]
@@ -118,8 +126,10 @@ public sealed class SimpleGetEndpointTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("int id", generated);
-        Assert.Contains("HandleAsync(id)", generated);
+        Assert.Multiple(
+            () => Assert.Contains("int id", generated),
+            () => Assert.Contains("HandleAsync(id)", generated)
+        );
     }
 
     [Fact]

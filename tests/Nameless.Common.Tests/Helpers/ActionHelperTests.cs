@@ -12,10 +12,10 @@ public class ActionHelperTests {
         });
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("configured", result.Name);
-            Assert.Equal(99, result.Value);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("configured", result.Name),
+            () => Assert.Equal(99, result.Value)
+        );
     }
 
     [Fact]
@@ -24,9 +24,11 @@ public class ActionHelperTests {
         var result = ActionHelper.FromDelegate<SampleConfig>(null);
 
         // assert
-        Assert.NotNull(result);
-        Assert.Equal(string.Empty, result.Name);
-        Assert.Equal(0, result.Value);
+        Assert.Multiple(
+            () => Assert.NotNull(result),
+            () => Assert.Equal(string.Empty, result.Name),
+            () => Assert.Equal(0, result.Value)
+        );
     }
 
     [Fact]

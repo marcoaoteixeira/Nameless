@@ -10,5 +10,5 @@ public readonly record struct DecompressMetadata(string DirectoryPath) {
     /// <summary>
     ///     Whether the destination directory exists or not.
     /// </summary>
-    public bool IsDirectoryAvailable => Directory.Exists(DirectoryPath);
+    public bool IsDirectoryAvailable => SysDirectory.Exists(DirectoryPath);
 }

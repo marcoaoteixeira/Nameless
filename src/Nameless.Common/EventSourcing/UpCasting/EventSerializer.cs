@@ -7,11 +7,11 @@ namespace Nameless.EventSourcing.UpCasting;
 /// <summary>
 ///     Default <see cref="IEventSerializer"/> implementation, backed by
 ///     <see cref="System.Text.Json"/> and a chain of
-///     <see cref="IEventUpcaster"/>s resolved from <see cref="IEventTypeCatalog"/>.
+///     <see cref="IEventUpCaster"/>s resolved from <see cref="IEventTypeCatalog"/>.
 /// </summary>
 public sealed class EventSerializer : IEventSerializer {
     private readonly IEventTypeCatalog _typeCatalog;
-    private readonly ILookup<(string EventType, int FromVersion), IEventUpcaster> _upCasters;
+    private readonly ILookup<(string EventType, int FromVersion), IEventUpCaster> _upCasters;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EventSerializer"/>
@@ -24,7 +24,7 @@ public sealed class EventSerializer : IEventSerializer {
     ///     Every registered up-caster, applied in order until an event's
     ///     payload reaches its current schema version.
     /// </param>
-    public EventSerializer(IEventTypeCatalog typeCatalog, IEnumerable<IEventUpcaster> upCasters) {
+    public EventSerializer(IEventTypeCatalog typeCatalog, IEnumerable<IEventUpCaster> upCasters) {
         _typeCatalog = Throws.When.Null(typeCatalog);
         _upCasters = Throws.When.Null(upCasters).ToLookup(upCaster => (upCaster.EventType, upCaster.FromVersion));
     }

@@ -1,14 +1,11 @@
-﻿#pragma warning disable CA1859
-// ReSharper disable InconsistentNaming
-
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Nameless.IO.Explorer;
+using Nameless.IO;
 using Nameless.Lucene.Collections;
 using Nameless.Lucene.Empty;
 using Nameless.Lucene.ObjectModel;
@@ -21,10 +18,8 @@ namespace Nameless.Lucene;
 ///     Default implementation of <see cref="IIndex"/>.
 /// </summary>
 public class Index : IIndex {
-    private string LogTag => $"INDEX::{Name}";
-
     private readonly Analyzer _analyzer;
-    private readonly IFileExplorer _fileSystemProvider;
+    private readonly IFileProvider _fileSystemProvider;
     private readonly IOptions<LuceneOptions> _options;
     private readonly ILogger<Index> _logger;
 
@@ -65,7 +60,7 @@ public class Index : IIndex {
     /// </param>
     public Index(
         Analyzer analyzer,
-        IFileExplorer fileSystemProvider,
+        IFileProvider fileSystemProvider,
         string name,
         IOptions<LuceneOptions> options,
         ILogger<Index> logger
@@ -93,9 +88,9 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -111,9 +106,9 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -129,9 +124,9 @@ public class Index : IIndex {
         catch (Exception ex) {
             if (ex is OutOfMemoryException) { DestroyIndexWriter(); }
 
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -150,7 +145,7 @@ public class Index : IIndex {
             );
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
             throw;
         }
@@ -169,9 +164,9 @@ public class Index : IIndex {
             return collector.TotalHits;
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -185,9 +180,9 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -201,9 +196,9 @@ public class Index : IIndex {
             return true;
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -277,7 +272,7 @@ public class Index : IIndex {
 
     private FSDirectory CreateFSDirectory() {
         try {
-            var relativeDirectoryPath = Path.Combine(_options.Value.DirectoryName, Name);
+            var relativeDirectoryPath = SysPath.Combine(_options.Value.DirectoryName, Name);
             var directory = _fileSystemProvider.GetDirectory(relativeDirectoryPath);
 
             // Ensure directory existence.
@@ -286,7 +281,7 @@ public class Index : IIndex {
             return FSDirectory.Open(directory.Path);
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
             throw;
         }
@@ -315,7 +310,7 @@ public class Index : IIndex {
             return EmptyIndexReader.Instance;
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LogTag);
+            CommonLog.Error(_logger, ex.Message, ex, tag: $"{GetType().Tag}::{Name}");
 
             throw;
         }

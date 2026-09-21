@@ -22,8 +22,10 @@ public class DisableCookieRedirectUsageTest {
     public void WhenEndpointClassMarkDisableCookieRedirect_ThenEmitConvention() {
         var source = CodeGeneratorHelper.GetCodeBySourceType(_code).SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.DisableCookieRedirect\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.DisableCookieRedirect\(\)", source)
+        );
     }
 }

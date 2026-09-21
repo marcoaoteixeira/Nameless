@@ -10,8 +10,6 @@ namespace Nameless.Data;
 ///     Default implementation of <see cref="IDatabase" />.
 /// </summary>
 public class Database : IDatabase, IDisposable {
-    private const string LOG_TAG = "DATABASE";
-
     private readonly IDbConnectionFactory _dbConnectionFactory;
     private readonly ILogger<Database> _logger;
 
@@ -43,9 +41,9 @@ public class Database : IDatabase, IDisposable {
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -68,9 +66,9 @@ public class Database : IDatabase, IDisposable {
             return result.ToArray();
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 
@@ -82,9 +80,9 @@ public class Database : IDatabase, IDisposable {
 
         try { return (TResult?)command.ExecuteScalar(); }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
 
-            return Error.Failure(ex.Message);
+            return Error.Failure(ex.Message, exception: ex);
         }
     }
 

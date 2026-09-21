@@ -1,11 +1,8 @@
-﻿using Nameless.Attributes;
-
-namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for RabbitMQ prefetch.
 /// </summary>
-[ConfigurationSectionName("Prefetch")]
 public record PrefetchOptions {
     /// <summary>
     ///     Whether it should configure prefetch.

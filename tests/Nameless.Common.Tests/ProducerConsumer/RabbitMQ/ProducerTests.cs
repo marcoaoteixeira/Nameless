@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;
 using RabbitMQ.Client;
@@ -47,7 +46,7 @@ public class ProducerTests {
     private static Mock<IMessageSerializer> CreateSerializerMock(byte[] payload) {
         var mock = new Mock<IMessageSerializer>(MockBehavior.Strict);
 
-        mock.Setup(s => s.SerializeAsync(
+        mock.Setup(s => s.Serialize(
                 It.IsAny<object>(),
                 It.IsAny<Context>(),
                 It.IsAny<CancellationToken>()))
@@ -86,7 +85,7 @@ public class ProducerTests {
 
         // assert
         serializerMock.Verify(
-            s => s.SerializeAsync(
+            s => s.Serialize(
                 It.IsAny<object>(),
                 It.IsAny<Context>(),
                 It.IsAny<CancellationToken>()),

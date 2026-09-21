@@ -14,11 +14,11 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers the <see cref="ILocalizer"/> service.
         ///     The concrete implementation is resolved via
-        ///     <paramref name="registration"/> (explicit type or assembly
+        ///     <paramref name="configure"/> (explicit type or assembly
         ///     scan). Falls back to <see cref="NullLocalizer"/> when no
         ///     implementation is found.
         /// </summary>
-        /// <param name="registration">
+        /// <param name="configure">
         ///     Optional delegate to configure
         ///     <see cref="LocalizationRegistration"/>.
         /// </param>
@@ -29,11 +29,11 @@ public static class ServiceCollectionExtensions {
         /// <returns>
         ///     The service collection for further chaining.
         /// </returns>
-        public IServiceCollection RegisterLocalization(Action<LocalizationRegistration>? registration = null, IConfiguration? configuration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
-            var implementation = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<ILocalizer>().SingleOrDefault()
-                : settings.Localizer;
+        public IServiceCollection RegisterLocalization(Action<LocalizationRegistration>? configure = null, IConfiguration? configuration = null) {
+            var registration = ActionHelper.FromDelegate(configure);
+            var implementation = registration.UseAssemblyScan
+                ? registration.GetImplementations<ILocalizer>().SingleOrDefault()
+                : registration.Localizer;
 
             self.ConfigureOptions<ResourceLocalizerOptions>(configuration);
 

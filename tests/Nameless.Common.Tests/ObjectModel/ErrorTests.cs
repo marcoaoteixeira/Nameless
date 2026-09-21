@@ -17,11 +17,11 @@ public class ErrorTests {
         var error = Error.Validation("invalid input");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(ErrorType.Validation, error.Type);
-            Assert.Equal("invalid input", error.Message);
-            Assert.Null(error.Code);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(ErrorType.Validation, error.Type),
+            () => Assert.Equal("invalid input", error.Message),
+            () => Assert.Null(error.Code)
+        );
     }
 
     [Fact]
@@ -30,11 +30,11 @@ public class ErrorTests {
         var error = Error.Validation("invalid input", "VAL001");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(ErrorType.Validation, error.Type);
-            Assert.Equal("invalid input", error.Message);
-            Assert.Equal("VAL001", error.Code);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(ErrorType.Validation, error.Type),
+            () => Assert.Equal("invalid input", error.Message),
+            () => Assert.Equal("VAL001", error.Code)
+        );
     }
 
     [Fact]
@@ -43,11 +43,11 @@ public class ErrorTests {
         var error = Error.Missing("not found");
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal(ErrorType.Missing, error.Type);
-            Assert.Equal("not found", error.Message);
-            Assert.Null(error.Code);
-        });
+        Assert.Multiple(
+            () => Assert.Equal(ErrorType.Missing, error.Type),
+            () => Assert.Equal("not found", error.Message),
+            () => Assert.Null(error.Code)
+        );
     }
 
     [Fact]

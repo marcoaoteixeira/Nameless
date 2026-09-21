@@ -11,8 +11,6 @@ namespace Nameless.GitHub;
 ///     Current implementation of <see cref="IGitHubHttpClient"/>
 /// </summary>
 public class GitHubHttpClient : IGitHubHttpClient {
-    private const string LOG_TAG = "GITHUB_HTTP_CLIENT";
-
     private readonly HttpClient _httpClient;
     private readonly ILogger<GitHubHttpClient> _logger;
 
@@ -53,10 +51,11 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(Release), statusCode);
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
             return Error.Failure(
-                $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}"
+                $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}",
+                exception: ex
             );
         }
     }
@@ -83,10 +82,11 @@ public class GitHubHttpClient : IGitHubHttpClient {
                 : UnableDeserializeResponse(nameof(ReleaseAsset), statusCode);
         }
         catch (Exception ex) {
-            CommonLog.Error(_logger, ex, tag: LOG_TAG);
+            CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
             return Error.Failure(
-                $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}"
+                $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}",
+                exception: ex
             );
         }
     }
@@ -94,7 +94,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
     private Error UnableDeserializeResponse(string objectName, int statusCode) {
         var reason = $"Unable to deserialize object '{objectName}' from response content. Status code: {statusCode}";
 
-        CommonLog.Warning(_logger, reason, tag: LOG_TAG);
+        CommonLog.Warning(_logger, reason, GetType().Tag);
 
         return Error.Conflict(reason);
     }

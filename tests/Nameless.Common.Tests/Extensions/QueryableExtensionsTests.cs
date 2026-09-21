@@ -16,9 +16,11 @@ public class QueryableExtensionsTests {
         var sorted = items.OrderBy(nameof(Item.Name)).ToList();
 
         // assert
-        Assert.Equal("Apple", sorted[0].Name);
-        Assert.Equal("Mango", sorted[1].Name);
-        Assert.Equal("Zebra", sorted[2].Name);
+        Assert.Multiple(
+            () => Assert.Equal("Apple", sorted[0].Name),
+            () => Assert.Equal("Mango", sorted[1].Name),
+            () => Assert.Equal("Zebra", sorted[2].Name)
+        );
     }
 
     [Fact]
@@ -45,9 +47,11 @@ public class QueryableExtensionsTests {
         var sorted = items.OrderByDescending(nameof(Item.Age)).ToList();
 
         // assert
-        Assert.Equal(3, sorted[0].Age);
-        Assert.Equal(2, sorted[1].Age);
-        Assert.Equal(1, sorted[2].Age);
+        Assert.Multiple(
+            () => Assert.Equal(3, sorted[0].Age),
+            () => Assert.Equal(2, sorted[1].Age),
+            () => Assert.Equal(1, sorted[2].Age)
+        );
     }
 
     [Fact]

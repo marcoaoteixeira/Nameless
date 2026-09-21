@@ -18,7 +18,7 @@ public static class AssemblyExtensions {
             var uri = new UriBuilder(location);
             var filePath = Uri.UnescapeDataString(uri.Path);
 
-            return Path.GetDirectoryName(filePath) ?? string.Empty;
+            return SysPath.GetDirectoryName(filePath) ?? string.Empty;
         }
 
         /// <summary>
@@ -96,25 +96,27 @@ public static class AssemblyExtensions {
         }
     }
 
-    /// <summary>
-    ///     Searches for all concrete implementations of all given services
-    ///     <paramref name="services" />.
-    /// </summary>
-    /// <param name="services">
-    ///     The service type.
-    /// </param>
     /// <param name="self">
     ///     The current collection of <see cref="Assembly"/>.
     /// </param>
-    /// <returns>
-    ///     A collection of types that implements any of
-    ///     <paramref name="services" />.
-    /// </returns>
-    public static IEnumerable<Type> GetImplementations(this IEnumerable<Assembly> self, params IEnumerable<Type> services) {
-        return
-            from assembly in self
-            from service in services
-            from implementation in assembly.GetImplementations(service)
-            select implementation;
+    extension(IEnumerable<Assembly> self) {
+        /// <summary>
+        ///     Searches for all concrete implementations of all given services
+        ///     <paramref name="services" />.
+        /// </summary>
+        /// <param name="services">
+        ///     The service type.
+        /// </param>
+        /// <returns>
+        ///     A collection of types that implements any of
+        ///     <paramref name="services" />.
+        /// </returns>
+        public IEnumerable<Type> GetImplementations(IEnumerable<Type> services) {
+            return
+                from assembly in self
+                from service in services
+                from implementation in assembly.GetImplementations(service)
+                select implementation;
+        }
     }
 }

@@ -42,8 +42,10 @@ public sealed class GroupedEndpointTests
     {
         var generated = GeneratorTestHelper.GetGeneratedSource(TwoEndpointsSameGroup);
 
-        Assert.Contains("global::TestApp.GetUserEndpoint", generated);
-        Assert.Contains("global::TestApp.CreateUserEndpoint", generated);
+        Assert.Multiple(
+            () => Assert.Contains("global::TestApp.GetUserEndpoint", generated),
+            () => Assert.Contains("global::TestApp.CreateUserEndpoint", generated)
+        );
     }
 
     [Fact]
@@ -59,9 +61,11 @@ public sealed class GroupedEndpointTests
     {
         var generated = GeneratorTestHelper.GetGeneratedSource(TwoEndpointsSameGroup);
 
-        Assert.Contains("partial class UsersGroup", generated);
-        Assert.Contains("internal static", generated);
-        Assert.Contains("Create(", generated);
+        Assert.Multiple(
+            () => Assert.Contains("partial class UsersGroup", generated),
+            () => Assert.Contains("internal static", generated),
+            () => Assert.Contains("Create(", generated)
+        );
     }
 
     [Fact]

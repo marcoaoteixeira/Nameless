@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Microsoft.Extensions.Options;
 using Nameless.Lucene.ObjectModel;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.IO;
 using Nameless.Testing.Tools.Mockers.Logging;
 
@@ -15,8 +14,8 @@ public class IndexTests : IDisposable {
     private readonly Index _sut;
 
     public IndexTests() {
-        _tempDir = Path.Combine(Path.GetTempPath(), $"lucene-index-tests-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(_tempDir);
+        _tempDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-index-tests-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(_tempDir);
 
         _sut = CreateIndex(_tempDir);
     }
@@ -24,8 +23,8 @@ public class IndexTests : IDisposable {
     public void Dispose() {
         _sut.Dispose();
 
-        if (Directory.Exists(_tempDir)) {
-            Directory.Delete(_tempDir, recursive: true);
+        if (SysDirectory.Exists(_tempDir)) {
+            SysDirectory.Delete(_tempDir, recursive: true);
         }
     }
 
@@ -48,8 +47,10 @@ public class IndexTests : IDisposable {
         var results = _sut.Search(query, Sort.RELEVANCE, 10).ToList();
 
         // Assert
-        Assert.Single(results);
-        Assert.Equal("001", ((Document)results[0]).GetField("id")?.GetStringValue());
+        Assert.Multiple(
+            () => Assert.Single(results),
+            () => Assert.Equal("001", ((Document)results[0]).GetField("id")?.GetStringValue())
+        );
     }
 
     [Fact]
@@ -72,9 +73,11 @@ public class IndexTests : IDisposable {
         var countResult = _sut.Count(deleteQuery);
 
         // Assert
-        Assert.True(deleteResult.Success);
-        Assert.True(countResult.Success);
-        Assert.Equal(0, countResult.Value);
+        Assert.Multiple(
+            () => Assert.True(deleteResult.Success),
+            () => Assert.True(countResult.Success),
+            () => Assert.Equal(0, countResult.Value)
+        );
     }
 
     [Fact]
@@ -102,9 +105,11 @@ public class IndexTests : IDisposable {
         var results = _sut.Search(searchQuery, Sort.RELEVANCE, 10).ToList();
 
         // Assert
-        Assert.True(updateResult.Success);
-        Assert.Single(results);
-        Assert.Equal("active", ((Document)results[0]).GetField("status")?.GetStringValue());
+        Assert.Multiple(
+            () => Assert.True(updateResult.Success),
+            () => Assert.Single(results),
+            () => Assert.Equal("active", ((Document)results[0]).GetField("status")?.GetStringValue())
+        );
     }
 
     [Fact]
@@ -126,8 +131,10 @@ public class IndexTests : IDisposable {
         var result = _sut.Count(query);
 
         // Assert
-        Assert.True(result.Success);
-        Assert.Equal(3, result.Value);
+        Assert.Multiple(
+            () => Assert.True(result.Success),
+            () => Assert.Equal(3, result.Value)
+        );
     }
 
     [Fact]
@@ -147,8 +154,10 @@ public class IndexTests : IDisposable {
         Assert.True(saveResult.Success);
 
         var countResult = _sut.Count(new TermQuery(new Term("id", "save-test")));
-        Assert.True(countResult.Success);
-        Assert.Equal(1, countResult.Value);
+        Assert.Multiple(
+            () => Assert.True(countResult.Success),
+            () => Assert.Equal(1, countResult.Value)
+        );
     }
 
     [Fact]
@@ -170,15 +179,17 @@ public class IndexTests : IDisposable {
         // after rollback a new writer is needed; re-open a new index over same dir to verify
         using var verifyIndex = CreateIndex(_tempDir);
         var countResult = verifyIndex.Count(new TermQuery(new Term("id", "rollback-test")));
-        Assert.True(countResult.Success);
-        Assert.Equal(0, countResult.Value);
+        Assert.Multiple(
+            () => Assert.True(countResult.Success),
+            () => Assert.Equal(0, countResult.Value)
+        );
     }
 
     [Fact]
     public void Dispose_DoesNotThrow() {
         // Arrange
-        var indexDir = Path.Combine(Path.GetTempPath(), $"lucene-dispose-test-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(indexDir);
+        var indexDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-dispose-test-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(indexDir);
         var index = CreateIndex(indexDir);
 
         // Act
@@ -187,8 +198,8 @@ public class IndexTests : IDisposable {
         // Assert
         Assert.Null(exception);
 
-        if (Directory.Exists(indexDir)) {
-            Directory.Delete(indexDir, recursive: true);
+        if (SysDirectory.Exists(indexDir)) {
+            SysDirectory.Delete(indexDir, recursive: true);
         }
     }
 

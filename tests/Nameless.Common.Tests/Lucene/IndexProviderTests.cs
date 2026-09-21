@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.IO;
-using Nameless.IO.Explorer;
-using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.Lucene;
@@ -13,8 +11,8 @@ public class IndexProviderTests : IDisposable {
     private readonly IndexProvider _sut;
 
     public IndexProviderTests() {
-        _tempDir = Path.Combine(Path.GetTempPath(), $"lucene-provider-tests-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(_tempDir);
+        _tempDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-provider-tests-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(_tempDir);
 
         _sut = CreateProvider(_tempDir);
     }
@@ -22,8 +20,8 @@ public class IndexProviderTests : IDisposable {
     public void Dispose() {
         _sut.Dispose();
 
-        if (Directory.Exists(_tempDir)) {
-            Directory.Delete(_tempDir, recursive: true);
+        if (SysDirectory.Exists(_tempDir)) {
+            SysDirectory.Delete(_tempDir, recursive: true);
         }
     }
 
@@ -51,16 +49,18 @@ public class IndexProviderTests : IDisposable {
         var beta = _sut.Get(IndexNameB);
 
         // Assert
-        Assert.NotSame(alpha, beta);
-        Assert.Equal(IndexNameA, alpha.Name);
-        Assert.Equal(IndexNameB, beta.Name);
+        Assert.Multiple(
+            () => Assert.NotSame(alpha, beta),
+            () => Assert.Equal(IndexNameA, alpha.Name),
+            () => Assert.Equal(IndexNameB, beta.Name)
+        );
     }
 
     [Fact]
     public void Dispose_DoesNotThrow() {
         // Arrange
-        var providerDir = Path.Combine(Path.GetTempPath(), $"lucene-provider-dispose-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(providerDir);
+        var providerDir = SysPath.Combine(SysPath.GetTempPath(), $"lucene-provider-dispose-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(providerDir);
         var provider = CreateProvider(providerDir);
 
         // Act
@@ -69,8 +69,8 @@ public class IndexProviderTests : IDisposable {
         // Assert
         Assert.Null(exception);
 
-        if (Directory.Exists(providerDir)) {
-            Directory.Delete(providerDir, recursive: true);
+        if (SysDirectory.Exists(providerDir)) {
+            SysDirectory.Delete(providerDir, recursive: true);
         }
     }
 
@@ -86,16 +86,16 @@ public class IndexProviderTests : IDisposable {
         // The file system provider must return a directory whose Path is a unique
         // sub-directory under tempDir for each call, so each index gets its own
         // directory.  We use a callback to materialise the correct path per call.
-        var fileSystemMock = new Mock<IFileExplorer>();
+        var fileSystemMock = new Mock<IFileProvider>();
         fileSystemMock
             .Setup(fs => fs.GetDirectory(It.IsAny<string>()))
             .Returns((string relativePath) => {
-                var fullPath = Path.Combine(tempDir, relativePath);
-                Directory.CreateDirectory(fullPath);
+                var fullPath = SysPath.Combine(tempDir, relativePath);
+                SysDirectory.CreateDirectory(fullPath);
 
                 var dirMock = new Mock<IDirectory>();
                 dirMock.Setup(d => d.Path).Returns(fullPath);
-                dirMock.Setup(d => d.Create()).Callback(() => Directory.CreateDirectory(fullPath));
+                dirMock.Setup(d => d.Create()).Callback(() => SysDirectory.CreateDirectory(fullPath));
                 return dirMock.Object;
             });
 

@@ -1,5 +1,4 @@
 using FluentValidation.Results;
-using Nameless.Testing.Tools.Attributes;
 using FvValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Nameless.Validation.FluentValidation;
@@ -46,12 +45,12 @@ public class FluentValidationResultExtensionsTests {
         var actual = results.Aggregate();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(actual.Success);
-            Assert.Single(actual.Errors);
-            Assert.Equal("Name is required", actual.Errors[0].Message);
-            Assert.Equal("Name", actual.Errors[0].Code);
-        });
+        Assert.Multiple(
+            () => Assert.False(actual.Success),
+            () => Assert.Single(actual.Errors),
+            () => Assert.Equal("Name is required", actual.Errors[0].Message),
+            () => Assert.Equal("Name", actual.Errors[0].Code)
+        );
     }
 
     [Fact]
@@ -73,9 +72,9 @@ public class FluentValidationResultExtensionsTests {
         var actual = results.Aggregate();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.False(actual.Success);
-            Assert.Equal(3, actual.Errors.Length);
-        });
+        Assert.Multiple(
+            () => Assert.False(actual.Success),
+            () => Assert.Equal(3, actual.Errors.Length)
+        );
     }
 }

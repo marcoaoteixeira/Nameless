@@ -24,10 +24,10 @@ public class DeepCopyTests {
         var clone = (SamplePoco)DeepCopy.Clone(original);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("Alice", clone.Name);
-            Assert.Equal(30, clone.Age);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("Alice", clone.Name),
+            () => Assert.Equal(30, clone.Age)
+        );
     }
 
     [Fact]
@@ -59,10 +59,10 @@ public class DeepCopyTests {
         var clone = DeepCopy.Clone(original);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("Bob", clone.Name);
-            Assert.Equal(25, clone.Age);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("Bob", clone.Name),
+            () => Assert.Equal(25, clone.Age)
+        );
     }
 
     // ─── Deep copy verification ───────────────────────────────────────────────

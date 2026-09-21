@@ -258,7 +258,9 @@ public sealed class KnownAttributePropagationTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains(".Accepts<", generated);
-        Assert.Contains("CreateRequest", generated);
+        Assert.Multiple(
+            () => Assert.Contains(".Accepts<", generated),
+            () => Assert.Contains("CreateRequest", generated)
+        );
     }
 }

@@ -17,11 +17,13 @@ public static class SemVersionTests {
         public void CoreTriple_ParsedCorrectly(string input, int major, int minor, int patch) {
             var v = SemVersion.Parse(input);
 
-            Assert.Equal(major, v.Major);
-            Assert.Equal(minor, v.Minor);
-            Assert.Equal(patch, v.Patch);
-            Assert.Null(v.PreRelease);
-            Assert.Null(v.Build);
+            Assert.Multiple(
+                () => Assert.Equal(major, v.Major),
+                () => Assert.Equal(minor, v.Minor),
+                () => Assert.Equal(patch, v.Patch),
+                () => Assert.Null(v.PreRelease),
+                () => Assert.Null(v.Build)
+            );
         }
 
         [Theory]
@@ -34,8 +36,10 @@ public static class SemVersionTests {
         public void PreRelease_ParsedCorrectly(string input, string expectedPreRelease) {
             var v = SemVersion.Parse(input);
 
-            Assert.Equal(expectedPreRelease, v.PreRelease);
-            Assert.Null(v.Build);
+            Assert.Multiple(
+                () => Assert.Equal(expectedPreRelease, v.PreRelease),
+                () => Assert.Null(v.Build)
+            );
         }
 
         [Theory]
@@ -46,19 +50,23 @@ public static class SemVersionTests {
         public void Build_ParsedCorrectly(string input, string expectedBuild) {
             var v = SemVersion.Parse(input);
 
-            Assert.Equal(expectedBuild, v.Build);
-            Assert.Null(v.PreRelease);
+            Assert.Multiple(
+                () => Assert.Equal(expectedBuild, v.Build),
+                () => Assert.Null(v.PreRelease)
+            );
         }
 
         [Fact]
         public void PreReleaseAndBuild_BothParsedCorrectly() {
             var v = SemVersion.Parse("1.2.3-beta.1+sha.abc1234");
 
-            Assert.Equal(1, v.Major);
-            Assert.Equal(2, v.Minor);
-            Assert.Equal(3, v.Patch);
-            Assert.Equal("beta.1", v.PreRelease);
-            Assert.Equal("sha.abc1234", v.Build);
+            Assert.Multiple(
+                () => Assert.Equal(1, v.Major),
+                () => Assert.Equal(2, v.Minor),
+                () => Assert.Equal(3, v.Patch),
+                () => Assert.Equal("beta.1", v.PreRelease),
+                () => Assert.Equal("sha.abc1234", v.Build)
+            );
         }
     }
 
@@ -105,21 +113,25 @@ public static class SemVersionTests {
         public void ValidInput_ReturnsTrueAndOutputsInstance() {
             var ok = SemVersion.TryParse("2.4.6-rc.1+build.99", out var v);
 
-            Assert.True(ok);
-            Assert.NotNull(v);
-            Assert.Equal(2, v.Major);
-            Assert.Equal(4, v.Minor);
-            Assert.Equal(6, v.Patch);
-            Assert.Equal("rc.1", v.PreRelease);
-            Assert.Equal("build.99", v.Build);
+            Assert.Multiple(
+                () => Assert.True(ok),
+                () => Assert.NotNull(v),
+                () => Assert.Equal(2, v.Major),
+                () => Assert.Equal(4, v.Minor),
+                () => Assert.Equal(6, v.Patch),
+                () => Assert.Equal("rc.1", v.PreRelease),
+                () => Assert.Equal("build.99", v.Build)
+            );
         }
 
         [Fact]
         public void Null_ReturnsFalseAndOutputsNull() {
             var ok = SemVersion.TryParse(null, out var v);
 
-            Assert.False(ok);
-            Assert.Null(v);
+            Assert.Multiple(
+                () => Assert.False(ok),
+                () => Assert.Null(v)
+            );
         }
 
         [Theory]
@@ -130,8 +142,10 @@ public static class SemVersionTests {
         public void InvalidInput_ReturnsFalseAndOutputsNull(string input) {
             var ok = SemVersion.TryParse(input, out var v);
 
-            Assert.False(ok);
-            Assert.Null(v);
+            Assert.Multiple(
+                () => Assert.False(ok),
+                () => Assert.Null(v)
+            );
         }
     }
 
@@ -170,11 +184,13 @@ public static class SemVersionTests {
         public void V1_HasExpectedValues() {
             var v = SemVersion.V1;
 
-            Assert.Equal(1, v.Major);
-            Assert.Equal(0, v.Minor);
-            Assert.Equal(0, v.Patch);
-            Assert.Null(v.PreRelease);
-            Assert.Null(v.Build);
+            Assert.Multiple(
+                () => Assert.Equal(1, v.Major),
+                () => Assert.Equal(0, v.Minor),
+                () => Assert.Equal(0, v.Patch),
+                () => Assert.Null(v.PreRelease),
+                () => Assert.Null(v.Build)
+            );
         }
 
         [Fact]
@@ -198,9 +214,11 @@ public static class SemVersionTests {
             var a = SemVersion.Parse("1.2.3");
             var b = SemVersion.Parse("1.2.3");
 
-            Assert.Equal(a, b);
-            Assert.True(a == b);
-            Assert.False(a != b);
+            Assert.Multiple(
+                () => Assert.Equal(a, b),
+                () => Assert.True(a == b),
+                () => Assert.False(a != b)
+            );
         }
 
         [Fact]
@@ -208,8 +226,10 @@ public static class SemVersionTests {
             var a = SemVersion.Parse("1.2.3+build.1");
             var b = SemVersion.Parse("1.2.3+build.2");
 
-            Assert.Equal(a, b);
-            Assert.True(a == b);
+            Assert.Multiple(
+                () => Assert.Equal(a, b),
+                () => Assert.True(a == b)
+            );
         }
 
         [Fact]
@@ -217,8 +237,10 @@ public static class SemVersionTests {
             var a = SemVersion.Parse("1.2.3-alpha");
             var b = SemVersion.Parse("1.2.3-beta");
 
-            Assert.NotEqual(a, b);
-            Assert.True(a != b);
+            Assert.Multiple(
+                () => Assert.NotEqual(a, b),
+                () => Assert.True(a != b)
+            );
         }
 
         [Fact]
@@ -273,12 +295,14 @@ public static class SemVersionTests {
             var a = SemVersion.Parse(lower);
             var b = SemVersion.Parse(higher);
 
-            Assert.True(a.CompareTo(b) < 0);
-            Assert.True(b.CompareTo(a) > 0);
-            Assert.True(a < b);
-            Assert.True(b > a);
-            Assert.True(a <= b);
-            Assert.True(b >= a);
+            Assert.Multiple(
+                () => Assert.True(a.CompareTo(b) < 0),
+                () => Assert.True(b.CompareTo(a) > 0),
+                () => Assert.True(a < b),
+                () => Assert.True(b > a),
+                () => Assert.True(a <= b),
+                () => Assert.True(b >= a)
+            );
         }
 
         [Fact]
@@ -286,9 +310,11 @@ public static class SemVersionTests {
             var a = SemVersion.Parse("2.3.4-rc.1");
             var b = SemVersion.Parse("2.3.4-rc.1");
 
-            Assert.Equal(0, a.CompareTo(b));
-            Assert.True(a <= b);
-            Assert.True(a >= b);
+            Assert.Multiple(
+                () => Assert.Equal(0, a.CompareTo(b)),
+                () => Assert.True(a <= b),
+                () => Assert.True(a >= b)
+            );
         }
 
         [Fact]
@@ -405,9 +431,11 @@ public static class SemVersionTests {
             var upper = SemVersion.Parse("V1.2.3");
             var none = SemVersion.Parse("1.2.3");
 
-            Assert.Equal(lower, upper);
-            Assert.Equal(lower, none);
-            Assert.Equal(upper, none);
+            Assert.Multiple(
+                () => Assert.Equal(lower, upper),
+                () => Assert.Equal(lower, none),
+                () => Assert.Equal(upper, none)
+            );
         }
 
         [Fact]
@@ -416,8 +444,10 @@ public static class SemVersionTests {
             var upper = SemVersion.Parse("V1.2.3");
             var none = SemVersion.Parse("1.2.3");
 
-            Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
-            Assert.Equal(lower.GetHashCode(), none.GetHashCode());
+            Assert.Multiple(
+                () => Assert.Equal(lower.GetHashCode(), upper.GetHashCode()),
+                () => Assert.Equal(lower.GetHashCode(), none.GetHashCode())
+            );
         }
 
         [Fact]
@@ -432,11 +462,13 @@ public static class SemVersionTests {
         public void CoreVersionProperties_UnaffectedByPrefix() {
             var v = SemVersion.Parse("v3.4.5-rc.1+sha.abc");
 
-            Assert.Equal(3, v.Major);
-            Assert.Equal(4, v.Minor);
-            Assert.Equal(5, v.Patch);
-            Assert.Equal("rc.1", v.PreRelease);
-            Assert.Equal("sha.abc", v.Build);
+            Assert.Multiple(
+                () => Assert.Equal(3, v.Major),
+                () => Assert.Equal(4, v.Minor),
+                () => Assert.Equal(5, v.Patch),
+                () => Assert.Equal("rc.1", v.PreRelease),
+                () => Assert.Equal("sha.abc", v.Build)
+            );
         }
     }
 }

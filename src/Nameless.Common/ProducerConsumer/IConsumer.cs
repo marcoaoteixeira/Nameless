@@ -1,14 +1,12 @@
-using Nameless.Resilience;
-
 namespace Nameless.ProducerConsumer;
 
 /// <summary>
 ///     Represents a consumer.
 /// </summary>
-/// <typeparam name="TMessage">
+/// <typeparam name="T">
 ///     Type of the message this consumer can handle.
 /// </typeparam>
-public interface IConsumer<in TMessage> {
+public interface IConsumer<in T> {
     /// <summary>
     ///     Gets the consumer name.
     /// </summary>
@@ -18,16 +16,11 @@ public interface IConsumer<in TMessage> {
     ///     Gets the topic associated with the consumer.
     /// </summary>
     string Topic { get; }
-    
-    /// <summary>
-    ///     Gets the retry policy.
-    /// </summary>
-    RetryPolicyConfiguration? RetryPolicy { get; }
 
     /// <summary>
     ///     Consumes the message.
     /// </summary>
-    /// <param name="message">
+    /// <param name="value">
     ///     The message.
     /// </param>
     /// <param name="context">
@@ -39,5 +32,5 @@ public interface IConsumer<in TMessage> {
     /// <returns>
     ///     A <see cref="Task"/> representing the asynchronous execution.
     /// </returns>
-    Task ConsumeAsync(TMessage message, ConsumerContext context, CancellationToken cancellationToken);
+    Task ConsumeAsync(T value, ConsumerContext context, CancellationToken cancellationToken);
 }

@@ -11,11 +11,11 @@ public class ParameterTests {
         var param = new Parameter("myParam", 42, DbType.Int32);
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Equal("myParam", param.Name);
-            Assert.Equal(42, param.Value);
-            Assert.Equal(DbType.Int32, param.Type);
-        });
+        Assert.Multiple(
+            () => Assert.Equal("myParam", param.Name),
+            () => Assert.Equal(42, param.Value),
+            () => Assert.Equal(DbType.Int32, param.Type)
+        );
     }
 
     [Fact]

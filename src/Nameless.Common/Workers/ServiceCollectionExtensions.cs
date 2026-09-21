@@ -14,24 +14,19 @@ public static class ServiceCollectionExtensions {
         /// <summary>
         ///     Registers all configured <see cref="PeriodicWorker"/> types as <see cref="IHostedService"/> singletons.
         /// </summary>
-        /// <param name="registration">Optional delegate to configure worker types and assembly scanning.</param>
+        /// <param name="configure">Optional delegate to configure worker types and assembly scanning.</param>
         /// <returns>
         ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterPeriodicWorkers(Action<PeriodicWorkersRegistration>? registration = null) {
-            var settings = ActionHelper.FromDelegate(registration);
+        public IServiceCollection RegisterPeriodicWorkers(Action<PeriodicWorkersRegistration>? configure = null) {
+            var registration = ActionHelper.FromDelegate(configure);
 
-            var implementations = settings.UseAssemblyScan
-                ? settings.ExecuteAssemblyScan<PeriodicWorker>()
-                : settings.Workers;
-            var descriptors = implementations.Select(
+            self.TryAddEnumerable(registration.Workers.Select(
                 implementation => ServiceDescriptor.Singleton(
                     typeof(IHostedService),
                     implementation
                 )
-            );
-
-            self.TryAddEnumerable(descriptors);
+            ));
 
             return self;
         }

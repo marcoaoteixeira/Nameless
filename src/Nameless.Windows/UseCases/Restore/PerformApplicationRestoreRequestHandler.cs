@@ -56,8 +56,8 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     private Result<string> GetBackupFilePath(DateTimeOffset timestamp) {
         // backup files should always be in the "backups" directory.
         var backupFileName = string.Format(WindowsConstants.BackupFileNamePattern, timestamp);
-        var backupDirectory = _applicationContext.FileExplorer.GetBackupDirectory();
-        var backupFile = _applicationContext.FileExplorer.GetFile(
+        var backupDirectory = _applicationContext.ApplicationDataFileProvider.GetBackupDirectory();
+        var backupFile = _applicationContext.ApplicationDataFileProvider.GetFile(
             Path.Combine(backupDirectory.Path, backupFileName)
         );
 
@@ -71,7 +71,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     private async Task<Result<string>> DecompressBackupFileAsync(string backupFilePath, CancellationToken cancellationToken) {
         // decompress file into the temporary directory
         var request = new DecompressRequest(backupFilePath) {
-            DestinationDirectoryPath = _applicationContext.FileExplorer.GetTemporaryDirectory().Path
+            DestinationDirectoryPath = _applicationContext.ApplicationDataFileProvider.GetTemporaryDirectory().Path
         };
 
         var response = await _compressor.DecompressAsync(request, cancellationToken)

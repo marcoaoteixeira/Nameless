@@ -1,4 +1,4 @@
-﻿namespace Nameless.Auth.OAuth;
+﻿namespace Nameless.Auth;
 
 /// <summary>
 ///     <see cref="IAuthorizationTokenProvider{TRequest,TResponse}"/> extension methods

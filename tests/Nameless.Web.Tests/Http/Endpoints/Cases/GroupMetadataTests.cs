@@ -218,8 +218,10 @@ public sealed class GroupMetadataTests
 
         var generated = GeneratorTestHelper.GetGeneratedSource(source);
 
-        Assert.Contains("AddEndpointFilter<global::TestApp.GroupFilter>()", generated);
-        Assert.Contains("AddEndpointFilter<global::TestApp.EndpointSpecificFilter>()", generated);
+        Assert.Multiple(
+            () => Assert.Contains("AddEndpointFilter<global::TestApp.GroupFilter>()", generated),
+            () => Assert.Contains("AddEndpointFilter<global::TestApp.EndpointSpecificFilter>()", generated)
+        );
     }
 
     [Fact]
@@ -244,7 +246,7 @@ public sealed class GroupMetadataTests
 
         // Group partial (UsersGroup.g.cs) has the RequireAuthorization call
         Assert.Contains(".RequireAuthorization()", generated);
-        // Registration file delegates to the Create method
-        Assert.Contains("ProductsGroup.Create(", generated);
+        // Registration file delegates to the GetOrCreate method
+        Assert.Contains("ProductsGroup.GetOrCreate(", generated);
     }
 }

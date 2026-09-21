@@ -24,9 +24,11 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(\)", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(\)", source)
+        );
     }
 
     [Fact]
@@ -48,9 +50,11 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-in-constructor""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-in-constructor""", source)
+        );
     }
     
     [Fact]
@@ -72,9 +76,11 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter""", source)
+        );
     }
 
     [Fact]
@@ -96,9 +102,11 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter""", source)
+        );
     }
 
     [Fact]
@@ -120,8 +128,10 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source)
+        );
         Assert.Matches("""
                        \.RequireAuthorization\(new AuthorizeAttribute \{ Roles = "role-policy"
                        """, source);
@@ -146,9 +156,11 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ AuthenticationSchemes = ""auth-scheme-policy""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ AuthenticationSchemes = ""auth-scheme-policy""", source)
+        );
     }
 
     [Fact]
@@ -170,8 +182,10 @@ public class AuthorizeAttributeUsageTests
             .GetCodeBySourceType(code)
             .SingleOrDefault();
 
-        Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source);
-        Assert.Matches(@"MapGet\(.*", source);
-        Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter"", Roles = ""role-policy"", AuthenticationSchemes = ""auth-scheme-policy""", source);
+        Assert.Multiple(
+            () => Assert.Contains($"{SourceCodeHelper.Namespace}.SampleEndpoint", source),
+            () => Assert.Matches(@"MapGet\(.*", source),
+            () => Assert.Matches(@"\.RequireAuthorization\(new AuthorizeAttribute \{ Policy = ""policy-as-parameter"", Roles = ""role-policy"", AuthenticationSchemes = ""auth-scheme-policy""", source)
+        );
     }
 }

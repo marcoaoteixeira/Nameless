@@ -17,7 +17,7 @@ public static class PeriodicWorkerConfig {
             if (settings.DisablePeriodicWorkers) { return self; }
 
             self.Services.RegisterPeriodicWorkers(
-                AssemblyScanAwareHelper.Join(
+                AssemblyScanAwareHelper.MergeAssemblies(
                     settings.ConfigurePeriodicWorkers,
                     settings.Assemblies
                 )

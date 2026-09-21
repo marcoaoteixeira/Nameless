@@ -15,11 +15,11 @@ public class ErrorExtensionsTests {
         var flat = errors.Flatten();
 
         // assert
-        Assert.Multiple(() => {
-            Assert.Contains("[Validation]", flat);
-            Assert.Contains("[Missing]", flat);
-            Assert.Contains(";", flat);
-        });
+        Assert.Multiple(
+            () => Assert.Contains("[Validation]", flat),
+            () => Assert.Contains("[Missing]", flat),
+            () => Assert.Contains(";", flat)
+        );
     }
 
     [Fact]
@@ -31,9 +31,11 @@ public class ErrorExtensionsTests {
         var flat = errors.Flatten();
 
         // assert
-        Assert.DoesNotContain(";", flat);
-        Assert.Contains("[Failure]", flat);
-        Assert.Contains("oops", flat);
+        Assert.Multiple(
+            () => Assert.DoesNotContain(";", flat),
+            () => Assert.Contains("[Failure]", flat),
+            () => Assert.Contains("oops", flat)
+        );
     }
 
     [Fact]
