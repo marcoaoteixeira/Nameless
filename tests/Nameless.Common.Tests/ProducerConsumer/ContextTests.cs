@@ -1,5 +1,6 @@
 namespace Nameless.ProducerConsumer;
 
+[UnitTest]
 public class ContextTests {
     // --- ConsumerContext ---
 

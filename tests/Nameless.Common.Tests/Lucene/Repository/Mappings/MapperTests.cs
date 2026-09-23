@@ -73,9 +73,9 @@ public class MapperTests {
         var found = mapper.TryGetID<MapperTestEntity>(out var descriptor);
 
         // Assert
+        Assert.True(found);
+        Assert.NotNull(descriptor);
         Assert.Multiple(
-            () => Assert.True(found),
-            () => Assert.NotNull(descriptor),
             () => Assert.Equal("Id", descriptor.Name),
             () => Assert.True(descriptor.IsID)
         );

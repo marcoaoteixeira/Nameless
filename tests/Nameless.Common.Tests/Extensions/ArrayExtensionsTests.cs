@@ -1,5 +1,6 @@
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ArrayExtensionsTests {
     // ─── TryGetElementAt ────────────────────────────────────────────────────
 

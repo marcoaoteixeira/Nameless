@@ -1,5 +1,6 @@
 namespace Nameless.IO;
 
+[UnitTest]
 public class PathHelperTests {
     // ─── Normalize ───────────────────────────────────────────────────────────
 

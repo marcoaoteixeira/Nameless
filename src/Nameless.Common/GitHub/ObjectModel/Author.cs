@@ -1,5 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
 namespace Nameless.GitHub.ObjectModel;
 
 /// <summary>
@@ -24,6 +27,7 @@ namespace Nameless.GitHub.ObjectModel;
 /// <param name="Type">Author type.</param>
 /// <param name="UserViewType">User view type.</param>
 /// <param name="SiteAdmin">Whether it is the site administrator.</param>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record Author(
     [property: JsonPropertyName("login")] string Login,
     [property: JsonPropertyName("id")] int Id,

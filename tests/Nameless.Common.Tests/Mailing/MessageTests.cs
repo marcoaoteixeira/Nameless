@@ -2,6 +2,7 @@ using System.Text;
 
 namespace Nameless.Mailing;
 
+[UnitTest]
 public class MessageTests {
     // --- Constructor ---
 

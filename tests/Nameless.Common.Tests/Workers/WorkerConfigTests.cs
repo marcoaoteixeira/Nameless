@@ -7,6 +7,7 @@ using Nameless.Testing.Tools.Mockers.StatusReporting;
 
 namespace Nameless.Workers;
 
+[IntegrationTest]
 public class WorkerConfigTests {
     // ─── IsDisabled ──────────────────────────────────────────────────────────
 
@@ -37,7 +38,7 @@ public class WorkerConfigTests {
         var workCalled = false;
 
         var worker = new ControllablePeriodicWorker(
-            CreateConfiguration(nameof(ControllablePeriodicWorker), isEnabled: false),
+            CreateConfiguration(isEnabled: false),
             NullLogger<PeriodicWorker>.Instance,
             _ => {
                 workCalled = true;
@@ -79,11 +80,9 @@ public class WorkerConfigTests {
         await Task.Delay(200, ct);
 
         // assert: the background ExecuteTask is faulted with InvalidOperationException
-        Assert.Multiple(
-            () => Assert.NotNull(worker.ExecuteTask),
-            () => Assert.True(worker.ExecuteTask.IsFaulted)
-        );
-        Assert.IsType<MissingConfigurationException>(
+        Assert.NotNull(worker.ExecuteTask);
+        Assert.True(worker.ExecuteTask.IsFaulted);
+        Assert.IsType<ConfigurationBindingException>(
             worker.ExecuteTask.Exception!.InnerExceptions[0]
         );
 
@@ -97,7 +96,7 @@ public class WorkerConfigTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         var worker = new SimplePeriodicWorker(
-            CreateConfiguration(nameof(SimplePeriodicWorker), isEnabled: true, interval: "00:00:00"),
+            CreateConfiguration(isEnabled: true, interval: "00:00:00"),
             new StatusReporterMocker<SimplePeriodicWorker>().Build(),
             NullLogger<PeriodicWorker>.Instance
         );
@@ -109,10 +108,8 @@ public class WorkerConfigTests {
         await Task.Delay(200, ct);
 
         // assert: the background ExecuteTask is faulted with InvalidOperationException
-        Assert.Multiple(
-            () => Assert.NotNull(worker.ExecuteTask),
-            () => Assert.True(worker.ExecuteTask.IsFaulted)
-        );
+        Assert.NotNull(worker.ExecuteTask);
+        Assert.True(worker.ExecuteTask.IsFaulted);
         Assert.IsType<InvalidOperationException>(
             worker.ExecuteTask.Exception!.InnerExceptions[0]
         );
@@ -123,20 +120,19 @@ public class WorkerConfigTests {
     // ─── helpers ─────────────────────────────────────────────────────────────
 
     private static IConfiguration CreateConfiguration(
-        string workerName,
         bool isEnabled = true,
         string interval = "00:00:00.050") {
         return new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?> {
-                [$"Workers:{workerName}:IsEnabled"] = isEnabled.ToString(),
-                [$"Workers:{workerName}:Interval"] = interval,
+                ["PeriodicWorkers:IsEnabled"] = isEnabled.ToString(),
+                ["PeriodicWorkers:Interval"] = interval,
             })
             .Build();
     }
 
     // ─── test doubles ─────────────────────────────────────────────────────────
 
-    private sealed class SimplePeriodicWorker(
+    public sealed class SimplePeriodicWorker(
         IConfiguration configuration,
         IStatusReporter<SimplePeriodicWorker> statusReporter,
         ILogger<PeriodicWorker> logger)
@@ -147,7 +143,7 @@ public class WorkerConfigTests {
         }
     }
 
-    private sealed class ControllablePeriodicWorker(IConfiguration configuration, ILogger<PeriodicWorker> logger, Func<CancellationToken, Task> work)
+    public sealed class ControllablePeriodicWorker(IConfiguration configuration, ILogger<PeriodicWorker> logger, Func<CancellationToken, Task> work)
         : PeriodicWorker(configuration, new StatusReporterMocker<ControllablePeriodicWorker>().Build(), logger) {
         public override string Name => nameof(ControllablePeriodicWorker);
         public override Task DoWorkAsync(CancellationToken ct) {

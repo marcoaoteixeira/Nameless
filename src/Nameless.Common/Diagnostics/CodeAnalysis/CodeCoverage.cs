@@ -12,7 +12,7 @@ public static class CodeCoverage {
         ///     Excluded from code coverage as it represents a plain data
         ///     structure with no business logic to validate.
         /// </summary>
-        public const string PlainCodeStructure = "Excluded from code coverage as it represents a plain data structure with no business logic to validate.";
+        public const string PocoStructure = "Excluded from code coverage as it represents a plain data structure with no business logic to validate.";
 
         /// <summary>
         ///     Excluded from code coverage because it consists of internal

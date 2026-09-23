@@ -279,84 +279,24 @@ public class ContextExtensionsTests {
     }
 
     [Fact]
-    public void ConsumerContext_AckOnSuccess_GetSet_RoundTrips() {
+    public void ConsumerContext_DeliveryTag_GetSet_RoundTrips() {
         // arrange
         var ctx = new ConsumerContext();
 
         // act
-        ctx.AckOnSuccess = true;
+        ctx.DeliveryTag = 42UL;
 
         // assert
-        Assert.True(ctx.AckOnSuccess);
+        Assert.Equal(42UL, ctx.DeliveryTag);
     }
 
     [Fact]
-    public void ConsumerContext_AckOnSuccess_WhenNotSet_ReturnsFalse() {
+    public void ConsumerContext_DeliveryTag_WhenNotSet_ReturnsZero() {
         // arrange
         var ctx = new ConsumerContext();
 
         // act & assert
-        Assert.False(ctx.AckOnSuccess);
-    }
-
-    [Fact]
-    public void ConsumerContext_AckMultiple_GetSet_RoundTrips() {
-        // arrange
-        var ctx = new ConsumerContext();
-
-        // act
-        ctx.AckMultiple = true;
-
-        // assert
-        Assert.True(ctx.AckMultiple);
-    }
-
-    [Fact]
-    public void ConsumerContext_NAckOnFailure_GetSet_RoundTrips() {
-        // arrange
-        var ctx = new ConsumerContext();
-
-        // act
-        ctx.NAckOnFailure = true;
-
-        // assert
-        Assert.True(ctx.NAckOnFailure);
-    }
-
-    [Fact]
-    public void ConsumerContext_NAckMultiple_GetSet_RoundTrips() {
-        // arrange
-        var ctx = new ConsumerContext();
-
-        // act
-        ctx.NAckMultiple = true;
-
-        // assert
-        Assert.True(ctx.NAckMultiple);
-    }
-
-    [Fact]
-    public void ConsumerContext_AutoAck_GetSet_RoundTrips() {
-        // arrange
-        var ctx = new ConsumerContext();
-
-        // act
-        ctx.AutoAck = true;
-
-        // assert
-        Assert.True(ctx.AutoAck);
-    }
-
-    [Fact]
-    public void ConsumerContext_RequeueOnFailure_GetSet_RoundTrips() {
-        // arrange
-        var ctx = new ConsumerContext();
-
-        // act
-        ctx.RequeueOnFailure = true;
-
-        // assert
-        Assert.True(ctx.RequeueOnFailure);
+        Assert.Equal(0UL, ctx.DeliveryTag);
     }
 
     // ── ProducerContext extension properties ─────────────────────────────────

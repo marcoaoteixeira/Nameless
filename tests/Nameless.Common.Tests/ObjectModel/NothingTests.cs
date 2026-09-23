@@ -1,5 +1,6 @@
 namespace Nameless.ObjectModel;
 
+[UnitTest]
 public class NothingTests {
     // ─── Equality operators ──────────────────────────────────────────────────
 

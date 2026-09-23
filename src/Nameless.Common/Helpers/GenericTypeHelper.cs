@@ -262,7 +262,7 @@ public static class GenericTypeHelper
         switch (constraint)
         {
             // Handle regular type constraints
-            case { IsGenericType: false, ContainsGenericParameters: false }:
+            case { ContainsGenericParameters: false }:
                 return constraint.IsAssignableFrom(candidateType);
             // Handle open generic type constraints
             case { IsGenericType: true, ContainsGenericParameters: true }:

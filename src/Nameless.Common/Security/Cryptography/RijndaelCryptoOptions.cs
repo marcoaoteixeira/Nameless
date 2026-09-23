@@ -56,7 +56,7 @@ public class RijndaelCryptoOptions {
     /// <remarks>
     ///     If key size is not specified, longest 256-bit key will be used.
     /// </remarks>
-    public KeySize KeySize { get; set; }
+    public KeySize KeySize { get; set; } = KeySize.Large;
 
     /// <summary>
     ///     Gets or sets the minimum salt size. This value should not be

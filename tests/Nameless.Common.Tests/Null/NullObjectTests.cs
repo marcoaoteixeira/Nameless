@@ -1,5 +1,6 @@
 namespace Nameless.Null;
 
+[UnitTest]
 public class NullObjectTests {
     // ─── NullDisposable ──────────────────────────────────────────────────────
 

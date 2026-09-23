@@ -1,5 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
 namespace Nameless.GitHub.ObjectModel;
 
 /// <summary>
@@ -25,6 +28,7 @@ namespace Nameless.GitHub.ObjectModel;
 /// <param name="TarballUrl">The tarball URL</param>
 /// <param name="ZipballUrl">The zip-ball URL</param>
 /// <param name="Body">The body</param>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record Release(
     [property: JsonPropertyName("url")] string Url,
     [property: JsonPropertyName("assets_url")] string AssetsUrl,

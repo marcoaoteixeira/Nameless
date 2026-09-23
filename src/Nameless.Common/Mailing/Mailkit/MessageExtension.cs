@@ -1,11 +1,14 @@
 ﻿using MimeKit;
 using MimeKit.Text;
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Mailing.Mailkit;
 
 /// <summary>
 /// <see cref="Message"/> extension methods for MailKit.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class MessageExtension {
     /// <summary>
     /// Converts a <see cref="Message"/> to a <see cref="MimeMessage"/>.

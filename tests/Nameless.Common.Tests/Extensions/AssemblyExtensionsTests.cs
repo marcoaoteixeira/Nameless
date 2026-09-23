@@ -5,6 +5,7 @@ namespace Nameless.Extensions;
 public interface IAssemblyExtTestMarker { }
 public sealed class ConcreteAssemblyExtTestImpl : IAssemblyExtTestMarker { }
 
+[UnitTest]
 public class AssemblyExtensionsTests {
     // ─── GetDirectoryPath ────────────────────────────────────────────────────
 

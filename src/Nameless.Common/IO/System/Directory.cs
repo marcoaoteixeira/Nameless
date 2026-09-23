@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.IO.System;
 
@@ -9,6 +11,8 @@ namespace Nameless.IO.System;
 public class Directory : IDirectory {
     private readonly DirectoryInfo _directory;
     private readonly FileProviderOptions _options;
+
+    [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 
     private string DebuggerDisplayValue => $"Path: {SysPath.GetRelativePath(_options.Root, Path)}";
     

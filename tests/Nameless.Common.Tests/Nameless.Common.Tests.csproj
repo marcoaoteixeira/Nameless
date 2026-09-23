@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="EntityFrameworkCore\Resources\EmbeddedSeed.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Bogus" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
 		<PackageReference Include="coverlet.collector">

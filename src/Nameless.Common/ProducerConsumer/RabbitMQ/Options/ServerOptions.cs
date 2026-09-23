@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
@@ -8,6 +9,7 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplayValue,nq}")]
 public record ServerOptions {
+    [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
     private string DebuggerDisplayValue
         => UseCredentials
             ? $"{Protocol}://{Username}:{Password}@{Hostname}:{Port}{VirtualHost}"

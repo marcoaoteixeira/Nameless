@@ -2,6 +2,7 @@ using System.Data;
 
 namespace Nameless.Data;
 
+[UnitTest]
 public class ParameterCollectionTests {
     // --- Default constructor ---
 

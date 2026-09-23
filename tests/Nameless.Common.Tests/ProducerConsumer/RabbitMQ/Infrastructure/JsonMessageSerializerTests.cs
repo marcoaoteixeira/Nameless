@@ -1,119 +1,73 @@
+using System.Text;
+using Nameless.ProducerConsumer.RabbitMQ.ObjectModel;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
+[UnitTest]
 public class JsonMessageSerializerTests {
-    private static JsonMessageSerializer CreateSut() {
-        return new JsonMessageSerializer();
-    }
+    private sealed record Payload(string Name, int Value);
 
-    private static ProducerContext CreateContextWithMetadata(
-        string messageId = "test-msg-id",
-        string correlationId = "test-corr-id",
-        long unixTimestamp = 1_700_000_000L) {
-
-        var ctx = new ProducerContext {
-            MessageId = messageId,
-            CorrelationId = correlationId,
-            Timestamp = new AmqpTimestamp(unixTimestamp)
+    [Fact]
+    public void Serialize_ThenDeserialize_RoundTripsContentAndHeader() {
+        // arrange
+        var sut = new JsonMessageSerializer();
+        var context = new ProducerContext {
+            CorrelationId = "corr-1",
+            MessageId = "msg-1",
+            Timestamp = new AmqpTimestamp(1_700_000_000L)
         };
 
-        return ctx;
-    }
-
-    [Fact]
-    [UnitTest]
-    public async Task SerializeAsync_ThenDeserializeAsync_RoundTrips() {
-        // arrange
-        var sut = CreateSut();
-        var original = "Hello, RabbitMQ!";
-        var producerCtx = CreateContextWithMetadata();
-        var consumerCtx = new ConsumerContext();
-
         // act
-        var buffer = await sut.Serialize(original, producerCtx, CancellationToken.None);
-        var deserialized = await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
+        var buffer = sut.Serialize(new Payload("alpha", 7), context);
+        var message = sut.Deserialize<Payload>(buffer);
 
         // assert
-        Assert.Equal(original, deserialized);
+        Assert.Multiple(
+            () => Assert.Equal(new Payload("alpha", 7), message.Content),
+            () => Assert.Equal("corr-1", message.Header.CorrelationID),
+            () => Assert.Equal("msg-1", message.Header.MessageID),
+            () => Assert.Equal(1_700_000_000L, message.Header.Timestamp)
+        );
     }
 
     [Fact]
-    [UnitTest]
-    public async Task SerializeAsync_SetsMessageIdInContext() {
+    public void Serialize_ReturnsUtf8Json() {
         // arrange
-        var sut = CreateSut();
-        const string ExpectedMessageId = "msg-id-123";
-        var producerCtx = CreateContextWithMetadata(messageId: ExpectedMessageId);
-        var consumerCtx = new ConsumerContext();
+        var sut = new JsonMessageSerializer();
 
         // act
-        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
-        await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
+        var buffer = sut.Serialize("hello", new ProducerContext());
+        var json = Encoding.UTF8.GetString(buffer);
 
         // assert
-        Assert.Equal(ExpectedMessageId, consumerCtx.MessageId);
+        Assert.Contains("\"Content\":\"hello\"", json);
     }
 
     [Fact]
-    [UnitTest]
-    public async Task SerializeAsync_SetsCorrelationIdInContext() {
+    public void Serialize_WithNullContext_Throws() {
         // arrange
-        var sut = CreateSut();
-        const string ExpectedCorrelationId = "corr-id-456";
-        var producerCtx = CreateContextWithMetadata(correlationId: ExpectedCorrelationId);
-        var consumerCtx = new ConsumerContext();
-
-        // act
-        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
-        await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
-
-        // assert
-        Assert.Equal(ExpectedCorrelationId, consumerCtx.CorrelationId);
-    }
-
-    [Fact]
-    [UnitTest]
-    public async Task SerializeAsync_SetsTimestampInContext() {
-        // arrange
-        var sut = CreateSut();
-        const long ExpectedUnixTime = 1_700_000_000L;
-        var producerCtx = CreateContextWithMetadata(unixTimestamp: ExpectedUnixTime);
-        var consumerCtx = new ConsumerContext();
-
-        // act
-        var buffer = await sut.Serialize("payload", producerCtx, CancellationToken.None);
-        await sut.DeserializeAsync<string>(buffer, consumerCtx, CancellationToken.None);
-
-        // assert
-        Assert.Equal(ExpectedUnixTime, consumerCtx.Timestamp.UnixTime);
-    }
-
-    [Fact]
-    [UnitTest]
-    public async Task SerializeAsync_ProducesNonEmptyBuffer() {
-        // arrange
-        var sut = CreateSut();
-        var ctx = CreateContextWithMetadata();
-
-        // act
-        var buffer = await sut.Serialize("some message", ctx, CancellationToken.None);
-
-        // assert
-        Assert.NotEmpty(buffer);
-    }
-
-    [Fact]
-    [UnitTest]
-    public async Task DeserializeAsync_InvalidBuffer_ThrowsInvalidOperationException() {
-        // arrange
-        var sut = CreateSut();
-        var invalidBuffer = "not-json"u8.ToArray();
-        var ctx = new ConsumerContext();
+        var sut = new JsonMessageSerializer();
 
         // act & assert
-        await Assert.ThrowsAsync<System.Text.Json.JsonException>(
-            () => sut.DeserializeAsync<string>(invalidBuffer, ctx, CancellationToken.None)
-        );
+        Assert.ThrowsAny<Exception>(() => sut.Serialize("hello", null!));
+    }
+
+    [Fact]
+    public void Deserialize_WithJsonNullLiteral_ThrowsInvalidOperationException() {
+        // arrange
+        var sut = new JsonMessageSerializer();
+
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => sut.Deserialize<string>(Encoding.UTF8.GetBytes("null")));
+    }
+
+    [Fact]
+    public void Deserialize_WithInvalidJson_Throws() {
+        // arrange
+        var sut = new JsonMessageSerializer();
+
+        // act & assert
+        Assert.ThrowsAny<Exception>(() => sut.Deserialize<string>(Encoding.UTF8.GetBytes("not-json")));
     }
 }

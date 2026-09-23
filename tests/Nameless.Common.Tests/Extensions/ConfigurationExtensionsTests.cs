@@ -3,6 +3,7 @@ using Nameless.Configuration;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ConfigurationExtensionsTests {
     // ─── GetOptions ──────────────────────────────────────────────────────────
 
@@ -17,7 +18,7 @@ public class ConfigurationExtensionsTests {
             .Build();
 
         // act
-        var opts = config.GetOptions<MyOptions>(sectionName: "MySection");
+        var opts = config.GetSection<MyOptions>("MySection").GetOrCreate<MyOptions>();
 
         // assert
         Assert.Multiple(
@@ -33,7 +34,7 @@ public class ConfigurationExtensionsTests {
                                                .Build();
 
         // act
-        var opts = config.GetOptions<MyOptions>(sectionName: "MissingSection");
+        var opts = config.GetSection<MyOptions>("MissingSection").GetOrCreate<MyOptions>();
 
         // assert
         Assert.Multiple(
@@ -52,7 +53,7 @@ public class ConfigurationExtensionsTests {
             .Build();
 
         // act
-        var opts = config.GetOptions<AttributeOptions>();
+        var opts = config.GetSection<AttributeOptions>().GetOrCreate<AttributeOptions>();
 
         // assert
         Assert.Equal(99, opts.Value);

@@ -1,12 +1,15 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.EntityFrameworkCore;
 
 /// <summary>
 ///     JSON database seeder options.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public class JsonDatabaseSeederOptions {
     /// <summary>
     ///     Whether it should use an embedded resource instead

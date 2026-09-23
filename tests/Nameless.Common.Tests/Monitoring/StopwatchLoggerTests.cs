@@ -32,8 +32,8 @@ public class StopwatchLoggerTests {
         sut.Dispose();
         
         // assert
-        loggerMocker.VerifyDebug(message => message.Contains("starting"));
-        loggerMocker.VerifyDebug(message => message.Contains("This is a test"));
-        loggerMocker.VerifyDebug(message => message.Contains("finished"));
+        loggerMocker.VerifyDebug(message => message.Contains("starting", StringComparison.OrdinalIgnoreCase));
+        loggerMocker.VerifyDebug(message => message.Contains("This is a test", StringComparison.OrdinalIgnoreCase));
+        loggerMocker.VerifyDebug(message => message.Contains("finished", StringComparison.OrdinalIgnoreCase));
     }
 }

@@ -1,5 +1,6 @@
 namespace Nameless.Resilience;
 
+[UnitTest]
 public class RetryPolicyConfigurationTests {
     // --- Default ---
 

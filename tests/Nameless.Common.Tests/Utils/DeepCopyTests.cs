@@ -1,5 +1,6 @@
 namespace Nameless.Utils;
 
+[UnitTest]
 public class DeepCopyTests {
     // ─── Clone(object) ───────────────────────────────────────────────────────
 

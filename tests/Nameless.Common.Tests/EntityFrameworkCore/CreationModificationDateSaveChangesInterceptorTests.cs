@@ -32,7 +32,7 @@ public class CreationModificationDateSaveChangesInterceptorTests {
     // ---------------------------------------------------------------------------
 
     private static TestDbContext CreateContext(TimeProvider timeProvider) {
-        var interceptor = new CreationModificationDateSaveChangesInterceptor(timeProvider);
+        var interceptor = new AuditableSaveChangesInterceptor(timeProvider);
 
         var options = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite("Data Source=:memory:")

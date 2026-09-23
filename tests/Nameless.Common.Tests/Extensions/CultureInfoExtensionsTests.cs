@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class CultureInfoExtensionsTests {
     // ─── GetParents ─────────────────────────────────────────────────────────
 

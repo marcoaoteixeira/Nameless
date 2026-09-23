@@ -1,8 +1,12 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
+namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for RabbitMQ prefetch.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record PrefetchOptions {
     /// <summary>
     ///     Whether it should configure prefetch.

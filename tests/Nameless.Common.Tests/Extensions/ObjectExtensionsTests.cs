@@ -2,6 +2,7 @@ using System.ComponentModel;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ObjectExtensionsTests {
     // ─── IsAnonymous ─────────────────────────────────────────────────────────
 

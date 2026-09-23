@@ -31,7 +31,8 @@ public class PostgresServer : IAsyncLifetime
 {
     private readonly PostgresServerOptions _options = ConfigurationHelper
         .CreateConfiguration()
-        .GetOptions<PostgresServerOptions>()
+        .GetSection<PostgresServerOptions>()
+        .GetOrThrow<PostgresServerOptions>()
         .Validate();
 
     private NpgsqlConnection? _connection;

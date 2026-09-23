@@ -2,6 +2,7 @@ using System.Xml.Linq;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class XmlExtensionsTests {
     // --- XContainerExtensions.HasElement(name) ---
 

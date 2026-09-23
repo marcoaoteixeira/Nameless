@@ -3,6 +3,7 @@ using System.Security;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ExceptionExtensionsTests {
     // ─── IsFatal ────────────────────────────────────────────────────────────
 

@@ -3,6 +3,7 @@ using Nameless.ObjectModel;
 
 namespace Nameless.Validation;
 
+[UnitTest]
 public class ValidatorExtensionsTests {
     // --- ValidateAsync(object, CancellationToken) ---
 

@@ -3,6 +3,7 @@ using Nameless.Security.Cryptography;
 
 namespace Nameless.Security;
 
+[UnitTest]
 public class CryptoExtensionsTests {
     // --- Encrypt ---
 

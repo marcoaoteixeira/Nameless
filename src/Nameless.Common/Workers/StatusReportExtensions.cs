@@ -1,7 +1,10 @@
-﻿using Nameless.Reporting;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+using Nameless.Reporting;
 
 namespace Nameless.Workers;
 
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class StatusReportExtensions {
     extension(IStatusReporter self) {
         internal void Idle(PeriodicWorker worker) {

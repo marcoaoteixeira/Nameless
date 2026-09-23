@@ -113,9 +113,9 @@ public static class SemVersionTests {
         public void ValidInput_ReturnsTrueAndOutputsInstance() {
             var ok = SemVersion.TryParse("2.4.6-rc.1+build.99", out var v);
 
+            Assert.True(ok);
+            Assert.NotNull(v);
             Assert.Multiple(
-                () => Assert.True(ok),
-                () => Assert.NotNull(v),
                 () => Assert.Equal(2, v.Major),
                 () => Assert.Equal(4, v.Minor),
                 () => Assert.Equal(6, v.Patch),

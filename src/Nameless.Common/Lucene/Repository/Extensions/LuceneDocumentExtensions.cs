@@ -8,13 +8,16 @@ namespace Nameless.Lucene.Repository;
 internal static class LuceneDocumentExtensions {
     extension(IIndexableField self) {
         internal bool TryGetValue(PropertyDescriptor property, [NotNullWhen(returnValue: true)] out object? output) {
-            output = Type.GetTypeCode(property.Type) switch {
+            output = property.Type.IsEnum ? GetUnknown(property, self) : Type.GetTypeCode(property.Type) switch {
                 TypeCode.Boolean => self.GetInt32ValueOrDefault() > 0,
                 TypeCode.Char => self.GetStringValue().First(),
-                TypeCode.SByte or TypeCode.Byte => self.GetByteValueOrDefault(),
-                TypeCode.Int16 or TypeCode.UInt16 => self.GetInt16ValueOrDefault(),
+                TypeCode.SByte => (sbyte)self.GetInt32ValueOrDefault(),
+                TypeCode.Byte => self.GetByteValueOrDefault(),
+                TypeCode.Int16 => self.GetInt16ValueOrDefault(),
+                TypeCode.UInt16 => (ushort)self.GetInt32ValueOrDefault(),
                 TypeCode.Int32 => self.GetInt32ValueOrDefault(),
-                TypeCode.UInt32 or TypeCode.Int64 => self.GetInt64ValueOrDefault(),
+                TypeCode.UInt32 => (uint)self.GetInt64ValueOrDefault(),
+                TypeCode.Int64 => self.GetInt64ValueOrDefault(),
                 TypeCode.UInt64 => Convert.ToUInt64(self.GetDoubleValueOrDefault()),
                 TypeCode.Single => self.GetSingleValueOrDefault(),
                 TypeCode.Double => self.GetDoubleValueOrDefault(),

@@ -1,171 +1,129 @@
-using Microsoft.Extensions.Configuration;
 using Moq;
-using Nameless.Testing.Tools.Helpers;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
+[UnitTest]
 public class ChannelFactoryTests {
-    private const string QUEUE_NAME = "test.queue";
+    private const string QueueName = "test.queue";
 
-    private static IConfiguration CreateConfiguration(bool prefetchEnabled = false) {
-        return ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
-            // queue section: RabbitMQ > Queues > <queueName>
-            [$"RabbitMQ:Queues:{QUEUE_NAME}:Durable"] = "true",
-            [$"RabbitMQ:Queues:{QUEUE_NAME}:Exclusive"] = "false",
-            [$"RabbitMQ:Queues:{QUEUE_NAME}:AutoDelete"] = "false",
-            [$"RabbitMQ:Queues:{QUEUE_NAME}:ExchangeName"] = "test.exchange",
-            ["RabbitMQ:Prefetch:IsEnabled"] = prefetchEnabled ? "true" : "false",
-            ["RabbitMQ:Prefetch:Count"] = "1",
-            ["RabbitMQ:Prefetch:Size"] = "0",
-            ["RabbitMQ:Prefetch:Global"] = "false"
+    private static (ChannelFactory Sut, Mock<IChannel> Channel) CreateSut(QueueOptions? queue = null, string declaredName = QueueName) {
+        var channel = new Mock<IChannel>();
+        channel.Setup(c => c.QueueDeclareAsync(
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<IDictionary<string, object?>>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new QueueDeclareOk(declaredName, 0, 0));
+
+        var connection = new Mock<IConnection>();
+        connection.Setup(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions?>(), It.IsAny<CancellationToken>()))
+                  .ReturnsAsync(channel.Object);
+
+        var connectionManager = new Mock<IConnectionManager>();
+        connectionManager.Setup(m => m.GetConnectionAsync(It.IsAny<CancellationToken>()))
+                         .ReturnsAsync(connection.Object);
+
+        var options = Microsoft.Extensions.Options.Options.Create(new RabbitMQOptions {
+            Queues = [queue ?? new QueueOptions { Name = QueueName, Durable = true, ExchangeName = "ex" }]
         });
-    }
 
-    private static Mock<IChannel> CreateChannelMock() {
-        var channelMock = new Mock<IChannel>(MockBehavior.Loose);
-
-        // QueueDeclareAsync must return a QueueDeclareOk with a non-empty QueueName
-        channelMock
-            .Setup(c => c.QueueDeclareAsync(
-                QUEUE_NAME,
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<IDictionary<string, object?>>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new QueueDeclareOk(QUEUE_NAME, messageCount: 0, consumerCount: 0));
-
-        return channelMock;
-    }
-
-    private static Mock<IConnection> CreateConnectionMock(Mock<IChannel> channelMock) {
-        var connectionMock = new Mock<IConnection>(MockBehavior.Loose);
-
-        connectionMock
-            .Setup(c => c.CreateChannelAsync(
-                It.IsAny<CreateChannelOptions>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(channelMock.Object);
-
-        return connectionMock;
-    }
-
-    private static Mock<IConnectionManager> CreateConnectionManagerMock(Mock<IConnection> connectionMock) {
-        var managerMock = new Mock<IConnectionManager>(MockBehavior.Strict);
-
-        managerMock
-            .Setup(m => m.GetConnectionAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(connectionMock.Object);
-
-        return managerMock;
+        return (new ChannelFactory(options, connectionManager.Object), channel);
     }
 
     [Fact]
-    [UnitTest]
-    public async Task CreateAsync_ReturnsChannel() {
+    public async Task CreateAsync_DeclaresQueueWithConfiguredSettings() {
         // arrange
-        var channelMock = CreateChannelMock();
-        var connectionMock = CreateConnectionMock(channelMock);
-        var managerMock = CreateConnectionManagerMock(connectionMock);
-        var configuration = CreateConfiguration();
-
-        var sut = new ChannelFactory(configuration, managerMock.Object);
+        var (sut, channel) = CreateSut(new QueueOptions {
+            Name = QueueName, Durable = true, Exclusive = true, AutoDelete = true
+        });
 
         // act
-        var channel = await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
+        var actual = await sut.CreateAsync(QueueName, TestContext.Current.CancellationToken);
 
         // assert
-        Assert.Multiple(
-            () => Assert.NotNull(channel),
-            () => Assert.Same(channelMock.Object, channel)
-        );
+        Assert.NotNull(actual);
+        channel.Verify(c => c.QueueDeclareAsync(
+            QueueName, true, true, true, It.IsAny<IDictionary<string, object?>>(), false, false,
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    [UnitTest]
-    public async Task CreateAsync_DeclaresQueue() {
+    public async Task CreateAsync_BindsEveryConfiguredBinding() {
         // arrange
-        var channelMock = CreateChannelMock();
-        var connectionMock = CreateConnectionMock(channelMock);
-        var managerMock = CreateConnectionManagerMock(connectionMock);
-        var configuration = CreateConfiguration();
-
-        var sut = new ChannelFactory(configuration, managerMock.Object);
+        var (sut, channel) = CreateSut(new QueueOptions {
+            Name = QueueName,
+            ExchangeName = "ex",
+            Bindings = [new BindingOptions { RoutingKey = "a" }, new BindingOptions { RoutingKey = "b" }]
+        });
 
         // act
-        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
+        await sut.CreateAsync(QueueName, TestContext.Current.CancellationToken);
 
         // assert
-        channelMock.Verify(
-            c => c.QueueDeclareAsync(
-                QUEUE_NAME,
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<IDictionary<string, object?>>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+        channel.Verify(c => c.QueueBindAsync(
+            QueueName, "ex", It.IsIn("a", "b"), It.IsAny<IDictionary<string, object?>>(), false,
+            It.IsAny<CancellationToken>()), Times.Exactly(2));
     }
 
     [Fact]
-    [UnitTest]
-    public async Task CreateAsync_WithPrefetchEnabled_CallsBasicQos() {
+    public async Task CreateAsync_WithPrefetchEnabled_ConfiguresQos() {
         // arrange
-        var channelMock = CreateChannelMock();
-
-        channelMock
-            .Setup(c => c.BasicQosAsync(
-                It.IsAny<uint>(),
-                It.IsAny<ushort>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        var connectionMock = CreateConnectionMock(channelMock);
-        var managerMock = CreateConnectionManagerMock(connectionMock);
-        var configuration = CreateConfiguration(prefetchEnabled: true);
-
-        var sut = new ChannelFactory(configuration, managerMock.Object);
+        var (sut, channel) = CreateSut(new QueueOptions {
+            Name = QueueName,
+            Prefetch = new PrefetchOptions { IsEnabled = true, Size = 10, Count = 5, Global = true }
+        });
 
         // act
-        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
+        await sut.CreateAsync(QueueName, TestContext.Current.CancellationToken);
 
         // assert
-        channelMock.Verify(
-            c => c.BasicQosAsync(
-                It.IsAny<uint>(),
-                It.IsAny<ushort>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+        channel.Verify(c => c.BasicQosAsync(10u, (ushort)5, true, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    [UnitTest]
-    public async Task CreateAsync_WithPrefetchDisabled_DoesNotCallBasicQos() {
+    public async Task CreateAsync_WithPrefetchDisabled_DoesNotConfigureQos() {
         // arrange
-        var channelMock = CreateChannelMock();
-        var connectionMock = CreateConnectionMock(channelMock);
-        var managerMock = CreateConnectionManagerMock(connectionMock);
-        var configuration = CreateConfiguration(prefetchEnabled: false);
-
-        var sut = new ChannelFactory(configuration, managerMock.Object);
+        var (sut, channel) = CreateSut(new QueueOptions {
+            Name = QueueName, Prefetch = new PrefetchOptions { IsEnabled = false }
+        });
 
         // act
-        await sut.CreateAsync(QUEUE_NAME, CancellationToken.None);
+        await sut.CreateAsync(QueueName, TestContext.Current.CancellationToken);
 
         // assert
-        channelMock.Verify(
-            c => c.BasicQosAsync(
-                It.IsAny<uint>(),
-                It.IsAny<ushort>(),
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()),
-            Times.Never);
+        channel.Verify(c => c.BasicQosAsync(It.IsAny<uint>(), It.IsAny<ushort>(), It.IsAny<bool>(),
+            It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithUnknownQueue_ThrowsMissingQueueConfigurationException() {
+        // arrange
+        var (sut, _) = CreateSut();
+
+        // act
+        var exception = await Assert.ThrowsAsync<MissingQueueConfigurationException>(
+            () => sut.CreateAsync("unknown", TestContext.Current.CancellationToken));
+
+        // assert
+        Assert.Equal("unknown", exception.QueueName);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithBlankQueueName_Throws() {
+        // arrange
+        var (sut, _) = CreateSut();
+
+        // act & assert
+        await Assert.ThrowsAsync<ArgumentException>(() => sut.CreateAsync(" ", TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task CreateAsync_WhenDeclareReturnsBlankName_ThrowsInvalidOperationException() {
+        // arrange
+        var (sut, _) = CreateSut(declaredName: "");
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => sut.CreateAsync(QueueName, TestContext.Current.CancellationToken));
     }
 }

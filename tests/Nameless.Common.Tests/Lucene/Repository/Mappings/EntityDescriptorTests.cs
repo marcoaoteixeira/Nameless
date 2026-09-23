@@ -18,10 +18,8 @@ public class EntityDescriptorTests {
         var idProperty = sut.Properties.SingleOrDefault(p => p.IsID);
 
         // Assert
-        Assert.Multiple(
-            () => Assert.NotNull(idProperty),
-            () => Assert.Equal("Id", idProperty.Name)
-        );
+        Assert.NotNull(idProperty);
+        Assert.Equal("Id", idProperty.Name);
     }
 
     [Fact]
@@ -36,8 +34,8 @@ public class EntityDescriptorTests {
         var property = sut.Properties.SingleOrDefault(p => p.Name == "Name");
 
         // Assert
+        Assert.NotNull(property);
         Assert.Multiple(
-            () => Assert.NotNull(property),
             () => Assert.False(property.IsID),
             () => Assert.Equal(PropertyOptions.Store, property.Options)
         );

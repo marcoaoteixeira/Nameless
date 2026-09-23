@@ -13,7 +13,7 @@ public class ApplicationContextTests {
         var options = Options.Create(new ApplicationContextOptions {
             EnvironmentName = "unittest",
             ApplicationName = "nameless.test.app",
-            ApplicationDataLocation = ApplicationDataLocation.Base,
+            ApplicationDataLocation = ApplicationDataLocation.Local,
             Version = "v1.2.3"
         });
 
@@ -26,7 +26,7 @@ public class ApplicationContextTests {
         Assert.Multiple(
             () => Assert.Equal("unittest", sut.EnvironmentName),
             () => Assert.Equal("nameless.test.app", sut.ApplicationName),
-            () => Assert.Equal(AppDomain.CurrentDomain.BaseDirectory, sut.ApplicationDataDirectory),
+            () => Assert.Equal(SysPath.GetFullPath(SysPath.Combine(AppContext.BaseDirectory, "App_Data")), sut.ApplicationDataDirectory),
             () => Assert.Equal("v1.2.3", sut.Version)
         );
 

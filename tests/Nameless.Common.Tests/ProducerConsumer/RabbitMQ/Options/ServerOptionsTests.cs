@@ -96,20 +96,20 @@ public class ServerOptionsTests {
     }
 
     [Fact]
-    public void Ssl_DefaultValue_IsNotNull() {
+    public void Ssl_DefaultValue_IsNull() {
         // arrange & act
         var sut = new ServerOptions();
 
         // assert
-        Assert.NotNull(sut.Ssl);
+        Assert.Null(sut.Ssl);
     }
 
     [Fact]
-    public void Certificate_DefaultValue_IsNotNull() {
+    public void Certificate_DefaultValue_IsNull() {
         // arrange & act
         var sut = new ServerOptions();
 
         // assert
-        Assert.NotNull(sut.Certificate);
+        Assert.Null(sut.Certificate);
     }
 }

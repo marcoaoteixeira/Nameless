@@ -1,10 +1,13 @@
 ﻿using MimeKit;
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Mailing.Mailkit;
 
 /// <summary>
 /// Helper class for managing email addresses in MimeKit.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class AddressHelper {
     /// <summary>
     /// Sets the recipients of an InternetAddressList from a collection of email addresses.

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ServiceProviderExtensionsTests {
     // --- GetLogger<T> ---
 

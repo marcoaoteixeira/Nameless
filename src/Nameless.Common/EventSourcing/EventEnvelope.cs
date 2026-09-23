@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
 namespace Nameless.EventSourcing;
 
 /// <summary>
@@ -5,6 +8,7 @@ namespace Nameless.EventSourcing;
 ///     both the raw stored payload and the metadata needed for replay,
 ///     auditing, and optimistic concurrency.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public sealed record EventEnvelope {
     /// <summary>
     ///     Gets the unique identifier of this event.

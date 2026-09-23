@@ -2,6 +2,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Resilience;
 using Nameless.Testing.Tools.Mockers.Logging;
 using RabbitMQ.Client;
@@ -19,7 +20,7 @@ public class ConsumerTests {
             IMessageSerializer serializer,
             IRetryPipelineFactory retryPipelineFactory,
             ILogger<Consumer<string>> logger)
-            : base(channelFactory, serializer, retryPipelineFactory, logger) { }
+            : base(channelFactory, serializer, retryPipelineFactory, new ConsumerOptions { Queue = "test.queue" }, logger) { }
 
         public override Task ConsumeAsync(string value, ConsumerContext context, CancellationToken cancellationToken) {
             return Task.CompletedTask;

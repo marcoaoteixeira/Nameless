@@ -27,7 +27,11 @@ public static class ServiceCollectionExtensions {
                     var options = provider.GetOptions<FileProviderOptions>().Value;
 
                     return provider.GetRequiredService<FileProviderFactory>()
-                                   .GetOrCreate(opts => opts = options);
+                                   .GetOrCreate(opts => {
+                                       opts.Root = options.Root;
+                                       opts.AllowOperationOutsideRoot = options.AllowOperationOutsideRoot;
+                                       opts.FileMonitorOptions = options.FileMonitorOptions;
+                                   });
                 }
             );
 

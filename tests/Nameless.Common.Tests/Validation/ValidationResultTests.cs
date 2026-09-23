@@ -2,6 +2,7 @@ using Nameless.ObjectModel;
 
 namespace Nameless.Validation;
 
+[UnitTest]
 public class ValidationResultTests {
     // ─── Successful ──────────────────────────────────────────────────────────
 

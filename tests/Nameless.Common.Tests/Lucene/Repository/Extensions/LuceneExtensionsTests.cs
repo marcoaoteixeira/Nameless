@@ -76,10 +76,8 @@ public class LuceneExtensionsTests {
         var nameProp = descriptor.Properties.SingleOrDefault(p => p.Name == "Name");
 
         // assert
-        Assert.Multiple(
-            () => Assert.NotNull(nameProp),
-            () => Assert.True(nameProp.Options.HasFlag(PropertyOptions.Store))
-        );
+        Assert.NotNull(nameProp);
+        Assert.True(nameProp.Options.HasFlag(PropertyOptions.Store));
     }
 
     // ── PropertyDescriptorExtensions.TryCreateField (via Mapper.Map entity→doc) ──

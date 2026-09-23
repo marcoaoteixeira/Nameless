@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Configuration;
-using Nameless.Testing.Tools.Helpers;
+using Microsoft.Extensions.Options;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
@@ -10,22 +10,23 @@ public class ConnectionManagerTests {
     // the disposal lifecycle and configuration wiring, which can be exercised
     // without a live broker.
 
-    private static ConnectionManager CreateSut(IConfiguration? configuration = null) {
-        configuration ??= CreateValidConfiguration();
+    private static ConnectionManager CreateSut(IOptions<RabbitMQOptions>? options = null) {
+        options ??= CreateValidOptions();
 
         var logger = new LoggerMocker<ConnectionManager>()
             .WithAnyLogLevel()
             .Build();
 
-        return new ConnectionManager(configuration, logger);
+        return new ConnectionManager(options, logger);
     }
 
-    private static IConfiguration CreateValidConfiguration() {
-        return ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
-            ["RabbitMQ:Server:Hostname"] = "localhost",
-            ["RabbitMQ:Server:Port"] = "5672",
-            ["RabbitMQ:Server:VirtualHost"] = "/",
-            ["RabbitMQ:Prefetch:IsEnabled"] = "false"
+    private static IOptions<RabbitMQOptions> CreateValidOptions() {
+        return Microsoft.Extensions.Options.Options.Create(new RabbitMQOptions {
+            Server = new ServerOptions {
+                Hostname = "localhost",
+                Port = 5672,
+                VirtualHost = "/"
+            }
         });
     }
 

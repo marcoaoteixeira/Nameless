@@ -2,6 +2,7 @@ using Moq;
 
 namespace Nameless.ProducerConsumer;
 
+[UnitTest]
 public class ProducerConsumerExtensionsTests {
     // --- ConsumerExtensions.HandleAsync ---
 

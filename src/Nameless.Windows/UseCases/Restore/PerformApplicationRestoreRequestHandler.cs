@@ -55,7 +55,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
 
     private Result<string> GetBackupFilePath(DateTimeOffset timestamp) {
         // backup files should always be in the "backups" directory.
-        var backupFileName = string.Format(WindowsConstants.BackupFileNamePattern, timestamp);
+        var backupFileName = string.Format(BackupFileNamePattern, timestamp);
         var backupDirectory = _applicationContext.ApplicationDataFileProvider.GetBackupDirectory();
         var backupFile = _applicationContext.ApplicationDataFileProvider.GetFile(
             Path.Combine(backupDirectory.Path, backupFileName)

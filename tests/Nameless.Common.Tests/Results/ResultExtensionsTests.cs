@@ -2,6 +2,7 @@ using Nameless.ObjectModel;
 
 namespace Nameless.Results;
 
+[UnitTest]
 public class ResultExtensionsTests {
     // --- Failure ---
 

@@ -2,6 +2,7 @@ using System.Collections;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class EnumerableExtensionsTests {
     // ─── Each(Action<T>) ─────────────────────────────────────────────────────
 

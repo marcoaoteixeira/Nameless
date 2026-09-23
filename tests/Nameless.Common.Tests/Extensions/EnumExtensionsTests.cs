@@ -2,6 +2,7 @@ using System.ComponentModel;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class EnumExtensionsTests {
     // ─── GetAttribute ────────────────────────────────────────────────────────
 
@@ -11,10 +12,8 @@ public class EnumExtensionsTests {
         var attr = TestEnum.WithDescription.GetAttribute<DescriptionAttribute>();
 
         // assert
-        Assert.Multiple(
-            () => Assert.NotNull(attr),
-            () => Assert.Equal("Human-readable value", attr.Description)
-        );
+        Assert.NotNull(attr);
+        Assert.Equal("Human-readable value", attr.Description);
     }
 
     [Fact]

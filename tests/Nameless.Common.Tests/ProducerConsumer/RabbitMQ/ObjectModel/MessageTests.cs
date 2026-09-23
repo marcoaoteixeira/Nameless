@@ -14,7 +14,7 @@ public class MessageTests {
         const string Payload = "hello";
 
         // act
-        var message = new Message {
+        var message = new Message<string> {
             Header = header,
             Content = Payload
         };
@@ -53,8 +53,8 @@ public class MessageTests {
             Timestamp = 42L
         };
 
-        var first = new Message { Header = header, Content = "payload" };
-        var second = new Message { Header = header, Content = "payload" };
+        var first = new Message<string> { Header = header, Content = "payload" };
+        var second = new Message<string> { Header = header, Content = "payload" };
 
         // act & assert
         Assert.Equal(first, second);

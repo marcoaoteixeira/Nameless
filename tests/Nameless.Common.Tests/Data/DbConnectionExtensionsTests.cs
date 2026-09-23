@@ -3,6 +3,7 @@ using Moq;
 
 namespace Nameless.Data;
 
+[UnitTest]
 public class DbConnectionExtensionsTests {
     // --- EnsureOpen ---
 

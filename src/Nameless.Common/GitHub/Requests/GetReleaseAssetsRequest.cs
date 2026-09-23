@@ -1,4 +1,7 @@
-﻿namespace Nameless.GitHub.Requests;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
+namespace Nameless.GitHub.Requests;
 
 /// <summary>
 ///     Represents a request to get the release assets
@@ -6,4 +9,5 @@
 /// <param name="Owner">The owner</param>
 /// <param name="Repository">The repository name</param>
 /// <param name="ReleaseID">The release ID</param>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record GetReleaseAssetsRequest(string Owner, string Repository, int ReleaseID);

@@ -2,6 +2,7 @@ using Moq;
 
 namespace Nameless.Xml;
 
+[UnitTest]
 public class XmlSchemaValidatorExtensionTests {
     // --- Validate(byte[], byte[]) ---
 

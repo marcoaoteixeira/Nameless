@@ -3,6 +3,7 @@ using Nameless.ObjectModel;
 
 namespace Nameless.Data;
 
+[UnitTest]
 public class ResponsesTests {
     // --- ExecuteNonQueryResponse ---
 

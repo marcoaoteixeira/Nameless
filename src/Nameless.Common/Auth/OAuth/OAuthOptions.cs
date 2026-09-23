@@ -7,7 +7,7 @@ namespace Nameless.Auth.OAuth;
 /// <summary>
 ///     Represents the OAuth configuration options.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PlainCodeStructure)]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 [ConfigurationSectionName("OAuth")]
 public record OAuthOptions {
     /// <summary>

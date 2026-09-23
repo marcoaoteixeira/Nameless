@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
 namespace Nameless.EventSourcing;
 
 /// <summary>
@@ -5,6 +8,7 @@ namespace Nameless.EventSourcing;
 ///     supplied explicitly by the caller for authorization checks and
 ///     event metadata (<see cref="EventEnvelope.CausedBy"/>).
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public sealed record ActorContext {
     /// <summary>
     ///     Gets the identifier of the user or process executing the

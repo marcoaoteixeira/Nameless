@@ -2,6 +2,7 @@ using System.Text;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class StringExtensionsTests {
     // ─── RemoveDiacritics ────────────────────────────────────────────────────
 

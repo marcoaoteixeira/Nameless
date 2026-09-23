@@ -3,6 +3,7 @@ using Nameless.Data.Requests;
 
 namespace Nameless.Data;
 
+[UnitTest]
 public class RequestsTests {
     // --- RequestBase ---
 

@@ -138,7 +138,7 @@ public class EventSourcingRegistration : AssemblyScanAware<EventSourcingRegistra
     ///     so other actions can be chained.
     /// </returns>
     public EventSourcingRegistration RegisterEvent<TEvent>()
-        where TEvent : IProjection {
+        where TEvent : IEvent {
         return RegisterEvent(typeof(TEvent));
     }
 

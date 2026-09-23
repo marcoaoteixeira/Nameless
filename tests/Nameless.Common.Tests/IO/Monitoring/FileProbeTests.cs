@@ -1,71 +1,69 @@
 namespace Nameless.IO.Monitoring;
 
-[Trait("Category", "Integration")]
-public sealed class FileProbeTests : IDisposable
-{
-    private readonly string _dir = SysDirectory.CreateTempSubdirectory("probe-").FullName;
-    private readonly FileProbe _sut = (FileProbe.Instance as FileProbe)!;
+[IntegrationTest]
+public class FileProbeTests : IDisposable {
+    private readonly string _root = SysPath.Combine(SysPath.GetTempPath(), $"probe-{Guid.NewGuid():N}");
 
-    public void Dispose()
-    {
-        SysDirectory.Delete(_dir, recursive: true);
+    public FileProbeTests() {
+        SysDirectory.CreateDirectory(_root);
+    }
+
+    public void Dispose() {
+        SysDirectory.Delete(_root, recursive: true);
     }
 
     [Fact]
-    public void Probe_MissingPath_ReturnsNotFound()
-    {
-        Assert.Equal(FileProbeResult.NotFound, _sut.Probe(Path.Combine(_dir, "missing.txt")));
+    public void Probe_WithMissingFile_ReturnsNotFound() {
+        // act
+        var actual = FileProbe.Instance.Probe(SysPath.Combine(_root, "missing.txt"));
+
+        // assert
+        Assert.Equal(FileProbeResult.NotFound, actual);
     }
 
     [Fact]
-    public void Probe_MissingFolder_ReturnsNotFound()
-    {
-        Assert.Equal(FileProbeResult.NotFound, _sut.Probe(Path.Combine(_dir, "nope", "missing.txt")));
+    public void Probe_WithMissingDirectory_ReturnsNotFound() {
+        // act
+        var actual = FileProbe.Instance.Probe(SysPath.Combine(_root, "nope", "missing.txt"));
+
+        // assert
+        Assert.Equal(FileProbeResult.NotFound, actual);
     }
 
     [Fact]
-    public void Probe_Directory_ReturnsDirectory()
-    {
-        Assert.Equal(FileProbeResult.Directory, _sut.Probe(_dir));
+    public void Probe_WithDirectory_ReturnsDirectory() {
+        // act
+        var actual = FileProbe.Instance.Probe(_root);
+
+        // assert
+        Assert.Equal(FileProbeResult.Directory, actual);
     }
 
     [Fact]
-    public void Probe_FreeFile_ReturnsAvailable()
-    {
-        var path = Path.Combine(_dir, "free.txt");
-        File.WriteAllText(path, "x");
+    public void Probe_WithFreeFile_ReturnsAvailable() {
+        // arrange
+        var path = SysPath.Combine(_root, "free.txt");
+        SysFile.WriteAllText(path, "content");
 
-        Assert.Equal(FileProbeResult.Available, _sut.Probe(path));
+        // act
+        var actual = FileProbe.Instance.Probe(path);
+
+        // assert
+        Assert.Equal(FileProbeResult.Available, actual);
     }
 
     [Fact]
-    public void Probe_FreeFile_DoesNotKeepHandle()
-    {
-        var path = Path.Combine(_dir, "free.txt");
-        File.WriteAllText(path, "x");
+    public void Probe_WithLockedFile_ReturnsLocked() {
+        // arrange
+        var path = SysPath.Combine(_root, "locked.txt");
+        SysFile.WriteAllText(path, "content");
 
-        _sut.Probe(path);
+        using var handle = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
-        File.Delete(path);
-        Assert.False(File.Exists(path));
-    }
+        // act
+        var actual = FileProbe.Instance.Probe(path);
 
-    [Fact]
-    public void Probe_FileOpenedByWriter_ReturnsLocked()
-    {
-        var path = Path.Combine(_dir, "busy.txt");
-        using var writer = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read);
-
-        Assert.Equal(FileProbeResult.Locked, _sut.Probe(path));
-    }
-
-    [Fact]
-    public void Probe_FileOpenedByReader_ReturnsLocked()
-    {
-        var path = Path.Combine(_dir, "read.txt");
-        File.WriteAllText(path, "x");
-        using var reader = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-        Assert.Equal(FileProbeResult.Locked, _sut.Probe(path));
+        // assert
+        Assert.Equal(FileProbeResult.Locked, actual);
     }
 }

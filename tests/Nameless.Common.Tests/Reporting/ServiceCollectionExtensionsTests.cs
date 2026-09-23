@@ -38,24 +38,24 @@ public class ServiceCollectionExtensionsTests {
     }
 
     [Fact]
-    public void RegisterStatusReporting_Registers_IStatusReporter_Generic_AsSingleton() {
+    public void RegisterStatusReporting_Registers_IStatusReporter_Generic_AsTransient() {
         var provider = BuildServices().BuildServiceProvider();
 
         var a = provider.GetRequiredService<IStatusReporter<SampleWorker>>();
         var b = provider.GetRequiredService<IStatusReporter<SampleWorker>>();
 
-        Assert.Same(a, b);
+        Assert.NotSame(a, b);
         Assert.IsType<StatusReporter<SampleWorker>>(a);
     }
 
     [Fact]
-    public void RegisterStatusReporting_Registers_IStatusMonitor_Generic_AsSingleton() {
+    public void RegisterStatusReporting_Registers_IStatusMonitor_Generic_AsTransient() {
         var provider = BuildServices().BuildServiceProvider();
 
         var a = provider.GetRequiredService<IStatusMonitor<SampleWorker>>();
         var b = provider.GetRequiredService<IStatusMonitor<SampleWorker>>();
 
-        Assert.Same(a, b);
+        Assert.NotSame(a, b);
         Assert.IsType<StatusMonitor<SampleWorker>>(a);
     }
 

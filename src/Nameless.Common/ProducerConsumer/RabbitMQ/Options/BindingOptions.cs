@@ -1,8 +1,12 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
+namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for a RabbitMQ binding.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record BindingOptions {
     /// <summary>
     ///     Gets or sets the routing key for the binding.

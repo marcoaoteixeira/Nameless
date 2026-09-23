@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Nameless.IO.System;
 
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class ThrowsExtensions {
     extension(Throws self) {
         internal string DirectoryNotFound([NotNull] string? paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {

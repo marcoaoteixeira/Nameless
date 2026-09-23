@@ -3,6 +3,7 @@ using Nameless.Security.Password;
 
 namespace Nameless.Security;
 
+[UnitTest]
 public class PasswordTests {
     // --- Arguments defaults ---
 

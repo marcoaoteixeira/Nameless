@@ -1,24 +1,25 @@
-using Microsoft.Extensions.Configuration;
-using Nameless.Testing.Tools.Helpers;
+using Microsoft.Extensions.Options;
+using Nameless.ProducerConsumer.RabbitMQ.Options;
 using Nameless.Testing.Tools.Mockers.Logging;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;
 
 [UnitTest]
 public class ConnectionManagerExtendedTests {
-    private static ConnectionManager CreateSut(IConfiguration? configuration = null) {
-        configuration ??= ConfigurationHelper.CreateConfiguration(new Dictionary<string, string?> {
-            ["RabbitMQ:Server:Hostname"] = "localhost",
-            ["RabbitMQ:Server:Port"] = "5672",
-            ["RabbitMQ:Server:VirtualHost"] = "/",
-            ["RabbitMQ:Prefetch:IsEnabled"] = "false"
+    private static ConnectionManager CreateSut(IOptions<RabbitMQOptions>? options = null) {
+        options ??= Microsoft.Extensions.Options.Options.Create(new RabbitMQOptions {
+            Server = new ServerOptions {
+                Hostname = "localhost",
+                Port = 5672,
+                VirtualHost = "/"
+            }
         });
 
         var logger = new LoggerMocker<ConnectionManager>()
             .WithAnyLogLevel()
             .Build();
 
-        return new ConnectionManager(configuration, logger);
+        return new ConnectionManager(options, logger);
     }
 
     [Fact]

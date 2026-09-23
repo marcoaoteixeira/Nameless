@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 using Serilog.Configuration;
 
 namespace Nameless.Logging.Serilog;
@@ -6,7 +7,7 @@ namespace Nameless.Logging.Serilog;
 /// <summary>
 ///     Registration options for the Serilog logging integration.
 /// </summary>
-[ExcludeFromCodeCoverage]
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public class SerilogRegistration {
     /// <summary>
     ///     Whether it should overwrite the settings configuration.

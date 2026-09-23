@@ -41,7 +41,15 @@ public enum ApplicationDataLocation {
     User,
 
     /// <summary>
-    ///     The application base directory
+    ///     Location relative to the application base directory.
     /// </summary>
-    Base
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             <term>On Windows and Linux</term>
+    ///             <description>APPLICATION_BASE_DIRECTORY/App_Data</description>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    Local
 }

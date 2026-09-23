@@ -78,7 +78,7 @@ public sealed class StopwatchLogger : IDisposable {
         _logger.Log(
             logLevel: level,
             message: "[{ClassName}] {ActionName} ({Duration}): {Message}",
-            args: [_className, _actionName, message, _sw.Elapsed]
+            args: [_className, _actionName, _sw.Elapsed, message]
         );
     }
 }

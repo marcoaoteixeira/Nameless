@@ -1,8 +1,12 @@
-﻿namespace Nameless.ProducerConsumer.RabbitMQ.Options;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
+namespace Nameless.ProducerConsumer.RabbitMQ.Options;
 
 /// <summary>
 ///     Represents the settings for a RabbitMQ queue.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record QueueOptions {
     /// <summary>
     ///     Gets the queue name.

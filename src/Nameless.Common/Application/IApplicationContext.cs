@@ -17,8 +17,7 @@ public interface IApplicationContext {
     string ApplicationName { get; }
 
     /// <summary>
-    ///     Gets the path to the application directory where all
-    ///     application files reside.
+    ///     Gets the path to the application data directory.
     /// </summary>
     string ApplicationDataDirectory { get; }
 

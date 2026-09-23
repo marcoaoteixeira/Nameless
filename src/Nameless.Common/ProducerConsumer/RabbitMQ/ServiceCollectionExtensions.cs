@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -12,7 +11,6 @@ namespace Nameless.ProducerConsumer.RabbitMQ;
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/>.
 /// </summary>
-[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions {
     /// <param name="self">
     ///     The current <see cref="IServiceCollection"/>.
@@ -33,9 +31,7 @@ public static class ServiceCollectionExtensions {
         /// </returns>
         public IServiceCollection RegisterProducerConsumer(Action<ProducerConsumerRegistration>? configure = null, IConfiguration? configuration = null) {
             var registration = ActionHelper.FromDelegate(configure);
-
-            //????
-            self.ConfigureOptions<ServerOptions>(configuration);
+            self.ConfigureOptions<RabbitMQOptions>(configuration);
 
             self.TryAddSingleton<IConnectionManager, ConnectionManager>();
             self.TryAddSingleton<IChannelFactory, ChannelFactory>();

@@ -1,5 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
+
 namespace Nameless.GitHub.ObjectModel;
 
 /// <summary>
@@ -19,6 +22,7 @@ namespace Nameless.GitHub.ObjectModel;
 /// <param name="CreatedAt">The creation date</param>
 /// <param name="UpdatedAt">The modification date</param>
 /// <param name="BrowserDownloadUrl">The browser download URL</param>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 public record ReleaseAsset(
     [property: JsonPropertyName("url")] string Url,
     [property: JsonPropertyName("id")] int Id,

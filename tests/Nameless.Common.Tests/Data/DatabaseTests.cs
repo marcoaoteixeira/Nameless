@@ -139,6 +139,67 @@ public class DatabaseTests {
     }
 
     [Fact]
+    public void BeginTransaction_ReturnsUsableTransaction() {
+        // arrange
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+
+        // act
+        using var transaction = sut.BeginTransaction(IsolationLevel.ReadCommitted);
+
+        // assert
+        Assert.NotNull(transaction);
+    }
+
+    [Fact]
+    public void ExecuteNonQuery_WithInvalidSql_ReturnsFailureResponse() {
+        // arrange
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        var request = new ExecuteNonQueryRequest {
+            Text = "INSERT INTO NonExistentTable (Name) VALUES ('Widget')",
+            Type = CommandType.Text
+        };
+
+        // act
+        var response = sut.ExecuteNonQuery(request);
+
+        // assert
+        Assert.False(response.Success);
+    }
+
+    [Fact]
+    public void ExecuteReader_WithInvalidSql_ReturnsFailureResponse() {
+        // arrange
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        var request = new ExecuteReaderRequest<string> {
+            Text = "SELECT Name FROM NonExistentTable",
+            Type = CommandType.Text,
+            Mapper = record => record.GetString(0)
+        };
+
+        // act
+        var response = sut.ExecuteReader(request);
+
+        // assert
+        Assert.False(response.Success);
+    }
+
+    [Fact]
+    public void ExecuteScalar_WithInvalidSql_ReturnsFailureResponse() {
+        // arrange
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        var request = new ExecuteScalarRequest {
+            Text = "SELECT COUNT(*) FROM NonExistentTable",
+            Type = CommandType.Text
+        };
+
+        // act
+        var response = sut.ExecuteScalar<long>(request);
+
+        // assert
+        Assert.False(response.Success);
+    }
+
+    [Fact]
     public void Dispose_CanBeCalledMultipleTimes() {
         // arrange
         var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);

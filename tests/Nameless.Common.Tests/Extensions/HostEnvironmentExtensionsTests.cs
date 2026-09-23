@@ -2,6 +2,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class HostEnvironmentExtensionsTests {
     // --- IsDeveloperMachine ---
 

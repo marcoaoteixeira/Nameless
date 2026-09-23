@@ -1,10 +1,13 @@
 ﻿using Nameless.Configuration;
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.GitHub;
 
 /// <summary>
 ///     Defines the GitHub options for the application.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 [ConfigurationSectionName("GitHub")]
 public class GitHubOptions {
     /// <summary>

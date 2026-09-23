@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Nameless.Diagnostics.CodeAnalysis;
 using Lucene.Net.Store;
 using Microsoft.Extensions.Options;
 using Nameless.IO.Monitoring;
@@ -12,6 +14,8 @@ namespace Nameless.IO.System;
 public class File : IFile {
     private readonly FileInfo _file;
     private readonly FileProviderOptions _options;
+
+    [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
 
     private string DebuggerDisplayValue => $"Path: {SysPath.GetRelativePath(_options.Root, Path)}";
 

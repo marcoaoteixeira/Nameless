@@ -1,10 +1,13 @@
-﻿using Nameless.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Nameless.Configuration;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.EntityFrameworkCore;
 
 /// <summary>
 ///     Configuration options for the Entity Framework Core integration.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.PocoStructure)]
 [ConfigurationSectionName("EntityFrameworkCore")]
 public record EntityFrameworkCoreOptions {
     /// <summary>

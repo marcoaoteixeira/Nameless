@@ -1,9 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Nameless.Diagnostics.ActivitySource;
+using Nameless.Diagnostics.CodeAnalysis;
 using Nameless.Diagnostics.Metrics;
 
 namespace Nameless.Diagnostics;
 
+[ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal readonly record struct CacheKey(string Name, string Version) {
     internal static CacheKey CreateKey(Assembly assembly) {
         return new CacheKey {

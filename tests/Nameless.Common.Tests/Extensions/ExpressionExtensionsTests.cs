@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ExpressionExtensionsTests {
     // ─── GetExpressionPath ──────────────────────────────────────────────────
 

@@ -1,5 +1,6 @@
 namespace Nameless.Registration;
 
+[UnitTest]
 public class RegistrationTests {
     // --- IgnoreAssemblyScanAttribute.IsNotPresent ---
 
@@ -93,7 +94,9 @@ public class RegistrationTests {
 
     // --- test doubles ---
 
-    private sealed class ConcreteScanner : AssemblyScanAware<ConcreteScanner> { }
+    private sealed class ConcreteScanner : AssemblyScanAware<ConcreteScanner> {
+        public IReadOnlyCollection<Type> GetImplementations<T>() => ExecuteAssemblyScan(typeof(T));
+    }
 }
 
 // Public types required for GetExportedTypes() to discover them during assembly scan

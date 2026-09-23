@@ -2,6 +2,7 @@ using Moq;
 
 namespace Nameless.IO.System;
 
+[UnitTest]
 public class DirectoryExtensionsTests {
     // --- DirectoryExtensions.IsEmpty ---
 

@@ -5,6 +5,7 @@ using Nameless.Configuration;
 
 namespace Nameless.Extensions;
 
+[UnitTest]
 public class ServiceCollectionExtensionsTests {
     // ─── ConfigureOptions ────────────────────────────────────────────────────
 

@@ -1,5 +1,6 @@
 namespace Nameless.Helpers;
 
+[IntegrationTest]
 public class NetworkPortFinderTests {
     // --- ListAvailablePorts ---
 

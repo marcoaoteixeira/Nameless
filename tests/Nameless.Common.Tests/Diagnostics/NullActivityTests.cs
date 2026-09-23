@@ -3,6 +3,7 @@ using Nameless.Diagnostics.ActivitySource;
 
 namespace Nameless.Diagnostics;
 
+[UnitTest]
 public class NullActivityTests {
     // --- Instance singleton ---
 

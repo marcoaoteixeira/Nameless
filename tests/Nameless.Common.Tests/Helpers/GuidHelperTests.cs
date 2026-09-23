@@ -1,5 +1,6 @@
 namespace Nameless.Helpers;
 
+[UnitTest]
 public class GuidHelperTests {
     // ─── Encode ──────────────────────────────────────────────────────────────
 

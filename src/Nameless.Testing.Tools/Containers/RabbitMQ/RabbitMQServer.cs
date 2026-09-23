@@ -31,7 +31,8 @@ public class RabbitMQServer : IAsyncLifetime
 {
     private readonly RabbitMQServerOptions _options = ConfigurationHelper
         .CreateConfiguration()
-        .GetOptions<RabbitMQServerOptions>()
+        .GetSection<RabbitMQServerOptions>()
+        .GetOrThrow<RabbitMQServerOptions>()
         .Validate();
 
     private NpgsqlConnection? _connection;

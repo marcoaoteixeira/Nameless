@@ -7,7 +7,7 @@ namespace Nameless.Application;
 [UnitTest]
 public class ServiceCollectionExtensionsTests {
     [Fact]
-    public void RegisterApplicationContext_WithConfiguration_RegistersAndResolvesContext_WithBaseDataLocation() {
+    public void RegisterApplicationContext_WithConfiguration_RegistersAndResolvesContext_WithLocalDataLocation() {
         // arrange
         var services = new ServiceCollection();
         services.AddLogging();
@@ -15,7 +15,7 @@ public class ServiceCollectionExtensionsTests {
         var inMemory = new Dictionary<string, string?> {
             ["ApplicationContext:ApplicationName"] = "svc.test.app",
             ["ApplicationContext:EnvironmentName"] = "svc-env",
-            ["ApplicationContext:ApplicationDataLocation"] = "Base"
+            ["ApplicationContext:ApplicationDataLocation"] = "Local"
         };
 
         var configuration = new ConfigurationBuilder()
@@ -37,10 +37,10 @@ public class ServiceCollectionExtensionsTests {
             () => Assert.Equal("svc-env", ctx.EnvironmentName)
         );
 
-        // SystemFileExplorer should be created under AppDomain base directory when Base is used
+        // SystemFileExplorer should be created under AppDomain base directory when Local is used
         var fsp = ctx.ApplicationDataFileProvider as FileProvider;
+        Assert.NotNull(fsp);
         Assert.Multiple(
-            () => Assert.NotNull(fsp),
             () => Assert.StartsWith(ctx.ApplicationDataDirectory, fsp.Root, StringComparison.OrdinalIgnoreCase),
             () => Assert.True(SysDirectory.Exists(fsp.Root))
         );

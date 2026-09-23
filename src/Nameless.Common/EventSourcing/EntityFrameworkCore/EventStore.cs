@@ -94,7 +94,7 @@ public sealed class EventStore<TDbContext> : IEventStore
         _dbContext.Set<EventEnvelope>().AddRange(envelopes);
 
         try { await _dbContext.SaveChangesAsync(cancellationToken).SkipContextSync(); }
-        catch (DbUpdateException ex) when (IsPostgresUniqueViolation(ex) || IsSqliteUniqueViolation(ex)) {
+        catch (DbUpdateException ex) when (IsPostgresUniqueViolation(ex.InnerException) || IsSqliteUniqueViolation(ex.InnerException)) {
             throw new ConcurrencyConflictException(streamID, expectedVersion);
         }
     }
