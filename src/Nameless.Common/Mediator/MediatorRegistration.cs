@@ -28,7 +28,7 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     ///     Gets the registered request handlers.
     /// </summary>
     public IReadOnlyCollection<Type> RequestHandlers => UseAssemblyScan
-        ? ExecuteAssemblyScan(typeof(IRequestHandler<,>), includeGenericTypeDefinition: true)
+        ? [.. ExecuteAssemblyScan(typeof(IRequestHandler<,>), includeGenericTypeDefinition: true), .. ExecuteAssemblyScan(typeof(IRequestHandler<>), includeGenericTypeDefinition: true)]
         : _requestHandlers;
 
     /// <summary>
@@ -123,6 +123,22 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     }
 
     /// <summary>
+    ///     Registers a request handler, for a request without a response,
+    ///     by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TRequestHandler">The request handler type.</typeparam>
+    /// <typeparam name="TRequest">The request type handled.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    public MediatorRegistration WithRequestHandler<TRequestHandler, TRequest>()
+        where TRequestHandler : IRequestHandler<TRequest>
+        where TRequest : IRequest {
+        return WithRequestHandler(typeof(TRequestHandler));
+    }
+
+    /// <summary>
     ///     Registers a request handler by type.
     /// </summary>
     /// <param name="type">The request handler type.</param>
@@ -136,7 +152,9 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     /// </exception>
     public MediatorRegistration WithRequestHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
-        Throws.When.IsNotAssignableFromGeneric(type, typeof(IRequestHandler<,>));
+        if (!typeof(IRequestHandler<,>).IsAssignableFromGeneric(type) && !typeof(IRequestHandler<>).IsAssignableFromGeneric(type)) {
+            throw new ArgumentException($"Type '{type.GetPrettyName()}' must implement '{nameof(IRequestHandler<,>)}' or '{nameof(IRequestHandler<>)}'.", nameof(type));
+        }
 
         _requestHandlers.Add(type);
 
@@ -156,6 +174,22 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     public MediatorRegistration WithRequestPipelineBehavior<TRequestPipelineBehavior, TRequest, TResponse>()
         where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
+        return WithRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
+    }
+
+    /// <summary>
+    ///     Registers a request pipeline behavior, for requests without a
+    ///     response, by generic type parameters.
+    /// </summary>
+    /// <typeparam name="TRequestPipelineBehavior">The pipeline behavior type.</typeparam>
+    /// <typeparam name="TRequest">The request type.</typeparam>
+    /// <returns>
+    ///     The current <see cref="MediatorRegistration"/> instance so other
+    ///     actions can be chained.
+    /// </returns>
+    public MediatorRegistration WithRequestPipelineBehavior<TRequestPipelineBehavior, TRequest>()
+        where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest>
+        where TRequest : IRequest {
         return WithRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
     }
 
@@ -180,7 +214,9 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     /// </remarks>
     public MediatorRegistration WithRequestPipelineBehavior(Type type) {
         Throws.When.IsNonConcreteType(type);
-        Throws.When.IsNotAssignableFromGeneric(type, typeof(IRequestPipelineBehavior<,>));
+        if (!typeof(IRequestPipelineBehavior<,>).IsAssignableFromGeneric(type) && !typeof(IRequestPipelineBehavior<>).IsAssignableFromGeneric(type)) {
+            throw new ArgumentException($"Type '{type.GetPrettyName()}' must implement '{nameof(IRequestPipelineBehavior<,>)}' or '{nameof(IRequestPipelineBehavior<>)}'.", nameof(type));
+        }
 
         if (!_requestPipelineBehaviors.Contains(type)) {
             _requestPipelineBehaviors.Add(type);

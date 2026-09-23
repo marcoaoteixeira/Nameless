@@ -1,23 +1,20 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 
 namespace Nameless.Mediator.Requests;
 
 /// <summary>
-///     The default implementation of <see cref="IRequestHandlerInvoker" />.
+///     Default implementation of <see cref="IRequestHandlerInvoker"/>.
 /// </summary>
 public class RequestHandlerInvoker : IRequestHandlerInvoker {
     private readonly ConcurrentDictionary<Type, RequestHandlerWrapper> _cache = new();
     private readonly IServiceProvider _provider;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="RequestHandlerInvoker" /> class.
+    ///     Initializes a new instance of <see cref="RequestHandlerInvoker"/>.
     /// </summary>
     /// <param name="provider">
     ///     The service provider.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="provider"/> is <see langword="null"/>.
-    /// </exception>
     public RequestHandlerInvoker(IServiceProvider provider) {
         _provider = provider;
     }
@@ -29,14 +26,41 @@ public class RequestHandlerInvoker : IRequestHandlerInvoker {
         var handler = _cache.GetOrAdd(request.GetType(), CreateRequestHandlerWrapper);
 
         return ((RequestHandlerWrapper<TResponse>)handler).HandleAsync(request, _provider, cancellationToken);
+    }
 
-        static RequestHandlerWrapper CreateRequestHandlerWrapper(Type requestType) {
-            var wrapperType = typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, typeof(TResponse));
-            var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException(
-                $"Couldn't create request handler wrapper for request '{requestType.GetPrettyName()}'."
+    /// <inheritdoc />
+    public Task ExecuteAsync(IRequest request, CancellationToken cancellationToken) {
+        Throws.When.Null(request);
+
+        var handler = _cache.GetOrAdd(request.GetType(), CreateRequestHandlerWrapper);
+
+        return handler.HandleAsync(request, _provider, cancellationToken);
+    }
+
+    // A single factory keyed by the request runtime type guarantees that a
+    // request type maps to exactly one wrapper, whichever overload creates
+    // it first.
+    private static RequestHandlerWrapper CreateRequestHandlerWrapper(Type requestType) {
+        var responseTypes = requestType.GetInterfaces()
+                                       .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IRequest<>))
+                                       .Select(type => type.GetGenericArguments()[0])
+                                       .Distinct()
+                                       .ToArray();
+
+        if (responseTypes.Length > 1) {
+            throw new InvalidOperationException(
+                $"Request '{requestType.GetPrettyName()}' implements more than one '{typeof(IRequest<>).Name}'; unable to determine its response type."
             );
-
-            return (RequestHandlerWrapper)wrapper;
         }
+
+        var wrapperType = responseTypes.Length == 1
+            ? typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, responseTypes[0])
+            : typeof(RequestHandlerWrapperImpl<>).MakeGenericType(requestType);
+
+        var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException(
+            $"Couldn't create request handler wrapper for request '{requestType.GetPrettyName()}'."
+        );
+
+        return (RequestHandlerWrapper)wrapper;
     }
 }

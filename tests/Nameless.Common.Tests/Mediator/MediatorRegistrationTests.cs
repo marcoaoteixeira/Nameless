@@ -4,7 +4,7 @@ using Nameless.Mediator.Streams;
 namespace Nameless.Mediator;
 
 public class PassThroughRequestBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull {
+    where TRequest : IRequest<TResponse> {
     public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         => next(cancellationToken);
 }

@@ -35,6 +35,11 @@ public class MediatorImpl : IMediator {
     }
 
     /// <inheritdoc />
+    public Task ExecuteAsync(IRequest request, CancellationToken cancellationToken) {
+        return _requestHandlerInvoker.ExecuteAsync(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IEvent {
         return _eventHandlerInvoker.PublishAsync(evt, cancellationToken);

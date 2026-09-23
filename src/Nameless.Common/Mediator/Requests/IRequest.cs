@@ -3,9 +3,14 @@
 namespace Nameless.Mediator.Requests;
 
 /// <summary>
-///     Defines a request that return a response.
+///     Represents a request without a return value.
+/// </summary>
+public interface IRequest;
+
+/// <summary>
+///     Represents a request with a return value.
 /// </summary>
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public interface IRequest<out TResponse>;
+public interface IRequest<out TResponse> : IRequest;

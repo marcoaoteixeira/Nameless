@@ -46,12 +46,14 @@ public static class ServiceCollectionExtensions {
         private IServiceCollection RegisterRequests(MediatorRegistration registration) {
             self.TryAddTransient<IRequestHandlerInvoker, RequestHandlerInvoker>();
             self.RegisterHandlers(typeof(IRequestHandler<,>), registration.RequestHandlers);
+            self.RegisterHandlers(typeof(IRequestHandler<>), registration.RequestHandlers);
 
             var pipelines = registration.UseValidateRequestPipelineBehavior
-                ? [typeof(ValidateRequestPipelineBehavior<,>), .. registration.RequestPipelineBehaviors]
+                ? [typeof(ValidateRequestPipelineBehavior<,>), typeof(ValidateRequestPipelineBehavior<>), .. registration.RequestPipelineBehaviors]
                 : registration.RequestPipelineBehaviors;
 
             self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<,>), pipelines);
+            self.RegisterPipelineBehaviors(typeof(IRequestPipelineBehavior<>), pipelines);
 
             return self;
         }
@@ -73,7 +75,7 @@ public static class ServiceCollectionExtensions {
             if (implementations.Count == 0) { return; }
 
             // register all open generic types first.
-            var open = implementations.Where(type => type.IsOpenGeneric);
+            var open = implementations.Where(type => type.IsOpenGeneric && type.GetInterfacesThatCloses(service).Any());
             var openServiceDescriptors = open.Select(
                 implementation => ServiceDescriptor.Transient(service, implementation)
             );

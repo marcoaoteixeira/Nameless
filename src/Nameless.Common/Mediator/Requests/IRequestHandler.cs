@@ -1,4 +1,4 @@
-﻿namespace Nameless.Mediator.Requests;
+namespace Nameless.Mediator.Requests;
 
 /// <summary>
 ///     Defines a request handler that returns a response.
@@ -26,4 +26,28 @@ public interface IRequestHandler<in TRequest, TResponse>
     ///     is the task result.
     /// </returns>
     Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken);
+}
+
+/// <summary>
+///     Defines a request handler that does not return a response.
+/// </summary>
+/// <typeparam name="TRequest">
+///     Type of the request.
+/// </typeparam>
+public interface IRequestHandler<in TRequest>
+    where TRequest : IRequest {
+    /// <summary>
+    ///     Handles the request asynchronously.
+    /// </summary>
+    /// <param name="request">
+    ///     The request.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the action asynchronous
+    ///     operation.
+    /// </returns>
+    Task HandleAsync(TRequest request, CancellationToken cancellationToken);
 }

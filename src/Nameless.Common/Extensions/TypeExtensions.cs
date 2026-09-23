@@ -217,7 +217,7 @@ public static class TypeExtensions {
         /// </returns>
         public IEnumerable<Type> GetInterfacesThatCloses(Type genericDefinition) {
             return genericDefinition.IsGenericTypeDefinition
-                ? GetInterfacesThatClosesCore(self, genericDefinition)
+                ? GetInterfacesThatClosesCore(self, genericDefinition).Distinct()
                 : [];
         }
 

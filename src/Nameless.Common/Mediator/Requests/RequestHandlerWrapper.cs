@@ -1,4 +1,4 @@
-﻿#pragma warning disable S1694
+#pragma warning disable S1694
 
 namespace Nameless.Mediator.Requests;
 
@@ -19,12 +19,10 @@ public abstract class RequestHandlerWrapper {
     ///     The cancellation token.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the action
-    ///     asynchronous operation, where the task result contains an object
-    ///     that represents the response.
+    ///     A <see cref="Task" /> representing the action asynchronous
+    ///     operation.
     /// </returns>
-    public abstract Task<object?> HandleAsync(object request, IServiceProvider provider,
-        CancellationToken cancellationToken);
+    public abstract Task HandleAsync(IRequest request, IServiceProvider provider, CancellationToken cancellationToken);
 }
 
 /// <summary>
