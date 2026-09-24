@@ -1,5 +1,4 @@
 ﻿using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Data.Responses;
 

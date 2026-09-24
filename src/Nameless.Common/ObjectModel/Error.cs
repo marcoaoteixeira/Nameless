@@ -44,7 +44,22 @@ public readonly record struct Error {
         throw new InvalidOperationException(message: "Do not use type constructor.");
     }
 
-    private Error(string message, string? code, ErrorType type, Exception? exception) {
+    /// <summary>
+    ///     Initializes a new instance of <see cref="Error"/> class.
+    /// </summary>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="code">
+    ///     The code.
+    /// </param>
+    /// <param name="type">
+    ///     The error type.
+    /// </param>
+    /// <param name="exception">
+    ///     The exception.
+    /// </param>
+    internal Error(string message, string? code, ErrorType type, Exception? exception) {
         Message = message;
         Code = code;
         Type = type;

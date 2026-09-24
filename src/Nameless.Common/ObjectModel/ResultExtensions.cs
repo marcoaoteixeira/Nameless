@@ -1,4 +1,4 @@
-﻿namespace Nameless.Results;
+﻿namespace Nameless.ObjectModel;
 
 /// <summary>
 ///     <see cref="Result{T}"/> extension methods.

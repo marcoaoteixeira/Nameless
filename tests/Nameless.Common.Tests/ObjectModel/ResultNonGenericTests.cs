@@ -1,6 +1,4 @@
-using Nameless.ObjectModel;
-
-namespace Nameless.Results;
+namespace Nameless.ObjectModel;
 
 [UnitTest]
 public class ResultNonGenericTests {

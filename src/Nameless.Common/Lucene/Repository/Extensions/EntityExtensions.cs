@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 using Nameless.Lucene.ObjectModel;
 using Nameless.Lucene.Repository.Mappings;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Lucene.Repository;
 

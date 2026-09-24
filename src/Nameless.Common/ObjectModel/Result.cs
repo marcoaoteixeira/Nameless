@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.ObjectModel;
 
-namespace Nameless.Results;
+namespace Nameless.ObjectModel;
 
 /// <summary>
 ///     Represents an action result that can carry error

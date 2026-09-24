@@ -10,7 +10,6 @@ using Nameless.Lucene.Collections;
 using Nameless.Lucene.Empty;
 using Nameless.Lucene.ObjectModel;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Lucene;
 

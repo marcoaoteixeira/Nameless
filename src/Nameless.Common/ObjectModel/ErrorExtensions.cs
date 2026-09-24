@@ -1,4 +1,6 @@
-﻿namespace Nameless.ObjectModel;
+﻿using Microsoft.VisualBasic;
+
+namespace Nameless.ObjectModel;
 
 /// <summary>
 ///     <see cref="Error"/> extension methods.
@@ -22,6 +24,48 @@ public static class ErrorExtensions {
     }
 
     extension(IEnumerable<Error> self) {
+        /// <summary>
+        ///     Folds all errors into a single error, by type.
+        /// </summary>
+        /// <param name="type">
+        ///     Type of the error.
+        /// </param>
+        /// <returns>
+        ///     A single error.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        ///     if no errors are available.
+        /// </exception>
+        public Error Aggregate(ErrorType type) {
+            var errors = self.Where(error => error.Type == type).ToArray();
+
+            switch (errors.Length) {
+                case 0: throw new InvalidOperationException(
+                    $"No errors of type '{type}' to aggregate."
+                );
+                case 1: return errors[0];
+            }
+
+            var codes = errors.Select(error => error.Code)
+                              .Where(code => !string.IsNullOrWhiteSpace(code))
+                              .ToArray();
+
+            var exceptions = errors.Select(error => error.Exception)
+                                   .OfType<Exception>()
+                                   .ToArray();
+
+            return new Error(
+                message: string.Join("; ", errors.Select(error => error.Message)),
+                code: codes.Length > 0 ? string.Join("; ", codes) : null,
+                type: type,
+                exception: exceptions.Length switch {
+                    0 => null,
+                    1 => exceptions[0],
+                    _ => new AggregateException(exceptions)
+                }
+            );
+        }
+
         /// <summary>
         ///     Retrieves a string representation of the error collection.
         /// </summary>

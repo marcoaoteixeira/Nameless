@@ -1,6 +1,5 @@
 ﻿using Nameless.GitHub.ObjectModel;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.GitHub.Responses;
 

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Diagnostics.ActivitySource;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Auth.OAuth;
 

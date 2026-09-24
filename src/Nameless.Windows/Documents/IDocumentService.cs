@@ -1,4 +1,4 @@
-﻿using Nameless.Results;
+﻿using Nameless.ObjectModel;
 
 namespace Nameless.Windows.Documents;
 

@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Search;
 using Nameless.Lucene.ObjectModel;
-using Nameless.Results;
+using Nameless.ObjectModel;
 
 namespace Nameless.Lucene;
 

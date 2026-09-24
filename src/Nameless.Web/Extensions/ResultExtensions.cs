@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Web;
 

@@ -3,7 +3,6 @@ using Moq;
 using Nameless.Lucene.Repository.Mappings;
 using Nameless.Lucene.Repository.Requests;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Lucene.Repository;
 
