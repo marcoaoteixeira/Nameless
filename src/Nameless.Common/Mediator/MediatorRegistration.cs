@@ -152,6 +152,7 @@ public class MediatorRegistration : AssemblyScanAware<MediatorRegistration> {
     /// </exception>
     public MediatorRegistration WithRequestHandler(Type type) {
         Throws.When.IsNonConcreteType(type);
+
         if (!typeof(IRequestHandler<,>).IsAssignableFromGeneric(type) && !typeof(IRequestHandler<>).IsAssignableFromGeneric(type)) {
             throw new ArgumentException($"Type '{type.GetPrettyName()}' must implement '{nameof(IRequestHandler<,>)}' or '{nameof(IRequestHandler<>)}'.", nameof(type));
         }

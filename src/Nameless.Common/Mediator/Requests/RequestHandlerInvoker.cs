@@ -41,21 +41,17 @@ public class RequestHandlerInvoker : IRequestHandlerInvoker {
     // request type maps to exactly one wrapper, whichever overload creates
     // it first.
     private static RequestHandlerWrapper CreateRequestHandlerWrapper(Type requestType) {
-        var responseTypes = requestType.GetInterfaces()
-                                       .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IRequest<>))
+        var responseTypes = requestType.GetInterfacesThatCloses(typeof(IRequest<>))
                                        .Select(type => type.GetGenericArguments()[0])
-                                       .Distinct()
                                        .ToArray();
 
-        if (responseTypes.Length > 1) {
-            throw new InvalidOperationException(
+        var wrapperType = responseTypes.Length switch {
+            0 => typeof(RequestHandlerWrapperImpl<>).MakeGenericType(requestType),
+            1 => typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, responseTypes[0]),
+            _ => throw new InvalidOperationException(
                 $"Request '{requestType.GetPrettyName()}' implements more than one '{typeof(IRequest<>).Name}'; unable to determine its response type."
-            );
-        }
-
-        var wrapperType = responseTypes.Length == 1
-            ? typeof(RequestHandlerWrapperImpl<,>).MakeGenericType(requestType, responseTypes[0])
-            : typeof(RequestHandlerWrapperImpl<>).MakeGenericType(requestType);
+            )
+        };
 
         var wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException(
             $"Couldn't create request handler wrapper for request '{requestType.GetPrettyName()}'."
