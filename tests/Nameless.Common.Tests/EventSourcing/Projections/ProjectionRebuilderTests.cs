@@ -1,5 +1,4 @@
 using Moq;
-using Nameless.EventSourcing.UpCasting;
 
 namespace Nameless.EventSourcing.Projections;
 

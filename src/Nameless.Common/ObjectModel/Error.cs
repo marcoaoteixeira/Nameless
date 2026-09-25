@@ -56,14 +56,14 @@ public readonly record struct Error {
     /// <param name="type">
     ///     The error type.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
-    internal Error(string message, string? code, ErrorType type, Exception? exception) {
-        Message = message;
+    internal Error(string message, string? code, ErrorType type, Exception? ex) {
+        Message = Throws.When.NullOrWhiteSpace(message);
         Code = code;
         Type = type;
-        Exception = exception;
+        Exception = ex;
     }
 
     /// <summary>
@@ -76,14 +76,14 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Validation(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Validation, exception);
+    public static Error Validation(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Validation, ex);
     }
 
     /// <summary>
@@ -96,14 +96,14 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Missing(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Missing, exception);
+    public static Error Missing(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Missing, ex);
     }
 
     /// <summary>
@@ -116,14 +116,14 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Conflict(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Conflict, exception);
+    public static Error Conflict(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Conflict, ex);
     }
 
     /// <summary>
@@ -136,14 +136,14 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Failure(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Failure, exception);
+    public static Error Failure(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Failure, ex);
     }
 
     /// <summary>
@@ -156,14 +156,14 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Forbidden(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Forbidden, exception);
+    public static Error Forbidden(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Forbidden, ex);
     }
 
     /// <summary>
@@ -176,13 +176,13 @@ public readonly record struct Error {
     /// <param name="code">
     ///     The error code.
     /// </param>
-    /// <param name="exception">
+    /// <param name="ex">
     ///     The exception.
     /// </param>
     /// <returns>
     ///     A new instance of the <see cref="Error" /> class.
     /// </returns>
-    public static Error Unauthorized(string message, string? code = null, Exception? exception = null) {
-        return new Error(message, code, ErrorType.Unauthorized, exception);
+    public static Error Unauthorized(string message, string? code = null, Exception? ex = null) {
+        return new Error(message, code, ErrorType.Unauthorized, ex);
     }
 }

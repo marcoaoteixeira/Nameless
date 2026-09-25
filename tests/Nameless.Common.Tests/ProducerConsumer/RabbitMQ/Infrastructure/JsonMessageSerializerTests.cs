@@ -1,5 +1,4 @@
 using System.Text;
-using Nameless.ProducerConsumer.RabbitMQ.ObjectModel;
 using RabbitMQ.Client;
 
 namespace Nameless.ProducerConsumer.RabbitMQ.Infrastructure;

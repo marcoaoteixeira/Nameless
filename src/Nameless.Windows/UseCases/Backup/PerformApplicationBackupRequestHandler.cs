@@ -5,7 +5,6 @@ using Nameless.Compression;
 using Nameless.Compression.Requests;
 using Nameless.IO;
 using Nameless.ObjectModel;
-using Nameless.Results;
 using Nameless.Windows.DisasterRecovery;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Messaging;

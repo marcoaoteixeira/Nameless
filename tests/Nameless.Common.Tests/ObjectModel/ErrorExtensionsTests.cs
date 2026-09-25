@@ -8,19 +8,18 @@ public class ErrorExtensionsTests {
     public void Flatten_WithMultipleErrors_JoinsBySemicolon() {
         // arrange
         var errors = new[] {
-            Error.Validation("field is required", "REQUIRED"),
-            Error.Missing("item not found", "NOT_FOUND")
+            Error.Validation("Validation 1", "Code 1"),
+            Error.Missing("Missing 1", "Code 1"),
+            Error.Validation("Validation 2"),
+            Error.Missing("Missing 2"),
         };
+        const string Expected = "[Validation] (Code 1) Validation 1; Validation 2 | [Missing] (Code 1) Missing 1; Missing 2";
 
         // act
-        var flat = errors.Flatten();
+        var actual = errors.Flatten();
 
         // assert
-        Assert.Multiple(
-            () => Assert.Contains("[Validation]", flat),
-            () => Assert.Contains("[Missing]", flat),
-            () => Assert.Contains(";", flat)
-        );
+        Assert.Equal(Expected, actual);
     }
 
     [Fact]

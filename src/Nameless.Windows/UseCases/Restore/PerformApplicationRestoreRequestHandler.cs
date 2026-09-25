@@ -4,7 +4,6 @@ using Nameless.Compression;
 using Nameless.Compression.Requests;
 using Nameless.Mediator.Requests;
 using Nameless.ObjectModel;
-using Nameless.Results;
 using Nameless.Windows.DisasterRecovery;
 
 namespace Nameless.Windows.UseCases.Restore;

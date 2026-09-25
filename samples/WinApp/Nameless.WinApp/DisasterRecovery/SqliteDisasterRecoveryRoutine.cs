@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nameless.Application;
 using Nameless.ObjectModel;
-using Nameless.Results;
 using Nameless.WinApp.Data;
 using Nameless.Windows.DisasterRecovery;
 using Nameless.Windows.Localization;

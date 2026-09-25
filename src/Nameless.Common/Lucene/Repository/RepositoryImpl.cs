@@ -3,7 +3,6 @@ using Nameless.Lucene.Repository.Mappings;
 using Nameless.Lucene.Repository.Requests;
 using Nameless.Lucene.Repository.Responses;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Lucene.Repository;
 

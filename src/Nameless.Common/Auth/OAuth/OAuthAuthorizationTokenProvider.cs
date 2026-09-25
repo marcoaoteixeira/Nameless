@@ -43,7 +43,7 @@ public class OAuthAuthorizationTokenProvider : IOAuthAuthorizationTokenProvider 
         catch (Exception ex) {
             CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 
-            return Error.Failure(ex.Message, exception: ex);
+            return Error.Failure(ex.Message, ex: ex);
         }
     }
 

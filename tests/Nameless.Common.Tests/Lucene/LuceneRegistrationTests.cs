@@ -1,7 +1,4 @@
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +7,6 @@ using Nameless.Lucene.Repository;
 using Nameless.Lucene.Repository.Mappings;
 using Nameless.Lucene.Repository.Responses;
 using Nameless.ObjectModel;
-using Nameless.Results;
 
 namespace Nameless.Lucene;
 

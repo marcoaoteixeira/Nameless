@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace Nameless.ObjectModel;
+﻿namespace Nameless.ObjectModel;
 
 /// <summary>
 ///     <see cref="Error"/> extension methods.
@@ -12,14 +10,14 @@ public static class ErrorExtensions {
         ///     operation cancellation. Message defaults to
         ///     <c>Operation was canceled unexpectedly.</c>
         /// </summary>
-        /// <param name="exception">
+        /// <param name="ex">
         ///     The operation canceled exception.
         /// </param>
         /// <returns>
         ///     An <see cref="Error"/> (Conflict) instance.
         /// </returns>
-        public static Error OperationCanceled(OperationCanceledException? exception = null) {
-            return Error.Failure("Operation was canceled unexpectedly.", exception: exception);
+        public static Error OperationCanceled(OperationCanceledException? ex = null) {
+            return Error.Failure("Operation was canceled unexpectedly.", ex: ex);
         }
     }
 
@@ -36,7 +34,7 @@ public static class ErrorExtensions {
         /// <exception cref="InvalidOperationException">
         ///     if no errors are available.
         /// </exception>
-        public Error Aggregate(ErrorType type) {
+        public Error AggregateByType(ErrorType type) {
             var errors = self.Where(error => error.Type == type).ToArray();
 
             switch (errors.Length) {
@@ -54,11 +52,13 @@ public static class ErrorExtensions {
                                    .OfType<Exception>()
                                    .ToArray();
 
+            const string Separator = "; ";
+
             return new Error(
-                message: string.Join("; ", errors.Select(error => error.Message)),
-                code: codes.Length > 0 ? string.Join("; ", codes) : null,
+                message: string.Join(Separator, errors.Select(error => error.Message)),
+                code: codes.Length > 0 ? string.Join(Separator, codes) : null,
                 type: type,
-                exception: exceptions.Length switch {
+                ex: exceptions.Length switch {
                     0 => null,
                     1 => exceptions[0],
                     _ => new AggregateException(exceptions)
@@ -72,8 +72,19 @@ public static class ErrorExtensions {
         /// <returns>
         ///     A string representing all errors separated by semicolon.
         /// </returns>
-        public string Flatten() {
-            return string.Join("; ", self.Select(error => error.Flatten));
+        public string Flatten(char separator = '|') {
+            var items = self.GroupBy(error => error.Type).Select(Flat);
+
+            return string.Join($" {separator} ", items);
+
+            static string Flat(IGrouping<ErrorType, Error> group) {
+                var messages = group.Select(item => !string.IsNullOrWhiteSpace(item.Code)
+                    ? $"({item.Code}) {item.Message}"
+                    : item.Message
+                );
+
+                return $"[{group.Key}] {string.Join("; ", messages)}";
+            }
         }
 
         /// <summary>

@@ -2,7 +2,6 @@ using System.Collections;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Nameless.IO;
 using Nameless.Lucene.Collections;

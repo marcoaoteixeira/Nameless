@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.ObjectModel;
-using Nameless.Results;
 using Nameless.Validation;
 
 namespace Nameless.Web.Filters.Validation;

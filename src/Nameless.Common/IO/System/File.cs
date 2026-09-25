@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Nameless.Diagnostics.CodeAnalysis;
-using Lucene.Net.Store;
-using Microsoft.Extensions.Options;
 using Nameless.IO.Monitoring;
 
 namespace Nameless.IO.System;

@@ -55,7 +55,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about the latest release. Message: {ex.Message} | Status code: {statusCode}",
-                exception: ex
+                ex: ex
             );
         }
     }
@@ -86,7 +86,7 @@ public class GitHubHttpClient : IGitHubHttpClient {
 
             return Error.Failure(
                 $"An error has occurred while retrieving information about release assets. Message: {ex.Message} | Status code: {statusCode}",
-                exception: ex
+                ex: ex
             );
         }
     }

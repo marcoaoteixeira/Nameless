@@ -1,7 +1,5 @@
 using Moq;
 using Nameless.Resilience;
-using Nameless.Testing.Tools.Mockers.Logging;
-using Nameless.Testing.Tools.Mockers.StatusReporting;
 using Nameless.Windows.Bootstrap.Notification;
 
 namespace Nameless.Windows.Bootstrap;

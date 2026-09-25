@@ -7,7 +7,6 @@ using Nameless.GitHub;
 using Nameless.GitHub.Requests;
 using Nameless.IO;
 using Nameless.ObjectModel;
-using Nameless.Results;
 using Nameless.Windows.Messaging;
 
 namespace Nameless.Windows.UseCases.SystemUpdate;
