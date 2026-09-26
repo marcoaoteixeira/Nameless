@@ -35,7 +35,7 @@ public class ErrorCollectionExtensionsTests {
         var actual = errors.Flatten();
 
         // assert
-        Assert.Equal("[Validation] (E1) bad; [Missing] gone", actual);
+        Assert.Equal("[Validation] (E1) bad | [Missing] gone", actual);
     }
 
     [Fact]
