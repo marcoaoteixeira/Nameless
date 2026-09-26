@@ -1,11 +1,15 @@
 namespace Nameless.IO.System;
 
+[IntegrationTest]
 public class FileTests : IDisposable {
     private readonly string _root;
+    private readonly FileProvider _provider;
 
     public FileTests() {
         _root = SysPath.Combine(SysPath.GetTempPath(), $"nameless-test-{Guid.NewGuid():N}");
         SysDirectory.CreateDirectory(_root);
+
+        _provider = new FileProvider(_root);
     }
 
     public void Dispose() {
@@ -14,35 +18,56 @@ public class FileTests : IDisposable {
         }
     }
 
-    private FileProviderOptions CreateOptions() {
-        return new FileProviderOptions {
-            Root = _root,
-            AllowOperationOutsideRoot = false
-        };
+    private File CreateSut(string relativePath) {
+        return new File(new FileInfo(_provider.GetFullPath(relativePath)), _provider);
     }
 
-    private File CreateWrapper(string fileName) {
-        return new File(
-            new FileInfo(
-                SysPath.Combine(_root, fileName)
-            ),
-            CreateOptions()
-        );
-    }
+    private string CreateFileOnDisk(string relativePath, string content = "test") {
+        var path = _provider.GetFullPath(relativePath);
 
-    private string CreateTempFile(string fileName, string content = "test") {
-        var path = SysPath.Combine(_root, fileName);
-
+        SysDirectory.CreateDirectory(SysPath.GetDirectoryName(path) ?? _root);
         SysFile.WriteAllText(path, content);
-        
+
         return path;
     }
 
+    private static string ReadAll(IFile file) {
+        using var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var reader = new StreamReader(stream);
+
+        return reader.ReadToEnd();
+    }
+
+    // --- Properties ---
+
     [Fact]
-    [IntegrationTest]
-    public void Exists_NonexistentFile_ReturnsFalse() {
+    public void Name_ReturnsFileName() {
         // arrange
-        var sut = CreateWrapper("does-not-exist.txt");
+        var sut = CreateSut("sub/named-file.txt");
+
+        // act
+        var actual = sut.Name;
+
+        // assert
+        Assert.Equal("named-file.txt", actual);
+    }
+
+    [Fact]
+    public void Path_ReturnsPathRelativeToProviderRoot() {
+        // arrange
+        var sut = CreateSut("sub/path-file.txt");
+
+        // act
+        var actual = sut.Path;
+
+        // assert
+        Assert.Equal(SysPath.Combine("sub", "path-file.txt"), actual);
+    }
+
+    [Fact]
+    public void Exists_WhenFileDoesNotExist_ReturnsFalse() {
+        // arrange
+        var sut = CreateSut("does-not-exist.txt");
 
         // act
         var actual = sut.Exists;
@@ -52,11 +77,10 @@ public class FileTests : IDisposable {
     }
 
     [Fact]
-    [IntegrationTest]
-    public void Exists_ExistingFile_ReturnsTrue() {
+    public void Exists_WhenFileExists_ReturnsTrue() {
         // arrange
-        CreateTempFile("exists.txt");
-        var sut = CreateWrapper("exists.txt");
+        CreateFileOnDisk("exists.txt");
+        var sut = CreateSut("exists.txt");
 
         // act
         var actual = sut.Exists;
@@ -66,134 +90,174 @@ public class FileTests : IDisposable {
     }
 
     [Fact]
-    [IntegrationTest]
-    public void Name_ReturnsFileName() {
+    public void LastWriteTime_ReturnsLastWriteTimeInUtc() {
         // arrange
-        const string FileName = "named-file.txt";
-        var sut = CreateWrapper(FileName);
+        var path = CreateFileOnDisk("last-write.txt");
+        var expected = new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+        SysFile.SetLastWriteTimeUtc(path, expected);
+        var sut = CreateSut("last-write.txt");
 
         // act
-        var actual = sut.Name;
+        var actual = sut.LastWriteTime;
 
         // assert
-        Assert.Equal(FileName, actual);
+        Assert.Multiple(
+            () => Assert.Equal(expected, actual),
+            () => Assert.Equal(DateTimeKind.Utc, actual.Kind)
+        );
+    }
+
+    // --- Open ---
+
+    [Fact]
+    public void Open_ExistingFileForReading_ReturnsStreamWithFileContent() {
+        // arrange
+        CreateFileOnDisk("readable.txt", "hello world");
+        var sut = CreateSut("readable.txt");
+
+        // act
+        var actual = ReadAll(sut);
+
+        // assert
+        Assert.Equal("hello world", actual);
     }
 
     [Fact]
-    [IntegrationTest]
-    public void Path_ReturnsFullPath() {
+    public void Open_WithCreateModeForWriting_CreatesFileWithContent() {
         // arrange
-        const string FileName = "path-file.txt";
-        var expected = SysPath.Combine(_root, FileName);
-        var sut = CreateWrapper(FileName);
+        var sut = CreateSut("writable.txt");
 
         // act
-        var actual = sut.Path;
+        using (var stream = sut.Open(FileMode.Create, FileAccess.Write, FileShare.None))
+        using (var writer = new StreamWriter(stream)) {
+            writer.Write("written");
+        }
 
         // assert
-        Assert.Equal(expected, actual);
+        Assert.Equal("written", SysFile.ReadAllText(SysPath.Combine(_root, "writable.txt")));
     }
 
     [Fact]
-    [IntegrationTest]
-    public void Delete_ExistingFile_RemovesFile() {
+    public void Open_NonexistentFileWithOpenMode_ThrowsFileNotFoundException() {
         // arrange
-        var filePath = CreateTempFile("to-delete.txt");
-        var sut = CreateWrapper("to-delete.txt");
+        var sut = CreateSut("missing.txt");
+
+        // act & assert
+        Assert.Throws<FileNotFoundException>(() => sut.Open(FileMode.Open, FileAccess.Read, FileShare.Read));
+    }
+
+    // --- Delete ---
+
+    [Fact]
+    public void Delete_ExistingFile_RemovesFileFromDisk() {
+        // arrange
+        var path = CreateFileOnDisk("to-delete.txt");
+        var sut = CreateSut("to-delete.txt");
 
         // act
         sut.Delete();
 
         // assert
-        Assert.False(SysFile.Exists(filePath));
+        Assert.False(SysFile.Exists(path));
     }
 
     [Fact]
-    [IntegrationTest]
-    public void Open_ExistingFile_ReturnsReadableStream() {
+    public void Delete_NonexistentFile_DoesNotThrow() {
         // arrange
-        const string Content = "hello world";
-        CreateTempFile("readable.txt", Content);
-        var sut = CreateWrapper("readable.txt");
+        var sut = CreateSut("missing.txt");
 
         // act
-        using var stream = sut.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var reader = new StreamReader(stream);
-        var actual = reader.ReadToEnd();
+        var exception = Record.Exception(sut.Delete);
 
         // assert
-        Assert.Equal(Content, actual);
+        Assert.Null(exception);
     }
 
-    [Fact]
-    public void LastWriteTime_ReturnsValidUtcTime() {
-        // arrange
-        CreateTempFile("last-write.txt");
-        var sut = CreateWrapper("last-write.txt");
-
-        // act
-        var actual = sut.LastWriteTime;
-
-        // assert — the write time should be a plausible recent UTC timestamp
-        Assert.Multiple(
-            () => Assert.True(actual > DateTime.UtcNow.AddMinutes(-5)),
-            () => Assert.Equal(DateTimeKind.Utc, actual.Kind)
-        );
-    }
+    // --- Copy ---
 
     [Fact]
-    public void Copy_WithOverwriteFalse_CreatesFileAtDestination() {
+    public void Copy_ToNewDestination_CreatesCopyInsideProviderRoot() {
         // arrange
-        const string SourceFile = "copy-source.txt";
-        const string DestFile = "copy-dest.txt";
-
-        CreateTempFile(SourceFile, "copy content");
-        var sut = CreateWrapper(SourceFile);
+        CreateFileOnDisk("copy-source.txt", "copy content");
+        var sut = CreateSut("copy-source.txt");
 
         // act
-        var copy = sut.Copy(DestFile, overwrite: false);
+        var copy = sut.Copy("copy-dest.txt", overwrite: false);
 
         // assert
         Assert.Multiple(
             () => Assert.True(copy.Exists),
-            () => Assert.Equal(SysPath.Combine(_root, DestFile), copy.Path)
+            () => Assert.Equal("copy-dest.txt", copy.Name),
+            () => Assert.Equal("copy-dest.txt", copy.Path),
+            () => Assert.Equal("copy content", SysFile.ReadAllText(SysPath.Combine(_root, "copy-dest.txt")))
         );
     }
 
     [Fact]
-    public void Copy_WithOverwriteTrue_OverwritesExistingFile() {
+    public void Copy_ToNestedDestination_CreatesCopyAtRelativePath() {
         // arrange
-        const string SourceFile = "over-source.txt";
-        const string DestFile = "over-dest.txt";
-
-        CreateTempFile(SourceFile, "new content");
-        CreateTempFile(DestFile, "old content");
-        var sut = CreateWrapper(SourceFile);
+        CreateFileOnDisk("nested-source.txt", "nested content");
+        SysDirectory.CreateDirectory(SysPath.Combine(_root, "target"));
+        var sut = CreateSut("nested-source.txt");
 
         // act
-        var copy = sut.Copy(DestFile, overwrite: true);
+        var copy = sut.Copy("target/nested-dest.txt", overwrite: false);
 
-        // assert — the file at dest now contains the source content
-        using var stream = copy.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var reader = new StreamReader(stream);
-        var actual = reader.ReadToEnd();
-
-        Assert.Equal("new content", actual);
+        // assert
+        Assert.Multiple(
+            () => Assert.True(copy.Exists),
+            () => Assert.Equal(SysPath.Combine("target", "nested-dest.txt"), copy.Path),
+            () => Assert.Equal("nested content", SysFile.ReadAllText(SysPath.Combine(_root, "target", "nested-dest.txt")))
+        );
     }
 
     [Fact]
-    public void Copy_ReturnsFileWrapper_WithCorrectName() {
+    public void Copy_WithOverwriteTrue_OverwritesExistingDestination() {
         // arrange
-        const string SourceFile = "nm-source.txt";
-        const string DestFile = "nm-dest.txt";
-
-        CreateTempFile(SourceFile);
-        var sut = CreateWrapper(SourceFile);
+        CreateFileOnDisk("over-source.txt", "new content");
+        CreateFileOnDisk("over-dest.txt", "old content");
+        var sut = CreateSut("over-source.txt");
 
         // act
-        var copy = sut.Copy(DestFile, overwrite: false);
+        var copy = sut.Copy("over-dest.txt", overwrite: true);
 
         // assert
-        Assert.Equal(DestFile, copy.Name);
+        Assert.Equal("new content", ReadAll(copy));
+    }
+
+    [Fact]
+    public void Copy_WithOverwriteFalseAndExistingDestination_ThrowsIOException() {
+        // arrange
+        CreateFileOnDisk("keep-source.txt", "new content");
+        var destination = CreateFileOnDisk("keep-dest.txt", "old content");
+        var sut = CreateSut("keep-source.txt");
+
+        // act
+        var exception = Record.Exception(() => sut.Copy("keep-dest.txt", overwrite: false));
+
+        // assert
+        Assert.Multiple(
+            () => Assert.IsType<IOException>(exception),
+            () => Assert.Equal("old content", SysFile.ReadAllText(destination))
+        );
+    }
+
+    [Fact]
+    public void Copy_WhenSourceDoesNotExist_ThrowsFileNotFoundException() {
+        // arrange
+        var sut = CreateSut("missing-source.txt");
+
+        // act & assert
+        Assert.Throws<FileNotFoundException>(() => sut.Copy("dest.txt", overwrite: false));
+    }
+
+    [Fact]
+    public void Copy_ToDestinationAboveRoot_ThrowsUnauthorizedAccessException() {
+        // arrange
+        CreateFileOnDisk("escape-source.txt");
+        var sut = CreateSut("escape-source.txt");
+
+        // act & assert
+        Assert.Throws<UnauthorizedAccessException>(() => sut.Copy("../escaped.txt", overwrite: false));
     }
 }

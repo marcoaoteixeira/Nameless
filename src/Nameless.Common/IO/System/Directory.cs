@@ -1,26 +1,25 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using Nameless.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nameless.IO.System;
 
 /// <summary>
 ///     Default implementation of <see cref="IDirectory"/>.
 /// </summary>
-[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{Path,nq}")]
 public class Directory : IDirectory {
+    private static readonly StringComparison MatcherComparison = OperatingSystem.IsWindows()
+        ? StringComparison.OrdinalIgnoreCase
+        : StringComparison.Ordinal;
+
     private readonly DirectoryInfo _directory;
-    private readonly FileProviderOptions _options;
+    private readonly FileProvider _provider;
 
-    [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
-
-    private string DebuggerDisplayValue => $"Path: {SysPath.GetRelativePath(_options.Root, Path)}";
-    
     /// <inheritdoc />
     public string Name => _directory.Name;
 
     /// <inheritdoc />
-    public string Path => _directory.GetFullPath();
+    public string Path => SysPath.GetRelativePath(_provider.Root, _directory.FullName);
 
     /// <inheritdoc />
     public bool Exists => _directory.Exists;
@@ -32,18 +31,12 @@ public class Directory : IDirectory {
     /// <param name="directory">
     ///     The underlying <see cref="DirectoryInfo"/> object.
     /// </param>
-    /// <param name="options">
+    /// <param name="provider">
     ///     The options for configuring the file system.
     /// </param>
-    public Directory(DirectoryInfo directory, FileProviderOptions options) {
-        Throws.When.OutsideRootDirectory(
-            directory.FullName,
-            options.Root,
-            ignore: options.AllowOperationOutsideRoot
-        );
-
+    public Directory(DirectoryInfo directory, FileProvider provider) {
         _directory = directory;
-        _options = options.Validate();
+        _provider = provider;
     }
 
     /// <inheritdoc />
@@ -52,22 +45,21 @@ public class Directory : IDirectory {
     }
     
     /// <inheritdoc />
-    public IEnumerable<IFile> GetFiles(string searchPattern, bool recursive) {
-        var searchOptions = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        var files = _directory.EnumerateFiles(searchPattern, searchOptions);
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="glob"/> is empty or white space.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="glob"/> is <see langword="null"/>.
+    /// </exception>
+    public IEnumerable<IFile> GetFiles(string glob) {
+        Throws.When.NullOrWhiteSpace(glob);
+
+        var matcher = new Matcher(MatcherComparison).AddInclude(glob);
         
-        foreach (var file in files) {
-            yield return new File(file, _options);
-        }
-    }
-
-    /// <inheritdoc />
-    public IEnumerable<IDirectory> GetDirectories(string searchPattern, bool recursive) {
-        var searchOptions = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        var directories = _directory.EnumerateDirectories(searchPattern, searchOptions);
-
-        foreach (var directory in directories) {
-            yield return new Directory(directory, _options);
+        foreach (var file in matcher.GetResultsInFullPath(_directory.FullName)) {
+            yield return _provider.GetFile(
+                SysPath.GetRelativePath(_provider.Root, file)
+            );
         }
     }
 

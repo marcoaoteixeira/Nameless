@@ -43,7 +43,7 @@ public class DirectoryMocker : Mocker<IDirectory> {
 
     public DirectoryMocker WithGetFiles(IEnumerable<IFile> returnValue) {
         MockInstance
-            .Setup(mock => mock.GetFiles(It.IsAny<string>(), It.IsAny<bool>()))
+            .Setup(mock => mock.GetFiles(It.IsAny<string>()))
             .Returns(returnValue);
 
         return this;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Nameless.IO.System;
@@ -20,20 +19,10 @@ public static class ServiceCollectionExtensions {
         ///     The current <see cref="IServiceCollection"/> instance so other
         ///     actions can be chained.
         /// </returns>
-        public IServiceCollection RegisterFileProvider(IConfiguration? configuration = null) {
-            self.ConfigureOptions<FileProviderOptions>(configuration);
+        public IServiceCollection RegisterFileProvider() {
             self.TryAddSingleton<FileProviderFactory>();
-            self.TryAddSingleton<IFileProvider>(provider => {
-                    var options = provider.GetOptions<FileProviderOptions>().Value;
-
-                    return provider.GetRequiredService<FileProviderFactory>()
-                                   .GetOrCreate(opts => {
-                                       opts.Root = options.Root;
-                                       opts.AllowOperationOutsideRoot = options.AllowOperationOutsideRoot;
-                                       opts.FileMonitorOptions = options.FileMonitorOptions;
-                                   });
-                }
-            );
+            self.TryAddSingleton<IFileProvider>(provider => provider.GetRequiredService<FileProviderFactory>()
+                                                                    .GetOrCreate(AppContext.BaseDirectory));
 
             return self;
         }

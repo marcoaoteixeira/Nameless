@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using Nameless.Diagnostics.CodeAnalysis;
 using Nameless.IO.Monitoring;
 
 namespace Nameless.IO.System;
@@ -8,20 +6,16 @@ namespace Nameless.IO.System;
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.
 /// </summary>
-[DebuggerDisplay(value: "{DebuggerDisplayValue,nq}")]
+[DebuggerDisplay(value: "{Path,nq}")]
 public class File : IFile {
     private readonly FileInfo _file;
-    private readonly FileProviderOptions _options;
-
-    [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Trivial)]
-
-    private string DebuggerDisplayValue => $"Path: {SysPath.GetRelativePath(_options.Root, Path)}";
+    private readonly FileProvider _provider;
 
     /// <inheritdoc />
     public string Name => _file.Name;
 
     /// <inheritdoc />
-    public string Path => _file.GetFullPath();
+    public string Path => SysPath.GetRelativePath(_provider.Root, _file.FullName);
 
     /// <inheritdoc />
     public bool Exists => _file.Exists;
@@ -36,18 +30,12 @@ public class File : IFile {
     /// <param name="file">
     ///     The underlying <see cref="FileInfo"/> object.
     /// </param>
-    /// <param name="options">
-    ///     The options for configuring the file system.
+    /// <param name="provider">
+    ///     The file provider.
     /// </param>
-    public File(FileInfo file, FileProviderOptions options) {
-        Throws.When.OutsideRootDirectory(
-            file.FullName,
-            options.Root,
-            ignore: options.AllowOperationOutsideRoot
-        );
-
+    public File(FileInfo file, FileProvider provider) {
         _file = file;
-        _options = options.Validate();
+        _provider = provider;
     }
 
     /// <inheritdoc />
@@ -66,38 +54,15 @@ public class File : IFile {
     ///     <see cref="IFileMonitor.Start" /> and dispose it.
     /// </remarks>
     public IFileMonitor Monitor() {
-        return new FileMonitor(
-            _options.Root,
-            Name,
-            new FileSystemWatcherAdapter(),
-            FileProbe.Instance,
-            TimeProvider.System,
-            _options.FileMonitorOptions
-        );
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />
     public IFile Copy(string destinationRelativePath, bool overwrite) {
-        Throws.When.NullOrWhiteSpace(destinationRelativePath);
+        var copy = _provider.GetFile(destinationRelativePath);
 
-        var destinationFullPath = PathHelper.Normalize(
-            SysPath.GetFullPath(
-                destinationRelativePath,
-                _options.Root
-            )
-        );
+        _ = _file.CopyTo(copy.Path, overwrite);
 
-        Throws.When.OutsideRootDirectory(
-            destinationFullPath,
-            _options.Root,
-            ignore: _options.AllowOperationOutsideRoot
-        );
-
-        var copy = _file.CopyTo(
-            destinationFullPath,
-            overwrite
-        );
-
-        return new File(copy, _options);
+        return copy;
     }
 }

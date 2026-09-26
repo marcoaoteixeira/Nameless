@@ -1,7 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Nameless.IO.System;
 using Nameless.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Nameless.Helpers;
 
@@ -92,29 +90,5 @@ public class GenericTypeHelperConstraintTests {
 
         // assert
         Assert.Null(exception);
-    }
-
-    [Fact]
-    public void File_Monitor_ReturnsMonitorRootedAtProviderRoot() {
-        // arrange
-        var root = SysPath.Combine(SysPath.GetTempPath(), $"file-monitor-{Guid.NewGuid():N}");
-        SysDirectory.CreateDirectory(root);
-
-        try {
-            var provider = new FileProvider(Options.Create(new FileProviderOptions { Root = root }));
-            var file = provider.GetFile("watched.txt");
-
-            // act
-            using var monitor = file.Monitor();
-
-            // assert
-            Assert.Multiple(
-                () => Assert.Equal("watched.txt", monitor.Glob),
-                () => Assert.Equal(SysPath.GetFullPath(root), monitor.Root)
-            );
-        }
-        finally {
-            SysDirectory.Delete(root, recursive: true);
-        }
     }
 }

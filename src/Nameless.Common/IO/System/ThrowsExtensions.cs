@@ -1,37 +1,80 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.IO.System;
 
 [ExcludeFromCodeCoverage(Justification = CodeCoverage.Justifications.Internal)]
 internal static class ThrowsExtensions {
     extension(Throws self) {
-        internal string DirectoryNotFound([NotNull] string? paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
-            Throws.When.NullOrWhiteSpace(paramValue, paramName, message, exceptionCreator);
-
-            if (SysDirectory.Exists(paramValue)) {
+        [DebuggerStepThrough]
+        internal string HasInvalidPathChars(string paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+            if (!PathUtils.HasInvalidPathChars(paramValue)) {
                 return paramValue;
             }
 
-            throw exceptionCreator?.Invoke() ?? new DirectoryNotFoundException(
+            throw exceptionCreator?.Invoke() ?? new ArgumentException(
                 string.IsNullOrWhiteSpace(message)
-                    ? $"Directory not found: {paramValue}"
-                    : message
-                );
+                    ? "The path contains invalid chars"
+                    : message,
+                paramName
+            );
         }
 
-        internal string OutsideRootDirectory([NotNull] string? fullPath, string root, bool ignore = false, [CallerArgumentExpression(nameof(fullPath))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
-            Throws.When.NullOrWhiteSpace(fullPath, paramName, message, exceptionCreator);
-            Throws.When.NullOrWhiteSpace(root, nameof(root), message, exceptionCreator);
+        [DebuggerStepThrough]
+        internal string PathIsRooted(string paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+            if (!SysPath.IsPathRooted(paramValue)) {
+                return paramValue;
+            }
 
-            if (ignore || PathHelper.Normalize(fullPath).StartsWith(root, StringComparison.Ordinal)) {
-                return fullPath;
+            throw exceptionCreator?.Invoke() ?? new ArgumentException(
+                string.IsNullOrWhiteSpace(message)
+                    ? "The path cannot be absolute"
+                    : message,
+                paramName
+            );
+        }
+
+        [DebuggerStepThrough]
+        internal string PathIsNotRooted(string paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+            if (SysPath.IsPathRooted(paramValue)) {
+                return paramValue;
+            }
+
+            throw exceptionCreator?.Invoke() ?? new ArgumentException(
+                string.IsNullOrWhiteSpace(message)
+                    ? "The path must be absolute"
+                    : message,
+                paramName
+            );
+        }
+        
+        [DebuggerStepThrough]
+        internal string PathNavigatesAboveRoot(string paramValue, string? message = null, Func<Exception>? exceptionCreator = null) {
+            if (!PathUtils.PathNavigatesAboveRoot(paramValue)) {
+                return paramValue;
             }
 
             throw exceptionCreator?.Invoke() ?? new UnauthorizedAccessException(
                 string.IsNullOrWhiteSpace(message)
-                    ? $"Path must point to location inside root directory. Path: {fullPath}"
+                    ? "Path must point to location inside root directory."
+                    : message
+            );
+        }
+
+        [DebuggerStepThrough]
+        internal string PathNotUnderneathRoot(string paramValue, string root, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+            Throws.When.NullOrWhiteSpace(paramValue, paramName, message, exceptionCreator);
+            Throws.When.NullOrWhiteSpace(root);
+
+            if (paramValue.StartsWith(root, StringComparison.OrdinalIgnoreCase)) {
+                return paramValue;
+            }
+
+            throw exceptionCreator?.Invoke() ?? new UnauthorizedAccessException(
+                string.IsNullOrWhiteSpace(message)
+                    ? "Path must be underneath root directory."
                     : message
             );
         }

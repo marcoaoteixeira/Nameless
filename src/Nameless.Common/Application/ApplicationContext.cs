@@ -68,14 +68,7 @@ public class ApplicationContext : IApplicationContext {
     private FileProvider CreateApplicationDataFileExplorer() {
         var directoryPath = PathHelper.Normalize(ApplicationDataDirectory);
 
-        try {
-            return new FileProvider(
-                options: Options.Create(new FileProviderOptions {
-                    AllowOperationOutsideRoot = false,
-                    Root = directoryPath
-                })
-            );
-        }
+        try { return new FileProvider(directoryPath); }
         catch (Exception ex) {
             CommonLog.Error(_logger, ex.Message, ex, GetType().Tag);
 

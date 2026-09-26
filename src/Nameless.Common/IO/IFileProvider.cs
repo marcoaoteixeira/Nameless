@@ -5,7 +5,7 @@
 /// </summary>
 public interface IFileProvider {
     /// <summary>
-    ///     Gets the root directory for file system operations.
+    ///     Gets the root directory the file provider is associated.
     /// </summary>
     string Root { get; }
 

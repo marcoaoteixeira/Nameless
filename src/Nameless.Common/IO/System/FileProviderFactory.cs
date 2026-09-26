@@ -1,6 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.Extensions.Options;
-using Nameless.Helpers;
 
 namespace Nameless.IO.System;
 
@@ -8,27 +6,24 @@ namespace Nameless.IO.System;
 ///     Factory of <see cref="FileProvider" />
 /// </summary>
 public class FileProviderFactory {
-    private readonly ConcurrentDictionary<string, FileProvider> _cache = [];
+    private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
+        ? StringComparer.OrdinalIgnoreCase
+        : StringComparer.Ordinal;
+
+    private readonly ConcurrentDictionary<string, FileProvider> _cache = new(PathComparer);
 
     /// <summary>
     ///     Gets or creates a new <see cref="FileProvider"/>.
     /// </summary>
-    /// <param name="configure">
-    ///     The configuration delegate.
+    /// <param name="root">
+    ///     The root path.
     /// </param>
     /// <returns>
     ///     An instance of <see cref="FileProvider"/>.
     /// </returns>
-    /// <remarks>
-    ///     It caches the instance of <see cref="FileProvider"/> by the
-    ///     <see cref="FileProviderOptions.Root"/> value.
-    /// </remarks>
-    public FileProvider GetOrCreate(Action<FileProviderOptions> configure) {
-        var opts = ActionHelper.FromDelegate(configure);
-        var key = PathHelper.Normalize(opts.Root).ToLowerInvariant();
-
-        return _cache.GetOrAdd(key, _ => new FileProvider(
-            Options.Create(opts)
+    public FileProvider GetOrCreate(string root) {
+        return _cache.GetOrAdd(root, _ => new FileProvider(
+            root
         ));
     }
 }
