@@ -12,7 +12,7 @@ public interface IFile {
     string Name { get; }
 
     /// <summary>
-    ///     Gets the full path of the file.
+    ///     Gets the path of the file.
     /// </summary>
     string Path { get; }
 

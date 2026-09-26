@@ -92,6 +92,9 @@ public class FileProvider : IFileProvider {
             SysPath.Combine(Root, relativePath)
         );
 
-        return Throws.When.PathNotUnderneathRoot(result, Root);
+        // a path resolving to the root itself has no trailing separator
+        Throws.When.PathNotUnderneathRoot(PathUtils.EnsureTrailingSlash(result), Root);
+
+        return result;
     }
 }

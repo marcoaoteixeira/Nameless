@@ -6,8 +6,10 @@ namespace Nameless.IO.System;
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.
 /// </summary>
-[DebuggerDisplay(value: "{Path,nq}")]
+[DebuggerDisplay(value: "{RelativePath,nq}")]
 public class File : IFile {
+    private string RelativePath => SysPath.GetRelativePath(_provider.Root, _file.FullName);
+
     private readonly FileInfo _file;
     private readonly FileProvider _provider;
 
@@ -15,7 +17,7 @@ public class File : IFile {
     public string Name => _file.Name;
 
     /// <inheritdoc />
-    public string Path => SysPath.GetRelativePath(_provider.Root, _file.FullName);
+    public string Path => _file.FullName;
 
     /// <inheritdoc />
     public bool Exists => _file.Exists;

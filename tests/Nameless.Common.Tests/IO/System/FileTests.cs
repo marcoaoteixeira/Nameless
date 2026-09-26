@@ -53,7 +53,7 @@ public class FileTests : IDisposable {
     }
 
     [Fact]
-    public void Path_ReturnsPathRelativeToProviderRoot() {
+    public void Path_ReturnsFullPath() {
         // arrange
         var sut = CreateSut("sub/path-file.txt");
 
@@ -61,7 +61,7 @@ public class FileTests : IDisposable {
         var actual = sut.Path;
 
         // assert
-        Assert.Equal(SysPath.Combine("sub", "path-file.txt"), actual);
+        Assert.Equal(SysPath.Combine(_root, "sub", "path-file.txt"), actual);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class FileTests : IDisposable {
         Assert.Multiple(
             () => Assert.True(copy.Exists),
             () => Assert.Equal("copy-dest.txt", copy.Name),
-            () => Assert.Equal("copy-dest.txt", copy.Path),
+            () => Assert.Equal(SysPath.Combine(_root, "copy-dest.txt"), copy.Path),
             () => Assert.Equal("copy content", SysFile.ReadAllText(SysPath.Combine(_root, "copy-dest.txt")))
         );
     }
@@ -206,7 +206,7 @@ public class FileTests : IDisposable {
         // assert
         Assert.Multiple(
             () => Assert.True(copy.Exists),
-            () => Assert.Equal(SysPath.Combine("target", "nested-dest.txt"), copy.Path),
+            () => Assert.Equal(SysPath.Combine(_root, "target", "nested-dest.txt"), copy.Path),
             () => Assert.Equal("nested content", SysFile.ReadAllText(SysPath.Combine(_root, "target", "nested-dest.txt")))
         );
     }

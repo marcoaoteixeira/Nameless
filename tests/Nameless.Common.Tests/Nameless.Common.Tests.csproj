@@ -3,15 +3,18 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless</RootNamespace>
 		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="EntityFrameworkCore\Resources\EmbeddedSeed.json" />
+		<EmbeddedResource Include="IO\Embedded\Resources\**\*" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
 		<PackageReference Include="coverlet.collector">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

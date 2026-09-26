@@ -6,8 +6,10 @@ namespace Nameless.IO.System;
 /// <summary>
 ///     Default implementation of <see cref="IDirectory"/>.
 /// </summary>
-[DebuggerDisplay(value: "{Path,nq}")]
+[DebuggerDisplay(value: "{RelativePath,nq}")]
 public class Directory : IDirectory {
+    private string RelativePath => SysPath.GetRelativePath(_provider.Root, _directory.FullName);
+
     private static readonly StringComparison MatcherComparison = OperatingSystem.IsWindows()
         ? StringComparison.OrdinalIgnoreCase
         : StringComparison.Ordinal;
@@ -19,7 +21,7 @@ public class Directory : IDirectory {
     public string Name => _directory.Name;
 
     /// <inheritdoc />
-    public string Path => SysPath.GetRelativePath(_provider.Root, _directory.FullName);
+    public string Path => _directory.FullName;
 
     /// <inheritdoc />
     public bool Exists => _directory.Exists;
@@ -56,7 +58,7 @@ public class Directory : IDirectory {
 
         var matcher = new Matcher(MatcherComparison).AddInclude(glob);
         
-        foreach (var file in matcher.GetResultsInFullPath(_directory.FullName)) {
+        foreach (var file in matcher.GetResultsInFullPath(Path)) {
             yield return _provider.GetFile(
                 SysPath.GetRelativePath(_provider.Root, file)
             );

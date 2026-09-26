@@ -114,6 +114,21 @@ public class FileProviderTests : IDisposable {
         Assert.Equal(SysPath.Combine(_root, "file.txt"), actual);
     }
 
+    [Theory]
+    [InlineData(".")]
+    [InlineData("./")]
+    [InlineData("sub/..")]
+    public void GetFullPath_WithPathResolvingToRoot_ReturnsRootPath(string relativePath) {
+        // arrange
+        var sut = CreateSut();
+
+        // act
+        var actual = sut.GetFullPath(relativePath);
+
+        // assert
+        Assert.Equal(_root, SysPath.TrimEndingDirectorySeparator(actual));
+    }
+
     [Fact]
     public void GetFullPath_WithNullPath_ThrowsArgumentNullException() {
         // arrange
@@ -169,7 +184,7 @@ public class FileProviderTests : IDisposable {
     // --- GetFile ---
 
     [Fact]
-    public void GetFile_WithRelativePath_ReturnsFileWithRelativePathAndName() {
+    public void GetFile_WithRelativePath_ReturnsFileWithFullPathAndName() {
         // arrange
         var sut = CreateSut();
 
@@ -180,7 +195,7 @@ public class FileProviderTests : IDisposable {
         Assert.Multiple(
             () => Assert.IsType<File>(actual),
             () => Assert.Equal("test.txt", actual.Name),
-            () => Assert.Equal(SysPath.Combine("sub", "test.txt"), actual.Path)
+            () => Assert.Equal(SysPath.Combine(_root, "sub", "test.txt"), actual.Path)
         );
     }
 
@@ -230,7 +245,7 @@ public class FileProviderTests : IDisposable {
     // --- GetDirectory ---
 
     [Fact]
-    public void GetDirectory_WithRelativePath_ReturnsDirectoryWithRelativePathAndName() {
+    public void GetDirectory_WithRelativePath_ReturnsDirectoryWithFullPathAndName() {
         // arrange
         var sut = CreateSut();
 
@@ -241,7 +256,7 @@ public class FileProviderTests : IDisposable {
         Assert.Multiple(
             () => Assert.IsType<Directory>(actual),
             () => Assert.Equal("child", actual.Name),
-            () => Assert.Equal(SysPath.Combine("parent", "child"), actual.Path)
+            () => Assert.Equal(SysPath.Combine(_root, "parent", "child"), actual.Path)
         );
     }
 
@@ -256,6 +271,32 @@ public class FileProviderTests : IDisposable {
 
         // assert
         Assert.True(actual.Exists);
+    }
+
+    [Fact]
+    public void GetDirectory_WithDot_ReturnsRootDirectory() {
+        // arrange
+        SysFile.WriteAllText(SysPath.Combine(_root, "a.txt"), "a");
+        SysDirectory.CreateDirectory(SysPath.Combine(_root, "sub"));
+        SysFile.WriteAllText(SysPath.Combine(_root, "sub", "b.txt"), "b");
+        var sut = CreateSut();
+
+        // act
+        var actual = sut.GetDirectory(".");
+        var files = actual.GetFiles("**/*")
+                          .Select(file => file.Path)
+                          .Order()
+                          .ToArray();
+
+        // assert
+        Assert.Multiple(
+            () => Assert.True(actual.Exists),
+            () => Assert.Equal(_root, SysPath.TrimEndingDirectorySeparator(actual.Path)),
+            () => Assert.Equal([
+                SysPath.Combine(_root, "a.txt"),
+                SysPath.Combine(_root, "sub", "b.txt")
+            ], files)
+        );
     }
 
     [Fact]

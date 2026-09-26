@@ -48,7 +48,7 @@ public class DirectoryTests : IDisposable {
     }
 
     [Fact]
-    public void Path_ReturnsPathRelativeToProviderRoot() {
+    public void Path_ReturnsFullPath() {
         // arrange
         var sut = CreateSut("parent/child");
 
@@ -56,7 +56,7 @@ public class DirectoryTests : IDisposable {
         var actual = sut.Path;
 
         // assert
-        Assert.Equal(SysPath.Combine("parent", "child"), actual);
+        Assert.Equal(SysPath.Combine(_root, "parent", "child"), actual);
     }
 
     [Fact]
@@ -209,8 +209,8 @@ public class DirectoryTests : IDisposable {
 
         // assert
         Assert.Equal([
-            SysPath.Combine("with-files", "a.txt"),
-            SysPath.Combine("with-files", "b.txt")
+            SysPath.Combine(_root, "with-files", "a.txt"),
+            SysPath.Combine(_root, "with-files", "b.txt")
         ], actual);
     }
 
@@ -231,9 +231,9 @@ public class DirectoryTests : IDisposable {
 
         // assert
         Assert.Equal([
-            SysPath.Combine("recursive", "a.txt"),
-            SysPath.Combine("recursive", "sub", "b.txt"),
-            SysPath.Combine("recursive", "sub", "deeper", "c.txt")
+            SysPath.Combine(_root, "recursive", "a.txt"),
+            SysPath.Combine(_root, "recursive", "sub", "b.txt"),
+            SysPath.Combine(_root, "recursive", "sub", "deeper", "c.txt")
         ], actual);
     }
 
