@@ -1,9 +1,9 @@
 ﻿using Moq;
-using Nameless.IO.FileSystem;
+using Nameless.IO;
 
 namespace Nameless.Testing.Tools.Mockers.IO;
 
-public class FileSystemMocker : Mocker<IFileSystem> {
+public class FileSystemMocker : Mocker<IFileProvider> {
     public FileSystemMocker WithRoot(string returnValue) {
         MockInstance
             .Setup(mock => mock.Root)
@@ -16,6 +16,15 @@ public class FileSystemMocker : Mocker<IFileSystem> {
         MockInstance
             .Setup(mock => mock.GetDirectory(It.IsAny<string>()))
             .Returns(returnValue);
+
+        return this;
+    }
+
+    public FileSystemMocker WithGetDirectory<TException>(Func<TException> exceptionFactory)
+        where TException : Exception {
+        MockInstance
+            .Setup(mock => mock.GetDirectory(It.IsAny<string>()))
+            .Throws(exceptionFactory);
 
         return this;
     }

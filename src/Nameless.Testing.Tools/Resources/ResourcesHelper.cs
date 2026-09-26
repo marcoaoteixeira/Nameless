@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Nameless.Helpers;
+using Nameless.IO;
 
 namespace Nameless.Testing.Tools.Resources;
 
@@ -36,7 +36,7 @@ public static class ResourcesHelper {
         filePath = PathHelper.Normalize(filePath);
 
         if (!filePath.StartsWith(root)) {
-            throw new UnauthorizedAccessException("The specified path is outside the root directory.");
+            throw new UnauthorizedAccessException("The specified relativePath is outside the root directory.");
         }
 
         if (!File.Exists(filePath)) {

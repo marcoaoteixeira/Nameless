@@ -3,7 +3,13 @@ using Microsoft.Data.Sqlite;
 
 namespace Nameless.Testing.Tools.Helpers;
 
+/// <summary>
+///     SQLite helper.
+/// </summary>
 public static class SqliteHelper {
+    /// <summary>
+    ///     Gets the root path for all instances of SQLite database.
+    /// </summary>
     public static string RootPath { get; } = Path.Combine(typeof(SqliteHelper).Assembly.GetDirectoryPath(), "__sqlite__");
 
     static SqliteHelper() {

@@ -1,0 +1,35 @@
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace Nameless.ComponentModel;
+
+/// <summary>
+///     Defines a type converter that will convert a <see cref="string"/>
+///     value into an <see cref="Assembly"/>. Useful when need to convert
+///     a configuration value.
+/// </summary>
+public class AssemblyTypeConverter : TypeConverter {
+    /// <inheritdoc />
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) {
+        return sourceType == typeof(string);
+    }
+
+    /// <inheritdoc />
+    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType) {
+        if (value is not string assembly) {
+            return null;
+        }
+
+        try { return Assembly.Load(assembly); }
+        catch (Exception ex) {
+            var logger = context?.GetLogger<AssemblyTypeConverter>() ??
+                         NullLogger<AssemblyTypeConverter>.Instance;
+
+            CommonLog.Error(logger, ex.Message, ex, GetType().Tag);
+        }
+
+        return null;
+    }
+}

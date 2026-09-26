@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<StartupObject>Nameless.WinApp.App</StartupObject>
+		<ApplicationManifest>App.manifest</ApplicationManifest>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591;NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Nameless.Windows\Nameless.Windows.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="AppSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Serilog.Formatting.Compact" />
+	</ItemGroup>
+
+	<!-- Resources -->
+	<ItemGroup>
+		<Resource Include="Resources\Fornts\AlteHaasGroteskBold.ttf" />
+		<Resource Include="Resources\Images\application_64x64.png" />
+		<Resource Include="Resources\Images\loading_64x64.png" />
+		<Resource Include="Resources\Images\splash_screen_256x256.png" />
+		<Resource Include="Resources\Xaml\ValidationResourceDictionary.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Localization\Translation.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Translation.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Localization\Translation.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Translation.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+</Project>

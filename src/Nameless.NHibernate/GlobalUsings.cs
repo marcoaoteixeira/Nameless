@@ -1,1 +1,0 @@
-﻿global using NHConfiguration = NHibernate.Cfg.Configuration;

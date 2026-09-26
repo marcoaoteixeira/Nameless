@@ -1,0 +1,91 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="cancelled.emit()"></div>
+  <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+
+    <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+      <h2 id="modal-title" class="text-lg font-semibold text-gray-800">New Chore</h2>
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        aria-label="Close modal"
+        class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="p-6 space-y-4">
+      @if (error()) {
+        <div class="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg p-3" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <div>
+        <label for="chore-title" class="block text-sm font-medium text-gray-700 mb-1">
+          Title <span class="text-red-500" aria-hidden="true">*</span>
+        </label>
+        <input
+          id="chore-title"
+          type="text"
+          formControlName="title"
+          placeholder="What needs to be done?"
+          autocomplete="off"
+          [class]="'w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-sky/50 focus:border-brand-sky '
+            + (form.get('title')?.invalid && form.get('title')?.touched ? 'border-red-400' : 'border-gray-200')">
+        @if (form.get('title')?.invalid && form.get('title')?.touched) {
+          <p class="mt-1 text-xs text-red-500" role="alert">Title is required</p>
+        }
+      </div>
+
+      <div>
+        <label for="chore-description" class="block text-sm font-medium text-gray-700 mb-1">
+          Description <span class="text-red-500" aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="chore-description"
+          formControlName="description"
+          rows="3"
+          placeholder="Describe the chore..."
+          [class]="'w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-sky/50 focus:border-brand-sky resize-none '
+            + (form.get('description')?.invalid && form.get('description')?.touched ? 'border-red-400' : 'border-gray-200')">
+        </textarea>
+        @if (form.get('description')?.invalid && form.get('description')?.touched) {
+          <p class="mt-1 text-xs text-red-500" role="alert">Description is required</p>
+        }
+      </div>
+
+      <div>
+        <label for="chore-due-date" class="block text-sm font-medium text-gray-700 mb-1">
+          Due Date <span class="text-gray-400 font-normal">(optional)</span>
+        </label>
+        <input
+          id="chore-due-date"
+          type="datetime-local"
+          formControlName="dueDate"
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-sky/50 focus:border-brand-sky">
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="cancelled.emit()"
+          class="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="form.invalid || submitting()"
+          class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand-blue text-white hover:bg-brand-sky transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (submitting()) {
+            Creating…
+          } @else {
+            Create Chore
+          }
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

@@ -1,4 +1,5 @@
-using Nameless.Infrastructure;
+using Nameless.Application;
+using Nameless.IO;
 
 namespace Nameless.Testing.Tools.Mockers.Infrastructure;
 
@@ -18,14 +19,14 @@ public class ApplicationContextMocker : Mocker<IApplicationContext> {
     }
 
     public ApplicationContextMocker WithBaseDirectoryPath(string returnValue) {
-        MockInstance.Setup(mock => mock.BaseDirectoryPath)
+        MockInstance.Setup(mock => mock.ApplicationDataDirectory)
                     .Returns(returnValue);
 
         return this;
     }
 
-    public ApplicationContextMocker WithDataDirectoryPath(string returnValue) {
-        MockInstance.Setup(mock => mock.DataDirectoryPath)
+    public ApplicationContextMocker WithFileSystemProvider(IFileProvider returnValue) {
+        MockInstance.Setup(mock => mock.ApplicationDataFileProvider)
                     .Returns(returnValue);
 
         return this;

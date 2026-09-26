@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Web</RootNamespace>
+		<Title>Nameless Web Library</Title>
+		<Description>Nameless Web Library Description</Description>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<InterceptorsNamespaces>
+			$(InterceptorsNamespaces);Microsoft.AspNetCore.OpenApi.Generated
+		</InterceptorsNamespaces>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+		<PackageReference Include="Scalar.AspNetCore.Microsoft" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Nameless.Common\Nameless.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<!-- Bundle generator DLL into build/generators/ at pack time -->
+	<!-- Do not put it inside analyzers/dotnet/cs so NuGet does not autoload it. -->
+	<!-- The .targets file controls loading conditionally via UseAutoEndpoints. -->
+	<ItemGroup>
+		<None Include="..\..\generators\Nameless.Generators\bin\$(Configuration)\netstandard2.0\Nameless.Generators.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
+		<None Include="Nameless.Web.targets" Pack="true" PackagePath="build/" />
+		<None Include="Nameless.Web.targets" Pack="true" PackagePath="buildTransitive/" />
+	</ItemGroup>
+
+</Project>

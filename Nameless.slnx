@@ -1,0 +1,57 @@
+<Solution>
+  <Folder Name="/.solution/">
+    <File Path=".claudeignore" />
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".runsettings" />
+    <File Path="CLAUDE.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/" />
+  <Folder Name="/.solution/.claude/agents/">
+    <File Path=".claude/agents/csharp.agent.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/prompts/">
+    <File Path=".claude/prompts/create-readme.prompt.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/skills/" />
+  <Folder Name="/.solution/.claude/skills/code-reviewer/">
+    <File Path=".claude/skills/code-reviewer/SKILL.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/skills/xunit/">
+    <File Path=".claude/skills/xunit/SKILL.md" />
+  </Folder>
+  <Folder Name="/generators/">
+    <Project Path="generators/Nameless.Generators.Tests/Nameless.Generators.Tests.csproj" Id="8589f193-a3a7-4d01-882a-ec22411ef4af" />
+    <Project Path="generators/Nameless.Generators/Nameless.Generators.csproj" Id="b38151b0-8478-4fee-907f-9183fbd9c169" />
+  </Folder>
+  <Folder Name="/samples/" />
+  <Folder Name="/samples/Microservices/">
+    <Project Path="samples/Microservices/Nameless.Microservices.Api/Nameless.Microservices.Api.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.AppHost/Nameless.Microservices.AppHost.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Bff/Nameless.Microservices.Bff.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Common/Nameless.Microservices.Common.csproj" />
+    <Project Path="samples/Microservices/Nameless.Microservices.Worker/Nameless.Microservices.Worker.csproj" />
+  </Folder>
+  <Folder Name="/samples/WinApp/">
+    <Project Path="samples/WinApp/Nameless.WinApp/Nameless.WinApp.csproj" />
+    <Project Path="samples/WinApp/Nameless.WinApp.Tests/Nameless.WinApp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Nameless.Common/Nameless.Common.csproj" />
+    <Project Path="src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" />
+    <Project Path="src/Nameless.Web/Nameless.Web.csproj" />
+    <Project Path="src/Nameless.Windows/Nameless.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Nameless.Common.Tests/Nameless.Common.Tests.csproj" />
+    <Project Path="tests/Nameless.Testing.Tools.Tests/Nameless.Testing.Tools.Tests.csproj" />
+    <Project Path="tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" />
+    <Project Path="tests/Nameless.Windows.Tests/Nameless.Windows.Tests.csproj" Id="455b3641-dd7b-40c2-b44d-deae0823e35f" />
+  </Folder>
+</Solution>
