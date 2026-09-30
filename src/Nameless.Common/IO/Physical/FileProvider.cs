@@ -1,4 +1,4 @@
-﻿namespace Nameless.IO.System;
+﻿namespace Nameless.IO.Physical;
 
 /// <summary>
 ///     Default implementation of <see cref="IFileProvider"/>.
@@ -25,76 +25,73 @@ public class FileProvider : IFileProvider {
         Throws.When.NullOrWhiteSpace(root);
         Throws.When.PathIsNotRooted(root);
 
-        Root = PathUtils.EnsureTrailingSlash(
-            SysPath.GetFullPath(root)
+        Root = PathHelper.RemoveTrailingSlash(
+            SysPath.GetFullPath(
+                PathHelper.Normalize(root)
+            )
         );
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException">
-    ///     if <paramref name="relativePath"/> is empty, white space,
-    ///     path is absolute, has invalid path chars or is absolute.
+    ///     if <paramref name="relativePath"/> is absolute or
+    ///     has one or more invalid path chars.
     /// </exception>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="relativePath"/> is <see langword="null"/>.
+    ///     If <paramref name="relativePath"/> is <see langword="null"/>.
     /// </exception>
-    /// <exception cref="UnauthorizedAccessException">
-    ///     if <paramref name="relativePath"/> navigates above
-    ///     file provider root path or not underneath.
+    /// <exception cref="RelativePathException">
+    ///     If unable to resolve the relative path.
     /// </exception>
     public IDirectory GetDirectory(string relativePath) {
-        var directory = new DirectoryInfo(
-            path: GetFullPath(relativePath)
-        );
+        var path = GetFullPath(relativePath);
+        var directory = new DirectoryInfo(path);
 
         return new Directory(directory, this);
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException">
-    ///     if <paramref name="relativePath"/> is empty, white space,
-    ///     path is absolute, has invalid path chars or is absolute.
+    ///     if <paramref name="relativePath"/> is absolute or
+    ///     has one or more invalid path chars.
     /// </exception>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="relativePath"/> is <see langword="null"/>.
+    ///     If <paramref name="relativePath"/> is <see langword="null"/>.
     /// </exception>
-    /// <exception cref="UnauthorizedAccessException">
-    ///     if <paramref name="relativePath"/> navigates above
-    ///     file provider root path or not underneath.
+    /// <exception cref="RelativePathException">
+    ///     If unable to resolve the relative path.
     /// </exception>
     public IFile GetFile(string relativePath) {
-        var file = new FileInfo(
-            fileName: GetFullPath(relativePath)
-        );
+        var path = GetFullPath(relativePath);
+        var file = new FileInfo(path);
 
         return new File(file, this);
     }
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException">
-    ///     if <paramref name="relativePath"/> is empty, white space,
-    ///     path is absolute, has invalid path chars or is absolute.
+    ///     if <paramref name="relativePath"/> is absolute or
+    ///     has one or more invalid path chars.
     /// </exception>
     /// <exception cref="ArgumentNullException">
-    ///     if <paramref name="relativePath"/> is <see langword="null"/>.
+    ///     If <paramref name="relativePath"/> is <see langword="null"/>.
     /// </exception>
-    /// <exception cref="UnauthorizedAccessException">
-    ///     if <paramref name="relativePath"/> navigates above
-    ///     file provider root path or not underneath.
+    /// <exception cref="RelativePathException">
+    ///     If unable to resolve the relative path.
     /// </exception>
     public string GetFullPath(string relativePath) {
-        Throws.When.NullOrWhiteSpace(relativePath);
-        Throws.When.HasInvalidPathChars(relativePath);
+        Throws.When.Null(relativePath);
         Throws.When.PathIsRooted(relativePath);
+        Throws.When.PathHasInvalidChars(relativePath);
         Throws.When.PathNavigatesAboveRoot(relativePath);
-
-        var result = SysPath.GetFullPath(
+        
+        var path = SysPath.GetFullPath(
             SysPath.Combine(Root, relativePath)
         );
 
-        // a path resolving to the root itself has no trailing separator
-        Throws.When.PathNotUnderneathRoot(PathUtils.EnsureTrailingSlash(result), Root);
-
-        return result;
+        // Defense in depth: Throws.When.PathNavigatesAboveRoot already
+        // rejects traversal segments, but the final path must never
+        // leave the root.
+        return Throws.When.PathUnderneathRoot(Root, relativePath, path);
     }
 }

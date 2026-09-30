@@ -43,12 +43,9 @@ public class PathHelperTests {
     }
 
     [Fact]
-    public void Sanitize_WithNull_ReturnsNull() {
-        // act
-        var result = PathHelper.Sanitize(null!);
-
-        // assert
-        Assert.Null(result);
+    public void Sanitize_WithNull_ThrowsArgumentNullException() {
+        // act && assert
+        Assert.Throws<ArgumentNullException>(() => PathHelper.Sanitize(null!));
     }
 
     [Fact]
@@ -85,5 +82,111 @@ public class PathHelperTests {
         Assert.Throws<ArgumentException>(
             () => PathHelper.Sanitize("somepath", replacement: invalidReplacement)
         );
+    }
+
+    // ─── RemoveTrailingSlash ─────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("a/b/", "a/b")]
+    [InlineData("a/b//", "a/b")]
+    [InlineData("a/b", "a/b")]
+    public void RemoveTrailingSlash_WithTrailingSeparators_RemovesThem(string path, string expected) {
+        // act
+        var result = PathHelper.RemoveTrailingSlash(path);
+
+        // assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void RemoveTrailingSlash_WithLeadingSeparator_KeepsIt() {
+        // act
+        var result = PathHelper.RemoveTrailingSlash("/var/data/");
+
+        // assert
+        Assert.Equal("/var/data", result);
+    }
+
+    [Theory]
+    [InlineData(@"a\b\\", @"a\b")]
+    [InlineData(@"\\server\share\", @"\\server\share")]
+    public void RemoveTrailingSlash_WithBackslashes_OnWindows_RemovesOnlyTrailingSeparators(string path, string expected) {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "Backslash is a separator only on Windows.");
+
+        // act
+        var result = PathHelper.RemoveTrailingSlash(path);
+
+        // assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void RemoveTrailingSlash_WithVolumeRootOnly_ReturnsVolumeRoot() {
+        // arrange
+        var volumeRoot = SysPath.GetPathRoot(SysPath.GetTempPath())!;
+
+        // act
+        var result = PathHelper.RemoveTrailingSlash(volumeRoot);
+
+        // assert
+        Assert.Equal(volumeRoot, result);
+    }
+
+    [Fact]
+    public void RemoveTrailingSlash_WithNull_ThrowsArgumentNullException() {
+        // act & assert
+        Assert.Throws<ArgumentNullException>(() => PathHelper.RemoveTrailingSlash(null!));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void RemoveTrailingSlash_WithEmptyOrWhiteSpace_ThrowsArgumentException(string path) {
+        // act & assert
+        Assert.Throws<ArgumentException>(() => PathHelper.RemoveTrailingSlash(path));
+    }
+
+    // ─── ResolveRelativePath ─────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("..")]
+    [InlineData("../file.txt")]
+    [InlineData("sub/../../file.txt")]
+    public void ResolveRelativePath_WithForwardSlashNavigatingAboveRoot_ThrowsRelativePathException(string relativePath) {
+        // act & assert
+        Assert.Throws<RelativePathException>(() => PathHelper.ResolveRelativePath(relativePath));
+    }
+
+    [Theory]
+    [InlineData(@"..\file.txt")]
+    [InlineData(@"sub\..\../file.txt")]
+    public void ResolveRelativePath_WithMixedSeparatorsNavigatingAboveRoot_OnWindows_ThrowsRelativePathException(string relativePath) {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "Backslash is a separator only on Windows.");
+
+        // act & assert
+        Assert.Throws<RelativePathException>(() => PathHelper.ResolveRelativePath(relativePath));
+    }
+
+    [Fact]
+    public void ResolveRelativePath_WithForwardSlashes_ReturnsPathJoinedByDirectorySeparator() {
+        // arrange
+        var sep = SysPath.DirectorySeparatorChar;
+
+        // act
+        var result = PathHelper.ResolveRelativePath("a/b/../c/./d");
+
+        // assert
+        Assert.Equal($"a{sep}c{sep}d", result);
+    }
+
+    [Fact]
+    public void ResolveRelativePath_WithMixedSeparators_OnWindows_ReturnsPathJoinedByDirectorySeparator() {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "Backslash is a separator only on Windows.");
+
+        // act
+        var result = PathHelper.ResolveRelativePath(@"a/b\..\c/./d");
+
+        // assert
+        Assert.Equal(@"a\c\d", result);
     }
 }

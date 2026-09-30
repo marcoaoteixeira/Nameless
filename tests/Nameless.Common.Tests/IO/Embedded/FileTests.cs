@@ -3,12 +3,12 @@ using System.Reflection;
 namespace Nameless.IO.Embedded;
 
 [UnitTest]
-public class EmbeddedFileTests {
+public class FileTests {
     private const string Resources = "IO/Embedded/Resources";
 
-    private static readonly Assembly TestAssembly = typeof(EmbeddedFileTests).Assembly;
+    private static readonly Assembly TestAssembly = typeof(FileTests).Assembly;
 
-    private readonly EmbeddedFileProvider _provider = new(TestAssembly);
+    private readonly FileProvider _provider = new(TestAssembly);
 
     private static string ReadAll(Stream stream) {
         using var reader = new StreamReader(stream);
@@ -39,7 +39,7 @@ public class EmbeddedFileTests {
         var actual = sut.Path;
 
         // assert
-        Assert.Equal($"{_provider.Root}{Resources}/folder-with-dash/nested.txt", actual);
+        Assert.Equal($"{_provider.Root}/{Resources}/folder-with-dash/nested.txt", actual);
     }
 
     [Fact]
@@ -93,11 +93,11 @@ public class EmbeddedFileTests {
     [Fact]
     public void LastWriteTime_ReturnsAssemblyCreationTimeInUtc() {
         // arrange
-        var expected = SysFile.GetCreationTimeUtc(TestAssembly.Location);
+        var expected = SysFile.GetLastWriteTimeUtc(TestAssembly.Location);
         var sut = _provider.GetFile($"{Resources}/root.txt");
 
         // act
-        var actual = sut.LastWriteTime;
+        var actual = sut.LastWriteTime.UtcDateTime;
 
         // assert
         Assert.Multiple(

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Nameless.IO.Monitoring;
 
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 /// <summary>
 ///     Default implementation of <see cref="IFile"/>.
@@ -23,7 +23,10 @@ public class File : IFile {
     public bool Exists => _file.Exists;
 
     /// <inheritdoc />
-    public DateTime LastWriteTime => _file.LastWriteTimeUtc;
+    public long Length => _file.Length;
+
+    /// <inheritdoc />
+    public DateTimeOffset LastWriteTime => _file.LastWriteTimeUtc;
 
     /// <summary>
     ///     Initializes a new instance of
@@ -61,10 +64,12 @@ public class File : IFile {
 
     /// <inheritdoc />
     public IFile Copy(string destinationRelativePath, bool overwrite) {
-        var copy = _provider.GetFile(destinationRelativePath);
+        var path = _provider.GetFullPath(
+            destinationRelativePath
+        );
 
-        _ = _file.CopyTo(copy.Path, overwrite);
-
-        return copy;
+        var file = _file.CopyTo(path, overwrite);
+        
+        return new File(file, _provider);
     }
 }

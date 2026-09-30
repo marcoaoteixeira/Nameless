@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Nameless.Configuration;
 using Nameless.Testing.Tools.Helpers;
 using Npgsql;
 using Testcontainers.RabbitMq;
@@ -27,8 +28,7 @@ public class RabbitMQServerCollectionFixture : ICollectionFixture<RabbitMQServer
 ///     for testing purposes, including connection management and lifecycle
 ///     handling.
 /// </summary>
-public class RabbitMQServer : IAsyncLifetime
-{
+public class RabbitMQServer : IAsyncLifetime {
     private readonly RabbitMQServerOptions _options = ConfigurationHelper
         .CreateConfiguration()
         .GetSection<RabbitMQServerOptions>()
@@ -53,17 +53,14 @@ public class RabbitMQServer : IAsyncLifetime
     /// <exception cref="InvalidOperationException">
     ///     If the container is not running.
     /// </exception>
-    public DbConnection GetDbConnection()
-    {
+    public DbConnection GetDbConnection() {
         BlockAccessAfterDispose();
 
-        if (_container is null || _container.State != TestcontainersStates.Running)
-        {
+        if (_container is null || _container.State != TestcontainersStates.Running) {
             throw new InvalidOperationException("RabbitMQ container is not available.");
         }
 
-        if (_connection is not null)
-        {
+        if (_connection is not null) {
             return _connection;
         }
 
@@ -73,8 +70,7 @@ public class RabbitMQServer : IAsyncLifetime
     }
 
     /// <inheritdoc />
-    public async ValueTask InitializeAsync()
-    {
+    public async ValueTask InitializeAsync() {
         BlockAccessAfterDispose();
 
         var imageUrl = string.IsNullOrWhiteSpace(_options.RegistryUrl)
@@ -83,8 +79,7 @@ public class RabbitMQServer : IAsyncLifetime
 
         var builder = new RabbitMqBuilder(imageUrl).WithEnvironment(_options.Environment);
 
-        if (_options.EnableSecurity)
-        {
+        if (_options.EnableSecurity) {
             builder
                 .WithUsername(_options.Username)
                 .WithPassword(_options.Password);
@@ -102,8 +97,7 @@ public class RabbitMQServer : IAsyncLifetime
     }
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync()
-    {
+    public async ValueTask DisposeAsync() {
         if (_disposed) { return; }
 
         await DisposeAsyncCore().ConfigureAwait(continueOnCapturedContext: false);
@@ -112,20 +106,16 @@ public class RabbitMQServer : IAsyncLifetime
         _disposed = true;
     }
 
-    private void BlockAccessAfterDispose()
-    {
+    private void BlockAccessAfterDispose() {
         ObjectDisposedException.ThrowIf(_disposed, this);
     }
 
-    private async ValueTask DisposeAsyncCore()
-    {
-        if (_connection is not null)
-        {
+    private async ValueTask DisposeAsyncCore() {
+        if (_connection is not null) {
             await _connection.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
         }
 
-        if (_container is not null)
-        {
+        if (_container is not null) {
             await _container.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
         }
 

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Microsoft.Extensions.FileProviders;
 using Nameless.IO.Monitoring;
 
 namespace Nameless.IO.Embedded;
@@ -9,35 +8,32 @@ namespace Nameless.IO.Embedded;
 ///     embedded as resource into an assembly.
 /// </summary>
 [DebuggerDisplay(value: "{Path,nq}")]
-public class EmbeddedFile : IFile {
-    private readonly string _relativePath;
-    private readonly EmbeddedFileProvider _provider;
-
-    private IFileInfo FileInfo => _provider.Manifest.GetFileInfo(_relativePath);
+public class File : IFile {
+    private readonly ManifestFileInfoWrapper _file;
 
     /// <inheritdoc />
-    public string Name => EmbeddedPathUtils.GetName(_relativePath);
+    public string Name => _file.Name;
 
     /// <inheritdoc />
-    /// <remarks>
-    ///     Format: <c>embedded://{AssemblyName}/{RelativePath}</c>.
-    /// </remarks>
-    public string Path => $"{_provider.Root}{_relativePath}";
+    public string Path => _file.PhysicalPath ?? string.Empty;
 
     /// <inheritdoc />
-    public bool Exists => FileInfo is { Exists: true, IsDirectory: false };
+    public bool Exists => _file.Exists;
 
     /// <inheritdoc />
-    /// <remarks>
-    ///     Returns the creation time of the assembly file, or
-    ///     <see cref="DateTime.MinValue"/> when the assembly has
-    ///     no location on disk.
-    /// </remarks>
-    public DateTime LastWriteTime => _provider.LastWriteTime;
+    public long Length => _file.Length;
 
-    internal EmbeddedFile(string relativePath, EmbeddedFileProvider provider) {
-        _relativePath = relativePath;
-        _provider = provider;
+    /// <inheritdoc />
+    public DateTimeOffset LastWriteTime => _file.LastModified;
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="File"/> class.
+    /// </summary>
+    /// <param name="file">
+    ///     The inner embedded resource file info.
+    /// </param>
+    internal File(ManifestFileInfoWrapper file) {
+        _file = file;
     }
 
     /// <inheritdoc />
@@ -50,13 +46,7 @@ public class EmbeddedFile : IFile {
     ///     if the file is not embedded into the assembly.
     /// </exception>
     public Stream Open(FileMode mode, FileAccess access, FileShare share) {
-        var fileInfo = FileInfo;
-
-        if (fileInfo is not { Exists: true, IsDirectory: false }) {
-            throw new FileNotFoundException("Embedded file not found.", Path);
-        }
-
-        return fileInfo.CreateReadStream();
+        return _file.CreateReadStream();
     }
 
     /// <inheritdoc />

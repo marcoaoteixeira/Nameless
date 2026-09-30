@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Nameless.IO.Embedded;
@@ -8,29 +9,21 @@ namespace Nameless.IO.Embedded;
 ///     of files embedded as resources into an assembly.
 /// </summary>
 [DebuggerDisplay(value: "{Path,nq}")]
-public class EmbeddedDirectory : IDirectory {
-    private readonly string _relativePath;
-    private readonly EmbeddedFileProvider _provider;
+public class Directory : IDirectory {
+    private readonly ManifestDirectoryInfoWrapper _directory;
+    private readonly FileProvider _provider;
 
     /// <inheritdoc />
-    /// <remarks>
-    ///     For the root directory, returns the assembly name.
-    /// </remarks>
-    public string Name => _relativePath.Length == 0
-        ? _provider.AssemblyName
-        : EmbeddedPathUtils.GetName(_relativePath);
+    public string Name => _directory.Name;
 
     /// <inheritdoc />
-    /// <remarks>
-    ///     Format: <c>embedded://{AssemblyName}/{RelativePath}</c>.
-    /// </remarks>
-    public string Path => $"{_provider.Root}{_relativePath}";
+    public string Path => _directory.PhysicalPath;
 
     /// <inheritdoc />
-    public bool Exists => _provider.Manifest.GetDirectoryContents(ToManifestPath(_relativePath)).Exists;
+    public bool Exists => _directory.Exists;
 
-    internal EmbeddedDirectory(string relativePath, EmbeddedFileProvider provider) {
-        _relativePath = relativePath;
+    internal Directory(ManifestDirectoryInfoWrapper directory, FileProvider provider) {
+        _directory = directory;
         _provider = provider;
     }
 
@@ -56,14 +49,16 @@ public class EmbeddedDirectory : IDirectory {
     public IEnumerable<IFile> GetFiles(string glob) {
         Throws.When.NullOrWhiteSpace(glob);
 
+        var recursive = glob.Contains("**") ||
+                        glob.Contains('/') ||
+                        glob.Contains('\\');
+
         var matcher = new Matcher(StringComparison.OrdinalIgnoreCase).AddInclude(glob);
-        var result = matcher.Match(EnumerateFiles(_relativePath, prefix: string.Empty));
+        var entries = EnumerateFiles(string.Empty, _directory, recursive);
+        var result = matcher.Match(entries);
 
         foreach (var match in result.Files) {
-            yield return new EmbeddedFile(
-                EmbeddedPathUtils.Combine(_relativePath, match.Path),
-                _provider
-            );
+            yield return _provider.GetFile($"{_directory.RelativePath}/{match.Path}");
         }
     }
 
@@ -77,26 +72,20 @@ public class EmbeddedDirectory : IDirectory {
 
     // Returns the paths of all files underneath the directory,
     // relative to this directory.
-    private IEnumerable<string> EnumerateFiles(string directory, string prefix) {
-        foreach (var entry in _provider.Manifest.GetDirectoryContents(ToManifestPath(directory))) {
-            var path = EmbeddedPathUtils.Combine(prefix, entry.Name);
+    private static IEnumerable<string> EnumerateFiles(string relativePath, IDirectoryContents root, bool recursive) {
+        foreach (var entry in root) {
+            var entryRelativePath = relativePath.Length > 0
+                ? $"{relativePath.TrimEnd('/')}/{entry.Name}"
+                : entry.Name;
 
-            if (!entry.IsDirectory) {
-                yield return path;
+            if (entry.IsDirectory) {
+                if (!recursive) { continue; }
 
-                continue;
+                foreach (var subEntryRelativePath in  EnumerateFiles(entryRelativePath, (IDirectoryContents)entry, recursive)) {
+                    yield return subEntryRelativePath;
+                }
             }
-
-            foreach (var file in EnumerateFiles(EmbeddedPathUtils.Combine(directory, entry.Name), path)) {
-                yield return file;
-            }
+            else { yield return entryRelativePath; }
         }
-    }
-
-    // the manifest does not resolve an empty path as its root
-    private static string ToManifestPath(string relativePath) {
-        return relativePath.Length == 0
-            ? EmbeddedPathUtils.SEPARATOR.ToString()
-            : relativePath;
     }
 }

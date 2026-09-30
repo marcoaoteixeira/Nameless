@@ -1,4 +1,4 @@
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 [IntegrationTest]
 public class FileProviderTests : IDisposable {
@@ -14,9 +14,7 @@ public class FileProviderTests : IDisposable {
             SysDirectory.Delete(_root, recursive: true);
         }
     }
-
-    private string RootWithSeparator => $"{_root}{SysPath.DirectorySeparatorChar}";
-
+    
     private FileProvider CreateSut() {
         return new FileProvider(_root);
     }
@@ -49,16 +47,52 @@ public class FileProviderTests : IDisposable {
         var sut = new FileProvider(_root);
 
         // assert
-        Assert.Equal(RootWithSeparator, sut.Root);
+        Assert.Equal(_root, sut.Root);
     }
 
     [Fact]
-    public void Constructor_WithRootWithTrailingSeparator_DoesNotDuplicateSeparator() {
+    public void Constructor_WithRootWithTrailingSeparator_RemovesTrailingSeparator() {
         // act
-        var sut = new FileProvider(RootWithSeparator);
+        var sut = new FileProvider($"{_root}{SysPath.DirectorySeparatorChar}");
 
         // assert
-        Assert.Equal(RootWithSeparator, sut.Root);
+        Assert.Equal(_root, sut.Root);
+    }
+
+    [Fact]
+    public void Constructor_WithVolumeRoot_KeepsVolumeRoot() {
+        // arrange
+        var volumeRoot = SysPath.GetPathRoot(_root)!;
+
+        // act
+        var sut = new FileProvider(volumeRoot);
+
+        // assert
+        Assert.Equal(volumeRoot, sut.Root);
+    }
+
+    [Fact]
+    public void Constructor_WithUncRoot_OnWindows_KeepsLeadingSeparators() {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "UNC paths exist only on Windows.");
+
+        // act
+        var sut = new FileProvider(@"\\server\share\");
+
+        // assert
+        Assert.Equal(@"\\server\share", sut.Root);
+    }
+
+    [Fact]
+    public void GetFullPath_WithVolumeRoot_ReturnsPathUnderVolumeRoot() {
+        // arrange
+        var volumeRoot = SysPath.GetPathRoot(_root)!;
+        var sut = new FileProvider(volumeRoot);
+
+        // act
+        var actual = sut.GetFullPath("file.txt");
+
+        // assert
+        Assert.Equal(SysPath.Combine(volumeRoot, "file.txt"), actual);
     }
 
     [Fact]
@@ -70,7 +104,7 @@ public class FileProviderTests : IDisposable {
         var sut = new FileProvider(root);
 
         // assert
-        Assert.Equal(RootWithSeparator, sut.Root);
+        Assert.Equal(_root, sut.Root);
     }
 
     // --- GetFullPath ---
@@ -141,12 +175,14 @@ public class FileProviderTests : IDisposable {
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public void GetFullPath_WithEmptyOrWhiteSpacePath_ThrowsArgumentException(string relativePath) {
+    public void GetFullPath_WithEmptyOrWhiteSpacePath_DoesNotThrows(string relativePath) {
         // arrange
         var sut = CreateSut();
 
         // act & assert
-        Assert.Throws<ArgumentException>(() => sut.GetFullPath(relativePath));
+        var ex = Record.Exception(() => sut.GetFullPath(relativePath));
+
+        Assert.Null(ex);
     }
 
     [Fact]
@@ -169,16 +205,17 @@ public class FileProviderTests : IDisposable {
     }
 
     [Theory]
-    [InlineData("../file.txt")]
-    [InlineData("..")]
-    [InlineData("sub/../../file.txt")]
-    [InlineData("./../file.txt")]
-    public void GetFullPath_WithPathNavigatingAboveRoot_ThrowsUnauthorizedAccessException(string relativePath) {
+    [ClassData<OutsideRootRelativePathTheoryData>]
+    public void GetFullPath_WithPathNavigatingAboveRoot_ThrowsRelativePathException(string relativePath) {
         // arrange
         var sut = CreateSut();
+        var path = SysPath.Combine(relativePath);
 
         // act & assert
-        Assert.Throws<UnauthorizedAccessException>(() => sut.GetFullPath(relativePath));
+        Assert.Throws<RelativePathException>(
+            () => sut.GetFullPath(path),
+            ex => ex.Message.Contains("escapes root") ? null : ex.Message
+        );
     }
 
     // --- GetFile ---
@@ -227,10 +264,14 @@ public class FileProviderTests : IDisposable {
     [Fact]
     public void GetFile_WithPathNavigatingAboveRoot_ThrowsUnauthorizedAccessException() {
         // arrange
+        var path = SysPath.Combine("..", "outside.txt");
         var sut = CreateSut();
 
         // act & assert
-        Assert.Throws<UnauthorizedAccessException>(() => sut.GetFile("../outside.txt"));
+        Assert.Throws<RelativePathException>(
+            () => sut.GetFile(path),
+            ex => ex.Message.Contains("escapes root") ? null : ex.Message
+        );
     }
 
     [Fact]
@@ -300,12 +341,15 @@ public class FileProviderTests : IDisposable {
     }
 
     [Fact]
-    public void GetDirectory_WithPathNavigatingAboveRoot_ThrowsUnauthorizedAccessException() {
+    public void GetDirectory_WithPathNavigatingAboveRoot_ThrowsRelativePathException() {
         // arrange
         var sut = CreateSut();
 
         // act & assert
-        Assert.Throws<UnauthorizedAccessException>(() => sut.GetDirectory("../outside"));
+        Assert.Throws<RelativePathException>(
+            () => sut.GetDirectory(SysPath.Combine("..", "outside")),
+            ex => ex.Message.Contains("escapes root") ? null : ex.Message
+        );
     }
 
     [Fact]
@@ -315,5 +359,21 @@ public class FileProviderTests : IDisposable {
 
         // act & assert
         Assert.Throws<ArgumentNullException>(() => sut.GetDirectory(null!));
+    }
+}
+
+public sealed class OutsideRootRelativePathTheoryData : TheoryData<string> {
+    public OutsideRootRelativePathTheoryData() {
+        Add(SysPath.Combine("..", "file.txt"));
+        Add("..");
+        Add(SysPath.Combine("sub", "..", "..", "file.txt"));
+        Add(SysPath.Combine(".", "..", "file.txt"));
+        Add("../file.txt");
+        Add("../../file.txt");
+        Add("sub/../../file.txt");
+
+        if (OperatingSystem.IsWindows()) {
+            Add(@"sub\..\../file.txt");
+        }
     }
 }

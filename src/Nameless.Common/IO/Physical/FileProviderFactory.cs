@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 /// <summary>
 ///     Factory of <see cref="FileProvider" />
