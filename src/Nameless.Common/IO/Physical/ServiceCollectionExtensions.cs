@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 /// <summary>
 ///     <see cref="IServiceCollection"/> extension methods for File Explorer Provider.

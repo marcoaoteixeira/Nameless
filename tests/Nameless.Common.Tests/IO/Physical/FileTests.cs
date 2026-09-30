@@ -1,4 +1,4 @@
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 [IntegrationTest]
 public class FileTests : IDisposable {
@@ -98,7 +98,7 @@ public class FileTests : IDisposable {
         var sut = CreateSut("last-write.txt");
 
         // act
-        var actual = sut.LastWriteTime;
+        var actual = sut.LastWriteTime.UtcDateTime;
 
         // assert
         Assert.Multiple(
@@ -252,12 +252,15 @@ public class FileTests : IDisposable {
     }
 
     [Fact]
-    public void Copy_ToDestinationAboveRoot_ThrowsUnauthorizedAccessException() {
+    public void Copy_ToDestinationAboveRoot_ThrowsRelativePathException() {
         // arrange
         CreateFileOnDisk("escape-source.txt");
         var sut = CreateSut("escape-source.txt");
 
         // act & assert
-        Assert.Throws<UnauthorizedAccessException>(() => sut.Copy("../escaped.txt", overwrite: false));
+        Assert.Throws<RelativePathException>(
+            () => sut.Copy(SysPath.Combine("..", "escape.txt"), overwrite: false),
+            ex => ex.Message.Contains("escapes root") ? null : ex.Message
+        );
     }
 }

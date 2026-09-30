@@ -22,9 +22,14 @@ public interface IFile {
     bool Exists { get; }
 
     /// <summary>
+    ///     Gets the file length.
+    /// </summary>
+    long Length { get; }
+
+    /// <summary>
     ///     Gets the last write time of the file in UTC.
     /// </summary>
-    DateTime LastWriteTime { get; }
+    DateTimeOffset LastWriteTime { get; }
 
     /// <summary>
     ///     Opens the file with the specified mode, access, and

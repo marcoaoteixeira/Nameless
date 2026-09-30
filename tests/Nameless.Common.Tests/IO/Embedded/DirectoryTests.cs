@@ -3,18 +3,19 @@ using System.Reflection;
 namespace Nameless.IO.Embedded;
 
 [UnitTest]
-public class EmbeddedDirectoryTests {
+public class DirectoryTests {
     private const string Resources = "IO/Embedded/Resources";
 
-    private static readonly Assembly TestAssembly = typeof(EmbeddedDirectoryTests).Assembly;
+    private static readonly Assembly TestAssembly = typeof(DirectoryTests).Assembly;
 
-    private readonly EmbeddedFileProvider _provider = new(TestAssembly);
+    private readonly FileProvider _provider = new(TestAssembly);
 
     private string[] GetFilePaths(IDirectory directory, string glob) {
-        return directory.GetFiles(glob)
-                        .Select(file => file.Path[_provider.Root.Length..])
+        return [
+            .. directory.GetFiles(glob)
+                        .Select(file => file.Path[(_provider.Root.Length + 1)..])
                         .Order(StringComparer.Ordinal)
-                        .ToArray();
+        ];
     }
 
     // --- Properties ---
@@ -40,7 +41,7 @@ public class EmbeddedDirectoryTests {
         var actual = sut.Path;
 
         // assert
-        Assert.Equal($"{_provider.Root}{Resources}/folder-with-dash", actual);
+        Assert.Equal($"{_provider.Root}/{Resources}/folder-with-dash", actual);
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 [UnitTest]
 public class FileProviderFactoryTests {
@@ -13,7 +13,7 @@ public class FileProviderFactoryTests {
         var actual = sut.GetOrCreate(Root);
 
         // assert
-        Assert.Equal($"{Root}{SysPath.DirectorySeparatorChar}", actual.Root);
+        Assert.Equal(Root, actual.Root);
     }
 
     [Fact]

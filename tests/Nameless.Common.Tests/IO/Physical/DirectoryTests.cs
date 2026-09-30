@@ -1,4 +1,4 @@
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 [IntegrationTest]
 public class DirectoryTests : IDisposable {

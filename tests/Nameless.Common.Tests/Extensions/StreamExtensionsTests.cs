@@ -1,242 +1,444 @@
+// ReSharper disable MethodHasAsyncOverloadWithCancellation
+
 using System.Text;
+using Nameless.Infrastructure;
+using static Nameless.IO.CappedReadStreamTests;
 
 namespace Nameless.Extensions;
 
 [UnitTest]
 public class StreamExtensionsTests {
-    // ─── GetContentAsString ─────────────────────────────────────────────────
+    private const string CONTENT = "Hello, olá mundo! 🌍";
 
-    [Fact]
-    public void GetContentAsString_WithUtf8Content_ReturnsString() {
-        // arrange
-        var content = "Hello, World!";
-        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-
-        // act
-        var result = stream.GetContentAsString();
-
-        // assert
-        Assert.Equal(content, result);
+    private static MemoryStream NewStream(string text = CONTENT, Encoding? encoding = null) {
+        return new MemoryStream((encoding ?? new UTF8Encoding(false)).GetBytes(text));
     }
 
-    [Fact]
-    public void GetContentAsString_FromMiddleOfStream_FromStartTrue_ReadsFromBeginning() {
-        // arrange
-        var content = "Hello";
-        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-        stream.Position = 3; // advance position
+    /// <summary>Runs the sync or the async variant so each scenario is covered twice.</summary>
+    private static async Task<string> ReadAsync(
+        Stream stream,
+        bool useAsync,
+        Encoding? encoding = null,
+        bool fromStart = true,
+        BufferSize bufferSize = BufferSize.Tiny
+    ) {
+        if (useAsync) {
+            return await stream.GetContentAsStringAsync(encoding, fromStart, bufferSize, TestContext.Current.CancellationToken);
+        }
 
-        // act
-        var result = stream.GetContentAsString(fromStart: true);
-
-        // assert
-        Assert.Equal(content, result);
+        return stream.GetContentAsString(encoding, fromStart, bufferSize);
     }
 
-    [Fact]
-    public void GetContentAsString_WithNonReadableStream_ThrowsInvalidOperationException() {
-        // arrange
-        using var stream = new NonReadableStream();
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsWholeContent_WhenStreamIsAtStart(bool useAsync) {
+        using var stream = NewStream();
 
-        // act & assert
-        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsString());
+        var result = await ReadAsync(stream, useAsync);
+
+        Assert.Equal(CONTENT, result);
+        Assert.Equal(0L, stream.Position);
     }
 
-    // ─── GetContentAsByteArray ──────────────────────────────────────────────
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsFromStartAndRestoresPosition_WhenStreamIsMidway(bool useAsync) {
+        using var stream = NewStream();
+        stream.Position = 5;
 
-    [Fact]
-    public void GetContentAsByteArray_WithMemoryStream_ReturnsBytes() {
-        // arrange
-        var bytes = new byte[] { 1, 2, 3, 4, 5 };
-        using var stream = new MemoryStream(bytes);
+        var result = await ReadAsync(stream, useAsync, fromStart: true);
 
-        // act
-        var result = stream.GetContentAsByteArray();
-
-        // assert
-        Assert.Equal(bytes, result);
+        Assert.Equal(CONTENT, result);
+        Assert.Equal(5L, stream.Position);
     }
 
-    [Fact]
-    public void GetContentAsByteArray_FromMiddleOfStream_FromStartTrue_ReadsFromBeginning() {
-        // arrange
-        var bytes = new byte[] { 1, 2, 3 };
-        using var stream = new MemoryStream(bytes);
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsFromCurrentPositionAndRestoresIt_WhenFromStartIsFalse(bool useAsync) {
+        using var stream = NewStream("abcdef");
         stream.Position = 2;
 
-        // act
-        var result = stream.GetContentAsByteArray(fromStart: true);
+        var result = await ReadAsync(stream, useAsync, fromStart: false);
 
-        // assert
-        Assert.Equal(bytes, result);
+        Assert.Equal("cdef", result);
+        Assert.Equal(2L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CanBeCalledRepeatedly_WithSameResult(bool useAsync) {
+        using var stream = NewStream();
+
+        var first = await ReadAsync(stream, useAsync);
+        var second = await ReadAsync(stream, useAsync);
+
+        Assert.Equal(first, second);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LeavesStreamOpen(bool useAsync) {
+        await using var stream = new TestStream(NewStream());
+
+        _ = await ReadAsync(stream, useAsync);
+
+        Assert.False(stream.Disposed);
+        Assert.True(stream.CanRead);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsEmptyStream(bool useAsync) {
+        using var stream = new MemoryStream();
+
+        var result = await ReadAsync(stream, useAsync);
+
+        Assert.Equal(string.Empty, result);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false, BufferSize.Tiny)]
+    [InlineData(false, BufferSize.Large)]
+    [InlineData(true, BufferSize.Tiny)]
+    [InlineData(true, BufferSize.Large)]
+    public async Task ReadsContentLargerThanBuffer(bool useAsync, BufferSize bufferSize) {
+        var text = string.Concat(Enumerable.Repeat(CONTENT, 500));
+        using var stream = NewStream(text);
+
+        var result = await ReadAsync(stream, useAsync, bufferSize: bufferSize);
+
+        Assert.Equal(text, result);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task UsesProvidedEncoding(bool useAsync) {
+        var latin1 = Encoding.Latin1;
+        using var stream = NewStream("olá", latin1);
+
+        var result = await ReadAsync(stream, useAsync, encoding: latin1);
+
+        Assert.Equal("olá", result);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ByteOrderMark_TakesPrecedenceOverProvidedEncoding_WhenFromStart(bool useAsync) {
+        var utf16 = new UnicodeEncoding(bigEndian: false, byteOrderMark: true);
+        var bytes = utf16.GetPreamble().Concat(utf16.GetBytes("olá")).ToArray();
+        using var stream = new MemoryStream(bytes);
+
+        // Caller says UTF-8, but the BOM says UTF-16 LE.
+        var result = await ReadAsync(stream, useAsync, encoding: Encoding.UTF8, fromStart: true);
+
+        Assert.Equal("olá", result);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenStreamIsNotReadable(bool useAsync) {
+        await using var stream = new TestStream(NewStream(), canRead: false);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => ReadAsync(stream, useAsync));
+
+        Assert.Equal("Can't read the stream.", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenFromStartAndStreamIsNotSeekable(bool useAsync) {
+        await using var stream = new TestStream(NewStream(), canSeek: false);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => ReadAsync(stream, useAsync, fromStart: true)
+        );
+
+        Assert.Equal("Can't change stream cursor position.", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsNonSeekableStream_WhenNotFromStart(bool useAsync) {
+        // This is the scenario that used to throw NotSupportedException
+        // because Position was read before checking CanSeek.
+        await using var stream = new TestStream(NewStream(), canSeek: false);
+
+        var result = await ReadAsync(stream, useAsync, fromStart: false);
+
+        Assert.Equal(CONTENT, result);
+        Assert.False(stream.Disposed);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenStreamIsNull(bool useAsync) {
+        Stream stream = null!;
+
+        await Assert.ThrowsAsync<ArgumentNullException>(() => ReadAsync(stream, useAsync));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RestoresPosition_WhenReadFails(bool useAsync) {
+        using var inner = NewStream();
+        inner.Position = 3;
+        await using var stream = new TestStream(inner, throwOnRead: true);
+
+        await Assert.ThrowsAsync<IOException>(() => ReadAsync(stream, useAsync, fromStart: true));
+
+        Assert.Equal(3L, inner.Position);
     }
 
     [Fact]
-    public void GetContentAsByteArray_WithNonReadableStream_ThrowsInvalidOperationException() {
-        // arrange
-        using var stream = new NonReadableStream();
+    public async Task Async_RestoresPosition_AndThrows_WhenAlreadyCancelled() {
+        using var stream = NewStream();
+        stream.Position = 4;
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
 
-        // act & assert
-        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsByteArray());
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => stream.GetContentAsStringAsync(cancellationToken: cts.Token)
+        );
+
+        Assert.Equal(4L, stream.Position);
+    }
+}
+
+public class StreamExtensionsBytesTests {
+    private static readonly byte[] Content = [.. "Hello, olá mundo! 🌍"u8];
+
+    private static MemoryStream NewStream(byte[]? bytes = null) {
+        return new MemoryStream([.. bytes ?? Content]);
     }
 
-    [Fact]
-    public void GetContentAsString_WithNonSeekableReadableStream_AndFromStartTrue_ThrowsInvalidOperationException() {
-        // arrange
-        using var stream = new ReadableNonSeekableStream("ABC"u8.ToArray());
+    /// <summary>Runs the sync or the async variant so each scenario is covered twice.</summary>
+    private static async Task<byte[]> ReadAsync(
+        Stream stream,
+        bool useAsync,
+        bool fromStart = true,
+        BufferSize bufferSize = BufferSize.Tiny
+    ) {
+        if (useAsync) {
+            return await stream.GetContentAsByteArrayAsync(fromStart, bufferSize, cancellationToken: TestContext.Current.CancellationToken);
+        }
 
-        // act & assert
-        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsString(fromStart: true));
+        return stream.GetContentAsByteArray(fromStart, bufferSize);
     }
 
-    [Fact]
-    public void GetContentAsString_WithNonSeekableReadableStream_AndFromStartFalse_ReturnsContent() {
-        // arrange
-        var bytes = Encoding.UTF8.GetBytes("ABC");
-        using var stream = new ReadableNonSeekableStream(bytes);
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsWholeContent_WhenStreamIsAtStart(bool useAsync) {
+        using var stream = NewStream();
 
-        // act
-        var result = stream.GetContentAsString(fromStart: false);
+        var result = await ReadAsync(stream, useAsync);
 
-        // assert
-        Assert.Equal("ABC", result);
+        Assert.Equal(Content, result);
+        Assert.Equal(0L, stream.Position);
     }
 
-    [Fact]
-    public void GetContentAsByteArray_WithNonSeekableReadableStream_AndFromStartTrue_ThrowsInvalidOperationException() {
-        // arrange
-        using var stream = new ReadableNonSeekableStream(new byte[] { 1, 2, 3 });
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsFromStartAndRestoresPosition_WhenStreamIsMidway(bool useAsync) {
+        using var stream = NewStream();
+        stream.Position = 5;
 
-        // act & assert
-        Assert.Throws<InvalidOperationException>(() => stream.GetContentAsByteArray(fromStart: true));
+        var result = await ReadAsync(stream, useAsync, fromStart: true);
+
+        Assert.Equal(Content, result);
+        Assert.Equal(5L, stream.Position);
     }
 
-    [Fact]
-    public void GetContentAsByteArray_WithNonSeekableReadableStream_AndFromStartFalse_ReturnsBytes() {
-        // arrange
-        var bytes = new byte[] { 10, 20, 30 };
-        using var stream = new ReadableNonSeekableStream(bytes);
-
-        // act
-        var result = stream.GetContentAsByteArray(fromStart: false);
-
-        // assert
-        Assert.Equal(bytes, result);
-    }
-
-    [Fact]
-    public void GetContentAsByteArray_WithSeekableNonMemoryStream_FromStartTrue_ReadsFromBeginning() {
-        // arrange — must NOT be a MemoryStream to bypass the fast-path branch
-        var bytes = new byte[] { 7, 8, 9 };
-        using var stream = new ReadableSeekableStream(bytes);
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsFromCurrentPositionAndRestoresIt_WhenFromStartIsFalse(bool useAsync) {
+        using var stream = NewStream("abcdef"u8.ToArray());
         stream.Position = 2;
 
-        // act
-        var result = stream.GetContentAsByteArray(fromStart: true);
+        var result = await ReadAsync(stream, useAsync, fromStart: false);
 
-        // assert
+        Assert.Equal("cdef"u8.ToArray(), result);
+        Assert.Equal(2L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsNothing_WhenPositionIsAtEndAndNotFromStart(bool useAsync) {
+        using var stream = NewStream();
+        stream.Position = stream.Length;
+
+        var result = await ReadAsync(stream, useAsync, fromStart: false);
+
+        Assert.Empty(result);
+        Assert.Equal(stream.Length, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CanBeCalledRepeatedly_WithSameResult(bool useAsync) {
+        using var stream = NewStream();
+
+        var first = await ReadAsync(stream, useAsync);
+        var second = await ReadAsync(stream, useAsync);
+
+        Assert.Equal(first, second);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReturnsIndependentArray_NotBackedByTheStream(bool useAsync) {
+        using var stream = NewStream();
+
+        var result = await ReadAsync(stream, useAsync);
+        result[0] = 0xFF;
+
+        Assert.Equal(Content[0], stream.ToArray()[0]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LeavesStreamOpen(bool useAsync) {
+        await using var stream = new TestStream(NewStream());
+
+        _ = await ReadAsync(stream, useAsync);
+
+        Assert.False(stream.Disposed);
+        Assert.True(stream.CanRead);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsEmptyStream(bool useAsync) {
+        using var stream = new MemoryStream();
+
+        var result = await ReadAsync(stream, useAsync);
+
+        Assert.Empty(result);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false, BufferSize.Tiny)]
+    [InlineData(false, BufferSize.Large)]
+    [InlineData(true, BufferSize.Tiny)]
+    [InlineData(true, BufferSize.Large)]
+    public async Task ReadsContentLargerThanBuffer(bool useAsync, BufferSize bufferSize) {
+        var bytes = new byte[100_000];
+        new Random(42).NextBytes(bytes);
+        using var stream = NewStream(bytes);
+
+        var result = await ReadAsync(stream, useAsync, bufferSize: bufferSize);
+
+        Assert.Equal(bytes, result);
+        Assert.Equal(0L, stream.Position);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PreservesBinaryContent_IncludingByteOrderMark(bool useAsync) {
+        // Unlike the string version, no decoding happens: BOM and arbitrary bytes are kept as-is.
+        var bytes = new byte[] { 0xEF, 0xBB, 0xBF, 0x00, 0xFF, 0xFE, 0x80 };
+        using var stream = NewStream(bytes);
+
+        var result = await ReadAsync(stream, useAsync);
+
         Assert.Equal(bytes, result);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenStreamIsNotReadable(bool useAsync) {
+        await using var stream = new TestStream(NewStream(), canRead: false);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => ReadAsync(stream, useAsync));
+
+        Assert.Equal("Can't read the stream.", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenFromStartAndStreamIsNotSeekable(bool useAsync) {
+        await using var stream = new TestStream(NewStream(), canSeek: false);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => ReadAsync(stream, useAsync, fromStart: true)
+        );
+
+        Assert.Equal("Can't change stream cursor position.", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadsNonSeekableStream_WhenNotFromStart(bool useAsync) {
+        await using var stream = new TestStream(NewStream(), canSeek: false);
+
+        var result = await ReadAsync(stream, useAsync, fromStart: false);
+
+        Assert.Equal(Content, result);
+        Assert.False(stream.Disposed);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Throws_WhenStreamIsNull(bool useAsync) {
+        Stream stream = null!;
+
+        await Assert.ThrowsAsync<ArgumentNullException>(() => ReadAsync(stream, useAsync));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RestoresPosition_WhenReadFails(bool useAsync) {
+        using var inner = NewStream();
+        inner.Position = 3;
+        await using var stream = new TestStream(inner, throwOnRead: true);
+
+        await Assert.ThrowsAsync<IOException>(() => ReadAsync(stream, useAsync, fromStart: true));
+
+        Assert.Equal(3L, inner.Position);
+    }
+
     [Fact]
-    public void GetContentAsByteArray_WithSeekableNonMemoryStream_RestoresPosition() {
-        // arrange — covers the self.Position = previousPosition restore path (line 96)
-        var bytes = new byte[] { 1, 2, 3 };
-        using var stream = new ReadableSeekableStream(bytes);
-        stream.Position = 1;
+    public async Task Async_RestoresPosition_AndThrows_WhenAlreadyCancelled() {
+        using var stream = NewStream();
+        stream.Position = 4;
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
 
-        // act
-        stream.GetContentAsByteArray(fromStart: false);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => stream.GetContentAsByteArrayAsync(cancellationToken: cts.Token)
+        );
 
-        // assert — position should be restored to 1 after reading
-        Assert.Equal(1, stream.Position);
-    }
-
-    // ─── test doubles ─────────────────────────────────────────────────────────
-
-    private sealed class NonReadableStream : Stream {
-        public override bool CanRead => false;
-        public override bool CanSeek => false;
-        public override bool CanWrite => true;
-        public override long Length => 0;
-        public override long Position { get => 0; set { } }
-        public override void Flush() { }
-        public override int Read(byte[] buffer, int offset, int count) {
-            return 0;
-        }
-
-        public override long Seek(long offset, SeekOrigin origin) {
-            return 0;
-        }
-
-        public override void SetLength(long value) { }
-        public override void Write(byte[] buffer, int offset, int count) { }
-    }
-
-    private sealed class ReadableNonSeekableStream(byte[] data) : Stream {
-        private int _position;
-
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => false;
-        public override long Length => data.Length;
-        public override long Position { get => _position; set => throw new NotSupportedException(); }
-
-        public override int Read(byte[] buffer, int offset, int count) {
-            var available = data.Length - _position;
-            var toRead = Math.Min(count, available);
-            Array.Copy(data, _position, buffer, offset, toRead);
-            _position += toRead;
-            return toRead;
-        }
-
-        public override void Flush() { }
-        public override long Seek(long offset, SeekOrigin origin) {
-            throw new NotSupportedException();
-        }
-
-        public override void SetLength(long value) {
-            throw new NotSupportedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count) {
-            throw new NotSupportedException();
-        }
-    }
-
-    private sealed class ReadableSeekableStream(byte[] data) : Stream {
-        private long _position;
-
-        public override bool CanRead => true;
-        public override bool CanSeek => true;
-        public override bool CanWrite => false;
-        public override long Length => data.Length;
-        public override long Position { get => _position; set => _position = value; }
-
-        public override int Read(byte[] buffer, int offset, int count) {
-            var available = (int)(data.Length - _position);
-            var toRead = Math.Min(count, available);
-            Array.Copy(data, (int)_position, buffer, offset, toRead);
-            _position += toRead;
-            return toRead;
-        }
-
-        public override void Flush() { }
-        public override long Seek(long offset, SeekOrigin origin) {
-            _position = origin switch {
-                SeekOrigin.Begin => offset,
-                SeekOrigin.Current => _position + offset,
-                SeekOrigin.End => data.Length + offset,
-                _ => throw new NotSupportedException()
-            };
-            return _position;
-        }
-        public override void SetLength(long value) {
-            throw new NotSupportedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count) {
-            throw new NotSupportedException();
-        }
+        Assert.Equal(4L, stream.Position);
     }
 }

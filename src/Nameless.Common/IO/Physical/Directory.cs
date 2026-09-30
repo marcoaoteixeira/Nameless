@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.FileSystemGlobbing;
 
-namespace Nameless.IO.System;
+namespace Nameless.IO.Physical;
 
 /// <summary>
 ///     Default implementation of <see cref="IDirectory"/>.

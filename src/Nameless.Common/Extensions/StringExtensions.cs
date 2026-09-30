@@ -383,12 +383,10 @@ public static class StringExtensions {
         ///     value <c>true</c>; otherwise, <see langword="false"/>.
         /// </returns>
         public bool ToBoolean() {
-            // ReSharper disable InconsistentNaming
             const string TrueAsYes = "Yes";
             const string TrueAsY = "Y";
             const string FalseAsNo = "No";
             const string FalseAsN = "N";
-            // ReSharper restore InconsistentNaming
 
             // we'll consider null as false.
             if (self is null) { return false; }

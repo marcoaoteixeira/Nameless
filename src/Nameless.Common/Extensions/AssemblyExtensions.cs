@@ -11,9 +11,22 @@ public static class AssemblyExtensions {
     /// </param>
     extension(Assembly self) {
         /// <summary>
+        ///     Gets the last write time UTC for the given assembly.
+        /// </summary>
+        /// <remarks>
+        ///     If value is <see cref="DateTimeOffset.MinValue"/>, it means
+        ///     that the assembly is dynamic or single-file.
+        /// </remarks>
+        public DateTimeOffset LastWriteTimeUtc => !string.IsNullOrWhiteSpace(self.Location) && SysFile.Exists(self.Location)
+            ? SysFile.GetLastWriteTimeUtc(self.Location)
+            : DateTimeOffset.MinValue;
+
+        /// <summary>
         ///     Retrieves the assembly directory path.
         /// </summary>
         public string GetDirectoryPath() {
+            if (string.IsNullOrWhiteSpace(self.Location)) { return string.Empty; }
+
             var location = $"file://{self.Location}";
             var uri = new UriBuilder(location);
             var filePath = Uri.UnescapeDataString(uri.Path);

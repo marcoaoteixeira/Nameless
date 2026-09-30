@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
-using Nameless.Configuration;
 
-namespace Nameless.Extensions;
+namespace Nameless.Configuration;
 
 [UnitTest]
 public class ConfigurationExtensionsTests {

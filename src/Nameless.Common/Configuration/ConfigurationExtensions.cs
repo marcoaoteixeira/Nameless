@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Nameless.Configuration;
 
-namespace Nameless;
+namespace Nameless.Configuration;
 
 /// <summary>
 ///     <see cref="IConfiguration"/> extension methods.

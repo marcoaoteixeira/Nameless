@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nameless.Configuration;
 using Nameless.Reporting;
 
 namespace Nameless.Workers;

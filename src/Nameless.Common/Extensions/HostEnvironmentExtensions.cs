@@ -1,6 +1,4 @@
-﻿#pragma warning disable CA1822
-
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace Nameless;
 
