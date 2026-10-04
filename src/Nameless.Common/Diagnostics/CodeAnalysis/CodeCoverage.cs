@@ -31,5 +31,11 @@ public static class CodeCoverage {
         ///     and not intended to be manually maintained or tested.
         /// </summary>
         public const string AutoGenCode = "Excluded from code coverage as it is automatically generated and not intended to be manually maintained or tested.";
+
+        /// <summary>
+        ///     Excluded from code coverage as it only contains constant
+        ///     values.
+        /// </summary>
+        public const string OnlyConstants = "Excluded from code coverage as it only contains constant values.";
     }
 }

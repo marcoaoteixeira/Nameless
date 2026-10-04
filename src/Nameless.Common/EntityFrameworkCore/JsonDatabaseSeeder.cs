@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nameless.EntityFrameworkCore.Entities;
@@ -51,7 +50,7 @@ public abstract class JsonDatabaseSeeder<TEntity> : IDatabaseSeeder
         using var logger = Logger.StartStopwatchLogger();
 
         try {
-            var seeds = GetEntitiesFromJsonFile();
+            var seeds = GetSeedsFromJsonFile();
 
             await ExecuteAsyncCore(dbContext, seeds, storeManagementOperation, cancellationToken).SkipContextSync();
         }
@@ -67,7 +66,7 @@ public abstract class JsonDatabaseSeeder<TEntity> : IDatabaseSeeder
         using var logger = Logger.StartStopwatchLogger();
 
         try {
-            var seeds = GetEntitiesFromJsonFile();
+            var seeds = GetSeedsFromJsonFile();
 
             ExecuteCore(dbContext, seeds, storeManagementOperation);
         }
@@ -112,37 +111,23 @@ public abstract class JsonDatabaseSeeder<TEntity> : IDatabaseSeeder
     /// </param>
     protected abstract void ExecuteCore(DbContext dbContext, TEntity[] seeds, bool storeManagementOperation);
 
-    private TEntity[] GetEntitiesFromJsonFile() {
+    private TEntity[] GetSeedsFromJsonFile() {
         var stream = GetResourceStream();
         
         if (stream is null) {
-            var reason = $"JSON entities file not found. Path: {Options.RelativePath}";
-
-            CommonLog.Warning(Logger, reason);
-
             return Options.ThrowOnMissing
-                ? throw new MissingDatabaseSeederResourceException(
-                    path: Options.RelativePath,
-                    embedded: Options.UseEmbeddedResource
-                ) : [];
+                ? throw new MissingDatabaseSeederResourceException(path: Options.RelativePath)
+                : [];
         }
 
         try {
             return JsonSerializer.Deserialize<TEntity[]>(stream, Options.JsonOptions) ??
-                   throw new InvalidOperationException($"Unable to deserialize entities of type '{typeof(TEntity)}'.");
+                   throw new InvalidOperationException($"Unable to deserialize seeds to type '{typeof(TEntity)}'.");
         }
         finally { stream.Dispose(); }
     }
 
     private Stream? GetResourceStream() {
-        if (Options.UseEmbeddedResource) {
-            var assembly = Options.Assembly ?? Assembly.GetExecutingAssembly();
-            var path = Options.RelativePath
-                              .Replace(SysPath.AltDirectorySeparatorChar, '.')
-                              .Replace(SysPath.DirectorySeparatorChar, '.');
-            return assembly.GetManifestResourceStream(path);
-        }
-
         var file = _fileProvider.GetFile(Options.RelativePath);
 
         return file.Exists ? file.Open(FileMode.Open, FileAccess.Read) : null;

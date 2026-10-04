@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Logging;
-using Nameless.Data.Requests;
-using Nameless.Data.Responses;
 using Nameless.ObjectModel;
 
 namespace Nameless.Data;
@@ -34,10 +32,21 @@ public class Database : IDatabase, IDisposable {
     }
 
     /// <inheritdoc />
-    public ExecuteNonQueryResponse ExecuteNonQuery(ExecuteNonQueryRequest request) {
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="sql"/> is empty or white space.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="sql"/> or <paramref name="parameters"/> is
+    ///     <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">
+    ///     if the current instance of <see cref="Database"/> class
+    ///     is disposed.
+    /// </exception>
+    public ExecuteNonQueryResult ExecuteNonQuery(string sql, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters) {
         BlockAccessAfterDispose();
 
-        using var command = CreateCommand(request.Text, request.Type, request.Parameters);
+        using var command = CreateCommand(sql, type, parameters);
 
         try { return command.ExecuteNonQuery(); }
         catch (Exception ex) {
@@ -48,18 +57,29 @@ public class Database : IDatabase, IDisposable {
     }
 
     /// <inheritdoc />
-    public ExecuteReaderResponse<TResult> ExecuteReader<TResult>(ExecuteReaderRequest<TResult> request) {
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="sql"/> is empty or white space.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="sql"/> or <paramref name="parameters"/> is
+    ///     <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">
+    ///     if the current instance of <see cref="Database"/> class
+    ///     is disposed.
+    /// </exception>
+    public ExecuteReaderResult<T> ExecuteReader<T>(string sql, Func<IDataRecord, T> mapper, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters) {
         BlockAccessAfterDispose();
 
-        using var command = CreateCommand(request.Text, request.Type, request.Parameters);
+        using var command = CreateCommand(sql, type, parameters);
 
         try {
             var reader = command.ExecuteReader(); 
-            var result = new List<TResult>();
+            var result = new List<T>();
 
             using (reader) {
                 while (reader.Read()) {
-                    result.Add(request.Mapper(reader));
+                    result.Add(mapper(reader));
                 }
             }
 
@@ -73,12 +93,23 @@ public class Database : IDatabase, IDisposable {
     }
 
     /// <inheritdoc />
-    public ExecuteScalarResponse<TResult> ExecuteScalar<TResult>(ExecuteScalarRequest request) {
+    /// <exception cref="ArgumentException">
+    ///     if <paramref name="sql"/> is empty or white space.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="sql"/> or <paramref name="parameters"/> is
+    ///     <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">
+    ///     if the current instance of <see cref="Database"/> class
+    ///     is disposed.
+    /// </exception>
+    public ExecuteScalarResult<T> ExecuteScalar<T>(string sql, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters) {
         BlockAccessAfterDispose();
 
-        using var command = CreateCommand(request.Text, request.Type, request.Parameters);
+        using var command = CreateCommand(sql, type, parameters);
 
-        try { return (TResult?)command.ExecuteScalar(); }
+        try { return (T?)command.ExecuteScalar(); }
         catch (Exception ex) {
             CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
 
@@ -133,10 +164,13 @@ public class Database : IDatabase, IDisposable {
         _disposed = true;
     }
 
-    private IDbCommand CreateCommand(string text, CommandType type, IEnumerable<Parameter> parameters) {
+    private IDbCommand CreateCommand(string sql, CommandType type, IEnumerable<Parameter> parameters) {
+        Throws.When.NullOrWhiteSpace(sql);
+        Throws.When.Null(parameters);
+
         var command = GetDbConnection().CreateCommand();
 
-        command.CommandText = text;
+        command.CommandText = sql;
         command.CommandType = type;
 
         foreach (var parameter in parameters) {
@@ -148,7 +182,8 @@ public class Database : IDatabase, IDisposable {
         Log.OutputDbCommandForDebug(
             _logger,
             command.CommandText,
-            command.Parameters
+            command.Parameters,
+            tag: GetType().Tag
         );
 
         return command;

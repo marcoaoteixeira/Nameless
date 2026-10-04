@@ -30,9 +30,15 @@ public readonly record struct Parameter {
     /// <summary>
     ///     Initializes a new instance of the <see cref="Parameter"/>.
     /// </summary>
-    /// <param name="name">The name of the parameter.</param>
-    /// <param name="value">The value of the parameter.</param>
-    /// <param name="type">The type of the parameter.</param>
+    /// <param name="name">
+    ///     The name of the parameter.
+    /// </param>
+    /// <param name="value">
+    ///     The value of the parameter.
+    /// </param>
+    /// <param name="type">
+    ///     The type of the parameter.
+    /// </param>
     public Parameter(string? name, object? value = null, DbType type = DbType.String) {
         Name = name ?? string.Empty;
         Value = value;

@@ -1,33 +1,32 @@
-using Nameless.Data.Responses;
 using Nameless.ObjectModel;
 
 namespace Nameless.Data;
 
 [UnitTest]
-public class ResponsesTests {
+public class ResultsTests {
     // --- ExecuteNonQueryResponse ---
 
     [Fact]
     public void ExecuteNonQueryResponse_FromValue_IsSuccess() {
         // act
-        ExecuteNonQueryResponse response = 5;
+        ExecuteNonQueryResult result = 5;
 
         // assert
         Assert.Multiple(
-            () => Assert.True(response.Success),
-            () => Assert.Equal(5, response.Value)
+            () => Assert.True(result.Success),
+            () => Assert.Equal(5, result.Value)
         );
     }
 
     [Fact]
     public void ExecuteNonQueryResponse_FromError_IsFailure() {
         // act
-        ExecuteNonQueryResponse response = Error.Failure("db error");
+        ExecuteNonQueryResult result = Error.Failure("db error");
 
         // assert
         Assert.Multiple(
-            () => Assert.False(response.Success),
-            () => Assert.Single(response.Errors)
+            () => Assert.False(result.Success),
+            () => Assert.Single(result.Errors)
         );
     }
 
@@ -36,24 +35,24 @@ public class ResponsesTests {
     [Fact]
     public void ExecuteScalarResponse_FromValue_IsSuccess() {
         // act
-        ExecuteScalarResponse<int> response = 42;
+        ExecuteScalarResult<int> result = 42;
 
         // assert
         Assert.Multiple(
-            () => Assert.True(response.Success),
-            () => Assert.Equal(42, response.Value)
+            () => Assert.True(result.Success),
+            () => Assert.Equal(42, result.Value)
         );
     }
 
     [Fact]
     public void ExecuteScalarResponse_FromError_IsFailure() {
         // act
-        ExecuteScalarResponse<int> response = Error.Missing("not found");
+        ExecuteScalarResult<int> result = Error.Missing("not found");
 
         // assert
         Assert.Multiple(
-            () => Assert.False(response.Success),
-            () => Assert.Single(response.Errors)
+            () => Assert.False(result.Success),
+            () => Assert.Single(result.Errors)
         );
     }
 
@@ -65,24 +64,24 @@ public class ResponsesTests {
         var rows = new[] { "row1", "row2" };
 
         // act
-        ExecuteReaderResponse<string> response = rows;
+        ExecuteReaderResult<string> result = rows;
 
         // assert
         Assert.Multiple(
-            () => Assert.True(response.Success),
-            () => Assert.Equal(2, response.Value.Length)
+            () => Assert.True(result.Success),
+            () => Assert.Equal(2, result.Value.Length)
         );
     }
 
     [Fact]
     public void ExecuteReaderResponse_FromError_IsFailure() {
         // act
-        ExecuteReaderResponse<string> response = Error.Failure("err");
+        ExecuteReaderResult<string> result = Error.Failure("err");
 
         // assert
         Assert.Multiple(
-            () => Assert.False(response.Success),
-            () => Assert.Single(response.Errors)
+            () => Assert.False(result.Success),
+            () => Assert.Single(result.Errors)
         );
     }
 }

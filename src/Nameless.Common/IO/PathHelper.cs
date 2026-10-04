@@ -73,7 +73,7 @@ public static class PathHelper {
     public static string Sanitize(string value, char replacement = '_') {
         Throws.When.Null(value);
 
-        if (Array.IndexOf(SysPath.GetInvalidPathChars(), replacement) >= 0) {
+        if (Array.IndexOf(InvalidPathChars, replacement) >= 0) {
             throw new ArgumentException(
                 message: $"Replacement character '{replacement}' is itself an invalid path character.",
                 paramName: nameof(replacement)

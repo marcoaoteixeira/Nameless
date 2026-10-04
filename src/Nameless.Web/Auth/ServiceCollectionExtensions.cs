@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions {
 
         private IServiceCollection AddAuthentication(AuthRegistration registration, IConfiguration? configuration) {
             var wrapper = new AuthenticationBuilderWrapper(self);
-            var configure = registration.ConfigureAuthentication ?? (builder => ConfigureDefaultAuthentication(builder, configuration));
+            var configure = registration.ConfigureAuthentication ?? (builder => ConfigureAuthenticationDefaults(builder, configuration));
 
             configure(wrapper);
 
@@ -28,16 +28,17 @@ public static class ServiceCollectionExtensions {
         }
     }
 
-    private static void ConfigureDefaultAuthentication(IAuthenticationBuilder builder, IConfiguration? configuration) {
+    private static void ConfigureAuthenticationDefaults(IAuthenticationBuilder builder, IConfiguration? configuration) {
         builder.Configure(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(opts => {
-                   if (configuration is null) { return; }
+                   var section = configuration?
+                                 .GetSection<JsonWebTokenOptions>()
+                                 .GetChildren()
+                                 .FirstOrDefault();
 
-                   const string SectionName = "Default";
-                   var sectionPath = $"{ConfigurationSectionNameAttribute.GetSectionName<JsonWebTokenOptions>()}:{SectionName}";
-                   var jwt = configuration.GetSection<JsonWebTokenOptions>()
-                                          .GetOptions<JsonWebTokenOptions>(SectionName) ??
-                             throw new MissingConfigurationException(section: sectionPath);
+                   if (section is null) { return; }
+
+                   var jwt = section.GetOrThrow<JsonWebTokenOptions>();
 
                    opts.Authority = jwt.Authority;
                    opts.TokenValidationParameters = new TokenValidationParameters {

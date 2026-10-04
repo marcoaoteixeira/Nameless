@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using Nameless.Data.Requests;
-using Nameless.Data.Responses;
 
 namespace Nameless.Data;
 
@@ -17,31 +15,60 @@ public interface IDatabase {
     /// <summary>
     ///     Executes a not-query command against the database.
     /// </summary>
-    /// <param name="request">The request.</param>
+    /// <param name="sql">
+    ///     The SQL command.
+    /// </param>
+    /// <param name="type">
+    ///     The SQL command type.
+    /// </param>
+    /// <param name="parameters">
+    ///     The SQL command parameters.
+    /// </param>
     /// <returns>
-    ///     A <see cref="ExecuteNonQueryResponse" /> instance with the
+    ///     A <see cref="ExecuteNonQueryResult" /> instance with the
     ///     request result.
     /// </returns>
-    ExecuteNonQueryResponse ExecuteNonQuery(ExecuteNonQueryRequest request);
+    ExecuteNonQueryResult ExecuteNonQuery(string sql, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters);
 
     /// <summary>
     ///     Executes a reader query against the database.
     /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="request">The request.</param>
+    /// <typeparam name="T">
+    ///     The type of the result.
+    /// </typeparam>
+    /// <param name="sql">
+    ///     The SQL command.
+    /// </param>
+    /// <param name="mapper">
+    ///     The SQL result mapper function.
+    /// </param>
+    /// <param name="type">
+    ///     The SQL command type.
+    /// </param>
+    /// <param name="parameters">
+    ///     The SQL command parameters.
+    /// </param>
     /// <returns>
-    ///     A <see cref="ExecuteReaderResponse{TResult}" /> instance with the
+    ///     A <see cref="ExecuteReaderResult{T}" /> instance with the
     ///     request result.
     /// </returns>
-    ExecuteReaderResponse<TResult> ExecuteReader<TResult>(ExecuteReaderRequest<TResult> request);
+    ExecuteReaderResult<T> ExecuteReader<T>(string sql, Func<IDataRecord, T> mapper, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters);
 
     /// <summary>
     ///     Executes a scalar command against the database.
     /// </summary>
-    /// <param name="request">The request.</param>
+    /// <param name="sql">
+    ///     The SQL command.
+    /// </param>
+    /// <param name="type">
+    ///     The SQL command type.
+    /// </param>
+    /// <param name="parameters">
+    ///     The SQL command parameters.
+    /// </param>
     /// <returns>
-    ///     A <see cref="ExecuteScalarResponse{TResult}" /> instance with the
+    ///     A <see cref="ExecuteScalarResult{T}" /> instance with the
     ///     request result.
     /// </returns>
-    ExecuteScalarResponse<TResult> ExecuteScalar<TResult>(ExecuteScalarRequest request);
+    ExecuteScalarResult<T> ExecuteScalar<T>(string sql, CommandType type = CommandType.Text, params IEnumerable<Parameter> parameters);
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Nameless.EntityFrameworkCore.Config;
 using Nameless.Helpers;
 
 namespace Nameless.EntityFrameworkCore;
@@ -40,6 +41,29 @@ public static class ServiceCollectionExtensions {
             return registration.UseDbContextFactory
                 ? self.AddDbContextFactory<TDbContext>(configureDbContext)
                 : self.AddDbContext<TDbContext>(configureDbContext);
+        }
+
+        /// <summary>
+        ///     Registers the entity type configuration for a given entity.
+        /// </summary>
+        /// <typeparam name="TEntity">
+        ///     Type of the entity.
+        /// </typeparam>
+        /// <typeparam name="TEntityTypeConfiguration">
+        ///     Type of the entity type configuration, related to the entity.
+        /// </typeparam>
+        /// <returns>
+        ///     The current <see cref="IServiceCollection"/> so other actions can be chained.
+        /// </returns>
+        public IServiceCollection RegisterEntityTypeConfiguration<TEntity, TEntityTypeConfiguration>()
+            where TEntity : class
+            where TEntityTypeConfiguration : class, IEntityTypeConfiguration<TEntity> {
+            self.AddSingleton<TEntityTypeConfiguration>();
+            self.AddSingleton<IEntityTypeConfigurator>(provider => new EntityTypeConfigurator<TEntity>(
+                provider.GetRequiredService<TEntityTypeConfiguration>()
+            ));
+
+            return self;
         }
 
         private void RegisterInterceptors(EntityFrameworkCoreRegistration registration) {
