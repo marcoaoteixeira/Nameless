@@ -1,6 +1,5 @@
 using System.Data;
 using Moq;
-using Nameless.Data.Requests;
 using Nameless.Testing.Tools.Helpers;
 using Nameless.Testing.Tools.Mockers.Logging;
 
@@ -11,8 +10,8 @@ public class DatabaseTests {
     private const string CREATE_TABLE_SQL =
         "CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL)";
 
-    private static Database CreateSut(string dbFileName, out IDbConnection connection) {
-        connection = SqliteHelper.CreateDbConnection(dbFileName);
+    private static Database CreateSut(string dbFileName) {
+        var connection = SqliteHelper.CreateDbConnection(dbFileName);
         connection.Open();
 
         // initialise schema before the Database instance touches the connection
@@ -37,14 +36,11 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteNonQuery_Insert_ReturnsAffectedRowCount() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
-        var request = new ExecuteNonQueryRequest {
-            Text = "INSERT INTO Items (Name) VALUES ('Widget')",
-            Type = CommandType.Text
-        };
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
+        const string Sql = "INSERT INTO Items (Name) VALUES ('Widget')";
 
         // act
-        var response = sut.ExecuteNonQuery(request);
+        var response = sut.ExecuteNonQuery(Sql);
 
         // assert
         Assert.Multiple(
@@ -56,27 +52,20 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteNonQuery_WithParameters_BindsValuesCorrectly() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
-        var insertRequest = new ExecuteNonQueryRequest {
-            Text = "INSERT INTO Items (Name) VALUES (@name)",
-            Type = CommandType.Text,
-            Parameters = new ParameterCollection([
-                new Parameter("@name", "Gadget", DbType.String)
-            ])
-        };
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
+        const string InsertSql = "INSERT INTO Items (Name) VALUES (@name)";
+        var insertParameters = new ParameterCollection([
+            new Parameter("@name", "Gadget")
+        ]);
 
-        var selectRequest = new ExecuteReaderRequest<string> {
-            Text = "SELECT Name FROM Items WHERE Name = @name",
-            Type = CommandType.Text,
-            Parameters = new ParameterCollection([
-                new Parameter("@name", "Gadget", DbType.String)
-            ]),
-            Mapper = record => record.GetString(0)
-        };
+        const string SelectSql = "SELECT Name FROM Items WHERE Name = @name";
+        var selectParameters = new ParameterCollection([
+            new Parameter("@name", "Gadget")
+        ]);
 
         // act
-        sut.ExecuteNonQuery(insertRequest);
-        var readResponse = sut.ExecuteReader(selectRequest);
+        sut.ExecuteNonQuery(InsertSql, parameters: insertParameters);
+        var readResponse = sut.ExecuteReader(SelectSql, ReaderMapper, parameters: selectParameters);
 
         // assert
         Assert.Multiple(
@@ -89,21 +78,16 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteReader_Select_ReturnsMappedResults() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
 
-        sut.ExecuteNonQuery(new ExecuteNonQueryRequest {
-            Text = "INSERT INTO Items (Name) VALUES ('Alpha'), ('Beta'), ('Gamma')",
-            Type = CommandType.Text
-        });
+        const string NonQuerySql = "INSERT INTO Items (Name) VALUES ('Alpha'), ('Beta'), ('Gamma')";
 
-        var request = new ExecuteReaderRequest<string> {
-            Text = "SELECT Name FROM Items ORDER BY Name",
-            Type = CommandType.Text,
-            Mapper = record => record.GetString(0)
-        };
+        sut.ExecuteNonQuery(NonQuerySql);
+
+        const string ReaderSql = "SELECT Name FROM Items ORDER BY Name";
 
         // act
-        var response = sut.ExecuteReader(request);
+        var response = sut.ExecuteReader(ReaderSql, ReaderMapper);
 
         // assert
         Assert.Multiple(
@@ -116,20 +100,16 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteScalar_Count_ReturnsValue() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
 
-        sut.ExecuteNonQuery(new ExecuteNonQueryRequest {
-            Text = "INSERT INTO Items (Name) VALUES ('One'), ('Two')",
-            Type = CommandType.Text
-        });
+        const string NonQuerySql = "INSERT INTO Items (Name) VALUES ('One'), ('Two')";
 
-        var request = new ExecuteScalarRequest {
-            Text = "SELECT COUNT(*) FROM Items",
-            Type = CommandType.Text
-        };
+        sut.ExecuteNonQuery(NonQuerySql);
+
+        const string ScalarSql = "SELECT COUNT(*) FROM Items";
 
         // act
-        var response = sut.ExecuteScalar<long>(request);
+        var response = sut.ExecuteScalar<long>(ScalarSql);
 
         // assert
         Assert.Multiple(
@@ -141,7 +121,7 @@ public class DatabaseTests {
     [Fact]
     public void BeginTransaction_ReturnsUsableTransaction() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
 
         // act
         using var transaction = sut.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -153,14 +133,11 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteNonQuery_WithInvalidSql_ReturnsFailureResponse() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
-        var request = new ExecuteNonQueryRequest {
-            Text = "INSERT INTO NonExistentTable (Name) VALUES ('Widget')",
-            Type = CommandType.Text
-        };
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
+        const string NonQuerySql = "INSERT INTO NonExistentTable (Name) VALUES ('Widget')";
 
         // act
-        var response = sut.ExecuteNonQuery(request);
+        var response = sut.ExecuteNonQuery(NonQuerySql);
 
         // assert
         Assert.False(response.Success);
@@ -169,15 +146,11 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteReader_WithInvalidSql_ReturnsFailureResponse() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
-        var request = new ExecuteReaderRequest<string> {
-            Text = "SELECT Name FROM NonExistentTable",
-            Type = CommandType.Text,
-            Mapper = record => record.GetString(0)
-        };
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
+        const string ReaderSql = "SELECT Name FROM NonExistentTable";
 
         // act
-        var response = sut.ExecuteReader(request);
+        var response = sut.ExecuteReader(ReaderSql, ReaderMapper);
 
         // assert
         Assert.False(response.Success);
@@ -186,14 +159,11 @@ public class DatabaseTests {
     [Fact]
     public void ExecuteScalar_WithInvalidSql_ReturnsFailureResponse() {
         // arrange
-        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
-        var request = new ExecuteScalarRequest {
-            Text = "SELECT COUNT(*) FROM NonExistentTable",
-            Type = CommandType.Text
-        };
+        using var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
+        const string ScalarSql = "SELECT COUNT(*) FROM NonExistentTable";
 
         // act
-        var response = sut.ExecuteScalar<long>(request);
+        var response = sut.ExecuteScalar<long>(ScalarSql);
 
         // assert
         Assert.False(response.Success);
@@ -202,7 +172,7 @@ public class DatabaseTests {
     [Fact]
     public void Dispose_CanBeCalledMultipleTimes() {
         // arrange
-        var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
 
         // act
         var exception = Record.Exception(() => {
@@ -217,15 +187,16 @@ public class DatabaseTests {
     [Fact]
     public void AfterDispose_ThrowsObjectDisposedException() {
         // arrange
-        var sut = CreateSut($"{Guid.CreateVersion7():N}.db", out _);
+        var sut = CreateSut($"{Guid.CreateVersion7():N}.db");
         sut.Dispose();
 
-        var request = new ExecuteNonQueryRequest {
-            Text = "SELECT 1",
-            Type = CommandType.Text
-        };
+        const string NonQuerySql = "SELECT 1";
 
         // act & assert
-        Assert.Throws<ObjectDisposedException>(() => sut.ExecuteNonQuery(request));
+        Assert.Throws<ObjectDisposedException>(() => sut.ExecuteNonQuery(NonQuerySql));
+    }
+
+    private static string ReaderMapper(IDataRecord record) {
+        return record.GetString(0);
     }
 }

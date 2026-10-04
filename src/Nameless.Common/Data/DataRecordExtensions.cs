@@ -8,8 +8,6 @@ namespace Nameless.Data;
 ///     <see cref="IDataRecord" /> extension methods.
 /// </summary>
 public static class DataRecordExtensions {
-    private const string EMPTY = "";
-
     /// <param name="self">The data record.</param>
     extension(IDataRecord self) {
         /// <summary>
@@ -49,7 +47,7 @@ public static class DataRecordExtensions {
         /// <param name="fallback">The default value.</param>
         /// <param name="formatProvider">The format provider. Default is <see cref="CultureInfo.CurrentCulture" /></param>
         /// <returns>A string value.</returns>
-        public string GetString(string columnName, string fallback = EMPTY, IFormatProvider? formatProvider = null) {
+        public string GetString(string columnName, string fallback = "", IFormatProvider? formatProvider = null) {
             return self.TryGet<string>(columnName, out var result, formatProvider)
                 ? result
                 : fallback;

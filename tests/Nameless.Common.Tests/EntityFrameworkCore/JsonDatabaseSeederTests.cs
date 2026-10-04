@@ -1,13 +1,34 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Nameless.EntityFrameworkCore.Entities;
 using Nameless.IO;
 using Nameless.Testing.Tools.Mockers.Logging;
-using Moq;
+using EmbeddedFileProvider = Nameless.IO.Embedded.FileProvider;
+using PhysicalFileProvider = Nameless.IO.Physical.FileProvider;
 
 namespace Nameless.EntityFrameworkCore;
 
-[UnitTest]
-public class JsonDatabaseSeederTests {
+public class JsonDatabaseSeederTests : IDisposable {
+    private const string EMBEDDED_SEED_PATH = "EntityFrameworkCore/Resources/EmbeddedSeed.json";
+    private const string EMBEDDED_MISSING_PATH = "EntityFrameworkCore/Resources/DoesNotExist.json";
+
+    private readonly string _root;
+
+    public JsonDatabaseSeederTests() {
+        _root = SysPath.Combine(SysPath.GetTempPath(), $"nameless-test-{Guid.NewGuid():N}");
+        SysDirectory.CreateDirectory(_root);
+    }
+
+    public void Dispose() {
+        if (SysDirectory.Exists(_root)) {
+            SysDirectory.Delete(_root, recursive: true);
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Inline test infrastructure
+    // ---------------------------------------------------------------------------
+
     public sealed class TestEntity : EntityBase {
         public string Name { get; set; } = string.Empty;
     }
@@ -39,6 +60,10 @@ public class JsonDatabaseSeederTests {
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
     }
 
+    // ---------------------------------------------------------------------------
+    // Factory helpers
+    // ---------------------------------------------------------------------------
+
     private static TestDbContext CreateDbContext() {
         var options = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite("Data Source=:memory:")
@@ -47,29 +72,128 @@ public class JsonDatabaseSeederTests {
         return new TestDbContext(options);
     }
 
-    private static Mock<IFile> CreateFileMock(bool exists, string? content = null) {
-        var fileMock = new Mock<IFile>();
-        fileMock.Setup(f => f.Exists).Returns(exists);
+    private static EmbeddedFileProvider CreateEmbeddedFileProvider() {
+        return new EmbeddedFileProvider(typeof(JsonDatabaseSeederTests).Assembly);
+    }
 
-        if (exists && content is not null) {
-            fileMock.Setup(f => f.Open(It.IsAny<FileMode>(), It.IsAny<FileAccess>(), It.IsAny<FileShare>()))
-                    .Returns(() => new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content)));
-        }
+    private PhysicalFileProvider CreatePhysicalFileProvider() {
+        return new PhysicalFileProvider(_root);
+    }
 
-        return fileMock;
+    private void WritePhysicalFile(string relativePath, string content) {
+        var path = SysPath.Combine(_root, relativePath);
+
+        SysDirectory.CreateDirectory(SysPath.GetDirectoryName(path) ?? _root);
+        SysFile.WriteAllText(path, content);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Embedded file provider
+    // ---------------------------------------------------------------------------
+
+    [Fact]
+    [UnitTest]
+    public async Task ExecuteAsync_WithEmbeddedFileProvider_WhenFileExists_DeserializesAndPassesSeeds() {
+        // arrange
+        var options = new JsonDatabaseSeederOptions { RelativePath = EMBEDDED_SEED_PATH };
+        var sut = new RecordingSeeder(CreateEmbeddedFileProvider(), options);
+
+        await using var dbContext = CreateDbContext();
+
+        // act
+        await sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Multiple(
+            () => Assert.NotNull(sut.CapturedAsyncSeeds),
+            () => Assert.Single(sut.CapturedAsyncSeeds!),
+            () => Assert.Equal("EmbeddedAlpha", sut.CapturedAsyncSeeds![0].Name)
+        );
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenFileExists_DeserializesAndPassesSeeds() {
+    [UnitTest]
+    public void Execute_WithEmbeddedFileProvider_WhenFileExists_DeserializesAndPassesSeeds() {
         // arrange
-        const string Json = """[{"Name":"Alpha"},{"Name":"Beta"}]""";
-        var fileMock = CreateFileMock(exists: true, content: Json);
+        var options = new JsonDatabaseSeederOptions { RelativePath = EMBEDDED_SEED_PATH };
+        var sut = new RecordingSeeder(CreateEmbeddedFileProvider(), options);
 
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("seeds.json")).Returns(fileMock.Object);
+        using var dbContext = CreateDbContext();
+
+        // act
+        sut.Execute(dbContext, storeManagementOperation: false);
+
+        // assert
+        Assert.Multiple(
+            () => Assert.NotNull(sut.CapturedSyncSeeds),
+            () => Assert.Single(sut.CapturedSyncSeeds!),
+            () => Assert.Equal("EmbeddedAlpha", sut.CapturedSyncSeeds![0].Name)
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task ExecuteAsync_WithEmbeddedFileProvider_WhenFileMissing_AndThrowOnMissingFalse_PassesEmptyArray() {
+        // arrange
+        var options = new JsonDatabaseSeederOptions { RelativePath = EMBEDDED_MISSING_PATH, ThrowOnMissing = false };
+        var sut = new RecordingSeeder(CreateEmbeddedFileProvider(), options);
+
+        await using var dbContext = CreateDbContext();
+
+        // act
+        await sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Multiple(
+            () => Assert.NotNull(sut.CapturedAsyncSeeds),
+            () => Assert.Empty(sut.CapturedAsyncSeeds!)
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task ExecuteAsync_WithEmbeddedFileProvider_WhenFileMissing_AndThrowOnMissingTrue_ThrowsMissingDatabaseSeederResourceException() {
+        // arrange
+        var options = new JsonDatabaseSeederOptions { RelativePath = EMBEDDED_MISSING_PATH, ThrowOnMissing = true };
+        var sut = new RecordingSeeder(CreateEmbeddedFileProvider(), options);
+
+        await using var dbContext = CreateDbContext();
+
+        // act & assert
+        var exception = await Assert.ThrowsAsync<MissingDatabaseSeederResourceException>(
+            () => sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains(EMBEDDED_MISSING_PATH, exception.Message);
+    }
+
+    [Fact]
+    [UnitTest]
+    public void Execute_WithEmbeddedFileProvider_WhenFileMissing_AndThrowOnMissingTrue_ThrowsMissingDatabaseSeederResourceException() {
+        // arrange
+        var options = new JsonDatabaseSeederOptions { RelativePath = EMBEDDED_MISSING_PATH, ThrowOnMissing = true };
+        var sut = new RecordingSeeder(CreateEmbeddedFileProvider(), options);
+
+        using var dbContext = CreateDbContext();
+
+        // act & assert
+        Assert.Throws<MissingDatabaseSeederResourceException>(
+            () => sut.Execute(dbContext, storeManagementOperation: false)
+        );
+    }
+
+    // ---------------------------------------------------------------------------
+    // Physical file provider
+    // ---------------------------------------------------------------------------
+
+    [Fact]
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenFileExists_DeserializesAndPassesSeeds() {
+        // arrange
+        WritePhysicalFile("seeds.json", """[{"Name":"Alpha"},{"Name":"Beta"}]""");
 
         var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         await using var dbContext = CreateDbContext();
 
@@ -80,21 +204,19 @@ public class JsonDatabaseSeederTests {
         Assert.Multiple(
             () => Assert.NotNull(sut.CapturedAsyncSeeds),
             () => Assert.Equal(2, sut.CapturedAsyncSeeds!.Length),
-            () => Assert.Equal("Alpha", sut.CapturedAsyncSeeds![0].Name)
+            () => Assert.Equal("Alpha", sut.CapturedAsyncSeeds![0].Name),
+            () => Assert.Equal("Beta", sut.CapturedAsyncSeeds![1].Name)
         );
     }
 
     [Fact]
-    public void Execute_WhenFileExists_DeserializesAndPassesSeeds() {
+    [IntegrationTest]
+    public void Execute_WithPhysicalFileProvider_WhenFileExists_DeserializesAndPassesSeeds() {
         // arrange
-        const string Json = """[{"Name":"Gamma"}]""";
-        var fileMock = CreateFileMock(exists: true, content: Json);
-
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("seeds.json")).Returns(fileMock.Object);
+        WritePhysicalFile("seeds.json", """[{"Name":"Gamma"}]""");
 
         var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         using var dbContext = CreateDbContext();
 
@@ -104,20 +226,19 @@ public class JsonDatabaseSeederTests {
         // assert
         Assert.Multiple(
             () => Assert.NotNull(sut.CapturedSyncSeeds),
-            () => Assert.Single(sut.CapturedSyncSeeds!)
+            () => Assert.Single(sut.CapturedSyncSeeds!),
+            () => Assert.Equal("Gamma", sut.CapturedSyncSeeds![0].Name)
         );
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenFileMissing_AndThrowOnMissingFalse_PassesEmptyArray() {
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenFileInSubDirectory_DeserializesAndPassesSeeds() {
         // arrange
-        var fileMock = CreateFileMock(exists: false);
+        WritePhysicalFile("Seeds/Nested/seeds.json", """[{"Name":"Nested"}]""");
 
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("missing.json")).Returns(fileMock.Object);
-
-        var options = new JsonDatabaseSeederOptions { RelativePath = "missing.json", ThrowOnMissing = false };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var options = new JsonDatabaseSeederOptions { RelativePath = "Seeds/Nested/seeds.json" };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         await using var dbContext = CreateDbContext();
 
@@ -125,39 +246,33 @@ public class JsonDatabaseSeederTests {
         await sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken);
 
         // assert
-        Assert.Empty(sut.CapturedAsyncSeeds!);
+        Assert.Equal("Nested", Assert.Single(sut.CapturedAsyncSeeds!).Name);
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenFileMissing_AndThrowOnMissingTrue_ThrowsMissingDatabaseSeederResourceException() {
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenEnumAsString_DeserializesEnum() {
         // arrange
-        var fileMock = CreateFileMock(exists: false);
+        WritePhysicalFile("seeds.json", """[{"Name":"Draft","EntityState":"Dirty"}]""");
 
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("missing.json")).Returns(fileMock.Object);
-
-        var options = new JsonDatabaseSeederOptions { RelativePath = "missing.json", ThrowOnMissing = true };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         await using var dbContext = CreateDbContext();
 
-        // act & assert
-        await Assert.ThrowsAsync<MissingDatabaseSeederResourceException>(
-            () => sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken)
-        );
+        // act
+        await sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(Entities.EntityState.Dirty, Assert.Single(sut.CapturedAsyncSeeds!).EntityState);
     }
 
     [Fact]
-    public async Task ExecuteAsync_WithEmbeddedResource_DeserializesAndPassesSeeds() {
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenFileMissing_AndThrowOnMissingFalse_PassesEmptyArray() {
         // arrange
-        var providerMock = new Mock<IFileProvider>();
-
-        var options = new JsonDatabaseSeederOptions {
-            RelativePath = "Nameless/EntityFrameworkCore/Resources/EmbeddedSeed.json",
-            UseEmbeddedResource = true,
-            Assembly = typeof(JsonDatabaseSeederTests).Assembly
-        };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var options = new JsonDatabaseSeederOptions { RelativePath = "missing.json", ThrowOnMissing = false };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         await using var dbContext = CreateDbContext();
 
@@ -167,42 +282,71 @@ public class JsonDatabaseSeederTests {
         // assert
         Assert.Multiple(
             () => Assert.NotNull(sut.CapturedAsyncSeeds),
-            () => Assert.Equal("EmbeddedAlpha", sut.CapturedAsyncSeeds![0].Name)
+            () => Assert.Empty(sut.CapturedAsyncSeeds!)
         );
     }
 
     [Fact]
-    public async Task ExecuteAsync_WithEmbeddedResource_WhenMissing_AndThrowOnMissingFalse_PassesEmptyArray() {
+    [IntegrationTest]
+    public void Execute_WithPhysicalFileProvider_WhenFileMissing_AndThrowOnMissingFalse_PassesEmptyArray() {
         // arrange
-        var providerMock = new Mock<IFileProvider>();
+        var options = new JsonDatabaseSeederOptions { RelativePath = "missing.json", ThrowOnMissing = false };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
-        var options = new JsonDatabaseSeederOptions {
-            RelativePath = "Nameless/EntityFrameworkCore/Resources/DoesNotExist.json",
-            UseEmbeddedResource = true,
-            Assembly = typeof(JsonDatabaseSeederTests).Assembly,
-            ThrowOnMissing = false
-        };
-        var sut = new RecordingSeeder(providerMock.Object, options);
-
-        await using var dbContext = CreateDbContext();
+        using var dbContext = CreateDbContext();
 
         // act
-        await sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken);
+        sut.Execute(dbContext, storeManagementOperation: false);
 
         // assert
-        Assert.Empty(sut.CapturedAsyncSeeds!);
+        Assert.Multiple(
+            () => Assert.NotNull(sut.CapturedSyncSeeds),
+            () => Assert.Empty(sut.CapturedSyncSeeds!)
+        );
     }
 
     [Fact]
-    public void Execute_WhenSeederThrows_PropagatesException() {
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenFileMissing_AndThrowOnMissingTrue_ThrowsMissingDatabaseSeederResourceException() {
         // arrange
-        var fileMock = CreateFileMock(exists: true, content: "null");
+        var options = new JsonDatabaseSeederOptions { RelativePath = "missing.json", ThrowOnMissing = true };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("seeds.json")).Returns(fileMock.Object);
+        await using var dbContext = CreateDbContext();
+
+        // act & assert
+        var exception = await Assert.ThrowsAsync<MissingDatabaseSeederResourceException>(
+            () => sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains("missing.json", exception.Message);
+    }
+
+    [Fact]
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenJsonIsNull_ThrowsInvalidOperationException() {
+        // arrange
+        WritePhysicalFile("seeds.json", "null");
 
         var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
+
+        await using var dbContext = CreateDbContext();
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken)
+        );
+    }
+
+    [Fact]
+    [IntegrationTest]
+    public void Execute_WithPhysicalFileProvider_WhenJsonIsNull_ThrowsInvalidOperationException() {
+        // arrange
+        WritePhysicalFile("seeds.json", "null");
+
+        var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         using var dbContext = CreateDbContext();
 
@@ -211,21 +355,39 @@ public class JsonDatabaseSeederTests {
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenJsonInvalid_ThrowsInvalidOperationException() {
+    [IntegrationTest]
+    public async Task ExecuteAsync_WithPhysicalFileProvider_WhenJsonMalformed_ThrowsJsonException() {
         // arrange
-        var fileMock = CreateFileMock(exists: true, content: "null");
-
-        var providerMock = new Mock<IFileProvider>();
-        providerMock.Setup(p => p.GetFile("seeds.json")).Returns(fileMock.Object);
+        WritePhysicalFile("seeds.json", "[{ not json");
 
         var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
-        var sut = new RecordingSeeder(providerMock.Object, options);
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
 
         await using var dbContext = CreateDbContext();
 
         // act & assert
-        await Assert.ThrowsAsync<InvalidOperationException>(
+        await Assert.ThrowsAnyAsync<JsonException>(
             () => sut.ExecuteAsync(dbContext, storeManagementOperation: false, TestContext.Current.CancellationToken)
         );
+    }
+
+    [Fact]
+    [IntegrationTest]
+    public void Execute_WithPhysicalFileProvider_AfterExecution_ReleasesFileHandle() {
+        // arrange
+        WritePhysicalFile("seeds.json", """[{"Name":"Alpha"}]""");
+
+        var options = new JsonDatabaseSeederOptions { RelativePath = "seeds.json" };
+        var sut = new RecordingSeeder(CreatePhysicalFileProvider(), options);
+
+        using var dbContext = CreateDbContext();
+
+        // act
+        sut.Execute(dbContext, storeManagementOperation: false);
+
+        // assert — would throw IOException on Windows if the stream was left open
+        var exception = Record.Exception(() => SysFile.Delete(SysPath.Combine(_root, "seeds.json")));
+
+        Assert.Null(exception);
     }
 }

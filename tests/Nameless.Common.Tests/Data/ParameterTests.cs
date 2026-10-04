@@ -31,7 +31,7 @@ public class ParameterTests {
     [Fact]
     public void Constructor_WithNullValue_AllowsNull() {
         // act
-        var param = new Parameter("name", null);
+        var param = new Parameter("name");
 
         // assert
         Assert.Null(param.Value);

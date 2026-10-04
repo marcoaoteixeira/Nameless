@@ -306,7 +306,7 @@ public class DataRecordExtensionsTests {
     [Fact]
     public void GetEnum_WhenColumnMissing_ReturnsFallback() {
         var record = new FakeDataRecord(new Dictionary<string, object?>());
-        Assert.Equal(DayOfWeek.Monday, record.GetEnum<DayOfWeek>("Missing", DayOfWeek.Monday));
+        Assert.Equal(DayOfWeek.Monday, record.GetEnum("Missing", DayOfWeek.Monday));
     }
 
     // --- GetBlob with fallback ---
@@ -412,7 +412,7 @@ public class DataRecordExtensionsTests {
     public void TryGet_WhenTypeIsUnsupported_ReturnsFalse() {
         // Uri has TypeCode.Object which falls through to the _ => null branch in Transform
         var record = new FakeDataRecord(new Dictionary<string, object?> { ["V"] = "http://example.com" });
-        var found = record.TryGet<Uri>("V", out var result);
+        var found = record.TryGet<Uri>("V", out _);
         Assert.False(found);
     }
 

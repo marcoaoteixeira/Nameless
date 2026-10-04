@@ -36,6 +36,7 @@ public class AuditableSaveChangesInterceptor : SaveChangesInterceptor {
                     entry.Entity.CreationDate = now;
                     break;
                 case EntityState.Modified:
+                    entry.Entity.CreationDate ??= now;
                     entry.Entity.ModificationDate = now;
                     break;
             }

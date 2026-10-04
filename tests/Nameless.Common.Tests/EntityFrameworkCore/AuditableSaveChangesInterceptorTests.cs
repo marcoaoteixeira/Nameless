@@ -5,7 +5,7 @@ using Nameless.EntityFrameworkCore.Entities;
 namespace Nameless.EntityFrameworkCore;
 
 [IntegrationTest]
-public class CreationModificationDateSaveChangesInterceptorTests {
+public class AuditableSaveChangesInterceptorTests {
     // ---------------------------------------------------------------------------
     // Inline test infrastructure
     // ---------------------------------------------------------------------------

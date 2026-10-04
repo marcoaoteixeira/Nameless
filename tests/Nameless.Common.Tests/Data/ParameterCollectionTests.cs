@@ -22,7 +22,7 @@ public class ParameterCollectionTests {
         // arrange
         var parameters = new[] {
             new Parameter("p1", 1, DbType.Int32),
-            new Parameter("p2", "hello", DbType.String)
+            new Parameter("p2", "hello")
         };
 
         // act
@@ -38,7 +38,7 @@ public class ParameterCollectionTests {
     public void Add_WithNewParameter_AddsToCollection() {
         // arrange
         var collection = new ParameterCollection();
-        var param = new Parameter("name", "value", DbType.String);
+        var param = new Parameter("name", "value");
 
         // act
         collection.Add(param);
@@ -51,10 +51,10 @@ public class ParameterCollectionTests {
     public void Add_WithDuplicateName_ReplacesExisting() {
         // arrange
         var collection = new ParameterCollection();
-        collection.Add(new Parameter("p1", "first", DbType.String));
+        collection.Add(new Parameter("p1", "first"));
 
         // act
-        collection.Add(new Parameter("p1", "second", DbType.String));
+        collection.Add(new Parameter("p1", "second"));
 
         // assert
         Assert.Multiple(
@@ -67,10 +67,10 @@ public class ParameterCollectionTests {
     public void Add_IsCaseInsensitive_ForParameterNames() {
         // arrange
         var collection = new ParameterCollection();
-        collection.Add(new Parameter("MyParam", "original", DbType.String));
+        collection.Add(new Parameter("MyParam", "original"));
 
         // act
-        collection.Add(new Parameter("myparam", "replaced", DbType.String));
+        collection.Add(new Parameter("myparam", "replaced"));
 
         // assert
         Assert.Single(collection);
