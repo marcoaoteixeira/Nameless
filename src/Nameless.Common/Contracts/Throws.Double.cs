@@ -207,6 +207,10 @@ public sealed partial class Throws {
     /// </exception>
     [DebuggerStepThrough]
     public double OutOfRange(double paramValue, double minimumValue, double maximumValue, bool excludeBounds = false, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (minimumValue > maximumValue) {
+            throw new ArgumentException("Maximum value must be greater or equal to minimum value.");
+        }
+
         var inRange = excludeBounds
             ? paramValue > minimumValue && paramValue < maximumValue
             : paramValue >= minimumValue && paramValue <= maximumValue;

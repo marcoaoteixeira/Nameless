@@ -2,6 +2,7 @@
 #pragma warning disable CA1822
 
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace Nameless;
@@ -185,6 +186,9 @@ public sealed partial class Throws {
     /// <param name="maximumValue">
     ///     The maximum value to compare.
     /// </param>
+    /// <param name="excludeBounds">
+    ///     Whether it should exclude minimum or maximum bounds.
+    /// </param>
     /// <param name="paramName">
     ///     The parameter name (optional).
     /// </param>
@@ -202,8 +206,16 @@ public sealed partial class Throws {
     ///     <paramref name="minimumValue"/> and <paramref name="maximumValue"/>.
     /// </exception>
     [DebuggerStepThrough]
-    public DateTime OutOfRange(DateTime paramValue, DateTime minimumValue, DateTime maximumValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
-        if (paramValue >= minimumValue && paramValue <= maximumValue) {
+    public DateTime OutOfRange(DateTime paramValue, DateTime minimumValue, DateTime maximumValue, bool excludeBounds = false, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (minimumValue > maximumValue) {
+            throw new ArgumentException("Maximum value must be greater or equal to minimum value.");
+        }
+
+        var inRange = excludeBounds
+            ? paramValue > minimumValue && paramValue < maximumValue
+            : paramValue >= minimumValue && paramValue <= maximumValue;
+
+        if (inRange) {
             return paramValue;
         }
 
@@ -212,7 +224,7 @@ public sealed partial class Throws {
                   paramName,
                   paramValue,
                   string.IsNullOrWhiteSpace(message)
-                      ? string.Format(PARAM_OUT_OF_RANGE_MESSAGE, minimumValue, maximumValue)
+                      ? string.Format(CultureInfo.InvariantCulture, PARAM_OUT_OF_RANGE_MESSAGE, minimumValue, maximumValue, excludeBounds)
                       : message);
     }
 }
