@@ -18,8 +18,9 @@ public class ProducerConsumerRegistrationTests {
         public FakeConsumer(IChannelFactory channelFactory, IMessageSerializer serializer, IRetryPipelineFactory retryPipelineFactory, ILogger<FakeConsumer> logger)
             : base(channelFactory, serializer, retryPipelineFactory, new ConsumerOptions(), logger) { }
 
-        public override Task ConsumeAsync(string value, ConsumerContext context, CancellationToken cancellationToken)
-            => Task.CompletedTask;
+        public override Task ConsumeAsync(string value, ConsumerContext context, CancellationToken cancellationToken) {
+            return Task.CompletedTask;
+        }
     }
 
     // ── ProducerConsumerRegistration ─────────────────────────────────────────

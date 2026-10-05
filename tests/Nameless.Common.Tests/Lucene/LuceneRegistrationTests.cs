@@ -23,12 +23,16 @@ public sealed class RegistrationEntityMapping : IEntityMapping<RegistrationEntit
 }
 
 public sealed class RegistrationAnalyzerSelector : IAnalyzerSelector {
-    public AnalyzerSelectorResult GetAnalyzer(string indexName) => new(null, 1);
+    public AnalyzerSelectorResult GetAnalyzer(string indexName) {
+        return new AnalyzerSelectorResult(null, 1);
+    }
 }
 
 [UnitTest]
 public class LuceneRegistrationTests {
-    private static LuceneRegistration CreateSut() => new LuceneRegistration().WithUseAssemblyScan(false);
+    private static LuceneRegistration CreateSut() {
+        return new LuceneRegistration().WithUseAssemblyScan(false);
+    }
 
     [Fact]
     public void WithAnalyzerSelector_Generic_AddsType() {

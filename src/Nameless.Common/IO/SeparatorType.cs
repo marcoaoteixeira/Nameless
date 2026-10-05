@@ -7,10 +7,10 @@ public enum SeparatorType {
     /// <summary>
     ///     Forward slash
     /// </summary>
-    ForwardSlash = 47,
+    ForwardSlash = Separators.ForwardSlash,
 
     /// <summary>
     ///     Backward slash
     /// </summary>
-    BackwardSlash = 92
+    BackwardSlash = Separators.BackwardSlash
 }

@@ -16,7 +16,9 @@ public class ConnectionManagerConfigurationTests {
         return new ConnectionManager(options, logger);
     }
 
-    private static ServerOptions Unreachable() => new() { Hostname = "127.0.0.1", Port = 1 };
+    private static ServerOptions Unreachable() {
+        return new ServerOptions { Hostname = "127.0.0.1", Port = 1 };
+    }
 
     [Fact]
     public async Task GetConnectionAsync_WhenBrokerUnreachable_Throws() {

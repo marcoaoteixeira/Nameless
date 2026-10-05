@@ -22,14 +22,15 @@ public class GitHubHttpClientTests {
         }
     }
 
-    private static HttpResponseMessage Json(string json, HttpStatusCode status = HttpStatusCode.OK)
-        => new(status) { Content = new StringContent(json, Encoding.UTF8, "application/json") };
+    private static HttpResponseMessage Json(string json, HttpStatusCode status = HttpStatusCode.OK) {
+        return new HttpResponseMessage(status) { Content = new StringContent(json, Encoding.UTF8, "application/json") };
+    }
 
     private const string AuthorJson = """
-        {"login":"l","id":1,"node_id":"n","avatar_url":"a","gravatar_id":"g","url":"u","html_url":"h","followers_url":"f",
-         "following_url":"f","gists_url":"g","starred_url":"s","subscriptions_url":"s","organizations_url":"o","repos_url":"r",
-         "events_url":"e","received_events_url":"r","type":"User","user_view_type":"public","site_admin":false}
-        """;
+                                      {"login":"l","id":1,"node_id":"n","avatar_url":"a","gravatar_id":"g","url":"u","html_url":"h","followers_url":"f",
+                                       "following_url":"f","gists_url":"g","starred_url":"s","subscriptions_url":"s","organizations_url":"o","repos_url":"r",
+                                       "events_url":"e","received_events_url":"r","type":"User","user_view_type":"public","site_admin":false}
+                                      """;
 
     private static string ReleaseJson => $$"""
         {"url":"u","assets_url":"a","upload_url":"up","html_url":"h","id":7,"author":{{AuthorJson}},"node_id":"n","tag_name":"v1.2.3",

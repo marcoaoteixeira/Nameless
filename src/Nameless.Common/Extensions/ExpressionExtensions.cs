@@ -192,7 +192,7 @@ public static class ExpressionExtensions {
         /// <param name="expression">The right expression.</param>
         /// <returns>An expression composition.</returns>
         public Expression<Func<T, bool>> And(Expression<Func<T, bool>> expression) {
-            var param = Expression.Parameter(typeof(T), Separators.Underscore);
+            var param = Expression.Parameter(typeof(T), new string([Separators.Underscore]));
             var body = Expression.And(
                 Expression.Invoke(self, param),
                 Expression.Invoke(expression, param)
@@ -206,7 +206,7 @@ public static class ExpressionExtensions {
         /// <param name="expression">The right expression.</param>
         /// <returns>An expression composition.</returns>
         public Expression<Func<T, bool>> Or(Expression<Func<T, bool>> expression) {
-            var param = Expression.Parameter(typeof(T), Separators.Underscore);
+            var param = Expression.Parameter(typeof(T), new string([Separators.Underscore]));
             var body = Expression.Or(
                 Expression.Invoke(self, param),
                 Expression.Invoke(expression, param)

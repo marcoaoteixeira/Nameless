@@ -7,18 +7,10 @@ namespace Nameless.IO;
 ///     Helper to deal with path related problems.
 /// </summary>
 public static class PathHelper {
-    private const char BACKWARD_SLASH_CHAR = (char)SeparatorType.BackwardSlash;
-    private const char FORWARD_SLASH_CHAR = (char)SeparatorType.ForwardSlash;
-
-    private static readonly char[] PathSeparators = [
-        BACKWARD_SLASH_CHAR,
-        FORWARD_SLASH_CHAR
-    ];
-
     private static readonly char[] InvalidPathChars = [
         .. SysPath.GetInvalidFileNameChars()
-                  .Where(@char => @char != BACKWARD_SLASH_CHAR &&
-                                  @char != FORWARD_SLASH_CHAR)
+                  .Where(@char => @char != SysPath.DirectorySeparatorChar &&
+                                  @char != SysPath.AltDirectorySeparatorChar)
     ];
     
     private static readonly Regex InvalidPathCharsRegex = new(
@@ -26,6 +18,14 @@ public static class PathHelper {
         options: RegexOptions.Compiled,
         matchTimeout: TimeSpan.FromSeconds(1)
     );
+
+    /// <summary>
+    ///     Gets the path separators chars (backward and forward slash)
+    /// </summary>
+    public static readonly char[] PathSeparators = [
+        SysPath.DirectorySeparatorChar,
+        SysPath.AltDirectorySeparatorChar
+    ];
 
     /// <summary>
     ///     Normalizes a path using the path delimiter semantics of the
@@ -89,14 +89,13 @@ public static class PathHelper {
     /// <param name="path">
     ///     The path.
     /// </param>
-    /// <param name="separator">
-    ///     Type of separator
-    /// </param>
     /// <returns>
     ///     The path with leading slash.
     /// </returns>
-    public static string EnsureLeadingSlash(string path, SeparatorType separator = SeparatorType.BackwardSlash) {
-        var slash = (char)separator;
+    public static string EnsureLeadingSlash(string path) {
+        var slash = OperatingSystem.IsWindows()
+            ? Separators.BackwardSlash
+            : Separators.ForwardSlash;
 
         if (string.IsNullOrWhiteSpace(path)) {
             return $"{slash}";
@@ -111,14 +110,13 @@ public static class PathHelper {
     /// <param name="path">
     ///     The path.
     /// </param>
-    /// <param name="separator">
-    ///     Type of separator
-    /// </param>
     /// <returns>
     ///     The path with trailing slash.
     /// </returns>
-    public static string EnsureTrailingSlash(string path, SeparatorType separator = SeparatorType.BackwardSlash) {
-        var slash = (char)separator;
+    public static string EnsureTrailingSlash(string path) {
+        var slash = OperatingSystem.IsWindows()
+            ? Separators.BackwardSlash
+            : Separators.ForwardSlash;
 
         if (string.IsNullOrWhiteSpace(path)) {
             return $"{slash}";
@@ -162,9 +160,6 @@ public static class PathHelper {
     /// <param name="relativePath">
     ///     The relative path.
     /// </param>
-    /// <param name="separator">
-    ///     Type of path separator.
-    /// </param>
     /// <returns>
     ///     The resolved relative path.
     /// </returns>
@@ -174,7 +169,7 @@ public static class PathHelper {
     /// <exception cref="RelativePathException">
     ///     If <paramref name="relativePath"/> escapes root.
     /// </exception>
-    public static string ResolveRelativePath(string relativePath, SeparatorType separator = SeparatorType.BackwardSlash) {
+    public static string ResolveRelativePath(string relativePath) {
         Throws.When.Null(relativePath);
 
         var segments = new List<string>();
@@ -202,7 +197,7 @@ public static class PathHelper {
             segments.Add(segment.Value);
         }
 
-        return string.Join((char)separator, segments);
+        return string.Join(SysPath.DirectorySeparatorChar, segments);
     }
 
     /// <summary>

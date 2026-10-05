@@ -2,6 +2,7 @@
 #pragma warning disable CA1822
 
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace Nameless;
@@ -185,6 +186,9 @@ public sealed partial class Throws {
     /// <param name="maximumValue">
     ///     The maximum value to compare.
     /// </param>
+    /// <param name="excludeBounds">
+    ///     Whether it should exclude minimum or maximum bounds.
+    /// </param>
     /// <param name="paramName">
     ///     The parameter name (optional).
     /// </param>
@@ -202,8 +206,12 @@ public sealed partial class Throws {
     ///     <paramref name="minimumValue"/> and <paramref name="maximumValue"/>.
     /// </exception>
     [DebuggerStepThrough]
-    public double OutOfRange(double paramValue, double minimumValue, double maximumValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
-        if (paramValue >= minimumValue && paramValue <= maximumValue) {
+    public double OutOfRange(double paramValue, double minimumValue, double maximumValue, bool excludeBounds = false, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        var inRange = excludeBounds
+            ? paramValue > minimumValue && paramValue < maximumValue
+            : paramValue >= minimumValue && paramValue <= maximumValue;
+
+        if (inRange) {
             return paramValue;
         }
 
@@ -212,16 +220,18 @@ public sealed partial class Throws {
                   paramName,
                   paramValue,
                   string.IsNullOrWhiteSpace(message)
-                      ? string.Format(PARAM_OUT_OF_RANGE_MESSAGE, minimumValue, maximumValue)
+                      ? string.Format(CultureInfo.InvariantCulture, PARAM_OUT_OF_RANGE_MESSAGE, minimumValue, maximumValue, excludeBounds)
                       : message);
     }
 
     /// <summary>
-    ///     Ensure that the <paramref name="paramValue"/> is exactly
-    ///     zero.
+    ///     Ensure that the <paramref name="paramValue"/> is not zero.
     /// </summary>
     /// <param name="paramValue">
     ///     The parameter value.
+    /// </param>
+    /// <param name="tolerance">
+    ///     The "zero-ing" tolerance.
     /// </param>
     /// <param name="paramName">
     ///     The parameter name (optional).
@@ -239,8 +249,8 @@ public sealed partial class Throws {
     ///     If <paramref name="paramValue"/> is zero value.
     /// </exception>
     [DebuggerStepThrough]
-    public double Zero(double paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
-        if (paramValue > 0D) {
+    public double Zero(double paramValue, double tolerance = 0D, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (double.IsNaN(paramValue) || Math.Abs(paramValue) > tolerance) {
             return paramValue;
         }
 
@@ -284,5 +294,42 @@ public sealed partial class Throws {
                       ? PARAM_NEGATIVE_MESSAGE
                       : message,
                   paramName);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is
+    ///     not an infinite value.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    ///     If <paramref name="paramValue"/> is negative value.
+    /// </exception>
+    [DebuggerStepThrough]
+    public double Infinite(double paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (double.IsFinite(paramValue)) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? PARAM_INFINITE_MESSAGE
+                      : message);
     }
 }

@@ -8,8 +8,10 @@ public class EntityFrameworkCoreRegistrationTests {
 
     private sealed class FakeDatabaseSeeder : IDatabaseSeeder {
         public int Order => 0;
-        public Task ExecuteAsync(Microsoft.EntityFrameworkCore.DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken)
-            => Task.CompletedTask;
+        public Task ExecuteAsync(Microsoft.EntityFrameworkCore.DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken) {
+            return Task.CompletedTask;
+        }
+
         public void Execute(Microsoft.EntityFrameworkCore.DbContext dbContext, bool storeManagementOperation) { }
     }
 

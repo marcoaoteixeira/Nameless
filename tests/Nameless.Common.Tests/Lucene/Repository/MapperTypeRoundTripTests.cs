@@ -69,30 +69,32 @@ public class MapperTypeRoundTripTests {
         return new Mapper(new EntityDescriptorProvider(services.BuildServiceProvider()));
     }
 
-    private static RoundTripEntity CreateEntity() => new() {
-        Id = "id-1",
-        Text = "<b>bold</b> text",
-        Flag = true,
-        Letter = 'z',
-        SByteValue = 3,
-        ByteValue = 200,
-        ShortValue = -5,
-        UShortValue = 65000,
-        IntValue = -42,
-        UIntValue = 4_000_000_000,
-        LongValue = 9_000_000_000,
-        ULongValue = 123456789,
-        FloatValue = 1.5f,
-        DoubleValue = 2.25,
-        DecimalValue = 3.75m,
-        DateTimeValue = new DateTime(2026, 5, 6, 7, 8, 9),
-        GuidValue = Guid.Parse("11111111-2222-3333-4444-555555555555"),
-        DateOnlyValue = new DateOnly(2026, 5, 6),
-        TimeOnlyValue = new TimeOnly(7, 8, 9),
-        TimeSpanValue = TimeSpan.FromMinutes(90),
-        DateTimeOffsetValue = new DateTimeOffset(2026, 5, 6, 7, 8, 9, TimeSpan.Zero),
-        EnumValue = RoundTripKind.Second
-    };
+    private static RoundTripEntity CreateEntity() {
+        return new RoundTripEntity {
+            Id = "id-1",
+            Text = "<b>bold</b> text",
+            Flag = true,
+            Letter = 'z',
+            SByteValue = 3,
+            ByteValue = 200,
+            ShortValue = -5,
+            UShortValue = 65000,
+            IntValue = -42,
+            UIntValue = 4_000_000_000,
+            LongValue = 9_000_000_000,
+            ULongValue = 123456789,
+            FloatValue = 1.5f,
+            DoubleValue = 2.25,
+            DecimalValue = 3.75m,
+            DateTimeValue = new DateTime(2026, 5, 6, 7, 8, 9),
+            GuidValue = Guid.Parse("11111111-2222-3333-4444-555555555555"),
+            DateOnlyValue = new DateOnly(2026, 5, 6),
+            TimeOnlyValue = new TimeOnly(7, 8, 9),
+            TimeSpanValue = TimeSpan.FromMinutes(90),
+            DateTimeOffsetValue = new DateTimeOffset(2026, 5, 6, 7, 8, 9, TimeSpan.Zero),
+            EnumValue = RoundTripKind.Second
+        };
+    }
 
     [Fact]
     public void MapEntityToDocumentAndBack_PreservesEveryPropertyType() {

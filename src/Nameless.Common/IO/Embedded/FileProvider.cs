@@ -22,7 +22,6 @@ namespace Nameless.IO.Embedded;
 /// </remarks>
 public class FileProvider : IFileProvider {
     private const string MANIFEST_ROOT = "/";
-    private const char FORWARD_SLASH = '/';
 
     private readonly ManifestEmbeddedFileProvider _provider;
 
@@ -151,10 +150,7 @@ public class FileProvider : IFileProvider {
         Throws.When.PathHasInvalidChars(relativePath);
         Throws.When.PathNavigatesAboveRoot(relativePath);
 
-        relativePath = PathHelper.ResolveRelativePath(
-            relativePath,
-            separator: SeparatorType.ForwardSlash
-        );
+        relativePath = ResolveRelativePathCore(relativePath);
 
         var path = !string.IsNullOrWhiteSpace(relativePath)
             ? $"{Root}/{relativePath}"
@@ -172,9 +168,7 @@ public class FileProvider : IFileProvider {
     ///     The root paths resolves to <see cref="string.Empty"/>.
     /// </summary>
     internal static string ResolveRelativePathCore(string relativePath) {
-        return PathHelper.ResolveRelativePath(
-            relativePath,
-            separator: SeparatorType.ForwardSlash
-        );
+        return PathHelper.ResolveRelativePath(relativePath)
+                         .Replace(Separators.BackwardSlash, Separators.ForwardSlash);
     }
 }

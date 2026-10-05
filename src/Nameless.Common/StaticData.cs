@@ -26,57 +26,57 @@ public static class StaticData {
         /// <summary>
         ///     Backward slash
         /// </summary>
-        public const string BackwardSlash = "\\";
+        public const char BackwardSlash = '\\';
 
         /// <summary>
         ///     Colon
         /// </summary>
-        public const string Colon = ":";
+        public const char Colon = ':';
 
         /// <summary>
         ///     Comma
         /// </summary>
-        public const string Comma = ",";
+        public const char Comma = ',';
 
         /// <summary>
         ///     Dash
         /// </summary>
-        public const string Dash = "-";
+        public const char Dash = '-';
 
         /// <summary>
         ///     Dot
         /// </summary>
-        public const string Dot = ".";
+        public const char Dot = '.';
 
         /// <summary>
         ///     Forward slash
         /// </summary>
-        public const string ForwardSlash = "/";
+        public const char ForwardSlash = '/';
 
         /// <summary>
         ///     Pipe
         /// </summary>
-        public const string Pipe = "|";
+        public const char Pipe = '|';
 
         /// <summary>
         ///     Semicolon
         /// </summary>
-        public const string Semicolon = ";";
+        public const char Semicolon = ';';
 
         /// <summary>
         ///     Sharp
         /// </summary>
-        public const string Sharp = "#";
+        public const char Sharp = '#';
 
         /// <summary>
         ///     Space
         /// </summary>
-        public const string Space = " ";
+        public const char Space = ' ';
 
         /// <summary>
         ///     Underscore
         /// </summary>
-        public const string Underscore = "_";
+        public const char Underscore = '_';
     }
 
     /// <summary>

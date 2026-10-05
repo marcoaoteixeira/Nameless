@@ -24,8 +24,9 @@ public class ConsumerDeliveryTests {
             _handler = handler;
         }
 
-        public override Task ConsumeAsync(string value, ConsumerContext context, CancellationToken cancellationToken)
-            => _handler(value, context);
+        public override Task ConsumeAsync(string value, ConsumerContext context, CancellationToken cancellationToken) {
+            return _handler(value, context);
+        }
     }
 
     private sealed class Fixture {
@@ -58,7 +59,9 @@ public class ConsumerDeliveryTests {
                 new ConsumerOptions { RetryPolicy = retry }, logger, handler);
         }
 
-        public Task StartAsync() => ((IHostedService)Sut).StartAsync(CancellationToken.None);
+        public Task StartAsync() {
+            return ((IHostedService)Sut).StartAsync(CancellationToken.None);
+        }
 
         public Task DeliverAsync(string payload = "hello", ulong deliveryTag = 7) {
             var buffer = new JsonMessageSerializer().Serialize(payload, new ProducerContext {
