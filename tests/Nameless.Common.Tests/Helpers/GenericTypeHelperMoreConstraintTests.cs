@@ -22,7 +22,9 @@ public sealed class ConstraintSelfHolder<TKey, TValue>
     where TValue : IComparable<TKey>;
 
 public sealed class ConstraintComparableKey : IComparable<ConstraintComparableKey> {
-    public int CompareTo(ConstraintComparableKey? other) => 0;
+    public int CompareTo(ConstraintComparableKey? other) {
+        return 0;
+    }
 }
 
 [UnitTest]

@@ -26,8 +26,14 @@ public sealed class ConstraintPairHolder<TKey, TValue>
 public sealed class NamedCategoryLogger : ILogger {
     public string CategoryName => "Some.Namespace.CategoryClass";
 
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => false;
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull {
+        return null;
+    }
+
+    public bool IsEnabled(LogLevel logLevel) {
+        return false;
+    }
+
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
 }
 

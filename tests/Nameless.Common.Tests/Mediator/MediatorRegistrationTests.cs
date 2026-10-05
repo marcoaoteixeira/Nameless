@@ -5,23 +5,29 @@ namespace Nameless.Mediator;
 
 public class PassThroughRequestBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse> {
-    public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-        => next(cancellationToken);
+    public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
+        return next(cancellationToken);
+    }
 }
 
 public class PassThroughStreamBehavior<TRequest, TResponse> : IStreamPipelineBehavior<TRequest, TResponse>
     where TRequest : IStream<TResponse> {
-    public IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-        => next();
+    public IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
+        return next();
+    }
 }
 
 public class GenericEventHandler<TEvent> : Events.IEventHandler<TEvent> where TEvent : Events.IEvent {
-    public Task HandleAsync(TEvent evt, CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task HandleAsync(TEvent evt, CancellationToken cancellationToken) {
+        return Task.CompletedTask;
+    }
 }
 
 [UnitTest]
 public class MediatorRegistrationTests {
-    private static MediatorRegistration CreateSut() => new MediatorRegistration().WithUseAssemblyScan(false);
+    private static MediatorRegistration CreateSut() {
+        return new MediatorRegistration().WithUseAssemblyScan(false);
+    }
 
     [Fact]
     public void WithEventHandler_Generic_AddsType() {

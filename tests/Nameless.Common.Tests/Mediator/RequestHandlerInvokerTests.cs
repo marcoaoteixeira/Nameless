@@ -33,8 +33,9 @@ public sealed class VoidRequestHandler(RequestLog log) : IRequestHandler<VoidReq
 public record ThrowingVoidRequest : IRequest;
 
 public sealed class ThrowingVoidRequestHandler : IRequestHandler<ThrowingVoidRequest> {
-    public Task HandleAsync(ThrowingVoidRequest request, CancellationToken cancellationToken)
-        => throw new InvalidOperationException("boom");
+    public Task HandleAsync(ThrowingVoidRequest request, CancellationToken cancellationToken) {
+        throw new InvalidOperationException("boom");
+    }
 }
 
 public record UnhandledVoidRequest : IRequest;

@@ -67,11 +67,15 @@ public class SmtpClientFactoryTests {
         }
     }
 
-    private static SmtpClientFactory CreateSut(int port, string? username = null, string? password = null)
-        => new(Options.Create(new MailingOptions {
-            Host = "127.0.0.1", Port = port, SecureSocket = SecureSocketOptions.None,
-            Username = username, Password = password
+    private static SmtpClientFactory CreateSut(int port, string? username = null, string? password = null) {
+        return new SmtpClientFactory(Options.Create(new MailingOptions {
+            Host = "127.0.0.1",
+            Port = port,
+            SecureSocket = SecureSocketOptions.None,
+            Username = username,
+            Password = password
         }));
+    }
 
     [Fact]
     public async Task CreateAsync_ConnectsToConfiguredServer() {

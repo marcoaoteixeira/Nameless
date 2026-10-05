@@ -21,7 +21,9 @@ public class FileMonitorTests {
             Monitor = new FileMonitor(Root, glob, Watcher.Object, Probe.Object, Time, options);
         }
 
-        public string Path(string name) => SysPath.Combine(Root, name);
+        public string Path(string name) {
+            return SysPath.Combine(Root, name);
+        }
 
         public void Subscribe(Action<FileCreatedEvent>? onCreated = null) {
             Monitor.OnCreated(onCreated ?? (e => Events.Enqueue($"created:{e.Name}")));
@@ -71,9 +73,13 @@ public class FileMonitorTests {
             }
         }
 
-        public static Task Settle() => Task.Delay(150);
+        public static Task Settle() {
+            return Task.Delay(150);
+        }
 
-        public void Dispose() => Monitor.Dispose();
+        public void Dispose() {
+            Monitor.Dispose();
+        }
     }
 
     // ── Construction ──────────────────────────────────────────────────────────

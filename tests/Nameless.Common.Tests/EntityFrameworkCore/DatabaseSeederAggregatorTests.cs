@@ -32,11 +32,13 @@ public class DatabaseSeederAggregatorTests {
     private sealed class ThrowingSeeder : IDatabaseSeeder {
         public int Order => 0;
 
-        public Task ExecuteAsync(DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken)
-            => throw new InvalidOperationException("boom");
+        public Task ExecuteAsync(DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken) {
+            throw new InvalidOperationException("boom");
+        }
 
-        public void Execute(DbContext dbContext, bool storeManagementOperation)
-            => throw new InvalidOperationException("boom");
+        public void Execute(DbContext dbContext, bool storeManagementOperation) {
+            throw new InvalidOperationException("boom");
+        }
     }
 
     private static RecordingDbContext CreateDbContext() {

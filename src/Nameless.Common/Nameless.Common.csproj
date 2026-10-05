@@ -18,6 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Nameless.Common.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Lucene.Net.QueryParser" />
 		<PackageReference Include="MailKit" />

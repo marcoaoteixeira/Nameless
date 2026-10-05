@@ -5,17 +5,23 @@ using Nameless.Mediator.Requests;
 namespace Nameless.Mediator;
 
 public sealed class OpenGenericVoidHandler<TRequest> : IRequestHandler<TRequest> where TRequest : IRequest {
-    public Task HandleAsync(TRequest request, CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task HandleAsync(TRequest request, CancellationToken cancellationToken) {
+        return Task.CompletedTask;
+    }
 }
 
 public sealed class OpenGenericTypedHandler<TRequest> : IRequestHandler<TRequest, string>
     where TRequest : IRequest<string> {
-    public Task<string> HandleAsync(TRequest request, CancellationToken cancellationToken) => Task.FromResult("open");
+    public Task<string> HandleAsync(TRequest request, CancellationToken cancellationToken) {
+        return Task.FromResult("open");
+    }
 }
 
 [UnitTest]
 public class VoidRequestRegistrationTests {
-    private static MediatorRegistration CreateSut() => new MediatorRegistration().WithUseAssemblyScan(false);
+    private static MediatorRegistration CreateSut() {
+        return new MediatorRegistration().WithUseAssemblyScan(false);
+    }
 
     // ── MediatorRegistration ──────────────────────────────────────────────────
 

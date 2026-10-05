@@ -20,7 +20,7 @@ public sealed partial class Throws {
     private const string PARAM_GREATER_OR_EQUAL_MESSAGE = "Parameter cannot be greater or equal to '{0}'.";
     private const string PARAM_LOWER_THAN_MESSAGE = "Parameter cannot be lower than '{0}'.";
     private const string PARAM_GREATER_THAN_MESSAGE = "Parameter cannot be greater than '{0}'.";
-    private const string PARAM_OUT_OF_RANGE_MESSAGE = "Parameter must be between minimum value of '{0}' and maximum value of '{1}'.";
+    private const string PARAM_OUT_OF_RANGE_MESSAGE = "Parameter must be between minimum value of '{0}' and maximum value of '{1}'. (Exclude bounds? {2})";
     private const string PARAM_ZERO_MESSAGE = "Parameter cannot be zero value.";
     private const string PARAM_NEGATIVE_MESSAGE = "Parameter cannot be negative value.";
     private const string PARAM_WHITE_SPACES_MESSAGE = "Parameter cannot be white spaces.";
@@ -30,6 +30,7 @@ public sealed partial class Throws {
     private const string PARAM_IS_OPEN_GENERIC_TYPE = "Type '{0}' must not be an open generic type.";
     private const string PARAM_IS_NOT_ASSIGNABLE_TYPE = "Type '{0}' must be assignable to '{1}'.";
     private const string PARAM_HAS_NO_PARAMETERLESS_CONSTRUCTOR = "Type '{0}' must have a parameteless constructor.";
+    private const string PARAM_INFINITE_MESSAGE = "Parameter cannot be an infinite number.";
 
     /// <summary>
     ///     Gets the unique instance of <see cref="Throws" />.

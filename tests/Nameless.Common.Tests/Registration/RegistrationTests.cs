@@ -95,7 +95,9 @@ public class RegistrationTests {
     // --- test doubles ---
 
     private sealed class ConcreteScanner : AssemblyScanAware<ConcreteScanner> {
-        public IReadOnlyCollection<Type> GetImplementations<T>() => ExecuteAssemblyScan(typeof(T));
+        public IReadOnlyCollection<Type> GetImplementations<T>() {
+            return ExecuteAssemblyScan(typeof(T));
+        }
     }
 }
 

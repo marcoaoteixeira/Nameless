@@ -5,7 +5,9 @@ namespace Nameless.ProducerConsumer.RabbitMQ.Extensions;
 
 [UnitTest]
 public class ConfigurationExtensionsTests {
-    private static IConfiguration Create(Dictionary<string, string?> values) => ConfigurationHelper.CreateConfiguration(values);
+    private static IConfiguration Create(Dictionary<string, string?> values) {
+        return ConfigurationHelper.CreateConfiguration(values);
+    }
 
     [Fact]
     public void GetServerOptions_WithSection_BindsValues() {

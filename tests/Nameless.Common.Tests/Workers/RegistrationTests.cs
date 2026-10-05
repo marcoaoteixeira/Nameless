@@ -9,7 +9,9 @@ namespace Nameless.Workers;
 
 public sealed class NoopWorker(IConfiguration configuration, IStatusReporter reporter)
     : PeriodicWorker(configuration, reporter, NullLogger.Instance) {
-    public override Task DoWorkAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public override Task DoWorkAsync(CancellationToken cancellationToken) {
+        return Task.CompletedTask;
+    }
 }
 
 [UnitTest]
