@@ -1003,6 +1003,176 @@ public class ThrowsTests {
         );
     }
 
+    // ─── OutOfRange (bounds & guards) ────────────────────────────────────────
+
+    [Fact]
+    public void Int32_OutOfRange_WhenBelow_ThrowsArgumentOutOfRangeExceptionWithParamName() {
+        var value = 0;
+        var ex = Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(value, 1, 10));
+        Assert.Equal(nameof(value), ex.ParamName);
+    }
+
+    [Fact]
+    public void Int32_OutOfRange_WhenExcludeBoundsAndAtMinimum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(1, 1, 10, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Int32_OutOfRange_WhenExcludeBoundsAndAtMaximum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(10, 1, 10, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Int32_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        Assert.Equal(5, Throws.When.OutOfRange(5, 1, 10, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Int32_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(() => Throws.When.OutOfRange(5, 10, 1));
+    }
+
+    [Fact]
+    public void Int64_OutOfRange_WhenAbove_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(11L, 1L, 10L));
+    }
+
+    [Fact]
+    public void Int64_OutOfRange_WhenExcludeBoundsAndAtMinimum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(1L, 1L, 10L, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Int64_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        Assert.Equal(5L, Throws.When.OutOfRange(5L, 1L, 10L, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Int64_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(() => Throws.When.OutOfRange(5L, 10L, 1L));
+    }
+
+    [Fact]
+    public void Decimal_OutOfRange_WhenAbove_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(11m, 1m, 10m));
+    }
+
+    [Fact]
+    public void Decimal_OutOfRange_WhenExcludeBoundsAndAtMaximum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(10m, 1m, 10m, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Decimal_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        Assert.Equal(5m, Throws.When.OutOfRange(5m, 1m, 10m, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Decimal_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(() => Throws.When.OutOfRange(5m, 10m, 1m));
+    }
+
+    [Fact]
+    public void Double_OutOfRange_WhenExcludeBoundsAndAtMinimum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(1d, 1d, 10d, excludeBounds: true));
+    }
+
+    [Fact]
+    public void Double_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(() => Throws.When.OutOfRange(5d, 10d, 1d));
+    }
+
+    [Fact]
+    public void DateTime_OutOfRange_WhenAbove_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => Throws.When.OutOfRange(new DateTime(2025, 1, 1), new DateTime(2024, 1, 1), new DateTime(2024, 6, 1))
+        );
+    }
+
+    [Fact]
+    public void DateTime_OutOfRange_WhenExcludeBoundsAndAtMinimum_ThrowsArgumentOutOfRangeException() {
+        var min = new DateTime(2024, 1, 1);
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => Throws.When.OutOfRange(min, min, new DateTime(2024, 6, 1), excludeBounds: true)
+        );
+    }
+
+    [Fact]
+    public void DateTime_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        var d = new DateTime(2024, 3, 1);
+        Assert.Equal(d, Throws.When.OutOfRange(d, new DateTime(2024, 1, 1), new DateTime(2024, 6, 1), excludeBounds: true));
+    }
+
+    [Fact]
+    public void DateTime_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(
+            () => Throws.When.OutOfRange(new DateTime(2024, 3, 1), new DateTime(2024, 6, 1), new DateTime(2024, 1, 1))
+        );
+    }
+
+    [Fact]
+    public void DateTimeOffset_OutOfRange_WhenBelow_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(
+            new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero)));
+    }
+
+    [Fact]
+    public void DateTimeOffset_OutOfRange_WhenExcludeBoundsAndAtMaximum_ThrowsArgumentOutOfRangeException() {
+        var max = new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Throws.When.OutOfRange(
+            max,
+            new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            max,
+            excludeBounds: true));
+    }
+
+    [Fact]
+    public void DateTimeOffset_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        var d = new DateTimeOffset(2024, 3, 1, 0, 0, 0, TimeSpan.Zero);
+        Assert.Equal(d, Throws.When.OutOfRange(
+            d,
+            new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero),
+            excludeBounds: true));
+    }
+
+    [Fact]
+    public void DateTimeOffset_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(() => Throws.When.OutOfRange(
+            new DateTimeOffset(2024, 3, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)));
+    }
+
+    [Fact]
+    public void TimeSpan_OutOfRange_WhenBelow_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => Throws.When.OutOfRange(TimeSpan.Zero, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10))
+        );
+    }
+
+    [Fact]
+    public void TimeSpan_OutOfRange_WhenExcludeBoundsAndAtMinimum_ThrowsArgumentOutOfRangeException() {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => Throws.When.OutOfRange(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10), excludeBounds: true)
+        );
+    }
+
+    [Fact]
+    public void TimeSpan_OutOfRange_WhenExcludeBoundsAndWithin_ReturnsValue() {
+        var t = TimeSpan.FromSeconds(5);
+        Assert.Equal(t, Throws.When.OutOfRange(t, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(10), excludeBounds: true));
+    }
+
+    [Fact]
+    public void TimeSpan_OutOfRange_WhenMinimumGreaterThanMaximum_ThrowsArgumentException() {
+        Assert.Throws<ArgumentException>(
+            () => Throws.When.OutOfRange(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
+        );
+    }
+
     // ─── test doubles ────────────────────────────────────────────────────────
 
     private abstract class AbstractBase { }
