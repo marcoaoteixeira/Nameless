@@ -83,21 +83,14 @@ public sealed class ZipCompressor : ICompressor {
     ///     <see langword="false"/>.
     /// </exception>
     public Task<CompressionResult> CompressFilesAsync(IEnumerable<string> filePaths, string destinationFilePath, CompressionLevel compressionLevel, bool overwrite, CancellationToken cancellationToken) {
-        ArgumentNullException.ThrowIfNull(filePaths);
+        Throws.When.Null(filePaths);
 
         string[] paths = [.. filePaths];
 
-        if (paths.Length == 0) {
-            throw new ArgumentException("At least one file path is required.", nameof(filePaths));
-        }
-
-        if (paths.Any(string.IsNullOrWhiteSpace)) {
-            throw new ArgumentException("File paths cannot be null, empty or white space.", nameof(filePaths));
-        }
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(destinationFilePath);
-
-        ValidateCompressionLevel(compressionLevel);
+        Throws.When.Empty(paths, paramName: nameof(filePaths), message: "At least one file path is required.");
+        Throws.When.AnyNullOrWhiteSpace(paths, paramName: nameof(filePaths), message: "File paths cannot be null, empty or white space.");
+        Throws.When.NullOrWhiteSpace(destinationFilePath);
+        Throws.When.Unknown(compressionLevel, message: "Unknown compression level.");
 
         return CompressFilesCoreAsync(paths, destinationFilePath, compressionLevel, overwrite, cancellationToken);
     }
@@ -121,14 +114,14 @@ public sealed class ZipCompressor : ICompressor {
     ///     <see langword="false"/>.
     /// </exception>
     public Task<CompressionResult> CompressDirectoryAsync(string directoryPath, string? globPattern, string destinationFilePath, CompressionLevel compressionLevel, bool overwrite, CancellationToken cancellationToken) {
-        ArgumentException.ThrowIfNullOrWhiteSpace(directoryPath);
+        Throws.When.NullOrWhiteSpace(directoryPath);
 
         if (globPattern is not null) {
             ValidateGlobPattern(globPattern);
         }
 
-        ArgumentException.ThrowIfNullOrWhiteSpace(destinationFilePath);
-        ValidateCompressionLevel(compressionLevel);
+        Throws.When.NullOrWhiteSpace(destinationFilePath);
+        Throws.When.Unknown(compressionLevel, message: "Unknown compression level.");
 
         return CompressDirectoryCoreAsync(
             directoryPath,
@@ -171,8 +164,8 @@ public sealed class ZipCompressor : ICompressor {
     ///     file locked).
     /// </exception>
     public Task<string> DecompressAsync(string filePath, string destinationDirectoryPath, string? checksum, bool overwrite, CancellationToken cancellationToken) {
-        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
-        ArgumentException.ThrowIfNullOrWhiteSpace(destinationDirectoryPath);
+        Throws.When.NullOrWhiteSpace(filePath);
+        Throws.When.NullOrWhiteSpace(destinationDirectoryPath);
 
         ArchiveChecksum.Validate(checksum);
 
@@ -428,16 +421,6 @@ public sealed class ZipCompressor : ICompressor {
         return items;
     }
 
-    private static void ValidateCompressionLevel(CompressionLevel compressionLevel) {
-        if (!Enum.IsDefined(compressionLevel)) {
-            throw new ArgumentOutOfRangeException(
-                paramName: nameof(compressionLevel),
-                actualValue: compressionLevel,
-                message: "Unknown compression level."
-            );
-        }
-    }
-
     /// <summary>
     ///     Rooted patterns (<c>/x</c>, <c>\x</c>, <c>\\server\share</c>,
     ///     <c>C:x</c> on Windows) and <c>..</c> segments are refused: they
@@ -445,7 +428,7 @@ public sealed class ZipCompressor : ICompressor {
     ///     not empty matches.
     /// </summary>
     private static void ValidateGlobPattern(string globPattern) {
-        ArgumentException.ThrowIfNullOrWhiteSpace(globPattern);
+        Throws.When.NullOrWhiteSpace(globPattern);
 
         var rooted = globPattern[0] is Separators.ForwardSlash or
                                        Separators.BackwardSlash ||

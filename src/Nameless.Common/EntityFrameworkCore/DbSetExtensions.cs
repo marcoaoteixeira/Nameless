@@ -53,9 +53,14 @@ public static class DbSetExtensions {
         }
 
         private EntityEntry<TEntity> MarkDeleted(TEntity entity, DateTimeOffset now) {
-            // no-op for state if already tracked;
-            // doesn't cascade as Modified
-            var entry = self.Attach(entity);
+            // Attach only when not tracked: attaching a tracked entity
+            // forces it to Unchanged, which would lose a pending Added
+            // state. For detached entities, Attach doesn't cascade as
+            // Modified and marks entities with unset generated keys as Added.
+            var entry = self.Entry(entity);
+            if (entry.State == Microsoft.EntityFrameworkCore.EntityState.Detached) {
+                entry = self.Attach(entity);
+            }
 
             if (entity.EntityState == EntityState.Deleted) {
                 return entry; // already soft-deleted, avoid a pointless UPDATE
@@ -65,6 +70,10 @@ public static class DbSetExtensions {
                 // Never persisted: removing it means cancelling the pending insert,
                 // same as DbSet.Remove does for Added entities.
                 entry.State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+
+                // must return here: flagging properties as modified on a
+                // detached entry would start tracking it as Modified again.
+                return entry;
             }
 
             entity.EntityState = EntityState.Deleted;
