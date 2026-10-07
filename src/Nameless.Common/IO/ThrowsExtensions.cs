@@ -75,7 +75,7 @@ internal static class ThrowsExtensions {
             );
         }
 
-        //[DebuggerStepThrough]
+        [DebuggerStepThrough]
         internal string PathUnderneathRoot(string root, string relativePath, string paramValue, string? message = null, Func<Exception>? exceptionCreator = null) {
             var isUnderneath = string.Equals(paramValue, root, PathComparison) ||
                                paramValue.StartsWith(root, PathComparison);

@@ -31,6 +31,9 @@ public sealed partial class Throws {
     private const string PARAM_IS_NOT_ASSIGNABLE_TYPE = "Type '{0}' must be assignable to '{1}'.";
     private const string PARAM_HAS_NO_PARAMETERLESS_CONSTRUCTOR = "Type '{0}' must have a parameteless constructor.";
     private const string PARAM_INFINITE_MESSAGE = "Parameter cannot be an infinite number.";
+    private const string PARAM_ENUM_NOT_DEFINED_MESSAGE = "Unknown value for type '{0}'";
+    private const string PARAM_ENUMERABLE_EMPTY_MESSAGE = "Parameter cannot be empty.";
+    private const string PARAM_ANY_NULL_WHITESPACE_MESSAGE = "Parameter contains values null, empty or white space.";
 
     /// <summary>
     ///     Gets the unique instance of <see cref="Throws" />.
@@ -72,7 +75,7 @@ public sealed partial class Throws {
     ///     If <paramref name="paramValue"/> is <see langword="null"/>.
     /// </exception>
     [DebuggerStepThrough]
-    public TValue Null<TValue>([NotNull] TValue? paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+    public TValue Null<TValue>([NotNull, JB_NoEnumeration] TValue? paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
         if (paramValue is not null) {
             return paramValue;
         }

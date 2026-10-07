@@ -9,3 +9,5 @@ global using FluentValidationResult = FluentValidation.Results.ValidationResult;
 global using IFluentValidationValidator = FluentValidation.IValidator;
 
 global using RabbitConstants = RabbitMQ.Client.Constants;
+
+global using JB_NoEnumerationAttribute = JetBrains.Annotations.NoEnumerationAttribute;
