@@ -26,10 +26,10 @@ public class ValidateRequestPipelineBehavior<TRequest, TResponse> : IRequestPipe
 
     /// <inheritdoc />
     public async Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
-        var result = await _validator.ValidateAsync(request, cancellationToken);
+        var result = await _validator.ValidateAsync(request, cancellationToken).SkipContextSync();
 
         if (result.Success) {
-            return await next(cancellationToken);
+            return await next(cancellationToken).SkipContextSync();
         }
 
         Log.ValidationFailure(_logger, result.Errors, GetType().Tag);
@@ -59,9 +59,9 @@ public class ValidateRequestPipelineBehavior<TRequest> : IRequestPipelineBehavio
 
     /// <inheritdoc />
     public async Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
-        var result = await _validator.ValidateAsync(request, cancellationToken);
+        var result = await _validator.ValidateAsync(request, cancellationToken).SkipContextSync();
         if (result.Success) {
-            await next(cancellationToken);
+            await next(cancellationToken).SkipContextSync();
 
             return;
         }

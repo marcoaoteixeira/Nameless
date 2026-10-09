@@ -27,12 +27,14 @@ public class ValidateStreamPipelineBehavior<TRequest, TResponse> : IStreamPipeli
 
     /// <inheritdoc />
     public async IAsyncEnumerable<TResponse> HandleAsync(TRequest request, StreamHandlerDelegate<TResponse> next, [EnumeratorCancellation] CancellationToken cancellationToken) {
-        var result = await _validator.ValidateAsync(request, cancellationToken);
+        var result = await _validator.ValidateAsync(request, cancellationToken).SkipContextSync();
 
         if (result.Success) {
-            await foreach (var item in next().WithCancellation(cancellationToken)) {
+            await foreach (var item in next().WithCancellation(cancellationToken).ConfigureAwait(false)) {
                 yield return item;
             }
+
+            yield break;
         }
 
         Log.ValidationFailure(_logger, result.Errors, GetType().Tag);

@@ -301,7 +301,7 @@ public class RequestHandlerInvokerTests {
     }
 
     [Fact]
-    public async Task ExecuteAsync_TypedRequestViewedAsCovariantResponse_ThrowsInvalidCastException() {
+    public async Task ExecuteAsync_TypedRequestViewedAsCovariantResponse_ThrowsInvalidOperationException() {
         // arrange
         // IRequest<out TResponse> is covariant, but the cached wrapper is closed over the
         // request's declared response type (string), so asking for object is not supported.
@@ -309,9 +309,28 @@ public class RequestHandlerInvokerTests {
         var sut = new RequestHandlerInvoker(provider);
         IRequest<object> covariant = new TrackedTypedRequest();
 
-        // act & assert
-        await Assert.ThrowsAsync<InvalidCastException>(
+        // act
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => sut.ExecuteAsync(covariant, TestContext.Current.CancellationToken));
+
+        // assert
+        Assert.Contains(nameof(TrackedTypedRequest), exception.Message);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CovariantCallThenTypedCall_TypedCallStillWorks() {
+        // arrange
+        using var provider = BuildProvider();
+        var sut = new RequestHandlerInvoker(provider);
+        IRequest<object> covariant = new TrackedTypedRequest();
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => sut.ExecuteAsync(covariant, TestContext.Current.CancellationToken));
+
+        // act
+        var response = await sut.ExecuteAsync(new TrackedTypedRequest(), TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal("typed", response);
     }
 
     // ── through IMediator ─────────────────────────────────────────────────────

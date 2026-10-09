@@ -23,6 +23,26 @@ public class GenericEventHandler<TEvent> : Events.IEventHandler<TEvent> where TE
     }
 }
 
+public record ScanStructRequest : IRequest;
+
+// Value type handlers must never be picked up by the assembly scan.
+public struct ScanStructRequestHandler : IRequestHandler<ScanStructRequest> {
+    public readonly Task HandleAsync(ScanStructRequest request, CancellationToken cancellationToken) {
+        return Task.CompletedTask;
+    }
+}
+
+// Vertical-slice layout: the handler is nested in a public static class.
+public static class ScanNestedFeature {
+    public record Request : IRequest<int>;
+
+    public sealed class Handler : IRequestHandler<Request, int> {
+        public Task<int> HandleAsync(Request request, CancellationToken cancellationToken) {
+            return Task.FromResult(1);
+        }
+    }
+}
+
 [UnitTest]
 public class MediatorRegistrationTests {
     private static MediatorRegistration CreateSut() {
@@ -161,5 +181,119 @@ public class MediatorRegistrationTests {
             () => Assert.True(sut.UseValidateRequestPipelineBehavior),
             () => Assert.True(sut.UseValidateStreamPipelineBehavior)
         );
+    }
+
+    // ── fail fast on types the mediator can never invoke ──────────────────────
+
+    [Fact]
+    public void WithRequestHandler_OpenGenericWithMismatchedTypeParameters_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestHandler(typeof(InspWrappedArityHandler<>)));
+    }
+
+    [Fact]
+    public void WithRequestHandler_VoidHandlerForRequestWithResponse_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestHandler(typeof(InspVoidForResponseHandler)));
+    }
+
+    [Fact]
+    public void WithRequestHandler_CovariantResponseType_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestHandler(typeof(InspCovariantHandler)));
+    }
+
+    [Fact]
+    public void WithEventHandler_OpenGenericWithMismatchedTypeParameters_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithEventHandler(typeof(InspWrappedEventHandler<>)));
+    }
+
+    [Fact]
+    public void WithStreamHandler_CovariantResponseType_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithStreamHandler(typeof(InspCovariantStreamHandler)));
+    }
+
+    [Fact]
+    public void WithRequestPipelineBehavior_OpenGenericWithMismatchedTypeParameters_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspWrappedArityBehavior<>)));
+    }
+
+    [Fact]
+    public void WithRequestPipelineBehavior_VoidBehaviorForRequestWithResponse_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspVoidBehaviorForResponse)));
+    }
+
+    [Fact]
+    public void WithStreamPipelineBehavior_ResponseTypeNotDeclaredByStream_ThrowsInvalidOperationException() {
+        // act & assert
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithStreamPipelineBehavior(typeof(InspWrongResponseStreamBehavior)));
+    }
+
+    [Fact]
+    public void WithRequestHandler_HandlerForSeveralRequests_AddsType() {
+        // act
+        var sut = CreateSut().WithRequestHandler(typeof(InspMultiHandler));
+
+        // assert
+        Assert.Contains(typeof(InspMultiHandler), sut.RequestHandlers);
+    }
+
+    // ── assembly scan + manual registration ───────────────────────────────────
+
+    [Fact]
+    public void Handlers_WithAssemblyScan_IncludeManualRegistrations() {
+        // arrange
+        var sut = new MediatorRegistration().WithAssemblyFrom<MediatorRegistrationTests>()
+                                            .WithRequestHandler(typeof(InspMultiHandler))
+                                            .WithEventHandler(typeof(InspEventHandler))
+                                            .WithStreamHandler(typeof(InspMultiStreamHandler));
+
+        // act & assert
+        Assert.Multiple(
+            () => Assert.Contains(typeof(InspMultiHandler), sut.RequestHandlers),
+            () => Assert.Contains(typeof(MediatorTestRequestHandler), sut.RequestHandlers),
+            () => Assert.Contains(typeof(InspEventHandler), sut.EventHandlers),
+            () => Assert.Contains(typeof(MediatorTestEventHandler), sut.EventHandlers),
+            () => Assert.Contains(typeof(InspMultiStreamHandler), sut.StreamHandlers),
+            () => Assert.Contains(typeof(MediatorTestStreamHandler), sut.StreamHandlers)
+        );
+    }
+
+    [Fact]
+    public void Handlers_WithAssemblyScan_AndSameTypeRegisteredManually_ListTypeOnce() {
+        // arrange
+        var sut = new MediatorRegistration().WithAssemblyFrom<MediatorRegistrationTests>()
+                                            .WithRequestHandler(typeof(MediatorTestRequestHandler))
+                                            .WithEventHandler(typeof(MediatorTestEventHandler))
+                                            .WithStreamHandler(typeof(MediatorTestStreamHandler));
+
+        // act & assert
+        Assert.Multiple(
+            () => Assert.Single(sut.RequestHandlers, type => type == typeof(MediatorTestRequestHandler)),
+            () => Assert.Single(sut.EventHandlers, type => type == typeof(MediatorTestEventHandler)),
+            () => Assert.Single(sut.StreamHandlers, type => type == typeof(MediatorTestStreamHandler))
+        );
+    }
+
+    [Fact]
+    public void RequestHandlers_WithAssemblyScan_FindsNestedPublicHandlers() {
+        // arrange
+        var sut = new MediatorRegistration().WithAssemblyFrom<MediatorRegistrationTests>();
+
+        // act & assert
+        Assert.Contains(typeof(ScanNestedFeature.Handler), sut.RequestHandlers);
+    }
+
+    [Fact]
+    public void RequestHandlers_WithAssemblyScan_ExcludesValueTypes() {
+        // arrange
+        var sut = new MediatorRegistration().WithAssemblyFrom<MediatorRegistrationTests>();
+
+        // act & assert
+        Assert.DoesNotContain(typeof(ScanStructRequestHandler), sut.RequestHandlers);
     }
 }

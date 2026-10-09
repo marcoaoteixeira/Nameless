@@ -11,7 +11,7 @@ namespace Nameless.Mediator.Requests;
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
+internal sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHandlerWrapper<TResponse>
     where TRequest : IRequest<TResponse> {
     /// <inheritdoc />
     /// <remarks>
@@ -49,7 +49,7 @@ public class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHandlerWrap
 /// <typeparam name="TRequest">
 ///     Type of the request.
 /// </typeparam>
-public class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrapper
+internal sealed class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrapper
     where TRequest : IRequest {
     /// <inheritdoc />
     public override Task HandleAsync(IRequest request, IServiceProvider provider, CancellationToken cancellationToken) {

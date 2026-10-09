@@ -7,7 +7,7 @@ namespace Nameless.Mediator;
 /// <summary>
 /// Default implementation of the <see cref="IMediator"/> interface.
 /// </summary>
-public class MediatorImpl : IMediator {
+internal sealed class MediatorImpl : IMediator {
     private readonly IEventHandlerInvoker _eventHandlerInvoker;
     private readonly IRequestHandlerInvoker _requestHandlerInvoker;
     private readonly IStreamHandlerInvoker _streamHandlerInvoker;

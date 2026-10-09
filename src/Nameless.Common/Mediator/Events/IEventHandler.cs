@@ -3,6 +3,11 @@
 /// <summary>
 ///     Defines an event handler.
 /// </summary>
+/// <remarks>
+///     An event may have any number of handlers. Dispatch uses the runtime
+///     type of the event, exactly: a handler for a base event type (or for
+///     <see cref="IEvent"/>) does not receive derived events.
+/// </remarks>
 /// <typeparam name="TEvent">
 ///     Type of the event
 /// </typeparam>

@@ -81,11 +81,16 @@ public static class AssemblyExtensions {
         /// </returns>
         /// <remarks>
         ///     We look for all exported types in the assembly that are not pointer
-        ///     types, not by-ref types, not abstract, and are public. Then we
-        ///     check if the type is assignable to the service type or if it is a
-        ///     generic type that is assignable to the service type.
+        ///     types, not by-ref types, not abstract, and are visible outside
+        ///     the assembly (public, or public and nested in public types).
+        ///     Then we check if the type is assignable to the service type or
+        ///     if it is a generic type that is assignable to the service type.
+        ///     Dynamic assemblies yield no types.
         /// </remarks>
         public IEnumerable<Type> GetImplementations(Type service) {
+            // dynamic assemblies don't support GetExportedTypes.
+            if (self.IsDynamic) { return []; }
+
             // retrieve all exported types from the assembly
             // that are relevant to us
             return self.GetExportedTypes()
@@ -99,8 +104,9 @@ public static class AssemblyExtensions {
                            // Exclude abstract types (can't be instantiated)
                            IsAbstract: false,
 
-                           // Only public types
-                           IsPublic: true
+                           // Only types visible outside the assembly,
+                           // including public types nested in public types
+                           IsVisible: true
                        })
                        // inside the types, we will look for all types that
                        // are assignable to the service type

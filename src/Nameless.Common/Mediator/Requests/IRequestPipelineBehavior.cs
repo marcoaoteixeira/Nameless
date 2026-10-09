@@ -39,6 +39,12 @@ public interface IRequestPipelineBehavior<in TRequest, TResponse>
 ///     Defines a pipeline behavior to surround the handler of a request
 ///     that does not return a response and adds additional behavior.
 /// </summary>
+/// <remarks>
+///     It does not wrap requests that declare a response
+///     (<see cref="IRequest{TResponse}"/>), even when invoked through
+///     <see cref="IRequestHandlerInvoker.ExecuteAsync(IRequest, CancellationToken)"/>;
+///     use <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/> for those.
+/// </remarks>
 /// <typeparam name="TRequest">
 ///     Type of the request.
 /// </typeparam>
