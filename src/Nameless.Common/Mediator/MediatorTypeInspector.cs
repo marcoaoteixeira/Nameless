@@ -1,4 +1,3 @@
-using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 
@@ -69,10 +68,12 @@ internal static class MediatorTypeInspector {
             var definitionParameters = string.Join(",", definition.GetGenericArguments().Select(parameter => parameter.Name));
             var expected = $"{implementation.Name.Split('`')[0]}<{definitionParameters}> : {definition.GetPrettyName()}";
 
-            throw new InvalidOperationException(
-                $"Open generic type '{implementation.GetPrettyName()}' implements '{@interface.GetPrettyName()}', " +
-                $"whose type arguments are not its own type parameters in the same order. " +
-                $"Declare it as '{expected}', or register closed types instead."
+            throw new InvalidOperationException($"""
+                                                Open generic type '{implementation.GetPrettyName()}' implements
+                                                '{@interface.GetPrettyName()}', whose type arguments are not its own type
+                                                parameters in the same order. Declare it as '{expected}', or register closed
+                                                types instead.
+                                                """
             );
         }
     }

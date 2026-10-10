@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Application;
 using Nameless.Compression;
-using Nameless.Compression.Requests;
 using Nameless.IO;
 using Nameless.ObjectModel;
 using Nameless.Windows.DisasterRecovery;

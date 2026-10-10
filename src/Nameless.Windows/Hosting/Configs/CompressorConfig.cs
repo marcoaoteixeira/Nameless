@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Nameless.Compression.Zip;
 using Nameless.Windows.Hosting.Wrappers;
 
 namespace Nameless.Windows.Hosting.Configs;
