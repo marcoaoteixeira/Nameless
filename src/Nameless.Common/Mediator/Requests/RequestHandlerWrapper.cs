@@ -5,7 +5,7 @@ namespace Nameless.Mediator.Requests;
 /// <summary>
 ///     A wrapper class for a request handler.
 /// </summary>
-public abstract class RequestHandlerWrapper {
+internal abstract class RequestHandlerWrapper {
     /// <summary>
     ///     Handles the request.
     /// </summary>
@@ -31,7 +31,7 @@ public abstract class RequestHandlerWrapper {
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public abstract class RequestHandlerWrapper<TResponse> : RequestHandlerWrapper {
+internal abstract class RequestHandlerWrapper<TResponse> : RequestHandlerWrapper {
     /// <summary>
     ///     Handles the request.
     /// </summary>

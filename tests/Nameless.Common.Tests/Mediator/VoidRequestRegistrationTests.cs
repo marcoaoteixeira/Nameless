@@ -10,10 +10,10 @@ public sealed class OpenGenericVoidHandler<TRequest> : IRequestHandler<TRequest>
     }
 }
 
-public sealed class OpenGenericTypedHandler<TRequest> : IRequestHandler<TRequest, string>
-    where TRequest : IRequest<string> {
-    public Task<string> HandleAsync(TRequest request, CancellationToken cancellationToken) {
-        return Task.FromResult("open");
+public sealed class OpenGenericTypedHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+    where TRequest : IRequest<TResponse> {
+    public Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken) {
+        return Task.FromResult(default(TResponse)!);
     }
 }
 
@@ -128,13 +128,13 @@ public class VoidRequestRegistrationTests {
         services.RegisterMediator(r => r
             .WithUseAssemblyScan(false)
             .WithRequestHandler(typeof(OpenGenericVoidHandler<>))
-            .WithRequestHandler(typeof(OpenGenericTypedHandler<>)));
+            .WithRequestHandler(typeof(OpenGenericTypedHandler<,>)));
 
         // assert
         Assert.Multiple(
             () => Assert.Contains(services, d => d.ServiceType == typeof(IRequestHandler<>) && d.ImplementationType == typeof(OpenGenericVoidHandler<>)),
-            () => Assert.Contains(services, d => d.ServiceType == typeof(IRequestHandler<,>) && d.ImplementationType == typeof(OpenGenericTypedHandler<>)),
-            () => Assert.DoesNotContain(services, d => d.ServiceType == typeof(IRequestHandler<>) && d.ImplementationType == typeof(OpenGenericTypedHandler<>)),
+            () => Assert.Contains(services, d => d.ServiceType == typeof(IRequestHandler<,>) && d.ImplementationType == typeof(OpenGenericTypedHandler<,>)),
+            () => Assert.DoesNotContain(services, d => d.ServiceType == typeof(IRequestHandler<>) && d.ImplementationType == typeof(OpenGenericTypedHandler<,>)),
             () => Assert.DoesNotContain(services, d => d.ServiceType == typeof(IRequestHandler<,>) && d.ImplementationType == typeof(OpenGenericVoidHandler<>))
         );
     }

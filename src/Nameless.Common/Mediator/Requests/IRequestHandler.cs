@@ -3,6 +3,11 @@ namespace Nameless.Mediator.Requests;
 /// <summary>
 ///     Defines a request handler that returns a response.
 /// </summary>
+/// <remarks>
+///     A request has exactly one handler. Dispatch uses the runtime type of
+///     the request and the response type it declares, exactly: a handler for
+///     a base request type does not handle derived requests.
+/// </remarks>
 /// <typeparam name="TRequest">
 ///     Type of the request.
 /// </typeparam>
@@ -31,6 +36,11 @@ public interface IRequestHandler<in TRequest, TResponse>
 /// <summary>
 ///     Defines a request handler that does not return a response.
 /// </summary>
+/// <remarks>
+///     Only for requests that do not declare a response
+///     (<see cref="IRequest{TResponse}"/>); those are always dispatched to
+///     <see cref="IRequestHandler{TRequest,TResponse}"/>.
+/// </remarks>
 /// <typeparam name="TRequest">
 ///     Type of the request.
 /// </typeparam>

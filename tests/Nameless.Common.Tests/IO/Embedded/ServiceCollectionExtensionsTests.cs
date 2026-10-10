@@ -1,7 +1,3 @@
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Nameless.IO.Physical;
-
 namespace Nameless.IO.Embedded;
 
 //[UnitTest]

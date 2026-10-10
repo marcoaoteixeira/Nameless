@@ -20,6 +20,16 @@ public interface IEventHandlerInvoker {
     ///     A <see cref="Task" /> representing the action
     ///     asynchronous operation.
     /// </returns>
+    /// <remarks>
+    ///     All handlers run concurrently, so handlers must not share state
+    ///     that isn't thread-safe (e.g. a scoped <c>DbContext</c>). A failing
+    ///     handler does not stop the others: a single failure is rethrown
+    ///     as-is, several failures are thrown as an
+    ///     <see cref="AggregateException"/>.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    ///     if <paramref name="evt"/> is <see langword="null"/>.
+    /// </exception>
     Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IEvent;
 }

@@ -172,6 +172,16 @@ public class TypeExtensionsTests {
         );
     }
 
+    [Fact]
+    public void GetPrettyName_ForNonGenericTypeNestedInGenericType_ReturnsTypeName() {
+        // act — the nested type is generic only through its declaring type,
+        // so its name carries no arity suffix.
+        var result = typeof(PrettyNameOuter<>.Inner).GetPrettyName();
+
+        // assert
+        Assert.Equal("Inner", result);
+    }
+
     // ─── CanInstantiate ──────────────────────────────────────────────────────
 
     [Fact]
@@ -277,4 +287,8 @@ public class TypeExtensionsTests {
     private sealed class ObsoleteType { }
 
     private sealed class MyList : List<int> { }
+}
+
+public class PrettyNameOuter<T> {
+    public class Inner;
 }

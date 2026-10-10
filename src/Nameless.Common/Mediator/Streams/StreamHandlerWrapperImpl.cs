@@ -14,17 +14,8 @@ namespace Nameless.Mediator.Streams;
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrapper<TResponse>
+internal sealed class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrapper<TResponse>
     where TRequest : IStream<TResponse> {
-    /// <inheritdoc />
-    public override async IAsyncEnumerable<object?> HandleAsync(object request, IServiceProvider provider, [EnumeratorCancellation] CancellationToken cancellationToken) {
-        var stream = HandleAsync((IStream<TResponse>)request, provider, cancellationToken);
-
-        await foreach (var item in stream) {
-            yield return item;
-        }
-    }
-
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">
     ///     if <paramref name="provider"/> is <see langword="null"/>.
@@ -38,7 +29,7 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
                                     () => NextWrapper(next(), cancellationToken), cancellationToken))
                             .Invoke();
 
-        await foreach (var item in items.WithCancellation(cancellationToken)) {
+        await foreach (var item in items.WithCancellation(cancellationToken).ConfigureAwait(false)) {
             yield return item;
         }
 
@@ -49,7 +40,7 @@ public class StreamHandlerWrapperImpl<TRequest, TResponse> : StreamHandlerWrappe
     }
 
     private static async IAsyncEnumerable<T> NextWrapper<T>(IAsyncEnumerable<T> items, [EnumeratorCancellation] CancellationToken cancellationToken) {
-        await foreach (var item in items.WithCancellation(cancellationToken)) {
+        await foreach (var item in items.WithCancellation(cancellationToken).ConfigureAwait(false)) {
             yield return item;
         }
     }

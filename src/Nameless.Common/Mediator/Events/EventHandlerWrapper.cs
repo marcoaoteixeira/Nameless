@@ -3,7 +3,7 @@
 /// <summary>
 ///     A wrapper class for an event handler.
 /// </summary>
-public abstract class EventHandlerWrapper {
+internal abstract class EventHandlerWrapper {
     /// <summary>
     ///     Handles the event asynchronously.
     /// </summary>

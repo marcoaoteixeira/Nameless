@@ -150,12 +150,15 @@ public static class TypeExtensions {
         ///     it will return List&lt;&gt;.
         /// </remarks>
         public string GetPrettyName() {
-            if (!self.IsGenericType) {
+            // A type nested in a generic type is generic through its
+            // declaring type only, so its name carries no arity suffix.
+            var aritySeparator = self.Name.IndexOf(value: '`', StringComparison.Ordinal);
+            if (!self.IsGenericType || aritySeparator < 0) {
                 return self.Name;
             }
 
             var arguments = self.GetGenericArguments();
-            var baseName = self.Name[..self.Name.IndexOf(value: '`', StringComparison.Ordinal)];
+            var baseName = self.Name[..aritySeparator];
 
             var sb = new StringBuilder();
             sb.Append(baseName);

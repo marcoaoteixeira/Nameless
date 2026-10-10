@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Nameless.Application;
 using Nameless.Compression;
-using Nameless.Compression.Requests;
 using Nameless.Mediator.Requests;
 using Nameless.ObjectModel;
 using Nameless.Windows.DisasterRecovery;

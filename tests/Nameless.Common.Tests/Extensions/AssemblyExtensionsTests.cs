@@ -1,9 +1,18 @@
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Nameless.Extensions;
 
 public interface IAssemblyExtTestMarker { }
 public sealed class ConcreteAssemblyExtTestImpl : IAssemblyExtTestMarker { }
+
+public static class AssemblyExtVisibleContainer {
+    public sealed class NestedImpl : IAssemblyExtTestMarker { }
+}
+
+internal static class AssemblyExtHiddenContainer {
+    public sealed class NestedImpl : IAssemblyExtTestMarker { }
+}
 
 [UnitTest]
 public class AssemblyExtensionsTests {
@@ -76,6 +85,42 @@ public class AssemblyExtensionsTests {
 
         // assert
         Assert.DoesNotContain(typeof(AbstractTestImpl), results);
+    }
+
+    [Fact]
+    public void GetImplementations_FindsNestedPublicImplementations() {
+        // arrange
+        var assembly = typeof(AssemblyExtensionsTests).Assembly;
+
+        // act
+        var results = assembly.GetImplementations(typeof(IAssemblyExtTestMarker)).ToList();
+
+        // assert
+        Assert.Contains(typeof(AssemblyExtVisibleContainer.NestedImpl), results);
+    }
+
+    [Fact]
+    public void GetImplementations_DoesNotReturnTypesNestedInNonPublicTypes() {
+        // arrange
+        var assembly = typeof(AssemblyExtensionsTests).Assembly;
+
+        // act
+        var results = assembly.GetImplementations(typeof(IAssemblyExtTestMarker)).ToList();
+
+        // assert
+        Assert.DoesNotContain(typeof(AssemblyExtHiddenContainer.NestedImpl), results);
+    }
+
+    [Fact]
+    public void GetImplementations_OnDynamicAssembly_ReturnsEmpty() {
+        // arrange
+        var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Nameless.Dynamic.Tests"), AssemblyBuilderAccess.Run);
+
+        // act
+        var results = assembly.GetImplementations(typeof(IAssemblyExtTestMarker)).ToList();
+
+        // assert
+        Assert.Empty(results);
     }
 
     // ─── IEnumerable<Assembly>.ExecuteAssemblyScan ────────────────────────────

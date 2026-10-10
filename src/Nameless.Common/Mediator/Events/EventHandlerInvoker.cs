@@ -5,8 +5,11 @@ namespace Nameless.Mediator.Events;
 /// <summary>
 ///     The default implementation of <see cref="IEventHandlerInvoker" />.
 /// </summary>
-public class EventHandlerInvoker : IEventHandlerInvoker {
-    private readonly ConcurrentDictionary<Type, EventHandlerWrapper> _cache = new();
+internal sealed class EventHandlerInvoker : IEventHandlerInvoker {
+    // Wrappers are stateless and keyed by type, so they are shared by every
+    // invoker instance (the invoker itself is transient).
+    private static readonly ConcurrentDictionary<Type, EventHandlerWrapper> Cache = new();
+
     private readonly IServiceProvider _provider;
 
     /// <summary>
@@ -23,7 +26,9 @@ public class EventHandlerInvoker : IEventHandlerInvoker {
     /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IEvent {
-        var handler = _cache.GetOrAdd(evt.GetType(), CreateEventHandlerWrapper);
+        Throws.When.Null(evt);
+
+        var handler = Cache.GetOrAdd(evt.GetType(), CreateEventHandlerWrapper);
 
         return handler.HandleAsync(evt, _provider, cancellationToken);
     }
