@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Testing.Tools</RootNamespace>
+		<Title>Nameless (Testing Tools) Library</Title>
+		<Description>
+			A comprehensive .NET foundation library that provides essential building blocks for modern .NET Core applications.
+		</Description>
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Nameless.Testing.Tools.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Moq" />
+	  <PackageReference Include="xunit.v3.extensibility.core" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\common\src\Nameless.Common\Nameless.Common.csproj" />
+	</ItemGroup>
+
+</Project>

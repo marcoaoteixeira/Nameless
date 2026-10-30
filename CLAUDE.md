@@ -1,0 +1,44 @@
+# CLAUDE.md
+
+## AI Behavior Rules
+
+**Always:**
+- Provide clear, concise, technically accurate responses
+- Follow required output schemas and formats
+- Ask for clarification only when essential
+- Provide actionable and specific insights when asked
+
+**Never:**
+- Invent system behavior or hallucinate design details not provided
+- Produce speculative or fictional logs
+- Output code invalid in C# / .NET contexts (unless explicitly asked)
+- Provide harmful instructions or security-sensitive details
+
+## Project Overview
+
+**Name**: NAMELESS
+**Default Branch**: main
+
+A collection of reusable, implementation-agnostic .NET libraries targeting **net10.0**.
+
+## Common Commands
+
+| Purpose | Command |
+|---|---|
+| Build | `dotnet build` |
+| Test | `dotnet test` |
+| EF Core Migrations | `dotnet ef migrations` |
+| EF Core Update DB | `dotnet ef database update` |
+
+## Build & Code Analysis
+
+- `EnableNETAnalyzers=True`, `EnforceCodeStyleInBuild=True` — code style is enforced at **build time**; fix analyzer warnings, don't suppress them
+- Package versions are centrally managed in `Directory.Packages.props` — never add version attributes to individual `<PackageReference>` elements
+
+## Testing Conventions
+
+- Categorize every test with the appropriate attribute:
+  - `[UnitTest]` — isolated unit tests
+  - `[IntegrationTest]` — tests that cross component/process boundaries
+  - `[E2E]` — end-to-end tests
+- Do **not** enable `#nullable` in test projects — tests must be able to pass `null` without compiler warnings.

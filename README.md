@@ -1,0 +1,212 @@
+# Nameless .NET
+
+## What's the idea?
+
+This repository project—a collection of versatile and easy-to-use libraries
+designed for reuse across a wide range of .NET projects. These libraries are
+implementation-agnostic, offering flexibility while also including default
+implementations to help you get started quickly.
+
+Whether you're building a console app, a microservice, or anything in between,
+these libraries are here to make your development smoother and more efficient.
+We warmly invite you to explore the code—see what might be useful for your
+own work, or even spot opportunities to make things better.
+
+To make contributing easier, there is a pull request template to guide you
+through the process.
+
+Happy coding!
+
+## Requirements
+
+To work properly with the solution, you'll need to install, at least the apps
+listed below, just follow the links:
+
+- [.NET Core SDK](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [Visual Studio Code](https://code.visualstudio.com/download)
+
+Or if you have the license for the full version of Visual Studio, you can use
+it instead of VS Code:
+
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/)
+
+Another option is to use [Rider](https://www.jetbrains.com/rider/) from
+JetBrains. It's a paid software, but not too expensive. The good thing about
+Rider is that you can use it on Windows, Linux and MacOS. So, if you are a
+cross-platform developer, you can use it on any OS. Also, it provides a
+powerful set of tools for C# development, including code analysis, refactoring,
+and debugging. It also has a built-in terminal and support for Docker.
+
+## ASP.NET Core Dependency
+
+If your solution/project requires ASP.NET Core or has dependency on it, please
+consider add the reference to the SDK instead of include the NuGet package.
+In your `.csproj` add the ItemGroup below: 
+
+```
+<ItemGroup>
+  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+</ItemGroup>
+```
+
+## Tools & Resources
+
+Here are a couple of apps that you may find useful when developing:
+
+- [Git](https://git-scm.com/downloads): No need (I hope) for presentations. 
+- [Notepad++](https://notepad-plus-plus.org/downloads/): You know what this is,
+  don't you?
+- [Postman](https://www.postman.com/downloads/): Useful to test Rest API calls.
+  Similar to SoapUI, but it's much more easy to handle.
+- [LINQPad](https://www.linqpad.net/download.aspx): For writing LINQ-Queries or
+  use as a REPL.
+- [ReSharper](https://www.jetbrains.com/resharper/): ReSharper by JetBrains is
+  a Visual Studio extension that helps developers write cleaner, faster, and
+  more efficient .NET code by providing smart code analysis, refactoring tools,
+  and suggestions.
+- [Sonarlint](https://www.sonarsource.com/products/sonarlint/): Analyze and
+  suggest code modifications on-the-fly. Has a free-tier.
+- [ILSpy](https://github.com/icsharpcode/ILSpy/releases): When you want to take
+  a peek on the compiled code that no one have the source.
+- [SMTP4Dev](https://github.com/rnwood/smtp4dev/releases): Small SMTP server
+  that runs as a service on your machine, for send e-mail tests. Very useful.
+- [DBeaver](https://dbeaver.io/download/): An alternative for databases
+  management. Don't have all options for each specific database, but it's
+  useful.
+
+## Testing
+
+Testing is not just a safety net—it’s a celebration of our code working as
+intended! I believe great software is built on a foundation of reliable,
+maintainable tests. Whether it's unit, integration, or end-to-end testing,
+each test is a small but mighty step toward quality and confidence. Let's keep
+the bar high, enjoy the process, and make testing a natural, joyful part of
+our development flow!
+
+### Running Tests
+
+You can easly run all tests using the command below in your `Terminal` at the
+solution root folder:
+
+```
+dotnet test
+```
+
+If you want to run a specific test, you can use the `--filter` option. For
+example, if you want to run only the tests within a spefic category, you can
+use the command below:
+
+```
+dotnet test --filter "Category=UnitTests"
+```
+Just remember to add the `Category` attribute to your test class or method.
+
+If you're using a IDE like Visual Studio or Rider, you can run the tests from
+the IDE itself. Just open the test explorer and run all tests from there.
+
+## Coding Styles
+
+Nothing written into stone, use your ol'good common sense. But you can refere
+to this page, if you like: [Common C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
+
+### Some Ideas to Keep in Mind
+
+- First things first, remember the basic rules of programming: **_KISS_** and
+  **_DRY_**. Keep it simple and don't repeat yourself.
+- YAGNI: **_You Are Gonna Need It_**. Don't create a class or method for
+  something that you don't need. If you don't need it now, you probably won't
+  need it in the future.
+- SOLID: **_Single Responsibility Principle_**, **_Open/Closed Principle_**,
+  **_Liskov Substitution Principle_**, **_Interface Segregation Principle_** and
+  **_Dependency Inversion Principle_**. If you don't know what they are, go
+  read about them. They are really important.
+- When creating a new extension method, never check for nullability of the
+  target instance. If the target instance is **_null_**, you'll get
+  an **_NullReferenceException_**. This way, you can be sure that your code
+  will behave properly.
+- Not everything should be an extension method (or property).
+- **_default_** vs **_null_** :
+  - Am I sure is a reference type? **null**
+  - Am I sure is a value type? **default**
+  - I'm not sure at all: **default**
+  - It's a _nullable_ value? **null**
+- Prefer **_IEnumerable\<T\>_** over **_ICollection\<T\>_** or
+  **_IList\<T\>_**. This way, you can return a collection of any type and
+  avoid exposing the implementation details of your class.
+- Methods or properties that returns arrays, collections or enumerables in
+  general, **DO NOT RETURN _null_ VALUE, NEVER AND EVER!!!** If there's no
+  value to be returned, just return an empty enumerable.
+- If you're returning an **_IEnumerable\<T\>_**, probably you should use the
+  **_yield_** keywork on your method return directive.
+- Use the collection initializer syntax when creating a new collection,
+  whenever is possible.
+- Use object initializer, whenever is possible.
+- Prefer **_var_** over explicit type declaration, whenever is possible.
+- Prefer **_double_** over **_float_**. The only exception is when you're using
+  **_float_** for a specific reason, like when you're working with a library
+  that requires it.
+- When dealing with currency values, prefer using **_decimal_** over
+  **_double_** or **_float_**. This is because **_decimal_** has a higher
+  precision and is more suitable for financial calculations.
+- Use meaningful variable and method names – names should describe what the
+  variable/method does or represents.
+- Follow `PascalCase` for class, method, and property names, and `camelCase`
+  for local variables and parameters.
+- Avoid abbreviations and overly short names—clarity trumps brevity.
+- Be consistent with indentation and formatting – we use the .editorconfig 
+  in Visual Studio - or IDE settings to enforce.
+- Keep methods short and focused – a method should do one thing well.
+- Avoid deeply nested code – return early, use guard clauses
+  Use `Prevent` class for that purpose.
+- Comment why, not what – code should be self-explanatory; comments are for
+  intent or edge cases.
+- Group related code logically – regionally or using partial classes when
+  necessary, but avoid as much as possible.
+- Break down large classes – apply separation of concerns even within a single
+  file.
+- Always initialize variables properly – avoid uninitialized variables or
+  `null` surprises.
+- Avoid magic numbers and strings – use constants or enums.
+- Use switch expressions or pattern matching where it improves readability.
+- Handle all branches in conditionals – even if it's just a default case or
+  exception.
+- Be mindful of operator precedence – use parentheses to make logic clear.
+- Use `using` statements or `using` declarations for disposable objects – avoid
+  memory/resource leaks.
+- Prefer `string` interpolation ($"...") over concatenation – it's more
+  readable and less error-prone.
+- Use null-coalescing (??) and null-conditional (?.) operators to avoid null
+  reference exceptions.
+- Favor `foreach` over `for` loops unless index access is required. Trick, you
+  can use the extension method `ForEach` to do that, if you need a index
+  number.
+- Use `async` and `await` for asynchronous programming – avoid blocking
+  calls.
+- Write unit tests for critical logic – even basic tests can prevent major
+  regressions.
+- Use exceptions appropriately – don't swallow them silently or use them for
+  control flow.
+- Check for nulls before dereferencing objects – especially with external
+  data or APIs.
+- Avoid hardcoded file paths, URLs, and credentials – use config files or
+  secrets management.
+
+## Contribuition
+
+List all the people that contributed to this project.
+
+## Versioning
+
+Using [SemVer](http://semver.org/) for assembly versioning.
+
+## Authors
+
+- **Marco Teixeira (marcoaoteixeira)** - _initial work_
+
+## License
+
+MIT
+
+## Acknowledgement
+
+- Hat tip to anyone who help expand this code base.

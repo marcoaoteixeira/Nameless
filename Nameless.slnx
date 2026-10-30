@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/.solution/">
+    <File Path=".claudeignore" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="CLAUDE.md" />
+    <File Path="coverage.runsettings" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/.solution/.claude/">
+    <File Path=".claude/settings.local.json" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="libs/common/src/Nameless.Common/Nameless.Common.csproj" />
+    <Project Path="libs/common/tests/Nameless.Common.Tests/Nameless.Common.Tests.csproj" Id="07e89afe-ac9d-46bc-849d-5636ea809e2b" />
+  </Folder>
+  <Folder Name="/Utils/">
+    <Project Path="libs/utils/codegen/Nameless.Generators.Common/Nameless.Generators.Common.csproj" Id="f8993622-e614-47a8-b1f4-6f3e804c8ae1" />
+    <Project Path="libs/utils/src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" Id="5434e6c2-7518-4721-9e0b-4582864d2946" />
+    <Project Path="libs/utils/tests/Nameless.Generators.Common.Tests/Nameless.Generators.Common.Tests.csproj" />
+    <Project Path="libs/utils/tests/Nameless.Testing.Tools.Tests/Nameless.Testing.Tools.Tests.csproj" Id="dd773161-f884-4fb0-aec1-f610f2425e2f" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="libs/web/codegen/Nameless.Web.Generators/Nameless.Web.Generators.csproj" Id="f3331baa-3ffd-499b-9170-b67b4b20ff78" />
+    <Project Path="libs/web/src/Nameless.Web/Nameless.Web.csproj" Id="1c6a756a-99bf-4799-857c-ca2bcdab679c" />
+    <Project Path="libs/web/tests/Nameless.Web.Generators.Tests/Nameless.Web.Generators.Tests.csproj" Id="a659b536-ee53-4a65-922d-b3b5269531ae" />
+    <Project Path="libs/web/tests/Nameless.Web.Tests/Nameless.Web.Tests.csproj" Id="c34c21df-0f4b-4213-8158-70dcdaba609f" />
+  </Folder>
+  <Folder Name="/Windows/">
+    <Project Path="libs/windows/src/Nameless.Windows/Nameless.Windows.csproj" Id="bfa99973-b1ea-4ce8-a0eb-9d7771c73fbb" />
+    <Project Path="libs/windows/tests/Nameless.Windows.Tests/Nameless.Windows.Tests.csproj" Id="65950ae3-3060-401a-b215-40e156f524d8" />
+  </Folder>
+</Solution>

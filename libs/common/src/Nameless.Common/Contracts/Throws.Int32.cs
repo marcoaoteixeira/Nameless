@@ -1,0 +1,296 @@
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace Nameless.Contracts;
+
+public sealed partial class Throws {
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is not
+    ///     lower or equal to the value of <paramref name="compare"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="compare">
+    ///     The value to compare.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <paramref name="paramValue"/> is lower or equal
+    ///     to <paramref name="compare"/>.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int LowerOrEqual(int paramValue, int compare, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (paramValue > compare) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeLowerOrEqual(compare)
+                      : message);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is not
+    ///     greater or equal to the value of <paramref name="compare"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="compare">
+    ///     The value to compare.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <paramref name="paramValue"/> is greater or equal
+    ///     to <paramref name="compare"/>.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int GreaterOrEqual(int paramValue, int compare, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (paramValue < compare) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeGreaterOrEqual(compare)
+                      : message);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is not
+    ///     lower than the value of <paramref name="compare"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="compare">
+    ///     The value to compare.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <paramref name="paramValue"/> is lower than
+    ///     <paramref name="compare"/>.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int LowerThan(int paramValue, int compare, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (paramValue >= compare) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeLowerThan(compare)
+                      : message);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is not
+    ///     greater than the value of <paramref name="compare"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="compare">
+    ///     The value to compare.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <paramref name="paramValue"/> is greater than
+    ///     <paramref name="compare"/>.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int GreaterThan(int paramValue, int compare, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (paramValue <= compare) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeGreaterThan(compare)
+                      : message);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is between
+    ///     the <paramref name="minimumValue"/> and
+    ///     <paramref name="maximumValue"/>.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="minimumValue">
+    ///     The minimum value to compare.
+    /// </param>
+    /// <param name="maximumValue">
+    ///     The maximum value to compare.
+    /// </param>
+    /// <param name="excludeBounds">
+    ///     Whether it should exclude minimum or maximum bounds.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <paramref name="paramValue"/> is not between
+    ///     <paramref name="minimumValue"/> and <paramref name="maximumValue"/>.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int OutOfRange(int paramValue, int minimumValue, int maximumValue, bool excludeBounds = false, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (minimumValue > maximumValue) {
+            throw new ArgumentException("Maximum value must be greater or equal to minimum value.");
+        }
+
+        var inRange = excludeBounds
+            ? paramValue > minimumValue && paramValue < maximumValue
+            : paramValue >= minimumValue && paramValue <= maximumValue;
+
+        if (inRange) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentOutOfRangeException(
+                  paramName,
+                  paramValue,
+                  string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterOutOfRange(minimumValue, maximumValue, excludeBounds)
+                      : message);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is exactly
+    ///     zero.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    ///     If <paramref name="paramValue"/> is zero value.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int Zero(int paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (paramValue > 0) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentException(string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeZero()
+                      : message,
+                  paramName);
+    }
+
+    /// <summary>
+    ///     Ensure that the <paramref name="paramValue"/> is
+    ///     not a negative value.
+    /// </summary>
+    /// <param name="paramValue">
+    ///     The parameter value.
+    /// </param>
+    /// <param name="paramName">
+    ///     The parameter name (optional).
+    /// </param>
+    /// <param name="message">
+    ///     The exception message (optional).
+    /// </param>
+    /// <param name="exceptionCreator">
+    ///     The exception creator (optional).
+    /// </param>
+    /// <returns>
+    ///     The current <paramref name="paramValue"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    ///     If <paramref name="paramValue"/> is negative value.
+    /// </exception>
+    [DebuggerStepThrough]
+    public int Negative(int paramValue, [CallerArgumentExpression(nameof(paramValue))] string? paramName = null, string? message = null, Func<Exception>? exceptionCreator = null) {
+        if (!int.IsNegative(paramValue)) {
+            return paramValue;
+        }
+
+        throw exceptionCreator?.Invoke()
+              ?? new ArgumentException(string.IsNullOrWhiteSpace(message)
+                      ? Messages.ParameterCannotBeNegative()
+                      : message,
+                  paramName);
+    }
+}

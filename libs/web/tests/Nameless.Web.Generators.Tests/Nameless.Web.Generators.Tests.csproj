@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Nameless.Web.Generators</RootNamespace>
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\utils\src\Nameless.Testing.Tools\Nameless.Testing.Tools.csproj" />
+		<ProjectReference Include="..\..\codegen\Nameless.Web.Generators\Nameless.Web.Generators.csproj" />
+		<ProjectReference Include="..\..\src\Nameless.Web\Nameless.Web.csproj" />
+	</ItemGroup>
+
+</Project>

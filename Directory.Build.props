@@ -1,0 +1,84 @@
+<!--
+	We use this file to define properties and settings that are common across all
+	projects in the solution. Other properties or actions can be defined in this
+	file too, if they are common across all projects.
+	
+	You can learn more about here: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=vs-2022
+-->
+
+<Project>
+	<!-- Boolean variables -->
+	<PropertyGroup>
+		<IsSrcProject>$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFullPath), `[\\|\/]src[\\|\/]`))</IsSrcProject>
+		<IsTestsProject>$(MSBuildProjectFile.ToLower().EndsWith('.tests.csproj'))</IsTestsProject>
+
+		<EnableCodeAnalysis>False</EnableCodeAnalysis>
+		<EnableCodeAnalysis Condition="$(IsSrcProject) == 'True'">True</EnableCodeAnalysis>
+	</PropertyGroup>
+
+	<!-- All projects must include these properties. -->
+	<PropertyGroup>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>False</IsPackable>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<TargetFramework>net10.0</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<!--
+		Project that will be packed (NuGet) should inherit these properties.
+		This will add the minimal properties for the NuGet package to be built.
+	-->
+	<PropertyGroup Condition="$(IsSrcProject)">
+		<Authors>Marco Antonio Orestes Teixeira</Authors>
+		<Company>Nameless</Company>
+		<Copyright>MIT</Copyright>
+		<EmbedUntrackedSources>True</EmbedUntrackedSources>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<IsPackable>True</IsPackable>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageIconUrl>https://github.com/marcoaoteixeira/Nameless/tree/main/resources/icon.png</PackageIconUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/marcoaoteixeira/nameless</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReleaseNotes>https://github.com/marcoaoteixeira/nameless/releases</PackageReleaseNotes>
+		<PublishRepositoryUrl>True</PublishRepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/marcoaoteixeira/nameless</RepositoryUrl>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(IsSrcProject)">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(IsSrcProject)">
+		<None Include="..\..\..\..\resources\icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<!-- For test projects, use these properties -->
+	<PropertyGroup Condition="$(IsTestsProject)">
+		<IsPackable>False</IsPackable>
+		<OutputType>Exe</OutputType>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+
+	<!-- Test projects must include these properties -->
+	<ItemGroup Condition="$(IsTestsProject)">
+		<Using Include="Xunit" />
+	</ItemGroup>
+</Project>
