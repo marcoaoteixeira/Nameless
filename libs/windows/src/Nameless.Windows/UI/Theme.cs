@@ -1,0 +1,29 @@
+﻿using System.Text.Json.Serialization;
+
+namespace Nameless.Windows.UI;
+
+/// <summary>
+///     UI themes.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter<Theme>))]
+public enum Theme {
+    /// <summary>
+    ///     The system theme.
+    /// </summary>
+    System,
+    
+    /// <summary>
+    ///     The light theme.
+    /// </summary>
+    Light,
+
+    /// <summary>
+    ///     The dark theme.
+    /// </summary>
+    Dark,
+
+    /// <summary>
+    ///     The high contrast theme.
+    /// </summary>
+    HighContrast
+}

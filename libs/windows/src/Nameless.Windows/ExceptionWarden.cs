@@ -1,0 +1,63 @@
+﻿using System.Diagnostics;
+using System.Windows.Threading;
+
+namespace Nameless.Windows;
+
+/// <summary>
+///     Exception Warden
+/// </summary>
+public static class ExceptionWarden {
+    private static volatile Exception? _last;
+
+    private static string ApplicationName { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Initializes the <see cref="ExceptionWarden"/>.
+    /// </summary>
+    /// <param name="applicationName">
+    ///     The application name.
+    /// </param>
+    public static void Initialize(string applicationName) {
+        ApplicationName = applicationName;
+
+        WindowsApplication.Current.DispatcherUnhandledException += UnhandledExceptionHandler;
+        Dispatcher.CurrentDispatcher.UnhandledException += UnhandledExceptionHandler;
+        TaskScheduler.UnobservedTaskException += UnhandledExceptionHandler;
+    }
+
+    private static void UnhandledExceptionHandler(object? _, UnobservedTaskExceptionEventArgs args) {
+        args.SetObserved();
+
+        ExceptionHandler(args.Exception);
+    }
+
+    private static void UnhandledExceptionHandler(object _, DispatcherUnhandledExceptionEventArgs args) {
+        args.Handled = true;
+
+        ExceptionHandler(args.Exception);
+    }
+
+    private static void ExceptionHandler(Exception exception) {
+        if (_last is not null) { return; }
+
+        _last = exception;
+
+        var messageBoxResult = SysMessageBox.Show(
+            messageBoxText: exception.Message,
+            caption: exception.GetType().Name,
+            button: SysMessageBoxButton.OK,
+            icon: SysMessageBoxImage.Error
+        );
+
+        if (messageBoxResult == SysMessageBoxResult.OK) {
+            Seppuku();
+        }
+    }
+
+    private static void Seppuku() {
+        using var self = Process.GetProcessesByName(ApplicationName)
+                                .SingleOrDefault();
+
+        self?.Kill();
+    }
+}

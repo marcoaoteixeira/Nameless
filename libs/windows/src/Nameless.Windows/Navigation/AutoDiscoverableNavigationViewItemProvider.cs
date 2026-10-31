@@ -1,0 +1,70 @@
+﻿using System.Reflection;
+using Wpf.Ui.Controls;
+
+namespace Nameless.Windows.Navigation;
+
+/// <summary>
+///     Auto Discoverable Navigation View Item Provider
+/// </summary>
+public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemProvider {
+    private readonly Assembly[] _assemblies;
+    private readonly Lazy<Entry[]> _entries;
+
+    /// <summary>
+    ///     Initializes a new instance of
+    ///     <see cref="AutoDiscoverableNavigationViewItemProvider"/> class.
+    /// </summary>
+    /// <param name="assemblies">
+    ///     A collection of assemblies.
+    /// </param>
+    public AutoDiscoverableNavigationViewItemProvider(IEnumerable<Assembly> assemblies) {
+        _assemblies = [.. assemblies];
+        _entries = new Lazy<Entry[]>(DiscoverNavigationViewItems);
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<NavigationViewItem> GetMainItems() {
+        return _entries.Value
+                       .Where(entry => !entry.Attribute.Footer)
+                       .Select(entry => entry.ViewIem);
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<NavigationViewItem> GetFooterItems() {
+        return _entries.Value
+                       .Where(entry => entry.Attribute.Footer)
+                       .Select(entry => entry.ViewIem);
+    }
+
+    private Entry[] DiscoverNavigationViewItems() {
+        return [
+            .. _assemblies.SelectMany(assembly => assembly.GetExportedTypes())
+                          .Where(type => type.HasAttribute<NavigationViewItemAttribute>())
+                          .Select(CreateTuple)
+                          .Select(CreateEntry)
+        ];
+
+        static Tuple<Type, NavigationViewItemAttribute> CreateTuple(Type type) {
+            var attribute = type.GetCustomAttribute<NavigationViewItemAttribute>()
+                            ?? throw new InvalidOperationException(
+                                $"Type is missing attribute '{nameof(NavigationViewItemAttribute)}'."
+                            );
+
+            return new Tuple<Type, NavigationViewItemAttribute>(type, attribute);
+        }
+
+        static Entry CreateEntry(Tuple<Type, NavigationViewItemAttribute> tuple) {
+            var (type, attribute) = tuple;
+            var viewItem = new NavigationViewItem {
+                Content = attribute.Title,
+                Icon = new SymbolIcon { Symbol = attribute.Icon },
+                TargetPageType = type,
+                ToolTip = attribute.ToolTip
+            };
+
+            return new Entry(viewItem, attribute);
+        }
+    }
+
+    internal record Entry(NavigationViewItem ViewIem, NavigationViewItemAttribute Attribute);
+}

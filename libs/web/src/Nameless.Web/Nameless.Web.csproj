@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Microsoft.Extensions.Http.Resilience" />
@@ -52,6 +53,7 @@
 	<!-- The .targets file controls loading conditionally via UseAutoEndpoints. -->
 	<ItemGroup>
 		<None Include="..\..\codegen\Nameless.Web.Generators\bin\$(Configuration)\netstandard2.0\Nameless.Web.Generators.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
+		<None Include="..\..\..\utils\codegen\Nameless.Generators.Common\bin\$(Configuration)\netstandard2.0\Nameless.Generators.Common.dll" Pack="true" PackagePath="build/generators/" Visible="false" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="build/" />
 		<None Include="Nameless.Web.targets" Pack="true" PackagePath="buildTransitive/" />
 	</ItemGroup>

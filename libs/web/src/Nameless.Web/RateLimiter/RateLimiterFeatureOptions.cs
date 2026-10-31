@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.RateLimiting;
 using Nameless.Contracts;
 using Nameless.Registration;
-using Nameless.Web.Hosting.Options;
 
 namespace Nameless.Web.RateLimiter;
 

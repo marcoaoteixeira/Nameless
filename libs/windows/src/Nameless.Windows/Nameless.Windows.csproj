@@ -24,4 +24,58 @@
 		</Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+	  <PackageReference Include="WPF-UI" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\common\src\Nameless.Common\Nameless.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Dialogs\FileSystem\Resources\FileSystemDialogResources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>FileSystemDialogResources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Dialogs\Message\Resources\MessageDialogResources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>MessageDialogResources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Extensions\Resources\ControlAppearanceResources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ControlAppearanceResources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="UI\Resources\ThemeResources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ThemeResources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Dialogs\FileSystem\Resources\FileSystemDialogResources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>FileSystemDialogResources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Dialogs\Message\Resources\MessageDialogResources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>MessageDialogResources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Extensions\Resources\ControlAppearanceResources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ControlAppearanceResources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="UI\Resources\ThemeResources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ThemeResources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>
