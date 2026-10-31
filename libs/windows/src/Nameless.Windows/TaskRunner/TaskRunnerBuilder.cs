@@ -9,6 +9,13 @@ namespace Nameless.Windows.TaskRunner;
 /// <summary>
 ///     Task Runner Builder
 /// </summary>
+/// <remarks>
+///     May be called from any thread. A builder instance is not meant for
+///     concurrent use from several threads at the same time. Calls that
+///     create the window marshal to the application dispatcher. Do not
+///     block the UI thread waiting on a builder call made from another
+///     thread (deadlock).
+/// </remarks>
 public class TaskRunnerBuilder : ITaskRunnerBuilder {
     private readonly IWindowFactory _windowFactory;
     private readonly Lazy<ITaskRunnerWindow> _taskRunnerWindow;
@@ -48,17 +55,21 @@ public class TaskRunnerBuilder : ITaskRunnerBuilder {
     }
 
     /// <inheritdoc/>
-    public Task RunAsync() {
-        Window.Show(WindowStartupLocation.CenterScreen);
+    public async Task<TaskRunnerOutcome> RunAsync() {
+        await WindowsApplication.Current.Dispatcher.InvokeAsync(
+            () => Window.Show(WindowStartupLocation.CenterScreen)
+        );
 
-        return Task.CompletedTask;
+        return await Window.ViewModel.Completion;
     }
 
     private ITaskRunnerWindow CreateTaskRunnerWindow() {
-        var window = _windowFactory.Create<ITaskRunnerWindow>();
+        return WindowsApplication.Current.Dispatcher.Invoke(() => {
+            var window = _windowFactory.Create<ITaskRunnerWindow>();
 
-        window.SetOwner(WindowsApplication.Current.MainWindow);
+            window.SetOwner(WindowsApplication.Current.MainWindow);
 
-        return window;
+            return window;
+        });
     }
 }

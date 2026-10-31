@@ -8,8 +8,6 @@ namespace Nameless.Windows.TaskRunner.UI;
 ///     Action handler window.
 /// </summary>
 public partial class TaskRunnerWindow : ITaskRunnerWindow {
-    private bool _canClose;
-
     /// <inheritdoc />
     public TaskRunnerWindowViewModel ViewModel { get; }
 
@@ -68,18 +66,22 @@ public partial class TaskRunnerWindow : ITaskRunnerWindow {
     }
 
     private void CloseButtonHandler(object sender, RoutedEventArgs args) {
-        _canClose = true;
-
         Close();
     }
 
     private void ClosingHandler(object sender, CancelEventArgs args) {
-        if (_canClose) {
-            ViewModel.CleanUp();
-
-            return;
-        }
+        if (ViewModel.Completion.IsCompleted) { return; }
 
         args.Cancel = true;
+
+        ViewModel.NotifyCloseBlocked();
+    }
+
+    // Closed always fires, even when WPF force-closes the window (e.g.
+    // Application.Shutdown, or an owner closing in code), a path where
+    // Closing's args.Cancel is ignored. CleanUp is safe to call even when
+    // ClosingHandler already allowed the close normally: it is idempotent.
+    private void ClosedHandler(object sender, EventArgs args) {
+        ViewModel.CleanUp();
     }
 }
