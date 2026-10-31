@@ -2,6 +2,7 @@ using Moq;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
+using Nameless.Windows.Notification;
 using Nameless.Windows.TaskRunner;
 using Nameless.Windows.TaskRunner.UI;
 
@@ -9,6 +10,8 @@ namespace Nameless.Windows.Tests.TaskRunner.UI;
 
 [UnitTest]
 public class TaskRunnerWindowViewModelTests {
+    private sealed record TestNotificationEvent : NotificationEvent;
+
     private static TaskRunnerWindowViewModel CreateSut() {
         var eventPublisher = new Mock<IEventPublisher>(MockBehavior.Loose);
 
@@ -97,12 +100,24 @@ public class TaskRunnerWindowViewModelTests {
     public async Task CancelAsync_BeforeExecuteEverRan_IsNoOp() {
         // arrange
         var sut = CreateSut();
+        var observedCancellationRequested = true;
+        sut.SetHandler(ct => {
+            observedCancellationRequested = ct.IsCancellationRequested;
 
-        // act
+            return Task.CompletedTask;
+        });
+
+        // act: cancel with no active run must not lazily create a
+        // pre-cancelled CTS that a later Execute would then pick up.
         await sut.CancelCommand.ExecuteAsync(null);
 
-        // assert
         Assert.False(sut.Completion.IsCompleted);
+
+        await sut.ExecuteCommand.ExecuteAsync(null);
+
+        // assert
+        Assert.False(observedCancellationRequested);
+        Assert.Equal(TaskRunnerOutcome.Completed, await sut.Completion);
     }
 
     [Fact]
@@ -183,6 +198,73 @@ public class TaskRunnerWindowViewModelTests {
         // assert
         Assert.False(invoked);
         Assert.Equal(TaskRunnerOutcome.Cancelled, await sut.Completion);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SubscribeThrows_FaultsCompletion_DoesNotHang() {
+        // arrange
+        var eventPublisher = new Mock<IEventPublisher>(MockBehavior.Loose);
+        var exception = new InvalidOperationException("subscribe boom");
+        eventPublisher
+            .Setup(p => p.Register(It.IsAny<object>(), It.IsAny<Action<object, TestNotificationEvent>>()))
+            .Throws(exception);
+
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        sut.SubscribeFor<TestNotificationEvent>();
+        sut.SetHandler(_ => Task.CompletedTask);
+
+        // act
+        await sut.ExecuteCommand.ExecuteAsync(null);
+
+        // assert: the delegate never runs, but Completion still resolves
+        // (it must not hang, otherwise the window could never close).
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => sut.Completion);
+        Assert.Same(exception, thrown);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_UnsubscribeThrows_FaultsCompletion_DoesNotHang() {
+        // arrange
+        var eventPublisher = new Mock<IEventPublisher>(MockBehavior.Loose);
+        var exception = new InvalidOperationException("unsubscribe boom");
+        eventPublisher
+            .Setup(p => p.Unregister<TestNotificationEvent>(It.IsAny<object>()))
+            .Throws(exception);
+
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        sut.SubscribeFor<TestNotificationEvent>();
+        sut.SetHandler(_ => Task.CompletedTask);
+
+        // act
+        await sut.ExecuteCommand.ExecuteAsync(null);
+
+        // assert: the delegate completed normally, but the unsubscribe
+        // failure still must not leave Completion unresolved.
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => sut.Completion);
+        Assert.Same(exception, thrown);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_DelegateThrowsAndUnsubscribeThrows_KeepsDelegateExceptionAsFault() {
+        // arrange
+        var eventPublisher = new Mock<IEventPublisher>(MockBehavior.Loose);
+        var delegateException = new InvalidOperationException("delegate boom");
+        var unsubscribeException = new InvalidOperationException("unsubscribe boom");
+        eventPublisher
+            .Setup(p => p.Unregister<TestNotificationEvent>(It.IsAny<object>()))
+            .Throws(unsubscribeException);
+
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        sut.SubscribeFor<TestNotificationEvent>();
+        sut.SetHandler(_ => throw delegateException);
+
+        // act
+        await sut.ExecuteCommand.ExecuteAsync(null);
+
+        // assert: the delegate's own exception wins; unsubscribe's failure
+        // does not overwrite it.
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => sut.Completion);
+        Assert.Same(delegateException, thrown);
     }
 
     [Fact]

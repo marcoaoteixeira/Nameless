@@ -37,6 +37,29 @@ called from any thread (calls that touch the window marshal to the
 application dispatcher internally); a builder instance itself is not
 meant for concurrent use from more than one thread at a time.
 
+### Behavior changes from the previous `RunAsync` (`Task`, no outcome)
+
+If you are upgrading code written against the old `Task RunAsync()`
+signature, note that this is more than a return-type change:
+
+- **A delegate exception used to be swallowed.** It was logged as an Error
+  entry in the window and otherwise discarded. Now `await RunAsync()`
+  rethrows it. If your delegate can fail and you relied on the old
+  "nothing ever throws" behavior, wrap the call in `try`/`catch`.
+- **On the UI thread, `RunAsync` used to block until the window closed.**
+  The old implementation called `Dispatcher.Invoke(ShowDialog)` directly,
+  which pumps a nested message loop synchronously. Code after
+  `builder.RunAsync();` (without awaiting) only ran once the dialog
+  closed. Now the window is shown through `Dispatcher.InvokeAsync`, so
+  `RunAsync` returns an incomplete task immediately: code after a
+  non-awaited `builder.RunAsync();` call now runs **before** the dialog
+  even shows. Await it if you need to wait for the result.
+- **`RunAsync().Wait()` / `.Result` on the UI thread used to work.** It no
+  longer does: calling either now deadlocks the UI thread, because the
+  dialog needs that same thread's dispatcher to pump in order for the run
+  (and therefore the task) to ever complete. Always `await RunAsync()`
+  from the UI thread; never block on it synchronously.
+
 ### Translator keys
 
 The task runner window and view model look up the following keys through

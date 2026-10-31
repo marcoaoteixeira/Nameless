@@ -15,8 +15,7 @@ namespace Nameless.Windows.TaskRunner.UI;
 /// </summary>
 public partial class TaskRunnerWindowViewModel : ViewModel {
     private readonly IEventPublisher _eventPublisher;
-    private readonly TaskCompletionSource<TaskRunnerOutcome> _completion =
-        new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource<TaskRunnerOutcome> _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     private CancellationTokenSource? _cts;
     private Action? _subscribe;
@@ -101,7 +100,9 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
     }
 
     /// <summary>
-    ///     Cleans up all resources used by the task runner.
+    ///     Cleans up all resources used by the task runner. Safe to call more
+    ///     than once (for example once from <c>Closing</c> and once from
+    ///     <c>Closed</c>): every step is a no-op when already cleaned up.
     /// </summary>
     public void CleanUp() {
         if (Running) {
@@ -130,7 +131,11 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
 
         _closeBlockedNotified = true;
 
-        Entries.Add(LoggerRichTextBoxEntry.Warning(T["TaskRunnerWindow_CloseBlocked_Message"]));
+        Entries.Add(
+            LoggerRichTextBoxEntry.Warning(
+                T["TaskRunnerWindow_CloseBlocked_Message"]
+            )
+        );
     }
 
     [RelayCommand]
@@ -138,6 +143,7 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
         if (Completion.IsCompleted) { return; }
 
         var @delegate = _delegate;
+
         if (@delegate is null) {
             _completion.TrySetResult(TaskRunnerOutcome.Completed);
 
@@ -156,30 +162,48 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
         var cts = _cts = new CancellationTokenSource();
         var unsubscribe = _unsubscribe;
 
-        _subscribe?.Invoke();
-
         var outcome = TaskRunnerOutcome.Completed;
         Exception? failure = null;
 
-        try { await @delegate(cts.Token); }
-        catch (OperationCanceledException) when (cts.IsCancellationRequested) {
-            outcome = TaskRunnerOutcome.Cancelled;
+        try {
+            try {
+                _subscribe?.Invoke();
 
-            Entries.Add(LoggerRichTextBoxEntry.Warning(T["TaskRunnerWindow_Cancelled_Message"]));
+                await @delegate(cts.Token);
+            }
+            catch (OperationCanceledException) when (cts.IsCancellationRequested) {
+                outcome = TaskRunnerOutcome.Cancelled;
+
+                Entries.Add(
+                    LoggerRichTextBoxEntry.Warning(
+                        T["TaskRunnerWindow_Cancelled_Message"]
+                    )
+                );
+            }
+            catch (Exception ex) {
+                failure = ex;
+
+                Entries.Add(LoggerRichTextBoxEntry.Error(ex.Message));
+            }
+            finally { unsubscribe?.Invoke(); }
         }
+        // Only reached when subscribe/unsubscribe itself throws (the delegate's
+        // own exceptions are already handled above). Treat it as a fault, but
+        // never overwrite a failure the delegate already reported.
         catch (Exception ex) {
-            failure = ex;
+            failure ??= ex;
 
             Entries.Add(LoggerRichTextBoxEntry.Error(ex.Message));
         }
         finally {
-            unsubscribe?.Invoke();
+            // Always resolve Completion, even if subscribe/unsubscribe faulted,
+            // otherwise the window could become permanently unclosable.
+            await ToggleRunningAsync();
+
+            _ = failure is not null
+                ? _completion.TrySetException(failure)
+                : _completion.TrySetResult(outcome);
         }
-
-        await ToggleRunningAsync();
-
-        if (failure is not null) { _completion.TrySetException(failure); }
-        else { _completion.TrySetResult(outcome); }
     }
 
     [RelayCommand]

@@ -57,7 +57,8 @@ public class TaskRunnerBuilder : ITaskRunnerBuilder {
     /// <inheritdoc/>
     public async Task<TaskRunnerOutcome> RunAsync() {
         await WindowsApplication.Current.Dispatcher.InvokeAsync(
-            () => Window.Show(WindowStartupLocation.CenterScreen));
+            () => Window.Show(WindowStartupLocation.CenterScreen)
+        );
 
         return await Window.ViewModel.Completion;
     }

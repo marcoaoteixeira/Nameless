@@ -20,6 +20,7 @@
 
         Loaded="StartupHandler"
         Closing="ClosingHandler"
+        Closed="ClosedHandler"
 
         Background="{DynamicResource ApplicationBackgroundBrush}"
         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
