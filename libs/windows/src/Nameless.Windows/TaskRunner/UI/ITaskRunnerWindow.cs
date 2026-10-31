@@ -26,7 +26,7 @@ public interface ITaskRunnerWindow : IWindow {
     ITaskRunnerWindow SetName(string name);
 
     /// <summary>
-    ///     Sets the 
+    ///     Sets the delegate that will be executed by the task runner window.
     /// </summary>
     /// <param name="delegate">
     ///     The delegate.

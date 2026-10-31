@@ -8,8 +8,6 @@ namespace Nameless.Windows.TaskRunner.UI;
 ///     Action handler window.
 /// </summary>
 public partial class TaskRunnerWindow : ITaskRunnerWindow {
-    private bool _canClose;
-
     /// <inheritdoc />
     public TaskRunnerWindowViewModel ViewModel { get; }
 
@@ -68,18 +66,18 @@ public partial class TaskRunnerWindow : ITaskRunnerWindow {
     }
 
     private void CloseButtonHandler(object sender, RoutedEventArgs args) {
-        _canClose = true;
-
         Close();
     }
 
     private void ClosingHandler(object sender, CancelEventArgs args) {
-        if (_canClose) {
+        if (ViewModel.Completion.IsCompleted) {
             ViewModel.CleanUp();
 
             return;
         }
 
         args.Cancel = true;
+
+        ViewModel.NotifyCloseBlocked();
     }
 }
