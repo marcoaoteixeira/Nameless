@@ -18,13 +18,12 @@ public static class ControlAppearanceExtension {
         /// <returns>
         ///     The text title associated with the <see cref="ControlAppearance"/>.
         /// </returns>
-        public string Title =>
-            self switch {
-                ControlAppearance.Success => ControlAppearanceResources.Success,
-                ControlAppearance.Caution => ControlAppearanceResources.Caution,
-                ControlAppearance.Danger => ControlAppearanceResources.Danger,
-                _ => ControlAppearanceResources.Info
-            };
+        public string Title => self switch {
+            ControlAppearance.Success => ControlAppearanceResources.Title_Success,
+            ControlAppearance.Caution => ControlAppearanceResources.Title_Caution,
+            ControlAppearance.Danger => ControlAppearanceResources.Title_Danger,
+            _ => ControlAppearanceResources.Title_Info
+        };
 
         /// <summary>
         ///     Retrieves the icon associated with the
@@ -33,13 +32,11 @@ public static class ControlAppearanceExtension {
         /// <returns>
         ///     The icon associated with the <see cref="ControlAppearance"/>.
         /// </returns>
-        public IconElement Icon {
-            get => self switch {
-                ControlAppearance.Success => new SymbolIcon(SymbolRegular.ThumbLike28),
-                ControlAppearance.Caution => new SymbolIcon(SymbolRegular.Warning28),
-                ControlAppearance.Danger => new SymbolIcon(SymbolRegular.ShieldError24),
-                _ => new SymbolIcon(SymbolRegular.LightbulbFilament24),
-            };
-        }
+        public IconElement Icon => self switch {
+            ControlAppearance.Success => new SymbolIcon(SymbolRegular.ThumbLike28),
+            ControlAppearance.Caution => new SymbolIcon(SymbolRegular.Warning28),
+            ControlAppearance.Danger => new SymbolIcon(SymbolRegular.ShieldError24),
+            _ => new SymbolIcon(SymbolRegular.LightbulbFilament24),
+        };
     }
 }

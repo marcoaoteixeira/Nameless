@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Globalization;
+using System.Windows.Controls;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.UI;
 using Wpf.Ui.Appearance;
@@ -50,6 +51,31 @@ public static class ThemeExtension {
         /// <returns>
         ///     The found <see cref="ComboBoxItem"/> instance or and
         ///     empty instance.
+        /// </returns>
+        public ComboBoxItem Find(ComboBoxItem[] available) {
+            return ComboBoxItemHelper.TryGet(available, self, out var output)
+                ? output
+                : ComboBoxItemHelper.EmptyComboBoxItem;
+        }
+    }
+}
+
+/// <summary>
+///     Culture Info Extension Methods
+/// </summary>
+public static class CultureInfoExtension {
+    /// <param name="self">
+    ///     The current <see cref="CultureInfo"/> instance.
+    /// </param>
+    extension(CultureInfo self) {
+        /// <summary>
+        ///     Retrieves the combo box item that matches the culture.
+        /// </summary>
+        /// <param name="available">
+        ///     Available combo box items.
+        /// </param>
+        /// <returns>
+        ///     The combo box item that matches the culture or an empty one.
         /// </returns>
         public ComboBoxItem Find(ComboBoxItem[] available) {
             return ComboBoxItemHelper.TryGet(available, self, out var output)

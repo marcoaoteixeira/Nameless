@@ -19,6 +19,6 @@ public class PhysicalFileManagerHostFeature : HostFeature<PhysicalFileManagerOpt
 
         builder.Services.TryAddSingleton<PhysicalFileManagerFactory>();
         builder.Services.TryAddSingleton<IFileManager>(provider => provider.GetRequiredService<PhysicalFileManagerFactory>()
-                                                                           .GetOrCreate(AppContext.BaseDirectory));
+                                                                           .GetOrCreate(root));
     }
 }

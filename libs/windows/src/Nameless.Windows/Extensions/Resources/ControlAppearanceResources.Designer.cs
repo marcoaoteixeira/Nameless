@@ -63,36 +63,36 @@ namespace Nameless.Windows.Extensions.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Caution.
         /// </summary>
-        internal static string Caution {
+        internal static string Title_Caution {
             get {
-                return ResourceManager.GetString("Caution", resourceCulture);
+                return ResourceManager.GetString("Title_Caution", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Danger.
         /// </summary>
-        internal static string Danger {
+        internal static string Title_Danger {
             get {
-                return ResourceManager.GetString("Danger", resourceCulture);
+                return ResourceManager.GetString("Title_Danger", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Info.
         /// </summary>
-        internal static string Info {
+        internal static string Title_Info {
             get {
-                return ResourceManager.GetString("Info", resourceCulture);
+                return ResourceManager.GetString("Title_Info", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Success.
         /// </summary>
-        internal static string Success {
+        internal static string Title_Success {
             get {
-                return ResourceManager.GetString("Success", resourceCulture);
+                return ResourceManager.GetString("Title_Success", resourceCulture);
             }
         }
     }

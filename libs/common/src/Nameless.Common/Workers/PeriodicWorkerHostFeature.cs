@@ -12,9 +12,8 @@ namespace Nameless.Workers;
 public sealed class PeriodicWorkerHostFeature : HostFeature<PeriodicWorkerFeatureOptions> {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
-        var options = ActionHelper.FromDelegate(ConfigureFeature);
-
-        options.WithAssemblies(context.Assemblies);
+        var options = ActionHelper.FromDelegate(ConfigureFeature)
+                                  .WithAssemblies(context.Assemblies);
 
         builder.Services.TryAddEnumerable(options.Workers.Select(
             implementation => ServiceDescriptor.Singleton(

@@ -24,9 +24,9 @@ public class FluentValidationFeatureOptions : AssemblyScanAware<FluentValidation
     ///     The current <see cref="FluentValidationFeatureOptions"/> instance so other
     ///     actions can be chained.
     /// </returns>
-    public FluentValidationFeatureOptions WithFluentValidationValidator<TFluentValidationValidator>()
+    public FluentValidationFeatureOptions WithValidator<TFluentValidationValidator>()
         where TFluentValidationValidator : IFluentValidationValidator {
-        return WithFluentValidationValidator(typeof(TFluentValidationValidator));
+        return WithValidator(typeof(TFluentValidationValidator));
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class FluentValidationFeatureOptions : AssemblyScanAware<FluentValidation
     ///     if <paramref name="type"/> is not assignable from <see cref="IFluentValidationValidator"/>,
     ///     is an open generic type, or is a non-concrete type.
     /// </exception>
-    public FluentValidationFeatureOptions WithFluentValidationValidator(Type type) {
+    public FluentValidationFeatureOptions WithValidator(Type type) {
         Throws.When.OpenGenericType(type);
         Throws.When.NonConcreteType(type);
         Throws.When.NonAssignableFrom(type, typeof(IFluentValidationValidator));

@@ -14,7 +14,7 @@ public static class FileManagerExtensions {
         ///     The backup directory.
         /// </returns>
         public IDirectory GetBackupDirectory() {
-            return self.InnerGetDirectory("backup");
+            return self.InnerGetDirectory("backups");
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ public static class FileManagerExtensions {
         ///     The database directory.
         /// </returns>
         public IDirectory GetDatabaseDirectory() {
-            return self.InnerGetDirectory("database");
+            return self.InnerGetDirectory("databases");
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ public static class FileManagerExtensions {
         ///     The update directory.
         /// </returns>
         public IDirectory GetUpdateDirectory() {
-            return self.InnerGetDirectory("update");
+            return self.InnerGetDirectory("updates");
         }
 
         private IDirectory InnerGetDirectory(string relativePath) {

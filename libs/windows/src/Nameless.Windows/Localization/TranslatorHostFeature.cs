@@ -21,6 +21,6 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
             ? ServiceDescriptor.Singleton(typeof(ITranslator), options.Translator)
             : ServiceDescriptor.Singleton(NullTranslator.Instance);
 
-        builder.Services.TryAddSingleton(descriptor);
+        builder.Services.TryAdd(descriptor);
     }
 }

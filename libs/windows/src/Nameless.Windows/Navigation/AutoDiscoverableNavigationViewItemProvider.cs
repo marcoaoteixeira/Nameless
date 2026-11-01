@@ -23,22 +23,15 @@ public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemPro
     }
 
     /// <inheritdoc />
-    public IEnumerable<NavigationViewItem> GetMainItems() {
+    public IEnumerable<NavigationViewItem> GetItems(Placement placement) {
         return _entries.Value
-                       .Where(entry => !entry.Attribute.Footer)
-                       .Select(entry => entry.ViewIem);
-    }
-
-    /// <inheritdoc />
-    public IEnumerable<NavigationViewItem> GetFooterItems() {
-        return _entries.Value
-                       .Where(entry => entry.Attribute.Footer)
+                       .Where(entry => entry.Attribute.Placement == placement)
                        .Select(entry => entry.ViewIem);
     }
 
     private Entry[] DiscoverNavigationViewItems() {
         return [
-            .. _assemblies.SelectMany(assembly => assembly.GetExportedTypes())
+            .. _assemblies.SelectMany(assembly => assembly.GetTypes())
                           .Where(type => type.HasAttribute<NavigationViewItemAttribute>())
                           .Select(CreateTuple)
                           .Select(CreateEntry)

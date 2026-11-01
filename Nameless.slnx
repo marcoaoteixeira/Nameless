@@ -23,7 +23,9 @@
   <Folder Name="/Samples/Web/">
     <Project Path="samples/web/Nameless.Sample.WebApp/Nameless.Sample.WebApp.csproj" Id="b6ccf53f-0011-4d97-a68d-821b70e29487" />
   </Folder>
-  <Folder Name="/Samples/Windows/" />
+  <Folder Name="/Samples/Windows/">
+    <Project Path="samples/windows/Nameless.WinApp/Nameless.WinApp.csproj" Id="2c9ba051-1248-4145-861e-eef8c04d6cbe" />
+  </Folder>
   <Folder Name="/Utils/">
     <Project Path="libs/utils/codegen/Nameless.Generators.Common/Nameless.Generators.Common.csproj" Id="f8993622-e614-47a8-b1f4-6f3e804c8ae1" />
     <Project Path="libs/utils/src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj" Id="5434e6c2-7518-4721-9e0b-4582864d2946" />

@@ -75,9 +75,9 @@ public class TranslatorExtension : MarkupExtension {
     ///     singleton.
     /// </summary>
     /// <param name="translator">
-    ///     The localizer to use for all XAML bindings.
+    ///     The translator to use for all XAML bindings.
     /// </param>
-    public static void SetLocalizer(ITranslator translator) {
+    public static void SetTranslator(ITranslator translator) {
         Translator = translator;
     }
 }

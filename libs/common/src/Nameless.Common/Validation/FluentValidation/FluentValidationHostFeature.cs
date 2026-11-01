@@ -12,7 +12,8 @@ namespace Nameless.Validation.FluentValidation;
 public class FluentValidationHostFeature : HostFeature<FluentValidationFeatureOptions> {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
-        var options = ActionHelper.FromDelegate(ConfigureFeature).WithAssemblies(context.Assemblies);
+        var options = ActionHelper.FromDelegate(ConfigureFeature)
+                                  .WithAssemblies(context.Assemblies);
 
         builder.Services.TryAddTransient<IValidator, FluentValidationValidator>();
         builder.Services.TryAddEnumerable(options.Validators.Select(

@@ -8,7 +8,7 @@ namespace Nameless.Windows.Dialogs.FileSystem;
 /// <summary>
 ///     <see cref="IServiceCollection"/> extensions methods.
 /// </summary>
-public class FileSystemHostFeature : HostFeature {
+public class FileSystemDialogHostFeature : HostFeature {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
         builder.Services.TryAddSingleton<IFileSystemDialog, FileSystemDialog>();

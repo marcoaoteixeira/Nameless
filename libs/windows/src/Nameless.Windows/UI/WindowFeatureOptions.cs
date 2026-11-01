@@ -28,8 +28,8 @@ public class WindowFeatureOptions : AssemblyScanAware<WindowFeatureOptions> {
     ///     The current <see cref="WindowFeatureOptions"/> instance
     ///     so other actions can be chained.
     /// </returns>
-    public WindowFeatureOptions RegisterWindow<TWindow>() where TWindow : class, IWindow {
-        return RegisterWindow(typeof(TWindow));
+    public WindowFeatureOptions WithWindow<TWindow>() where TWindow : class, IWindow {
+        return WithWindow(typeof(TWindow));
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class WindowFeatureOptions : AssemblyScanAware<WindowFeatureOptions> {
     ///     The current <see cref="WindowFeatureOptions"/> instance
     ///     so other actions can be chained.
     /// </returns>
-    public WindowFeatureOptions RegisterWindow(Type type) {
+    public WindowFeatureOptions WithWindow(Type type) {
         Throws.When.NonConcreteType(type);
         Throws.When.OpenGenericType(type);
         Throws.When.NonAssignableFrom(type, WindowType);

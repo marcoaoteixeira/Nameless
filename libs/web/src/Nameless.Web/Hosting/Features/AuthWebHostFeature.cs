@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Nameless.Configuration;
@@ -18,12 +19,9 @@ public class AuthWebHostFeature : HostFeature<AuthFeatureOptions>, IWebHostFeatu
     /// <inheritdoc />
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
         var options = ActionHelper.FromDelegate(ConfigureFeature);
-        var wrapper = new AuthenticationBuilderWrapper(builder.Services);
-        var configure = options.ConfigureAuthentication ?? ConfigureDefaultAuthentication;
 
-        configure(wrapper, builder.Configuration);
-
-        wrapper.Apply();
+        ConfigureAuthorization(builder.Services, options);
+        ConfigureAuthentication(builder.Services, builder.Configuration, options);
     }
 
     /// <inheritdoc />
@@ -31,7 +29,20 @@ public class AuthWebHostFeature : HostFeature<AuthFeatureOptions>, IWebHostFeatu
         app.UseAuthentication();
         app.UseAuthorization();
     }
-    
+
+    private static void ConfigureAuthorization(IServiceCollection services, AuthFeatureOptions options) {
+        services.AddAuthorization(options.ConfigureAuthorization ?? (_ => { }));
+    }
+
+    private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration, AuthFeatureOptions options) {
+        var wrapper = new AuthenticationBuilderWrapper(services);
+        var configure = options.ConfigureAuthentication ?? ConfigureDefaultAuthentication;
+
+        configure(wrapper, configuration);
+
+        wrapper.Apply();
+    }
+
     private static void ConfigureDefaultAuthentication(IAuthenticationBuilder builder, IConfiguration? configuration) {
         builder.Configure(opts => opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(opts => {

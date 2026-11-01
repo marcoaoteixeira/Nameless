@@ -10,13 +10,12 @@ public static class ThemeExtensions {
         /// <summary>
         ///     Gets the display text for the specified theme.
         /// </summary>
-        public string DisplayText =>
-            self switch {
-                Theme.System => ThemeResources.DisplayText_System,
-                Theme.Light => ThemeResources.DisplayText_Light,
-                Theme.Dark => ThemeResources.DisplayText_Dark,
-                Theme.HighContrast => ThemeResources.DisplayText_HighContrast,
-                _ => self.ToString()
-            };
+        public string DisplayText => self switch {
+            Theme.System => ThemeResources.DisplayText_System,
+            Theme.Light => ThemeResources.DisplayText_Light,
+            Theme.Dark => ThemeResources.DisplayText_Dark,
+            Theme.HighContrast => ThemeResources.DisplayText_HighContrast,
+            _ => self.ToString()
+        };
     }
 }

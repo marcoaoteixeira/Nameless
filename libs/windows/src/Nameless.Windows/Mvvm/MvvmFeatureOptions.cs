@@ -28,8 +28,8 @@ public class MvvmFeatureOptions : AssemblyScanAware<MvvmFeatureOptions> {
     ///     The current <see cref="MvvmFeatureOptions"/> instance so
     ///     other actions can be chained.
     /// </returns>
-    public MvvmFeatureOptions RegisterViewModel<TViewModel>() where TViewModel : ViewModel {
-        return RegisterViewModel(typeof(TViewModel));
+    public MvvmFeatureOptions WithViewModel<TViewModel>() where TViewModel : ViewModel {
+        return WithViewModel(typeof(TViewModel));
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class MvvmFeatureOptions : AssemblyScanAware<MvvmFeatureOptions> {
     ///     The current <see cref="MvvmFeatureOptions"/> instance so
     ///     other actions can be chained.
     /// </returns>
-    public MvvmFeatureOptions RegisterViewModel(Type type) {
+    public MvvmFeatureOptions WithViewModel(Type type) {
         Throws.When.NonConcreteType(type);
         Throws.When.OpenGenericType(type);
         Throws.When.NonAssignableFrom(type, ViewModelType);

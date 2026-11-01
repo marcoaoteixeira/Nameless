@@ -29,7 +29,22 @@ public class NavigationViewItemAttribute : Attribute {
     public int Position { get; init; }
 
     /// <summary>
-    ///     Whether it should be placed in the footer.
+    ///     Gets or sets the menu item placement
     /// </summary>
-    public bool Footer { get; init; }
+    public Placement Placement { get; init; }
+}
+
+/// <summary>
+///     Navigation View Item Menu Placement
+/// </summary>
+public enum Placement {
+    /// <summary>
+    ///     On top
+    /// </summary>
+    Top,
+
+    /// <summary>
+    ///     On bottom
+    /// </summary>
+    Bottom
 }

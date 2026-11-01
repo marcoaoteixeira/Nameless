@@ -16,7 +16,9 @@ public class EntityFrameworkCoreHostFeature<TDbContext> : HostFeature<EntityFram
     where TDbContext : DbContext {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
-        var options = ActionHelper.FromDelegate(ConfigureFeature).WithAssemblies(context.Assemblies);
+        var options = ActionHelper.FromDelegate(ConfigureFeature)
+                                  .WithAssemblies(context.Assemblies);
+
         var services = builder.Services;
 
         services.ConfigureOptions<EntityFrameworkCoreOptions>(builder.Configuration);

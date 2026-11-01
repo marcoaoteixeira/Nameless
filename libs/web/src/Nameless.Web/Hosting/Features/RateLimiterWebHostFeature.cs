@@ -12,7 +12,9 @@ namespace Nameless.Web.Hosting.Features;
 public class RateLimiterWebHostFeature : HostFeature<RateLimiterFeatureOptions>, IWebHostFeature {
     /// <inheritdoc />
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
-        var options = ActionHelper.FromDelegate(ConfigureFeature).WithAssemblies(context.Assemblies);
+        var options = ActionHelper.FromDelegate(ConfigureFeature)
+                                  .WithAssemblies(context.Assemblies);
+
         var policies = new Dictionary<string, Type>(options.RateLimiterPolicies);
 
         if (options.IncludeDefaultPolicies) { IncludeDefaultPolicies(policies); }

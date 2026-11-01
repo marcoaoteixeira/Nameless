@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Windows.Controls;
 
 namespace Nameless.Windows.Helpers;
@@ -74,6 +75,35 @@ public static class ComboBoxItemHelper {
     public static bool TryGet<TEnum>(ComboBoxItem[] items, TEnum value, [NotNullWhen(returnValue: true)] out ComboBoxItem? output) where TEnum : struct, Enum {
         output = items.FirstOrDefault(
             item => Enum.IsDefined(typeof(TEnum), item.Tag) && ((TEnum)item.Tag).Equals(value)
+        );
+
+        output?.IsSelected = true;
+
+        return output is not null;
+    }
+
+    /// <summary>
+    ///     Tries retrieve the associated combo box item to the culture info value.
+    /// </summary>
+    /// <param name="items">
+    ///     A collection of combo box items.
+    /// </param>
+    /// <param name="value">
+    ///     The culture info value.
+    /// </param>
+    /// <param name="output">
+    ///     If found, the combo box item.
+    /// </param>
+    /// <returns>
+    ///     <see langword="true"/> if found; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool TryGet(ComboBoxItem[] items, CultureInfo value, [NotNullWhen(returnValue: true)] out ComboBoxItem? output) {
+        output = items.FirstOrDefault(
+            item => item.Tag switch {
+                CultureInfo culture => Equals(culture, value),
+                string culture => culture == value.Name,
+                _ => false
+            }
         );
 
         output?.IsSelected = true;

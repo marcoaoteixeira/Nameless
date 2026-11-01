@@ -9,6 +9,7 @@ namespace Nameless.Windows.Navigation;
 ///     Navigation Feature Options
 /// </summary>
 public class NavigationFeatureOptions : AssemblyScanAware<NavigationFeatureOptions> {
+    private static readonly Type NavigationWindowType = typeof(INavigationWindow);
     private static readonly Type NavigableViewType = typeof(INavigableView<>);
 
     private readonly HashSet<Type> _navigationViews = [];
@@ -16,7 +17,12 @@ public class NavigationFeatureOptions : AssemblyScanAware<NavigationFeatureOptio
     /// <summary>
     ///     Gets the navigation window implementation.
     /// </summary>
-    public Type? NavigationWindow { get; private set; }
+    public Type? NavigationWindow {
+        get => UseAssemblyScan
+            ? ExecuteAssemblyScan(NavigationWindowType, includeGenericTypeDefinition: false).SingleOrDefault()
+            : field;
+        private set;
+    }
 
     /// <summary>
     ///     Gets the navigation view implementations.
