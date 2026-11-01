@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nameless.Application;
 using Nameless.EntityFrameworkCore;
 using Nameless.Hosting;
+using Nameless.IO.Physical;
 using Nameless.Logging.Serilog;
 using Nameless.WinApp.Data;
 using Nameless.Windows;
@@ -16,7 +17,14 @@ internal static class ApplicationHostFeature {
     public static void Configure(HostFeatureCollection features) {
         ConfigureTranslatorHostFeature(features);
         ConfigureEntityFrameworkCoreHostFeature(features);
-        ConfigureLogging(features);
+        ConfigureLoggingFeature(features);
+        ConfigureFileManagerFeature(features);
+    }
+
+    private static void ConfigureFileManagerFeature(HostFeatureCollection features) {
+        features.Replace<PhysicalFileManagerHostFeature>(
+            new CustomFileManagerHostFeature()
+        );
     }
 
     private static void ConfigureTranslatorHostFeature(HostFeatureCollection features) {
@@ -44,7 +52,7 @@ internal static class ApplicationHostFeature {
         features.Add(feature);
     }
 
-    private static void ConfigureLogging(HostFeatureCollection feature) {
+    private static void ConfigureLoggingFeature(HostFeatureCollection feature) {
         feature.Get<SerilogHostFeature>().Configure(opts => opts.WithSinkConfiguration((_, sink) => sink.File(
             path: SysPath.Combine(Constants.Logging.Directory, Constants.Logging.FileNamePattern),
             rollingInterval: RollingInterval.Day,

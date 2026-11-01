@@ -3,6 +3,7 @@ using Nameless.Hosting;
 using Nameless.Hosting.Features;
 using Nameless.IO.Physical;
 using Nameless.Logging.Serilog;
+using Nameless.Lucene;
 using Nameless.Mediator;
 using Nameless.Resilience;
 using Nameless.Validation.FluentValidation;
@@ -47,6 +48,7 @@ internal static class AppHostFeatureCollectionExtensions {
                    .Add(new EventPublisherHostFeature())
                    .Add(new FileSystemDialogHostFeature())
                    .Add(new FluentValidationHostFeature())
+                   .Add(new LuceneHostFeature())
                    .Add(new MediatorHostFeature())
                    .Add(new MessageDialogHostFeature())
                    .Add(new MvvmHostFeature())

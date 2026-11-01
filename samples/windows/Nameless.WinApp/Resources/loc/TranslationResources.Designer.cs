@@ -358,6 +358,24 @@ namespace Nameless.WinApp.Resources.loc {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lucene index initialized successfully!.
+        /// </summary>
+        internal static string InitializeLuceneIndexStep_ExecuteAsync_Finish {
+            get {
+                return ResourceManager.GetString("InitializeLuceneIndexStep_ExecuteAsync_Finish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing Lucene index....
+        /// </summary>
+        internal static string InitializeLuceneIndexStep_ExecuteAsync_Startup {
+            get {
+                return ResourceManager.GetString("InitializeLuceneIndexStep_ExecuteAsync_Startup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to find application log file..
         /// </summary>
         internal static string OpenCurrentLogFileRequestHandler_HandleAsync_Notify_Missing_Log_File_Message {

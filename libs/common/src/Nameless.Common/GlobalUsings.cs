@@ -7,3 +7,5 @@ global using SysDirectory = System.IO.Directory;
 
 global using FluentValidationResult = FluentValidation.Results.ValidationResult;
 global using IFluentValidationValidator = FluentValidation.IValidator;
+
+global using System.Diagnostics.CodeAnalysis;

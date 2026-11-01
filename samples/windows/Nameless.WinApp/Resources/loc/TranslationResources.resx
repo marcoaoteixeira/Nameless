@@ -222,4 +222,10 @@
   <data name="Bootstrapper_ExecuteStepWithRetryAsync_StepFailure" xml:space="preserve">
     <value>Step '{0}' failed with '{1}'.</value>
   </data>
+  <data name="InitializeLuceneIndexStep_ExecuteAsync_Startup" xml:space="preserve">
+    <value>Initializing Lucene index...</value>
+  </data>
+  <data name="InitializeLuceneIndexStep_ExecuteAsync_Finish" xml:space="preserve">
+    <value>Lucene index initialized successfully!</value>
+  </data>
 </root>

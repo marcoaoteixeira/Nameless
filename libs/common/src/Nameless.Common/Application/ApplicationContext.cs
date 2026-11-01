@@ -30,6 +30,9 @@ internal class ApplicationContext : IApplicationContext {
     /// </summary>
     /// <param name="options">The application context options.</param>
     /// <param name="logger">The logger.</param>
+    // NOTE: ApplicationContext should never inject anything beside options
+    // or logger. We want to guarantee that we can use the object during
+    // other objects resolution.
     public ApplicationContext(IOptions<ApplicationContextOptions> options, ILogger<ApplicationContext> logger) {
         _options = options;
         _logger = logger;
