@@ -2,6 +2,7 @@ using System.IO;
 using System.IO.Compression;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Nameless.Application;
@@ -67,7 +68,8 @@ public class PerformApplicationRestoreRequestHandlerTests {
             luceneOptions: luceneOptions,
             appConfigurationManager: appConfigurationManagerMock.Object,
             eventPublisher: eventPublisherMock.Object,
-            translator: new FakeTranslator()
+            translator: new FakeTranslator(),
+            logger: NullLogger<PerformApplicationRestoreRequestHandler>.Instance
         );
 
         return new Sut {
@@ -375,22 +377,12 @@ public class PerformApplicationRestoreRequestHandlerTests {
 
     [Fact]
     [UnitTest]
-    public async Task HandleAsync_WhenSuccessPublishFailsAfterConfigSwap_NeverReloadsAheadOfTheRollback() {
-        // arrange: app.config swaps successfully and the rollback-backup
-        // cleanup completes, but the final "Success" progress publish
-        // itself throws — a late failure on the path that used to run
-        // after Reload(). The outer catch still treats this as a failed
-        // restore and runs the (best-effort) rollback.
-        //
-        // Note: by this point DeleteBackupSiblingsAsync has already
-        // deleted the rollback-point backup, so the rollback itself cannot
-        // actually restore app.config's original bytes here — a separate,
-        // pre-existing gap (cleanup runs before the still-failable final
-        // publish) that is not what this test is pinning. What matters for
-        // this fix is that Reload() is never called on this path: calling
-        // it here would make the in-memory config hold the (soon to be
-        // undone) restored values even though the restore is reported as
-        // RolledBack — the exact stale-state exposure the reorder fixes.
+    public async Task HandleAsync_WhenSuccessPublishFailsAfterCommit_KeepsRestoredArtifactsAndReturnsCompleted() {
+        // arrange: app.config swaps successfully and Reload() succeeds —
+        // the restore has already passed the commit point — but the final
+        // "Success" progress publish itself throws. That failure must be
+        // cosmetic: the restored file stays on disk, no rollback is
+        // attempted, and the outcome is still Completed.
         using var sut = CreateSut();
 
         var configPath = SysPath.Combine(sut.Root.Path, "app.config");
@@ -410,8 +402,140 @@ public class PerformApplicationRestoreRequestHandlerTests {
         var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
 
         // assert
+        Assert.Equal(RestoreOutcome.Completed, outcome);
+        Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(configPath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            Times.Never
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenReloadThrows_RollsBackToOriginalsAndReturnsRolledBack() {
+        // arrange: app.config swaps successfully, but Reload() — the last
+        // failable action before the commit point — throws. The `.bak-*`
+        // backup still exists at this point, so the rollback must restore
+        // the original file in full and report RolledBack truthfully.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-only.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        sut.AppConfigurationManagerMock.Setup(x => x.Reload()).Throws<IOException>();
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
         Assert.Equal(RestoreOutcome.RolledBack, outcome);
-        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenCancelledDuringPostCommitTail_StillReturnsCompletedWithArtifactsRestored() {
+        // arrange: cancellation observed only once the restore has already
+        // committed (Reload() succeeded) — simulated here by having the
+        // post-commit backup-sibling cleanup itself throw
+        // OperationCanceledException, standing in for a cancellation signal
+        // arriving during the tail. Once committed, an OCE must not be
+        // treated as a reason to roll back: it is caught by the tail's
+        // guard (which catches Exception, OCE included) and the restore is
+        // still reported Completed.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-only.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message == "PerformApplicationRestoreRequestHandler_HandleAsync_Success")))
+            .ThrowsAsync(new OperationCanceledException("cancelled after commit"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(RestoreOutcome.Completed, outcome);
+        Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(configPath));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            Times.Never
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenBackupSiblingCleanupFailsAndItsWarningPublishAlsoFails_StillReturnsCompleted() {
+        // arrange: the restore commits, then DeleteBackupSiblingsAsync's
+        // own delete attempt fails and its warning-publish branch also
+        // throws. Neither failure may escape HandleAsync or be mistaken for
+        // a reason to roll back.
+        //
+        // The original app.config is marked read-only before the restore
+        // runs. SwapFileArtifactAsync's rename (File.Move) still succeeds
+        // on a read-only file — the attribute travels with it — so the
+        // resulting ".bak-*" sibling is itself read-only. File.Delete on a
+        // read-only file always throws UnauthorizedAccessException, which
+        // DeleteBackupSiblingsAsync's per-swap catch already handles. This
+        // is deterministic, unlike trying to win a race against the
+        // handler to lock the sibling file open.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+        SysFile.SetAttributes(configPath, FileAttributes.ReadOnly);
+
+        var zipPath = CreateZipArchive(sut.Root, "config-only.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message.Contains("DeletingBackupSiblings_Failure", StringComparison.Ordinal))))
+            .ThrowsAsync(new InvalidOperationException("warning publish is also down"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        try {
+            // act
+            var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+            // assert
+            Assert.Equal(RestoreOutcome.Completed, outcome);
+            Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(configPath));
+        }
+        finally {
+            // Clear the read-only attribute on whatever sibling is left so
+            // the TempDirectory's recursive delete in sut.Dispose() does
+            // not silently leave an orphan behind.
+            foreach (var entry in SysDirectory.GetFileSystemEntries(sut.Root.Path)) {
+                if (entry.Contains(".bak-", StringComparison.Ordinal)) { SysFile.SetAttributes(entry, FileAttributes.Normal); }
+            }
+        }
     }
 
     [Fact]
