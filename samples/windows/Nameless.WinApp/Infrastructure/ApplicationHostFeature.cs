@@ -40,7 +40,7 @@ internal static class ApplicationHostFeature {
             var applicationContext = provider.GetRequiredService<IApplicationContext>();
             var databaseFile = applicationContext.FileManager.GetFile(
                 relativePath: SysPath.Combine(
-                    applicationContext.FileManager.GetDatabaseDirectory().Path,
+                    applicationContext.FileManager.GetDatabaseDirectory().Name,
                     Constants.Database.FileName
                 )
             );

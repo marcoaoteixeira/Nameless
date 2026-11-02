@@ -140,20 +140,20 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             var outcome = await _taskRunner.CreateBuilder()
-                                            .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
-                                            .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
-                                            .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
-                                            .RunAsync();
+                                           .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                                           .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                                           .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
+                                           .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
                 await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
-                    message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Success"], backupFilePath)
+                    message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Success", backupFilePath]
                 );
             }
             // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure"], ex.Message)
+                message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure", ex.Message]
             );
         }
     }
@@ -171,10 +171,10 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             await _taskRunner.CreateBuilder()
-                              .SetName(T["AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title"])
-                              .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
-                              .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
-                              .RunAsync();
+                             .SetName(T["AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title"])
+                             .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                             .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
+                             .RunAsync();
 
             // RolledBack (including a cancelled restore, which rolls back
             // too): the handler already published its own failure progress
@@ -193,7 +193,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             System.Windows.Application.Current.Shutdown();
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationRestore_Failure"], ex.Message)
+                message: T["AppConfigurationPageViewModel_PerformApplicationRestore_Failure", ex.Message]
             );
         }
     }
