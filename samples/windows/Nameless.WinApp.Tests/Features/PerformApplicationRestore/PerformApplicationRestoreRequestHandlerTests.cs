@@ -374,6 +374,47 @@ public class PerformApplicationRestoreRequestHandlerTests {
     }
 
     [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenSuccessPublishFailsAfterConfigSwap_NeverReloadsAheadOfTheRollback() {
+        // arrange: app.config swaps successfully and the rollback-backup
+        // cleanup completes, but the final "Success" progress publish
+        // itself throws — a late failure on the path that used to run
+        // after Reload(). The outer catch still treats this as a failed
+        // restore and runs the (best-effort) rollback.
+        //
+        // Note: by this point DeleteBackupSiblingsAsync has already
+        // deleted the rollback-point backup, so the rollback itself cannot
+        // actually restore app.config's original bytes here — a separate,
+        // pre-existing gap (cleanup runs before the still-failable final
+        // publish) that is not what this test is pinning. What matters for
+        // this fix is that Reload() is never called on this path: calling
+        // it here would make the in-memory config hold the (soon to be
+        // undone) restored values even though the restore is reported as
+        // RolledBack — the exact stale-state exposure the reorder fixes.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-only.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message == "PerformApplicationRestoreRequestHandler_HandleAsync_Success")))
+            .ThrowsAsync(new InvalidOperationException("event bus is down"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+    }
+
+    [Fact]
     [IntegrationTest]
     public async Task HandleAsync_RoundTrip_RestoresConfigDatabaseAndLuceneIndexFromBackup() {
         // arrange: back up a real small SQLite database and a fake index

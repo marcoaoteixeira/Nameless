@@ -168,18 +168,25 @@ done. Final success/failure also raised as `SnackBarNotificationEvent` after the
   1. Publish "starting restore" progress event.
   2. `await _dbContext.Database.CloseConnectionAsync(cancellationToken)`.
   3. `_indexProvider.CloseAll()`.
-  4. Rename current `app.config`, `databases`, `lucene` to `*.bak-{timestamp}` siblings (rollback point).
-     This is a rename within the same parent directory, not a copy — cheap and atomic-ish on the same
-     volume.
-  5. Extract the zip (`ZipFile.ExtractToDirectory`) into a temp dir, then move the three expected
-     entries (`app.config`, `databases/`, `lucene/`) into place at the root.
-     - If the zip doesn't contain the expected structure (e.g. wrong/garbage file), treat as failure →
-       go to rollback step below before returning.
-  6. On any failure in step 4/5: move the `*.bak-*` siblings back to their original names/locations
-     (best-effort — log if even that fails, user is told to check the backups folder manually), publish
-     failure progress + `SnackBarNotificationEvent`, return `RestoreOutcome.RolledBack`.
-  7. On success: delete the `*.bak-*` siblings, publish success progress event, return
-     `RestoreOutcome.Completed`.
+  4. Extract the zip (`ZipFile.ExtractToDirectory`) into a temp dir, then **validate what it actually
+     contains** before touching any live file: at least one of `app.config`, `databases/app.db`,
+     `lucene/` must be present; `app.config` must parse as JSON; `app.db` must pass SQLite's
+     `PRAGMA quick_check`. A validation failure aborts before anything is renamed — there is nothing to
+     roll back yet.
+     - Only the entries the (now validated) archive actually contains are swapped into place — each one
+       individually renamed to a `*.bak-{timestamp}` sibling (rollback point) and replaced by the
+       extracted copy. This is a rename within the same parent directory, not a copy — cheap and
+       atomic-ish on the same volume.
+     - Trade-off this implies: an older config-only backup restored next to a newer live database leaves
+       the database as-is. That is intentional — a backup missing an artifact (because it predates that
+       artifact's existence, or was deliberately scoped) must not wipe out the live one — not a bug.
+  5. On any failure in step 4 (validation, or a swap itself): move the `*.bak-*` siblings already put in
+     place back to their original names/locations (best-effort — log if even that fails, user is told to
+     check the backups folder manually), publish failure progress + `SnackBarNotificationEvent`, return
+     `RestoreOutcome.RolledBack`.
+  6. On success: delete the `*.bak-*` siblings, publish success progress event, reload the in-memory
+     app configuration (if `app.config` was one of the swapped entries) so a later shutdown-time save
+     doesn't clobber it with stale pre-restore values, and return `RestoreOutcome.Completed`.
 
 ## 7. Restart requirement
 

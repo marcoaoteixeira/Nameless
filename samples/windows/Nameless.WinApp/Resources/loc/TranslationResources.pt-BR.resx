@@ -330,6 +330,9 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failure" xml:space="preserve">
     <value>Falha ao excluir o backup de rollback '{0}': {1}. Você pode excluí-lo manualmente no diretório de dados da aplicação.</value>
   </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_SelfHeal_Failure" xml:space="preserve">
+    <value>Falha ao restaurar o backup original de '{0}' após um erro de substituição: {1}. Por favor, verifique manualmente o diretório de dados da aplicação por arquivos '*.bak-*'.</value>
+  </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Restauração da aplicação concluída com sucesso! Reinicie a aplicação para usar os dados restaurados.</value>
   </data>

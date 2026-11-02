@@ -119,19 +119,8 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             // Only swap the artifacts the (now validated) archive actually
             // contains — a backup missing e.g. the Lucene index (nothing to
             // back up yet at the time) must not wipe out the live one.
-            await RunStepAsync("RestoringArtifacts", () => {
-                RestoreValidatedArtifacts(validated, extractedDirectory, timestamp, swaps);
-
-                return Task.CompletedTask;
-            });
-
-            // The in-memory configuration dictionary would otherwise still
-            // hold the pre-restore values; without this, the next
-            // SaveChangesAsync (e.g. the one the host runs on application
-            // shutdown) clobbers the just-restored app.config.
-            if (validated.ConfigPresent) {
-                _appConfigurationManager.Reload();
-            }
+            await RunStepAsync("RestoringArtifacts",
+                () => RestoreValidatedArtifactsAsync(validated, extractedDirectory, timestamp, swaps));
 
             // Everything swapped successfully: the rollback point is no
             // longer needed.
@@ -139,13 +128,26 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
 
             await PublishProgressAsync("Success");
 
+            // The in-memory configuration dictionary would otherwise still
+            // hold the pre-restore values; without this, the next
+            // SaveChangesAsync (e.g. the one the host runs on application
+            // shutdown) clobbers the just-restored app.config. Done last —
+            // after cleanup and the success publish both succeeded — so a
+            // late failure on either of those (which still routes through
+            // the rollback path below) can never leave the in-memory config
+            // reloaded to restored values while the files on disk were
+            // rolled back to the originals.
+            if (validated.ConfigPresent) {
+                _appConfigurationManager.Reload();
+            }
+
             return RestoreOutcome.Completed;
         }
-        catch (OperationCanceledException ex) {
+        catch (OperationCanceledException) {
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(_translator[$"{Prefix}_RolledBack_Cancelled"], ex.Message)
+                message: _translator[$"{Prefix}_RolledBack_Cancelled"]
             );
 
             return RestoreOutcome.RolledBack;
@@ -173,7 +175,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         try {
             await action();
         }
-        catch (Exception ex) {
+        catch (Exception ex) when (ex is not OperationCanceledException) {
             await PublishStepFailureAsync(stepName, ex);
 
             throw;
@@ -255,13 +257,13 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         }
     }
 
-    private void RestoreValidatedArtifacts(
+    private async Task RestoreValidatedArtifactsAsync(
         ValidatedArchiveContents validated, IDirectory extractedDirectory, DateTimeOffset timestamp, List<ArtifactSwap> swaps) {
         if (validated.ConfigPresent) {
             var extractedPath = SysPath.Combine(extractedDirectory.Path, Constants.BackupRecovery.AppConfigFileName);
             var destinationPath = _fileManager.GetFile(Constants.BackupRecovery.AppConfigFileName).Path;
 
-            SwapFileArtifact(extractedPath, destinationPath, timestamp, swaps);
+            await SwapFileArtifactAsync(extractedPath, destinationPath, timestamp, swaps);
         }
 
         if (validated.DatabasePresent) {
@@ -269,18 +271,18 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             var extractedPath = SysPath.Combine(extractedDirectory.Path, Constants.Database.FileName);
             var destinationPath = SysPath.Combine(databaseDirectory.Path, Constants.Database.FileName);
 
-            SwapFileArtifact(extractedPath, destinationPath, timestamp, swaps);
+            await SwapFileArtifactAsync(extractedPath, destinationPath, timestamp, swaps);
         }
 
         if (validated.LucenePresent) {
             var luceneDirectory = _fileManager.GetDirectory(_luceneOptions.Value.DirectoryRelativePath);
             var extractedPath = SysPath.Combine(extractedDirectory.Path, luceneDirectory.Name);
 
-            SwapDirectoryArtifact(extractedPath, luceneDirectory.Path, timestamp, swaps);
+            await SwapDirectoryArtifactAsync(extractedPath, luceneDirectory.Path, timestamp, swaps);
         }
     }
 
-    private static void SwapFileArtifact(string extractedPath, string destinationPath, DateTimeOffset timestamp, List<ArtifactSwap> swaps) {
+    private async Task SwapFileArtifactAsync(string extractedPath, string destinationPath, DateTimeOffset timestamp, List<ArtifactSwap> swaps) {
         string? backupPath = null;
 
         if (SysFile.Exists(destinationPath)) {
@@ -299,8 +301,10 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         catch {
             // Self-heal this one artifact immediately: put its own backup
             // back before letting the caller's outer rollback deal with
-            // whatever else was already swapped.
-            if (backupPath is not null) { SysFile.Move(backupPath, destinationPath); }
+            // whatever else was already swapped. A failure here must not
+            // mask the exception driving the rollback (rethrown below) —
+            // it is contained to a warning instead.
+            if (backupPath is not null) { await SelfHealAsync(() => SysFile.Move(backupPath, destinationPath), destinationPath); }
 
             throw;
         }
@@ -308,7 +312,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         swaps.Add(new ArtifactSwap(destinationPath, backupPath, IsDirectory: false));
     }
 
-    private static void SwapDirectoryArtifact(string extractedPath, string destinationPath, DateTimeOffset timestamp, List<ArtifactSwap> swaps) {
+    private async Task SwapDirectoryArtifactAsync(string extractedPath, string destinationPath, DateTimeOffset timestamp, List<ArtifactSwap> swaps) {
         string? backupPath = null;
 
         if (SysDirectory.Exists(destinationPath)) {
@@ -325,12 +329,28 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             SysDirectory.Move(extractedPath, destinationPath);
         }
         catch {
-            if (backupPath is not null) { SysDirectory.Move(backupPath, destinationPath); }
+            if (backupPath is not null) { await SelfHealAsync(() => SysDirectory.Move(backupPath, destinationPath), destinationPath); }
 
             throw;
         }
 
         swaps.Add(new ArtifactSwap(destinationPath, backupPath, IsDirectory: true));
+    }
+
+    private async Task SelfHealAsync(Action moveBackupBack, string destinationPath) {
+        try {
+            moveBackupBack();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Best-effort: the outer rollback (and the "RolledBack"/
+            // "RolledBack_Cancelled" SnackBar message it publishes) still
+            // runs against the original exception that triggered this
+            // self-heal attempt. The `.bak-*` sibling this leaves behind is
+            // called out explicitly so it is not unaccounted for.
+            await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
+                message: string.Format(_translator[$"{Prefix}_SelfHeal_Failure"], destinationPath, ex.Message)
+            );
+        }
     }
 
     private static string BuildBackupSiblingPath(string originalPath, DateTimeOffset timestamp) {

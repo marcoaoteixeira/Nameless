@@ -176,9 +176,9 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                               .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
                               .RunAsync();
 
-            // RolledBack: the handler already published its own failure
-            // progress entry and SnackBar toast — nothing left to do here.
-            // Cancelled: nothing to report either, same reasoning as backup.
+            // RolledBack (including a cancelled restore, which rolls back
+            // too): the handler already published its own failure progress
+            // entry and SnackBar toast — nothing left to do here.
             if (restoreOutcome is not RestoreOutcome.Completed) { return; }
 
             var confirmation = _messageDialog.ShowQuestion(

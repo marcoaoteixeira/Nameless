@@ -330,6 +330,9 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failure" xml:space="preserve">
     <value>Failed to delete rollback backup '{0}': {1}. You may delete it manually from the application data directory.</value>
   </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_SelfHeal_Failure" xml:space="preserve">
+    <value>Failed to restore the original backup for '{0}' after a swap error: {1}. Please check the application data directory manually for '*.bak-*' files.</value>
+  </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Application restore completed successfully! Restart the application to use the restored data.</value>
   </data>

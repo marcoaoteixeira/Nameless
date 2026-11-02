@@ -5,6 +5,7 @@ using Nameless.IO.Physical;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.IO;
 using Nameless.Windows.AppConfiguration;
+using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
 using SysPath = System.IO.Path;
 
@@ -86,6 +87,52 @@ public class AppConfigurationManagerTests {
         var persisted = SysFile.ReadAllText(configPath);
         Assert.Contains("Light", persisted);
         Assert.DoesNotContain("Dark", persisted);
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WritesAtomically_LeavesNoTempFileAfterSuccess() {
+        // arrange: proves the write-then-rename path is actually used —
+        // no ".tmp-*" sibling is left behind once the save completes.
+        using var sut = CreateSut();
+
+        sut.Manager.Set("Theme", "Dark");
+
+        // act
+        await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert
+        var entries = SysDirectory.GetFiles(sut.Root.Path);
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
+        Assert.Contains(entries, path => SysPath.GetFileName(path) == "app.config");
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenWriteFails_NeverLeavesDestinationPartial() {
+        // arrange: a reader of app.config must never observe a
+        // truncated/partial file. Simulate a write failure (an already
+        // cancelled token makes the temp-file write throw before any bytes
+        // land) and prove the destination — still holding the previous,
+        // fully-written content — was never touched.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"Theme":"Light"}""");
+
+        sut.Manager.Set("Theme", "Dark");
+
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        // act
+        await sut.Manager.SaveChangesAsync(cts.Token);
+
+        // assert: destination untouched, and the failed temp write did not
+        // leave a stray sibling behind either.
+        var persisted = SysFile.ReadAllText(configPath);
+        Assert.Equal("""{"Theme":"Light"}""", persisted);
+
+        var entries = SysDirectory.GetFiles(sut.Root.Path);
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
     }
 
     [Fact]
