@@ -69,6 +69,13 @@ public class IndexProvider : IIndexProvider {
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
+    public void CloseAll() {
+        BlockAccessAfterDispose();
+
+        CloseIndexes(_cache.Values.ToArray());
+    }
+
     private void BlockAccessAfterDispose() {
         ObjectDisposedException.ThrowIf(_disposed, this);
     }
@@ -77,14 +84,26 @@ public class IndexProvider : IIndexProvider {
         if (_disposed) { return; }
 
         if (disposing) {
-            var indexes = _cache.Values.ToArray();
-
-            foreach (var index in indexes) {
-                index.Dispose();
-            }
+            CloseIndexes(_cache.Values.ToArray());
         }
 
         _disposed = true;
+    }
+
+    private static void CloseIndexes(Index[] indexes) {
+        List<Exception>? exceptions = null;
+
+        foreach (var index in indexes) {
+            try { index.Dispose(); }
+            catch (Exception ex) {
+                exceptions ??= [];
+                exceptions.Add(ex);
+            }
+        }
+
+        if (exceptions is not null) {
+            throw new AggregateException(exceptions);
+        }
     }
 
     private Index Create(string indexName) {
@@ -97,7 +116,11 @@ public class IndexProvider : IIndexProvider {
     }
 
     private void RemoveFromCache(Index index) {
-        if (_cache.TryRemove(index.Name, out _)) {
+        // Remove by key+value match, not key-only: if a new instance was
+        // already cached under the same name (e.g. a concurrent Get() racing
+        // this dispose callback), a key-only removal would evict that new
+        // instance instead, orphaning it (never disposed, keeps write.lock).
+        if (_cache.TryRemove(new KeyValuePair<string, Index>(index.Name, index))) {
             index.UnregisterDisposeCallback(RemoveFromCache);
         }
     }

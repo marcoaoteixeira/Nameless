@@ -24,6 +24,7 @@
     <Project Path="samples/web/Nameless.Sample.WebApp/Nameless.Sample.WebApp.csproj" Id="b6ccf53f-0011-4d97-a68d-821b70e29487" />
   </Folder>
   <Folder Name="/Samples/Windows/">
+    <Project Path="samples/windows/Nameless.WinApp.Tests/Nameless.WinApp.Tests.csproj" Id="ace4d3ce-7dbd-4abf-a844-4e740e97e36b" />
     <Project Path="samples/windows/Nameless.WinApp/Nameless.WinApp.csproj" Id="2c9ba051-1248-4145-861e-eef8c04d6cbe" />
   </Folder>
   <Folder Name="/Utils/">

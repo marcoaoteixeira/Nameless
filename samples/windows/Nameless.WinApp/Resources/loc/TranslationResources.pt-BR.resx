@@ -228,4 +228,52 @@
   <data name="InitializeLuceneIndexStep_ExecuteAsync_Finish" xml:space="preserve">
     <value>Índice do Lucene inicializado com sucesso!</value>
   </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Backup da Aplicação</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Success" xml:space="preserve">
+    <value>Backup criado com sucesso em '{0}'.</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Failure" xml:space="preserve">
+    <value>Falha ao realizar o backup: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_Starting" xml:space="preserve">
+    <value>Iniciando backup da aplicação...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_SavingConfiguration_Failure" xml:space="preserve">
+    <value>Falha ao salvar a configuração antes do backup: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection" xml:space="preserve">
+    <value>Fechando conexão com o banco de dados...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure" xml:space="preserve">
+    <value>Falha ao fechar a conexão com o banco de dados: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Missing" xml:space="preserve">
+    <value>Arquivo de configuração não encontrado, ignorando-o neste backup.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Failure" xml:space="preserve">
+    <value>Falha ao copiar o arquivo de configuração: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase" xml:space="preserve">
+    <value>Realizando backup do banco de dados...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase_Failure" xml:space="preserve">
+    <value>Falha ao realizar o backup do banco de dados: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex" xml:space="preserve">
+    <value>Realizando backup do índice do Lucene...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex_Failure" xml:space="preserve">
+    <value>Falha ao realizar o backup do índice do Lucene: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive" xml:space="preserve">
+    <value>Criando arquivo de backup...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive_Failure" xml:space="preserve">
+    <value>Falha ao criar o arquivo de backup: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_Success" xml:space="preserve">
+    <value>Backup da aplicação concluído com sucesso!</value>
+  </data>
 </root>
