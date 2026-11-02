@@ -26,11 +26,17 @@ Two subsystems keep files open/locked under normal operation:
   (`Pooling=false` only disables ADO.NET pooling, it does not mean "no open handle"). Prior art for
   this exact problem exists in `Nameless` (predecessor repo) at
   `samples/WinApp/Nameless.WinApp/DisasterRecovery/SqliteBackupRecoveryRoutine.cs`: it (a) closes the
-  `AppDbContext`'s connection (`_dbContext.Database.CloseConnectionAsync()`), then (b) uses SQLite's
-  **online backup API** — `Microsoft.Data.Sqlite`'s `SqliteConnection.BackupDatabase(destinationConnection)`
-  — to copy source → destination through two fresh, short-lived connections. We reuse that approach
-  instead of a raw file copy: it is the supported way to copy a SQLite file that might be in use, and it
-  produces a consistent snapshot even mid-write.
+  handler's own `AppDbContext` connection (`_dbContext.Database.CloseConnectionAsync()`) for parity —
+  **this alone does not guarantee consistency**, other scopes may still hold connections — and (b) uses
+  SQLite's **online backup API** — `Microsoft.Data.Sqlite`'s `SqliteConnection.BackupDatabase(destinationConnection)`
+  — to copy source → destination through two fresh, short-lived connections. Consistency actually comes
+  from `BackupDatabase()` itself: it is designed to work correctly while other connections on the same
+  database are open. We reuse that approach instead of a raw file copy. Both connections use
+  `Constants.Database.ConnStrPattern` (`Pooling=false`) — if pooling were on, the destination file
+  would stay locked after `Dispose()` and both zipping and temp-folder cleanup would fail. Before
+  opening the source connection, check the file exists and open with `Mode=ReadOnly`: `SqliteConnection.Open()`
+  against a missing `app.db` silently creates an empty database, which would then be backed up as if it
+  were real data. Use `await using` for both connections.
 - **Lucene**: `IIndexProvider` (DI singleton) caches `IIndex` instances that lazily open an
   `IndexWriter` + `FSDirectory` and hold them until `Dispose()` — there is currently no flush/close/reopen
   method, only `Dispose()` (which is final — the provider can't be reused after). Copying the index
@@ -45,19 +51,43 @@ public interface IIndexProvider : IDisposable {
     IIndex Get(string? indexName);
 
     /// <summary>
-    /// Flushes and closes every currently-open index (commits pending changes,
-    /// disposes the underlying IndexWriter/IndexReader/FSDirectory), without
-    /// disposing the provider itself. A later <see cref="Get"/> call transparently
-    /// reopens the index on demand.
+    /// Flushes and closes every currently-open index (commits pending changes —
+    /// disposing an IndexWriter in Lucene.NET 4.8 commits, it does not roll back;
+    /// call <see cref="IIndex.Rollback"/> first if uncommitted writes must be
+    /// discarded — then disposes the underlying IndexWriter/IndexReader/FSDirectory),
+    /// without disposing the provider itself. A later <see cref="Get"/> call
+    /// transparently reopens the index on demand.
     /// </summary>
+    /// <remarks>
+    /// Any <see cref="IIndex"/> obtained before this call is disposed by it; using
+    /// it afterward throws <see cref="ObjectDisposedException"/> — call
+    /// <see cref="Get"/> again for a fresh instance. Do not call this while an
+    /// operation (including an in-progress <c>Search</c> enumeration) is using an
+    /// index obtained from this provider — <see cref="IIndex"/> is not thread-safe
+    /// and this method does not change that. Calling this after <see cref="IDisposable.Dispose"/>
+    /// throws <see cref="ObjectDisposedException"/>. Idempotent otherwise.
+    /// </remarks>
     void CloseAll();
 }
 ```
 
-`IndexProvider.CloseAll()` disposes each cached `Index` (same effect `Dispose()` has on them today) and
-clears the cache dictionary, but leaves the provider itself usable — `Get()` afterward just lazily
-recreates an `Index` the same way it does today for a name not yet cached. This is additive and
-low-risk: existing callers (`InitializeLuceneIndexStep`, anything calling `Get`) are unaffected.
+`IndexProvider.CloseAll()`: calls the existing disposed-guard first, snapshots cached keys, removes and
+disposes each one (reusing the same close loop `Dispose(bool)` uses, rather than duplicating it), and if
+one `Index.Dispose()` throws, still closes the rest and aggregates. This is additive and low-risk for
+existing callers (`InitializeLuceneIndexStep`, anything calling `Get`).
+
+**Required fix alongside this addition** — `IndexProvider.RemoveFromCache` (`IndexProvider.cs:99-103`)
+currently does `_cache.TryRemove(index.Name, out _)`, removing by key only. If `CloseAll` evicts an
+index while a concurrent `Get()` caches a *new* instance under the same name before the old instance's
+dispose callback runs, that callback evicts the new instance instead — orphaning it (never disposed,
+keeps `write.lock`), and the next `Get()` hits `LockObtainFailedException`. Fix: remove only if both key
+and value match — `_cache.TryRemove(new KeyValuePair<string, Index>(index.Name, index))`.
+
+Add library tests (`[UnitTest]`/`[IntegrationTest]`, Nameless.Common.Tests, temp-folder `IFileManager`):
+`Get` after `CloseAll` returns a different working instance; the old instance throws
+`ObjectDisposedException`; `CloseAll` after `Dispose` throws `ObjectDisposedException`; calling
+`CloseAll` twice is a no-op; writes committed before `CloseAll` are readable after reopening; the
+`RemoveFromCache` race does not evict a new instance cached under the same name.
 
 Used by backup (`CloseAll()` before zipping the `lucene` folder — index reopens itself lazily on next
 `Get()`) and by restore (`CloseAll()` before swapping the folder, so the next search reopens against the
@@ -84,31 +114,49 @@ done. Final success/failure also raised as `SnackBarNotificationEvent` after the
 
 ## 5. Backup feature (`Features/PerformApplicationBackup/`)
 
-- `PerformApplicationBackupRequest : IRequest<string>` — carries optional `string? DestinationFilePath`
-  (null → default backups folder + timestamped name, computed by the handler).
+- `PerformApplicationBackupRequest : IRequest<string>` — no parameters for this pass
+  (`public sealed class PerformApplicationBackupRequest : IRequest<string>;`). A destination-path
+  override is purely additive, deferred until a save-dialog flow is actually needed.
 - `PerformApplicationBackupRequestHandler : IRequestHandler<PerformApplicationBackupRequest, string>`
-  Constructor deps: `IApplicationContext`, `AppDbContext`, `IIndexProvider`, `IEventPublisher`, `ITranslator`.
-  Steps (each wrapped try/catch, each failure short-circuits and reports failure — mirrors
-  `SqliteBackupRecoveryRoutine`'s per-step `Result` pattern, simplified to exceptions since this
-  codebase's `IRequestHandler` contract doesn't use a `Result<T>` type):
+  Constructor deps: `IApplicationContext`, `IAppConfigurationManager`, `AppDbContext`, `IIndexProvider`,
+  `IOptions<LuceneOptions>`, `IEventPublisher`, `ITranslator`. Guard all with `Throws.When.Null`
+  (matches `OpenCurrentLogFileRequestHandler` convention). Resource keys use the full
+  `{Class}_{Method}_{Suffix}` form (the existing handler's literal `"Notify_Missing_Log_File_Title"`
+  looks like a lookup bug against its own resx key `OpenCurrentLogFileRequestHandler_HandleAsync_Notify_Missing_Log_File_Title`
+  — don't copy that mistake).
+
+  Steps (try/catch per step publishing a step-specific failure progress message, rethrow to the
+  handler's outer boundary so §8's view-model wrapper can report the final outcome; one outer `finally`
+  deletes the per-run temp folder regardless of outcome or cancellation):
   1. Publish "starting backup" progress event.
-  2. `await _dbContext.Database.CloseConnectionAsync(cancellationToken)`.
-  3. Build a temp working directory (`FileManagerExtensions.GetTemporaryDirectory()`).
-  4. Copy `app.config` into the temp dir as-is (plain file copy — it's not held open by anything).
-  5. SQLite backup: open fresh `SqliteConnection`s for source (`databases/app.db`) and a destination
-     file inside the temp dir (`databases/app.db`), call `source.BackupDatabase(destination)`, then
-     close/dispose both connections (exact shape of `SqliteBackupRecoveryRoutine.ExecuteDatabaseBackupAsync`).
-  6. `_indexProvider.CloseAll()`, then recursively copy the `lucene` directory into the temp dir
-     (`IDirectory.GetFiles()` recursive helper already available, or `Directory.CreateDirectory` +
-     `File.Copy` per file — no existing recursive-directory-copy helper in the repo, write a small
-     private helper local to the handler).
-  7. `System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, destinationFilePath)`.
-  8. Delete the temp working directory.
+  2. `await SaveChangesAsync(cancellationToken)` on `IAppConfigurationManager` — settings changed this
+     session (theme/language/confirm-before-exit) only hit disk at app exit otherwise; back up stale or
+     possibly-absent data without this.
+  3. `await _dbContext.Database.CloseConnectionAsync(cancellationToken)` (parity/best-effort — see §2 note
+     on why actual consistency comes from the SQLite online-backup API, not this call).
+  4. Build a **per-run** temp working directory: `FileManagerExtensions.GetTemporaryDirectory(timestamp)`
+     — never the parameterless overload, which returns the shared `{Root}/temporary` folder also used by
+     `XpsDocumentConverter`; deleting that would be a bug, not a cleanup.
+  5. Copy `app.config` into the temp dir if it exists; if it still doesn't exist (e.g. fresh install),
+     log a warning and skip it rather than failing the whole backup.
+  6. SQLite backup: check the source `databases/app.db` file exists first (see §2); open fresh
+     `SqliteConnection`s (`await using`) for source (`Mode=ReadOnly`) and a destination file inside the
+     temp dir, call `source.BackupDatabase(destination)` under `Task.Run` (synchronous API, keep the
+     TaskRunner window responsive), honoring `cancellationToken.ThrowIfCancellationRequested()` around it.
+  7. `_indexProvider.CloseAll()`, then recursively copy the Lucene directory (resolved from
+     `IOptions<LuceneOptions>.Value.DirectoryRelativePath` via the file manager — a missing folder means
+     "nothing to back up yet", not an error) into the temp dir, skipping any `write.lock` file. No
+     existing recursive-copy helper in the repo — write one private to this handler.
+  8. `await System.IO.Compression.ZipFile.CreateFromDirectoryAsync(tempDir, destinationFilePath, includeBaseDirectory: false, cancellationToken)`
+     (.NET 10 async overload, so the token is actually honored). `CreateFromDirectory*` throws if the
+     destination already exists; on any failure/cancellation after this point, delete a partially
+     written destination zip.
   9. Publish success progress event + return the destination file path.
 
   No existing zip/archive abstraction exists anywhere in the repo (confirmed by search) — this handler
-  uses `System.IO.Compression.ZipFile`/`ZipArchive` directly; no new library abstraction is introduced
-  for it since it's a single call site today.
+  uses `System.IO.Compression.ZipFile`/`ZipArchive` directly; no new library abstraction (revisit only if
+  the restore handler shares >~10 lines with this one — even then, a private helper in the sample app
+  first, not a new `Nameless.Common` public type).
 
 ## 6. Restore feature (`Features/PerformApplicationRestore/`)
 
@@ -155,14 +203,34 @@ Lucene index reopens lazily on next `Get()` after `CloseAll()`).
 
 Replace the two stub `[RelayCommand]`s:
 
+`TaskRunnerBuilder.RunAsync()` re-throws the delegate's exception (`Completion` faults — see
+`TaskRunnerWindowViewModel.cs:56-61`); it does not swallow it, and it has no way to tell the handler
+"the window just closed" so the handler cannot own the final snackbar itself. The view model must catch
+the exception and capture the handler's result from inside the delegate:
+
 ```csharp
 [RelayCommand]
-private Task PerformApplicationBackupAsync(CancellationToken cancellationToken) {
-    return _taskRunner.CreateBuilder()
-                       .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
-                       .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
-                       .SetDelegate(ct => _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
-                       .RunAsync();
+private async Task PerformApplicationBackupAsync(CancellationToken cancellationToken) {
+    string? backupFilePath = null;
+
+    try {
+        var outcome = await _taskRunner.CreateBuilder()
+                                        .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                                        .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                                        .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
+                                        .RunAsync();
+
+        if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
+            await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
+                message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Success"], backupFilePath)
+            );
+        }
+        // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
+    } catch (Exception ex) {
+        await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+            message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure"], ex.Message)
+        );
+    }
 }
 
 [RelayCommand]

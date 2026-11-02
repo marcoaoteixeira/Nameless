@@ -3,12 +3,17 @@ using CommunityToolkit.Mvvm.Input;
 using Nameless.Application;
 using Nameless.Mediator;
 using Nameless.WinApp.Features.OpenCurrentLogFile;
+using Nameless.WinApp.Features.PerformApplicationBackup;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Dialogs.FileSystem;
+using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
+using Nameless.Windows.Notification;
+using Nameless.Windows.Notification.BackupRecovery;
+using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.TaskRunner;
 using Nameless.Windows.UI;
 using System.Globalization;
@@ -24,6 +29,7 @@ namespace Nameless.WinApp.ViewModels.Pages;
 public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
+    private readonly IEventPublisher _eventPublisher;
     private readonly IFileSystemDialog _fileSystemDialog;
     private readonly IMediator _mediator;
     private readonly ITaskRunner _taskRunner;
@@ -58,12 +64,14 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     public AppConfigurationPageViewModel(
         IAppConfigurationManager appConfigurationManager,
         IApplicationContext applicationContext,
+        IEventPublisher eventPublisher,
         IFileSystemDialog fileSystemDialog,
         ITranslator translator,
         IMediator mediator,
         ITaskRunner taskRunner) {
         _appConfigurationManager = appConfigurationManager;
         _applicationContext = applicationContext;
+        _eventPublisher = eventPublisher;
         _fileSystemDialog = fileSystemDialog;
         _mediator = mediator;
         _taskRunner = taskRunner;
@@ -121,8 +129,27 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     [RelayCommand]
-    private Task PerformApplicationBackupAsync() {
-        return Task.CompletedTask;
+    private async Task PerformApplicationBackupAsync(CancellationToken cancellationToken) {
+        string? backupFilePath = null;
+
+        try {
+            var outcome = await _taskRunner.CreateBuilder()
+                                            .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                                            .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                                            .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
+                                            .RunAsync();
+
+            if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
+                await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
+                    message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Success"], backupFilePath)
+                );
+            }
+            // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
+        } catch (Exception ex) {
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure"], ex.Message)
+            );
+        }
     }
 
     [RelayCommand]
@@ -154,15 +181,6 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         if (!_initialized || oldValue == newValue) { return; }
 
         _appConfigurationManager.ConfirmBeforeExit = newValue;
-    }
-
-    private Task ExecuteApplicationBackupAsync(CancellationToken cancellationToken) {
-        //_ = await _mediator.ExecuteAsync(
-        //    new PerformApplicationBackupRequest(),
-        //    cancellationToken
-        //).SkipContextSync();
-
-        return Task.CompletedTask;
     }
 
     private Task ExecuteSystemUpdateAsync(CancellationToken cancellationToken) {

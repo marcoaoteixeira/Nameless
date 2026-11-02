@@ -228,4 +228,52 @@
   <data name="InitializeLuceneIndexStep_ExecuteAsync_Finish" xml:space="preserve">
     <value>Lucene index initialized successfully!</value>
   </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Application Backup</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Success" xml:space="preserve">
+    <value>Backup created successfully at '{0}'.</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Failure" xml:space="preserve">
+    <value>Backup failed: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_Starting" xml:space="preserve">
+    <value>Starting application backup...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_SavingConfiguration_Failure" xml:space="preserve">
+    <value>Failed to save configuration before backup: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection" xml:space="preserve">
+    <value>Closing database connection...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure" xml:space="preserve">
+    <value>Failed to close database connection: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Missing" xml:space="preserve">
+    <value>Configuration file not found, skipping it in this backup.</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Failure" xml:space="preserve">
+    <value>Failed to copy configuration file: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase" xml:space="preserve">
+    <value>Backing up database...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase_Failure" xml:space="preserve">
+    <value>Failed to back up database: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex" xml:space="preserve">
+    <value>Backing up Lucene index...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex_Failure" xml:space="preserve">
+    <value>Failed to back up Lucene index: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive" xml:space="preserve">
+    <value>Creating backup archive...</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive_Failure" xml:space="preserve">
+    <value>Failed to create backup archive: {0}</value>
+  </data>
+  <data name="PerformApplicationBackupRequestHandler_HandleAsync_Success" xml:space="preserve">
+    <value>Application backup completed successfully!</value>
+  </data>
 </root>
