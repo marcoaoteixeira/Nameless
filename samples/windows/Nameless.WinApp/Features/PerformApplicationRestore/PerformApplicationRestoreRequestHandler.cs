@@ -195,14 +195,14 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             await DeleteBackupSiblingsAsync(swaps);
         }
         catch (Exception ex) {
-            CommonLog.Warning(_logger, ex.Message, tag: GetType().Tag);
+            CommonLog.Error(_logger, $"Post-commit backup-sibling cleanup failed: {ex.Message}", ex, tag: GetType().Tag);
         }
 
         try {
             await PublishProgressAsync("Success");
         }
         catch (Exception ex) {
-            CommonLog.Warning(_logger, ex.Message, tag: GetType().Tag);
+            CommonLog.Error(_logger, $"Post-commit success notification failed: {ex.Message}", ex, tag: GetType().Tag);
         }
     }
 
@@ -443,9 +443,17 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
                 // Not fatal to the restore itself (it already succeeded) —
                 // but the orphaned sibling should not disappear silently.
-                await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                    message: string.Format(_translator[$"{Prefix}_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
-                );
+                // The publish itself is wrapped separately: if the
+                // publisher is also down, that must not stop the loop from
+                // attempting to clean up the remaining siblings.
+                try {
+                    await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
+                        message: string.Format(_translator[$"{Prefix}_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
+                    );
+                }
+                catch (Exception publishEx) {
+                    CommonLog.Error(_logger, $"Backup-sibling cleanup warning publish failed for '{swap.BackupPath}': {publishEx.Message}", publishEx, tag: GetType().Tag);
+                }
             }
         }
     }
