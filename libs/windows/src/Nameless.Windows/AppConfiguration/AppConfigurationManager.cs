@@ -15,9 +15,9 @@ public class AppConfigurationManager : IAppConfigurationManager {
 
     private readonly IApplicationContext _applicationContext;
     private readonly ILogger<AppConfigurationManager> _logger;
-    private readonly Lazy<Dictionary<string, JsonElement>> _appConfiguration;
+    private Dictionary<string, JsonElement>? _appConfiguration;
 
-    private Dictionary<string, JsonElement> AppConfiguration => _appConfiguration.Value;
+    private Dictionary<string, JsonElement> AppConfiguration => _appConfiguration ??= GetAppConfiguration();
 
     /// <summary>
     ///     Initializes a new instance of
@@ -32,7 +32,6 @@ public class AppConfigurationManager : IAppConfigurationManager {
     public AppConfigurationManager(IApplicationContext applicationContext, ILogger<AppConfigurationManager> logger) {
         _applicationContext = applicationContext;
         _logger = logger;
-        _appConfiguration = new Lazy<Dictionary<string, JsonElement>>(GetAppConfiguration);
     }
 
     /// <inheritdoc />
@@ -67,6 +66,11 @@ public class AppConfigurationManager : IAppConfigurationManager {
             await stream.WriteAsync(json, cancellationToken);
         }
         catch (Exception ex) { CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag); }
+    }
+
+    /// <inheritdoc />
+    public void Reload() {
+        _appConfiguration = GetAppConfiguration();
     }
 
     private Dictionary<string, JsonElement> GetAppConfiguration() {

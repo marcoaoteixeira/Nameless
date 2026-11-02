@@ -1,3 +1,5 @@
+using System.IO;
+using System.IO.Compression;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -23,6 +25,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         public required PhysicalFileManager FileManager { get; init; }
         public required Mock<IIndexProvider> IndexProviderMock { get; init; }
         public required Mock<IEventPublisher> EventPublisherMock { get; init; }
+        public required Mock<IAppConfigurationManager> AppConfigurationManagerMock { get; init; }
         public required AppDbContext DbContext { get; init; }
         public required PerformApplicationRestoreRequestHandler Handler { get; init; }
 
@@ -46,6 +49,8 @@ public class PerformApplicationRestoreRequestHandlerTests {
             .Setup(x => x.PublishAsync(It.IsAny<SnackBarNotificationEvent>()))
             .Returns(Task.CompletedTask);
 
+        var appConfigurationManagerMock = CreateAppConfigurationManagerMock();
+
         var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlite("Data Source=:memory:")
             .Options;
@@ -60,6 +65,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
             dbContext: dbContext,
             indexProvider: indexProviderMock.Object,
             luceneOptions: luceneOptions,
+            appConfigurationManager: appConfigurationManagerMock.Object,
             eventPublisher: eventPublisherMock.Object,
             translator: new FakeTranslator()
         );
@@ -69,6 +75,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
             FileManager = fileManager,
             IndexProviderMock = indexProviderMock,
             EventPublisherMock = eventPublisherMock,
+            AppConfigurationManagerMock = appConfigurationManagerMock,
             DbContext = dbContext,
             Handler = handler
         };
@@ -107,6 +114,22 @@ public class PerformApplicationRestoreRequestHandlerTests {
         return (string)command.ExecuteScalar()!;
     }
 
+    // Builds a backup-shaped zip from whatever entries the caller stages,
+    // independent of the handler's own notion of "current live state" —
+    // lets tests build archives that are missing entries on purpose.
+    private static string CreateZipArchive(TempDirectory root, string zipName, Action<string> populateStagingDirectory) {
+        var stagingDirectoryPath = SysPath.Combine(root.Path, $"{zipName}-staging");
+        SysDirectory.CreateDirectory(stagingDirectoryPath);
+
+        populateStagingDirectory(stagingDirectoryPath);
+
+        var zipPath = SysPath.Combine(root.Path, zipName);
+
+        ZipFile.CreateFromDirectory(stagingDirectoryPath, zipPath);
+
+        return zipPath;
+    }
+
     [Fact]
     [UnitTest]
     public async Task HandleAsync_WhenRequestIsNull_ThrowsArgumentNullException() {
@@ -126,7 +149,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         using var sut = CreateSut();
 
         var configPath = SysPath.Combine(sut.Root.Path, "app.config");
-        SysFile.WriteAllText(configPath, "<configuration>original</configuration>");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
 
         var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
         CreateSqliteDatabase(databasePath, "original-value");
@@ -137,7 +160,8 @@ public class PerformApplicationRestoreRequestHandlerTests {
         SysFile.WriteAllText(luceneFilePath, "original-segment");
 
         // Not a valid zip at all: ZipFile.ExtractToDirectoryAsync throws
-        // InvalidDataException while reading its central directory.
+        // InvalidDataException while reading its central directory — before
+        // anything is ever renamed away.
         var corruptZipPath = SysPath.Combine(sut.Root.Path, "corrupt.zip");
         SysFile.WriteAllText(corruptZipPath, "this is not a zip file");
 
@@ -149,7 +173,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         // assert
         Assert.Equal(RestoreOutcome.RolledBack, outcome);
 
-        Assert.Equal("<configuration>original</configuration>", SysFile.ReadAllText(configPath));
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
         Assert.Equal("original-value", ReadSqliteValue(databasePath));
         Assert.Equal("original-segment", SysFile.ReadAllText(luceneFilePath));
 
@@ -157,6 +181,191 @@ public class PerformApplicationRestoreRequestHandlerTests {
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
 
         sut.IndexProviderMock.Verify(x => x.CloseAll(), Times.Once);
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenZipHasNoRecognizedEntries_RollsBackWithOriginalsIntact() {
+        // arrange
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var zipPath = CreateZipArchive(sut.Root, "unrecognized.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "readme.txt"), "nothing useful here"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenConfigEntryIsNotValidJson_RollsBackAndLeavesOriginalsUntouched() {
+        // arrange
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
+        CreateSqliteDatabase(databasePath, "original-value");
+
+        var zipPath = CreateZipArchive(sut.Root, "bad-config.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), "not json at all"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert: validated before anything was swapped, so nothing to roll back.
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
+        Assert.Equal("original-value", ReadSqliteValue(databasePath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenDatabaseEntryIsNotValidSqlite_RollsBackAndLeavesOriginalsUntouched() {
+        // arrange
+        using var sut = CreateSut();
+
+        var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
+        CreateSqliteDatabase(databasePath, "original-value");
+
+        var zipPath = CreateZipArchive(sut.Root, "bad-database.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.db"), "not a sqlite file"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        Assert.Equal("original-value", ReadSqliteValue(databasePath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenZipOnlyHasASubsetOfEntries_RestoresThatEntryAndLeavesTheOthersAsIs() {
+        // arrange: the zip only backed up app.config — mirrors a backup
+        // taken before the database/Lucene index ever existed.
+        using var sut = CreateSut();
+
+        SysFile.WriteAllText(SysPath.Combine(sut.Root.Path, "app.config"), """{"theme":"stale"}""");
+
+        var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
+        CreateSqliteDatabase(databasePath, "untouched-value");
+
+        var luceneDirectoryPath = SysPath.Combine(sut.Root.Path, "lucene");
+        SysDirectory.CreateDirectory(luceneDirectoryPath);
+        var luceneFilePath = SysPath.Combine(luceneDirectoryPath, "segments.gen");
+        SysFile.WriteAllText(luceneFilePath, "untouched-segment");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-only.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+        // assert
+        Assert.Equal(RestoreOutcome.Completed, outcome);
+        Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(SysPath.Combine(sut.Root.Path, "app.config")));
+
+        // Entries the zip did not include are left exactly as they were —
+        // not renamed away, not deleted.
+        Assert.Equal("untouched-value", ReadSqliteValue(databasePath));
+        Assert.Equal("untouched-segment", SysFile.ReadAllText(luceneFilePath));
+
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenAnArtifactIsAlreadySwappedAndALaterOneFails_UndoesTheSwapAndRollsBack() {
+        // arrange: both app.config and app.db are in the archive. app.config
+        // swaps successfully; the live app.db is locked open so the handler
+        // cannot even rename it away, forcing a failure after config has
+        // already been put in its final place.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
+        CreateSqliteDatabase(databasePath, "original-value");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-and-db.zip", stagingPath => {
+            SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}""");
+            CreateSqliteDatabase(SysPath.Combine(stagingPath, "app.db"), "restored-value");
+        });
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        // act
+        RestoreOutcome outcome;
+        using (var databaseLock = new FileStream(databasePath, FileMode.Open, FileAccess.Read, FileShare.None)) {
+            outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+        }
+
+        // assert: the config swap that already happened was undone too.
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
+        Assert.Equal("original-value", ReadSqliteValue(databasePath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenCancelled_RollsBackAndReturnsRolledBackInsteadOfThrowing() {
+        // arrange
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+
+        var zipPath = CreateZipArchive(sut.Root, "any.zip",
+            stagingPath => SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}"""));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        // act
+        var outcome = await sut.Handler.HandleAsync(request, cts.Token);
+
+        // assert
+        Assert.Equal(RestoreOutcome.RolledBack, outcome);
+        Assert.Equal("""{"theme":"original"}""", SysFile.ReadAllText(configPath));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
 
         sut.EventPublisherMock.Verify(
             x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
@@ -172,7 +381,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         // from that archive and verify every file round-trips.
         using var sut = CreateSut();
 
-        SysFile.WriteAllText(SysPath.Combine(sut.Root.Path, "app.config"), "<configuration>round-trip</configuration>");
+        SysFile.WriteAllText(SysPath.Combine(sut.Root.Path, "app.config"), """{"theme":"round-trip"}""");
 
         var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
         CreateSqliteDatabase(databasePath, "round-trip-value");
@@ -183,7 +392,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
 
         var backupHandler = new PerformApplicationBackupRequestHandler(
             applicationContext: CreateApplicationContextMock(sut.FileManager).Object,
-            appConfigurationManager: CreateAppConfigurationManagerMock().Object,
+            appConfigurationManager: sut.AppConfigurationManagerMock.Object,
             dbContext: sut.DbContext,
             indexProvider: sut.IndexProviderMock.Object,
             luceneOptions: Options.Create(new LuceneOptions { DirectoryRelativePath = "lucene" }),
@@ -206,11 +415,16 @@ public class PerformApplicationRestoreRequestHandlerTests {
         // assert
         Assert.Equal(RestoreOutcome.Completed, outcome);
 
-        Assert.Equal("<configuration>round-trip</configuration>", SysFile.ReadAllText(SysPath.Combine(sut.Root.Path, "app.config")));
+        Assert.Equal("""{"theme":"round-trip"}""", SysFile.ReadAllText(SysPath.Combine(sut.Root.Path, "app.config")));
         Assert.Equal("round-trip-value", ReadSqliteValue(databasePath));
         Assert.Equal("round-trip-segment", SysFile.ReadAllText(SysPath.Combine(luceneDirectoryPath, "segments.gen")));
 
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
+
+        // The critical fix: the in-memory configuration manager must be
+        // reloaded from the restored file so a later shutdown-time
+        // SaveChangesAsync does not clobber it with stale pre-restore data.
+        sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
     }
 
     private static Mock<IApplicationContext> CreateApplicationContextMock(PhysicalFileManager fileManager) {

@@ -306,17 +306,17 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex_Failure" xml:space="preserve">
     <value>Failed to close Lucene index: {0}</value>
   </data>
-  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts" xml:space="preserve">
-    <value>Setting a rollback point...</value>
-  </data>
-  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts_Failure" xml:space="preserve">
-    <value>Failed to set a rollback point: {0}</value>
-  </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive" xml:space="preserve">
     <value>Extracting backup archive...</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive_Failure" xml:space="preserve">
     <value>Failed to extract backup archive: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive" xml:space="preserve">
+    <value>Validating backup archive...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive_Failure" xml:space="preserve">
+    <value>Failed to validate backup archive: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts" xml:space="preserve">
     <value>Restoring application files...</value>
@@ -325,12 +325,18 @@
     <value>Failed to restore application files: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RollingBack_Failure" xml:space="preserve">
-    <value>Failed to roll back an application artifact: {0}. Please check the backups folder manually.</value>
+    <value>Failed to roll back an application artifact: {0}. Please check the application data directory manually for '*.bak-*' files.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failure" xml:space="preserve">
+    <value>Failed to delete rollback backup '{0}': {1}. You may delete it manually from the application data directory.</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Application restore completed successfully! Restart the application to use the restored data.</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack" xml:space="preserve">
     <value>Restore failed and was rolled back: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
+    <value>Restore was cancelled and rolled back.</value>
   </data>
 </root>

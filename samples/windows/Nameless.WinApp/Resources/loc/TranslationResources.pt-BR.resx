@@ -306,17 +306,17 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex_Failure" xml:space="preserve">
     <value>Falha ao fechar o índice do Lucene: {0}</value>
   </data>
-  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts" xml:space="preserve">
-    <value>Definindo um ponto de rollback...</value>
-  </data>
-  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts_Failure" xml:space="preserve">
-    <value>Falha ao definir um ponto de rollback: {0}</value>
-  </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive" xml:space="preserve">
     <value>Extraindo arquivo de backup...</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive_Failure" xml:space="preserve">
     <value>Falha ao extrair o arquivo de backup: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive" xml:space="preserve">
+    <value>Validando arquivo de backup...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive_Failure" xml:space="preserve">
+    <value>Falha ao validar o arquivo de backup: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts" xml:space="preserve">
     <value>Restaurando arquivos da aplicação...</value>
@@ -325,12 +325,18 @@
     <value>Falha ao restaurar os arquivos da aplicação: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RollingBack_Failure" xml:space="preserve">
-    <value>Falha ao reverter um artefato da aplicação: {0}. Por favor, verifique a pasta de backups manualmente.</value>
+    <value>Falha ao reverter um artefato da aplicação: {0}. Por favor, verifique manualmente o diretório de dados da aplicação por arquivos '*.bak-*'.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failure" xml:space="preserve">
+    <value>Falha ao excluir o backup de rollback '{0}': {1}. Você pode excluí-lo manualmente no diretório de dados da aplicação.</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Restauração da aplicação concluída com sucesso! Reinicie a aplicação para usar os dados restaurados.</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack" xml:space="preserve">
     <value>Falha na restauração, as alterações foram revertidas: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
+    <value>A restauração foi cancelada e revertida.</value>
   </data>
 </root>

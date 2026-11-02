@@ -159,7 +159,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     [RelayCommand]
-    private async Task PerformApplicationRestoreAsync(CancellationToken cancellationToken) {
+    private async Task PerformApplicationRestoreAsync() {
         var filePath = _fileSystemDialog.OpenFile(o => {
             o.Title = T["AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title"];
             o.Filter = "Zip files (*.zip)|*.zip";
@@ -188,7 +188,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
             if (confirmation != MessageDialogResult.Yes) { return; }
 
-            Process.Start(Environment.ProcessPath!);
+            using (Process.Start(Environment.ProcessPath!)) { }
 
             System.Windows.Application.Current.Shutdown();
         } catch (Exception ex) {
