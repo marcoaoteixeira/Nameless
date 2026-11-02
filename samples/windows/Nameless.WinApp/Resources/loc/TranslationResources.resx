@@ -276,4 +276,61 @@
   <data name="PerformApplicationBackupRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Application backup completed successfully!</value>
   </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Application Restore</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title" xml:space="preserve">
+    <value>Select a backup file to restore</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Title" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Message" xml:space="preserve">
+    <value>The application must restart to use the restored data. Restart now?</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_Failure" xml:space="preserve">
+    <value>Restore failed: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Starting" xml:space="preserve">
+    <value>Starting application restore...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection" xml:space="preserve">
+    <value>Closing database connection...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure" xml:space="preserve">
+    <value>Failed to close database connection: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex" xml:space="preserve">
+    <value>Closing Lucene index...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex_Failure" xml:space="preserve">
+    <value>Failed to close Lucene index: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts" xml:space="preserve">
+    <value>Setting a rollback point...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RenamingExistingArtifacts_Failure" xml:space="preserve">
+    <value>Failed to set a rollback point: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive" xml:space="preserve">
+    <value>Extracting backup archive...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive_Failure" xml:space="preserve">
+    <value>Failed to extract backup archive: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts" xml:space="preserve">
+    <value>Restoring application files...</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts_Failure" xml:space="preserve">
+    <value>Failed to restore application files: {0}</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RollingBack_Failure" xml:space="preserve">
+    <value>Failed to roll back an application artifact: {0}. Please check the backups folder manually.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Success" xml:space="preserve">
+    <value>Application restore completed successfully! Restart the application to use the restored data.</value>
+  </data>
+  <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack" xml:space="preserve">
+    <value>Restore failed and was rolled back: {0}</value>
+  </data>
 </root>
