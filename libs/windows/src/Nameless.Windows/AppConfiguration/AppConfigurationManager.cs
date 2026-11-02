@@ -15,9 +15,9 @@ public class AppConfigurationManager : IAppConfigurationManager {
 
     private readonly IApplicationContext _applicationContext;
     private readonly ILogger<AppConfigurationManager> _logger;
-    private readonly Lazy<Dictionary<string, JsonElement>> _appConfiguration;
+    private Dictionary<string, JsonElement>? _appConfiguration;
 
-    private Dictionary<string, JsonElement> AppConfiguration => _appConfiguration.Value;
+    private Dictionary<string, JsonElement> AppConfiguration => _appConfiguration ??= GetAppConfiguration();
 
     /// <summary>
     ///     Initializes a new instance of
@@ -32,7 +32,6 @@ public class AppConfigurationManager : IAppConfigurationManager {
     public AppConfigurationManager(IApplicationContext applicationContext, ILogger<AppConfigurationManager> logger) {
         _applicationContext = applicationContext;
         _logger = logger;
-        _appConfiguration = new Lazy<Dictionary<string, JsonElement>>(GetAppConfiguration);
     }
 
     /// <inheritdoc />
@@ -59,14 +58,38 @@ public class AppConfigurationManager : IAppConfigurationManager {
 
     /// <inheritdoc />
     public async Task SaveChangesAsync(CancellationToken cancellationToken) {
+        var file = _applicationContext.FileManager.GetFile(APP_CONFIGURATION_FILE);
+
+        // Write-then-rename: a concurrent reader (e.g. a freshly relaunched
+        // process racing the old process's shutdown-time save) must never
+        // observe a truncated/partial app.config. The temp file lives next
+        // to the destination so the final move is an atomic rename on the
+        // same volume, not a copy.
+        var tempFile = _applicationContext.FileManager.GetFile($"{APP_CONFIGURATION_FILE}.tmp-{Guid.NewGuid():N}");
+
         try {
-            var file = _applicationContext.FileManager.GetFile(APP_CONFIGURATION_FILE);
             var json = JsonSerializer.SerializeToUtf8Bytes(AppConfiguration);
 
-            await using var stream = file.Open(FileMode.Create);
-            await stream.WriteAsync(json, cancellationToken);
+            await using (var stream = tempFile.Open(FileMode.Create, FileAccess.Write, FileShare.None)) {
+                await stream.WriteAsync(json, cancellationToken);
+            }
+
+            SysFile.Move(tempFile.Path, file.Path, overwrite: true);
         }
-        catch (Exception ex) { CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag); }
+        catch (Exception ex) {
+            CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
+
+            if (tempFile.Exists) {
+                try { tempFile.Delete(); }
+                catch (IOException) { /* best effort cleanup */ }
+                catch (UnauthorizedAccessException) { /* best effort cleanup */ }
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void Reload() {
+        _appConfiguration = GetAppConfiguration();
     }
 
     private Dictionary<string, JsonElement> GetAppConfiguration() {

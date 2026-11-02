@@ -4,9 +4,11 @@ using Nameless.Application;
 using Nameless.Mediator;
 using Nameless.WinApp.Features.OpenCurrentLogFile;
 using Nameless.WinApp.Features.PerformApplicationBackup;
+using Nameless.WinApp.Features.PerformApplicationRestore;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Dialogs.FileSystem;
+using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
@@ -16,6 +18,7 @@ using Nameless.Windows.Notification.BackupRecovery;
 using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.TaskRunner;
 using Nameless.Windows.UI;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Controls;
 using Wpf.Ui.Abstractions.Controls;
@@ -31,6 +34,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     private readonly IApplicationContext _applicationContext;
     private readonly IEventPublisher _eventPublisher;
     private readonly IFileSystemDialog _fileSystemDialog;
+    private readonly IMessageDialog _messageDialog;
     private readonly IMediator _mediator;
     private readonly ITaskRunner _taskRunner;
 
@@ -66,6 +70,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IApplicationContext applicationContext,
         IEventPublisher eventPublisher,
         IFileSystemDialog fileSystemDialog,
+        IMessageDialog messageDialog,
         ITranslator translator,
         IMediator mediator,
         ITaskRunner taskRunner) {
@@ -73,6 +78,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         _applicationContext = applicationContext;
         _eventPublisher = eventPublisher;
         _fileSystemDialog = fileSystemDialog;
+        _messageDialog = messageDialog;
         _mediator = mediator;
         _taskRunner = taskRunner;
 
@@ -134,27 +140,62 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             var outcome = await _taskRunner.CreateBuilder()
-                                            .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
-                                            .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
-                                            .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
-                                            .RunAsync();
+                                           .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                                           .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                                           .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
+                                           .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
                 await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
-                    message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Success"], backupFilePath)
+                    message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Success", backupFilePath]
                 );
             }
             // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure"], ex.Message)
+                message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure", ex.Message]
             );
         }
     }
 
     [RelayCommand]
-    private Task PerformApplicationRestoreAsync() {
-        return Task.CompletedTask;
+    private async Task PerformApplicationRestoreAsync() {
+        var filePath = _fileSystemDialog.OpenFile(o => {
+            o.Title = T["AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title"];
+            o.Filter = "Zip files (*.zip)|*.zip";
+        }).FirstOrDefault();
+
+        if (filePath is null) { return; }
+
+        RestoreOutcome? restoreOutcome = null;
+
+        try {
+            await _taskRunner.CreateBuilder()
+                             .SetName(T["AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title"])
+                             .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
+                             .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
+                             .RunAsync();
+
+            // RolledBack (including a cancelled restore, which rolls back
+            // too): the handler already published its own failure progress
+            // entry and SnackBar toast — nothing left to do here.
+            if (restoreOutcome is not RestoreOutcome.Completed) { return; }
+
+            var confirmation = _messageDialog.ShowQuestion(
+                title: T["AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Title"],
+                message: T["AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Message"]
+            );
+
+            if (confirmation != MessageDialogResult.Yes) { return; }
+
+            using (Process.Start(Environment.ProcessPath!)) { }
+
+            System.Windows.Application.Current.Shutdown();
+        } catch (Exception ex) {
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPageViewModel_PerformApplicationRestore_Failure", ex.Message]
+            );
+        }
     }
 
     partial void OnCurrentThemeChanged(ComboBoxItem oldValue, ComboBoxItem newValue) {
@@ -181,9 +222,5 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         if (!_initialized || oldValue == newValue) { return; }
 
         _appConfigurationManager.ConfirmBeforeExit = newValue;
-    }
-
-    private Task ExecuteSystemUpdateAsync(CancellationToken cancellationToken) {
-        throw new NotImplementedException();
     }
 }

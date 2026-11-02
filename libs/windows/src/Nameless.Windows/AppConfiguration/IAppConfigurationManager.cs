@@ -50,4 +50,18 @@ public interface IAppConfigurationManager {
     ///     execution.
     /// </returns>
     Task SaveChangesAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    ///     Discards every in-memory change and reloads the configuration
+    ///     from its backing file.
+    /// </summary>
+    /// <remarks>
+    ///     Call this after the backing file has been replaced outside of
+    ///     this manager (e.g. a restore that swapped <c>app.config</c> on
+    ///     disk) so a later <see cref="SaveChangesAsync"/> — for instance
+    ///     the one the host runs on application shutdown — writes back the
+    ///     reloaded content instead of clobbering it with stale, pre-reload
+    ///     in-memory values.
+    /// </remarks>
+    void Reload();
 }
