@@ -64,13 +64,18 @@ public class AppConfigurationManager : IAppConfigurationManager {
         // process racing the old process's shutdown-time save) must never
         // observe a truncated/partial app.config. The temp file lives next
         // to the destination so the final move is an atomic rename on the
-        // same volume, not a copy.
-        var tempFile = _applicationContext.FileManager.GetFile($"{APP_CONFIGURATION_FILE}.tmp-{Guid.NewGuid():N}");
+        // same volume, not a copy. A single fixed name (rather than a
+        // per-call guid) means at most one orphan can ever exist: the next
+        // save's FileMode.Create overwrites it.
+        var tempFile = _applicationContext.FileManager.GetFile($"{APP_CONFIGURATION_FILE}.tmp");
+        var tempCreated = false;
 
         try {
             var json = JsonSerializer.SerializeToUtf8Bytes(AppConfiguration);
 
             await using (var stream = tempFile.Open(FileMode.Create, FileAccess.Write, FileShare.None)) {
+                tempCreated = true;
+
                 await stream.WriteAsync(json, cancellationToken);
             }
 
@@ -79,7 +84,11 @@ public class AppConfigurationManager : IAppConfigurationManager {
         catch (Exception ex) {
             CommonLog.Error(_logger, ex.Message, ex, tag: GetType().Tag);
 
-            if (tempFile.Exists) {
+            // Only delete the temp file if this call actually created/opened
+            // it. With a fixed name, a failure to open it (e.g. another
+            // writer already holds it with FileShare.None) must not delete
+            // that other writer's in-flight temp file.
+            if (tempCreated && tempFile.Exists) {
                 try { tempFile.Delete(); }
                 catch (IOException) { /* best effort cleanup */ }
                 catch (UnauthorizedAccessException) { /* best effort cleanup */ }

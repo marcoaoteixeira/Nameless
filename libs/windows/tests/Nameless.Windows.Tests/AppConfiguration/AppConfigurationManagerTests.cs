@@ -102,7 +102,7 @@ public class AppConfigurationManagerTests {
 
         // assert
         var entries = SysDirectory.GetFiles(sut.Root.Path);
-        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path) == "app.config.tmp");
         Assert.Contains(entries, path => SysPath.GetFileName(path) == "app.config");
     }
 
@@ -132,7 +132,62 @@ public class AppConfigurationManagerTests {
         Assert.Equal("""{"Theme":"Light"}""", persisted);
 
         var entries = SysDirectory.GetFiles(sut.Root.Path);
-        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path) == "app.config.tmp");
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenStaleTempFileExists_OverwritesItAndLeavesNoTempFile() {
+        // arrange: an orphan from a previous save that never got renamed
+        // away (e.g. the process died between the write and the rename).
+        // The fixed temp name must self-heal: the next save's
+        // FileMode.Create overwrites it, and the rename still leaves no
+        // temp file behind.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        var tempPath = SysPath.Combine(sut.Root.Path, "app.config.tmp");
+        SysFile.WriteAllText(tempPath, "stale junk from a previous failed save");
+
+        sut.Manager.Set("Theme", "Dark");
+
+        // act
+        await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert
+        var persisted = SysFile.ReadAllText(configPath);
+        Assert.Contains("Dark", persisted);
+
+        Assert.False(SysFile.Exists(tempPath));
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenTempFileIsHeldByAnotherWriter_DoesNotDeleteItAndLeavesDestinationIntact() {
+        // arrange: another writer already has the fixed-name temp file
+        // open exclusively (FileShare.None). This save's own attempt to
+        // open it must fail without ever having created/opened it itself,
+        // so the cleanup-on-failure logic must not delete the other
+        // writer's in-flight temp file — the `tempCreated` guard.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"Theme":"Light"}""");
+
+        var tempPath = SysPath.Combine(sut.Root.Path, "app.config.tmp");
+
+        sut.Manager.Set("Theme", "Dark");
+
+        using var otherWriterLock = new System.IO.FileStream(tempPath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+
+        // act
+        await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert: the call did not throw out of SaveChangesAsync (it is
+        // logged internally), the held temp file is untouched, and the
+        // destination was never overwritten.
+        Assert.True(SysFile.Exists(tempPath));
+
+        var persisted = SysFile.ReadAllText(configPath);
+        Assert.Equal("""{"Theme":"Light"}""", persisted);
     }
 
     [Fact]
