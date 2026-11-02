@@ -232,7 +232,11 @@ public class AppConfigurationManagerTests {
         // act
         await manager.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        // assert: no delete attempt was ever made on the temp file.
+        // assert: Open was actually reached (otherwise the Delete, Times.Never
+        // assertion below would pass vacuously even if the code stopped
+        // calling Open at all), and no delete attempt was ever made on the
+        // temp file.
+        tempFileMock.Verify(f => f.Open(SysFileMode.Create, SysFileAccess.Write, SysFileShare.None), Times.Once);
         tempFileMock.Verify(f => f.Delete(), Times.Never);
     }
 

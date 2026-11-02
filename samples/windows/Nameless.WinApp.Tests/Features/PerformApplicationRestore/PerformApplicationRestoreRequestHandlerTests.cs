@@ -545,6 +545,73 @@ public class PerformApplicationRestoreRequestHandlerTests {
     }
 
     [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenOneBackupSiblingCleanupFailsAndItsWarningPublishAlsoFails_StillCleansUpTheOtherSiblings() {
+        // arrange: two artifacts swap this run — app.config and the lucene
+        // directory — so there are two ".bak-*" siblings to clean up after
+        // commit. The config original is read-only, so its backup sibling
+        // is read-only too and its delete (and the warning-publish about
+        // that failure) both throw, same setup as the test above. The
+        // lucene backup sibling has no such obstacle. This proves
+        // DeleteBackupSiblingsAsync's loop keeps going to the next sibling
+        // even when a prior sibling's delete-failure-warning-publish also
+        // throws (the inner try/catch added around that publish call).
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"theme":"original"}""");
+        SysFile.SetAttributes(configPath, FileAttributes.ReadOnly);
+
+        var luceneDirectoryPath = SysPath.Combine(sut.Root.Path, "lucene");
+        SysDirectory.CreateDirectory(luceneDirectoryPath);
+        var luceneFilePath = SysPath.Combine(luceneDirectoryPath, "segments.gen");
+        SysFile.WriteAllText(luceneFilePath, "original-segment");
+
+        var zipPath = CreateZipArchive(sut.Root, "config-and-lucene.zip", stagingPath => {
+            SysFile.WriteAllText(SysPath.Combine(stagingPath, "app.config"), """{"theme":"restored"}""");
+
+            var stagedLuceneDirectoryPath = SysPath.Combine(stagingPath, "lucene");
+            SysDirectory.CreateDirectory(stagedLuceneDirectoryPath);
+            SysFile.WriteAllText(SysPath.Combine(stagedLuceneDirectoryPath, "segments.gen"), "restored-segment");
+        });
+
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message.Contains("DeletingBackupSiblings_Failure", StringComparison.Ordinal))))
+            .ThrowsAsync(new InvalidOperationException("warning publish is also down"));
+
+        var request = new PerformApplicationRestoreRequest(zipPath);
+
+        try {
+            // act
+            var outcome = await sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken);
+
+            // assert
+            Assert.Equal(RestoreOutcome.Completed, outcome);
+            Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(configPath));
+            Assert.Equal("restored-segment", SysFile.ReadAllText(luceneFilePath));
+
+            var remainingEntries = SysDirectory.GetFileSystemEntries(sut.Root.Path);
+
+            // The lucene sibling's delete was never blocked by the config
+            // sibling's failure: the loop moved on and cleaned it up.
+            Assert.DoesNotContain(remainingEntries, entry => entry.Contains("lucene.bak-", StringComparison.Ordinal));
+
+            // The config sibling's delete genuinely failed (read-only file)
+            // and is still sitting here, undeleted.
+            Assert.Contains(remainingEntries, entry => entry.Contains("app.config.bak-", StringComparison.Ordinal));
+        }
+        finally {
+            // Clear the read-only attribute on whatever sibling is left so
+            // the TempDirectory's recursive delete in sut.Dispose() does
+            // not silently leave an orphan behind.
+            foreach (var entry in SysDirectory.GetFileSystemEntries(sut.Root.Path)) {
+                if (entry.Contains(".bak-", StringComparison.Ordinal)) { SysFile.SetAttributes(entry, FileAttributes.Normal); }
+            }
+        }
+    }
+
+    [Fact]
     [IntegrationTest]
     public async Task HandleAsync_RoundTrip_RestoresConfigDatabaseAndLuceneIndexFromBackup() {
         // arrange: back up a real small SQLite database and a fake index
