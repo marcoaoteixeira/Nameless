@@ -122,22 +122,11 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
     [RelayCommand]
     private Task PerformApplicationBackupAsync() {
-        //return _taskRunner.CreateBuilder()
-        //                  .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
-        //                  .SubscribeFor<UseCaseMessage>()
-        //                  .SubscribeFor<DisasterRecoveryRoutineMessage>()
-        //                  .SetDelegate(ExecuteApplicationBackupAsync)
-        //                  .RunAsync();
         return Task.CompletedTask;
     }
 
     [RelayCommand]
     private Task PerformApplicationRestoreAsync() {
-        //var files = _fileSystemDialog.OpenFile(opts => {
-        //    opts.Title = "Selecionar arquivo de backup...";
-        //    opts.Filter = $"InfoPhoenix Application Backup File|*{BackupFileExtension}";
-        //});
-
         return Task.CompletedTask;
     }
 
