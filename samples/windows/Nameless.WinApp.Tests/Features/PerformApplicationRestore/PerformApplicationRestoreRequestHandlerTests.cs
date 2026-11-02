@@ -452,7 +452,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
     public async Task HandleAsync_WhenCancelledDuringPostCommitTail_StillReturnsCompletedWithArtifactsRestored() {
         // arrange: cancellation observed only once the restore has already
         // committed (Reload() succeeded) — simulated here by having the
-        // post-commit backup-sibling cleanup itself throw
+        // post-commit "Success" progress publish itself throw
         // OperationCanceledException, standing in for a cancellation signal
         // arriving during the tail. Once committed, an OCE must not be
         // treated as a reason to roll back: it is caught by the tail's
@@ -527,6 +527,12 @@ public class PerformApplicationRestoreRequestHandlerTests {
             // assert
             Assert.Equal(RestoreOutcome.Completed, outcome);
             Assert.Equal("""{"theme":"restored"}""", SysFile.ReadAllText(configPath));
+
+            // Proves the delete attempt actually failed (rather than this
+            // test silently passing because the sibling got cleaned up
+            // some other way): the ".bak-*" sibling must still be sitting
+            // here, undeleted, at this point.
+            Assert.Contains(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
         }
         finally {
             // Clear the read-only attribute on whatever sibling is left so
