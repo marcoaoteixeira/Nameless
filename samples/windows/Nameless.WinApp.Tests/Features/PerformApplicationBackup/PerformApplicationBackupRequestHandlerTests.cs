@@ -1,3 +1,4 @@
+using System.IO;
 using System.IO.Compression;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -272,13 +273,15 @@ public class PerformApplicationBackupRequestHandlerTests {
 
     [Fact]
     [IntegrationTest]
-    public async Task HandleAsync_WhenArchivingFails_CleansUpTemporaryDirectoryAndPartialArchive() {
+    public async Task HandleAsync_WhenGetDestinationFilePathFails_CleansUpTemporaryDirectory() {
         // arrange
         using var sut = CreateSut();
 
         // Point the backup directory at a location that cannot be a
-        // directory (a file occupying the name) so archive creation fails
-        // deterministically after every prior step has succeeded.
+        // directory (a file occupying the name) so GetDestinationFilePath's
+        // backupDirectory.Create() fails deterministically after every prior
+        // step has succeeded. This happens before the archive try/catch, so
+        // it is a different failure path from the one below.
         var backupsPath = SysPath.Combine(sut.Root.Path, "backups");
         SysFile.WriteAllText(backupsPath, "not-a-directory");
 
@@ -287,6 +290,89 @@ public class PerformApplicationBackupRequestHandlerTests {
         // act & assert
         await Assert.ThrowsAnyAsync<Exception>(
             () => sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken)
+        );
+
+        var temporaryRoot = SysPath.Combine(sut.Root.Path, "temporary");
+        Assert.True(!SysDirectory.Exists(temporaryRoot) || SysDirectory.GetDirectories(temporaryRoot).Length == 0);
+    }
+
+    [Fact]
+    [IntegrationTest]
+    public async Task HandleAsync_WhenArchivingFails_DeletesPartialArchiveAndPublishesFailure() {
+        // arrange
+        using var sut = CreateSut();
+
+        SysFile.WriteAllText(SysPath.Combine(sut.Root.Path, "app.config"), "<configuration />");
+
+        var request = new PerformApplicationBackupRequest();
+        FileStream? lockedCopy = null;
+
+        // By the time the "CreatingArchive" progress event fires, the
+        // per-run temp directory has already been populated; lock one of
+        // its files so ZipFile.CreateFromDirectoryAsync fails while reading
+        // it, exercising the real step-8 try/catch (DeletePartialArchive +
+        // failure publish) instead of a step that runs before it.
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message == "PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive")))
+            .Returns(() => {
+                var temporaryRoot = SysPath.Combine(sut.Root.Path, "temporary");
+                var runDirectory = SysDirectory.GetDirectories(temporaryRoot).Single();
+
+                lockedCopy = SysFile.Open(
+                    SysPath.Combine(runDirectory, "app.config"),
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.None
+                );
+
+                return Task.CompletedTask;
+            });
+
+        try {
+            // act & assert
+            await Assert.ThrowsAnyAsync<IOException>(
+                () => sut.Handler.HandleAsync(request, TestContext.Current.CancellationToken)
+            );
+        }
+        finally {
+            lockedCopy?.Dispose();
+        }
+
+        var backupsDirectory = SysPath.Combine(sut.Root.Path, "backups");
+        Assert.True(!SysDirectory.Exists(backupsDirectory) || SysDirectory.GetFiles(backupsDirectory).Length == 0);
+
+        // Temp-directory cleanup is not asserted here: the lock this test
+        // holds on a file inside that directory is exactly what makes
+        // DeleteTempDirectory's own best-effort cleanup fail too (it
+        // swallows IOException the same way production would if a real
+        // external process held the lock), so the directory is only
+        // removable once lockedCopy is disposed above.
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<BackupRecoveryProgressNotificationEvent>(
+                e => e.Message == "PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive_Failure"
+                     && e.Type == NotificationType.Failure)),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    [IntegrationTest]
+    public async Task HandleAsync_WhenCancellationRequested_PropagatesAndCleansUpTemporaryDirectory() {
+        // arrange
+        using var sut = CreateSut();
+
+        var databasePath = SysPath.Combine(sut.Root.Path, "databases", "app.db");
+        CreateSqliteDatabase(databasePath, "value");
+
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        var request = new PerformApplicationBackupRequest();
+
+        // act & assert
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => sut.Handler.HandleAsync(request, cts.Token)
         );
 
         var temporaryRoot = SysPath.Combine(sut.Root.Path, "temporary");

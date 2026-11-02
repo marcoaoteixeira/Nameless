@@ -31,6 +31,9 @@ public interface IIndexProvider : IDisposable {
     ///     index obtained from this provider — <see cref="IIndex"/> is not thread-safe
     ///     and this method does not change that. Calling this after <see cref="IDisposable.Dispose"/>
     ///     throws <see cref="ObjectDisposedException"/>. Idempotent otherwise.
+    ///     The default implementation is a no-op, so existing implementers of this
+    ///     interface compiled against an older version keep compiling and behave
+    ///     as before (as if indexes are never pre-closed) until they override it.
     /// </remarks>
-    void CloseAll();
+    void CloseAll() { }
 }
