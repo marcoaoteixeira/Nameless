@@ -8,6 +8,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `Nameless.WinApp` self-update: the `AppConfigurationPage` Version card checks GitHub
+  Releases for the newest non-draft, non-prerelease `winapp-v*` tag, confirms with the
+  user, then downloads, SHA-256-verifies, extracts and swaps the release's files into
+  the install directory in place of the running application — renaming each replaced
+  entry aside as a `.old-{timestamp}` sibling first, so a pre-commit failure rolls
+  back to byte-identical originals and a post-commit failure (including the final
+  success notification) never undoes already-swapped files. The app relaunches itself
+  and shuts down on success; a new `CleanupPreviousSystemUpdateStep` bootstrap step
+  deletes the `.old-*`/`.update-*` leftovers once the new version proves it can start.
+  Also fixes `IApplicationContext.Version` always showing `v1.0.0`: the assembly's
+  informational version (no `+<sha>` suffix) is now passed to the host as
+  `--ApplicationContext:Version`, and only a release build stamped with
+  `-p:SelfUpdateEnabled=true` carries the marker that allows self-update to run.
+  New `.github/workflows/winapp-release.yml` builds and publishes WinApp releases per
+  `docs/specs/winapp-self-update-release-contract.md`.
+  ([#167](https://github.com/marcoaoteixeira/Nameless/issues/167))
 - Application restore: the `AppConfigurationPage` restore command extracts a backup
   zip, validates its contents (JSON-parses `app.config`, runs SQLite's `PRAGMA
   quick_check` on `app.db`), and swaps the validated artifacts into place, renaming
