@@ -24,5 +24,6 @@ internal sealed class SystemUpdateHostFeature : HostFeature {
         });
 
         builder.Services.TryAddSingleton<ISystemUpdateEnvironment, SystemUpdateEnvironment>();
+        builder.Services.TryAddSingleton<IApplicationRelauncher, ApplicationRelauncher>();
     }
 }

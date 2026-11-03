@@ -2,9 +2,13 @@
 using CommunityToolkit.Mvvm.Input;
 using Nameless.Application;
 using Nameless.Mediator;
+using Nameless.WinApp.Features.CheckSystemUpdate;
 using Nameless.WinApp.Features.OpenCurrentLogFile;
 using Nameless.WinApp.Features.PerformApplicationBackup;
 using Nameless.WinApp.Features.PerformApplicationRestore;
+using Nameless.WinApp.Features.PerformSystemUpdate;
+using Nameless.WinApp.Infrastructure;
+using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Dialogs.FileSystem;
@@ -32,10 +36,12 @@ namespace Nameless.WinApp.ViewModels.Pages;
 public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware {
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IApplicationContext _applicationContext;
+    private readonly IApplicationRelauncher _applicationRelauncher;
     private readonly IEventPublisher _eventPublisher;
     private readonly IFileSystemDialog _fileSystemDialog;
     private readonly IMessageDialog _messageDialog;
     private readonly IMediator _mediator;
+    private readonly ISystemUpdateEnvironment _systemUpdateEnvironment;
     private readonly ITaskRunner _taskRunner;
 
     private bool _initialized;
@@ -68,18 +74,22 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     public AppConfigurationPageViewModel(
         IAppConfigurationManager appConfigurationManager,
         IApplicationContext applicationContext,
+        IApplicationRelauncher applicationRelauncher,
         IEventPublisher eventPublisher,
         IFileSystemDialog fileSystemDialog,
         IMessageDialog messageDialog,
         ITranslator translator,
         IMediator mediator,
+        ISystemUpdateEnvironment systemUpdateEnvironment,
         ITaskRunner taskRunner) {
         _appConfigurationManager = appConfigurationManager;
         _applicationContext = applicationContext;
+        _applicationRelauncher = applicationRelauncher;
         _eventPublisher = eventPublisher;
         _fileSystemDialog = fileSystemDialog;
         _messageDialog = messageDialog;
         _mediator = mediator;
+        _systemUpdateEnvironment = systemUpdateEnvironment;
         _taskRunner = taskRunner;
 
         T = translator;
@@ -113,13 +123,68 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     }
 
     [RelayCommand]
-    private Task PerformSystemUpdateAsync() {
-        //return _taskRunner.CreateBuilder()
-        //                  .SetName(T["AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title"])
-        //                  .SubscribeFor<UseCaseMessage>()
-        //                  .SetDelegate(ExecuteSystemUpdateAsync)
-        //                  .RunAsync();
-        return Task.CompletedTask;
+    private async Task PerformSystemUpdateAsync(CancellationToken cancellationToken) {
+        try {
+            var check = await _mediator.ExecuteAsync(new CheckSystemUpdateRequest(), cancellationToken);
+
+            if (!check.IsUpdateAvailable) {
+                await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
+                    message: T["AppConfigurationPageViewModel_PerformSystemUpdate_UpToDate", check.Current.Format(includePrefix: true)]
+                );
+
+                return;
+            }
+
+            var release = check.Release!;
+
+            var confirmation = _messageDialog.ShowQuestion(
+                title: T["AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Title"],
+                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Message",
+                    check.Current.Format(includePrefix: true), release.Version.Format(includePrefix: true), release.HtmlUrl?.ToString() ?? string.Empty]
+            );
+
+            if (confirmation != MessageDialogResult.Yes) { return; }
+
+            SystemUpdateOutcome? outcome = null;
+
+            await _taskRunner.CreateBuilder()
+                             .SetName(T["AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title"])
+                             .SubscribeFor<SystemUpdateProgressNotificationEvent>()
+                             .SetDelegate(async ct => outcome = await _mediator.ExecuteAsync(new PerformSystemUpdateRequest(release), ct))
+                             .RunAsync();
+
+            // RolledBack (including a cancelled update, which rolls back
+            // too): the handler already published its own failure progress
+            // entry and SnackBar toast — nothing left to do here.
+            if (outcome is not SystemUpdateOutcome.Completed) { return; }
+
+            // No second prompt: the user already agreed to a restart above,
+            // and the running process is now an orphan of its install.
+            try {
+                _applicationRelauncher.RelaunchAndShutdown(_systemUpdateEnvironment.ExecutablePath, _systemUpdateEnvironment.InstallDirectoryPath);
+            }
+            catch (InvalidOperationException ex) {
+                // The update is already committed. Do not roll back and do
+                // not shut down — the old process keeps working from its
+                // in-memory image until the user reopens it by hand.
+                await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                    message: T["AppConfigurationPageViewModel_PerformSystemUpdate_RelaunchFailed", ex.Message]
+                );
+            }
+        }
+        catch (GitHubReleaseClientException ex) when (ex.IsRateLimited) {
+            var resetsAt = ex.RateLimitResetsAt?.ToLocalTime().ToString("f", CultureInfo.CurrentCulture)
+                ?? T["AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited_UnknownReset"];
+
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited", resetsAt]
+            );
+        }
+        catch (Exception ex) {
+            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_Failure", ex.Message]
+            );
+        }
     }
 
     [RelayCommand]

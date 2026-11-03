@@ -342,4 +342,112 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
     <value>Restore was cancelled and rolled back.</value>
   </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Updating application</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_UpToDate" xml:space="preserve">
+    <value>You are running the latest version ({0}).</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Title" xml:space="preserve">
+    <value>Update available</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Message" xml:space="preserve">
+    <value>Version {1} is available (you have {0}). Download and install it now? The application will restart. Release notes: {2}</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Failure" xml:space="preserve">
+    <value>Could not update the application: {0}</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited" xml:space="preserve">
+    <value>GitHub's request limit was reached. Try again after {0}.</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited_UnknownReset" xml:space="preserve">
+    <value>later</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RelaunchFailed" xml:space="preserve">
+    <value>The update was installed, but the application could not restart: {0}. Close and reopen it.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_Starting" xml:space="preserve">
+    <value>Starting application update...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites" xml:space="preserve">
+    <value>Checking prerequisites...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites_Failure" xml:space="preserve">
+    <value>Prerequisite check failed: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum" xml:space="preserve">
+    <value>Downloading checksum...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum_Failure" xml:space="preserve">
+    <value>Failed to download or parse the checksum: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage" xml:space="preserve">
+    <value>Downloading update package...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage_Failure" xml:space="preserve">
+    <value>Failed to download the update package: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage" xml:space="preserve">
+    <value>Verifying update package...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage_Failure" xml:space="preserve">
+    <value>The update package failed verification: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage" xml:space="preserve">
+    <value>Extracting update package...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage_Failure" xml:space="preserve">
+    <value>Failed to extract the update package: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage" xml:space="preserve">
+    <value>Validating update package...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage_Failure" xml:space="preserve">
+    <value>The update package failed validation: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection" xml:space="preserve">
+    <value>Closing database connection...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure" xml:space="preserve">
+    <value>Failed to close database connection: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex" xml:space="preserve">
+    <value>Closing Lucene index...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex_Failure" xml:space="preserve">
+    <value>Failed to close Lucene index: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles" xml:space="preserve">
+    <value>Installing update files...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles_Failure" xml:space="preserve">
+    <value>Failed to install the update files: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation" xml:space="preserve">
+    <value>Verifying installation...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation_Failure" xml:space="preserve">
+    <value>Installation verification failed: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RollingBack_Failure" xml:space="preserve">
+    <value>Failed to roll back an update file: {0}. Please check the application install directory manually for '*.old-*' files.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SelfHeal_Failure" xml:space="preserve">
+    <value>Failed to restore the original file for '{0}' after a swap error: {1}. Please check the application install directory manually for '*.old-*' files.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_Success" xml:space="preserve">
+    <value>Application update completed successfully! Restart the application to use the new version.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RolledBack" xml:space="preserve">
+    <value>Update failed and was rolled back: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
+    <value>Update was cancelled and rolled back.</value>
+  </data>
+  <data name="CleanupPreviousSystemUpdateStep_get_DisplayName_DisplayName" xml:space="preserve">
+    <value>Clean Up Previous Update</value>
+  </data>
+  <data name="CleanupPreviousSystemUpdateStep_ExecuteAsync_CleaningUp" xml:space="preserve">
+    <value>Cleaning up previous update leftovers...</value>
+  </data>
 </root>
