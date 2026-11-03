@@ -212,16 +212,36 @@ public class GitHubReleaseClientTests {
     public async Task DownloadToFileAsync_WhenBodyExceedsCap_AbortsMidCopyInsteadOfOnlyCheckingLengthAfterward() {
         // A wrong/hostile response could otherwise fill the disk before any
         // length check runs: the copy must abort as soon as the cap is
-        // crossed, not just be checked once the whole body is written.
+        // crossed, not just be checked once the whole body is written. The
+        // body here is far larger than the cap so that a post-loop-only
+        // length check (checking after the whole body was copied) would
+        // still throw, but would also have written the full body to disk
+        // first — the file length assertion below is what distinguishes
+        // the two.
         using var root = new TempDirectory(nameof(GitHubReleaseClientTests));
         var destinationPath = SysPath.Combine(root.Path, "package.zip");
+        // Large enough relative to the cap that several read/write chunks
+        // happen before the cap is crossed — a trivial single-chunk body
+        // would abort before any bytes were written at all, which would
+        // not distinguish "aborts mid-copy" from "aborts before copying".
+        const long maxBytes = 200_000;
+        const long bodyLength = 10 * maxBytes;
 
         var sut = CreateSut(_ => new HttpResponseMessage(HttpStatusCode.OK) {
-            Content = new StringContent(new string('a', 2048))
+            Content = new StringContent(new string('a', (int)bodyLength))
         });
 
         await Assert.ThrowsAsync<InvalidDataException>(
-            () => sut.DownloadToFileAsync(new Uri("https://example.test/package.zip"), destinationPath, maxBytes: 1024, TestContext.Current.CancellationToken)
+            () => sut.DownloadToFileAsync(new Uri("https://example.test/package.zip"), destinationPath, maxBytes, TestContext.Current.CancellationToken)
         );
+
+        var writtenLength = new FileInfo(destinationPath).Length;
+
+        Assert.True(writtenLength > 0, "Expected some bytes to have been written before the cap was crossed.");
+        Assert.True(
+            writtenLength <= maxBytes,
+            $"Expected the partial file to be capped at {maxBytes} bytes (proving the copy aborted mid-transfer), but it was {writtenLength} bytes."
+        );
+        Assert.True(writtenLength < bodyLength, "The full body was written before the length check ran.");
     }
 }

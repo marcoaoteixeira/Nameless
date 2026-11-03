@@ -126,7 +126,7 @@ public class PerformSystemUpdateRequestHandlerTests {
                 return Task.FromResult(checksumText);
             });
         gitHubReleaseClientMock
-            .Setup(x => x.DownloadToFileAsync(packageUrl, It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.DownloadToFileAsync(packageUrl, It.IsAny<string>(), release.Package.Size, It.IsAny<CancellationToken>()))
             .Returns<Uri, string, long, CancellationToken>(async (_, destinationPath, _, ct) => {
                 var directoryPath = SysPath.GetDirectoryName(destinationPath);
 
