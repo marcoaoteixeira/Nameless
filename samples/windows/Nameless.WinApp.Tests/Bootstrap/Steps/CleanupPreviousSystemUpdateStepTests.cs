@@ -163,6 +163,12 @@ public class CleanupPreviousSystemUpdateStepTests {
         var lockedLeftover = SysPath.Combine(sut.InstallRoot.Path, "Nameless.WinApp.exe.old-20261103120000");
         SysFile.WriteAllText(lockedLeftover, "old-exe");
 
+        // The original must exist alongside the leftover, otherwise the
+        // "keep the only surviving copy" guard short-circuits before the
+        // delete is even attempted, and this test would no longer exercise
+        // DeleteBestEffort's locked-file handling.
+        SysFile.WriteAllText(SysPath.Combine(sut.InstallRoot.Path, "Nameless.WinApp.exe"), "current-exe");
+
         using var fileLock = new FileStream(lockedLeftover, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         await sut.Step.ExecuteAsync(new Progress<StepProgress>(), TestContext.Current.CancellationToken);
