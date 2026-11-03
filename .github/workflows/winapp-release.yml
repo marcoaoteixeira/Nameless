@@ -36,8 +36,10 @@ jobs:
       - name: Resolve and validate version from tag
         id: version
         shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          $tag = "${{ github.ref_name }}"
+          $tag = $env:TAG
 
           if ($tag -notmatch '^winapp-v(?<version>\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?)$') {
             Write-Error "Tag '$tag' does not match the required pattern 'winapp-v{MAJOR.MINOR.PATCH}[-prerelease]'."
@@ -108,8 +110,10 @@ jobs:
       - name: Create package and checksum sidecar
         id: package
         shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          $version = "${{ steps.version.outputs.version }}"
+          $version = $env:VERSION
           $zipName = "Nameless.WinApp-$version-win-x64.zip"
           $sidecarName = "$zipName.sha256"
 
@@ -143,15 +147,20 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          IS_PRERELEASE: ${{ steps.version.outputs.isPrerelease }}
+          ZIP_NAME: ${{ steps.package.outputs.zipName }}
+          SIDECAR_NAME: ${{ steps.package.outputs.sidecarName }}
         run: |
-          $tag = "${{ steps.version.outputs.tag }}"
-          $version = "${{ steps.version.outputs.version }}"
-          $isPrerelease = [bool]::Parse("${{ steps.version.outputs.isPrerelease }}")
+          $tag = $env:TAG
+          $version = $env:VERSION
+          $isPrerelease = [bool]::Parse($env:IS_PRERELEASE)
 
           $args = @(
             $tag,
-            "${{ steps.package.outputs.zipName }}",
-            "${{ steps.package.outputs.sidecarName }}",
+            $env:ZIP_NAME,
+            $env:SIDECAR_NAME,
             '--title', "Nameless.WinApp $version",
             '--generate-notes'
           )
