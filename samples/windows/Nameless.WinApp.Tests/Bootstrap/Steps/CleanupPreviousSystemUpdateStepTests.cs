@@ -140,6 +140,23 @@ public class CleanupPreviousSystemUpdateStepTests {
 
     [Fact]
     [UnitTest]
+    public async Task ExecuteAsync_WhenTheOldSiblingIsTheOnlySurvivingCopy_KeepsItInstead() {
+        using var sut = CreateSut();
+
+        // No "appsettings.json" at its original name — only the
+        // ".old-*" sibling survives (e.g. a prior self-heal/rollback
+        // failure). Deleting it would leave the install directory with
+        // no copy of the file at all.
+        var orphanedOldSibling = SysPath.Combine(sut.InstallRoot.Path, "appsettings.json.old-20261103120000");
+        SysFile.WriteAllText(orphanedOldSibling, "{\"old\":true}");
+
+        await sut.Step.ExecuteAsync(new Progress<StepProgress>(), TestContext.Current.CancellationToken);
+
+        Assert.True(SysFile.Exists(orphanedOldSibling));
+    }
+
+    [Fact]
+    [UnitTest]
     public async Task ExecuteAsync_WhenALeftoverIsLocked_SkipsItWithoutThrowing() {
         using var sut = CreateSut();
 

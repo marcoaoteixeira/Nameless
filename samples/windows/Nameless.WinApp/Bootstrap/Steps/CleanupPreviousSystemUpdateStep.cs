@@ -30,7 +30,7 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
     // "App_Data", not the running exe's own name, not a near-miss variant
     // with the wrong digit count or an extra suffix. Getting this wrong
     // means deleting live application files on every third startup step.
-    private static readonly Regex OldSiblingPattern = new(@"^.+\.old-\d{14}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    private static readonly Regex OldSiblingPattern = new(@"^(?<name>.+)\.old-\d{14}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
     private static readonly Regex StagingOrProbePattern = new(@"^\.update-(probe-)?\d{14}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private readonly ISystemUpdateEnvironment _environment;
@@ -104,7 +104,26 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
         foreach (var entryPath in SysDirectory.EnumerateFileSystemEntries(_environment.InstallDirectoryPath)) {
             var entryName = SysPath.GetFileName(entryPath);
 
-            if (IsPreviousUpdateLeftover(entryName)) { DeleteBestEffort(entryPath); }
+            if (!IsPreviousUpdateLeftover(entryName)) { continue; }
+
+            // A ".old-{ts}" sibling with no current sibling at its original
+            // name is the only surviving copy (e.g. a self-heal or
+            // rollback failure left it as the sole copy) — deleting it
+            // would contradict the user-facing "check manually for
+            // *.old-* files" guidance (ADR-001). Keep it and warn instead.
+            var match = OldSiblingPattern.Match(entryName);
+
+            if (match.Success) {
+                var originalPath = SysPath.Combine(_environment.InstallDirectoryPath, match.Groups["name"].Value);
+
+                if (!SysFile.Exists(originalPath) && !SysDirectory.Exists(originalPath)) {
+                    CommonLog.Warning(_logger, $"Keeping self-update leftover '{entryPath}': its original '{originalPath}' does not exist, so this is the only surviving copy.", tag: GetType().Tag);
+
+                    continue;
+                }
+            }
+
+            DeleteBestEffort(entryPath);
         }
     }
 
