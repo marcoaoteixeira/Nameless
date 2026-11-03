@@ -285,6 +285,54 @@ public class PerformSystemUpdateRequestHandlerTests {
         );
     }
 
+    // Plan §8's documented sidecar edge cases (ParseChecksumSidecar,
+    // handler :230-251). A regression in a *positive* case here would
+    // break every real update, since GNU sha256sum output legitimately
+    // varies in case, BOM presence and trailing newline.
+    [Theory]
+    [UnitTest]
+    [InlineData("valid-uppercase-hash", true)]
+    [InlineData("valid-bom-prefix", true)]
+    [InlineData("valid-no-trailing-newline", true)]
+    [InlineData("malformed-63-char-hash", false)]
+    [InlineData("malformed-65-char-hash", false)]
+    [InlineData("malformed-non-hex", false)]
+    [InlineData("malformed-empty", false)]
+    [InlineData("malformed-wrong-name-token", false)]
+    public async Task HandleAsync_ChecksumSidecarEdgeCases_ParsesPerContractOrRollsBack(string variant, bool expectCompleted) {
+        var version = SemVersion.Parse("1.0.0");
+        var packageName = $"Nameless.WinApp-{version.Format()}-win-x64.zip";
+        var packageBytes = BuildPackageZip(CurrentTestExecutablePath);
+        var hash = ComputeSha256Hex(packageBytes);
+
+        var checksumText = variant switch {
+            "valid-uppercase-hash" => $"{hash.ToUpperInvariant()}  {packageName}",
+            "valid-bom-prefix" => $"﻿{hash}  {packageName}",
+            "valid-no-trailing-newline" => $"{hash}  {packageName}",
+            "malformed-63-char-hash" => $"{hash[..63]}  {packageName}",
+            "malformed-65-char-hash" => $"{hash}a  {packageName}",
+            "malformed-non-hex" => $"{new string('g', 64)}  {packageName}",
+            "malformed-empty" => string.Empty,
+            "malformed-wrong-name-token" => $"{hash}  whatever.zip",
+            _ => throw new ArgumentOutOfRangeException(nameof(variant))
+        };
+
+        using var sut = CreateSut(packageBytesOverride: packageBytes, checksumTextOverride: checksumText);
+
+        var outcome = await sut.Handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
+
+        if (expectCompleted) {
+            Assert.Equal(SystemUpdateOutcome.Completed, outcome);
+        } else {
+            Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
+
+            sut.EventPublisherMock.Verify(
+                x => x.PublishAsync(It.Is<SystemUpdateProgressNotificationEvent>(e => e.Message.Contains("DownloadingChecksum_Failure", StringComparison.Ordinal))),
+                Times.Once
+            );
+        }
+    }
+
     [Fact]
     [UnitTest]
     public async Task HandleAsync_WhenDownloadedLengthDoesNotMatchDeclaredSize_RollsBackAndRemovesPartialPackage() {
