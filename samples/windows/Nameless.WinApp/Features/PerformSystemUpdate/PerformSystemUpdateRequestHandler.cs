@@ -378,7 +378,10 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
         swaps.Add(new EntrySwap(destinationPath, backupPath, isDirectory));
     }
 
-    private static void MoveEntry(string sourcePath, string destinationPath, bool isDirectory) {
+    // protected virtual so tests can force the move INTO the destination
+    // (as opposed to the earlier rename-aside move) to fail deterministically,
+    // exercising the self-heal branch in SwapEntryAsync's catch block.
+    protected virtual void MoveEntry(string sourcePath, string destinationPath, bool isDirectory) {
         if (isDirectory) { SysDirectory.Move(sourcePath, destinationPath); }
         else { SysFile.Move(sourcePath, destinationPath); }
     }
