@@ -13,7 +13,23 @@
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591;NU1903</NoWarn>
 		<ApplicationIcon>Resources\icons\application.ico</ApplicationIcon>
+		<!-- The self-update feature compares AssemblyInformationalVersion
+		     against GitHub release tags; a trailing "+<sha>" would never
+		     match a release's "-p:Version={VERSION}" stamp. -->
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
+
+	<!-- Self-update marker: only the release workflow passes
+	     "-p:SelfUpdateEnabled=true" (see the release contract, §3). A dev
+	     build never carries this attribute, which is how
+	     ISystemUpdateEnvironment.IsSelfUpdateEnabled refuses to run the
+	     update outside a real release. -->
+	<ItemGroup Condition="'$(SelfUpdateEnabled)' == 'true'">
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>Nameless.WinApp.SelfUpdate</_Parameter1>
+			<_Parameter2>Enabled</_Parameter2>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
