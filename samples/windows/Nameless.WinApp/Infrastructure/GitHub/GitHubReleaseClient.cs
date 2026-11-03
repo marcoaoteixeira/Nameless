@@ -47,14 +47,26 @@ public sealed class GitHubReleaseClient : IGitHubReleaseClient {
     }
 
     /// <inheritdoc />
-    public async Task DownloadToFileAsync(Uri url, string destinationPath, CancellationToken cancellationToken) {
+    public async Task DownloadToFileAsync(Uri url, string destinationPath, long maxBytes, CancellationToken cancellationToken) {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         using var response = await SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
         await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
         await using var destination = SysFile.Create(destinationPath);
 
-        await source.CopyToAsync(destination, cancellationToken);
+        var chunk = new byte[81920];
+        long total = 0;
+        int read;
+
+        while ((read = await source.ReadAsync(chunk, cancellationToken)) > 0) {
+            total += read;
+
+            if (total > maxBytes) {
+                throw new InvalidDataException($"Response body exceeded the {maxBytes}-byte cap.");
+            }
+
+            await destination.WriteAsync(chunk.AsMemory(0, read), cancellationToken);
+        }
     }
 
     private static async Task<string> ReadBoundedTextAsync(HttpContent content, long maxBytes, CancellationToken cancellationToken) {

@@ -263,7 +263,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
 
         if (directoryPath is not null) { SysDirectory.CreateDirectory(directoryPath); }
 
-        await _gitHubReleaseClient.DownloadToFileAsync(release.Package.DownloadUrl, packagePath, cancellationToken);
+        await _gitHubReleaseClient.DownloadToFileAsync(release.Package.DownloadUrl, packagePath, release.Package.Size, cancellationToken);
     }
 
     private static async Task VerifyPackageAsync(AvailableRelease release, string packagePath, string expectedHash, CancellationToken cancellationToken) {

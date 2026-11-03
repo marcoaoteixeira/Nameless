@@ -196,13 +196,32 @@ public class GitHubReleaseClientTests {
     public async Task DownloadToFileAsync_StreamsBodyToDestinationFile() {
         using var root = new TempDirectory(nameof(GitHubReleaseClientTests));
         var destinationPath = SysPath.Combine(root.Path, "package.zip");
+        var body = "zip-bytes-stand-in";
 
         var sut = CreateSut(_ => new HttpResponseMessage(HttpStatusCode.OK) {
-            Content = new StringContent("zip-bytes-stand-in")
+            Content = new StringContent(body)
         });
 
-        await sut.DownloadToFileAsync(new Uri("https://example.test/package.zip"), destinationPath, TestContext.Current.CancellationToken);
+        await sut.DownloadToFileAsync(new Uri("https://example.test/package.zip"), destinationPath, maxBytes: body.Length, TestContext.Current.CancellationToken);
 
-        Assert.Equal("zip-bytes-stand-in", SysFile.ReadAllText(destinationPath));
+        Assert.Equal(body, SysFile.ReadAllText(destinationPath));
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task DownloadToFileAsync_WhenBodyExceedsCap_AbortsMidCopyInsteadOfOnlyCheckingLengthAfterward() {
+        // A wrong/hostile response could otherwise fill the disk before any
+        // length check runs: the copy must abort as soon as the cap is
+        // crossed, not just be checked once the whole body is written.
+        using var root = new TempDirectory(nameof(GitHubReleaseClientTests));
+        var destinationPath = SysPath.Combine(root.Path, "package.zip");
+
+        var sut = CreateSut(_ => new HttpResponseMessage(HttpStatusCode.OK) {
+            Content = new StringContent(new string('a', 2048))
+        });
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => sut.DownloadToFileAsync(new Uri("https://example.test/package.zip"), destinationPath, maxBytes: 1024, TestContext.Current.CancellationToken)
+        );
     }
 }
