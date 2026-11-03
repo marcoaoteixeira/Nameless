@@ -75,3 +75,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (`app.config.tmp`) and only deletes it on failure if the current call actually
   created it.
   ([#163](https://github.com/marcoaoteixeira/Nameless/issues/163))
+- Fixed `dotnet test` being broken repo-wide on the .NET 10 SDK, which no longer
+  supports the legacy VSTest target: a new root `global.json` pins the test runner to
+  Microsoft.Testing.Platform. This also unblocks the `winapp-v*` release workflow's
+  test step. One side effect is handled too — `Nameless.Web.Tests` has no test files
+  yet, and MTP treats "zero tests ran" as a failure (exit code 8); that exit code is
+  now ignored for that project only, until real tests are added.
+  ([#167](https://github.com/marcoaoteixeira/Nameless/issues/167))

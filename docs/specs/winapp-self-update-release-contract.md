@@ -1,6 +1,7 @@
 # Nameless.WinApp self-update: GitHub release contract
 
-- Ticket: none (feature from the self-update brainstorm). Plan: [`docs/plans/winapp-self-update.md`](../plans/winapp-self-update.md).
+- Ticket: [#167](https://github.com/marcoaoteixeira/Nameless/issues/167) (feature from the self-update
+  brainstorm). Plan: [`docs/plans/winapp-self-update.md`](../plans/winapp-self-update.md).
   ADR: [`docs/adr/ADR-001-Self-Update-WinApp-In-Process-By-Renaming-Running-Files-Aside.md`](../adr/ADR-001-Self-Update-WinApp-In-Process-By-Renaming-Running-Files-Aside.md).
 - Parties: the release workflow (producer, new file `.github/workflows/winapp-release.yml`) and the app's
   self-update feature (consumer). This contract binds both. Report any deviation; do not change one side alone.

@@ -1,7 +1,7 @@
 # Nameless.WinApp in-app self-update (AppConfigurationPage "Version" card)
 
-- Ticket: none (feature from the self-update brainstorm). No GitHub issue was given. Create one before
-  starting work so the project board can track it (CLAUDE.md workflow).
+- Ticket: [#167](https://github.com/marcoaoteixeira/Nameless/issues/167) (feature from the self-update
+  brainstorm).
 - Stack: .NET 10 / WPF (`net10.0-windows`, `win-x64`). Sample app `Nameless.WinApp`. There are no library
   changes. GitHub Actions is used for the release workflow.
 - Agent pair: `backend-developer-dotnet` / `backend-reviewer-dotnet`. No frontend side (same as #162 and #163).
