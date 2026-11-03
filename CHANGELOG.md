@@ -44,3 +44,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `IAppConfigurationManager` singleton never reloaded the swapped-in file after a
   restore — see the `Reload()` addition above.
   ([#162](https://github.com/marcoaoteixeira/Nameless/issues/162))
+- Fixed a data-loss bug in `PerformApplicationRestoreRequestHandler` where a failure
+  occurring after artifacts were restored and the config reloaded, but before backup
+  cleanup or the success notification finished, rolled every restored artifact back
+  to its original file while still reporting `RolledBack` — deleting the live,
+  already-restored data it claimed to have rolled back. A `committed` flag is now set
+  right after the last failable pre-commit step (`Reload()`); once set, no later
+  failure can trigger `RollbackSwapsAsync`, and post-commit cleanup/notification
+  failures are logged and swallowed instead of propagating.
+  ([#163](https://github.com/marcoaoteixeira/Nameless/issues/163))
+- Fixed `AppConfigurationManager.SaveChangesAsync` using a per-call GUID-suffixed temp
+  file name, which let one writer's failure-cleanup delete another writer's
+  still-in-flight temp file. The atomic write now uses a single fixed temp file name
+  (`app.config.tmp`) and only deletes it on failure if the current call actually
+  created it.
+  ([#163](https://github.com/marcoaoteixeira/Nameless/issues/163))

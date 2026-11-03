@@ -1,12 +1,17 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Nameless.Application;
+using Nameless.IO;
 using Nameless.IO.Physical;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.IO;
 using Nameless.Windows.AppConfiguration;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
+using SysFileAccess = System.IO.FileAccess;
+using SysFileMode = System.IO.FileMode;
+using SysFileShare = System.IO.FileShare;
+using SysIOException = System.IO.IOException;
 using SysPath = System.IO.Path;
 
 namespace Nameless.Windows.Tests.AppConfiguration;
@@ -102,7 +107,7 @@ public class AppConfigurationManagerTests {
 
         // assert
         var entries = SysDirectory.GetFiles(sut.Root.Path);
-        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path) == "app.config.tmp");
         Assert.Contains(entries, path => SysPath.GetFileName(path) == "app.config");
     }
 
@@ -132,7 +137,107 @@ public class AppConfigurationManagerTests {
         Assert.Equal("""{"Theme":"Light"}""", persisted);
 
         var entries = SysDirectory.GetFiles(sut.Root.Path);
-        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path).Contains(".tmp-", StringComparison.Ordinal));
+        Assert.DoesNotContain(entries, path => SysPath.GetFileName(path) == "app.config.tmp");
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenStaleTempFileExists_OverwritesItAndLeavesNoTempFile() {
+        // arrange: an orphan from a previous save that never got renamed
+        // away (e.g. the process died between the write and the rename).
+        // The fixed temp name must self-heal: the next save's
+        // FileMode.Create overwrites it, and the rename still leaves no
+        // temp file behind.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        var tempPath = SysPath.Combine(sut.Root.Path, "app.config.tmp");
+        SysFile.WriteAllText(tempPath, "stale junk from a previous failed save");
+
+        sut.Manager.Set("Theme", "Dark");
+
+        // act
+        await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert
+        var persisted = SysFile.ReadAllText(configPath);
+        Assert.Contains("Dark", persisted);
+
+        Assert.False(SysFile.Exists(tempPath));
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenTempFileIsHeldByAnotherWriter_DoesNotDeleteItAndLeavesDestinationIntact() {
+        // arrange: another writer already has the fixed-name temp file
+        // open exclusively (FileShare.None). This is an end-to-end check
+        // that the destination survives and the held file is left in
+        // place; it does NOT pin the `tempCreated` guard itself — the real
+        // file's `Delete()` throws a plain IOException here, which the
+        // existing best-effort catch around the delete would swallow even
+        // without the guard. See the mocked test below for that proof.
+        using var sut = CreateSut();
+
+        var configPath = SysPath.Combine(sut.Root.Path, "app.config");
+        SysFile.WriteAllText(configPath, """{"Theme":"Light"}""");
+
+        var tempPath = SysPath.Combine(sut.Root.Path, "app.config.tmp");
+
+        sut.Manager.Set("Theme", "Dark");
+
+        using var otherWriterLock = new System.IO.FileStream(tempPath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+
+        // act
+        await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert: the call did not throw out of SaveChangesAsync (it is
+        // logged internally), the held temp file is untouched, and the
+        // destination was never overwritten.
+        Assert.True(SysFile.Exists(tempPath));
+
+        var persisted = SysFile.ReadAllText(configPath);
+        Assert.Equal("""{"Theme":"Light"}""", persisted);
+    }
+
+    [Fact]
+    public async Task SaveChangesAsync_WhenOpeningTempFileThrowsIOException_NeverAttemptsToDeleteIt() {
+        // arrange: deterministically proves the `tempCreated` guard itself
+        // — as opposed to the real-file test above, which only proves the
+        // end-to-end "destination intact" outcome and would still pass
+        // with the guard removed (its Delete() call throws IOException,
+        // which an existing best-effort catch swallows regardless). Here,
+        // `Open` throws before `tempCreated` is ever set to true, so the
+        // guard must prevent any call to `Delete()` on the temp file at
+        // all — mutation-tested by removing `if (tempCreated && ...)`.
+        var destinationFileMock = new Mock<IFile>();
+        destinationFileMock.SetupGet(f => f.Exists).Returns(false);
+
+        var tempFileMock = new Mock<IFile>();
+        tempFileMock.Setup(f => f.Open(SysFileMode.Create, SysFileAccess.Write, SysFileShare.None))
+                    .Throws<SysIOException>();
+        tempFileMock.SetupGet(f => f.Exists).Returns(true);
+
+        var fileManagerMock = new Mock<IFileManager>();
+        fileManagerMock.Setup(fm => fm.GetFile("app.config")).Returns(destinationFileMock.Object);
+        fileManagerMock.Setup(fm => fm.GetFile("app.config.tmp")).Returns(tempFileMock.Object);
+
+        var applicationContextMock = new Mock<IApplicationContext>();
+        applicationContextMock.SetupGet(ctx => ctx.FileManager).Returns(fileManagerMock.Object);
+
+        var manager = new AppConfigurationManager(
+            applicationContextMock.Object,
+            NullLogger<AppConfigurationManager>.Instance
+        );
+
+        manager.Set("Theme", "Dark");
+
+        // act
+        await manager.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        // assert: Open was actually reached (otherwise the Delete, Times.Never
+        // assertion below would pass vacuously even if the code stopped
+        // calling Open at all), and no delete attempt was ever made on the
+        // temp file.
+        tempFileMock.Verify(f => f.Open(SysFileMode.Create, SysFileAccess.Write, SysFileShare.None), Times.Once);
+        tempFileMock.Verify(f => f.Delete(), Times.Never);
     }
 
     [Fact]

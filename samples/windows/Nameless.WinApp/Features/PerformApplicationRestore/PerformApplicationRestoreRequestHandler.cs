@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nameless.Contracts;
 using Nameless.IO;
@@ -40,6 +41,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IEventPublisher _eventPublisher;
     private readonly ITranslator _translator;
+    private readonly ILogger<PerformApplicationRestoreRequestHandler> _logger;
 
     /// <summary>
     ///     Initializes a new instance of
@@ -66,6 +68,9 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     /// <param name="translator">
     ///     The translator.
     /// </param>
+    /// <param name="logger">
+    ///     The logger.
+    /// </param>
     public PerformApplicationRestoreRequestHandler(
         IFileManager fileManager,
         AppDbContext dbContext,
@@ -73,7 +78,8 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         IOptions<LuceneOptions> luceneOptions,
         IAppConfigurationManager appConfigurationManager,
         IEventPublisher eventPublisher,
-        ITranslator translator) {
+        ITranslator translator,
+        ILogger<PerformApplicationRestoreRequestHandler> logger) {
         _fileManager = Throws.When.Null(fileManager);
         _dbContext = Throws.When.Null(dbContext);
         _indexProvider = Throws.When.Null(indexProvider);
@@ -81,6 +87,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _eventPublisher = Throws.When.Null(eventPublisher);
         _translator = Throws.When.Null(translator);
+        _logger = Throws.When.Null(logger);
     }
 
     /// <inheritdoc />
@@ -95,6 +102,12 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         // extraction itself fails partway through (truncated zip, zip-slip
         // IOException, cancellation).
         var extractedDirectory = _fileManager.GetTemporaryDirectory(timestamp);
+
+        // Once true, nothing below can turn into a rollback: the restored
+        // artifacts (and the in-memory configuration, reloaded right before
+        // this flips) are the new source of truth. See the catch filters
+        // below and the guarded tail that follows the commit.
+        var committed = false;
 
         try {
             await PublishProgressAsync("Starting");
@@ -122,28 +135,30 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             await RunStepAsync("RestoringArtifacts",
                 () => RestoreValidatedArtifactsAsync(validated, extractedDirectory, timestamp, swaps));
 
-            // Everything swapped successfully: the rollback point is no
-            // longer needed.
-            await DeleteBackupSiblingsAsync(swaps);
-
-            await PublishProgressAsync("Success");
-
             // The in-memory configuration dictionary would otherwise still
             // hold the pre-restore values; without this, the next
             // SaveChangesAsync (e.g. the one the host runs on application
-            // shutdown) clobbers the just-restored app.config. Done last —
-            // after cleanup and the success publish both succeeded — so a
-            // late failure on either of those (which still routes through
-            // the rollback path below) can never leave the in-memory config
-            // reloaded to restored values while the files on disk were
-            // rolled back to the originals.
+            // shutdown) clobbers the just-restored app.config. This is the
+            // last action that is allowed to roll the restore back: if it
+            // throws, the `.bak-*` backups still exist and the catch blocks
+            // below undo the swap fully, with disk and memory left on the
+            // original values.
             if (validated.ConfigPresent) {
                 _appConfigurationManager.Reload();
             }
 
+            // Commit point: once set, a late failure must never delete the
+            // restored artifacts or report RolledBack for a restore that
+            // already succeeded. Everything from here on runs in its own
+            // best-effort guard (CompleteCommittedRestoreAsync) and the
+            // catch blocks below are filtered out by `when (!committed)`.
+            committed = true;
+
+            await CompleteCommittedRestoreAsync(swaps);
+
             return RestoreOutcome.Completed;
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException) when (!committed) {
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
@@ -152,7 +167,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
 
             return RestoreOutcome.RolledBack;
         }
-        catch (Exception ex) {
+        catch (Exception ex) when (!committed) {
             // Best-effort: undo whatever was already swapped into place so
             // the application can keep running as it was before this
             // attempt.
@@ -166,6 +181,28 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         }
         finally {
             DeleteExtractedDirectory(extractedDirectory);
+        }
+    }
+
+    // Runs everything that happens after the commit point. Every step is
+    // wrapped in its own best-effort guard: a failure here is cosmetic (the
+    // restore already succeeded) and must never escape as an exception or
+    // be mistaken for a reason to roll back.
+    private async Task CompleteCommittedRestoreAsync(List<ArtifactSwap> swaps) {
+        try {
+            // Everything swapped successfully: the rollback point is no
+            // longer needed.
+            await DeleteBackupSiblingsAsync(swaps);
+        }
+        catch (Exception ex) {
+            CommonLog.Error(_logger, $"Post-commit backup-sibling cleanup failed: {ex.Message}", ex, tag: GetType().Tag);
+        }
+
+        try {
+            await PublishProgressAsync("Success");
+        }
+        catch (Exception ex) {
+            CommonLog.Error(_logger, $"Post-commit success notification failed: {ex.Message}", ex, tag: GetType().Tag);
         }
     }
 
@@ -406,9 +443,17 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
                 // Not fatal to the restore itself (it already succeeded) —
                 // but the orphaned sibling should not disappear silently.
-                await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                    message: string.Format(_translator[$"{Prefix}_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
-                );
+                // The publish itself is wrapped separately: if the
+                // publisher is also down, that must not stop the loop from
+                // attempting to clean up the remaining siblings.
+                try {
+                    await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
+                        message: string.Format(_translator[$"{Prefix}_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
+                    );
+                }
+                catch (Exception publishEx) {
+                    CommonLog.Error(_logger, $"Backup-sibling cleanup warning publish failed for '{swap.BackupPath}': {publishEx.Message}", publishEx, tag: GetType().Tag);
+                }
             }
         }
     }
