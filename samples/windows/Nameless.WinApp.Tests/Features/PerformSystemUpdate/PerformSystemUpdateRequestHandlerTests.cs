@@ -498,6 +498,82 @@ public class PerformSystemUpdateRequestHandlerTests {
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.InstallRoot.Path), entry => SysPath.GetFileName(entry).Contains(".old-", StringComparison.Ordinal));
     }
 
+    // Test-only subclass: throws specifically when rolling back the
+    // executable's swap, to deterministically exercise RollbackSwapsAsync's
+    // per-entry catch continuing to the next entry even when that entry's
+    // own failure-publish also throws (lesson from #163's
+    // DeleteBackupSiblingsAsync, applied here).
+    private sealed class RollbackFailureTriggeringHandler : PerformSystemUpdateRequestHandler {
+        private readonly string _failingOriginalPath;
+
+        public RollbackFailureTriggeringHandler(
+            IGitHubReleaseClient gitHubReleaseClient,
+            ISystemUpdateEnvironment environment,
+            PhysicalFileManager fileManager,
+            AppDbContext dbContext,
+            IIndexProvider indexProvider,
+            IEventPublisher eventPublisher,
+            ITranslator translator,
+            ILogger<PerformSystemUpdateRequestHandler> logger,
+            string failingOriginalPath)
+            : base(gitHubReleaseClient, environment, fileManager, dbContext, indexProvider, eventPublisher, translator, logger) {
+            _failingOriginalPath = failingOriginalPath;
+        }
+
+        protected override void DeleteEntry(string path, bool isDirectory) {
+            if (string.Equals(path, _failingOriginalPath, StringComparison.OrdinalIgnoreCase)) {
+                throw new IOException("Simulated failure deleting the swapped-in entry during rollback.");
+            }
+
+            base.DeleteEntry(path, isDirectory);
+        }
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenOneEntrysRollbackFailsAndItsFailurePublishAlsoFails_StillRollsBackTheOtherEntries() {
+        var packageBytes = BuildPackageZip(CurrentTestExecutablePath, stagingPath =>
+            SysFile.WriteAllText(SysPath.Combine(stagingPath, "appsettings.json"), "{\"new\":true}"));
+
+        using var sut = CreateSut(packageBytesOverride: packageBytes);
+
+        SysFile.WriteAllText(SysPath.Combine(sut.InstallRoot.Path, "appsettings.json"), "{\"old\":true}");
+
+        // Fails rollback specifically for the exe entry (processed first,
+        // being the last swap added) — both its own delete and the
+        // failure-publish about that delete throw. The appsettings.json
+        // entry's rollback must still run afterward.
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<SystemUpdateProgressNotificationEvent>(e => e.Message.Contains("_VerifyingInstallation", StringComparison.Ordinal) && !e.Message.Contains("_Failure", StringComparison.Ordinal))))
+            .ThrowsAsync(new InvalidOperationException("forcing rollback after both swaps succeeded"));
+        sut.EventPublisherMock
+            .Setup(x => x.PublishAsync(It.Is<SystemUpdateProgressNotificationEvent>(e => e.Message.Contains("RollingBack_Failure", StringComparison.Ordinal))))
+            .ThrowsAsync(new InvalidOperationException("the failure-publish is also down"));
+
+        var handler = new RollbackFailureTriggeringHandler(
+            gitHubReleaseClient: sut.GitHubReleaseClientMock.Object,
+            environment: sut.Environment,
+            fileManager: sut.FileManager,
+            dbContext: sut.DbContext,
+            indexProvider: new Mock<IIndexProvider>().Object,
+            eventPublisher: sut.EventPublisherMock.Object,
+            translator: new FakeTranslator(),
+            logger: NullLogger<PerformSystemUpdateRequestHandler>.Instance,
+            failingOriginalPath: sut.Environment.ExecutablePath
+        );
+
+        var outcome = await handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
+
+        Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
+
+        // The exe's own rollback failed (deliberately) — it is left as
+        // whatever the failed DeleteEntry left behind, not asserted here.
+        // What matters is that the earlier appsettings.json entry's
+        // rollback still ran to completion despite the exe entry's
+        // failure-publish also throwing.
+        Assert.Equal("{\"old\":true}", SysFile.ReadAllText(SysPath.Combine(sut.InstallRoot.Path, "appsettings.json")));
+    }
+
     [Fact]
     [UnitTest]
     public async Task HandleAsync_WhenCancelledBeforeCommit_RollsBackAndPublishesCancelledMessageWithNothingTouched() {

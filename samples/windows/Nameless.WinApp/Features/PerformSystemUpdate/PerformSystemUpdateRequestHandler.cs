@@ -386,6 +386,15 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
         else { SysFile.Move(sourcePath, destinationPath); }
     }
 
+    // protected virtual, same reason as MoveEntry: lets a test force one
+    // rollback entry's delete to fail deterministically, so the per-entry
+    // catch in RollbackSwapsAsync (and the loop continuing past it) can be
+    // exercised without relying on file locks or timing.
+    protected virtual void DeleteEntry(string path, bool isDirectory) {
+        if (isDirectory) { SysDirectory.Delete(path, recursive: true); }
+        else { SysFile.Delete(path); }
+    }
+
     private async Task SelfHealAsync(Action moveBackupBack, string destinationPath) {
         try {
             moveBackupBack();
@@ -395,10 +404,17 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
             // "RolledBack_Cancelled" SnackBar message it publishes) still
             // runs against the original exception that triggered this
             // self-heal attempt. The ".old-*" sibling this leaves behind is
-            // called out explicitly so it is not unaccounted for.
-            await _eventPublisher.PublishWarningAsync<SystemUpdateProgressNotificationEvent>(
-                message: string.Format(_translator[$"{Prefix}_SelfHeal_Failure"], destinationPath, ex.Message)
-            );
+            // called out explicitly so it is not unaccounted for. The
+            // publish itself is wrapped separately: a publisher that is
+            // also down must not turn into an unhandled exception here.
+            try {
+                await _eventPublisher.PublishWarningAsync<SystemUpdateProgressNotificationEvent>(
+                    message: string.Format(_translator[$"{Prefix}_SelfHeal_Failure"], destinationPath, ex.Message)
+                );
+            }
+            catch (Exception publishEx) {
+                CommonLog.Error(_logger, $"Self-heal warning publish failed for '{destinationPath}': {publishEx.Message}", publishEx, tag: GetType().Tag);
+            }
         }
     }
 
@@ -435,17 +451,24 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
 
             try {
                 if (swap.IsDirectory) {
-                    if (SysDirectory.Exists(swap.OriginalPath)) { SysDirectory.Delete(swap.OriginalPath, recursive: true); }
-
-                    if (swap.BackupPath is not null) { SysDirectory.Move(swap.BackupPath, swap.OriginalPath); }
-                } else {
-                    if (SysFile.Exists(swap.OriginalPath)) { SysFile.Delete(swap.OriginalPath); }
-
-                    if (swap.BackupPath is not null) { SysFile.Move(swap.BackupPath, swap.OriginalPath); }
+                    if (SysDirectory.Exists(swap.OriginalPath)) { DeleteEntry(swap.OriginalPath, isDirectory: true); }
+                } else if (SysFile.Exists(swap.OriginalPath)) {
+                    DeleteEntry(swap.OriginalPath, isDirectory: false);
                 }
+
+                if (swap.BackupPath is not null) { MoveEntry(swap.BackupPath, swap.OriginalPath, swap.IsDirectory); }
             }
             catch (Exception ex) {
-                await PublishStepFailureAsync("RollingBack", ex);
+                // The publish itself is wrapped separately: a publisher
+                // that is also down must not abort the loop and leave
+                // remaining entries (possibly including the swapped exe)
+                // un-rolled-back (lesson from #163's DeleteBackupSiblingsAsync).
+                try {
+                    await PublishStepFailureAsync("RollingBack", ex);
+                }
+                catch (Exception publishEx) {
+                    CommonLog.Error(_logger, $"Rollback-failure notification failed for '{swap.OriginalPath}': {publishEx.Message}", publishEx, tag: GetType().Tag);
+                }
             }
         }
     }
