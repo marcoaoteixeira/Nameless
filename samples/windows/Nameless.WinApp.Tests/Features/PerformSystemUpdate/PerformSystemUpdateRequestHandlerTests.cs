@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Nameless.IO.Physical;
@@ -11,10 +12,12 @@ using Nameless.ObjectModel;
 using Nameless.Testing.Tools.IO;
 using Nameless.WinApp.Data;
 using Nameless.WinApp.Features.CheckSystemUpdate;
+using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.WinApp.Tests.Tooling;
 using Nameless.Windows;
 using Nameless.Windows.Events;
+using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
 using Nameless.Windows.Notification.SnackBar;
 
@@ -243,13 +246,43 @@ public class PerformSystemUpdateRequestHandlerTests {
 
     [Fact]
     [UnitTest]
-    public async Task HandleAsync_WhenChecksumSidecarDoesNotMatchDownloadedPackage_RollsBackAndRemovesPartialPackage() {
+    public async Task HandleAsync_WhenChecksumSidecarDoesNotMatchDownloadedPackage_RollsBackAtTheHashCheckAndRemovesPartialPackage() {
+        var version = SemVersion.Parse("1.0.0");
+        var packageName = $"Nameless.WinApp-{version.Format()}-win-x64.zip";
+
+        // Correct name token, wrong hash: this must fail at the hash
+        // comparison (handler's VerifyPackageAsync), not at the sidecar's
+        // earlier name-token check.
+        using var sut = CreateSut(checksumTextOverride: $"{new string('a', 64)}  {packageName}");
+
+        var outcome = await sut.Handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
+
+        Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
+        Assert.False(SysFile.Exists(sut.PackagePath));
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SystemUpdateProgressNotificationEvent>(e => e.Message.Contains("VerifyingPackage_Failure", StringComparison.Ordinal))),
+            Times.Once
+        );
+
+        // Nothing was swapped: the original exe is untouched.
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.InstallRoot.Path), entry => SysPath.GetFileName(entry).Contains(".old-", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenChecksumSidecarNameTokenDoesNotMatchThePackageName_RollsBackAtTheSidecarParseStep() {
         using var sut = CreateSut(checksumTextOverride: $"{new string('a', 64)}  whatever.zip");
 
         var outcome = await sut.Handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
 
         Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
         Assert.False(SysFile.Exists(sut.PackagePath));
+
+        sut.EventPublisherMock.Verify(
+            x => x.PublishAsync(It.Is<SystemUpdateProgressNotificationEvent>(e => e.Message.Contains("DownloadingChecksum_Failure", StringComparison.Ordinal))),
+            Times.Once
+        );
     }
 
     [Fact]
@@ -321,7 +354,7 @@ public class PerformSystemUpdateRequestHandlerTests {
 
     [Fact]
     [UnitTest]
-    public async Task HandleAsync_WhenSwapFailsPartway_SelfHealsEarlierEntriesAndRollsBack() {
+    public async Task HandleAsync_WhenRenameAsideOfTheExecutableFails_RollsBackTheEarlierAlreadySwappedEntry() {
         var packageBytes = BuildPackageZip(CurrentTestExecutablePath, stagingPath =>
             SysFile.WriteAllText(SysPath.Combine(stagingPath, "appsettings.json"), "{\"new\":true}"));
 
@@ -331,15 +364,89 @@ public class PerformSystemUpdateRequestHandlerTests {
 
         // Lock the live exe open without share-delete: the handler's
         // SwappingFiles step processes the exe last, so by the time it
-        // tries to rename the original exe aside, appsettings.json has
-        // already swapped successfully — exercising the rollback of an
-        // earlier, already-succeeded entry.
+        // tries to rename the original exe aside (the move OUT of
+        // destinationPath, outside SwapEntryAsync's try block),
+        // appsettings.json has already swapped successfully — exercising
+        // the outer rollback of an earlier, already-succeeded entry. This
+        // fails before SwapEntryAsync's try block even starts, so it never
+        // reaches self-heal.
         using var exeLock = new FileStream(sut.Environment.ExecutablePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var outcome = await sut.Handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
 
         Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
         Assert.Equal("{\"old\":true}", SysFile.ReadAllText(SysPath.Combine(sut.InstallRoot.Path, "appsettings.json")));
+        Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.InstallRoot.Path), entry => SysPath.GetFileName(entry).Contains(".old-", StringComparison.Ordinal));
+    }
+
+    // Test-only subclass: throws specifically on the move INTO the
+    // executable's destination path (i.e. after the rename-aside already
+    // succeeded, inside SwapEntryAsync's try block), to deterministically
+    // exercise the self-heal branch (handler :370-373) without relying on
+    // file locks or timing.
+    private sealed class SelfHealTriggeringHandler : PerformSystemUpdateRequestHandler {
+        private readonly string _failingDestinationPath;
+        private int _moveIntoDestinationAttempts;
+
+        public SelfHealTriggeringHandler(
+            IGitHubReleaseClient gitHubReleaseClient,
+            ISystemUpdateEnvironment environment,
+            PhysicalFileManager fileManager,
+            AppDbContext dbContext,
+            IIndexProvider indexProvider,
+            IEventPublisher eventPublisher,
+            ITranslator translator,
+            ILogger<PerformSystemUpdateRequestHandler> logger,
+            string failingDestinationPath)
+            : base(gitHubReleaseClient, environment, fileManager, dbContext, indexProvider, eventPublisher, translator, logger) {
+            _failingDestinationPath = failingDestinationPath;
+        }
+
+        protected override void MoveEntry(string sourcePath, string destinationPath, bool isDirectory) {
+            if (string.Equals(destinationPath, _failingDestinationPath, StringComparison.OrdinalIgnoreCase)) {
+                _moveIntoDestinationAttempts++;
+
+                // Only the move INTO the destination (the staged entry
+                // replacing the renamed-aside original) must fail — the
+                // self-heal's own move-back uses the same destination path
+                // as its argument, so it must succeed.
+                if (_moveIntoDestinationAttempts == 1) {
+                    throw new IOException("Simulated failure moving the staged entry into place.");
+                }
+            }
+
+            base.MoveEntry(sourcePath, destinationPath, isDirectory);
+        }
+    }
+
+    [Fact]
+    [UnitTest]
+    public async Task HandleAsync_WhenMoveIntoPlaceFailsAfterRenameAside_SelfHealsTheExecutableAndRollsBack() {
+        using var sut = CreateSut();
+
+        var originalExeBytes = SysFile.ReadAllBytes(sut.Environment.ExecutablePath);
+
+        var handler = new SelfHealTriggeringHandler(
+            gitHubReleaseClient: sut.GitHubReleaseClientMock.Object,
+            environment: sut.Environment,
+            fileManager: sut.FileManager,
+            dbContext: sut.DbContext,
+            indexProvider: new Mock<IIndexProvider>().Object,
+            eventPublisher: sut.EventPublisherMock.Object,
+            translator: new FakeTranslator(),
+            logger: NullLogger<PerformSystemUpdateRequestHandler>.Instance,
+            failingDestinationPath: sut.Environment.ExecutablePath
+        );
+
+        var outcome = await handler.HandleAsync(new PerformSystemUpdateRequest(sut.Release), TestContext.Current.CancellationToken);
+
+        Assert.Equal(SystemUpdateOutcome.RolledBack, outcome);
+
+        // Self-heal restored the original exe at its original path...
+        Assert.True(SysFile.Exists(sut.Environment.ExecutablePath));
+        Assert.Equal(originalExeBytes, SysFile.ReadAllBytes(sut.Environment.ExecutablePath));
+
+        // ...and no ".old-*" sibling is left behind.
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.InstallRoot.Path), entry => SysPath.GetFileName(entry).Contains(".old-", StringComparison.Ordinal));
     }
 
