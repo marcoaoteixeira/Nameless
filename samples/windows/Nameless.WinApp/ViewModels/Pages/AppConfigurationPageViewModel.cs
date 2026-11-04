@@ -129,7 +129,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
             if (!check.IsUpdateAvailable) {
                 await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
-                    message: T["AppConfigurationPageViewModel_PerformSystemUpdate_UpToDate", check.Current.Format(includePrefix: true)]
+                    message: T.Get("UpToDate", check.Current.Format(includePrefix: true))
                 );
 
                 return;
@@ -138,9 +138,13 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             var release = check.Release!;
 
             var confirmation = _messageDialog.ShowQuestion(
-                title: T["AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Title"],
-                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Message",
-                    check.Current.Format(includePrefix: true), release.Version.Format(includePrefix: true), release.HtmlUrl?.ToString() ?? string.Empty]
+                title: T.Get("Confirm_Title"),
+                message: T.Get(
+                    key: "Confirm_Message",
+                    check.Current.Format(includePrefix: true),
+                    release.Version.Format(includePrefix: true),
+                    release.HtmlUrl?.ToString() ?? string.Empty
+                )
             );
 
             if (confirmation != MessageDialogResult.Yes) { return; }
@@ -148,7 +152,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             SystemUpdateOutcome? outcome = null;
 
             await _taskRunner.CreateBuilder()
-                             .SetName(T["AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title"])
+                             .SetName(T.Get("TaskRunnerWindow_Title"))
                              .SubscribeFor<SystemUpdateProgressNotificationEvent>()
                              .SetDelegate(async ct => outcome = await _mediator.ExecuteAsync(new PerformSystemUpdateRequest(release), ct))
                              .RunAsync();
@@ -168,21 +172,21 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                 // not shut down — the old process keeps working from its
                 // in-memory image until the user reopens it by hand.
                 await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                    message: T["AppConfigurationPageViewModel_PerformSystemUpdate_RelaunchFailed", ex.Message]
+                    message: T.Get("RelaunchFailed", ex.Message)
                 );
             }
         }
         catch (GitHubReleaseClientException ex) when (ex.IsRateLimited) {
-            var resetsAt = ex.RateLimitResetsAt?.ToLocalTime().ToString("f", CultureInfo.CurrentCulture)
-                ?? T["AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited_UnknownReset"];
+            var resetsAt = ex.RateLimitResetsAt?.ToLocalTime().ToString("f", CultureInfo.CurrentCulture) ??
+                           T.Get("RateLimited_UnknownReset");
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited", resetsAt]
+                message: T.Get("RateLimited", resetsAt)
             );
         }
         catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPageViewModel_PerformSystemUpdate_Failure", ex.Message]
+                message: T.Get("Failure", ex.Message)
             );
         }
     }
@@ -205,20 +209,20 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             var outcome = await _taskRunner.CreateBuilder()
-                                           .SetName(T["AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title"])
+                                           .SetName(T.Get("TaskRunnerWindow_Title"))
                                            .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                                            .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
                                            .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
                 await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
-                    message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Success", backupFilePath]
+                    message: T.Get("Success", backupFilePath)
                 );
             }
             // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPageViewModel_PerformApplicationBackup_Failure", ex.Message]
+                message: T.Get("Failure", ex.Message)
             );
         }
     }
@@ -226,7 +230,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     [RelayCommand]
     private async Task PerformApplicationRestoreAsync() {
         var filePath = _fileSystemDialog.OpenFile(o => {
-            o.Title = T["AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title"];
+            o.Title = T.Get("SelectFile_Title");
             o.Filter = "Zip files (*.zip)|*.zip";
         }).FirstOrDefault();
 
@@ -236,7 +240,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             await _taskRunner.CreateBuilder()
-                             .SetName(T["AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title"])
+                             .SetName(T.Get("TaskRunnerWindow_Title"))
                              .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                              .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
                              .RunAsync();
@@ -247,8 +251,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             if (restoreOutcome is not RestoreOutcome.Completed) { return; }
 
             var confirmation = _messageDialog.ShowQuestion(
-                title: T["AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Title"],
-                message: T["AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Message"]
+                title: T.Get("ConfirmRestart_Title"),
+                message: T.Get("ConfirmRestart_Message")
             );
 
             if (confirmation != MessageDialogResult.Yes) { return; }
@@ -258,7 +262,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             System.Windows.Application.Current.Shutdown();
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T["AppConfigurationPageViewModel_PerformApplicationRestore_Failure", ex.Message]
+                message: T.Get("Failure", ex.Message)
             );
         }
     }

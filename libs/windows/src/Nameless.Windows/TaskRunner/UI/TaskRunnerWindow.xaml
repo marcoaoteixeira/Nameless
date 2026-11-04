@@ -70,6 +70,7 @@
                    Grid.Column="1"
                    Grid.Row="2"
                    VerticalAlignment="Bottom">
+
             <!-- Cancel Button -->
             <ui:Button Appearance="Danger"
                        Command="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.CancelCommand}"

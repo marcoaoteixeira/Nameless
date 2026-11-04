@@ -65,15 +65,12 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
     /// <param name="logger">
     ///     The logger.
     /// </param>
-    public CleanupPreviousSystemUpdateStep(
-        ISystemUpdateEnvironment environment,
-        IApplicationContext applicationContext,
-        ITranslator translator,
-        ILogger<CleanupPreviousSystemUpdateStep> logger) {
+    public CleanupPreviousSystemUpdateStep(ISystemUpdateEnvironment environment, IApplicationContext applicationContext, ITranslator translator, ILogger<CleanupPreviousSystemUpdateStep> logger) {
         _environment = Throws.When.Null(environment);
         _applicationContext = Throws.When.Null(applicationContext);
-        T = Throws.When.Null(translator);
         _logger = Throws.When.Null(logger);
+
+        T = Throws.When.Null(translator);
     }
 
     /// <summary>

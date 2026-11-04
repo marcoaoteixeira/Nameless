@@ -11,12 +11,11 @@ public sealed class SystemUpdateEnvironment : ISystemUpdateEnvironment {
     public string InstallDirectoryPath { get; } = PathHelper.RemoveTrailingSlash(PathHelper.Normalize(AppContext.BaseDirectory));
 
     /// <inheritdoc />
-    public string ExecutablePath { get; } = Environment.ProcessPath
-        ?? throw new InvalidOperationException("The current process path could not be determined.");
+    public string ExecutablePath { get; } = Environment.ProcessPath ??
+                                            throw new InvalidOperationException("The current process path could not be determined.");
 
     /// <inheritdoc />
-    public bool IsSelfUpdateEnabled { get; } = Assembly.GetEntryAssembly()
-                                                        ?.GetCustomAttributes<AssemblyMetadataAttribute>()
-                                                        .Any(attribute => attribute.Key == "Nameless.WinApp.SelfUpdate" && attribute.Value == "Enabled")
-        ?? false;
+    public bool IsSelfUpdateEnabled { get; } = Assembly.GetEntryAssembly()?
+                                                       .GetCustomAttributes<AssemblyMetadataAttribute>()
+                                                       .Any(attribute => attribute is { Key: "Nameless.WinApp.SelfUpdate", Value: "Enabled" }) ?? false;
 }

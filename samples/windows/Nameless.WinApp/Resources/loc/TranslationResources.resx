@@ -228,13 +228,13 @@
   <data name="InitializeLuceneIndexStep_ExecuteAsync_Finish" xml:space="preserve">
     <value>Lucene index initialized successfully!</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Application Backup</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Success" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_Success" xml:space="preserve">
     <value>Backup created successfully at '{0}'.</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Failure" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_Failure" xml:space="preserve">
     <value>Backup failed: {0}</value>
   </data>
   <data name="PerformApplicationBackupRequestHandler_HandleAsync_Starting" xml:space="preserve">
@@ -276,19 +276,19 @@
   <data name="PerformApplicationBackupRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Application backup completed successfully!</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Application Restore</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_SelectFile_Title" xml:space="preserve">
     <value>Select a backup file to restore</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Title" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Message" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Message" xml:space="preserve">
     <value>The application must restart to use the restored data. Restart now?</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_Failure" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_Failure" xml:space="preserve">
     <value>Restore failed: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Starting" xml:space="preserve">
@@ -342,28 +342,28 @@
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
     <value>Restore was cancelled and rolled back.</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_TaskRunnerWindow_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Updating application</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_UpToDate" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_UpToDate" xml:space="preserve">
     <value>You are running the latest version ({0}).</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Title" xml:space="preserve">
     <value>Update available</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Confirm_Message" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Message" xml:space="preserve">
     <value>Version {1} is available (you have {0}). Download and install it now? The application will restart. Release notes: {2}</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_Failure" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure" xml:space="preserve">
     <value>Could not update the application: {0}</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited" xml:space="preserve">
     <value>GitHub's request limit was reached. Try again after {0}.</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RateLimited_UnknownReset" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited_UnknownReset" xml:space="preserve">
     <value>later</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformSystemUpdate_RelaunchFailed" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RelaunchFailed" xml:space="preserve">
     <value>The update was installed, but the application could not restart: {0}. Close and reopen it.</value>
   </data>
   <data name="PerformSystemUpdateRequestHandler_HandleAsync_Starting" xml:space="preserve">
@@ -449,5 +449,11 @@
   </data>
   <data name="CleanupPreviousSystemUpdateStep_ExecuteAsync_CleaningUp" xml:space="preserve">
     <value>Cleaning up previous update leftovers...</value>
+  </data>
+  <data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Close</value>
   </data>
 </root>
