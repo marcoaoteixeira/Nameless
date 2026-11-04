@@ -14,6 +14,12 @@
   <Folder Name="/.solution/.claude/">
     <File Path=".claude/settings.local.json" />
   </Folder>
+  <Folder Name="/.solution/.github/" />
+  <Folder Name="/.solution/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/libs-release.yml" />
+    <File Path=".github/workflows/winapp-release.yml" />
+  </Folder>
   <Folder Name="/Common/">
     <Project Path="libs/common/src/Nameless.Common/Nameless.Common.csproj" />
     <Project Path="libs/common/tests/Nameless.Common.Tests/Nameless.Common.Tests.csproj" Id="07e89afe-ac9d-46bc-849d-5636ea809e2b" />
