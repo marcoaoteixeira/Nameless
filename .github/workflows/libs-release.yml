@@ -78,14 +78,15 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-      # GPR is the source actions/setup-dotnet added above, already
-      # authenticated with NUGET_AUTH_TOKEN.
+      # Pushed by URL, not by a named source: nuget.config is gitignored and
+      # never present on the runner, so there is no "GPR" (or any other)
+      # source for setup-dotnet to attach NUGET_AUTH_TOKEN to.
       - name: Push packages
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           dotnet nuget push "packages\*.nupkg"
-          --source GPR
+          --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
           --api-key $env:GH_TOKEN
           --skip-duplicate
