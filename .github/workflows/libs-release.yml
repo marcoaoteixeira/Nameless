@@ -32,6 +32,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+          source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Tag must be lib-v{MAJOR.MINOR.PATCH} with an optional -prerelease
       # suffix, mirroring the winapp-release.yml tag contract.
@@ -71,24 +74,14 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-      - name: Add GitHub Packages source
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
-          dotnet nuget add source
-          "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-          --name github
-          --username ${{ github.repository_owner }}
-          --password $env:GH_TOKEN
-          --store-password-in-clear-text
-
+      # GPR is the source actions/setup-dotnet added above, already
+      # authenticated with NUGET_AUTH_TOKEN.
       - name: Push packages
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           dotnet nuget push "packages\*.nupkg"
-          --source github
+          --source GPR
           --api-key $env:GH_TOKEN
           --skip-duplicate
