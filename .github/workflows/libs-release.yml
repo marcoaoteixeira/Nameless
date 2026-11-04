@@ -56,8 +56,12 @@ jobs:
       - name: Restore
         run: dotnet restore Nameless.slnx
 
+      # Version is not passed here: it would override every project in the
+      # solution, including test/sample projects that assert their own
+      # build-time version (e.g. self-update tests). The Pack step below
+      # sets -p:Version per packable project instead.
       - name: Build
-        run: dotnet build Nameless.slnx -c Release --no-restore -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet build Nameless.slnx -c Release --no-restore
 
       - name: Test
         run: dotnet test Nameless.slnx -c Release --no-build
