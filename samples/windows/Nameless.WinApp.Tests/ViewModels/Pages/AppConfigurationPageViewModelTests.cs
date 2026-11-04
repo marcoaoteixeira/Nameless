@@ -159,7 +159,7 @@ public class AppConfigurationPageViewModelTests {
             harness.EventPublisherMock.Verify(
                 x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e =>
                     e.Type == NotificationType.Failure &&
-                    e.Message.Contains("AppConfigurationPageViewModel_PerformSystemUpdate_Failure", StringComparison.Ordinal))),
+                    e.Message.Contains("AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure", StringComparison.Ordinal))),
                 Times.Once
             );
         });
