@@ -97,9 +97,10 @@ example, if you want to run only the tests within a spefic category, you can
 use the command below:
 
 ```
-dotnet test --filter "Category=UnitTests"
+dotnet test -- --filter-trait "Category=UnitTest"
 ```
-Just remember to add the `Category` attribute to your test class or method.
+Just remember to add the `[UnitTest]` (or `[IntegrationTest]`/`[E2E]`) attribute
+to your test class or method.
 
 If you're using a IDE like Visual Studio or Rider, you can run the tests from
 the IDE itself. Just open the test explorer and run all tests from there.

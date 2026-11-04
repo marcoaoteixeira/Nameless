@@ -19,6 +19,11 @@ internal static class ApplicationHostFeature {
         ConfigureEntityFrameworkCoreHostFeature(features);
         ConfigureLoggingFeature(features);
         ConfigureFileManagerFeature(features);
+        ConfigureSystemUpdateFeature(features);
+    }
+
+    private static void ConfigureSystemUpdateFeature(HostFeatureCollection features) {
+        features.Add(new SystemUpdateHostFeature());
     }
 
     private static void ConfigureFileManagerFeature(HostFeatureCollection features) {

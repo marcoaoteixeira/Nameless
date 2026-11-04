@@ -228,13 +228,13 @@
   <data name="InitializeLuceneIndexStep_ExecuteAsync_Finish" xml:space="preserve">
     <value>Índice do Lucene inicializado com sucesso!</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_TaskRunnerWindow_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Backup da Aplicação</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Success" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_Success" xml:space="preserve">
     <value>Backup criado com sucesso em '{0}'.</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationBackup_Failure" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationBackupAsync_Failure" xml:space="preserve">
     <value>Falha ao realizar o backup: {0}</value>
   </data>
   <data name="PerformApplicationBackupRequestHandler_HandleAsync_Starting" xml:space="preserve">
@@ -276,19 +276,19 @@
   <data name="PerformApplicationBackupRequestHandler_HandleAsync_Success" xml:space="preserve">
     <value>Backup da aplicação concluído com sucesso!</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_TaskRunnerWindow_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_TaskRunnerWindow_Title" xml:space="preserve">
     <value>Restauração da Aplicação</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_SelectFile_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_SelectFile_Title" xml:space="preserve">
     <value>Selecione um arquivo de backup para restaurar</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Title" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Title" xml:space="preserve">
     <value>Reinicialização necessária</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_ConfirmRestart_Message" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Message" xml:space="preserve">
     <value>A aplicação precisa reiniciar para usar os dados restaurados. Reiniciar agora?</value>
   </data>
-  <data name="AppConfigurationPageViewModel_PerformApplicationRestore_Failure" xml:space="preserve">
+  <data name="AppConfigurationPageViewModel_PerformApplicationRestoreAsync_Failure" xml:space="preserve">
     <value>Falha na restauração: {0}</value>
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_Starting" xml:space="preserve">
@@ -341,5 +341,119 @@
   </data>
   <data name="PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
     <value>A restauração foi cancelada e revertida.</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_TaskRunnerWindow_Title" xml:space="preserve">
+    <value>Atualizando aplicação</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_UpToDate" xml:space="preserve">
+    <value>Você está usando a versão mais recente ({0}).</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Title" xml:space="preserve">
+    <value>Atualização disponível</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Message" xml:space="preserve">
+    <value>A versão {1} está disponível (você tem a {0}). Baixar e instalar agora? A aplicação será reiniciada. Notas da versão: {2}</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure" xml:space="preserve">
+    <value>Não foi possível atualizar a aplicação: {0}</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited" xml:space="preserve">
+    <value>O limite de requisições do GitHub foi atingido. Tente novamente após {0}.</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited_UnknownReset" xml:space="preserve">
+    <value>mais tarde</value>
+  </data>
+  <data name="AppConfigurationPageViewModel_PerformSystemUpdateAsync_RelaunchFailed" xml:space="preserve">
+    <value>A atualização foi instalada, mas a aplicação não conseguiu reiniciar: {0}. Encerre e abra-a novamente.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_Starting" xml:space="preserve">
+    <value>Iniciando atualização da aplicação...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites" xml:space="preserve">
+    <value>Verificando pré-requisitos...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites_Failure" xml:space="preserve">
+    <value>Falha na verificação de pré-requisitos: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum" xml:space="preserve">
+    <value>Baixando checksum...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum_Failure" xml:space="preserve">
+    <value>Falha ao baixar ou interpretar o checksum: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage" xml:space="preserve">
+    <value>Baixando pacote de atualização...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage_Failure" xml:space="preserve">
+    <value>Falha ao baixar o pacote de atualização: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage" xml:space="preserve">
+    <value>Verificando pacote de atualização...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage_Failure" xml:space="preserve">
+    <value>O pacote de atualização falhou na verificação: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage" xml:space="preserve">
+    <value>Extraindo pacote de atualização...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage_Failure" xml:space="preserve">
+    <value>Falha ao extrair o pacote de atualização: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage" xml:space="preserve">
+    <value>Validando pacote de atualização...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage_Failure" xml:space="preserve">
+    <value>O pacote de atualização falhou na validação: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection" xml:space="preserve">
+    <value>Fechando conexão com o banco de dados...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure" xml:space="preserve">
+    <value>Falha ao fechar a conexão com o banco de dados: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex" xml:space="preserve">
+    <value>Fechando índice Lucene...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex_Failure" xml:space="preserve">
+    <value>Falha ao fechar o índice Lucene: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles" xml:space="preserve">
+    <value>Instalando arquivos da atualização...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles_Failure" xml:space="preserve">
+    <value>Falha ao instalar os arquivos da atualização: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation" xml:space="preserve">
+    <value>Verificando instalação...</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation_Failure" xml:space="preserve">
+    <value>Falha na verificação da instalação: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RollingBack_Failure" xml:space="preserve">
+    <value>Falha ao revertar um arquivo da atualização: {0}. Por favor, verifique manualmente o diretório de instalação da aplicação por arquivos '*.old-*'.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_SelfHeal_Failure" xml:space="preserve">
+    <value>Falha ao restaurar o arquivo original de '{0}' após um erro de substituição: {1}. Por favor, verifique manualmente o diretório de instalação da aplicação por arquivos '*.old-*'.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_Success" xml:space="preserve">
+    <value>Atualização da aplicação concluída com sucesso! Reinicie a aplicação para usar a nova versão.</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RolledBack" xml:space="preserve">
+    <value>Falha na atualização, as alterações foram revertidas: {0}</value>
+  </data>
+  <data name="PerformSystemUpdateRequestHandler_HandleAsync_RolledBack_Cancelled" xml:space="preserve">
+    <value>A atualização foi cancelada e revertida.</value>
+  </data>
+  <data name="CleanupPreviousSystemUpdateStep_get_DisplayName_DisplayName" xml:space="preserve">
+    <value>Limpar Atualização Anterior</value>
+  </data>
+  <data name="CleanupPreviousSystemUpdateStep_ExecuteAsync_CleaningUp" xml:space="preserve">
+    <value>Limpando resíduos da atualização anterior...</value>
+  </data>
+  <data name="TaskRunnerWindow_CancelButton_Caption" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
+    <value>Fechar</value>
   </data>
 </root>

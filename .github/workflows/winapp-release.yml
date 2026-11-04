@@ -1,0 +1,172 @@
+# Builds and publishes a Nameless.WinApp release on GitHub Releases for the
+# self-update feature to find (docs/specs/winapp-self-update-release-contract.md).
+# Binding contract — any change to the checks or asset names below must be
+# mirrored in the contract doc and in the app's own validation
+# (CheckSystemUpdateRequestHandler / PerformSystemUpdateRequestHandler).
+name: WinApp Release
+
+on:
+  push:
+    tags:
+      - 'winapp-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    env:
+      PROJECT_PATH: samples/windows/Nameless.WinApp/Nameless.WinApp.csproj
+      TEST_PROJECT_PATH: samples/windows/Nameless.WinApp.Tests/Nameless.WinApp.Tests.csproj
+      RUNTIME_IDENTIFIER: win-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Release contract §5, check 1: the tag must be winapp-v{MAJOR.MINOR.PATCH}
+      # with an optional -prerelease suffix (no +build metadata).
+      - name: Resolve and validate version from tag
+        id: version
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $tag = $env:TAG
+
+          if ($tag -notmatch '^winapp-v(?<version>\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?)$') {
+            Write-Error "Tag '$tag' does not match the required pattern 'winapp-v{MAJOR.MINOR.PATCH}[-prerelease]'."
+            exit 1
+          }
+
+          $version = $Matches.version
+          $isPrerelease = $version.Contains('-')
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "isPrerelease=$isPrerelease" >> $env:GITHUB_OUTPUT
+
+      - name: Run WinApp tests
+        shell: pwsh
+        run: dotnet test "${{ env.TEST_PROJECT_PATH }}" -c Release
+
+      # Release contract §2.1: self-contained, single-file publish. These
+      # flags repeat win-x64.pubxml explicitly because -p:PublishProfile
+      # would not find a pubxml outside Properties/PublishProfiles.
+      - name: Publish
+        shell: pwsh
+        run: >
+          dotnet publish "${{ env.PROJECT_PATH }}"
+          -c Release
+          -r "${{ env.RUNTIME_IDENTIFIER }}"
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -p:Version="${{ steps.version.outputs.version }}"
+          -p:SelfUpdateEnabled=true
+          -o publish
+
+      # Release contract §5, checks 2-3: the executable is at the publish
+      # root, no forbidden entry is present, and its stamped ProductVersion
+      # matches the tag.
+      - name: Validate publish output
+        shell: pwsh
+        run: |
+          $exePath = Join-Path "publish" "Nameless.WinApp.exe"
+
+          if (-not (Test-Path $exePath)) {
+            Write-Error "Nameless.WinApp.exe was not found at the publish root."
+            exit 1
+          }
+
+          $forbidden = @('logs', 'App_Data') + (Get-ChildItem "publish" -Force |
+            Where-Object { $_.Name -match '\.old-' -or $_.Name -match '^\.update-' } |
+            Select-Object -ExpandProperty Name)
+
+          $present = Get-ChildItem "publish" -Force | Select-Object -ExpandProperty Name
+          $hits = $present | Where-Object { $forbidden -contains $_ }
+
+          if ($hits) {
+            Write-Error "Forbidden root entry found in publish output: $($hits -join ', ')"
+            exit 1
+          }
+
+          $productVersion = (Get-Item $exePath).VersionInfo.ProductVersion
+
+          if ($productVersion -ne "${{ steps.version.outputs.version }}") {
+            Write-Error "Nameless.WinApp.exe ProductVersion '$productVersion' does not match tag version '${{ steps.version.outputs.version }}'."
+            exit 1
+          }
+
+      # Release contract §2.1/§2.2: package name and sidecar format.
+      - name: Create package and checksum sidecar
+        id: package
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $version = $env:VERSION
+          $zipName = "Nameless.WinApp-$version-win-x64.zip"
+          $sidecarName = "$zipName.sha256"
+
+          Compress-Archive -Path "publish\*" -DestinationPath $zipName
+
+          $hash = (Get-FileHash $zipName -Algorithm SHA256).Hash.ToLowerInvariant()
+          "{0}  {1}" -f $hash, $zipName | Out-File -FilePath $sidecarName -Encoding utf8NoBOM -NoNewline
+
+          "zipName=$zipName" >> $env:GITHUB_OUTPUT
+          "sidecarName=$sidecarName" >> $env:GITHUB_OUTPUT
+
+      # Release contract §5, check 4: re-hashing the zip must give the hash
+      # in the sidecar — catches a sidecar written against the wrong file.
+      - name: Verify checksum sidecar
+        shell: pwsh
+        run: |
+          $zipName = "${{ steps.package.outputs.zipName }}"
+          $sidecarName = "${{ steps.package.outputs.sidecarName }}"
+
+          $expectedHash = (Get-Content $sidecarName -Raw).Trim().Split(' ')[0]
+          $actualHash = (Get-FileHash $zipName -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          if ($expectedHash -ne $actualHash) {
+            Write-Error "Checksum sidecar does not match the package: expected $expectedHash, got $actualHash."
+            exit 1
+          }
+
+      # Release contract §5, check 5: a prerelease tag (containing '-')
+      # must be published as a GitHub prerelease.
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          IS_PRERELEASE: ${{ steps.version.outputs.isPrerelease }}
+          ZIP_NAME: ${{ steps.package.outputs.zipName }}
+          SIDECAR_NAME: ${{ steps.package.outputs.sidecarName }}
+        run: |
+          $tag = $env:TAG
+          $version = $env:VERSION
+          $isPrerelease = [bool]::Parse($env:IS_PRERELEASE)
+
+          $args = @(
+            $tag,
+            $env:ZIP_NAME,
+            $env:SIDECAR_NAME,
+            '--title', "Nameless.WinApp $version",
+            '--generate-notes'
+          )
+
+          if ($isPrerelease) {
+            $args += '--prerelease'
+          }
+
+          gh release create @args

@@ -3,6 +3,15 @@
 	<PropertyGroup>
 		<RootNamespace>Nameless.Web</RootNamespace>
 		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<!--
+			This project currently has no test files. Microsoft.Testing.Platform
+			(pinned repo-wide via global.json) treats "zero tests ran" as a
+			failure (exit code 8), which would otherwise make `dotnet test`
+			fail for the whole solution even though every other project's
+			tests pass. Ignore that specific exit code here until real tests
+			are added.
+		-->
+		<TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
 	</PropertyGroup>
 
 	<ItemGroup>

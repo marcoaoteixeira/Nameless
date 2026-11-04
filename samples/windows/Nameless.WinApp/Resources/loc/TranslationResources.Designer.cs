@@ -250,6 +250,154 @@ namespace Nameless.WinApp.Resources.loc {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backup failed: {0}.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationBackupAsync_Failure {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationBackupAsync_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup created successfully at &apos;{0}&apos;..
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationBackupAsync_Success {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationBackupAsync_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Backup.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationBackupAsync_TaskRunnerWindow_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationBackupAsync_TaskRunnerWindow_Titl" +
+                        "e", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application must restart to use the restored data. Restart now?.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Messa" +
+                        "ge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationRestoreAsync_ConfirmRestart_Title" +
+                        "", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore failed: {0}.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationRestoreAsync_Failure {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationRestoreAsync_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a backup file to restore.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationRestoreAsync_SelectFile_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationRestoreAsync_SelectFile_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Restore.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformApplicationRestoreAsync_TaskRunnerWindow_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformApplicationRestoreAsync_TaskRunnerWindow_Tit" +
+                        "le", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {1} is available (you have {0}). Download and install it now? The application will restart. Release notes: {2}.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Message {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update available.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_Confirm_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not update the application: {0}.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GitHub&apos;s request limit was reached. Try again after {0}..
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to later.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited_UnknownReset {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_RateLimited_UnknownReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The update was installed, but the application could not restart: {0}. Close and reopen it..
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_RelaunchFailed {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_RelaunchFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating application.
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_TaskRunnerWindow_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_TaskRunnerWindow_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are running the latest version ({0})..
+        /// </summary>
+        internal static string AppConfigurationPageViewModel_PerformSystemUpdateAsync_UpToDate {
+            get {
+                return ResourceManager.GetString("AppConfigurationPageViewModel_PerformSystemUpdateAsync_UpToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step &apos;{0}&apos; failed with &apos;{1}&apos;..
         /// </summary>
         internal static string Bootstrapper_ExecuteStepWithRetryAsync_StepFailure {
@@ -309,6 +457,24 @@ namespace Nameless.WinApp.Resources.loc {
         internal static string Bootstrapper_RunAsync_Start {
             get {
                 return ResourceManager.GetString("Bootstrapper_RunAsync_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cleaning up previous update leftovers....
+        /// </summary>
+        internal static string CleanupPreviousSystemUpdateStep_ExecuteAsync_CleaningUp {
+            get {
+                return ResourceManager.GetString("CleanupPreviousSystemUpdateStep_ExecuteAsync_CleaningUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clean Up Previous Update.
+        /// </summary>
+        internal static string CleanupPreviousSystemUpdateStep_get_DisplayName_DisplayName {
+            get {
+                return ResourceManager.GetString("CleanupPreviousSystemUpdateStep_get_DisplayName_DisplayName", resourceCulture);
             }
         }
         
@@ -390,6 +556,533 @@ namespace Nameless.WinApp.Resources.loc {
         internal static string OpenCurrentLogFileRequestHandler_HandleAsync_Notify_Missing_Log_File_Title {
             get {
                 return ResourceManager.GetString("OpenCurrentLogFileRequestHandler_HandleAsync_Notify_Missing_Log_File_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backing up database....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to back up database: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_BackingUpDatabase_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backing up Lucene index....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to back up Lucene index: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_BackingUpLuceneIndex_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing database connection....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to close database connection: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_ClosingDatabaseConnection_Fail" +
+                        "ure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to copy configuration file: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Failu" +
+                        "re", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration file not found, skipping it in this backup..
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Missing {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_CopyingConfigurationFile_Missi" +
+                        "ng", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating backup archive....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to create backup archive: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_CreatingArchive_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save configuration before backup: {0}.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_SavingConfiguration_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_SavingConfiguration_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting application backup....
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_Starting {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application backup completed successfully!.
+        /// </summary>
+        internal static string PerformApplicationBackupRequestHandler_HandleAsync_Success {
+            get {
+                return ResourceManager.GetString("PerformApplicationBackupRequestHandler_HandleAsync_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing database connection....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to close database connection: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ClosingDatabaseConnection_Fai" +
+                        "lure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing Lucene index....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to close Lucene index: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ClosingLuceneIndex_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete rollback backup &apos;{0}&apos;: {1}. You may delete it manually from the application data directory..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_DeletingBackupSiblings_Failur" +
+                        "e", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extracting backup archive....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to extract backup archive: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ExtractingArchive_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restoring application files....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to restore application files: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_RestoringArtifacts_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore failed and was rolled back: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore was cancelled and rolled back..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_RolledBack_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to roll back an application artifact: {0}. Please check the application data directory manually for &apos;*.bak-*&apos; files..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_RollingBack_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_RollingBack_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to restore the original backup for &apos;{0}&apos; after a swap error: {1}. Please check the application data directory manually for &apos;*.bak-*&apos; files..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_SelfHeal_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_SelfHeal_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting application restore....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_Starting {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application restore completed successfully! Restart the application to use the restored data..
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_Success {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validating backup archive....
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to validate backup archive: {0}.
+        /// </summary>
+        internal static string PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive_Failure {
+            get {
+                return ResourceManager.GetString("PerformApplicationRestoreRequestHandler_HandleAsync_ValidatingArchive_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking prerequisites....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prerequisite check failed: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_CheckingPrerequisites_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing database connection....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to close database connection: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ClosingDatabaseConnection_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing Lucene index....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to close Lucene index: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ClosingLuceneIndex_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading checksum....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to download or parse the checksum: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_DownloadingChecksum_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading update package....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to download the update package: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_DownloadingPackage_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extracting update package....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to extract the update package: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ExtractingPackage_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update failed and was rolled back: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_RolledBack {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_RolledBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update was cancelled and rolled back..
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_RolledBack_Cancelled {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_RolledBack_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to roll back an update file: {0}. Please check the application install directory manually for &apos;*.old-*&apos; files..
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_RollingBack_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_RollingBack_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to restore the original file for &apos;{0}&apos; after a swap error: {1}. Please check the application install directory manually for &apos;*.old-*&apos; files..
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_SelfHeal_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_SelfHeal_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting application update....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_Starting {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application update completed successfully! Restart the application to use the new version..
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_Success {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installing update files....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to install the update files: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_SwappingFiles_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validating update package....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The update package failed validation: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_ValidatingPackage_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verifying installation....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installation verification failed: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_VerifyingInstallation_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verifying update package....
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The update package failed verification: {0}.
+        /// </summary>
+        internal static string PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage_Failure {
+            get {
+                return ResourceManager.GetString("PerformSystemUpdateRequestHandler_HandleAsync_VerifyingPackage_Failure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string TaskRunnerWindow_CancelButton_Caption {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_CancelButton_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string TaskRunnerWindow_CloseButton_Caption {
+            get {
+                return ResourceManager.GetString("TaskRunnerWindow_CloseButton_Caption", resourceCulture);
             }
         }
     }
