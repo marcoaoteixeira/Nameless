@@ -1,0 +1,94 @@
+# Builds, tests and publishes the reusable library NuGet packages to the
+# GitHub Packages registry. Only these projects are packed — they are the
+# ones meant for reuse outside this repo. All 4 ship at the same version,
+# taken from the tag, to keep them in lockstep while they're young.
+name: Libraries Release
+
+on:
+  push:
+    tags:
+      - 'lib-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  PACKABLE_PROJECTS: >-
+    libs/common/src/Nameless.Common/Nameless.Common.csproj
+    libs/windows/src/Nameless.Windows/Nameless.Windows.csproj
+    libs/web/src/Nameless.Web/Nameless.Web.csproj
+    libs/utils/src/Nameless.Testing.Tools/Nameless.Testing.Tools.csproj
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Tag must be lib-v{MAJOR.MINOR.PATCH} with an optional -prerelease
+      # suffix, mirroring the winapp-release.yml tag contract.
+      - name: Resolve and validate version from tag
+        id: version
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $tag = $env:TAG
+
+          if ($tag -notmatch '^lib-v(?<version>\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?)$') {
+            Write-Error "Tag '$tag' does not match the required pattern 'lib-v{MAJOR.MINOR.PATCH}[-prerelease]'."
+            exit 1
+          }
+
+          "version=$($Matches.version)" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore Nameless.slnx
+
+      - name: Build
+        run: dotnet build Nameless.slnx -c Release --no-restore -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Test
+        run: dotnet test Nameless.slnx -c Release --no-build
+
+      - name: Pack
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $projects = $env:PACKABLE_PROJECTS -split '\s+' | Where-Object { $_ }
+
+          foreach ($project in $projects) {
+            dotnet pack $project -c Release --no-build -p:Version=$env:VERSION -o packages
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Add GitHub Packages source
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          dotnet nuget add source
+          "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          --name github
+          --username ${{ github.repository_owner }}
+          --password $env:GH_TOKEN
+          --store-password-in-clear-text
+
+      - name: Push packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          dotnet nuget push "packages\*.nupkg"
+          --source github
+          --api-key $env:GH_TOKEN
+          --skip-duplicate
