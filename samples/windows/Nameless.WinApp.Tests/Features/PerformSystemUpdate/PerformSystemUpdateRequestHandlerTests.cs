@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 using System.Security.Cryptography;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -45,14 +46,23 @@ public class PerformSystemUpdateRequestHandlerTests {
         }
     }
 
-    // The actual running test host exe is a real PE with a real,
-    // parseable ProductVersion ("1.0.0+<sha>" — Directory.Build.props pins
+    // The test project's own apphost is a real PE with a real, parseable
+    // ProductVersion ("1.0.0+<sha>" — Directory.Build.props pins
     // AssemblyVersion to 1.0.0 and the test project does not disable
     // source-revision suffixing). SemVersion equality ignores build
     // metadata, so comparisons against SemVersion.Parse("1.0.0") succeed —
     // this lets tests exercise the real FileVersionInfo-based checks
     // without crafting a synthetic PE.
-    private static string CurrentTestExecutablePath => Environment.ProcessPath!;
+    //
+    // This is derived from the test assembly's own location rather than
+    // Environment.ProcessPath: `dotnet test` (pinned to Microsoft.Testing.
+    // Platform via global.json) launches this project's own apphost
+    // directly, so ProcessPath happens to line up, but Visual Studio/Rider
+    // Test Explorer launch the test host via the `dotnet` muxer against the
+    // managed dll, where ProcessPath resolves to dotnet.exe — a PE stamped
+    // with the installed SDK/runtime version, not 1.0.0 (#173).
+    private static string CurrentTestExecutablePath =>
+        SysPath.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
 
     private static byte[] BuildPackageZip(string executableSourcePath, Action<string>? populateExtra = null) {
         using var staging = new TempDirectory(nameof(PerformSystemUpdateRequestHandlerTests));
