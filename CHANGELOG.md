@@ -55,6 +55,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `PerformSystemUpdateRequestHandlerTests.HandleAsync_HappyPath_...` failing
+  under Visual Studio/Rider Test Explorer (`RolledBack` instead of `Completed`). The
+  test used `Environment.ProcessPath` to get a real PE to stamp as the fake update
+  package, assuming the current process is always the test project's own apphost —
+  true for `dotnet test` (pinned to Microsoft.Testing.Platform), but Test Explorer
+  launches the host via the `dotnet` muxer against the managed dll, so
+  `ProcessPath` resolved to `dotnet.exe` and its version never matched. Now derived
+  from the test assembly's own location instead.
+  ([#173](https://github.com/marcoaoteixeira/Nameless/issues/173))
 - Fixed a restore regression where a restored `app.config` was silently overwritten
   the next time the app shut down, because the long-lived
   `IAppConfigurationManager` singleton never reloaded the swapped-in file after a
