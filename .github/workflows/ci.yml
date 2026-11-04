@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - 'feature/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore Nameless.slnx
+
+      - name: Build
+        run: dotnet build Nameless.slnx -c Release --no-restore
+
+      # Microsoft.Testing.Extensions.CodeCoverage (MTP) writes one
+      # *.cobertura.xml per test project under its own TestResults folder.
+      - name: Test with coverage
+        run: >
+          dotnet test Nameless.slnx -c Release --no-build
+          -- --coverage --coverage-output-format cobertura
+
+      # danielpalme/ReportGenerator-GitHub-Action: maintained by the
+      # ReportGenerator author, widely adopted (Marketplace-verified,
+      # used across thousands of public repos) — safe choice where no
+      # first-party Action exists for merging/rendering Cobertura reports.
+      - name: Generate coverage report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.3
+        with:
+          reports: '**/*.cobertura.xml'
+          targetdir: 'coveragereport'
+          reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
+
+      - name: Publish coverage summary
+        shell: pwsh
+        run: Get-Content 'coveragereport/SummaryGithub.md' >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coveragereport
+          retention-days: 14
