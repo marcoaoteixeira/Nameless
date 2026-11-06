@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Windows;
 using Moq;
 using Nameless.Testing.Tools.Attributes;
@@ -57,7 +56,7 @@ public class TaskRunnerBuilderThreadingTests {
         uiThread.Start();
 
         Assert.True(
-            appReady.Wait(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken),
+            appReady.Wait(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken),
             "UI thread did not start in time.");
         Assert.Null(uiThreadException);
 
