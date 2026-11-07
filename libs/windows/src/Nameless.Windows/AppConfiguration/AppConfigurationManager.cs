@@ -71,6 +71,8 @@ public class AppConfigurationManager : IAppConfigurationManager {
         var tempCreated = false;
 
         try {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var json = JsonSerializer.SerializeToUtf8Bytes(AppConfiguration);
 
             using (var stream = tempFile.Open(FileMode.Create, FileAccess.Write, FileShare.None)) {
@@ -78,6 +80,8 @@ public class AppConfigurationManager : IAppConfigurationManager {
 
                 stream.Write(json);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             SysFile.Move(tempFile.Path, file.Path, overwrite: true);
         }
