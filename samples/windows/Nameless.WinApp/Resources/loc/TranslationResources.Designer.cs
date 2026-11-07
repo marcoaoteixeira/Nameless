@@ -205,6 +205,24 @@ namespace Nameless.WinApp.Resources.loc {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string AppConfigurationPage_NavigationViewItem_Title {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_NavigationViewItem_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the application settings here..
+        /// </summary>
+        internal static string AppConfigurationPage_NavigationViewItem_ToolTip {
+            get {
+                return ResourceManager.GetString("AppConfigurationPage_NavigationViewItem_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select the application appearance.
         /// </summary>
         internal static string AppConfigurationPage_ThemeCard_Message {

@@ -14,7 +14,7 @@ public class NavigationViewItemAttributeTests {
             Title = "Test Title",
             ToolTip = "Test ToolTip",
             Position = 10,
-            Placement = Placement.Bottom,
+            Placement = Placement.Footer,
             TitleResourceName = "Title Resource Name",
             ToolTipResourceName = "ToolTip Resource Name",
             ResourceType = typeof(NavigationViewItemAttributeTests)
@@ -26,7 +26,7 @@ public class NavigationViewItemAttributeTests {
             () => Assert.Equal("Test Title", sut.Title),
             () => Assert.Equal("Test ToolTip", sut.ToolTip),
             () => Assert.Equal(10, sut.Position),
-            () => Assert.Equal(Placement.Bottom, sut.Placement),
+            () => Assert.Equal(Placement.Footer, sut.Placement),
             () => Assert.Equal("Title Resource Name", sut.TitleResourceName),
             () => Assert.Equal("ToolTip Resource Name", sut.ToolTipResourceName),
             () => Assert.Equal(typeof(NavigationViewItemAttributeTests), sut.ResourceType)
@@ -60,7 +60,7 @@ public class NavigationViewItemAttributeTests {
             Icon = SymbolRegular.AccessTime20,
             ToolTip = "Test ToolTip",
             Position = 10,
-            Placement = Placement.Bottom,
+            Placement = Placement.Footer,
             ToolTipResourceName = "ToolTip Resource Name",
             ResourceType = typeof(Resources.Resources)
         };
@@ -76,7 +76,7 @@ public class NavigationViewItemAttributeTests {
             Icon = SymbolRegular.AccessTime20,
             ToolTip = "Test ToolTip",
             Position = 10,
-            Placement = Placement.Bottom,
+            Placement = Placement.Footer,
             TitleResourceName = "Incorrect_Title_Resource_Name",
             ToolTipResourceName = "ToolTip Resource Name",
             ResourceType = typeof(Resources.Resources)

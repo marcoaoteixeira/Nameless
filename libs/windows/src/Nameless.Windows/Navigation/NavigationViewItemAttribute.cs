@@ -1,5 +1,7 @@
 ﻿using Nameless.Contracts;
 using Nameless.Helpers;
+using System.Globalization;
+using Nameless.Windows.Localization;
 using Wpf.Ui.Controls;
 
 namespace Nameless.Windows.Navigation;
@@ -70,11 +72,8 @@ public class NavigationViewItemAttribute : Attribute {
         }
         if (ResourceType is null) { return TitleResourceName; }
 
-        return ResourceManagerCache.GetString(
-            ResourceType,
-            TitleResourceName,
-            Thread.CurrentThread.CurrentUICulture
-        ) ?? TitleResourceName;
+        return ResourceManagerCache.GetString(ResourceType, TitleResourceName) ??
+               TitleResourceName;
     }
 
     private void SetTitle(string value) {
@@ -85,12 +84,9 @@ public class NavigationViewItemAttribute : Attribute {
         if (!string.IsNullOrWhiteSpace(_toolTip)) { return _toolTip; }
         if (string.IsNullOrWhiteSpace(ToolTipResourceName)) { return null; }
         if (ResourceType is null) { return ToolTipResourceName; }
-
-        return ResourceManagerCache.GetString(
-            ResourceType,
-            ToolTipResourceName,
-            Thread.CurrentThread.CurrentUICulture
-        ) ?? ToolTipResourceName;
+        
+        return ResourceManagerCache.GetString(ResourceType, ToolTipResourceName) ??
+               ToolTipResourceName;
     }
 
     private void SetToolTip(string? value) {
@@ -103,12 +99,12 @@ public class NavigationViewItemAttribute : Attribute {
 /// </summary>
 public enum Placement {
     /// <summary>
-    ///     On top
+    ///     In menu component
     /// </summary>
-    Top,
+    Menu,
 
     /// <summary>
-    ///     On bottom
+    ///     In footer component
     /// </summary>
-    Bottom
+    Footer
 }

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
@@ -9,6 +7,8 @@ using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
+using System.Reflection;
+using System.Windows;
 using Wpf.Ui;
 
 namespace Nameless.WinApp;
@@ -65,9 +65,7 @@ public partial class App {
     }
 
     private static Task OnCurrentHostStart(IServiceProvider provider, CancellationToken cancellationToken) {
-        TranslatorExtension.SetTranslator(
-            provider.GetService<ITranslator>() ?? NullTranslator.Instance
-        );
+        SetLocalizationForUi(provider);
 
         var main = provider.GetRequiredService<INavigationWindow>();
 
@@ -77,6 +75,16 @@ public partial class App {
         main.ShowWindow();
 
         return Task.CompletedTask;
+    }
+
+    private static void SetLocalizationForUi(IServiceProvider provider) {
+        // Set UI culture on startup, not on bootstrap.
+        var appConfigurationManager = provider.GetRequiredService<IAppConfigurationManager>();
+        var translator = provider.GetService<ITranslator>() ?? NullTranslator.Instance;
+
+        translator.SetCulture(appConfigurationManager.Language);
+
+        TranslatorExtension.SetTranslator(translator);
     }
 
     private static async Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {

@@ -7,13 +7,18 @@ namespace Nameless.Windows.Navigation;
 /// </summary>
 public interface INavigationViewItemProvider {
     /// <summary>
-    ///     Retrieves navigation items.
+    ///     Retrieves navigation menu items.
     /// </summary>
-    /// <param name="placement">
-    ///     The placement
-    /// </param>
     /// <returns>
     ///     A collection of navigation view items.
     /// </returns>
-    IEnumerable<NavigationViewItem> GetItems(Placement placement);
+    IEnumerable<NavigationViewItem> GetMenuItems();
+
+    /// <summary>
+    ///     Retrieves navigation footer items.
+    /// </summary>
+    /// <returns>
+    ///     A collection of navigation view items.
+    /// </returns>
+    IEnumerable<NavigationViewItem> GetFooterItems();
 }
