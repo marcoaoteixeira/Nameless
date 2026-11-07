@@ -1,4 +1,3 @@
-using System.Threading;
 using Moq;
 using Nameless.Application;
 using Nameless.Mediator;

@@ -1,4 +1,7 @@
-﻿using System.Windows.Data;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Helpers;
+using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace Nameless.Windows.Localization;
@@ -79,5 +82,32 @@ public class TranslatorExtension : MarkupExtension {
     /// </param>
     public static void SetTranslator(ITranslator translator) {
         Translator = translator;
+    }
+
+    /// <summary>
+    ///     Resolves and wires the shared static <see cref="ITranslator"/>
+    ///     used by all <see cref="TranslatorExtension"/> instances.
+    ///     Call this once after the DI container is built, passing the
+    ///     resolved <see cref="ITranslator"/> singleton.
+    /// </summary>
+    /// <param name="provider">
+    ///     The DI provider.
+    /// </param>
+    public static void ResolveTranslator(IServiceProvider provider) {
+        var appConfigurationManager = provider.GetRequiredService<IAppConfigurationManager>();
+        var translator = provider.GetService<ITranslator>() ?? NullTranslator.Instance;
+
+        SetTranslator(translator);
+
+        if (!CultureResolver.TryGet(appConfigurationManager.Language, out var culture)) {
+            CommonLog.Warning(
+                provider.GetLogger(typeof(TranslatorExtension)),
+                $"Unable to resolve culture '{appConfigurationManager.Language}'."
+            );
+
+            return;
+        }
+
+        translator.SetCulture(culture);
     }
 }

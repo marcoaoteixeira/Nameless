@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nameless.Windows.Office;
+﻿namespace Nameless.Windows.Office;
 
 /// <summary>
 ///     Document Format

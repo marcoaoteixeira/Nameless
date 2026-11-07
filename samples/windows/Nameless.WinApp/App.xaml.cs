@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
@@ -9,6 +6,8 @@ using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
+using System.Reflection;
+using System.Windows;
 using Wpf.Ui;
 
 namespace Nameless.WinApp;
@@ -50,7 +49,7 @@ public partial class App {
 
     // ReSharper disable once AsyncVoidEventHandlerMethod
     protected override async void OnStartup(StartupEventArgs e) {
-        await CurrentHost.RunAsync();
+        await CurrentHost.StartAsync();
 
         base.OnStartup(e);
     }
@@ -65,9 +64,7 @@ public partial class App {
     }
 
     private static Task OnCurrentHostStart(IServiceProvider provider, CancellationToken cancellationToken) {
-        TranslatorExtension.SetTranslator(
-            provider.GetService<ITranslator>() ?? NullTranslator.Instance
-        );
+        TranslatorExtension.ResolveTranslator(provider);
 
         var main = provider.GetRequiredService<INavigationWindow>();
 
@@ -79,10 +76,9 @@ public partial class App {
         return Task.CompletedTask;
     }
 
-    private static async Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
-        await provider.GetRequiredService<IAppConfigurationManager>()
-                      .SaveChangesAsync(cancellationToken)
-                      .SkipContextSync();
+    private static Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
+        return provider.GetRequiredService<IAppConfigurationManager>()
+                       .SaveChangesAsync(cancellationToken);
     }
 }
 

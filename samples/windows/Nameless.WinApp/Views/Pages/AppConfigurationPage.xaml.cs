@@ -7,8 +7,10 @@ namespace Nameless.WinApp.Views.Pages;
 
 [NavigationViewItem(
     Icon = SymbolRegular.Settings48,
-    Title = Constants.Labels.NavigationMenuItems.Configuration,
-    Placement = Placement.Bottom
+    Placement = Placement.Footer,
+    TitleResourceName = "AppConfigurationPage_NavigationViewItem_Title",
+    ToolTipResourceName = "AppConfigurationPage_NavigationViewItem_ToolTip",
+    ResourceType = typeof(Resources.loc.TranslationResources)
 )]
 public partial class AppConfigurationPage : INavigableView<AppConfigurationPageViewModel> {
     public AppConfigurationPageViewModel ViewModel { get; }

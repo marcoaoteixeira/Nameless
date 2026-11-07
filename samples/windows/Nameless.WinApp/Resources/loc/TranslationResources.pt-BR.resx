@@ -456,4 +456,10 @@
   <data name="TaskRunnerWindow_CloseButton_Caption" xml:space="preserve">
     <value>Fechar</value>
   </data>
+  <data name="AppConfigurationPage_NavigationViewItem_Title" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="AppConfigurationPage_NavigationViewItem_ToolTip" xml:space="preserve">
+    <value>Use esta opção para ajustar as configurações da aplicação.</value>
+  </data>
 </root>

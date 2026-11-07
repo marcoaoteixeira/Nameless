@@ -25,6 +25,7 @@ using Nameless.Windows.UI;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Controls;
+using Nameless.WinApp.Infrastructure.Events;
 using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
 
@@ -283,6 +284,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         var isoCode = (string)newValue.Tag;
 
         T.SetCulture(isoCode);
+        _eventPublisher.PublishAsync(new CultureChangeEvent());
 
         _appConfigurationManager.Language = isoCode;
     }

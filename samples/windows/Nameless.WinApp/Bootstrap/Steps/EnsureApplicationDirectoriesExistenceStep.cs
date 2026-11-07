@@ -17,10 +17,7 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
     private readonly IApplicationContext _applicationContext;
 
     private ITranslator T { get; }
-
-    /// <inheritdoc />
-    public override IReadOnlyCollection<string> Dependencies => [nameof(SetUILanguageStep)];
-
+    
     /// <inheritdoc />
     public override string DisplayName => T.Get(nameof(DisplayName));
 

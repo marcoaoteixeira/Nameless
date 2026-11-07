@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Diagnostics.CodeAnalysis;
+﻿using Nameless.Diagnostics.CodeAnalysis;
 using Serilog.Configuration;
 
 namespace Nameless.Logging.Serilog;

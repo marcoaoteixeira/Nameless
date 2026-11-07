@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Contracts;
+﻿using Nameless.Contracts;
 using Nameless.Internals;
 
 namespace Nameless.ObjectModel;
