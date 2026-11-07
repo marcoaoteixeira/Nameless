@@ -1,7 +1,5 @@
 ﻿using Nameless.Contracts;
 using Nameless.Helpers;
-using System.Globalization;
-using Nameless.Windows.Localization;
 using Wpf.Ui.Controls;
 
 namespace Nameless.Windows.Navigation;

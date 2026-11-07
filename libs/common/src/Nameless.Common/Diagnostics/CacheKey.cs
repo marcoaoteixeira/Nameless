@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using Nameless.Diagnostics.ActivitySource;
 using Nameless.Diagnostics.CodeAnalysis;
 using Nameless.Diagnostics.Metrics;

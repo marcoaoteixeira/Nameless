@@ -57,7 +57,7 @@ public class AppConfigurationManager : IAppConfigurationManager {
     }
 
     /// <inheritdoc />
-    public async Task SaveChangesAsync(CancellationToken cancellationToken) {
+    public Task SaveChangesAsync(CancellationToken cancellationToken) {
         var file = _applicationContext.FileManager.GetFile(APP_CONFIGURATION_FILE);
 
         // Write-then-rename: a concurrent reader (e.g. a freshly relaunched
@@ -73,10 +73,10 @@ public class AppConfigurationManager : IAppConfigurationManager {
         try {
             var json = JsonSerializer.SerializeToUtf8Bytes(AppConfiguration);
 
-            await using (var stream = tempFile.Open(FileMode.Create, FileAccess.Write, FileShare.None)) {
+            using (var stream = tempFile.Open(FileMode.Create, FileAccess.Write, FileShare.None)) {
                 tempCreated = true;
 
-                await stream.WriteAsync(json, cancellationToken);
+                stream.Write(json);
             }
 
             SysFile.Move(tempFile.Path, file.Path, overwrite: true);
@@ -94,6 +94,8 @@ public class AppConfigurationManager : IAppConfigurationManager {
                 catch (UnauthorizedAccessException) { /* best effort cleanup */ }
             }
         }
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

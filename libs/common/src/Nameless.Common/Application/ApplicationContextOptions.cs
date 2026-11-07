@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nameless.Configuration;
+﻿using Nameless.Configuration;
 using Nameless.Diagnostics.CodeAnalysis;
 
 namespace Nameless.Application;

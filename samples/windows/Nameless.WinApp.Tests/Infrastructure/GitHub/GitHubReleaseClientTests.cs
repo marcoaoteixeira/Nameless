@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using Nameless.Testing.Tools.IO;
-using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.WinApp.Tests.Tooling;
 
 namespace Nameless.WinApp.Infrastructure.GitHub;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
@@ -50,7 +49,7 @@ public partial class App {
 
     // ReSharper disable once AsyncVoidEventHandlerMethod
     protected override async void OnStartup(StartupEventArgs e) {
-        await CurrentHost.RunAsync();
+        await CurrentHost.StartAsync();
 
         base.OnStartup(e);
     }
@@ -65,7 +64,7 @@ public partial class App {
     }
 
     private static Task OnCurrentHostStart(IServiceProvider provider, CancellationToken cancellationToken) {
-        SetLocalizationForUi(provider);
+        TranslatorExtension.ResolveTranslator(provider);
 
         var main = provider.GetRequiredService<INavigationWindow>();
 
@@ -77,20 +76,9 @@ public partial class App {
         return Task.CompletedTask;
     }
 
-    private static void SetLocalizationForUi(IServiceProvider provider) {
-        // Set UI culture on startup, not on bootstrap.
-        var appConfigurationManager = provider.GetRequiredService<IAppConfigurationManager>();
-        var translator = provider.GetService<ITranslator>() ?? NullTranslator.Instance;
-
-        translator.SetCulture(appConfigurationManager.Language);
-
-        TranslatorExtension.SetTranslator(translator);
-    }
-
-    private static async Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
-        await provider.GetRequiredService<IAppConfigurationManager>()
-                      .SaveChangesAsync(cancellationToken)
-                      .SkipContextSync();
+    private static Task OnCurrentHostStop(IServiceProvider provider, CancellationToken cancellationToken) {
+        return provider.GetRequiredService<IAppConfigurationManager>()
+                       .SaveChangesAsync(cancellationToken);
     }
 }
 
