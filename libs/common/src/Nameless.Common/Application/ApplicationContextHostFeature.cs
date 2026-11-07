@@ -7,10 +7,11 @@ namespace Nameless.Application;
 /// <summary>
 ///     Application Context Host Feature
 /// </summary>
-public class ApplicationContextHostFeature : HostFeature<ApplicationContextOptions> {
+public class ApplicationContextHostFeature : HostFeature {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
-        builder.Services.ConfigureOptions<ApplicationContextOptions>(builder.Configuration)
+        builder.Services
+               .ConfigureOptions<ApplicationContextOptions>(builder.Configuration)
                .TryAddSingleton<IApplicationContext, ApplicationContext>();
     }
 }

@@ -14,12 +14,12 @@ public sealed class OAuthClientOptions {
     ///     URL of the Token Endpoint. Must be HTTPS, except for loopback
     ///     addresses.
     /// </summary>
-    public Uri TokenEndpoint { get; set; } = null!;
+    public Uri TokenEndpoint { get; set; } = new("http://localhost/token/connect");
 
     /// <summary>
     ///     Client identifier.
     /// </summary>
-    public string ClientId { get; set; } = null!;
+    public string ClientId { get; set; } = string.Empty;
 
     /// <summary>
     ///     Client secret. Required unless <see cref="ClientAuthentication"/>
