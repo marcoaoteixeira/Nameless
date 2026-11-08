@@ -18,8 +18,27 @@ public class ApplicationContext : IApplicationContext {
 
     /// <inheritdoc />
     public string ApplicationName => _options.Value.ApplicationName;
-    
+
     /// <inheritdoc />
+    /// <remarks>
+    ///     <para>
+    ///         This <see cref="IFileManager"/> instance points to application's
+    ///         data folder. The application's data folder is defined by option
+    ///         <see cref="ApplicationContextOptions.ApplicationDataLocation"/>.
+    ///     </para>
+    ///     <para>
+    ///         When <see cref="ApplicationDataLocation.Machine"/> then points to
+    ///         <c>%ProgramData%</c> on Windows and <c>/user/share</c> on Linux/MacOS.
+    ///     </para>
+    ///     <para>
+    ///         When <see cref="ApplicationDataLocation.User"/> then points to
+    ///         <c>%LOCALAPPDATA%</c> on Windows and <c>~/.local/share</c> on Linux/MacOS.
+    ///     </para>
+    ///     <para>
+    ///         When <see cref="ApplicationDataLocation.App"/> then points to
+    ///         <c>App_Data</c> folder inside <see cref="AppContext.BaseDirectory"/>.
+    ///     </para>
+    /// </remarks>
     public IFileManager FileManager { get; }
 
     /// <inheritdoc />

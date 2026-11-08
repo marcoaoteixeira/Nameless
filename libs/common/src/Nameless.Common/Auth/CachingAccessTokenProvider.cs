@@ -15,7 +15,7 @@ namespace Nameless.Auth;
 ///     (single-flight), which avoids request bursts when a token
 ///     expires under load.
 /// </remarks>
-public sealed class CachingAccessTokenProvider<TRequest> : IAccessTokenProvider<TRequest> where TRequest : notnull {
+internal sealed class CachingAccessTokenProvider<TRequest> : IAccessTokenProvider<TRequest> where TRequest : notnull {
     private readonly IAccessTokenProvider<TRequest> _inner;
     private readonly TimeProvider _timeProvider;
     private readonly TimeSpan _clockSkew;
@@ -27,12 +27,26 @@ public sealed class CachingAccessTokenProvider<TRequest> : IAccessTokenProvider<
     /// </summary>
     internal int EntryCount => _entries.Count;
 
-    /// <summary>Creates the cache around a provider.</summary>
-    /// <param name="inner">Provider queried when there is no valid token in the cache.</param>
-    /// <param name="timeProvider">Source of the current instant.</param>
-    /// <param name="clockSkew">Margin before expiration in which a token is already considered expired. Defaults to 60 s.</param>
-    /// <param name="comparer">Key comparer; defaults to the equality of <typeparamref name="TRequest"/> itself.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="clockSkew"/> is negative.</exception>
+    /// <summary>
+    ///     Creates the cache around a provider.
+    /// </summary>
+    /// <param name="inner">
+    ///     Provider queried when there is no valid token in the cache.
+    /// </param>
+    /// <param name="timeProvider">
+    ///     Source of the current instant.
+    /// </param>
+    /// <param name="clockSkew">
+    ///     Margin before expiration in which a token is already considered
+    ///     expired. Defaults to 60 s.
+    /// </param>
+    /// <param name="comparer">
+    ///     Key comparer; defaults to the equality of
+    ///     <typeparamref name="TRequest"/> itself.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="clockSkew"/> is negative.
+    /// </exception>
     public CachingAccessTokenProvider(IAccessTokenProvider<TRequest> inner, TimeProvider timeProvider, TimeSpan? clockSkew = null, IEqualityComparer<TRequest>? comparer = null) {
         Throws.When.Null(inner);
         Throws.When.Null(timeProvider);
