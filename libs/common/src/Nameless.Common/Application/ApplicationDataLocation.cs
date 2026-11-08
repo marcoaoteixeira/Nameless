@@ -12,11 +12,11 @@ public enum ApplicationDataLocation {
     ///     <list type="bullet">
     ///         <item>
     ///             <term>On Windows</term>
-    ///             <description>C:\ProgramData\APPLICATION_NAME</description>
+    ///             <description>%ProgramData%\<c>Application_Name</c></description>
     ///         </item>
     ///         <item>
     ///             <term>On Linux</term>
-    ///             <description>/usr/share/APPLICATION_NAME</description>
+    ///             <description>/usr/share/<c>Application_Name</c></description>
     ///         </item>
     ///     </list>
     /// </remarks>
@@ -30,11 +30,11 @@ public enum ApplicationDataLocation {
     ///     <list type="bullet">
     ///         <item>
     ///             <term>On Windows</term>
-    ///             <description>C:\Users\CURRENT_USER\AppData\Local\APPLICATION_NAME</description>
+    ///             <description>%LOCALAPPDATA%\<c>Application_Name</c></description>
     ///         </item>
     ///         <item>
     ///             <term>On Linux</term>
-    ///             <description>/home/CURRENT_USER/.local/share/APPLICATION_NAME</description>
+    ///             <description>~/.local/share/<c>Application_Name</c></description>
     ///         </item>
     ///     </list>
     /// </remarks>
@@ -47,9 +47,9 @@ public enum ApplicationDataLocation {
     ///     <list type="bullet">
     ///         <item>
     ///             <term>On Windows and Linux</term>
-    ///             <description>APPLICATION_BASE_DIRECTORY/App_Data</description>
+    ///             <description><c>AppContext.BaseDirectory</c>/App_Data</description>
     ///         </item>
     ///     </list>
     /// </remarks>
-    Local
+    App
 }

@@ -1,5 +1,4 @@
 ﻿using Nameless.Configuration;
-using Nameless.Contracts;
 
 namespace Nameless.Auth.OAuth;
 
@@ -14,7 +13,7 @@ public sealed class OAuthClientOptions {
     ///     URL of the Token Endpoint. Must be HTTPS, except for loopback
     ///     addresses.
     /// </summary>
-    public Uri TokenEndpoint { get; set; } = new("http://localhost/token/connect");
+    public Uri TokenEndpoint { get; set; } = null!;
 
     /// <summary>
     ///     Client identifier.
@@ -40,10 +39,7 @@ public sealed class OAuthClientOptions {
     /// <exception cref="ArgumentOutOfRangeException">
     ///     The value is negative.
     /// </exception>
-    public TimeSpan ClockSkew {
-        get;
-        set => field = Throws.When.LowerThan(value, compare: TimeSpan.Zero, message: "Clock skew cannot be negative.");
-    } = TimeSpan.FromSeconds(60);
+    public TimeSpan ClockSkew { get; set; } = TimeSpan.FromSeconds(60);
 
     /// <summary>
     ///     Checks that the configuration is complete and secure.
@@ -75,6 +71,12 @@ public sealed class OAuthClientOptions {
         if (ClientAuthentication != ClientAuthenticationType.None && string.IsNullOrEmpty(ClientSecret)) {
             throw new InvalidOperationException(
                 $"{nameof(ClientSecret)} is required unless {nameof(ClientAuthentication)} is {nameof(ClientAuthenticationType.None)}."
+            );
+        }
+
+        if (ClockSkew < TimeSpan.Zero) {
+            throw new InvalidOperationException(
+                $"{nameof(ClockSkew)} cannot be a negative value."
             );
         }
 

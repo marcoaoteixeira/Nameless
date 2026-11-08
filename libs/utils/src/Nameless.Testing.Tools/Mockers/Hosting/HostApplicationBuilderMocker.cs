@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Nameless.Testing.Tools.Mockers.Hosting;
@@ -43,6 +44,24 @@ public class HostApplicationBuilderMocker : Mocker<IHostApplicationBuilder> {
         MockInstance
             .SetupGet(mock => mock.Services)
             .Returns(services);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Mocks <see cref="IHostApplicationBuilder.Configuration"/> property.
+    /// </summary>
+    /// <param name="returnValue">
+    ///     The <see cref="IConfigurationManager"/> instance.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="HostApplicationBuilderMocker"/> instance
+    ///     so other actions can be chained.
+    /// </returns>
+    public HostApplicationBuilderMocker WithConfiguration(IConfigurationManager returnValue) {
+        MockInstance
+            .SetupGet(mock => mock.Configuration)
+            .Returns(returnValue);
 
         return this;
     }
