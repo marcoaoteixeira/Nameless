@@ -22,6 +22,8 @@ public class JsonTranslatorTests {
     private sealed class FakeTranslationFileProvider : ITranslationFileProvider {
         private readonly Dictionary<string, string> _files = new(StringComparer.OrdinalIgnoreCase);
 
+        public event EventHandler<TranslationFileChangedEventArgs>? Changed;
+
         public FakeTranslationFileProvider With(string key, string json) {
             _files[key] = json;
 
@@ -30,6 +32,14 @@ public class JsonTranslatorTests {
 
         public bool TryRead(string key, [NotNullWhen(true)] out string? content) {
             return _files.TryGetValue(key, out content);
+        }
+
+        /// <summary>
+        ///     Simulates a hot-reload-capable provider noticing a change —
+        ///     raises <see cref="Changed"/> for <paramref name="key"/>.
+        /// </summary>
+        public void Raise(string key) {
+            Changed?.Invoke(this, new TranslationFileChangedEventArgs(key));
         }
     }
 

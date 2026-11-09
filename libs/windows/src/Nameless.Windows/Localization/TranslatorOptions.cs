@@ -30,4 +30,15 @@ public record TranslatorOptions {
     ///     this property having any effect yet.
     /// </remarks>
     public string? DefaultCulture { get; init; }
+
+    /// <summary>
+    ///     How long a <see cref="System.IO.FileSystemWatcher"/>-backed
+    ///     <see cref="Json.ITranslationFileProvider"/> waits after the last
+    ///     file-system event for a given file before reloading it and
+    ///     raising <see cref="Json.ITranslationFileProvider.Changed"/>.
+    ///     Coalesces the burst of events a single save can raise (and
+    ///     successive quick edits) into a single reload. Defaults to 300
+    ///     milliseconds.
+    /// </summary>
+    public TimeSpan WatcherDebounceDelay { get; init; } = TimeSpan.FromMilliseconds(300);
 }

@@ -40,9 +40,10 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
         }
 
         if (translatorType == typeof(JsonTranslator)) {
-            // Read-once-at-startup, disk-backed by default. #191 swaps this
-            // registration for a FileSystemWatcher-backed implementation
-            // without JsonTranslator itself changing (see ADR-002).
+            // Disk-backed, and watches RootPath for changes (#191):
+            // JsonTranslator subscribes to ITranslationFileProvider.Changed
+            // to hot-reload the affected culture without a restart (see
+            // ADR-002).
             builder.Services.TryAddSingleton<ITranslationFileProvider, FileSystemTranslationFileProvider>();
         }
 

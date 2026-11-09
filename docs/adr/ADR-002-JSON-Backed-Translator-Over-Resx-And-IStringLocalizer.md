@@ -125,3 +125,35 @@ otherwise the host falls back to `NullTranslator.Instance`, matching this ADR's 
 intent for hosts that never opt into localization. `ResourceTranslator` and
 `TranslatorOptions.ResourceFullName` are retired as part of the same ticket (breaking
 change — see CHANGELOG).
+
+## Amended by #191
+
+Three claims made above about the initial design did not survive contact with hot-reload
+and are corrected here rather than silently edited away:
+
+* **"`JsonTranslator`'s lookup/cache logic never has to change"** — it did. The single
+  merged `Dictionary<string, string>` this ADR originally described could not support
+  hot-reload's "last known-good state per file" promise: a bad reload of one culture's
+  file, once merged, cannot be told apart from a good one already in the same dictionary,
+  so there would be nothing to roll back to. `JsonTranslator` now caches each file's parsed
+  entries separately (`_fileCache`, keyed by culture/`"default"`) and only re-merges the
+  fallback chain into `_translations` lazily, invalidating that merged view on a successful
+  reload or a culture switch. This is the mechanism that lets a malformed edit to one file
+  leave every other cached file, and that file's own last-good content, untouched.
+* **"a one-method seam"** — `ITranslationFileProvider` gained a second member,
+  `Changed`, because reading a file on demand (the original one method) has no way to tell
+  `JsonTranslator` *which* culture's file changed on disk without the provider pushing that
+  information itself; there is no polling loop to notice it otherwise.
+* **"hot-reload... only has to write one new implementation"** — in practice, #191 also
+  had to modify the *existing* `FileSystemTranslationFileProvider` (adding the
+  `FileSystemWatcher` subscription, debounce timers and the `Changed` raise) rather than
+  add a second implementation alongside it, because the read-once provider from #190 and
+  the watching one from #191 are the same disk-backed provider at two different points in
+  its life, not two alternative strategies a consumer would choose between.
+  `FileSystemTranslationFileProvider` is also no longer "read-once-at-startup" — that line
+  above is superseded by this section.
+
+None of this was a mistake in the original ADR: #191's hot-reload requirement did not exist
+when #188 made these calls, and the fallback-merge and one-method-seam designs were correct
+for what #188 had to deliver. They just did not generalize to a requirement added two
+tickets later, which is what this amendment records.

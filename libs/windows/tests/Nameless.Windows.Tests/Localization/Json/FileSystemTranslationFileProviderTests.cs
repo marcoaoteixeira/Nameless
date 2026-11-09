@@ -30,11 +30,31 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
         SysDirectory.Delete(_rootPath, recursive: true);
     }
 
-    private static FileSystemTranslationFileProvider CreateSut(string? rootPath) {
+    private static FileSystemTranslationFileProvider CreateSut(string? rootPath, TimeSpan? watcherDebounceDelay = null) {
         return new FileSystemTranslationFileProvider(
-            Options.Create(new TranslatorOptions { RootPath = rootPath }),
+            Options.Create(new TranslatorOptions {
+                RootPath = rootPath,
+                WatcherDebounceDelay = watcherDebounceDelay ?? TimeSpan.FromMilliseconds(50)
+            }),
             NullLogger<FileSystemTranslationFileProvider>.Instance
         );
+    }
+
+    // Generous relative to the 50ms debounce used above — real
+    // FileSystemWatcher delivery has OS-level jitter (the repo's own
+    // known flaky-CI-timing lesson, #179), so this waits up to a few
+    // seconds rather than asserting on a tight deadline.
+    private static bool WaitFor(Func<bool> condition, int timeoutMilliseconds = 5_000) {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+        while (DateTime.UtcNow < deadline) {
+            if (condition()) {
+                return true;
+            }
+
+            Thread.Sleep(25);
+        }
+
+        return condition();
     }
 
     [Fact]
@@ -42,7 +62,7 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
         // arrange
         SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Key1": "Text1" }""");
 
-        var sut = CreateSut(_rootPath);
+        using var sut = CreateSut(_rootPath);
 
         // act
         var found = sut.TryRead("default", out var content);
@@ -57,7 +77,7 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
         // arrange
         SysFile.WriteAllText(SysPath.Combine(_rootPath, "pt-BR.json"), """{ "Key1": "TextoPT-BR" }""");
 
-        var sut = CreateSut(_rootPath);
+        using var sut = CreateSut(_rootPath);
 
         // act
         var found = sut.TryRead("pt-BR", out var content);
@@ -70,7 +90,7 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
     [Fact]
     public void TryRead_WhenFileDoesNotExist_ReturnsFalse() {
         // arrange
-        var sut = CreateSut(_rootPath);
+        using var sut = CreateSut(_rootPath);
 
         // act
         var found = sut.TryRead("pt-BR", out var content);
@@ -93,7 +113,7 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
         try {
             SysFile.WriteAllText(SysPath.Combine(absoluteRootPath, "default.json"), """{ "Key1": "Text1" }""");
 
-            var sut = CreateSut(relativeRootPath);
+            using var sut = CreateSut(relativeRootPath);
 
             // act
             var found = sut.TryRead("default", out var content);
@@ -121,7 +141,7 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
 
         SysFile.WriteAllText(path, """{ "Key1": "Text1" }""");
 
-        var sut = CreateSut(_rootPath);
+        using var sut = CreateSut(_rootPath);
 
         using var stream = SysFile.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
 
@@ -131,5 +151,84 @@ public sealed class FileSystemTranslationFileProviderTests : IDisposable {
         // assert
         Assert.False(found);
         Assert.Null(content);
+    }
+
+    [Fact]
+    public void Changed_WhenAFileIsEditedOnDisk_IsRaisedForThatFilesKey() {
+        // arrange
+        var path = SysPath.Combine(_rootPath, "default.json");
+
+        SysFile.WriteAllText(path, """{ "Key1": "Text1" }""");
+
+        using var sut = CreateSut(_rootPath);
+
+        TranslationFileChangedEventArgs? raised = null;
+        sut.Changed += (_, args) => raised = args;
+
+        // act
+        SysFile.WriteAllText(path, """{ "Key1": "Text1 (edited)" }""");
+
+        // assert: generous wait — real FileSystemWatcher delivery is not
+        // instantaneous and has OS-level jitter (see #179's lesson on
+        // flaky FS timing).
+        var delivered = WaitFor(() => raised is not null);
+
+        Assert.True(delivered, "Expected Changed to be raised for the edited file within the timeout.");
+        Assert.Equal("default", raised!.Key);
+    }
+
+    [Fact]
+    public void Changed_WithTwoRapidSuccessiveEditsToTheSameFile_IsRaisedOnlyOnce() {
+        // arrange: a debounce window generous enough that two writes
+        // performed back-to-back in-process both land inside it.
+        var path = SysPath.Combine(_rootPath, "default.json");
+
+        SysFile.WriteAllText(path, """{ "Key1": "Text1" }""");
+
+        using var sut = CreateSut(_rootPath, watcherDebounceDelay: TimeSpan.FromMilliseconds(400));
+
+        var raisedCount = 0;
+        sut.Changed += (_, _) => Interlocked.Increment(ref raisedCount);
+
+        // act: two rapid successive edits, well inside the debounce window.
+        SysFile.WriteAllText(path, """{ "Key1": "Text1 (edit 1)" }""");
+        Thread.Sleep(50);
+        SysFile.WriteAllText(path, """{ "Key1": "Text1 (edit 2)" }""");
+
+        // Waits past the debounce window, then holds for a bit longer to
+        // make sure a second, unwanted raise doesn't show up late.
+        WaitFor(() => raisedCount > 0, timeoutMilliseconds: 3_000);
+        Thread.Sleep(600);
+
+        // assert
+        Assert.Equal(1, raisedCount);
+    }
+
+    [Fact]
+    public void Constructor_WhenRootPathDoesNotExist_DoesNotThrow_AndNeverRaisesChanged() {
+        // arrange: a RootPath nobody has populated yet is not fatal —
+        // there is simply nothing to watch.
+        var missingRootPath = SysPath.Combine(_rootPath, "does-not-exist");
+
+        // act & assert: construction itself must not throw.
+        using var sut = CreateSut(missingRootPath);
+
+        var raised = false;
+        sut.Changed += (_, _) => raised = true;
+
+        var found = sut.TryRead("default", out var content);
+
+        Assert.False(found);
+        Assert.Null(content);
+
+        // A missing root means there is no FileSystemWatcher at all, so
+        // creating the directory and dropping a file into it afterward
+        // still must never raise Changed for this instance.
+        SysDirectory.CreateDirectory(missingRootPath);
+        SysFile.WriteAllText(SysPath.Combine(missingRootPath, "default.json"), """{ "Key1": "Text1" }""");
+
+        WaitFor(() => raised, timeoutMilliseconds: 500);
+
+        Assert.False(raised);
     }
 }
