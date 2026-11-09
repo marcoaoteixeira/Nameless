@@ -9,7 +9,7 @@ namespace Nameless.Windows.Localization;
 public interface ITranslator : INotifyPropertyChanged {
     /// <summary>
     ///     Returns the localized string for <paramref name="key"/> using the
-    ///     current culture. Returns the key itself when no match is found.
+    ///     current culture. Returns <c>"[key]"</c> when no match is found.
     /// </summary>
     /// <param name="key">
     ///     The resource key.
@@ -18,7 +18,7 @@ public interface ITranslator : INotifyPropertyChanged {
 
     /// <summary>
     ///     Returns the localized string for <paramref name="key"/> formatted
-    ///     with <paramref name="parameters"/>. Returns the key itself when no
+    ///     with <paramref name="parameters"/>. Returns <c>"[key]"</c> when no
     ///     match is found.
     /// </summary>
     /// <param name="key">
