@@ -46,6 +46,15 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Resources\icons\application.ico" />
+		<!-- JSON translation files for the upcoming JsonTranslator (see
+		     TranslatorOptions.RootPath); copied alongside the still-active
+		     embedded resx resources used by ResourceTranslator today. -->
+		<Content Include="Resources\loc\default.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\loc\pt-BR.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
