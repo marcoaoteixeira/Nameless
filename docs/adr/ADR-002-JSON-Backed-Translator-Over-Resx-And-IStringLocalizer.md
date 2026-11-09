@@ -114,3 +114,14 @@ when hot-reload (#191) swaps in a `FileSystemWatcher`-backed provider. `ITransla
 * **Code:** `libs/windows/src/Nameless.Windows/Localization/JsonTranslator.cs`,
   `libs/windows/src/Nameless.Windows/Localization/Json/ITranslationFileProvider.cs`,
   `libs/windows/src/Nameless.Windows/Localization/TranslatorOptions.cs`.
+
+## Update — 2026-11-09 (#190)
+
+`TranslatorOptions.RootPath` is no longer unconsumed: #190 wired it into a disk-backed
+`FileSystemTranslationFileProvider` (read-once-at-startup; #191's hot-reload is still the
+`FileSystemWatcher`-backed implementation of the same seam), registered by
+`TranslatorHostFeature` only when a `Translator` configuration section is present —
+otherwise the host falls back to `NullTranslator.Instance`, matching this ADR's zero-drift
+intent for hosts that never opt into localization. `ResourceTranslator` and
+`TranslatorOptions.ResourceFullName` are retired as part of the same ticket (breaking
+change — see CHANGELOG).

@@ -53,6 +53,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   now referenced only by the sample app, `Nameless.WinApp`.
   ([#162](https://github.com/marcoaoteixeira/Nameless/issues/162))
 
+### Removed
+
+- **BREAKING:** `ResourceTranslator` and `TranslatorOptions.ResourceFullName` are removed.
+  `Nameless.Windows`'s `TranslatorHostFeature` now resolves `JsonTranslator` (backed by
+  `TranslatorOptions.RootPath` and a disk-backed `ITranslationFileProvider`) when a
+  `Translator` configuration section is present, falling back to `NullTranslator.Instance`
+  otherwise. Consumers still referencing `ResourceTranslator`/`ResourceFullName` must switch
+  to the JSON-backed translator and its `RootPath` configuration.
+  ([#190](https://github.com/marcoaoteixeira/Nameless/issues/190))
+
 ### Fixed
 
 - Fixed `PerformSystemUpdateRequestHandlerTests.HandleAsync_HappyPath_...` failing
