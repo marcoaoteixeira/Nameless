@@ -2,13 +2,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Logging;
-using Nameless.Windows.Localization;
 using Nameless.Windows.Localization.Json;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
 using SysPath = System.IO.Path;
 
-namespace Nameless.Windows.Tests.Localization;
+namespace Nameless.Windows.Localization;
 
 /// <summary>
 ///     End-to-end proof that an on-disk edit reaches

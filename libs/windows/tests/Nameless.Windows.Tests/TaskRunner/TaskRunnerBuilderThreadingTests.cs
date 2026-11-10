@@ -3,12 +3,11 @@ using Moq;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
-using Nameless.Windows.TaskRunner;
 using Nameless.Windows.TaskRunner.UI;
 using Nameless.Windows.UI;
 using WindowsApplication = System.Windows.Application;
 
-namespace Nameless.Windows.Tests.TaskRunner;
+namespace Nameless.Windows.TaskRunner;
 
 /// <summary>
 ///     Proves the threading contract documented on

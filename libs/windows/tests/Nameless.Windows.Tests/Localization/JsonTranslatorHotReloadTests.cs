@@ -1,10 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Logging;
-using Nameless.Windows.Localization;
 using Nameless.Windows.Localization.Json;
 
-namespace Nameless.Windows.Tests.Localization;
+namespace Nameless.Windows.Localization;
 
 /// <summary>
 ///     Pins <see cref="JsonTranslator"/>'s reaction to
