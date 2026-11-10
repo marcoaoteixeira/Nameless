@@ -154,6 +154,107 @@ public class JsonTranslatorTests {
     }
 
     [Fact]
+    public void Indexer_WhenKeyDuplicatedWithinTheSameEntryObject_LogsAndFallsBackToNeutralOrDefaultFile() {
+        // arrange: "pt-BR" repeats "Key1" within the *same* entry object —
+        // default JsonSerializerOptions would silently keep the last
+        // value ("Second") without ever reaching the seenInSection check,
+        // so this must fail loudly (logged) and fall back instead.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """{ "SectionA": [ { "Key1": "First", "Key1": "Second" } ] }""")
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Key1"];
+
+        // assert: falls back to "pt". With AllowDuplicateProperties
+        // disabled, this is caught as a JsonException and logged at
+        // Error (not reaching the seenInSection warning path at all) —
+        // same route a malformed file already takes.
+        Assert.Equal("TextoPT", result);
+        logger.VerifyError();
+    }
+
+    [Fact]
+    public void Indexer_WhenSectionNameDuplicatedAtTopLevel_LogsAndFallsBackToNeutralOrDefaultFile() {
+        // arrange: "pt-BR" declares "SectionA" twice at the top level —
+        // default JsonSerializerOptions would silently drop the first
+        // block entirely with nothing logged, so this must fail loudly
+        // (logged) and fall back instead.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """
+                {
+                    "SectionA": [ { "Key1": "First" } ],
+                    "SectionA": [ { "Key2": "Second" } ]
+                }
+                """)
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Key1"];
+
+        // assert: falls back to "pt". With AllowDuplicateProperties
+        // disabled, this is caught as a JsonException and logged at
+        // Error instead of silently dropping the first "SectionA" block.
+        Assert.Equal("TextoPT", result);
+        logger.VerifyError();
+    }
+
+    [Fact]
+    public void Indexer_WhenSectionIsNull_LogsAndFallsBackToNeutralOrDefaultFile() {
+        // arrange: "pt-BR" declares "SectionA" as JSON null instead of an
+        // array of entry objects — this must fail loudly (logged) and
+        // fall back, same as every other shape mismatch this method logs,
+        // instead of silently treating it as an empty section.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """{ "SectionA": null }""")
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Key1"];
+
+        // assert
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning(message => message.Contains("SectionA", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Indexer_WhenEntryIsNull_LogsAndFallsBackToNeutralOrDefaultFile() {
+        // arrange: "pt-BR" declares an entry inside "SectionA" as JSON
+        // null instead of an object — this must fail loudly (logged) and
+        // fall back instead of silently treating it as an empty entry.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """{ "SectionA": [ null ] }""")
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Key1"];
+
+        // assert
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning(message => message.Contains("SectionA", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Indexer_WhenSpecificCultureFileIsMalformedJson_LogsAndFallsBackToNeutralOrDefaultFile() {
         // arrange: pt-BR is malformed (wrong shape — array, not object) —
         // the lookup must not throw and must still resolve "Key1" from

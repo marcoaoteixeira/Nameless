@@ -40,6 +40,15 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     // Cached event args — avoids allocating on every culture change
     private static readonly PropertyChangedEventArgs IndexerArgs = new("Item[]");
 
+    // Default JsonSerializerOptions silently keep the *last* value for a
+    // duplicate property — which would hide a duplicate key within the
+    // same entry object, and silently drop an entire duplicate top-level
+    // section, instead of failing loudly like every other shape problem
+    // this type logs. Disallowing duplicates turns both into a JsonException,
+    // which already routes through the existing "log and keep last
+    // known-good state" path below.
+    private static readonly JsonSerializerOptions ParseOptions = new() { AllowDuplicateProperties = false };
+
     private readonly ITranslationFileProvider _fileProvider;
     private readonly ILogger<JsonTranslator> _logger;
 
@@ -224,7 +233,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     private IReadOnlyDictionary<string, string>? TryParseFile(string key, string json) {
         Dictionary<string, List<Dictionary<string, string>>>? sections;
         try {
-            sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(json);
+            sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, ParseOptions);
         }
         catch (JsonException exception) {
             CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, List<Dictionary<string, string>>>), exception, tag: key);
@@ -245,8 +254,21 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
             // remarks above), so the set is recreated for every section.
             var seenInSection = new HashSet<string>(StringComparer.Ordinal);
 
-            foreach (var entry in entries ?? []) {
-                foreach (var (entryKey, entryValue) in entry ?? []) {
+            if (entries is null) {
+                CommonLog.Warning(_logger, message: $"Section '{sectionName}' deserialized to null — expected an array of entry objects.", tag: key);
+
+                return null;
+            }
+
+            for (var index = 0; index < entries.Count; index++) {
+                var entry = entries[index];
+                if (entry is null) {
+                    CommonLog.Warning(_logger, message: $"Entry at index {index} in section '{sectionName}' deserialized to null — expected an object mapping keys to text.", tag: key);
+
+                    return null;
+                }
+
+                foreach (var (entryKey, entryValue) in entry) {
                     if (!seenInSection.Add(entryKey)) {
                         CommonLog.Warning(_logger, message: $"Duplicate key '{entryKey}' in section '{sectionName}'.", tag: key);
 

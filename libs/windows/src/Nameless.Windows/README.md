@@ -67,6 +67,23 @@ The task runner window and view model look up the following keys through
 `TranslatorOptions.RootPath`); when missing, the lookup falls back to the
 bracketed key itself, e.g. `[TaskRunnerWindow_Cancelled_Message]`.
 
+Each culture's file groups its keys by section, purely for human
+organization when hand-editing the file:
+
+```json
+{
+  "SectionName": [
+    { "TaskRunnerWindow_Cancelled_Message": "The run was cancelled." }
+  ]
+}
+```
+
+A key is looked up by its own name regardless of which section it is
+filed under — `ITranslator`'s indexer takes a flat key
+(`translator["TaskRunnerWindow_Cancelled_Message"]`), never a section-
+qualified one, so a key can be moved between sections freely as long as
+it stays unique within the whole file.
+
 | Key | Used when |
 |---|---|
 | `TaskRunnerWindow_Cancelled_Message` | The run is cancelled through its own token (Warning log entry). |

@@ -110,7 +110,8 @@ when hot-reload (#191) swaps in a `FileSystemWatcher`-backed provider. `ITransla
 
 * **Epic:** #187 JSON String Localizer.
 * **Story:** #188 JSON-backed `ITranslator` core (this ADR).
-* **Follow-ups:** #189 (content migration), #190 (DI re-registration), #191 (hot-reload).
+* **Follow-ups:** #189 (content migration), #190 (DI re-registration), #191 (hot-reload),
+  #197 (on-disk section grouping).
 * **Code:** `libs/windows/src/Nameless.Windows/Localization/JsonTranslator.cs`,
   `libs/windows/src/Nameless.Windows/Localization/Json/ITranslationFileProvider.cs`,
   `libs/windows/src/Nameless.Windows/Localization/TranslatorOptions.cs`.
@@ -157,3 +158,16 @@ None of this was a mistake in the original ADR: #191's hot-reload requirement di
 when #188 made these calls, and the fallback-merge and one-method-seam designs were correct
 for what #188 had to deliver. They just did not generalize to a requirement added two
 tickets later, which is what this amendment records.
+
+## Amended by #197
+
+The "Shape: flat per-culture dict vs. per-type/per-feature nesting" section above chose a
+flat `{ "Key1": "Text1" }` file and rejected nesting. #197 reverses the *on-disk* half of
+that call: each culture's file now groups its entries by section,
+`{ "SectionName": [ { "Key1": "Text1" } ] }`, purely so a human editing the file by hand can
+find related keys together. This does **not** overturn this ADR's core rationale — the
+*lookup* key `JsonTranslator`'s indexer resolves is still the flat `"Key1"`, never
+`"SectionName.Key1"` or any other path-qualified form; the section name is discarded at
+parse time and is invisible to every consumer. The reasons the nested option was originally
+rejected (no key-path convention invented, #189's migration staying a content copy) still
+hold for the *lookup* contract; only the *on-disk* file shape changed.

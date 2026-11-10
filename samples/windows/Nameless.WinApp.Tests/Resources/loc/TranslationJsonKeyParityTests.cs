@@ -15,6 +15,11 @@ namespace Nameless.WinApp.Resources.loc;
 /// </summary>
 [IntegrationTest]
 public class TranslationJsonKeyParityTests {
+    // Mirrors JsonTranslator.ParseOptions — default JsonSerializerOptions
+    // silently keep the last value for a duplicate property, which would
+    // hide a duplicate key/section in these sample files from this guard.
+    private static readonly JsonSerializerOptions ParseOptions = new() { AllowDuplicateProperties = false };
+
     [Fact]
     public void DefaultAndPtBrJson_ShareTheExactSameKeySet() {
         var defaultKeys = LoadJson("default.json");
@@ -36,7 +41,7 @@ public class TranslationJsonKeyParityTests {
         var path = SysPath.Combine(AppContext.BaseDirectory, "Resources", "loc", fileName);
         var content = SysFile.ReadAllText(path);
 
-        var sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(content)
+        var sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(content, ParseOptions)
                        ?? throw new InvalidOperationException($"'{path}' deserialized to null.");
 
         return sections.Values
