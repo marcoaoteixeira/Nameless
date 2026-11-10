@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Nameless.Configuration;
 using Nameless.Helpers;
 using Nameless.Hosting;
+using Nameless.Windows.Localization.Json;
 
 namespace Nameless.Windows.Localization;
 
@@ -12,15 +15,38 @@ namespace Nameless.Windows.Localization;
 public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
+        builder.Services.ConfigureOptions<TranslatorOptions>(builder.Configuration);
+
         var options = ActionHelper.FromDelegate(ConfigureFeature)
                                   .WithAssemblies(context.Assemblies);
 
-        builder.Services.ConfigureOptions<TranslatorOptions>(builder.Configuration);
+        var translatorType = options.Translator;
 
-        var descriptor = options.Translator is not null
-            ? ServiceDescriptor.Singleton(typeof(ITranslator), options.Translator)
-            : ServiceDescriptor.Singleton(NullTranslator.Instance);
+        // No "Translator" configuration section at all means the host
+        // never opted into JsonTranslator's disk-backed lookups. Registering
+        // it anyway would make resolving ITranslator throw as soon as
+        // FileSystemTranslationFileProvider needs a RootPath that was never
+        // configured. Fall back to NullTranslator instead — AC2. A custom,
+        // explicitly-registered translator (via WithTranslator<T>()) isn't
+        // necessarily tied to that section, so it is registered as-is.
+        var sectionExists = builder.Configuration
+            .GetSectionFor<TranslatorOptions>(ConfigurationSectionNameAttribute.GetSectionName<TranslatorOptions>())
+            .Exists();
 
-        builder.Services.TryAdd(descriptor);
+        if (translatorType is null || (translatorType == typeof(JsonTranslator) && !sectionExists)) {
+            builder.Services.TryAdd(ServiceDescriptor.Singleton(NullTranslator.Instance));
+
+            return;
+        }
+
+        if (translatorType == typeof(JsonTranslator)) {
+            // Disk-backed, and watches RootPath for changes (#191):
+            // JsonTranslator subscribes to ITranslationFileProvider.Changed
+            // to hot-reload the affected culture without a restart (see
+            // ADR-002).
+            builder.Services.TryAddSingleton<ITranslationFileProvider, FileSystemTranslationFileProvider>();
+        }
+
+        builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ITranslator), translatorType));
     }
 }

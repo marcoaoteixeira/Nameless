@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Nameless.Windows.Localization;
 using Wpf.Ui.Controls;
 
 namespace Nameless.Windows.Navigation;
@@ -8,6 +9,7 @@ namespace Nameless.Windows.Navigation;
 /// </summary>
 public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemProvider {
     private readonly Assembly[] _assemblies;
+    private readonly ITranslator? _translator;
     private readonly Lazy<Entry[]> _entries;
 
     /// <summary>
@@ -17,23 +19,36 @@ public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemPro
     /// <param name="assemblies">
     ///     A collection of assemblies.
     /// </param>
-    public AutoDiscoverableNavigationViewItemProvider(IEnumerable<Assembly> assemblies) {
+    /// <param name="translator">
+    ///     The translator used to resolve <see cref="NavigationViewItemAttribute.TitleResourceName"/>
+    ///     and <see cref="NavigationViewItemAttribute.ToolTipResourceName"/>
+    ///     when no <see cref="NavigationViewItemAttribute.ResourceType"/> is
+    ///     set. <see langword="null"/> falls back to the attribute's own
+    ///     resx-based resolution.
+    /// </param>
+    public AutoDiscoverableNavigationViewItemProvider(IEnumerable<Assembly> assemblies, ITranslator? translator = null) {
         _assemblies = [.. assemblies];
+        _translator = translator;
         _entries = new Lazy<Entry[]>(CreateEntries);
     }
+
+    // Test-only seam: proves NavigationHostFeature actually wires the
+    // container's ITranslator into this provider, without forcing an
+    // STA thread (Build()/GetMenuItems() construct real WPF controls).
+    internal ITranslator? Translator => _translator;
 
     /// <inheritdoc />
     public IEnumerable<NavigationViewItem> GetMenuItems() {
         return _entries.Value
                        .Where(entry => entry.Attribute.Placement == Placement.Menu)
-                       .Select(entry => entry.Build());
+                       .Select(entry => entry.Build(_translator));
     }
 
     /// <inheritdoc />
     public IEnumerable<NavigationViewItem> GetFooterItems() {
         return _entries.Value
                        .Where(entry => entry.Attribute.Placement == Placement.Footer)
-                       .Select(entry => entry.Build());
+                       .Select(entry => entry.Build(_translator));
     }
 
     private Entry[] CreateEntries() {
@@ -54,13 +69,34 @@ public class AutoDiscoverableNavigationViewItemProvider : INavigationViewItemPro
     }
 
     internal record Entry(Type TargetPage, NavigationViewItemAttribute Attribute) {
-        public NavigationViewItem Build() {
+        public NavigationViewItem Build(ITranslator? translator) {
             return new NavigationViewItem {
-                Content = Attribute.Title,
+                Content = ResolveTitle(translator),
                 Icon = new SymbolIcon { Symbol = Attribute.Icon },
                 TargetPageType = TargetPage,
-                ToolTip = Attribute.ToolTip
+                ToolTip = ResolveToolTip(translator)
             };
+        }
+
+        // No ResourceType means the attribute has nothing resx-backed to
+        // fall back to for this key — route it through the live
+        // ITranslator instead, so it tracks culture switches the same way
+        // the resx path used to (re-evaluated on every call, same as
+        // Attribute.Title/ToolTip below).
+        internal string ResolveTitle(ITranslator? translator) {
+            return translator is not null &&
+                   Attribute.ResourceType is null &&
+                   !string.IsNullOrWhiteSpace(Attribute.TitleResourceName)
+                ? translator[Attribute.TitleResourceName]
+                : Attribute.Title;
+        }
+
+        internal string? ResolveToolTip(ITranslator? translator) {
+            return translator is not null &&
+                   Attribute.ResourceType is null &&
+                   !string.IsNullOrWhiteSpace(Attribute.ToolTipResourceName)
+                ? translator[Attribute.ToolTipResourceName]
+                : Attribute.ToolTip;
         }
     }
 }

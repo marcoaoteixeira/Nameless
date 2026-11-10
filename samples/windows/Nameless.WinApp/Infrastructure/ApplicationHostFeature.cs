@@ -34,7 +34,7 @@ internal static class ApplicationHostFeature {
 
     private static void ConfigureTranslatorHostFeature(HostFeatureCollection features) {
         features.Get<TranslatorHostFeature>().Configure(
-            opts => opts.WithTranslator<ResourceTranslator>()
+            opts => opts.WithTranslator<JsonTranslator>()
         );
     }
 

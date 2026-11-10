@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
 using Nameless.Hosting;
+using Nameless.Windows.Localization;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
 using Wpf.Ui.Abstractions.Controls;
@@ -47,7 +48,10 @@ public class NavigationHostFeature : HostFeature<NavigationFeatureOptions> {
 
     private static void RegisterNavigationViewItemProvider(IServiceCollection services, NavigationFeatureOptions options) {
         services.TryAddSingleton<INavigationViewItemProvider>(
-            new AutoDiscoverableNavigationViewItemProvider(options.Assemblies)
+            provider => new AutoDiscoverableNavigationViewItemProvider(
+                options.Assemblies,
+                provider.GetService<ITranslator>()
+            )
         );
     }
 

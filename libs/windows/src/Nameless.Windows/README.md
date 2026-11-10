@@ -63,8 +63,9 @@ signature, note that this is more than a return-type change:
 ### Translator keys
 
 The task runner window and view model look up the following keys through
-`ITranslator`. Supply them in your application's resources; when missing,
-`ITranslator` falls back to the key text itself:
+`ITranslator`. Supply them in your configured translation JSON files (see
+`TranslatorOptions.RootPath`); when missing, the lookup falls back to the
+bracketed key itself, e.g. `[TaskRunnerWindow_Cancelled_Message]`.
 
 | Key | Used when |
 |---|---|

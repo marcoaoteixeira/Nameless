@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `Nameless.Windows`'s `JsonTranslator` hot-reloads translation files edited on disk while
+  the app is running: `FileSystemTranslationFileProvider` now watches its `RootPath` folder
+  with a `FileSystemWatcher`, debouncing rapid successive events for the same file through
+  the new `TranslatorOptions.WatcherDebounceDelay` option before raising the new
+  `ITranslationFileProvider.Changed` event. `JsonTranslator` reloads only the affected
+  culture's file on `Changed`, replacing its cached entries and re-raising the `"Item[]"`
+  `PropertyChanged` signal on success; a malformed or unreadable file is logged and leaves
+  the last known-good cached content (and the UI) untouched. All `JsonTranslator` state
+  shared between the UI thread and the watcher's reload callbacks is now synchronized, so
+  two files changing together (e.g. a bulk save or a `git pull`) can no longer corrupt the
+  cache or leave the UI stale despite both reloads succeeding.
+  `ITranslationFileProvider.Changed` has a default no-op implementation, so adding it is
+  not a breaking change for a provider that does not watch for changes.
+  ([#191](https://github.com/marcoaoteixeira/Nameless/issues/191))
 - `Nameless.WinApp` self-update: the `AppConfigurationPage` Version card checks GitHub
   Releases for the newest non-draft, non-prerelease `winapp-v*` tag, confirms with the
   user, then downloads, SHA-256-verifies, extracts and swaps the release's files into
@@ -52,6 +66,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   full package (and its transitive `SQLitePCLRaw.bundle_e_sqlite3` native bundle) is
   now referenced only by the sample app, `Nameless.WinApp`.
   ([#162](https://github.com/marcoaoteixeira/Nameless/issues/162))
+
+### Removed
+
+- **BREAKING:** `ResourceTranslator` and `TranslatorOptions.ResourceFullName` are removed.
+  `Nameless.Windows`'s `TranslatorHostFeature` now resolves `JsonTranslator` (backed by
+  `TranslatorOptions.RootPath` and a disk-backed `ITranslationFileProvider`) when a
+  `Translator` configuration section is present, falling back to `NullTranslator.Instance`
+  otherwise. Consumers still referencing `ResourceTranslator`/`ResourceFullName` must switch
+  to the JSON-backed translator and its `RootPath` configuration.
+  ([#190](https://github.com/marcoaoteixeira/Nameless/issues/190))
 
 ### Fixed
 
