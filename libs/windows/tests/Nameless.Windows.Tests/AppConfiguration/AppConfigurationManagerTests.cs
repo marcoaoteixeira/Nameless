@@ -5,7 +5,6 @@ using Nameless.IO;
 using Nameless.IO.Physical;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.IO;
-using Nameless.Windows.AppConfiguration;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
 using SysFileAccess = System.IO.FileAccess;
@@ -14,7 +13,7 @@ using SysFileShare = System.IO.FileShare;
 using SysIOException = System.IO.IOException;
 using SysPath = System.IO.Path;
 
-namespace Nameless.Windows.Tests.AppConfiguration;
+namespace Nameless.Windows.AppConfiguration;
 
 /// <summary>
 ///     Proves the fix for the shutdown-time clobber bug: after an external

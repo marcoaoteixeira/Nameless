@@ -3,10 +3,8 @@ using Nameless.Testing.Tools.Attributes;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.TaskRunner;
-using Nameless.Windows.TaskRunner.UI;
 
-namespace Nameless.Windows.Tests.TaskRunner.UI;
+namespace Nameless.Windows.TaskRunner.UI;
 
 [UnitTest]
 public class TaskRunnerWindowViewModelTests {
