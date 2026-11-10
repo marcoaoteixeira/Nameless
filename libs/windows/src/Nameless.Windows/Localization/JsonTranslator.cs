@@ -8,9 +8,12 @@ using Nameless.Windows.Localization.Json;
 namespace Nameless.Windows.Localization;
 
 /// <summary>
-///     <see cref="ITranslator"/> implementation backed by one flat JSON
-///     dictionary file per culture (<c>{ "Key1": "Text1" }</c>), read
-///     through <see cref="ITranslationFileProvider"/>. Supports runtime
+///     <see cref="ITranslator"/> implementation backed by one JSON file per
+///     culture, read through <see cref="ITranslationFileProvider"/>. On
+///     disk, keys are grouped by section purely for human organization
+///     (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>) — the section
+///     name is never part of the lookup key, so <c>this["Key1"]</c> works
+///     exactly as it would against a flat file. Supports runtime
 ///     culture switching: calling <see cref="SetCulture(CultureInfo)"/>
 ///     raises <see cref="INotifyPropertyChanged.PropertyChanged"/> with
 ///     <c>"Item[]"</c> so all WPF indexer bindings re-evaluate
@@ -36,6 +39,15 @@ namespace Nameless.Windows.Localization;
 public sealed class JsonTranslator : ITranslator, IDisposable {
     // Cached event args — avoids allocating on every culture change
     private static readonly PropertyChangedEventArgs IndexerArgs = new("Item[]");
+
+    // Default JsonSerializerOptions silently keep the *last* value for a
+    // duplicate property — which would hide a duplicate key within the
+    // same entry object, and silently drop an entire duplicate top-level
+    // section, instead of failing loudly like every other shape problem
+    // this type logs. Disallowing duplicates turns both into a JsonException,
+    // which already routes through the existing "log and keep last
+    // known-good state" path below.
+    private static readonly JsonSerializerOptions ParseOptions = new() { AllowDuplicateProperties = false };
 
     private readonly ITranslationFileProvider _fileProvider;
     private readonly ILogger<JsonTranslator> _logger;
@@ -203,29 +215,72 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     }
 
     /// <summary>
-    ///     Parses <paramref name="json"/> into a flat string dictionary,
-    ///     logging the reason (exception, when raised, or a shape
-    ///     mismatch otherwise) and returning <see langword="null"/> when
-    ///     it isn't one.
+    ///     Parses <paramref name="json"/> — a JSON object grouping entries
+    ///     by section (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>)
+    ///     — into a flat lookup dictionary, logging the reason (exception,
+    ///     when raised, a shape mismatch, or a key duplicated within the
+    ///     same section) and returning <see langword="null"/> when parsing
+    ///     fails.
     /// </summary>
+    /// <remarks>
+    ///     A key repeated across two <em>different</em> sections is not an
+    ///     error — the section grouping is a purely organizational,
+    ///     on-disk concern, invisible to lookups — but whichever section
+    ///     is enumerated last silently wins for that flat key, so
+    ///     translation authors must still keep flat keys unique across the
+    ///     whole file.
+    /// </remarks>
     private IReadOnlyDictionary<string, string>? TryParseFile(string key, string json) {
-        Dictionary<string, string>? parsed;
+        Dictionary<string, List<Dictionary<string, string>>>? sections;
         try {
-            parsed = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, ParseOptions);
         }
         catch (JsonException exception) {
-            CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, string>), exception, tag: key);
+            CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, List<Dictionary<string, string>>>), exception, tag: key);
 
             return null;
         }
 
-        if (parsed is null) {
-            CommonLog.Warning(_logger, message: "Translation file deserialized to null — expected a flat string dictionary.", tag: key);
+        if (sections is null) {
+            CommonLog.Warning(_logger, message: "Translation file deserialized to null — expected a JSON object grouping keys by section.", tag: key);
 
             return null;
         }
 
-        return parsed;
+        var flattened = new Dictionary<string, string>();
+        foreach (var (sectionName, entries) in sections) {
+            // Duplicate detection is scoped to this section only — a key
+            // repeated across two different sections is allowed (see
+            // remarks above), so the set is recreated for every section.
+            var seenInSection = new HashSet<string>(StringComparer.Ordinal);
+
+            if (entries is null) {
+                CommonLog.Warning(_logger, message: $"Section '{sectionName}' deserialized to null — expected an array of entry objects.", tag: key);
+
+                return null;
+            }
+
+            for (var index = 0; index < entries.Count; index++) {
+                var entry = entries[index];
+                if (entry is null) {
+                    CommonLog.Warning(_logger, message: $"Entry at index {index} in section '{sectionName}' deserialized to null — expected an object mapping keys to text.", tag: key);
+
+                    return null;
+                }
+
+                foreach (var (entryKey, entryValue) in entry) {
+                    if (!seenInSection.Add(entryKey)) {
+                        CommonLog.Warning(_logger, message: $"Duplicate key '{entryKey}' in section '{sectionName}'.", tag: key);
+
+                        return null;
+                    }
+
+                    flattened[entryKey] = entryValue;
+                }
+            }
+        }
+
+        return flattened;
     }
 
     /// <summary>

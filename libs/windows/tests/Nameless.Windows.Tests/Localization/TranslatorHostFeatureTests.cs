@@ -34,8 +34,8 @@ public sealed class TranslatorHostFeatureTests : IDisposable {
     [Fact]
     public void Register_WithValidRootPath_ResolvesJsonTranslator_ReadingRealFilesForBothCultures() {
         // arrange
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Key1": "Text1" }""");
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "pt-BR.json"), """{ "Key1": "TextoPT-BR" }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "pt-BR.json"), """{ "Section": [ { "Key1": "TextoPT-BR" } ] }""");
 
         var configuration = new ConfigurationManager();
         configuration.AddInMemoryCollection(new Dictionary<string, string?> {

@@ -55,6 +55,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `Nameless.Windows`'s `JsonTranslator` now expects each culture's JSON file to group
+  its keys by section — `{ "SectionName": [ { "Key1": "Text1" } ] }` — instead of a flat
+  `{ "Key1": "Text1" }` object, purely so a human editing the file by hand can find related
+  keys together. The section name is discarded at parse time: the lookup key itself is
+  unchanged (`translator["Key1"]`, never `"SectionName.Key1"`), so this is not a behavior
+  change for consumers. A key duplicated within the same section, or a section name
+  duplicated at the top level, is logged and treated as a malformed file (falls back
+  through the culture chain) instead of silently picking one of the values. Not marked as
+  a breaking change: `JsonTranslator` itself has not shipped in a release yet (see the
+  #191 and #190 entries above). ([#197](https://github.com/marcoaoteixeira/Nameless/issues/197))
 - `AppConfigurationManager.SaveChangesAsync` now writes `app.config` through a
   write-then-atomic-rename (temp file on the same volume, moved into place with
   `overwrite: true`) instead of writing the destination file directly, so a reader
