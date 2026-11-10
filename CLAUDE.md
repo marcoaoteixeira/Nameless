@@ -59,3 +59,7 @@ Work is tracked in GitHub Project "Nameless" (`marcoaoteixeira/Nameless`, projec
 - Starting work (development pipeline) on an issue → move to **In progress**.
 - Work done, ready for human review → move to **In review**, open the PR.
 - PR approved and merged → move to **Done**.
+
+## Dev-Team Detected Facts
+
+- Tracker: `github-issues` (evidence: `github` MCP + `gh auth status` + `gh project list --owner marcoaoteixeira` all succeed) — detected 2026-11-09 by tracker-detection. Delete this line to force re-detection.
