@@ -52,19 +52,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   a restored `app.config` into place, so a later shutdown-time `SaveChangesAsync()`
   persists the reloaded values instead of clobbering the restore with stale,
   pre-reload in-memory data. ([#162](https://github.com/marcoaoteixeira/Nameless/issues/162))
+- `Nameless.Windows`'s `ITranslator<T>` and `ITranslatorFactory`: inject `ITranslator<T>`
+  to get a translator scoped to the section mapped from `T` (its simple name, generic
+  arity stripped), in the style of `ILogger<T>`/`IStringLocalizer<T>` — index it with the
+  section-relative key only, no stack-walking or hand-built key prefix needed.
+  `ITranslatorFactory.Create(Type)`/`Create(string)`, plus a `Create<T>()` extension,
+  cover resolution outside DI (e.g. code-behind). Registered as an open-generic singleton
+  by `TranslatorHostFeature` alongside the root `ITranslator`, with or without a
+  `Translator` configuration section. `Nameless.WinApp`'s request handlers, bootstrap
+  steps, `AppConfigurationPageViewModel` and `MainWindow` now use it; the old
+  reflection/call-stack-based `ITranslator.Get(...)` extension and `CallerInfo` helper
+  are removed from the sample app. ([#199](https://github.com/marcoaoteixeira/Nameless/issues/199))
 
 ### Changed
 
 - `Nameless.Windows`'s `JsonTranslator` now expects each culture's JSON file to group
   its keys by section — `{ "SectionName": [ { "Key1": "Text1" } ] }` — instead of a flat
   `{ "Key1": "Text1" }` object, purely so a human editing the file by hand can find related
-  keys together. The section name is discarded at parse time: the lookup key itself is
-  unchanged (`translator["Key1"]`, never `"SectionName.Key1"`), so this is not a behavior
-  change for consumers. A key duplicated within the same section, or a section name
-  duplicated at the top level, is logged and treated as a malformed file (falls back
-  through the culture chain) instead of silently picking one of the values. Not marked as
-  a breaking change: `JsonTranslator` itself has not shipped in a release yet (see the
-  #191 and #190 entries above). ([#197](https://github.com/marcoaoteixeira/Nameless/issues/197))
+  keys together. **Keys are section-relative on disk** (#199 amends #197's initial shape):
+  `JsonTranslator` flattens each entry to `{Section}_{Key}` (`TranslationKey.Compose`), and
+  that composed string is the actual lookup key (`translator["SectionName_Key1"]`, not
+  `translator["Key1"]`) — the section name is now written once, not twice. A key duplicated
+  within the same section, a section name duplicated at the top level, an empty/white-space
+  section or key name, or two different sections composing to the same flat key (only
+  possible when a section/key name itself contains `_`) is logged and treated as a
+  malformed file (falls back through the culture chain) instead of silently picking one of
+  the values. Not marked as a breaking change: `JsonTranslator` itself has not shipped in a
+  release yet (see the #191 and #190 entries above).
+  ([#197](https://github.com/marcoaoteixeira/Nameless/issues/197),
+  [#199](https://github.com/marcoaoteixeira/Nameless/issues/199))
 - `AppConfigurationManager.SaveChangesAsync` now writes `app.config` through a
   write-then-atomic-rename (temp file on the same volume, moved into place with
   `overwrite: true`) instead of writing the destination file directly, so a reader
