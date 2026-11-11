@@ -259,6 +259,51 @@ public class JsonTranslatorTests {
         logger.VerifyError();
     }
 
+    [Theory]
+    [InlineData("""{ "Section": { "Key1": null } }""")]
+    [InlineData("""{ "Section": { "Key1": "" } }""")]
+    [InlineData("""{ "Section": { "Key1": "   " } }""")]
+    public void Indexer_WhenEntryValueIsNullOrBlankInMoreSpecificCultureFile_LogsAndFallsBackToNeutralOrDefaultFile(string malformedJson) {
+        // arrange: "pt-BR" has a null/empty/whitespace value for "Key1" —
+        // this must not silently overwrite the valid value already merged
+        // in from "pt", which is exactly the bug this guards against.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", malformedJson)
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Section_Key1"];
+
+        // assert
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning(message => message.Contains("Key1", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Indexer_WhenNoFileInFallbackChainDefinesNonBlankValue_ReturnsBracketedKey() {
+        // arrange: every file in the chain has a null/blank value for
+        // "Key1" — there is nothing valid to fall back to, so the
+        // bracketed-key behavior must still apply.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """{ "Section": { "Key1": null } }""")
+            .With("pt", """{ "Section": { "Key1": "" } }""")
+            .With("default", """{ "Section": { "Key1": "   " } }""");
+
+        var sut = CreateSut(fileProvider);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Section_Key1"];
+
+        // assert
+        Assert.Equal("[Section_Key1]", result);
+    }
+
     [Fact]
     public void Indexer_WhenSectionIsNull_LogsAndFallsBackToNeutralOrDefaultFile() {
         // arrange: "pt-BR" declares "SectionA" as JSON null instead of an

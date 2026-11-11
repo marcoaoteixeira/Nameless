@@ -257,6 +257,12 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
                     return null;
                 }
 
+                if (string.IsNullOrWhiteSpace(entryValue)) {
+                    CommonLog.Warning(_logger, message: $"Entry value for key '{entryKey}' in section '{sectionName}' is null, empty or white space — expected non-empty text.", tag: key);
+
+                    return null;
+                }
+
                 var composedKey = TranslationKey.Compose(sectionName, entryKey);
 
                 if (!flattened.TryAdd(composedKey, entryValue)) {
