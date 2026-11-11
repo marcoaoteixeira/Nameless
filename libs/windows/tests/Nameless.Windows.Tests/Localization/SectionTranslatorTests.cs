@@ -222,4 +222,32 @@ public class SectionTranslatorTests {
         // assert
         Assert.Equal(0, root.SubscriberCount);
     }
+
+    [Fact]
+    public void PropertyChanged_RemovingNeverAddedHandler_DoesNotUnsubscribeRealSubscriber() {
+        // arrange: removing a handler that was never added (or already
+        // removed) must not drop a counter below the real subscriber count
+        // and unsubscribe from the root prematurely.
+        var root = new FakeTranslator();
+        var sut = new SectionTranslator(root, "Section");
+
+        var observed = false;
+        void RealHandler(object? sender, PropertyChangedEventArgs args) {
+            observed = true;
+        }
+
+        void NeverAddedHandler(object? sender, PropertyChangedEventArgs args) { }
+
+        sut.PropertyChanged += RealHandler;
+
+        // act
+        sut.PropertyChanged -= NeverAddedHandler;
+        sut.PropertyChanged -= NeverAddedHandler;
+
+        root.Raise();
+
+        // assert
+        Assert.True(observed);
+        Assert.Equal(1, root.SubscriberCount);
+    }
 }

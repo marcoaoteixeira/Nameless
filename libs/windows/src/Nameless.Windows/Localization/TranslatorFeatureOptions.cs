@@ -16,7 +16,13 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
     /// </summary>
     public Type? Translator {
         get => UseAssemblyScan
-            ? ExecuteAssemblyScan(TranslatorType).SingleOrDefault()
+            // Types implementing ITranslator<> are excluded the same way
+            // WithTranslator(Type) rejects them explicitly: registering one
+            // as the root would build a DI cycle (root -> ITranslatorFactory
+            // -> root, ADR-003).
+            ? ExecuteAssemblyScan(TranslatorType)
+                .Where(type => !type.HasInterface(typeof(ITranslator<>)))
+                .SingleOrDefault()
             : field;
         private set;
     }

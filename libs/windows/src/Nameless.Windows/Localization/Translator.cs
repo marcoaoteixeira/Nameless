@@ -31,38 +31,12 @@ namespace Nameless.Windows.Localization;
 [SkipAssemblyScan]
 public sealed class Translator<T> : ITranslator<T> {
     private readonly ITranslator _inner;
-    private readonly Lock _sync = new();
-
-    private PropertyChangedEventHandler? _propertyChanged;
-    private int _subscriberCount;
+    private readonly PropertyChangedForwarder _propertyChangedForwarder;
 
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged {
-        add {
-            lock (_sync) {
-                if (_subscriberCount == 0) {
-                    _inner.PropertyChanged += OnInnerPropertyChanged;
-                }
-
-                _subscriberCount++;
-                _propertyChanged += value;
-            }
-        }
-        remove {
-            lock (_sync) {
-                if (value is null) {
-                    return;
-                }
-
-                _propertyChanged -= value;
-                _subscriberCount--;
-
-                if (_subscriberCount <= 0) {
-                    _subscriberCount = 0;
-                    _inner.PropertyChanged -= OnInnerPropertyChanged;
-                }
-            }
-        }
+        add => _propertyChangedForwarder.Add(value);
+        remove => _propertyChangedForwarder.Remove(value);
     }
 
     /// <inheritdoc />
@@ -85,6 +59,7 @@ public sealed class Translator<T> : ITranslator<T> {
         Throws.When.Null(factory);
 
         _inner = factory.Create(typeof(T));
+        _propertyChangedForwarder = new PropertyChangedForwarder(_inner, this);
     }
 
     /// <inheritdoc />
@@ -95,9 +70,5 @@ public sealed class Translator<T> : ITranslator<T> {
     /// <inheritdoc />
     public void SetCulture(string cultureName) {
         _inner.SetCulture(cultureName);
-    }
-
-    private void OnInnerPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        _propertyChanged?.Invoke(this, e);
     }
 }

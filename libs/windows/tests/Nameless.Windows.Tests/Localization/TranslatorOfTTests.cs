@@ -146,4 +146,32 @@ public class TranslatorOfTTests {
         // assert
         Assert.Equal(0, inner.SubscriberCount);
     }
+
+    [Fact]
+    public void PropertyChanged_RemovingNeverAddedHandler_DoesNotUnsubscribeRealSubscriber() {
+        // arrange: removing a handler that was never added (or already
+        // removed) must not drop a counter below the real subscriber count
+        // and unsubscribe from the inner translator prematurely.
+        var inner = new FakeTranslator();
+        var sut = new Translator<TranslatorOfTTests>(new FakeTranslatorFactory(inner));
+
+        var observed = false;
+        void RealHandler(object? sender, PropertyChangedEventArgs args) {
+            observed = true;
+        }
+
+        void NeverAddedHandler(object? sender, PropertyChangedEventArgs args) { }
+
+        sut.PropertyChanged += RealHandler;
+
+        // act
+        sut.PropertyChanged -= NeverAddedHandler;
+        sut.PropertyChanged -= NeverAddedHandler;
+
+        inner.Raise();
+
+        // assert
+        Assert.True(observed);
+        Assert.Equal(1, inner.SubscriberCount);
+    }
 }

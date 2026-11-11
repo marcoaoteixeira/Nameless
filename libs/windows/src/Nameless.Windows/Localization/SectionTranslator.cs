@@ -22,38 +22,12 @@ namespace Nameless.Windows.Localization;
 internal sealed class SectionTranslator : ITranslator {
     private readonly ITranslator _root;
     private readonly string _section;
-    private readonly Lock _sync = new();
-
-    private PropertyChangedEventHandler? _propertyChanged;
-    private int _subscriberCount;
+    private readonly PropertyChangedForwarder _propertyChangedForwarder;
 
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged {
-        add {
-            lock (_sync) {
-                if (_subscriberCount == 0) {
-                    _root.PropertyChanged += OnRootPropertyChanged;
-                }
-
-                _subscriberCount++;
-                _propertyChanged += value;
-            }
-        }
-        remove {
-            lock (_sync) {
-                if (value is null) {
-                    return;
-                }
-
-                _propertyChanged -= value;
-                _subscriberCount--;
-
-                if (_subscriberCount <= 0) {
-                    _subscriberCount = 0;
-                    _root.PropertyChanged -= OnRootPropertyChanged;
-                }
-            }
-        }
+        add => _propertyChangedForwarder.Add(value);
+        remove => _propertyChangedForwarder.Remove(value);
     }
 
     /// <inheritdoc />
@@ -82,6 +56,7 @@ internal sealed class SectionTranslator : ITranslator {
     public SectionTranslator(ITranslator root, string section) {
         _root = Throws.When.Null(root);
         _section = Throws.When.NullOrWhiteSpace(section);
+        _propertyChangedForwarder = new PropertyChangedForwarder(_root, this);
     }
 
     /// <inheritdoc />
@@ -92,9 +67,5 @@ internal sealed class SectionTranslator : ITranslator {
     /// <inheritdoc />
     public void SetCulture(string cultureName) {
         _root.SetCulture(cultureName);
-    }
-
-    private void OnRootPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        _propertyChanged?.Invoke(this, e);
     }
 }
