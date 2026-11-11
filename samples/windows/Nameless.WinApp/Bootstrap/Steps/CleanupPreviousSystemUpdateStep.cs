@@ -37,7 +37,7 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
     private readonly IApplicationContext _applicationContext;
     private readonly ILogger<CleanupPreviousSystemUpdateStep> _logger;
 
-    private ITranslator T { get; }
+    private ITranslator<CleanupPreviousSystemUpdateStep> T { get; }
 
     /// <inheritdoc />
     public override IReadOnlyCollection<string> Dependencies => [
@@ -46,7 +46,7 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
     ];
 
     /// <inheritdoc />
-    public override string DisplayName => T.Get(nameof(DisplayName));
+    public override string DisplayName => T["DisplayName"];
 
     /// <summary>
     ///     Initializes a new instance of
@@ -64,7 +64,7 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
     /// <param name="logger">
     ///     The logger.
     /// </param>
-    public CleanupPreviousSystemUpdateStep(ISystemUpdateEnvironment environment, IApplicationContext applicationContext, ITranslator translator, ILogger<CleanupPreviousSystemUpdateStep> logger) {
+    public CleanupPreviousSystemUpdateStep(ISystemUpdateEnvironment environment, IApplicationContext applicationContext, ITranslator<CleanupPreviousSystemUpdateStep> translator, ILogger<CleanupPreviousSystemUpdateStep> logger) {
         _environment = Throws.When.Null(environment);
         _applicationContext = Throws.When.Null(applicationContext);
         _logger = Throws.When.Null(logger);
@@ -88,7 +88,7 @@ public class CleanupPreviousSystemUpdateStep : StepBase {
 
     /// <inheritdoc />
     public override Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        progress.ReportInformation(DisplayName, T.Get("CleaningUp"));
+        progress.ReportInformation(DisplayName, T["ExecuteAsync_CleaningUp"]);
 
         DeleteMatchingInstallDirectoryEntries();
         DeleteUpdateDirectoryContents();

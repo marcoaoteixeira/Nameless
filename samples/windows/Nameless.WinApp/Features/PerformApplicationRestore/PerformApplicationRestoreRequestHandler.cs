@@ -40,7 +40,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     private readonly IOptions<LuceneOptions> _luceneOptions;
     private readonly IAppConfigurationManager _appConfigurationManager;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<PerformApplicationRestoreRequestHandler> _translator;
     private readonly ILogger<PerformApplicationRestoreRequestHandler> _logger;
 
     /// <summary>
@@ -78,7 +78,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         IOptions<LuceneOptions> luceneOptions,
         IAppConfigurationManager appConfigurationManager,
         IEventPublisher eventPublisher,
-        ITranslator translator,
+        ITranslator<PerformApplicationRestoreRequestHandler> translator,
         ILogger<PerformApplicationRestoreRequestHandler> logger) {
         _fileManager = Throws.When.Null(fileManager);
         _dbContext = Throws.When.Null(dbContext);
@@ -162,7 +162,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: _translator[$"{Prefix}_RolledBack_Cancelled"]
+                message: _translator[$"HandleAsync_RolledBack_Cancelled"]
             );
 
             return RestoreOutcome.RolledBack;
@@ -174,7 +174,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(_translator[$"{Prefix}_RolledBack"], ex.Message)
+                message: string.Format(_translator[$"HandleAsync_RolledBack"], ex.Message)
             );
 
             return RestoreOutcome.RolledBack;
@@ -385,7 +385,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             // self-heal attempt. The `.bak-*` sibling this leaves behind is
             // called out explicitly so it is not unaccounted for.
             await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                message: string.Format(_translator[$"{Prefix}_SelfHeal_Failure"], destinationPath, ex.Message)
+                message: string.Format(_translator[$"HandleAsync_SelfHeal_Failure"], destinationPath, ex.Message)
             );
         }
     }
@@ -448,7 +448,7 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
                 // attempting to clean up the remaining siblings.
                 try {
                     await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                        message: string.Format(_translator[$"{Prefix}_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
+                        message: string.Format(_translator[$"HandleAsync_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
                     );
                 }
                 catch (Exception publishEx) {
@@ -468,15 +468,13 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
 
     private Task PublishProgressAsync(string suffix) {
         return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{suffix}"]
+            message: _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
         return _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-            message: string.Format(_translator[$"{Prefix}_{suffix}_Failure"], exception.Message)
+            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
         );
     }
-
-    private static string Prefix => $"{nameof(PerformApplicationRestoreRequestHandler)}_{nameof(HandleAsync)}";
 }

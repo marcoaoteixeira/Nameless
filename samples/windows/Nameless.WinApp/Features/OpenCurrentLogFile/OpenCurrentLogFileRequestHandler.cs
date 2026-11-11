@@ -14,9 +14,9 @@ namespace Nameless.WinApp.Features.OpenCurrentLogFile;
 public class OpenCurrentLogFileRequestHandler : IRequestHandler<OpenCurrentLogFileRequest> {
     private readonly IEventPublisher _eventPublisher;
     private readonly IFileManager _fileManager;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<OpenCurrentLogFileRequestHandler> _translator;
 
-    public OpenCurrentLogFileRequestHandler(IEventPublisher eventPublisher, PhysicalFileManagerFactory fileManagerFactory, ITranslator translator) {
+    public OpenCurrentLogFileRequestHandler(IEventPublisher eventPublisher, PhysicalFileManagerFactory fileManagerFactory, ITranslator<OpenCurrentLogFileRequestHandler> translator) {
         _eventPublisher = Throws.When.Null(eventPublisher);
         _fileManager = Throws.When.Null(fileManagerFactory).GetOrCreate(AppContext.BaseDirectory);
         _translator = Throws.When.Null(translator);
@@ -28,8 +28,8 @@ public class OpenCurrentLogFileRequestHandler : IRequestHandler<OpenCurrentLogFi
 
         if (currentFile is null) {
             await _eventPublisher.PublishWarningAsync<SnackBarNotificationEvent>(
-                title: _translator.Get("Notify_Missing_Log_File_Title"),
-                message: _translator.Get("Notify_Missing_Log_File_Message")
+                title: _translator["HandleAsync_Notify_Missing_Log_File_Title"],
+                message: _translator["HandleAsync_Notify_Missing_Log_File_Message"]
             );
 
             return;

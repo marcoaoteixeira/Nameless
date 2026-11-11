@@ -28,7 +28,7 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
     private readonly IIndexProvider _indexProvider;
     private readonly IOptions<LuceneOptions> _luceneOptions;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<PerformApplicationBackupRequestHandler> _translator;
 
     /// <summary>
     ///     Initializes a new instance of
@@ -62,7 +62,7 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
         IIndexProvider indexProvider,
         IOptions<LuceneOptions> luceneOptions,
         IEventPublisher eventPublisher,
-        ITranslator translator) {
+        ITranslator<PerformApplicationBackupRequestHandler> translator) {
         _applicationContext = Throws.When.Null(applicationContext);
         _appConfigurationManager = Throws.When.Null(appConfigurationManager);
         _dbContext = Throws.When.Null(dbContext);
@@ -182,7 +182,7 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
 
         if (!configFile.Exists) {
             await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                message: _translator[$"{Prefix}_CopyingConfigurationFile_Missing"]
+                message: _translator["HandleAsync_CopyingConfigurationFile_Missing"]
             );
 
             return;
@@ -294,15 +294,13 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
 
     private Task PublishProgressAsync(string suffix) {
         return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{suffix}"]
+            message: _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
         return _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-            message: string.Format(_translator[$"{Prefix}_{suffix}_Failure"], exception.Message)
+            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
         );
     }
-
-    private static string Prefix => $"{nameof(PerformApplicationBackupRequestHandler)}_{nameof(HandleAsync)}";
 }

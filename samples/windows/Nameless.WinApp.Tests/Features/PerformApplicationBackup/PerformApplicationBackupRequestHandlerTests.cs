@@ -68,7 +68,7 @@ public class PerformApplicationBackupRequestHandlerTests {
             indexProvider: indexProviderMock.Object,
             luceneOptions: luceneOptions,
             eventPublisher: eventPublisherMock.Object,
-            translator: new FakeTranslator()
+            translator: FakeTranslator.For<PerformApplicationBackupRequestHandler>()
         );
 
         return new Sut {

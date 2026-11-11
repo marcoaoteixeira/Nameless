@@ -47,7 +47,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
     private bool _initialized;
 
-    private ITranslator T { get; }
+    private ITranslator<AppConfigurationPageViewModel> T { get; }
 
     [ObservableProperty]
     public partial ComboBoxItem CurrentTheme { get; set; } = ComboBoxItemHelper.EmptyComboBoxItem;
@@ -79,7 +79,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
         IEventPublisher eventPublisher,
         IFileSystemDialog fileSystemDialog,
         IMessageDialog messageDialog,
-        ITranslator translator,
+        ITranslator<AppConfigurationPageViewModel> translator,
         IMediator mediator,
         ISystemUpdateEnvironment systemUpdateEnvironment,
         ITaskRunner taskRunner) {
@@ -130,7 +130,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
             if (!check.IsUpdateAvailable) {
                 await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
-                    message: T.Get("UpToDate", check.Current.Format(includePrefix: true))
+                    message: T["PerformSystemUpdateAsync_UpToDate", check.Current.Format(includePrefix: true)]
                 );
 
                 return;
@@ -139,13 +139,13 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             var release = check.Release!;
 
             var confirmation = _messageDialog.ShowQuestion(
-                title: T.Get("Confirm_Title"),
-                message: T.Get(
-                    key: "Confirm_Message",
+                title: T["PerformSystemUpdateAsync_Confirm_Title"],
+                message: T[
+                    "PerformSystemUpdateAsync_Confirm_Message",
                     check.Current.Format(includePrefix: true),
                     release.Version.Format(includePrefix: true),
                     release.HtmlUrl?.ToString() ?? string.Empty
-                )
+                ]
             );
 
             if (confirmation != MessageDialogResult.Yes) { return; }
@@ -153,7 +153,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             SystemUpdateOutcome? outcome = null;
 
             await _taskRunner.CreateBuilder()
-                             .SetName(T.Get("TaskRunnerWindow_Title"))
+                             .SetName(T["PerformSystemUpdateAsync_TaskRunnerWindow_Title"])
                              .SubscribeFor<SystemUpdateProgressNotificationEvent>()
                              .SetDelegate(async ct => outcome = await _mediator.ExecuteAsync(new PerformSystemUpdateRequest(release), ct))
                              .RunAsync();
@@ -173,21 +173,21 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                 // not shut down — the old process keeps working from its
                 // in-memory image until the user reopens it by hand.
                 await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                    message: T.Get("RelaunchFailed", ex.Message)
+                    message: T["PerformSystemUpdateAsync_RelaunchFailed", ex.Message]
                 );
             }
         }
         catch (GitHubReleaseClientException ex) when (ex.IsRateLimited) {
             var resetsAt = ex.RateLimitResetsAt?.ToLocalTime().ToString("f", CultureInfo.CurrentCulture) ??
-                           T.Get("RateLimited_UnknownReset");
+                           T["PerformSystemUpdateAsync_RateLimited_UnknownReset"];
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T.Get("RateLimited", resetsAt)
+                message: T["PerformSystemUpdateAsync_RateLimited", resetsAt]
             );
         }
         catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T.Get("Failure", ex.Message)
+                message: T["PerformSystemUpdateAsync_Failure", ex.Message]
             );
         }
     }
@@ -210,20 +210,20 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             var outcome = await _taskRunner.CreateBuilder()
-                                           .SetName(T.Get("TaskRunnerWindow_Title"))
+                                           .SetName(T["PerformApplicationBackupAsync_TaskRunnerWindow_Title"])
                                            .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                                            .SetDelegate(async ct => backupFilePath = await _mediator.ExecuteAsync(new PerformApplicationBackupRequest(), ct))
                                            .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
                 await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
-                    message: T.Get("Success", backupFilePath)
+                    message: T["PerformApplicationBackupAsync_Success", backupFilePath]
                 );
             }
             // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T.Get("Failure", ex.Message)
+                message: T["PerformApplicationBackupAsync_Failure", ex.Message]
             );
         }
     }
@@ -231,7 +231,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
     [RelayCommand]
     private async Task PerformApplicationRestoreAsync() {
         var filePath = _fileSystemDialog.OpenFile(o => {
-            o.Title = T.Get("SelectFile_Title");
+            o.Title = T["PerformApplicationRestoreAsync_SelectFile_Title"];
             o.Filter = "Zip files (*.zip)|*.zip";
         }).FirstOrDefault();
 
@@ -241,7 +241,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
         try {
             await _taskRunner.CreateBuilder()
-                             .SetName(T.Get("TaskRunnerWindow_Title"))
+                             .SetName(T["PerformApplicationRestoreAsync_TaskRunnerWindow_Title"])
                              .SubscribeFor<BackupRecoveryProgressNotificationEvent>()
                              .SetDelegate(async ct => restoreOutcome = await _mediator.ExecuteAsync(new PerformApplicationRestoreRequest(filePath), ct))
                              .RunAsync();
@@ -252,8 +252,8 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             if (restoreOutcome is not RestoreOutcome.Completed) { return; }
 
             var confirmation = _messageDialog.ShowQuestion(
-                title: T.Get("ConfirmRestart_Title"),
-                message: T.Get("ConfirmRestart_Message")
+                title: T["PerformApplicationRestoreAsync_ConfirmRestart_Title"],
+                message: T["PerformApplicationRestoreAsync_ConfirmRestart_Message"]
             );
 
             if (confirmation != MessageDialogResult.Yes) { return; }
@@ -263,7 +263,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             System.Windows.Application.Current.Shutdown();
         } catch (Exception ex) {
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: T.Get("Failure", ex.Message)
+                message: T["PerformApplicationRestoreAsync_Failure", ex.Message]
             );
         }
     }

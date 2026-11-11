@@ -27,7 +27,7 @@ public partial class MainWindow : INavigationWindow {
 
     private bool _initialized;
 
-    private ITranslator T { get; }
+    private ITranslator<MainWindow> T { get; }
 
     public MainWindowViewModel ViewModel { get; }
 
@@ -35,7 +35,7 @@ public partial class MainWindow : INavigationWindow {
         MainWindowViewModel viewModel,
         IAppConfigurationManager appConfigurationManager,
         IContentDialogService contentDialogService,
-        ITranslator translator,
+        ITranslator<MainWindow> translator,
         IMessageDialog messageDialog,
         INavigationService navigationService,
         INavigationViewPageProvider navigationViewPageProvider,
@@ -89,8 +89,8 @@ public partial class MainWindow : INavigationWindow {
         }
 
         var result = _messageDialog.ShowQuestion(
-            title: T["MainWindow_ConfirmApplicationExit_MessageBox_Title"],
-            message: T["MainWindow_ConfirmApplicationExit_MessageBox_Message"],
+            title: T["ConfirmApplicationExit_MessageBox_Title"],
+            message: T["ConfirmApplicationExit_MessageBox_Message"],
             buttons: MessageDialogButtons.YesNoCancel
         );
 

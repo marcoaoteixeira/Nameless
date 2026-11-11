@@ -61,7 +61,7 @@ public class CleanupPreviousSystemUpdateStepTests {
         var step = new CleanupPreviousSystemUpdateStep(
             environment: environment,
             applicationContext: applicationContextMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<CleanupPreviousSystemUpdateStep>(),
             logger: NullLogger<CleanupPreviousSystemUpdateStep>.Instance
         );
 
@@ -129,7 +129,7 @@ public class CleanupPreviousSystemUpdateStepTests {
         var step = new CleanupPreviousSystemUpdateStep(
             environment: environment,
             applicationContext: applicationContextMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<CleanupPreviousSystemUpdateStep>(),
             logger: NullLogger<CleanupPreviousSystemUpdateStep>.Instance
         );
 

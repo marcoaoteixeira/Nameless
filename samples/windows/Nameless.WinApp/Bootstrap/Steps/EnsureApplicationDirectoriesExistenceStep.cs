@@ -16,10 +16,10 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
 
     private readonly IApplicationContext _applicationContext;
 
-    private ITranslator T { get; }
-    
+    private ITranslator<EnsureApplicationDirectoriesExistenceStep> T { get; }
+
     /// <inheritdoc />
-    public override string DisplayName => T.Get(nameof(DisplayName));
+    public override string DisplayName => T["DisplayName"];
 
     /// <summary>
     ///     Initializes a new instance of
@@ -31,7 +31,7 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
     /// <param name="translator">
     ///     The translator service.
     /// </param>
-    public EnsureApplicationDirectoriesExistenceStep(IApplicationContext applicationContext, ITranslator translator) {
+    public EnsureApplicationDirectoriesExistenceStep(IApplicationContext applicationContext, ITranslator<EnsureApplicationDirectoriesExistenceStep> translator) {
         _applicationContext = Throws.When.Null(applicationContext);
 
         T = Throws.When.Null(translator);
@@ -39,19 +39,19 @@ public class EnsureApplicationDirectoriesExistenceStep : StepBase {
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<StepProgress> progress, CancellationToken cancellationToken) {
-        progress.ReportInformation(DisplayName, T.Get("CreateBackupDirectory"));
+        progress.ReportInformation(DisplayName, T["ExecuteAsync_CreateBackupDirectory"]);
         _applicationContext.FileManager.GetBackupDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
-        progress.ReportInformation(DisplayName, T.Get("CreateDatabaseDirectory"));
+        progress.ReportInformation(DisplayName, T["ExecuteAsync_CreateDatabaseDirectory"]);
         _applicationContext.FileManager.GetDatabaseDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
-        progress.ReportInformation(DisplayName, T.Get("CreateTemporaryDirectory"));
+        progress.ReportInformation(DisplayName, T["ExecuteAsync_CreateTemporaryDirectory"]);
         _applicationContext.FileManager.GetTemporaryDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
 
-        progress.ReportInformation(DisplayName, T.Get("CreateUpdateDirectory"));
+        progress.ReportInformation(DisplayName, T["ExecuteAsync_CreateUpdateDirectory"]);
         _applicationContext.FileManager.GetUpdateDirectory().Create();
         await Task.Delay(STEP_DELAY, cancellationToken);
     }
