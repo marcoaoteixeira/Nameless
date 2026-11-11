@@ -49,6 +49,14 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
         Throws.When.OpenGenericType(type);
         Throws.When.NonAssignableFrom(type, lhs: TranslatorType);
 
+        // Registering a Translator<X> as the root would build a DI cycle:
+        // root -> ITranslatorFactory -> root (ADR-003).
+        if (type.HasInterface(typeof(ITranslator<>))) {
+            throw new ArgumentException(
+                $"'{type.GetPrettyName()}' implements ITranslator<T> and cannot be the root ITranslator.",
+                nameof(type));
+        }
+
         Translator = type;
 
         return this;
