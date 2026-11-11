@@ -86,8 +86,7 @@ internal static class AppHostFeatureCollectionExtensions {
                    .Add(new PhysicalFileManagerHostFeature())
                    .Add(new ResilienceHostFeature())
                    .Add(new SerilogHostFeature())
-                   .Add(new TranslatorHostFeature())
-                   .Add(new WindowHostFeature());
+                   .Add(new TranslatorHostFeature());
         }
     }
 }

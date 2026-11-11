@@ -125,9 +125,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
     /// <inheritdoc />
     public void Dispose() {
-        if (_disposed) {
-            return;
-        }
+        if (_disposed) { return; }
 
         _disposed = true;
 
@@ -137,9 +135,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     /// <inheritdoc />
     public void SetCulture(CultureInfo culture) {
         lock (_sync) {
-            if (Equals(_currentCulture, culture)) {
-                return;
-            }
+            if (Equals(_currentCulture, culture)) { return; }
 
             // Invalidates the cached dictionary — the next lookup resolves
             // the fallback chain again, now against the new culture.
@@ -165,11 +161,11 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
     private IReadOnlyDictionary<string, string> GetTranslations() {
         lock (_sync) {
-            return _translations ??= LoadTranslations();
+            return _translations ??= FetchTranslations();
         }
     }
 
-    private IReadOnlyDictionary<string, string> LoadTranslations() {
+    private IReadOnlyDictionary<string, string> FetchTranslations() {
         // Merges per-key, not per-file: loading in reverse fallback order
         // (default first, then neutral, then specific) means a more
         // specific file's entries overwrite less specific ones only for
@@ -180,9 +176,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
         foreach (var key in GetCultureFallbackChain(_currentCulture).Reverse()) {
             var entries = GetFileEntries(key);
-            if (entries is null) {
-                continue;
-            }
+            if (entries is null) { continue; }
 
             foreach (var (translationKey, translationValue) in entries) {
                 merged[translationKey] = translationValue;
@@ -199,18 +193,11 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     ///     the result on success.
     /// </summary>
     private IReadOnlyDictionary<string, string>? GetFileEntries(string key) {
-        if (_fileCache.TryGetValue(key, out var cached)) {
-            return cached;
-        }
-
-        if (!_fileProvider.TryRead(key, out var json)) {
-            return null;
-        }
+        if (_fileCache.TryGetValue(key, out var cached)) { return cached; }
+        if (!_fileProvider.TryRead(key, out var json)) { return null; }
 
         var parsed = TryParseFile(key, json);
-        if (parsed is not null) {
-            _fileCache[key] = parsed;
-        }
+        if (parsed is not null) { _fileCache[key] = parsed; }
 
         return parsed;
     }
@@ -236,9 +223,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     /// </remarks>
     private IReadOnlyDictionary<string, string>? TryParseFile(string key, string json) {
         Dictionary<string, Dictionary<string, string>>? sections;
-        try {
-            sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, ParseOptions);
-        }
+        try { sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, ParseOptions); }
         catch (JsonException exception) {
             CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, Dictionary<string, string>>), exception, tag: key);
 
