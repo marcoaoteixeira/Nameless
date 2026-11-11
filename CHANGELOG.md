@@ -105,6 +105,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `JsonTranslator` letting a `null`/empty/whitespace translation value in a more
+  specific culture file (e.g. `pt-BR`) silently overwrite a valid value already merged
+  in from a less specific culture (`pt`/`default`), since `System.Text.Json` deserializes
+  a JSON `null` into a `string` dictionary value without error. `TryParseFile` now treats
+  a blank entry value the same as every other malformed shape it already rejects: logged
+  at Warning and the whole file's parse fails, so the merge falls back to the next
+  culture in the chain instead of rendering `"[key]"`.
+  ([#201](https://github.com/marcoaoteixeira/Nameless/issues/201))
 - Fixed `PerformSystemUpdateRequestHandlerTests.HandleAsync_HappyPath_...` failing
   under Visual Studio/Rider Test Explorer (`RolledBack` instead of `Completed`). The
   test used `Environment.ProcessPath` to get a real PE to stamp as the fake update
