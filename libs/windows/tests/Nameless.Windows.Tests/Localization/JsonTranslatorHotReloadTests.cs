@@ -66,7 +66,7 @@ public class JsonTranslatorHotReloadTests {
     public void Changed_WithValidContentForCurrentCultureFile_ReloadsAndRaisesIndexerPropertyChanged() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         using var sut = CreateSut(fileProvider);
 
@@ -80,7 +80,7 @@ public class JsonTranslatorHotReloadTests {
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
 
         // act: edit the file in place and notify, as a real watcher would.
-        fileProvider.With("default", """{ "Section": [ { "Key1": "Text1 (edited)" } ] }""");
+        fileProvider.With("default", """{ "Section": { "Key1": "Text1 (edited)" } }""");
         fileProvider.Raise("default");
 
         // assert
@@ -92,7 +92,7 @@ public class JsonTranslatorHotReloadTests {
     public void Changed_WithMalformedJson_LogsKeepsLastKnownGoodState_AndDoesNotRaisePropertyChanged() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         using var sut = CreateSut(fileProvider, logger);
@@ -121,7 +121,7 @@ public class JsonTranslatorHotReloadTests {
     public void Changed_WithInvalidJsonSyntax_LogsKeepsLastKnownGoodState_AndDoesNotRaisePropertyChanged() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         using var sut = CreateSut(fileProvider, logger);
@@ -148,8 +148,8 @@ public class JsonTranslatorHotReloadTests {
         // arrange: currently resolving against "en-US" → "en" → "default".
         // "pt-BR" is unrelated to what is currently displayed.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""")
-            .With("pt-BR", """{ "Section": [ { "Key1": "TextoPT-BR" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""")
+            .With("pt-BR", """{ "Section": { "Key1": "TextoPT-BR" } }""");
 
         using var sut = CreateSut(fileProvider);
 
@@ -168,7 +168,7 @@ public class JsonTranslatorHotReloadTests {
         // act: "pt-BR" changes on disk while out of chain — evicted from
         // the cache without a reload or a refresh signal, since nothing
         // currently displayed depends on it.
-        fileProvider.With("pt-BR", """{ "Section": [ { "Key1": "TextoPT-BR (edited)" } ] }""");
+        fileProvider.With("pt-BR", """{ "Section": { "Key1": "TextoPT-BR (edited)" } }""");
         fileProvider.Raise("pt-BR");
 
         Assert.False(raised);
@@ -185,7 +185,7 @@ public class JsonTranslatorHotReloadTests {
     public void Changed_WhenFileNoLongerReadable_LogsKeepsLastKnownGoodState_AndDoesNotRaisePropertyChanged() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         using var sut = CreateSut(fileProvider, logger);
@@ -217,9 +217,9 @@ public class JsonTranslatorHotReloadTests {
         // and _translations fields OnFileChanged mutates without any
         // synchronization before this fix.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("en-US", """{ "Section": [ { "Key1": "Specific" } ] }""")
-            .With("en", """{ "Section": [ { "Key1": "Neutral", "Key2": "NeutralOnly" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Default" } ] }""");
+            .With("en-US", """{ "Section": { "Key1": "Specific" } }""")
+            .With("en", """{ "Section": { "Key1": "Neutral", "Key2": "NeutralOnly" } }""")
+            .With("default", """{ "Section": { "Key1": "Default" } }""");
 
         using var sut = CreateSut(fileProvider);
 
@@ -238,8 +238,8 @@ public class JsonTranslatorHotReloadTests {
         }
 
         var cancellationToken = TestContext.Current.CancellationToken;
-        var taskA = Task.Run(() => EditAndRaise("en-US", """{ "Section": [ { "Key1": "Specific (edited)" } ] }"""), cancellationToken);
-        var taskB = Task.Run(() => EditAndRaise("en", """{ "Section": [ { "Key1": "Neutral (edited)", "Key2": "NeutralOnly (edited)" } ] }"""), cancellationToken);
+        var taskA = Task.Run(() => EditAndRaise("en-US", """{ "Section": { "Key1": "Specific (edited)" } }"""), cancellationToken);
+        var taskB = Task.Run(() => EditAndRaise("en", """{ "Section": { "Key1": "Neutral (edited)", "Key2": "NeutralOnly (edited)" } }"""), cancellationToken);
 
         await Task.WhenAll(taskA, taskB);
 
@@ -255,7 +255,7 @@ public class JsonTranslatorHotReloadTests {
     public void Dispose_UnsubscribesFromProviderChanged_SoFurtherRaisesHaveNoEffect() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -269,7 +269,7 @@ public class JsonTranslatorHotReloadTests {
         // act
         sut.Dispose();
 
-        fileProvider.With("default", """{ "Section": [ { "Key1": "Text1 (edited)" } ] }""");
+        fileProvider.With("default", """{ "Section": { "Key1": "Text1 (edited)" } }""");
         fileProvider.Raise("default");
 
         // assert: disposed translator no longer reacts.

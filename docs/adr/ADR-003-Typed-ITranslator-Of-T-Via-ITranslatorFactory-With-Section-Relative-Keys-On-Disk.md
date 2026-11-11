@@ -86,7 +86,7 @@ Constraints:
 
 * **C1. Keys on disk are section-relative. `JsonTranslator` flattens each entry to
   `{Section}_{Key}`, and `ITranslator<T>` composes the same string** (chosen). On disk,
-  `"AppConfigurationPage": [ { "Title": "..." } ]` flattens to the lookup key `AppConfigurationPage_Title`,
+  `"AppConfigurationPage": { "Title": "..." }` flattens to the lookup key `AppConfigurationPage_Title`,
   which is the exact key used today. The separator `_` was chosen so that **every composed key equals
   today's full key**. All 115 keys in both culture files already start with `{their section}_`, which was
   checked mechanically on the #197 branch. So:

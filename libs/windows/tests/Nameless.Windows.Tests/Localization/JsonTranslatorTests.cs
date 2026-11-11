@@ -52,7 +52,7 @@ public class JsonTranslatorTests {
     public void Indexer_WhenKeyExistsInDefaultFile_ReturnsItsValue() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -68,9 +68,9 @@ public class JsonTranslatorTests {
         // arrange: all three files define "Key1" with a different value —
         // only the most specific one (pt-BR) must win.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("pt-BR", """{ "Section": [ { "Key1": "TextoPT-BR" } ] }""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt-BR", """{ "Section": { "Key1": "TextoPT-BR" } }""")
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
         sut.SetCulture("pt-BR");
@@ -88,9 +88,9 @@ public class JsonTranslatorTests {
         // still resolve from "pt", and "Key3" from "default", instead of
         // the whole pt-BR file blocking fallback for keys it lacks.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("pt-BR", """{ "Section": [ { "Key1": "TextoPT-BR" } ] }""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT", "Key2": "TextoPT2" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1", "Key2": "Text2", "Key3": "Text3" } ] }""");
+            .With("pt-BR", """{ "Section": { "Key1": "TextoPT-BR" } }""")
+            .With("pt", """{ "Section": { "Key1": "TextoPT", "Key2": "TextoPT2" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1", "Key2": "Text2", "Key3": "Text3" } }""");
 
         var sut = CreateSut(fileProvider);
         sut.SetCulture("pt-BR");
@@ -111,8 +111,8 @@ public class JsonTranslatorTests {
         var fileProvider = new FakeTranslationFileProvider()
             .With("default", """
                 {
-                    "SectionA": [ { "Key": "FromSectionA" } ],
-                    "SectionB": [ { "Key": "FromSectionB" } ]
+                    "SectionA": { "Key": "FromSectionA" },
+                    "SectionB": { "Key": "FromSectionB" }
                 }
                 """);
 
@@ -125,45 +125,15 @@ public class JsonTranslatorTests {
 
     [Fact]
     public void Indexer_WhenKeyDuplicatedWithinTheSameSection_LogsAndFallsBackToNeutralOrDefaultFile() {
-        // arrange: "pt-BR" repeats "Key1" within "SectionA" itself — this
-        // must fail loudly (logged) and fall back, exactly like a
-        // malformed file, instead of silently picking one of the values.
+        // arrange: "pt-BR" repeats "Key1" within "SectionA" — default
+        // JsonSerializerOptions would silently keep the last value
+        // ("Second") instead of failing loudly, so this must be logged and
+        // fall back exactly like a malformed file, instead of silently
+        // picking one of the values.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("pt-BR", """
-                {
-                    "SectionA": [
-                        { "Key1": "First" },
-                        { "Key1": "Second" }
-                    ]
-                }
-                """)
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
-
-        var logger = new InMemoryLogger<JsonTranslator>();
-        var sut = CreateSut(fileProvider, logger);
-        sut.SetCulture("pt-BR");
-
-        // act
-        var result = sut["Section_Key1"];
-
-        // assert: falls back to "pt", and the duplicate was actually
-        // logged, not silently resolved.
-        Assert.Equal("TextoPT", result);
-        logger.VerifyWarning(message => message.Contains("Key1", StringComparison.Ordinal)
-                                      && message.Contains("SectionA", StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public void Indexer_WhenKeyDuplicatedWithinTheSameEntryObject_LogsAndFallsBackToNeutralOrDefaultFile() {
-        // arrange: "pt-BR" repeats "Key1" within the *same* entry object —
-        // default JsonSerializerOptions would silently keep the last
-        // value ("Second") without ever reaching the seenInSection check,
-        // so this must fail loudly (logged) and fall back instead.
-        var fileProvider = new FakeTranslationFileProvider()
-            .With("pt-BR", """{ "SectionA": [ { "Key1": "First", "Key1": "Second" } ] }""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt-BR", """{ "SectionA": { "Key1": "First", "Key1": "Second" } }""")
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -174,8 +144,7 @@ public class JsonTranslatorTests {
 
         // assert: falls back to "pt". With AllowDuplicateProperties
         // disabled, this is caught as a JsonException and logged at
-        // Error (not reaching the seenInSection warning path at all) —
-        // same route a malformed file already takes.
+        // Error — same route a malformed file already takes.
         Assert.Equal("TextoPT", result);
         logger.VerifyError();
     }
@@ -192,12 +161,12 @@ public class JsonTranslatorTests {
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", """
                 {
-                    "A_B": [ { "C": "First" } ],
-                    "A": [ { "B_C": "Second" } ]
+                    "A_B": { "C": "First" },
+                    "A": { "B_C": "Second" }
                 }
                 """)
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -213,8 +182,8 @@ public class JsonTranslatorTests {
     }
 
     [Theory]
-    [InlineData("""{ "": [ { "Key1": "First" } ] }""")]
-    [InlineData("""{ "   ": [ { "Key1": "First" } ] }""")]
+    [InlineData("""{ "": { "Key1": "First" } }""")]
+    [InlineData("""{ "   ": { "Key1": "First" } }""")]
     public void Indexer_WhenSectionNameIsEmptyOrWhiteSpace_LogsAndFallsBackToNeutralOrDefaultFile(string malformedJson) {
         // arrange: an empty or white-space section name is a shape
         // mismatch — TranslationKey.Compose has nothing meaningful to
@@ -222,8 +191,8 @@ public class JsonTranslatorTests {
         // the same way every other shape mismatch this method logs does.
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", malformedJson)
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -238,15 +207,15 @@ public class JsonTranslatorTests {
     }
 
     [Theory]
-    [InlineData("""{ "SectionA": [ { "": "First" } ] }""")]
-    [InlineData("""{ "SectionA": [ { "   ": "First" } ] }""")]
+    [InlineData("""{ "SectionA": { "": "First" } }""")]
+    [InlineData("""{ "SectionA": { "   ": "First" } }""")]
     public void Indexer_WhenEntryKeyIsEmptyOrWhiteSpace_LogsAndFallsBackToNeutralOrDefaultFile(string malformedJson) {
         // arrange: an empty or white-space entry key is a shape mismatch
         // for the same reason as an empty section name above.
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", malformedJson)
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -269,12 +238,12 @@ public class JsonTranslatorTests {
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", """
                 {
-                    "SectionA": [ { "Key1": "First" } ],
-                    "SectionA": [ { "Key2": "Second" } ]
+                    "SectionA": { "Key1": "First" },
+                    "SectionA": { "Key2": "Second" }
                 }
                 """)
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -293,35 +262,13 @@ public class JsonTranslatorTests {
     [Fact]
     public void Indexer_WhenSectionIsNull_LogsAndFallsBackToNeutralOrDefaultFile() {
         // arrange: "pt-BR" declares "SectionA" as JSON null instead of an
-        // array of entry objects — this must fail loudly (logged) and
-        // fall back, same as every other shape mismatch this method logs,
-        // instead of silently treating it as an empty section.
+        // object mapping keys to text — this must fail loudly (logged)
+        // and fall back, same as every other shape mismatch this method
+        // logs, instead of silently treating it as an empty section.
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", """{ "SectionA": null }""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
-
-        var logger = new InMemoryLogger<JsonTranslator>();
-        var sut = CreateSut(fileProvider, logger);
-        sut.SetCulture("pt-BR");
-
-        // act
-        var result = sut["Section_Key1"];
-
-        // assert
-        Assert.Equal("TextoPT", result);
-        logger.VerifyWarning(message => message.Contains("SectionA", StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public void Indexer_WhenEntryIsNull_LogsAndFallsBackToNeutralOrDefaultFile() {
-        // arrange: "pt-BR" declares an entry inside "SectionA" as JSON
-        // null instead of an object — this must fail loudly (logged) and
-        // fall back instead of silently treating it as an empty entry.
-        var fileProvider = new FakeTranslationFileProvider()
-            .With("pt-BR", """{ "SectionA": [ null ] }""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var logger = new InMemoryLogger<JsonTranslator>();
         var sut = CreateSut(fileProvider, logger);
@@ -342,8 +289,8 @@ public class JsonTranslatorTests {
         // "pt" instead of crashing on every binding re-read.
         var fileProvider = new FakeTranslationFileProvider()
             .With("pt-BR", """[ "not", "an", "object" ]""")
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
         sut.SetCulture("pt-BR");
@@ -359,8 +306,8 @@ public class JsonTranslatorTests {
     public void Indexer_WhenSpecificCultureFileMissing_FallsBackToNeutralCultureFile() {
         // arrange: no "pt-BR" file, but "pt" and "default" exist.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
         sut.SetCulture("pt-BR");
@@ -376,7 +323,7 @@ public class JsonTranslatorTests {
     public void Indexer_WhenNoCultureFilesExist_FallsBackToDefaultFile() {
         // arrange: neither "pt-BR" nor "pt" exist.
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
         sut.SetCulture("pt-BR");
@@ -392,7 +339,7 @@ public class JsonTranslatorTests {
     public void Indexer_WhenKeyAbsentFromResolvedFile_ReturnsBracketedKey() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -407,7 +354,7 @@ public class JsonTranslatorTests {
     public void Indexer_WithParameters_AppliesStringFormatSubstitution() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Greeting": "Hello, {0}" } ] }""");
+            .With("default", """{ "Section": { "Greeting": "Hello, {0}" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -422,7 +369,7 @@ public class JsonTranslatorTests {
     public void Indexer_WithParameters_WhenPlaceholderUnsatisfied_ThrowsFormatException() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Greeting": "Hello, {0}" } ] }""");
+            .With("default", """{ "Section": { "Greeting": "Hello, {0}" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -434,8 +381,8 @@ public class JsonTranslatorTests {
     public void SetCulture_InvalidatesCachedTranslations_SoTheNextLookupResolvesAgainstTheNewCulture() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("pt", """{ "Section": { "Key1": "TextoPT" } }""")
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
 
@@ -457,7 +404,7 @@ public class JsonTranslatorTests {
     public void SetCulture_RaisesIndexerPropertyChanged_SoBoundControlsRefresh() {
         // arrange
         var fileProvider = new FakeTranslationFileProvider()
-            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+            .With("default", """{ "Section": { "Key1": "Text1" } }""");
 
         var sut = CreateSut(fileProvider);
 
