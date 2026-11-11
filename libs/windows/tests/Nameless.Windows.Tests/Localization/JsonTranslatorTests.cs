@@ -57,7 +57,7 @@ public class JsonTranslatorTests {
         var sut = CreateSut(fileProvider);
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("Text1", result);
@@ -76,7 +76,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("TextoPT-BR", result);
@@ -96,30 +96,31 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act & assert
-        Assert.Equal("TextoPT-BR", sut["Key1"]);
-        Assert.Equal("TextoPT2", sut["Key2"]);
-        Assert.Equal("Text3", sut["Key3"]);
+        Assert.Equal("TextoPT-BR", sut["Section_Key1"]);
+        Assert.Equal("TextoPT2", sut["Section_Key2"]);
+        Assert.Equal("Text3", sut["Section_Key3"]);
     }
 
     [Fact]
-    public void Indexer_WhenKeysAreGroupedIntoDifferentSections_BothSectionsResolveByTheirOwnUnprefixedKey() {
-        // arrange: the on-disk grouping is a purely organizational
-        // concern — the lookup key is never prefixed with its section
-        // name, so two different sections' keys coexist in the flat
-        // lookup as long as the keys themselves are unique.
+    public void Indexer_WhenSameRelativeKeyExistsInDifferentSections_EachComposesToItsOwnDistinctKey() {
+        // arrange: the section name is part of the flat lookup key
+        // (TranslationKey.Compose), so the same section-relative key in
+        // two different sections composes to two distinct flat keys and
+        // never collides — unlike the pre-#199 shape, where the flat key
+        // was the section-relative key alone.
         var fileProvider = new FakeTranslationFileProvider()
             .With("default", """
                 {
-                    "SectionA": [ { "Key1": "FromSectionA" } ],
-                    "SectionB": [ { "Key2": "FromSectionB" } ]
+                    "SectionA": [ { "Key": "FromSectionA" } ],
+                    "SectionB": [ { "Key": "FromSectionB" } ]
                 }
                 """);
 
         var sut = CreateSut(fileProvider);
 
         // act & assert
-        Assert.Equal("FromSectionA", sut["Key1"]);
-        Assert.Equal("FromSectionB", sut["Key2"]);
+        Assert.Equal("FromSectionA", sut["SectionA_Key"]);
+        Assert.Equal("FromSectionB", sut["SectionB_Key"]);
     }
 
     [Fact]
@@ -144,7 +145,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert: falls back to "pt", and the duplicate was actually
         // logged, not silently resolved.
@@ -169,7 +170,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert: falls back to "pt". With AllowDuplicateProperties
         // disabled, this is caught as a JsonException and logged at
@@ -177,6 +178,86 @@ public class JsonTranslatorTests {
         // same route a malformed file already takes.
         Assert.Equal("TextoPT", result);
         logger.VerifyError();
+    }
+
+    [Fact]
+    public void Indexer_WhenComposedKeyCollidesAcrossDifferentSections_LogsAndFallsBackToNeutralOrDefaultFile() {
+        // arrange: "pt-BR" has section "A_B" with key "C" and section "A"
+        // with key "B_C" — both compose (TranslationKey.Compose) to the
+        // same flat key "A_B_C", because the separator ("_") also appears
+        // inside the section/key names themselves. This must fail loudly
+        // (logged) and fall back, the same way #197's duplicate-key rule
+        // does, instead of letting whichever section is enumerated last
+        // silently win.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", """
+                {
+                    "A_B": [ { "C": "First" } ],
+                    "A": [ { "B_C": "Second" } ]
+                }
+                """)
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Section_Key1"];
+
+        // assert: falls back to "pt", and the collision was actually
+        // logged, not silently resolved to whichever section won.
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning(message => message.Contains("A_B_C", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("""{ "": [ { "Key1": "First" } ] }""")]
+    [InlineData("""{ "   ": [ { "Key1": "First" } ] }""")]
+    public void Indexer_WhenSectionNameIsEmptyOrWhiteSpace_LogsAndFallsBackToNeutralOrDefaultFile(string malformedJson) {
+        // arrange: an empty or white-space section name is a shape
+        // mismatch — TranslationKey.Compose has nothing meaningful to
+        // compose with, so this must fail loudly (logged) and fall back,
+        // the same way every other shape mismatch this method logs does.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", malformedJson)
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Section_Key1"];
+
+        // assert
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning();
+    }
+
+    [Theory]
+    [InlineData("""{ "SectionA": [ { "": "First" } ] }""")]
+    [InlineData("""{ "SectionA": [ { "   ": "First" } ] }""")]
+    public void Indexer_WhenEntryKeyIsEmptyOrWhiteSpace_LogsAndFallsBackToNeutralOrDefaultFile(string malformedJson) {
+        // arrange: an empty or white-space entry key is a shape mismatch
+        // for the same reason as an empty section name above.
+        var fileProvider = new FakeTranslationFileProvider()
+            .With("pt-BR", malformedJson)
+            .With("pt", """{ "Section": [ { "Key1": "TextoPT" } ] }""")
+            .With("default", """{ "Section": [ { "Key1": "Text1" } ] }""");
+
+        var logger = new InMemoryLogger<JsonTranslator>();
+        var sut = CreateSut(fileProvider, logger);
+        sut.SetCulture("pt-BR");
+
+        // act
+        var result = sut["Section_Key1"];
+
+        // assert
+        Assert.Equal("TextoPT", result);
+        logger.VerifyWarning(message => message.Contains("SectionA", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -200,7 +281,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert: falls back to "pt". With AllowDuplicateProperties
         // disabled, this is caught as a JsonException and logged at
@@ -225,7 +306,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("TextoPT", result);
@@ -247,7 +328,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("TextoPT", result);
@@ -268,7 +349,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("TextoPT", result);
@@ -285,7 +366,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert: value came from "pt", not "default".
         Assert.Equal("TextoPT", result);
@@ -301,7 +382,7 @@ public class JsonTranslatorTests {
         sut.SetCulture("pt-BR");
 
         // act
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("Text1", result);
@@ -331,7 +412,7 @@ public class JsonTranslatorTests {
         var sut = CreateSut(fileProvider);
 
         // act
-        var result = sut["Greeting", "Marco"];
+        var result = sut["Section_Greeting", "Marco"];
 
         // assert
         Assert.Equal("Hello, Marco", result);
@@ -346,7 +427,7 @@ public class JsonTranslatorTests {
         var sut = CreateSut(fileProvider);
 
         // act & assert: matches ResourceTranslator's current, uncaught behavior.
-        Assert.Throws<FormatException>(() => sut["Greeting"]);
+        Assert.Throws<FormatException>(() => sut["Section_Greeting"]);
     }
 
     [Fact]
@@ -363,10 +444,10 @@ public class JsonTranslatorTests {
         // the environment's own current UI culture cannot make this a
         // no-op.
         sut.SetCulture("en-US");
-        _ = sut["Key1"];
+        _ = sut["Section_Key1"];
 
         sut.SetCulture("pt-BR");
-        var result = sut["Key1"];
+        var result = sut["Section_Key1"];
 
         // assert
         Assert.Equal("TextoPT", result);

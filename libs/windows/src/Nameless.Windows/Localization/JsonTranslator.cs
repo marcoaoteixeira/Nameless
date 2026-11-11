@@ -10,10 +10,11 @@ namespace Nameless.Windows.Localization;
 /// <summary>
 ///     <see cref="ITranslator"/> implementation backed by one JSON file per
 ///     culture, read through <see cref="ITranslationFileProvider"/>. On
-///     disk, keys are grouped by section purely for human organization
-///     (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>) — the section
-///     name is never part of the lookup key, so <c>this["Key1"]</c> works
-///     exactly as it would against a flat file. Supports runtime
+///     disk, keys are grouped by section and flattened to the lookup key
+///     <see cref="TranslationKey.Compose(string, string)"/> builds from the
+///     section and the section-relative key
+///     (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c> becomes the
+///     lookup key <c>SectionName_Key1</c>). Supports runtime
 ///     culture switching: calling <see cref="SetCulture(CultureInfo)"/>
 ///     raises <see cref="INotifyPropertyChanged.PropertyChanged"/> with
 ///     <c>"Item[]"</c> so all WPF indexer bindings re-evaluate
@@ -217,18 +218,22 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     /// <summary>
     ///     Parses <paramref name="json"/> — a JSON object grouping entries
     ///     by section (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>)
-    ///     — into a flat lookup dictionary, logging the reason (exception,
-    ///     when raised, a shape mismatch, or a key duplicated within the
-    ///     same section) and returning <see langword="null"/> when parsing
-    ///     fails.
+    ///     — into a flat lookup dictionary keyed by
+    ///     <see cref="TranslationKey.Compose(string, string)"/>, logging the
+    ///     reason (exception, when raised, a shape mismatch, a key
+    ///     duplicated within the same section, or two different sections
+    ///     composing to the same flat key) and returning
+    ///     <see langword="null"/> when parsing fails.
     /// </summary>
     /// <remarks>
-    ///     A key repeated across two <em>different</em> sections is not an
-    ///     error — the section grouping is a purely organizational,
-    ///     on-disk concern, invisible to lookups — but whichever section
-    ///     is enumerated last silently wins for that flat key, so
-    ///     translation authors must still keep flat keys unique across the
-    ///     whole file.
+    ///     Because the lookup key is the section and the section-relative
+    ///     key composed together, the same section-relative key in two
+    ///     different sections never collides — each composes to its own
+    ///     distinct flat key. A composed-key collision can only happen when
+    ///     a section or key name contains the <see cref="TranslationKey.Separator"/>
+    ///     itself (e.g. section <c>A_B</c> key <c>C</c> and section <c>A</c>
+    ///     key <c>B_C</c> both compose to <c>A_B_C</c>), and that is
+    ///     rejected loudly instead of letting one silently win.
     /// </remarks>
     private IReadOnlyDictionary<string, string>? TryParseFile(string key, string json) {
         Dictionary<string, List<Dictionary<string, string>>>? sections;
@@ -249,9 +254,16 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
         var flattened = new Dictionary<string, string>();
         foreach (var (sectionName, entries) in sections) {
+            if (string.IsNullOrWhiteSpace(sectionName)) {
+                CommonLog.Warning(_logger, message: "Section name is null, empty or white space — expected a non-empty section name.", tag: key);
+
+                return null;
+            }
+
             // Duplicate detection is scoped to this section only — a key
-            // repeated across two different sections is allowed (see
-            // remarks above), so the set is recreated for every section.
+            // repeated across two different sections composes to a
+            // different flat key (see remarks above), so the set is
+            // recreated for every section.
             var seenInSection = new HashSet<string>(StringComparer.Ordinal);
 
             if (entries is null) {
@@ -269,13 +281,25 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
                 }
 
                 foreach (var (entryKey, entryValue) in entry) {
+                    if (string.IsNullOrWhiteSpace(entryKey)) {
+                        CommonLog.Warning(_logger, message: $"Entry key is null, empty or white space in section '{sectionName}' — expected a non-empty key.", tag: key);
+
+                        return null;
+                    }
+
                     if (!seenInSection.Add(entryKey)) {
                         CommonLog.Warning(_logger, message: $"Duplicate key '{entryKey}' in section '{sectionName}'.", tag: key);
 
                         return null;
                     }
 
-                    flattened[entryKey] = entryValue;
+                    var composedKey = TranslationKey.Compose(sectionName, entryKey);
+
+                    if (!flattened.TryAdd(composedKey, entryValue)) {
+                        CommonLog.Warning(_logger, message: $"Composed key '{composedKey}' collides across sections — check section '{sectionName}' and whichever other section also produces that key.", tag: key);
+
+                        return null;
+                    }
                 }
             }
         }

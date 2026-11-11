@@ -74,7 +74,7 @@ public class JsonTranslatorHotReloadTests {
         // culture could otherwise already resolve to "default" by chance.
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]); // first lookup — caches "default"
+        Assert.Equal("Text1", sut["Section_Key1"]); // first lookup — caches "default"
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
@@ -85,7 +85,7 @@ public class JsonTranslatorHotReloadTests {
 
         // assert
         Assert.True(raised);
-        Assert.Equal("Text1 (edited)", sut["Key1"]);
+        Assert.Equal("Text1 (edited)", sut["Section_Key1"]);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class JsonTranslatorHotReloadTests {
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]); // caches the known-good "default" entries
+        Assert.Equal("Text1", sut["Section_Key1"]); // caches the known-good "default" entries
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
@@ -111,7 +111,7 @@ public class JsonTranslatorHotReloadTests {
         // assert: last known-good content still served, no refresh signal,
         // and the failure is actually logged (not silently swallowed).
         Assert.False(raised);
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
         // A JSON array cannot deserialize into Dictionary<string, string> —
         // System.Text.Json throws JsonException, logged at Error.
         logger.VerifyError(message => message.Contains("default", StringComparison.Ordinal));
@@ -128,7 +128,7 @@ public class JsonTranslatorHotReloadTests {
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
@@ -139,7 +139,7 @@ public class JsonTranslatorHotReloadTests {
 
         // assert
         Assert.False(raised);
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
         logger.VerifyError(message => message.Contains("default", StringComparison.Ordinal));
     }
 
@@ -156,11 +156,11 @@ public class JsonTranslatorHotReloadTests {
         // Switches into "pt-BR" first and reads a key, so "pt-BR" is
         // actually cached — otherwise evicting it would prove nothing.
         sut.SetCulture("pt-BR");
-        Assert.Equal("TextoPT-BR", sut["Key1"]);
+        Assert.Equal("TextoPT-BR", sut["Section_Key1"]);
 
         // Switches away: "pt-BR" is now outside the fallback chain.
         sut.SetCulture("en-US");
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
@@ -172,13 +172,13 @@ public class JsonTranslatorHotReloadTests {
         fileProvider.Raise("pt-BR");
 
         Assert.False(raised);
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
 
         // assert: switching back to "pt-BR" now resolves the edited
         // content — proving the stale cache entry was actually evicted,
         // not just ignored.
         sut.SetCulture("pt-BR");
-        Assert.Equal("TextoPT-BR (edited)", sut["Key1"]);
+        Assert.Equal("TextoPT-BR (edited)", sut["Section_Key1"]);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class JsonTranslatorHotReloadTests {
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";
@@ -205,7 +205,7 @@ public class JsonTranslatorHotReloadTests {
 
         // assert
         Assert.False(raised);
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
         logger.VerifyWarning(message => message.Contains("default", StringComparison.Ordinal));
     }
 
@@ -226,8 +226,8 @@ public class JsonTranslatorHotReloadTests {
         sut.SetCulture("en-US");
 
         // Primes both files into the cache before the concurrent edits.
-        Assert.Equal("Specific", sut["Key1"]);
-        Assert.Equal("NeutralOnly", sut["Key2"]);
+        Assert.Equal("Specific", sut["Section_Key1"]);
+        Assert.Equal("NeutralOnly", sut["Section_Key2"]);
 
         using var start = new Barrier(2);
 
@@ -247,8 +247,8 @@ public class JsonTranslatorHotReloadTests {
         // dictionary — regardless of which thread's lock section ran
         // first. "en-US" still wins over "en" for "Key1" (fallback order
         // preserved); "Key2" (only defined in "en") reflects its own edit.
-        Assert.Equal("Specific (edited)", sut["Key1"]);
-        Assert.Equal("NeutralOnly (edited)", sut["Key2"]);
+        Assert.Equal("Specific (edited)", sut["Section_Key1"]);
+        Assert.Equal("NeutralOnly (edited)", sut["Section_Key2"]);
     }
 
     [Fact]
@@ -261,7 +261,7 @@ public class JsonTranslatorHotReloadTests {
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = args.PropertyName == "Item[]";

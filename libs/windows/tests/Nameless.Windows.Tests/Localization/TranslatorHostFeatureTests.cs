@@ -62,10 +62,39 @@ public sealed class TranslatorHostFeatureTests : IDisposable {
 
         // assert
         Assert.IsType<JsonTranslator>(sut);
-        Assert.Equal("TextoPT-BR", sut["Key1"]);
+        Assert.Equal("TextoPT-BR", sut["Section_Key1"]);
 
         sut.SetCulture("en-US");
 
+        Assert.Equal("Text1", sut["Section_Key1"]);
+    }
+
+    [Fact]
+    public void Register_WithValidRootPath_ResolvesTypedTranslator_ScopedToItsAnchorSection() {
+        // arrange: the anchor's simple type name ("TranslatorHostFeatureTests")
+        // is the section TranslationKey.GetSection maps it to.
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "TranslatorHostFeatureTests": [ { "Key1": "Text1" } ] }""");
+
+        var configuration = new ConfigurationManager();
+        configuration.AddInMemoryCollection(new Dictionary<string, string?> {
+            ["Translator:RootPath"] = _rootPath
+        });
+
+        var builder = new HostApplicationBuilderMocker()
+            .WithServices(services => services.AddLogging())
+            .WithConfiguration(configuration)
+            .Build();
+
+        var feature = new TranslatorHostFeature();
+
+        feature.Register(builder, new HostFeatureContext([typeof(JsonTranslator).Assembly], NullLogger.Instance));
+
+        var provider = builder.Services.BuildServiceProvider();
+
+        // act
+        var sut = provider.GetRequiredService<ITranslator<TranslatorHostFeatureTests>>();
+
+        // assert
         Assert.Equal("Text1", sut["Key1"]);
     }
 

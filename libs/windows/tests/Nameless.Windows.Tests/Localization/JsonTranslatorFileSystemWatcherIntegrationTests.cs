@@ -68,7 +68,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
 
         sut.SetCulture("en-US"); // normalizes the starting culture
 
-        Assert.Equal("Text1", sut["Key1"]); // first lookup — caches "default"
+        Assert.Equal("Text1", sut["Section_Key1"]); // first lookup — caches "default"
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = raised || args.PropertyName == "Item[]";
@@ -76,7 +76,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         // act: a non-developer edits the file while the app is running.
         SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1 (edited)" } ] }""");
 
-        var delivered = WaitFor(() => sut["Key1"] == "Text1 (edited)");
+        var delivered = WaitFor(() => sut["Section_Key1"] == "Text1 (edited)");
 
         // assert
         Assert.True(delivered, "Expected the edited value to be visible through the indexer within the timeout.");
@@ -100,7 +100,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         sut.SetCulture("en-US");
 
         // act & assert
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]); // first lookup — caches "default"
+        Assert.Equal("Text1", sut["Section_Key1"]); // first lookup — caches "default"
 
         var raised = false;
         sut.PropertyChanged += (_, args) => raised = raised || args.PropertyName == "Item[]";
@@ -148,7 +148,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         sut.SetCulture("pt-BR");
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]);
+        Assert.Equal("Text1", sut["Section_Key1"]);
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
 
         sut.SetCulture("en-US");
 
-        Assert.Equal("Text1", sut["Key1"]); // first lookup — caches "default"
+        Assert.Equal("Text1", sut["Section_Key1"]); // first lookup — caches "default"
 
         var raisedCount = 0;
         sut.PropertyChanged += (_, args) => {
@@ -183,7 +183,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         Thread.Sleep(50);
         SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1 (edit 2)" } ] }""");
 
-        var delivered = WaitFor(() => sut["Key1"] == "Text1 (edit 2)");
+        var delivered = WaitFor(() => sut["Section_Key1"] == "Text1 (edit 2)");
 
         // Holds for a bit longer past the debounce window to make sure a
         // second, unwanted reload doesn't show up late.
@@ -191,7 +191,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
 
         // assert
         Assert.True(delivered, "Expected the latest edited value to be visible through the indexer within the timeout.");
-        Assert.Equal("Text1 (edit 2)", sut["Key1"]);
+        Assert.Equal("Text1 (edit 2)", sut["Section_Key1"]);
         Assert.Equal(1, raisedCount);
     }
 }
