@@ -13,7 +13,7 @@ namespace Nameless.Windows.Localization;
 ///     disk, keys are grouped by section and flattened to the lookup key
 ///     <see cref="TranslationKey.Compose(string, string)"/> builds from the
 ///     section and the section-relative key
-///     (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c> becomes the
+///     (<c>{ "SectionName": { "Key1": "Text1" } }</c> becomes the
 ///     lookup key <c>SectionName_Key1</c>). Supports runtime
 ///     culture switching: calling <see cref="SetCulture(CultureInfo)"/>
 ///     raises <see cref="INotifyPropertyChanged.PropertyChanged"/> with
@@ -43,7 +43,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
     // Default JsonSerializerOptions silently keep the *last* value for a
     // duplicate property — which would hide a duplicate key within the
-    // same entry object, and silently drop an entire duplicate top-level
+    // same section, and silently drop an entire duplicate top-level
     // section, instead of failing loudly like every other shape problem
     // this type logs. Disallowing duplicates turns both into a JsonException,
     // which already routes through the existing "log and keep last
@@ -125,9 +125,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
     /// <inheritdoc />
     public void Dispose() {
-        if (_disposed) {
-            return;
-        }
+        if (_disposed) { return; }
 
         _disposed = true;
 
@@ -137,9 +135,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     /// <inheritdoc />
     public void SetCulture(CultureInfo culture) {
         lock (_sync) {
-            if (Equals(_currentCulture, culture)) {
-                return;
-            }
+            if (Equals(_currentCulture, culture)) { return; }
 
             // Invalidates the cached dictionary — the next lookup resolves
             // the fallback chain again, now against the new culture.
@@ -165,11 +161,11 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
     private IReadOnlyDictionary<string, string> GetTranslations() {
         lock (_sync) {
-            return _translations ??= LoadTranslations();
+            return _translations ??= FetchTranslations();
         }
     }
 
-    private IReadOnlyDictionary<string, string> LoadTranslations() {
+    private IReadOnlyDictionary<string, string> FetchTranslations() {
         // Merges per-key, not per-file: loading in reverse fallback order
         // (default first, then neutral, then specific) means a more
         // specific file's entries overwrite less specific ones only for
@@ -180,9 +176,7 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
 
         foreach (var key in GetCultureFallbackChain(_currentCulture).Reverse()) {
             var entries = GetFileEntries(key);
-            if (entries is null) {
-                continue;
-            }
+            if (entries is null) { continue; }
 
             foreach (var (translationKey, translationValue) in entries) {
                 merged[translationKey] = translationValue;
@@ -199,31 +193,23 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     ///     the result on success.
     /// </summary>
     private IReadOnlyDictionary<string, string>? GetFileEntries(string key) {
-        if (_fileCache.TryGetValue(key, out var cached)) {
-            return cached;
-        }
-
-        if (!_fileProvider.TryRead(key, out var json)) {
-            return null;
-        }
+        if (_fileCache.TryGetValue(key, out var cached)) { return cached; }
+        if (!_fileProvider.TryRead(key, out var json)) { return null; }
 
         var parsed = TryParseFile(key, json);
-        if (parsed is not null) {
-            _fileCache[key] = parsed;
-        }
+        if (parsed is not null) { _fileCache[key] = parsed; }
 
         return parsed;
     }
 
     /// <summary>
     ///     Parses <paramref name="json"/> — a JSON object grouping entries
-    ///     by section (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>)
+    ///     by section (<c>{ "SectionName": { "Key1": "Text1" } }</c>)
     ///     — into a flat lookup dictionary keyed by
     ///     <see cref="TranslationKey.Compose(string, string)"/>, logging the
-    ///     reason (exception, when raised, a shape mismatch, a key
-    ///     duplicated within the same section, or two different sections
-    ///     composing to the same flat key) and returning
-    ///     <see langword="null"/> when parsing fails.
+    ///     reason (exception, when raised, a shape mismatch, or two
+    ///     different sections composing to the same flat key) and
+    ///     returning <see langword="null"/> when parsing fails.
     /// </summary>
     /// <remarks>
     ///     Because the lookup key is the section and the section-relative
@@ -236,12 +222,10 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
     ///     rejected loudly instead of letting one silently win.
     /// </remarks>
     private IReadOnlyDictionary<string, string>? TryParseFile(string key, string json) {
-        Dictionary<string, List<Dictionary<string, string>>>? sections;
-        try {
-            sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, ParseOptions);
-        }
+        Dictionary<string, Dictionary<string, string>>? sections;
+        try { sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, ParseOptions); }
         catch (JsonException exception) {
-            CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, List<Dictionary<string, string>>>), exception, tag: key);
+            CommonLog.JsonDeserializationFailure(_logger, typeof(Dictionary<string, Dictionary<string, string>>), exception, tag: key);
 
             return null;
         }
@@ -260,46 +244,25 @@ public sealed class JsonTranslator : ITranslator, IDisposable {
                 return null;
             }
 
-            // Duplicate detection is scoped to this section only — a key
-            // repeated across two different sections composes to a
-            // different flat key (see remarks above), so the set is
-            // recreated for every section.
-            var seenInSection = new HashSet<string>(StringComparer.Ordinal);
-
             if (entries is null) {
-                CommonLog.Warning(_logger, message: $"Section '{sectionName}' deserialized to null — expected an array of entry objects.", tag: key);
+                CommonLog.Warning(_logger, message: $"Section '{sectionName}' deserialized to null — expected an object mapping keys to text.", tag: key);
 
                 return null;
             }
 
-            for (var index = 0; index < entries.Count; index++) {
-                var entry = entries[index];
-                if (entry is null) {
-                    CommonLog.Warning(_logger, message: $"Entry at index {index} in section '{sectionName}' deserialized to null — expected an object mapping keys to text.", tag: key);
+            foreach (var (entryKey, entryValue) in entries) {
+                if (string.IsNullOrWhiteSpace(entryKey)) {
+                    CommonLog.Warning(_logger, message: $"Entry key is null, empty or white space in section '{sectionName}' — expected a non-empty key.", tag: key);
 
                     return null;
                 }
 
-                foreach (var (entryKey, entryValue) in entry) {
-                    if (string.IsNullOrWhiteSpace(entryKey)) {
-                        CommonLog.Warning(_logger, message: $"Entry key is null, empty or white space in section '{sectionName}' — expected a non-empty key.", tag: key);
+                var composedKey = TranslationKey.Compose(sectionName, entryKey);
 
-                        return null;
-                    }
+                if (!flattened.TryAdd(composedKey, entryValue)) {
+                    CommonLog.Warning(_logger, message: $"Composed key '{composedKey}' collides across sections — check section '{sectionName}' and whichever other section also produces that key.", tag: key);
 
-                    if (!seenInSection.Add(entryKey)) {
-                        CommonLog.Warning(_logger, message: $"Duplicate key '{entryKey}' in section '{sectionName}'.", tag: key);
-
-                        return null;
-                    }
-
-                    var composedKey = TranslationKey.Compose(sectionName, entryKey);
-
-                    if (!flattened.TryAdd(composedKey, entryValue)) {
-                        CommonLog.Warning(_logger, message: $"Composed key '{composedKey}' collides across sections — check section '{sectionName}' and whichever other section also produces that key.", tag: key);
-
-                        return null;
-                    }
+                    return null;
                 }
             }
         }

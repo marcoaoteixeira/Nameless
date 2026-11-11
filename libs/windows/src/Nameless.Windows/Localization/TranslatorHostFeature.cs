@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Configuration;
@@ -34,7 +33,7 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
                                    .Exists();
 
         if (translatorType is null || (translatorType == typeof(JsonTranslator) && !sectionExists)) {
-            builder.Services.TryAdd(ServiceDescriptor.Singleton(NullTranslator.Instance));
+            builder.Services.TryAddSingleton(NullTranslator.Instance);
 
             RegisterTypedTranslator(builder);
 
@@ -61,6 +60,6 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
     // (ADR-003).
     private static void RegisterTypedTranslator(IHostApplicationBuilder builder) {
         builder.Services.TryAddSingleton<ITranslatorFactory, TranslatorFactory>();
-        builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ITranslator<>), typeof(Translator<>)));
+        builder.Services.TryAddSingleton(typeof(ITranslator<>), typeof(Translator<>));
     }
 }

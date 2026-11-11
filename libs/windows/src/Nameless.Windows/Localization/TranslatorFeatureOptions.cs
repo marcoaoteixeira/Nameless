@@ -20,9 +20,7 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
             // WithTranslator(Type) rejects them explicitly: registering one
             // as the root would build a DI cycle (root -> ITranslatorFactory
             // -> root, ADR-003).
-            ? ExecuteAssemblyScan(TranslatorType)
-                .Where(type => !type.HasInterface(typeof(ITranslator<>)))
-                .SingleOrDefault()
+            ? ExecuteAssemblyScan(TranslatorType).SingleOrDefault(type => !type.HasInterface(typeof(ITranslator<>)))
             : field;
         private set;
     }
@@ -59,8 +57,9 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
         // root -> ITranslatorFactory -> root (ADR-003).
         if (type.HasInterface(typeof(ITranslator<>))) {
             throw new ArgumentException(
-                $"'{type.GetPrettyName()}' implements ITranslator<T> and cannot be the root ITranslator.",
-                nameof(type));
+                message: $@"'{type.GetPrettyName()}' implements ITranslator<T> and cannot be the root ITranslator.",
+                paramName: nameof(type)
+            );
         }
 
         Translator = type;

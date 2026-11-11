@@ -49,7 +49,7 @@ public class TranslationJsonKeyParityTests {
 
     /// <summary>
     ///     Loads the flat set of lookup keys out of a grouped translation
-    ///     file (<c>{ "SectionName": [ { "Key1": "Text1" } ] }</c>),
+    ///     file (<c>{ "SectionName": { "Key1": "Text1" } }</c>),
     ///     flattening each entry to <see cref="TranslationKey.Compose(string, string)"/>
     ///     — the same composed key <c>JsonTranslator</c> builds at runtime
     ///     (#199; section-relative keys on disk).
@@ -58,11 +58,10 @@ public class TranslationJsonKeyParityTests {
         var path = SysPath.Combine(AppContext.BaseDirectory, "Resources", "loc", fileName);
         var content = SysFile.ReadAllText(path);
 
-        var sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(content, ParseOptions)
+        var sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(content, ParseOptions)
                        ?? throw new InvalidOperationException($"'{path}' deserialized to null.");
 
-        return sections.SelectMany(section => section.Value
-                                                      .SelectMany(entry => entry.Keys)
+        return sections.SelectMany(section => section.Value.Keys
                                                       .Select(key => TranslationKey.Compose(section.Key, key)))
                        .ToHashSet(StringComparer.Ordinal);
     }
@@ -77,11 +76,10 @@ public class TranslationJsonKeyParityTests {
         var path = SysPath.Combine(AppContext.BaseDirectory, "Resources", "loc", fileName);
         var content = SysFile.ReadAllText(path);
 
-        var sections = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(content, ParseOptions)
+        var sections = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(content, ParseOptions)
                        ?? throw new InvalidOperationException($"'{path}' deserialized to null.");
 
-        return sections.SelectMany(section => section.Value
-                                                      .SelectMany(entry => entry.Keys)
+        return sections.SelectMany(section => section.Value.Keys
                                                       .Select(key => (section.Key, key)));
     }
 }

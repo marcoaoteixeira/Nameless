@@ -86,7 +86,7 @@ Constraints:
 
 * **C1. Keys on disk are section-relative. `JsonTranslator` flattens each entry to
   `{Section}_{Key}`, and `ITranslator<T>` composes the same string** (chosen). On disk,
-  `"AppConfigurationPage": [ { "Title": "..." } ]` flattens to the lookup key `AppConfigurationPage_Title`,
+  `"AppConfigurationPage": { "Title": "..." }` flattens to the lookup key `AppConfigurationPage_Title`,
   which is the exact key used today. The separator `_` was chosen so that **every composed key equals
   today's full key**. All 115 keys in both culture files already start with `{their section}_`, which was
   checked mechanically on the #197 branch. So:
@@ -124,7 +124,7 @@ Constraints:
   in **both** of its branches, the JSON one and the `NullTranslator` one.
 * `TranslationKey.GetSection(Type)` and `TranslationKey.Compose(section, key)` are the only place the
   mapping rule and the `_` separator are defined.
-* `JsonTranslator` flattens `{Section: [{Key: Text}]}` to `{Section}_{Key}`. The sample JSON files are
+* `JsonTranslator` flattens `{Section: {Key: Text}}` to `{Section}_{Key}`. The sample JSON files are
   rewritten to section-relative keys in the same commit.
 * `TranslatorExtension`, `NullTranslator` and `ITranslator` are not changed. `NullTranslator` does not
   become generic: the factory wraps the single `NullTranslator.Instance` for every `T`.
@@ -144,9 +144,12 @@ Constraints:
 * **Bad (accepted):** a breaking change for the sample app's consumers and their tests. The library's
   public surface only gains members (`ITranslator`, `TranslatorExtension` and `TranslatorFeatureOptions`
   are unchanged in shape). One observable library behavior does change: the flattened lookup key of a
-  grouped JSON file is now `{Section}_{Key}` instead of `{Key}`. Because #197 has not shipped (PR #198 is
-  unreleased), this is recorded as part of the same unreleased change set and not as a separate breaking
-  release.
+  grouped JSON file is now `{Section}_{Key}` instead of `{Key}`. A second observable change follows from
+  the shape itself: a file written in #197's original array-of-entries shape (`{Section: [{Key: Text}]}`)
+  now fails to parse — logged and skipped, same as any other shape mismatch — so lookups resolve from the
+  next culture in the fallback chain or render `[key]`. Because #197 has not shipped (PR #198 is
+  unreleased), both changes are recorded as part of the same unreleased change set and not as a separate
+  breaking release.
 * **Constraint:** `TranslatorFeatureOptions.WithTranslator(Type)` must reject types that implement
   `ITranslator<>`. Registering `Translator<X>` as the root would build a DI cycle
   (root → factory → root).

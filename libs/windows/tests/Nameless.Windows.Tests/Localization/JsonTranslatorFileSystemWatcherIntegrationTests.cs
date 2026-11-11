@@ -57,7 +57,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
     [Fact]
     public void EditingTheCurrentCultureFileOnDisk_RefreshesJsonTranslatorLookupsAndRaisesIndexerPropertyChanged_WithNoRestart() {
         // arrange
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1" } }""");
 
         using var fileProvider = new FileSystemTranslationFileProvider(
             Options.Create(new TranslatorOptions { RootPath = _rootPath, WatcherDebounceDelay = TimeSpan.FromMilliseconds(100) }),
@@ -74,7 +74,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         sut.PropertyChanged += (_, args) => raised = raised || args.PropertyName == "Item[]";
 
         // act: a non-developer edits the file while the app is running.
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1 (edited)" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1 (edited)" } }""");
 
         var delivered = WaitFor(() => sut["Section_Key1"] == "Text1 (edited)");
 
@@ -88,7 +88,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         // arrange: #192 scenario 1 — a plain startup read, explicitly
         // without any hot-reload/edit involved, against a real provider
         // and real JsonTranslator reading a real file from disk.
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1" } }""");
 
         using var fileProvider = new FileSystemTranslationFileProvider(
             Options.Create(new TranslatorOptions { RootPath = _rootPath }),
@@ -109,7 +109,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         // FileSystemWatcher (not the fake provider used by
         // JsonTranslatorHotReloadTests), an invalid on-disk edit must be
         // logged and ignored, with the previous state still served.
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1" } }""");
 
         using var fileProvider = new FileSystemTranslationFileProvider(
             Options.Create(new TranslatorOptions { RootPath = _rootPath, WatcherDebounceDelay = TimeSpan.FromMilliseconds(100) }),
@@ -158,7 +158,7 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         // level (one "Item[]" signal, final correct value), not just at
         // the provider's Changed-event count already covered by
         // FileSystemTranslationFileProviderTests.
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1" } }""");
 
         using var fileProvider = new FileSystemTranslationFileProvider(
             Options.Create(new TranslatorOptions { RootPath = _rootPath, WatcherDebounceDelay = TimeSpan.FromMilliseconds(400) }),
@@ -179,9 +179,9 @@ public sealed class JsonTranslatorFileSystemWatcherIntegrationTests : IDisposabl
         };
 
         // act: two rapid successive edits, well inside the debounce window.
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1 (edit 1)" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1 (edit 1)" } }""");
         Thread.Sleep(50);
-        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": [ { "Key1": "Text1 (edit 2)" } ] }""");
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "Section": { "Key1": "Text1 (edit 2)" } }""");
 
         var delivered = WaitFor(() => sut["Section_Key1"] == "Text1 (edit 2)");
 

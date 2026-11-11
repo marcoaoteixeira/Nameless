@@ -67,7 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - `Nameless.Windows`'s `JsonTranslator` now expects each culture's JSON file to group
-  its keys by section — `{ "SectionName": [ { "Key1": "Text1" } ] }` — instead of a flat
+  its keys by section — `{ "SectionName": { "Key1": "Text1" } }` — instead of a flat
   `{ "Key1": "Text1" }` object, purely so a human editing the file by hand can find related
   keys together. **Keys are section-relative on disk** (#199 amends #197's initial shape):
   `JsonTranslator` flattens each entry to `{Section}_{Key}` (`TranslationKey.Compose`), and

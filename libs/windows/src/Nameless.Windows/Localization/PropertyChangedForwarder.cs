@@ -47,9 +47,7 @@ internal sealed class PropertyChangedForwarder {
     ///     The handler to add. A <see langword="null"/> handler is a no-op.
     /// </param>
     public void Add(PropertyChangedEventHandler? value) {
-        if (value is null) {
-            return;
-        }
+        if (value is null) { return; }
 
         lock (_sync) {
             var wasEmpty = _handlers is null;

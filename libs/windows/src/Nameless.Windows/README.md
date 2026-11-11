@@ -66,9 +66,9 @@ On disk, each culture's JSON file groups its keys by section:
 
 ```json
 {
-  "TaskRunnerWindow": [
-    { "Cancelled_Message": "The run was cancelled." }
-  ]
+  "TaskRunnerWindow": {
+    "Cancelled_Message": "The run was cancelled."
+  }
 }
 ```
 
