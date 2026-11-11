@@ -72,7 +72,7 @@ public class AppConfigurationPageViewModelTests {
             eventPublisher: eventPublisherMock.Object,
             fileSystemDialog: new Mock<IFileSystemDialog>().Object,
             messageDialog: messageDialogMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<AppConfigurationPageViewModel>(),
             mediator: mediatorMock.Object,
             systemUpdateEnvironment: environment,
             taskRunner: taskRunnerMock.Object

@@ -52,3 +52,17 @@ public interface ITranslator : INotifyPropertyChanged {
     /// </param>
     void SetCulture(string cultureName);
 }
+
+/// <summary>
+///     Marker interface that scopes <see cref="ITranslator"/> lookups to the
+///     section mapped from <typeparamref name="T"/>, in the style of
+///     <c>ILogger&lt;T&gt;</c> and <c>IStringLocalizer&lt;T&gt;</c>. Resolve
+///     through DI or <see cref="ITranslatorFactory"/>; it adds no members
+///     beyond <see cref="ITranslator"/>.
+/// </summary>
+/// <typeparam name="T">
+///     The anchor type whose simple name (arity stripped) maps to the
+///     section this translator is scoped to. See
+///     <see cref="TranslationKey.GetSection(Type)"/>.
+/// </typeparam>
+public interface ITranslator<out T> : ITranslator;

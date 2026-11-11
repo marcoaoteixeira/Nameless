@@ -171,3 +171,12 @@ find related keys together. This does **not** overturn this ADR's core rationale
 parse time and is invisible to every consumer. The reasons the nested option was originally
 rejected (no key-path convention invented, #189's migration staying a content copy) still
 hold for the *lookup* contract; only the *on-disk* file shape changed.
+
+## Amended by #199
+
+The claim directly above — that the section name "is discarded at parse time and is
+invisible to every consumer" — no longer holds. See
+[ADR-003](ADR-003-Typed-ITranslator-Of-T-Via-ITranslatorFactory-With-Section-Relative-Keys-On-Disk.md),
+which defines the section/key composition rule (`TranslationKey.Compose`) `JsonTranslator`'s
+lookup key now follows, and the `ITranslator<T>`/`ITranslatorFactory` resolution pattern built
+on top of it.

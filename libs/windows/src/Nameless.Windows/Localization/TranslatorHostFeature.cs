@@ -30,11 +30,13 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
         // explicitly-registered translator (via WithTranslator<T>()) isn't
         // necessarily tied to that section, so it is registered as-is.
         var sectionExists = builder.Configuration
-            .GetSectionFor<TranslatorOptions>(ConfigurationSectionNameAttribute.GetSectionName<TranslatorOptions>())
-            .Exists();
+                                   .GetSectionFor<TranslatorOptions>()
+                                   .Exists();
 
         if (translatorType is null || (translatorType == typeof(JsonTranslator) && !sectionExists)) {
             builder.Services.TryAdd(ServiceDescriptor.Singleton(NullTranslator.Instance));
+
+            RegisterTypedTranslator(builder);
 
             return;
         }
@@ -47,6 +49,18 @@ public class TranslatorHostFeature : HostFeature<TranslatorFeatureOptions> {
             builder.Services.TryAddSingleton<ITranslationFileProvider, FileSystemTranslationFileProvider>();
         }
 
-        builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ITranslator), translatorType));
+        builder.Services.TryAddSingleton(typeof(ITranslator), translatorType);
+
+        RegisterTypedTranslator(builder);
+    }
+
+    // ITranslator<T> resolution (ILogger<T>/IStringLocalizer<T> style),
+    // added next to the root registration in both branches above — the
+    // NullTranslator one and the configured one — so ITranslator<T> always
+    // resolves, with or without a "Translator" configuration section
+    // (ADR-003).
+    private static void RegisterTypedTranslator(IHostApplicationBuilder builder) {
+        builder.Services.TryAddSingleton<ITranslatorFactory, TranslatorFactory>();
+        builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ITranslator<>), typeof(Translator<>)));
     }
 }

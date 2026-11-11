@@ -62,29 +62,63 @@ signature, note that this is more than a return-type change:
 
 ### Translator keys
 
-The task runner window and view model look up the following keys through
-`ITranslator`. Supply them in your configured translation JSON files (see
-`TranslatorOptions.RootPath`); when missing, the lookup falls back to the
-bracketed key itself, e.g. `[TaskRunnerWindow_Cancelled_Message]`.
-
-Each culture's file groups its keys by section, purely for human
-organization when hand-editing the file:
+On disk, each culture's JSON file groups its keys by section:
 
 ```json
 {
-  "SectionName": [
-    { "TaskRunnerWindow_Cancelled_Message": "The run was cancelled." }
+  "TaskRunnerWindow": [
+    { "Cancelled_Message": "The run was cancelled." }
   ]
 }
 ```
 
-A key is looked up by its own name regardless of which section it is
-filed under — `ITranslator`'s indexer takes a flat key
-(`translator["TaskRunnerWindow_Cancelled_Message"]`), never a section-
-qualified one, so a key can be moved between sections freely as long as
-it stays unique within the whole file.
+The section is not just organizational: `JsonTranslator` flattens every
+entry to `{Section}_{Key}` (`TranslationKey.Compose`), and that composed
+string is the flat key `ITranslator`'s indexer actually looks up. So the
+entry above resolves as `translator["TaskRunnerWindow_Cancelled_Message"]`
+— a key can still be renamed within its own section freely, but moving it
+to a *different* section changes its lookup key, because the section name
+is part of it. A missing key falls back to the bracketed composed key
+itself, e.g. `[TaskRunnerWindow_Cancelled_Message]`.
+
+The task runner window and view model look up the following keys through
+the root `ITranslator` (see below for why), under the `TaskRunnerWindow`
+section. Supply them in your configured translation JSON files (see
+`TranslatorOptions.RootPath`).
 
 | Key | Used when |
 |---|---|
 | `TaskRunnerWindow_Cancelled_Message` | The run is cancelled through its own token (Warning log entry). |
 | `TaskRunnerWindow_CloseBlocked_Message` | A title-bar/Alt+F4 close is blocked because the run has not completed yet (Warning log entry, at most once per run). |
+
+#### `ITranslator<T>` and `ITranslatorFactory`
+
+Most consumers should not build composed keys by hand or inject the
+untyped root `ITranslator`. Inject `ITranslator<T>` instead — the same
+resolution pattern as `ILogger<T>` and `IStringLocalizer<T>` — and index it
+with the section-relative key only:
+
+```csharp
+public sealed class MyPageViewModel(ITranslator<MyPageViewModel> translator) {
+    // Resolves "MyPageViewModel_Title" — the section ("MyPageViewModel",
+    // from the anchor type's own simple name) is supplied automatically.
+    public string Title => translator["Title"];
+}
+```
+
+`ITranslator<T>` is registered as an open-generic singleton, resolved
+through `ITranslatorFactory` (`Create(Type)`, `Create(string)`, and the
+`Create<T>()` extension for code outside DI, e.g. static helpers or
+code-behind). `TranslationKey.GetSection(Type)` is the only place the
+type-to-section mapping rule lives: a type's own `Name`, with generic
+arity stripped. `ITranslatorFactory.Create(string section)` is the escape
+hatch for an anchor whose section differs from its own type name.
+
+One culture switch (`SetCulture`, on any instance — typed or root) still
+refreshes every binding, because every `ITranslator<T>` ultimately
+delegates to the same root. The library's own XAML markup extension
+(`TranslatorExtension`) and a few library-internal consumers
+(`Bootstrapper`, `TaskRunnerWindowViewModel`, the navigation attribute
+provider) keep using the untyped root `ITranslator` with full,
+pre-composed keys — moving them is an optional follow-up, not required to
+use `ITranslator<T>` in your own code.

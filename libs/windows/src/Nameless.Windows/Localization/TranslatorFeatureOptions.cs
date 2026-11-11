@@ -16,7 +16,13 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
     /// </summary>
     public Type? Translator {
         get => UseAssemblyScan
-            ? ExecuteAssemblyScan(TranslatorType).SingleOrDefault()
+            // Types implementing ITranslator<> are excluded the same way
+            // WithTranslator(Type) rejects them explicitly: registering one
+            // as the root would build a DI cycle (root -> ITranslatorFactory
+            // -> root, ADR-003).
+            ? ExecuteAssemblyScan(TranslatorType)
+                .Where(type => !type.HasInterface(typeof(ITranslator<>)))
+                .SingleOrDefault()
             : field;
         private set;
     }
@@ -48,6 +54,14 @@ public class TranslatorFeatureOptions : AssemblyScanAware<TranslatorFeatureOptio
         Throws.When.NonConcreteType(type);
         Throws.When.OpenGenericType(type);
         Throws.When.NonAssignableFrom(type, lhs: TranslatorType);
+
+        // Registering a Translator<X> as the root would build a DI cycle:
+        // root -> ITranslatorFactory -> root (ADR-003).
+        if (type.HasInterface(typeof(ITranslator<>))) {
+            throw new ArgumentException(
+                $"'{type.GetPrettyName()}' implements ITranslator<T> and cannot be the root ITranslator.",
+                nameof(type));
+        }
 
         Translator = type;
 

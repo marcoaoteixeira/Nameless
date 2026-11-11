@@ -37,7 +37,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
     private readonly AppDbContext _dbContext;
     private readonly IIndexProvider _indexProvider;
     private readonly IEventPublisher _eventPublisher;
-    private readonly ITranslator _translator;
+    private readonly ITranslator<PerformSystemUpdateRequestHandler> _translator;
     private readonly ILogger<PerformSystemUpdateRequestHandler> _logger;
 
     /// <summary>
@@ -51,7 +51,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
         AppDbContext dbContext,
         IIndexProvider indexProvider,
         IEventPublisher eventPublisher,
-        ITranslator translator,
+        ITranslator<PerformSystemUpdateRequestHandler> translator,
         ILogger<PerformSystemUpdateRequestHandler> logger) {
         _gitHubReleaseClient = Throws.When.Null(gitHubReleaseClient);
         _environment = Throws.When.Null(environment);
@@ -144,7 +144,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: _translator[$"{Prefix}_RolledBack_Cancelled"]
+                message: _translator[$"HandleAsync_RolledBack_Cancelled"]
             );
 
             return SystemUpdateOutcome.RolledBack;
@@ -153,7 +153,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
             await RollbackSwapsAsync(swaps);
 
             await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(_translator[$"{Prefix}_RolledBack"], ex.Message)
+                message: string.Format(_translator[$"HandleAsync_RolledBack"], ex.Message)
             );
 
             return SystemUpdateOutcome.RolledBack;
@@ -409,7 +409,7 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
             // also down must not turn into an unhandled exception here.
             try {
                 await _eventPublisher.PublishWarningAsync<SystemUpdateProgressNotificationEvent>(
-                    message: string.Format(_translator[$"{Prefix}_SelfHeal_Failure"], destinationPath, ex.Message)
+                    message: string.Format(_translator[$"HandleAsync_SelfHeal_Failure"], destinationPath, ex.Message)
                 );
             }
             catch (Exception publishEx) {
@@ -491,15 +491,13 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
 
     private Task PublishProgressAsync(string suffix) {
         return _eventPublisher.PublishInformationAsync<SystemUpdateProgressNotificationEvent>(
-            message: _translator[$"{Prefix}_{suffix}"]
+            message: _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
         return _eventPublisher.PublishFailureAsync<SystemUpdateProgressNotificationEvent>(
-            message: string.Format(_translator[$"{Prefix}_{suffix}_Failure"], exception.Message)
+            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
         );
     }
-
-    private static string Prefix => $"{nameof(PerformSystemUpdateRequestHandler)}_{nameof(HandleAsync)}";
 }

@@ -62,11 +62,86 @@ public sealed class TranslatorHostFeatureTests : IDisposable {
 
         // assert
         Assert.IsType<JsonTranslator>(sut);
-        Assert.Equal("TextoPT-BR", sut["Key1"]);
+        Assert.Equal("TextoPT-BR", sut["Section_Key1"]);
 
         sut.SetCulture("en-US");
 
+        Assert.Equal("Text1", sut["Section_Key1"]);
+    }
+
+    [Fact]
+    public void Register_WithValidRootPath_ResolvesTypedTranslator_ScopedToItsAnchorSection() {
+        // arrange: the anchor's simple type name ("TranslatorHostFeatureTests")
+        // is the section TranslationKey.GetSection maps it to.
+        SysFile.WriteAllText(SysPath.Combine(_rootPath, "default.json"), """{ "TranslatorHostFeatureTests": [ { "Key1": "Text1" } ] }""");
+
+        var configuration = new ConfigurationManager();
+        configuration.AddInMemoryCollection(new Dictionary<string, string?> {
+            ["Translator:RootPath"] = _rootPath
+        });
+
+        var builder = new HostApplicationBuilderMocker()
+            .WithServices(services => services.AddLogging())
+            .WithConfiguration(configuration)
+            .Build();
+
+        var feature = new TranslatorHostFeature();
+
+        feature.Register(builder, new HostFeatureContext([typeof(JsonTranslator).Assembly], NullLogger.Instance));
+
+        var provider = builder.Services.BuildServiceProvider();
+
+        // act
+        var sut = provider.GetRequiredService<ITranslator<TranslatorHostFeatureTests>>();
+
+        // assert
         Assert.Equal("Text1", sut["Key1"]);
+    }
+
+    [Fact]
+    public void Register_WithNoTranslatorConfiguration_ResolvesTypedTranslator_ThroughNullTranslator() {
+        // arrange: no "Translator" configuration section — ITranslator<T>
+        // must still resolve (never throw) and, through NullTranslator,
+        // echo the composed "Section_Key" string (ADR-003, risk #3).
+        var configuration = new ConfigurationManager();
+        var builder = new HostApplicationBuilderMocker()
+            .WithServices(services => services.AddLogging())
+            .WithConfiguration(configuration)
+            .Build();
+
+        var feature = new TranslatorHostFeature();
+
+        feature.Register(builder, new HostFeatureContext([typeof(JsonTranslator).Assembly], NullLogger.Instance));
+
+        var provider = builder.Services.BuildServiceProvider();
+
+        // act
+        var sut = provider.GetRequiredService<ITranslator<TranslatorHostFeatureTests>>();
+
+        // assert
+        Assert.Equal("TranslatorHostFeatureTests_Key1", sut["Key1"]);
+    }
+
+    [Fact]
+    public void WithTranslator_WhenTypeImplementsITranslatorOfT_Throws() {
+        // arrange: registering a Translator<X> as the root would build a
+        // DI cycle (root -> ITranslatorFactory -> root), per ADR-003.
+        // Configure only composes the delegate; WithTranslator itself only
+        // runs once Register() evaluates it.
+        var configuration = new ConfigurationManager();
+        var builder = new HostApplicationBuilderMocker()
+            .WithServices(services => services.AddLogging())
+            .WithConfiguration(configuration)
+            .Build();
+
+        var feature = new TranslatorHostFeature();
+
+        feature.Configure(options => options.WithUseAssemblyScan(false)
+                                             .WithTranslator<Translator<TranslatorHostFeatureTests>>());
+
+        // act & assert
+        Assert.Throws<ArgumentException>(() =>
+            feature.Register(builder, new HostFeatureContext([typeof(JsonTranslator).Assembly], NullLogger.Instance)));
     }
 
     [Fact]

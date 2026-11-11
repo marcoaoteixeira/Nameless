@@ -68,7 +68,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
             luceneOptions: luceneOptions,
             appConfigurationManager: appConfigurationManagerMock.Object,
             eventPublisher: eventPublisherMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<PerformApplicationRestoreRequestHandler>(),
             logger: NullLogger<PerformApplicationRestoreRequestHandler>.Instance
         );
 
@@ -635,7 +635,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
             indexProvider: sut.IndexProviderMock.Object,
             luceneOptions: Options.Create(new LuceneOptions { DirectoryRelativePath = "lucene" }),
             eventPublisher: sut.EventPublisherMock.Object,
-            translator: new FakeTranslator()
+            translator: FakeTranslator.For<PerformApplicationBackupRequestHandler>()
         );
 
         var backupFilePath = await backupHandler.HandleAsync(new PerformApplicationBackupRequest(), TestContext.Current.CancellationToken);

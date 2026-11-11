@@ -172,7 +172,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             dbContext: dbContext,
             indexProvider: indexProviderMock.Object,
             eventPublisher: eventPublisherMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<PerformSystemUpdateRequestHandler>(),
             logger: NullLogger<PerformSystemUpdateRequestHandler>.Instance
         );
 
@@ -452,7 +452,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             AppDbContext dbContext,
             IIndexProvider indexProvider,
             IEventPublisher eventPublisher,
-            ITranslator translator,
+            ITranslator<PerformSystemUpdateRequestHandler> translator,
             ILogger<PerformSystemUpdateRequestHandler> logger,
             string failingDestinationPath)
             : base(gitHubReleaseClient, environment, fileManager, dbContext, indexProvider, eventPublisher, translator, logger) {
@@ -490,7 +490,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             dbContext: sut.DbContext,
             indexProvider: new Mock<IIndexProvider>().Object,
             eventPublisher: sut.EventPublisherMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<PerformSystemUpdateRequestHandler>(),
             logger: NullLogger<PerformSystemUpdateRequestHandler>.Instance,
             failingDestinationPath: sut.Environment.ExecutablePath
         );
@@ -522,7 +522,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             AppDbContext dbContext,
             IIndexProvider indexProvider,
             IEventPublisher eventPublisher,
-            ITranslator translator,
+            ITranslator<PerformSystemUpdateRequestHandler> translator,
             ILogger<PerformSystemUpdateRequestHandler> logger,
             string failingOriginalPath)
             : base(gitHubReleaseClient, environment, fileManager, dbContext, indexProvider, eventPublisher, translator, logger) {
@@ -566,7 +566,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             dbContext: sut.DbContext,
             indexProvider: new Mock<IIndexProvider>().Object,
             eventPublisher: sut.EventPublisherMock.Object,
-            translator: new FakeTranslator(),
+            translator: FakeTranslator.For<PerformSystemUpdateRequestHandler>(),
             logger: NullLogger<PerformSystemUpdateRequestHandler>.Instance,
             failingOriginalPath: sut.Environment.ExecutablePath
         );
