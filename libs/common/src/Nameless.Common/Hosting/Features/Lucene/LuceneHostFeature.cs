@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
-using Nameless.Hosting;
+using Nameless.Lucene;
 
-namespace Nameless.Lucene;
+namespace Nameless.Hosting.Features.Lucene;
 
 /// <summary>
 ///     Lucene Host Feature

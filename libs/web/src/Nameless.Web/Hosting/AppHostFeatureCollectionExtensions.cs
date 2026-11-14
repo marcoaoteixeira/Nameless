@@ -1,5 +1,4 @@
 ﻿using Nameless.Hosting;
-using Nameless.Mediator;
 using Nameless.Resilience;
 using Nameless.Validation.FluentValidation;
 using Nameless.Web.Hosting.Features;

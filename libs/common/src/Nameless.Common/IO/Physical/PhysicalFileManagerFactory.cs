@@ -6,11 +6,7 @@ namespace Nameless.IO.Physical;
 ///     Factory of <see cref="PhysicalFileManager" />
 /// </summary>
 public class PhysicalFileManagerFactory {
-    private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
-        ? StringComparer.OrdinalIgnoreCase
-        : StringComparer.Ordinal;
-
-    private readonly ConcurrentDictionary<string, PhysicalFileManager> _cache = new(PathComparer);
+    private readonly ConcurrentDictionary<string, PhysicalFileManager> _cache = new(Defaults.PathComparer);
 
     /// <summary>
     ///     Gets or creates a new <see cref="PhysicalFileManager"/>.

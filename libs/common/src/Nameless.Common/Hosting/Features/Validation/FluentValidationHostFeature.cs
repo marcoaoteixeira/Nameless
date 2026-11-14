@@ -3,8 +3,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
 using Nameless.Hosting;
+using Nameless.Validation;
+using Nameless.Validation.FluentValidation;
 
-namespace Nameless.Validation.FluentValidation;
+namespace Nameless.Hosting.Features.Validation;
 
 /// <summary>
 ///     FluentValidation Host Feature

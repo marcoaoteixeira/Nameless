@@ -1,7 +1,8 @@
 ﻿using Nameless.Contracts;
+using Nameless.Lucene;
 using Nameless.Registration;
 
-namespace Nameless.Lucene;
+namespace Nameless.Hosting.Features.Lucene;
 
 /// <summary>
 ///     Registration options for the Lucene services, including analyzer selectors

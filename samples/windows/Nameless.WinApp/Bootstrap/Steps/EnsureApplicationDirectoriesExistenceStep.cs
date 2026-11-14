@@ -1,6 +1,5 @@
 ﻿using Nameless.Application;
 using Nameless.Contracts;
-using Nameless.WinApp.Infrastructure;
 using Nameless.Windows;
 using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Bootstrap.Notification;

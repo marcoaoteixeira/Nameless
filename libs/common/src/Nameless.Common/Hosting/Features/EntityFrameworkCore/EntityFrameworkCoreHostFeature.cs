@@ -4,16 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Nameless.EntityFrameworkCore;
 using Nameless.Helpers;
-using Nameless.Hosting;
 
-namespace Nameless.EntityFrameworkCore;
+namespace Nameless.Hosting.Features.EntityFrameworkCore;
 
 /// <summary>
 ///     Entity Framework Core Host Feature
 /// </summary>
-public class EntityFrameworkCoreHostFeature<TDbContext> : HostFeature<EntityFrameworkCoreFeatureOptions>
-    where TDbContext : DbContext {
+public class EntityFrameworkCoreHostFeature<TDbContext> : HostFeature<EntityFrameworkCoreFeatureOptions> where TDbContext : DbContext {
     /// <inheritdoc/>
     public override void Register(IHostApplicationBuilder builder, HostFeatureContext context) {
         var options = ActionHelper.FromDelegate(ConfigureFeature)

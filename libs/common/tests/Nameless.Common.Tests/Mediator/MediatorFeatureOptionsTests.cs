@@ -1,9 +1,10 @@
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 
 namespace Nameless.Mediator;
 
-public class PassThroughRequestBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
+public class PassThroughRequestBehaviour<TRequest, TResponse> : IRequestPipelineBehaviour<TRequest, TResponse>
     where TRequest : IRequest<TResponse> {
     public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
         return next(cancellationToken);
@@ -112,8 +113,8 @@ public class MediatorFeatureOptionsTests {
         var sut = CreateSut();
 
         // act
-        sut.WithRequestPipelineBehavior(typeof(PassThroughRequestBehavior<,>));
-        sut.WithRequestPipelineBehavior(typeof(PassThroughRequestBehavior<,>));
+        sut.WithRequestPipelineBehavior(typeof(PassThroughRequestBehaviour<,>));
+        sut.WithRequestPipelineBehavior(typeof(PassThroughRequestBehaviour<,>));
 
         // assert
         Assert.Single(sut.RequestPipelineBehaviors);
@@ -125,10 +126,10 @@ public class MediatorFeatureOptionsTests {
         var sut = CreateSut();
 
         // act
-        sut.WithRequestPipelineBehavior<PassThroughRequestBehavior<MediatorTestRequest, string>, MediatorTestRequest, string>();
+        sut.WithRequestPipelineBehavior<PassThroughRequestBehaviour<MediatorTestRequest, string>, MediatorTestRequest, string>();
 
         // assert
-        Assert.Contains(typeof(PassThroughRequestBehavior<MediatorTestRequest, string>), sut.RequestPipelineBehaviors);
+        Assert.Contains(typeof(PassThroughRequestBehaviour<MediatorTestRequest, string>), sut.RequestPipelineBehaviors);
     }
 
     [Fact]
@@ -203,13 +204,13 @@ public class MediatorFeatureOptionsTests {
     [Fact]
     public void WithRequestPipelineBehavior_OpenGenericWithMismatchedTypeParameters_ThrowsInvalidOperationException() {
         // act & assert
-        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspWrappedArityBehavior<>)));
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspWrappedArityBehaviour<>)));
     }
 
     [Fact]
     public void WithRequestPipelineBehavior_VoidBehaviorForRequestWithResponse_ThrowsInvalidOperationException() {
         // act & assert
-        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspVoidBehaviorForResponse)));
+        Assert.Throws<InvalidOperationException>(() => CreateSut().WithRequestPipelineBehavior(typeof(InspVoidBehaviourForResponse)));
     }
 
     [Fact]

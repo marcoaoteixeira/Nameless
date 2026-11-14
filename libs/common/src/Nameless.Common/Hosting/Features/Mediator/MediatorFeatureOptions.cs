@@ -4,7 +4,7 @@ using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 using Nameless.Registration;
 
-namespace Nameless.Mediator;
+namespace Nameless.Hosting.Features.Mediator;
 
 /// <summary>
 ///     Mediator options for configuring the mediator services.
@@ -51,7 +51,7 @@ public class MediatorFeatureOptions : AssemblyScanAware<MediatorFeatureOptions> 
     ///     Gets the registered request pipeline behaviors.
     /// </summary>
     /// <remarks>
-    ///     <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/> cannot
+    ///     <see cref="IRequestPipelineBehaviour{TRequest,TResponse}"/> cannot
     ///     be retrieved using assembly scan since the order in which they are
     ///     registered matters.
     /// </remarks>
@@ -215,7 +215,7 @@ public class MediatorFeatureOptions : AssemblyScanAware<MediatorFeatureOptions> 
     ///     actions can be chained.
     /// </returns>
     public MediatorFeatureOptions WithRequestPipelineBehavior<TRequestPipelineBehavior, TRequest, TResponse>()
-        where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest, TResponse>
+        where TRequestPipelineBehavior : IRequestPipelineBehaviour<TRequest, TResponse>
         where TRequest : IRequest<TResponse> {
         return WithRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
     }
@@ -231,7 +231,7 @@ public class MediatorFeatureOptions : AssemblyScanAware<MediatorFeatureOptions> 
     ///     actions can be chained.
     /// </returns>
     public MediatorFeatureOptions WithRequestPipelineBehavior<TRequestPipelineBehavior, TRequest>()
-        where TRequestPipelineBehavior : IRequestPipelineBehavior<TRequest>
+        where TRequestPipelineBehavior : IRequestPipelineBehaviour<TRequest>
         where TRequest : IRequest {
         return WithRequestPipelineBehavior(typeof(TRequestPipelineBehavior));
     }
@@ -251,8 +251,8 @@ public class MediatorFeatureOptions : AssemblyScanAware<MediatorFeatureOptions> 
     /// </exception>
     /// <exception cref="ArgumentException">
     ///     if <paramref name="type"/> is a non-concrete type or does not
-    ///     implement <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/>
-    ///     nor <see cref="IRequestPipelineBehavior{TRequest}"/>.
+    ///     implement <see cref="IRequestPipelineBehaviour{TRequest,TResponse}"/>
+    ///     nor <see cref="IRequestPipelineBehaviour{TRequest}"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
     ///     if <paramref name="type"/> is an open generic type whose type
@@ -268,11 +268,11 @@ public class MediatorFeatureOptions : AssemblyScanAware<MediatorFeatureOptions> 
     public MediatorFeatureOptions WithRequestPipelineBehavior(Type type) {
         Throws.When.NonConcreteType(type);
 
-        if (!typeof(IRequestPipelineBehavior<,>).IsAssignableFromGeneric(type) && !typeof(IRequestPipelineBehavior<>).IsAssignableFromGeneric(type)) {
-            throw new ArgumentException($"Type '{type.GetPrettyName()}' must implement '{nameof(IRequestPipelineBehavior<,>)}' or '{nameof(IRequestPipelineBehavior<>)}'.", nameof(type));
+        if (!typeof(IRequestPipelineBehaviour<,>).IsAssignableFromGeneric(type) && !typeof(IRequestPipelineBehaviour<>).IsAssignableFromGeneric(type)) {
+            throw new ArgumentException($"Type '{type.GetPrettyName()}' must implement '{nameof(IRequestPipelineBehaviour<,>)}' or '{nameof(IRequestPipelineBehaviour<>)}'.", nameof(type));
         }
 
-        EnsureInvocable(type, typeof(IRequestPipelineBehavior<,>), typeof(IRequestPipelineBehavior<>));
+        EnsureInvocable(type, typeof(IRequestPipelineBehaviour<,>), typeof(IRequestPipelineBehaviour<>));
 
         if (!_requestPipelineBehaviors.Contains(type)) {
             _requestPipelineBehaviors.Add(type);

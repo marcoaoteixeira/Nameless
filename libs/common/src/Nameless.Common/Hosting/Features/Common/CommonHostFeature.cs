@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
-namespace Nameless.Hosting.Features;
+namespace Nameless.Hosting.Features.Common;
 
 /// <summary>
 ///     Registers the services every web host needs: options, problem

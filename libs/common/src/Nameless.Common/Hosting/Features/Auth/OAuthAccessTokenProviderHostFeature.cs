@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Auth;
+using Nameless.Auth.OAuth;
 using Nameless.Configuration;
 
-namespace Nameless.Auth.OAuth;
+namespace Nameless.Hosting.Features.Auth;
 
 /// <summary>
 ///     OAuth Access Token Provider Host Feature

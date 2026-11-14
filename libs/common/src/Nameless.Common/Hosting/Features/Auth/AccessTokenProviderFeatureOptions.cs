@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Auth;
 using Nameless.Contracts;
 
-namespace Nameless.Auth;
+namespace Nameless.Hosting.Features.Auth;
 
 /// <summary>
 ///     Access Token Provider Feature Options

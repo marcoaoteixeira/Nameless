@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Hosting;
-using Nameless.Hosting.Features;
+using Nameless.Hosting.Features.Common;
 
 namespace Nameless.Web.Hosting.Features;
 

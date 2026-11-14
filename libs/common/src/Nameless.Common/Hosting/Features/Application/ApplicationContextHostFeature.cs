@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Nameless.Hosting;
+using Nameless.Application;
 
-namespace Nameless.Application;
+namespace Nameless.Hosting.Features.Application;
 
 /// <summary>
 ///     Application Context Host Feature

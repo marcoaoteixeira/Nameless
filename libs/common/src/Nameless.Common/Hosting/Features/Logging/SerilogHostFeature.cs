@@ -2,12 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
-using Nameless.Hosting;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
 
-namespace Nameless.Logging.Serilog;
+namespace Nameless.Hosting.Features.Logging;
 
 /// <summary>
 ///     Registers Serilog features.

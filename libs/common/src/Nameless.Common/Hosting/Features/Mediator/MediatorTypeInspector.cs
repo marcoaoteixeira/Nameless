@@ -1,7 +1,7 @@
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 
-namespace Nameless.Mediator;
+namespace Nameless.Hosting.Features.Mediator;
 
 /// <summary>
 ///     Resolves the service types a mediator handler or pipeline behavior
@@ -69,11 +69,10 @@ internal static class MediatorTypeInspector {
             var expected = $"{implementation.Name.Split('`')[0]}<{definitionParameters}> : {definition.GetPrettyName()}";
 
             throw new InvalidOperationException(
-                $"Open generic type '{implementation.GetPrettyName()}' " +
-                $"implements '{@interface.GetPrettyName()}', whose type " +
-                $"arguments are not its own type parameters in the same " +
-                $"order. Declare it as '{expected}', or register closed " +
-                "types instead."
+                $"Open generic type '{implementation.GetPrettyName()}' implements " +
+                $"'{@interface.GetPrettyName()}', whose type arguments are not its " +
+                $"own type parameters in the same order. Declare it as '{expected}', " +
+                "or register closed types instead."
             );
         }
     }
@@ -86,11 +85,11 @@ internal static class MediatorTypeInspector {
             EnsureRequestWithoutResponse(implementation, service, arguments[0], typeof(IRequestHandler<,>));
         }
 
-        if (definition == typeof(IRequestPipelineBehavior<>)) {
-            EnsureRequestWithoutResponse(implementation, service, arguments[0], typeof(IRequestPipelineBehavior<,>));
+        if (definition == typeof(IRequestPipelineBehaviour<>)) {
+            EnsureRequestWithoutResponse(implementation, service, arguments[0], typeof(IRequestPipelineBehaviour<,>));
         }
 
-        if (definition == typeof(IRequestHandler<,>) || definition == typeof(IRequestPipelineBehavior<,>)) {
+        if (definition == typeof(IRequestHandler<,>) || definition == typeof(IRequestPipelineBehaviour<,>)) {
             EnsureDeclaredResponse(implementation, service, arguments[0], arguments[1], typeof(IRequest<>), exactlyOne: true);
         }
 

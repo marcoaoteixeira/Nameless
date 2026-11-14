@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Hosting;
+using Nameless.Hosting.Features.EntityFrameworkCore;
 using Nameless.Testing.Tools.Mockers.Hosting;
 
 namespace Nameless.EntityFrameworkCore;

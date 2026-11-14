@@ -10,7 +10,7 @@ namespace Nameless.Mediator.Requests;
 /// <typeparam name="TResponse">
 ///     Type of the response.
 /// </typeparam>
-public interface IRequestPipelineBehavior<in TRequest, TResponse>
+public interface IRequestPipelineBehaviour<in TRequest, TResponse>
     where TRequest : IRequest<TResponse> {
     /// <summary>
     ///     Executes the pipeline handler performing any additional
@@ -43,12 +43,12 @@ public interface IRequestPipelineBehavior<in TRequest, TResponse>
 ///     It does not wrap requests that declare a response
 ///     (<see cref="IRequest{TResponse}"/>), even when invoked through
 ///     <see cref="IRequestHandlerInvoker.ExecuteAsync(IRequest, CancellationToken)"/>;
-///     use <see cref="IRequestPipelineBehavior{TRequest,TResponse}"/> for those.
+///     use <see cref="IRequestPipelineBehaviour{TRequest,TResponse}"/> for those.
 /// </remarks>
 /// <typeparam name="TRequest">
 ///     Type of the request.
 /// </typeparam>
-public interface IRequestPipelineBehavior<in TRequest>
+public interface IRequestPipelineBehaviour<in TRequest>
     where TRequest : IRequest {
     /// <summary>
     ///     Executes the pipeline handler performing any additional

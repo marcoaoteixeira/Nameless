@@ -1,7 +1,7 @@
 ﻿using Nameless.Contracts;
 using Nameless.Registration;
 
-namespace Nameless.Validation.FluentValidation;
+namespace Nameless.Hosting.Features.Validation;
 
 /// <summary>
 ///     Validation registration options.

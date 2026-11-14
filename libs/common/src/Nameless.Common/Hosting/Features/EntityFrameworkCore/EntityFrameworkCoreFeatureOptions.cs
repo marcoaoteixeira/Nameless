@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Nameless.Contracts;
+using Nameless.EntityFrameworkCore;
 using Nameless.EntityFrameworkCore.Config;
 using Nameless.Registration;
 
-namespace Nameless.EntityFrameworkCore;
+namespace Nameless.Hosting.Features.EntityFrameworkCore;
 
 /// <summary>
 ///     Configuration object used to register Entity Framework Core interceptors

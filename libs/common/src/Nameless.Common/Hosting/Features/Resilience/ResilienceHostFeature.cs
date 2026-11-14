@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Hosting;
+using Nameless.Resilience;
 
-namespace Nameless.Resilience;
+namespace Nameless.Hosting.Features.Resilience;
 
 /// <summary>
 ///     Resilience Host Feature 

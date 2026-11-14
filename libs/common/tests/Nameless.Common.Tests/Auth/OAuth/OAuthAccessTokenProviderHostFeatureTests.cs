@@ -5,6 +5,7 @@ using Nameless.Auth.Support;
 using Nameless.Configuration;
 using Nameless.Helpers;
 using Nameless.Hosting;
+using Nameless.Hosting.Features.Auth;
 using Nameless.Testing.Tools.Mockers.Hosting;
 using System.Reflection;
 

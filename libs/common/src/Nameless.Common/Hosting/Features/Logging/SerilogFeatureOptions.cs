@@ -1,7 +1,7 @@
 ﻿using Nameless.Diagnostics.CodeAnalysis;
 using Serilog.Configuration;
 
-namespace Nameless.Logging.Serilog;
+namespace Nameless.Hosting.Features.Logging;
 
 /// <summary>
 ///     Registration options for the Serilog logging integration.

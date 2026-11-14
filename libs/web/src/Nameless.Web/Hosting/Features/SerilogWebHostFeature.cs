@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nameless.Hosting;
-using Nameless.Logging.Serilog;
+using Nameless.Hosting.Features.Logging;
 using Nameless.Web.Logging;
 using Serilog;
 using Serilog.Configuration;
