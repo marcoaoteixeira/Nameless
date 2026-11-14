@@ -1,6 +1,4 @@
-﻿using Nameless.Windows.UI.Resources;
-
-namespace Nameless.Windows.UI;
+﻿namespace Nameless.Windows.UI;
 
 /// <summary>
 ///     Theme Extension Methods
@@ -11,10 +9,10 @@ public static class ThemeExtensions {
         ///     Gets the display text for the specified theme.
         /// </summary>
         public string DisplayText => self switch {
-            Theme.System => ThemeResources.DisplayText_System,
-            Theme.Light => ThemeResources.DisplayText_Light,
-            Theme.Dark => ThemeResources.DisplayText_Dark,
-            Theme.HighContrast => ThemeResources.DisplayText_HighContrast,
+            Theme.System => nameof(Theme.System),
+            Theme.Light => nameof(Theme.Light),
+            Theme.Dark => nameof(Theme.Dark),
+            Theme.HighContrast => nameof(Theme.HighContrast),
             _ => self.ToString()
         };
     }

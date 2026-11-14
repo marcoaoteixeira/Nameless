@@ -25,7 +25,7 @@ public static class SnackBarServiceExtension {
             var appearance = evt.Type.ToControlAppearance();
 
             self.Show(
-                evt.Title ?? appearance.Title,
+                evt.Title ?? appearance.ToString(),
                 evt.Message,
                 appearance,
                 appearance.Icon,

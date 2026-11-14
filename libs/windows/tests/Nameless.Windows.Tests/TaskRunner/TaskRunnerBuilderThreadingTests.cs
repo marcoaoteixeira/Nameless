@@ -106,7 +106,8 @@ public class TaskRunnerBuilderThreadingTests {
             CreationThreadId = Environment.CurrentManagedThreadId;
 
             var window = new TaskRunnerWindow(
-                new TaskRunnerWindowViewModel(eventPublisher, NullTranslator.Instance));
+                new TaskRunnerWindowViewModel(eventPublisher, NullTranslator<TaskRunnerWindow>.Instance)
+            );
 
             CreatedWindow = window;
 

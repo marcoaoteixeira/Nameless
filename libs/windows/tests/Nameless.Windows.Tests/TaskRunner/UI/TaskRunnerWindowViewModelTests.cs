@@ -13,7 +13,7 @@ public class TaskRunnerWindowViewModelTests {
     private static TaskRunnerWindowViewModel CreateSut() {
         var eventPublisher = new Mock<IEventPublisher>(MockBehavior.Loose);
 
-        return new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        return new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator<TaskRunnerWindow>.Instance);
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class TaskRunnerWindowViewModelTests {
             .Setup(p => p.Register(It.IsAny<object>(), It.IsAny<Action<object, TestNotificationEvent>>()))
             .Throws(exception);
 
-        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator<TaskRunnerWindow>.Instance);
         sut.SubscribeFor<TestNotificationEvent>();
         sut.SetHandler(_ => Task.CompletedTask);
 
@@ -229,7 +229,7 @@ public class TaskRunnerWindowViewModelTests {
             .Setup(p => p.Unregister<TestNotificationEvent>(It.IsAny<object>()))
             .Throws(exception);
 
-        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator<TaskRunnerWindow>.Instance);
         sut.SubscribeFor<TestNotificationEvent>();
         sut.SetHandler(_ => Task.CompletedTask);
 
@@ -252,7 +252,7 @@ public class TaskRunnerWindowViewModelTests {
             .Setup(p => p.Unregister<TestNotificationEvent>(It.IsAny<object>()))
             .Throws(unsubscribeException);
 
-        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator.Instance);
+        var sut = new TaskRunnerWindowViewModel(eventPublisher.Object, NullTranslator<TaskRunnerWindow>.Instance);
         sut.SubscribeFor<TestNotificationEvent>();
         sut.SetHandler(_ => throw delegateException);
 
