@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
@@ -237,7 +238,7 @@ public class RegistrationRulesTests {
 
         // act
         var exception = Assert.Throws<InvalidOperationException>(
-            () => MediatorServiceCollectionExtensions.CreateDescriptors(typeof(IRequestHandler<,>), implementations));
+            () => MediatorHostFeature.CreateServiceDescriptors(typeof(IRequestHandler<,>), implementations));
 
         // assert
         Assert.Multiple(

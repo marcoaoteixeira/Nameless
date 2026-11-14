@@ -1,8 +1,12 @@
-﻿using Nameless.Application;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Nameless.Application;
 using Nameless.Hosting;
+using Nameless.Hosting.Features.EntityFrameworkCore;
 using Nameless.Hosting.Features.FileManager;
 using Nameless.Hosting.Features.Logging;
 using Nameless.WinApp.Data;
+using Nameless.Windows;
 using Nameless.Windows.Localization;
 using Serilog;
 using Serilog.Formatting.Compact;
