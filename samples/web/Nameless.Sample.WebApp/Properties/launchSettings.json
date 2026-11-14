@@ -8,7 +8,8 @@
       "applicationUrl": "http://localhost:8080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "scalar"
     },
     "HTTPS": {
       "commandName": "Project",
@@ -17,7 +18,8 @@
       "applicationUrl": "https://localhost:8443;http://localhost:8080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "scalar"
     }
   }
 }

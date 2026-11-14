@@ -14,6 +14,9 @@ namespace Nameless.Web.Scalar.Auth.OAuth;
 ///     "auto" provider.
 /// </summary>
 public static class OAuthHttpAuthenticationHelper {
+    private const string TAG = "SCALAR_HTTP_SECURITY";
+    private const string OAUTH_CLIENT_CREDENTIALS_CONFIG_SECTION = "OAuthClientCredentials";
+
     /// <summary>
     ///     Configures Scalar HTTP security to use OAuth
     ///     authentication token provider.
@@ -33,22 +36,32 @@ public static class OAuthHttpAuthenticationHelper {
 
     private static void GetJwtBearerToken(ScalarHttpSecurityScheme scheme, HttpContext context) {
         var logger = context.RequestServices.GetLogger(typeof(OAuthHttpAuthenticationHelper));
-        var provider = context.RequestServices.GetService<IAccessTokenProvider<ClientCredentialsRequest>>();
+        var provider = context.RequestServices.GetService<IAccessTokenProvider<OAuthTokenRequest>>();
         if (provider is null) {
             CommonLog.Debug(
                 logger,
-                message: "OAuth authentication token provider was not registered.",
-                tag: typeof(OAuthHttpAuthenticationHelper).Tag
+                message: "OAuth access token provider unavailable.",
+                tag: TAG
             );
 
             return;
         }
 
         var configuration = context.RequestServices.GetRequiredService<IConfiguration>();
-        var oauth = configuration.GetSection("OAuth");
+        var oauthClientCredentials = configuration.GetSection(OAUTH_CLIENT_CREDENTIALS_CONFIG_SECTION);
+        if (!oauthClientCredentials.Exists()) {
+            CommonLog.Warning(
+                logger,
+                message: $"Missing OAuth Client Credentials configuration section ({OAUTH_CLIENT_CREDENTIALS_CONFIG_SECTION}).",
+                tag: TAG
+            );
+
+            return;
+        }
+
         var request = new ClientCredentialsRequest {
-            Scope = oauth.GetValue<string>(nameof(ClientCredentialsRequest.Scope)),
-            Audience = oauth.GetValue<string>(nameof(ClientCredentialsRequest.Audience))
+            Scope = oauthClientCredentials.GetValue<string>(nameof(ClientCredentialsRequest.Scope)),
+            Audience = oauthClientCredentials.GetValue<string>(nameof(ClientCredentialsRequest.Audience))
         };
         var response = provider.GetToken(request);
 
@@ -60,7 +73,7 @@ public static class OAuthHttpAuthenticationHelper {
                 Log.UnableRetrieveAccessToken(
                     logger,
                     reason: failure.Flatten(),
-                    tag: typeof(OAuthHttpAuthenticationHelper).Tag
+                    tag: TAG
                 );
             }
         );
