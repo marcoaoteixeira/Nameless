@@ -1,5 +1,4 @@
-﻿using Nameless.Windows.Extensions.Resources;
-using Wpf.Ui.Controls;
+﻿using Wpf.Ui.Controls;
 
 namespace Nameless.Windows;
 
@@ -11,20 +10,6 @@ public static class ControlAppearanceExtension {
     ///     The current <see cref="ControlAppearance"/>.
     /// </param>
     extension(ControlAppearance self) {
-        /// <summary>
-        ///     Retrieves the text title associated with the
-        ///     specified <see cref="ControlAppearance"/>.
-        /// </summary>
-        /// <returns>
-        ///     The text title associated with the <see cref="ControlAppearance"/>.
-        /// </returns>
-        public string Title => self switch {
-            ControlAppearance.Success => ControlAppearanceResources.Title_Success,
-            ControlAppearance.Caution => ControlAppearanceResources.Title_Caution,
-            ControlAppearance.Danger => ControlAppearanceResources.Title_Danger,
-            _ => ControlAppearanceResources.Title_Info
-        };
-
         /// <summary>
         ///     Retrieves the icon associated with the
         ///     specified <see cref="ControlAppearance"/>.

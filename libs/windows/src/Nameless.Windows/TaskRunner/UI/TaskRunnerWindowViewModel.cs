@@ -72,7 +72,7 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
     /// <param name="translator">
     ///     The translator.
     /// </param>
-    public TaskRunnerWindowViewModel(IEventPublisher eventPublisher, ITranslator translator) {
+    public TaskRunnerWindowViewModel(IEventPublisher eventPublisher, ITranslator<TaskRunnerWindow> translator) {
         _eventPublisher = Throws.When.Null(eventPublisher);
 
         T = Throws.When.Null(translator);
@@ -133,7 +133,7 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
 
         Entries.Add(
             LoggerRichTextBoxEntry.Warning(
-                T["TaskRunnerWindow_CloseBlocked_Message"]
+                T["CloseBlocked_Message"]
             )
         );
     }
@@ -176,7 +176,7 @@ public partial class TaskRunnerWindowViewModel : ViewModel {
 
                 Entries.Add(
                     LoggerRichTextBoxEntry.Warning(
-                        T["TaskRunnerWindow_Cancelled_Message"]
+                        T["Cancelled_Message"]
                     )
                 );
             }

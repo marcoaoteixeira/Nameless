@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Nameless.Registration;
+using System.ComponentModel;
 using System.Globalization;
-using Nameless.Registration;
 
 namespace Nameless.Windows.Localization;
 
@@ -11,11 +11,25 @@ namespace Nameless.Windows.Localization;
 ///     localizer is registered.
 /// </summary>
 [SkipAssemblyScan]
-public sealed class NullTranslator : ITranslator {
+public sealed class NullTranslator {
     /// <summary>
     ///     Gets the singleton instance.
     /// </summary>
-    public static ITranslator Instance { get; } = new NullTranslator();
+    public static ITranslator Instance => NullTranslator<object>.Instance;
+}
+
+/// <summary>
+///     Null-object implementation of <see cref="ITranslator"/>.
+///     Returns the resource key as-is (applying any format arguments) and
+///     ignores culture-switch requests. Used as the default before a real
+///     localizer is registered.
+/// </summary>
+[SkipAssemblyScan]
+public sealed class NullTranslator<T> : ITranslator<T> {
+    /// <summary>
+    ///     Gets the singleton instance.
+    /// </summary>
+    public static ITranslator<T> Instance { get; } = new NullTranslator<T>();
 
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
