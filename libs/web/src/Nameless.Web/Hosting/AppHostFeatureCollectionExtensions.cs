@@ -2,9 +2,24 @@
 using Nameless.Hosting.Features.Mediator;
 using Nameless.Hosting.Features.Resilience;
 using Nameless.Hosting.Features.Validation;
-using Nameless.Resilience;
-using Nameless.Validation.FluentValidation;
-using Nameless.Web.Hosting.Features;
+using Nameless.Web.Hosting.Features.Antiforgery;
+using Nameless.Web.Hosting.Features.Auth;
+using Nameless.Web.Hosting.Features.Common;
+using Nameless.Web.Hosting.Features.Cors;
+using Nameless.Web.Hosting.Features.DataProtection;
+using Nameless.Web.Hosting.Features.Discoverability;
+using Nameless.Web.Hosting.Features.ExceptionHandling;
+using Nameless.Web.Hosting.Features.HealthCheck;
+using Nameless.Web.Hosting.Features.HttpRequestCorrelation;
+using Nameless.Web.Hosting.Features.Https;
+using Nameless.Web.Hosting.Features.Logging;
+using Nameless.Web.Hosting.Features.OpenApi;
+using Nameless.Web.Hosting.Features.OutputCache;
+using Nameless.Web.Hosting.Features.RateLimiter;
+using Nameless.Web.Hosting.Features.RequestTimeout;
+using Nameless.Web.Hosting.Features.Routing;
+using Nameless.Web.Hosting.Features.Scalar;
+using Nameless.Web.Hosting.Features.Telemetry;
 using Nameless.Workers;
 
 namespace Nameless.Web.Hosting;

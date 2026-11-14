@@ -7,6 +7,7 @@ using Nameless.Hosting.Features.FileManager;
 using Nameless.Hosting.Features.Logging;
 using Nameless.WinApp.Data;
 using Nameless.Windows;
+using Nameless.Windows.Hosting.Features.Localization;
 using Nameless.Windows.Localization;
 using Serilog;
 using Serilog.Formatting.Compact;

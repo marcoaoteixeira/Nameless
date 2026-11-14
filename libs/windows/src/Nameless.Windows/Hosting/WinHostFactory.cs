@@ -21,7 +21,7 @@ public sealed class WinHostFactory : HostFactory {
     /// </summary>
     /// <remarks>
     ///     The feature collection starts from
-    ///     <see cref="AppHostFeatureCollectionExtensions.CreateDefault"/>,
+    ///     <see cref="WinHostFeatureCollectionExtensions.CreateDefault"/>,
     ///     opt-in features included. Use <see cref="CreateMinimal"/> to
     ///     start from the minimal set instead.
     /// </remarks>
@@ -64,7 +64,7 @@ public sealed class WinHostFactory : HostFactory {
     /// </summary>
     /// <remarks>
     ///     The feature collection starts from
-    ///     <see cref="AppHostFeatureCollectionExtensions.CreateMinimal"/>,
+    ///     <see cref="WinHostFeatureCollectionExtensions.CreateMinimal"/>,
     ///     without the opt-in features; add the ones the application needs.
     ///     Use <see cref="CreateDefault"/> to start from the full set instead.
     /// </remarks>

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Hosting;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Hosting;
+using Nameless.Windows.Hosting.Features.Navigation;
 using Nameless.Windows.Localization;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
