@@ -84,6 +84,13 @@ public static class StaticData {
     /// </summary>
     public static class Defaults {
         /// <summary>
+        ///     Gets the string comparer to be used when comparing paths.
+        /// </summary>
+        public static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal;
+
+        /// <summary>
         ///     Gets the default encoding (UTF-8 without BOM)
         /// </summary>
         public static Encoding Encoding { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);

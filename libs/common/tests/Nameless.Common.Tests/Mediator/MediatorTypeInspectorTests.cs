@@ -1,3 +1,4 @@
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
@@ -88,11 +89,11 @@ internal class InspMultiStreamHandler : IStreamHandler<InspMultiStream, string>,
     IAsyncEnumerable<int> IStreamHandler<InspMultiStream, int>.HandleAsync(InspMultiStream request, CancellationToken cancellationToken) => AsyncEnumerable.Empty<int>();
 }
 
-internal class InspVoidBehaviorForResponse : IRequestPipelineBehavior<InspA> {
+internal class InspVoidBehaviourForResponse : IRequestPipelineBehaviour<InspA> {
     public Task HandleAsync(InspA request, RequestHandlerDelegate next, CancellationToken cancellationToken) => next(cancellationToken);
 }
 
-internal class InspCovariantBehavior : IRequestPipelineBehavior<InspCov, object> {
+internal class InspCovariantBehaviour : IRequestPipelineBehaviour<InspCov, object> {
     public Task<object> HandleAsync(InspCov request, RequestHandlerDelegate<object> next, CancellationToken cancellationToken) => next(cancellationToken);
 }
 
@@ -100,7 +101,7 @@ internal class InspWrongResponseStreamBehavior : IStreamPipelineBehavior<InspStr
     public IAsyncEnumerable<int> HandleAsync(InspStream request, StreamHandlerDelegate<int> next, CancellationToken cancellationToken) => next();
 }
 
-internal class InspWrappedArityBehavior<T> : IRequestPipelineBehavior<InspGenericRequest<T>, T> {
+internal class InspWrappedArityBehaviour<T> : IRequestPipelineBehaviour<InspGenericRequest<T>, T> {
     public Task<T> HandleAsync(InspGenericRequest<T> request, RequestHandlerDelegate<T> next, CancellationToken cancellationToken) => next(cancellationToken);
 }
 
@@ -164,15 +165,15 @@ public class MediatorTypeInspectorTests {
     [InlineData(typeof(InspSwappedHandler<,>), typeof(IRequestHandler<,>))]
     [InlineData(typeof(InspOuter<>.Inner), typeof(IRequestHandler<>))]
     [InlineData(typeof(InspWrappedEventHandler<>), typeof(IEventHandler<>))]
-    [InlineData(typeof(InspWrappedArityBehavior<>), typeof(IRequestPipelineBehavior<,>))]
+    [InlineData(typeof(InspWrappedArityBehaviour<>), typeof(IRequestPipelineBehaviour<,>))]
     // void handler/behavior for a request that returns a response
     [InlineData(typeof(InspVoidForResponseHandler), typeof(IRequestHandler<>))]
     [InlineData(typeof(InspMultiWithVoidForResponseHandler), typeof(IRequestHandler<>))]
-    [InlineData(typeof(InspVoidBehaviorForResponse), typeof(IRequestPipelineBehavior<>))]
+    [InlineData(typeof(InspVoidBehaviourForResponse), typeof(IRequestPipelineBehaviour<>))]
     // response type differs from the one the request declares
     [InlineData(typeof(InspCovariantHandler), typeof(IRequestHandler<,>))]
     [InlineData(typeof(InspAmbiguousHandler), typeof(IRequestHandler<,>))]
-    [InlineData(typeof(InspCovariantBehavior), typeof(IRequestPipelineBehavior<,>))]
+    [InlineData(typeof(InspCovariantBehaviour), typeof(IRequestPipelineBehaviour<,>))]
     [InlineData(typeof(InspCovariantStreamHandler), typeof(IStreamHandler<,>))]
     [InlineData(typeof(InspWrongResponseStreamBehavior), typeof(IStreamPipelineBehavior<,>))]
     public void GetServiceTypes_InvalidType_ThrowsInvalidOperationExceptionNamingTheType(Type implementation, Type service) {

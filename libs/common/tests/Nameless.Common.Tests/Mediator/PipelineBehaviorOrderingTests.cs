@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Requests;
 
 namespace Nameless.Mediator;
@@ -43,8 +44,8 @@ public sealed class OtherVoidRequestHandler(RequestLog log) : IRequestHandler<Ot
     }
 }
 
-public abstract class TracingTypedBehavior<TRequest, TResponse>(RequestLog log, string name)
-    : IRequestPipelineBehavior<TRequest, TResponse>
+public abstract class TracingTypedBehaviour<TRequest, TResponse>(RequestLog log, string name)
+    : IRequestPipelineBehaviour<TRequest, TResponse>
     where TRequest : IRequest<TResponse> {
     public Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) {
         log.Add(name);
@@ -53,8 +54,8 @@ public abstract class TracingTypedBehavior<TRequest, TResponse>(RequestLog log, 
     }
 }
 
-public abstract class TracingVoidBehavior<TRequest>(RequestLog log, string name)
-    : IRequestPipelineBehavior<TRequest>
+public abstract class TracingVoidBehaviour<TRequest>(RequestLog log, string name)
+    : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.Add(name);
@@ -63,29 +64,29 @@ public abstract class TracingVoidBehavior<TRequest>(RequestLog log, string name)
     }
 }
 
-public sealed class OpenTypedFirst<TRequest, TResponse>(RequestLog log) : TracingTypedBehavior<TRequest, TResponse>(log, "open-1")
+public sealed class OpenTypedFirst<TRequest, TResponse>(RequestLog log) : TracingTypedBehaviour<TRequest, TResponse>(log, "open-1")
     where TRequest : IRequest<TResponse>;
 
-public sealed class OpenTypedSecond<TRequest, TResponse>(RequestLog log) : TracingTypedBehavior<TRequest, TResponse>(log, "open-2")
+public sealed class OpenTypedSecond<TRequest, TResponse>(RequestLog log) : TracingTypedBehaviour<TRequest, TResponse>(log, "open-2")
     where TRequest : IRequest<TResponse>;
 
-public sealed class ClosedTypedFirst(RequestLog log) : TracingTypedBehavior<OrderedRequest, string>(log, "closed-1");
+public sealed class ClosedTypedFirst(RequestLog log) : TracingTypedBehaviour<OrderedRequest, string>(log, "closed-1");
 
-public sealed class ClosedTypedSecond(RequestLog log) : TracingTypedBehavior<OrderedRequest, string>(log, "closed-2");
+public sealed class ClosedTypedSecond(RequestLog log) : TracingTypedBehaviour<OrderedRequest, string>(log, "closed-2");
 
-public sealed class ClosedTypedOther(RequestLog log) : TracingTypedBehavior<OtherRequest, string>(log, "closed-other");
+public sealed class ClosedTypedOther(RequestLog log) : TracingTypedBehaviour<OtherRequest, string>(log, "closed-other");
 
-public sealed class OpenVoidFirst<TRequest>(RequestLog log) : TracingVoidBehavior<TRequest>(log, "open-1")
+public sealed class OpenVoidFirst<TRequest>(RequestLog log) : TracingVoidBehaviour<TRequest>(log, "open-1")
     where TRequest : IRequest;
 
-public sealed class OpenVoidSecond<TRequest>(RequestLog log) : TracingVoidBehavior<TRequest>(log, "open-2")
+public sealed class OpenVoidSecond<TRequest>(RequestLog log) : TracingVoidBehaviour<TRequest>(log, "open-2")
     where TRequest : IRequest;
 
-public sealed class ClosedVoidFirst(RequestLog log) : TracingVoidBehavior<OrderedVoidRequest>(log, "closed-1");
+public sealed class ClosedVoidFirst(RequestLog log) : TracingVoidBehaviour<OrderedVoidRequest>(log, "closed-1");
 
-public sealed class ClosedVoidSecond(RequestLog log) : TracingVoidBehavior<OrderedVoidRequest>(log, "closed-2");
+public sealed class ClosedVoidSecond(RequestLog log) : TracingVoidBehaviour<OrderedVoidRequest>(log, "closed-2");
 
-public sealed class ClosedVoidOther(RequestLog log) : TracingVoidBehavior<OtherVoidRequest>(log, "closed-other");
+public sealed class ClosedVoidOther(RequestLog log) : TracingVoidBehaviour<OtherVoidRequest>(log, "closed-other");
 
 /// <summary>
 ///     Verifies, through the real <c>RegisterMediator</c> registration, that

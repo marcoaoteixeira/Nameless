@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Hosting;
+using Nameless.Hosting.Features.Logging;
 using Nameless.Testing.Tools.Mockers.Hosting;
 using Serilog.Configuration;
 using Serilog.Events;

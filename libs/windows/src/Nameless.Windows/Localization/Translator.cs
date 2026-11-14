@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using Nameless.Contracts;
 using Nameless.Registration;
+using Nameless.Windows.Hosting.Features.Localization;
 
 namespace Nameless.Windows.Localization;
 

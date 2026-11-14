@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Requests;
 
 namespace Nameless.Mediator;
@@ -54,19 +55,19 @@ public class VoidRequestRegistrationTests {
         var sut = CreateSut();
 
         // act
-        sut.WithRequestPipelineBehavior<VoidBehaviorA<VoidRequest>, VoidRequest>();
+        sut.WithRequestPipelineBehavior<VoidBehaviourA<VoidRequest>, VoidRequest>();
 
         // assert
-        Assert.Contains(typeof(VoidBehaviorA<VoidRequest>), sut.RequestPipelineBehaviors);
+        Assert.Contains(typeof(VoidBehaviourA<VoidRequest>), sut.RequestPipelineBehaviors);
     }
 
     [Fact]
     public void WithRequestPipelineBehavior_Type_AcceptsOpenGenericVoidBehavior() {
         // act
-        var sut = CreateSut().WithRequestPipelineBehavior(typeof(VoidBehaviorA<>));
+        var sut = CreateSut().WithRequestPipelineBehavior(typeof(VoidBehaviourA<>));
 
         // assert
-        Assert.Contains(typeof(VoidBehaviorA<>), sut.RequestPipelineBehaviors);
+        Assert.Contains(typeof(VoidBehaviourA<>), sut.RequestPipelineBehaviors);
     }
 
     [Fact]
@@ -144,9 +145,9 @@ public class VoidRequestRegistrationTests {
         var services = new ServiceCollection();
 
         // act
-        services.RegisterMediator(r => r.WithUseAssemblyScan(false).WithRequestPipelineBehavior(typeof(VoidBehaviorA<>)));
+        services.RegisterMediator(r => r.WithUseAssemblyScan(false).WithRequestPipelineBehavior(typeof(VoidBehaviourA<>)));
 
         // assert
-        Assert.Contains(services, d => d.ServiceType == typeof(IRequestPipelineBehavior<>) && d.ImplementationType == typeof(VoidBehaviorA<>));
+        Assert.Contains(services, d => d.ServiceType == typeof(IRequestPipelineBehaviour<>) && d.ImplementationType == typeof(VoidBehaviourA<>));
     }
 }

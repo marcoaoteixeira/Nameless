@@ -2,7 +2,6 @@
 using Nameless.IO;
 using Nameless.IO.Physical;
 using Nameless.Mediator.Requests;
-using Nameless.WinApp.Infrastructure;
 using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;

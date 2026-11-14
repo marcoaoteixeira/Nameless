@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Nameless.Hosting.Features.EntityFrameworkCore;
 
 namespace Nameless.EntityFrameworkCore;
 

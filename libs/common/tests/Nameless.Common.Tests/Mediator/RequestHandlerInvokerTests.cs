@@ -40,7 +40,7 @@ public sealed class ThrowingVoidRequestHandler : IRequestHandler<ThrowingVoidReq
 
 public record UnhandledVoidRequest : IRequest;
 
-public sealed class VoidBehaviorA<TRequest>(RequestLog log) : IRequestPipelineBehavior<TRequest>
+public sealed class VoidBehaviourA<TRequest>(RequestLog log) : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public async Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.Add("A:before");
@@ -49,7 +49,7 @@ public sealed class VoidBehaviorA<TRequest>(RequestLog log) : IRequestPipelineBe
     }
 }
 
-public sealed class VoidBehaviorB<TRequest>(RequestLog log) : IRequestPipelineBehavior<TRequest>
+public sealed class VoidBehaviourB<TRequest>(RequestLog log) : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public async Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.Add("B:before");
@@ -58,7 +58,7 @@ public sealed class VoidBehaviorB<TRequest>(RequestLog log) : IRequestPipelineBe
     }
 }
 
-public sealed class ShortCircuitVoidBehavior<TRequest>(RequestLog log) : IRequestPipelineBehavior<TRequest>
+public sealed class ShortCircuitVoidBehaviour<TRequest>(RequestLog log) : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.Add("short-circuit");
@@ -67,7 +67,7 @@ public sealed class ShortCircuitVoidBehavior<TRequest>(RequestLog log) : IReques
     }
 }
 
-public sealed class TokenSwappingVoidBehavior<TRequest>(RequestLog log) : IRequestPipelineBehavior<TRequest>
+public sealed class TokenSwappingVoidBehaviour<TRequest>(RequestLog log) : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.Add("swap");
@@ -76,7 +76,7 @@ public sealed class TokenSwappingVoidBehavior<TRequest>(RequestLog log) : IReque
     }
 }
 
-public sealed class TokenRecordingVoidBehavior<TRequest>(RequestLog log) : IRequestPipelineBehavior<TRequest>
+public sealed class TokenRecordingVoidBehaviour<TRequest>(RequestLog log) : IRequestPipelineBehaviour<TRequest>
     where TRequest : IRequest {
     public Task HandleAsync(TRequest request, RequestHandlerDelegate next, CancellationToken cancellationToken) {
         log.BehaviorToken = cancellationToken;
@@ -146,8 +146,8 @@ public class RequestHandlerInvokerTests {
     public async Task ExecuteAsync_VoidRequest_RunsBehaviorsOutermostFirstInRegistrationOrder() {
         // arrange
         using var provider = BuildProvider(services => {
-            services.AddTransient(typeof(IRequestPipelineBehavior<>), typeof(VoidBehaviorA<>));
-            services.AddTransient(typeof(IRequestPipelineBehavior<>), typeof(VoidBehaviorB<>));
+            services.AddTransient(typeof(IRequestPipelineBehaviour<>), typeof(VoidBehaviourA<>));
+            services.AddTransient(typeof(IRequestPipelineBehaviour<>), typeof(VoidBehaviourB<>));
         });
         var sut = new RequestHandlerInvoker(provider);
 
@@ -165,7 +165,7 @@ public class RequestHandlerInvokerTests {
     public async Task ExecuteAsync_VoidRequest_WhenBehaviorShortCircuits_DoesNotInvokeHandler() {
         // arrange
         using var provider = BuildProvider(services =>
-            services.AddTransient(typeof(IRequestPipelineBehavior<>), typeof(ShortCircuitVoidBehavior<>)));
+            services.AddTransient(typeof(IRequestPipelineBehaviour<>), typeof(ShortCircuitVoidBehaviour<>)));
         var sut = new RequestHandlerInvoker(provider);
 
         // act
@@ -179,8 +179,8 @@ public class RequestHandlerInvokerTests {
     public async Task ExecuteAsync_VoidRequest_WhenOuterBehaviorPassesNoToken_InnerBehaviorReceivesOriginalToken() {
         // arrange
         using var provider = BuildProvider(services => {
-            services.AddTransient(typeof(IRequestPipelineBehavior<>), typeof(TokenSwappingVoidBehavior<>));
-            services.AddTransient(typeof(IRequestPipelineBehavior<>), typeof(TokenRecordingVoidBehavior<>));
+            services.AddTransient(typeof(IRequestPipelineBehaviour<>), typeof(TokenSwappingVoidBehaviour<>));
+            services.AddTransient(typeof(IRequestPipelineBehaviour<>), typeof(TokenRecordingVoidBehaviour<>));
         });
         var sut = new RequestHandlerInvoker(provider);
         using var cts = new CancellationTokenSource();

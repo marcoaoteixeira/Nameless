@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using Nameless.Testing.Tools.Attributes;
+using Nameless.Windows.Hosting.Features.Localization;
 
 namespace Nameless.Windows.Localization;
 

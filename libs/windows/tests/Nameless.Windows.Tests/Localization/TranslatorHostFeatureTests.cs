@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Hosting;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Testing.Tools.Mockers.Hosting;
+using Nameless.Windows.Hosting.Features.Localization;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
 using SysPath = System.IO.Path;

@@ -1,4 +1,6 @@
-﻿namespace Nameless.Windows.Dialogs.FileSystem;
+﻿using Nameless.Windows.Hosting.Features.Dialogs.FileSystem;
+
+namespace Nameless.Windows.Dialogs.FileSystem;
 
 /// <summary>
 ///     File Selection Options.

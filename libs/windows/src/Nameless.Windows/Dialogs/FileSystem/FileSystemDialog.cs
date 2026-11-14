@@ -2,6 +2,7 @@
 using Nameless.Application;
 using Nameless.Contracts;
 using Nameless.Windows.Dialogs.FileSystem.Resources;
+using Nameless.Windows.Hosting.Features.Dialogs.FileSystem;
 using System.Windows;
 
 namespace Nameless.Windows.Dialogs.FileSystem;

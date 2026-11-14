@@ -23,7 +23,7 @@ internal sealed class RequestHandlerWrapperImpl<TRequest, TResponse> : RequestHa
 
     /// <inheritdoc />
     public override Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider provider, CancellationToken cancellationToken) {
-        return provider.GetServices<IRequestPipelineBehavior<TRequest, TResponse>>()
+        return provider.GetServices<IRequestPipelineBehaviour<TRequest, TResponse>>()
                        .Reverse()
                        .Aggregate(
                            seed: (RequestHandlerDelegate<TResponse>)InnerHandleAsync,
@@ -53,7 +53,7 @@ internal sealed class RequestHandlerWrapperImpl<TRequest> : RequestHandlerWrappe
     where TRequest : IRequest {
     /// <inheritdoc />
     public override Task HandleAsync(IRequest request, IServiceProvider provider, CancellationToken cancellationToken) {
-        return provider.GetServices<IRequestPipelineBehavior<TRequest>>()
+        return provider.GetServices<IRequestPipelineBehaviour<TRequest>>()
                        .Reverse()
                        .Aggregate(
                            seed: (RequestHandlerDelegate)InnerHandleAsync,

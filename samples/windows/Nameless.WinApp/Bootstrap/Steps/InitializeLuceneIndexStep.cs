@@ -1,6 +1,5 @@
 ﻿using Nameless.Contracts;
 using Nameless.Lucene;
-using Nameless.WinApp.Infrastructure;
 using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Bootstrap.Notification;
 using Nameless.Windows.Localization;

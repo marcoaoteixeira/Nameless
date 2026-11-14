@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nameless.Hosting.Features.Mediator;
 using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
+using Nameless.Registration;
 
 namespace Nameless.Mediator;
 
@@ -237,11 +239,11 @@ public class RegistrationRulesTests {
 
         // act
         var exception = Assert.Throws<InvalidOperationException>(
-            () => MediatorServiceCollectionExtensions.CreateDescriptors(typeof(IRequestHandler<,>), implementations));
+            () => MediatorHostFeature.CreateServiceDescriptors(typeof(IRequestHandler<,>), implementations));
 
         // assert
         Assert.Multiple(
-            () => Assert.Contains("[IgnoreAssemblyScan]", exception.Message),
+            () => Assert.Contains($"[{nameof(SkipAssemblyScanAttribute)}]", exception.Message),
             () => Assert.IsType<InvalidOperationException>(exception.InnerException),
             () => Assert.StartsWith(exception.InnerException!.Message, exception.Message)
         );
