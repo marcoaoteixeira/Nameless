@@ -1,15 +1,15 @@
 ﻿namespace Nameless.Validation;
 
 /// <summary>
-///     <see cref="IValidator"/> extension methods.
+///     <see cref="IValidationService"/> extension methods.
 /// </summary>
-public static class ValidatorExtensions {
+public static class ValidationServiceExtensions {
     private static readonly Dictionary<string, object> EmptyContext = [];
 
     /// <param name="self">
-    ///     The current <see cref="IValidator"/> instance.
+    ///     The current <see cref="IValidationService"/> instance.
     /// </param>
-    extension(IValidator self) {
+    extension(IValidationService self) {
         /// <summary>
         ///     Validates the specified value.
         /// </summary>

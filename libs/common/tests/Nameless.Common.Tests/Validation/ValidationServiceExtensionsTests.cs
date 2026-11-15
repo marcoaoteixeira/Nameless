@@ -4,14 +4,14 @@ using Nameless.ObjectModel;
 namespace Nameless.Validation;
 
 [UnitTest]
-public class ValidatorExtensionsTests {
+public class ValidationServiceExtensionsTests {
     // --- ValidateAsync(object, CancellationToken) ---
 
     [Fact]
     public async Task ValidateAsync_WithoutContext_DelegatesToFullSignature() {
         // arrange
         var ct = TestContext.Current.CancellationToken;
-        var mock = new Mock<IValidator>();
+        var mock = new Mock<IValidationService>();
         mock.Setup(s => s.ValidateAsync(
                 It.IsAny<object>(),
                 It.IsAny<Dictionary<string, object>>(),
@@ -36,7 +36,7 @@ public class ValidatorExtensionsTests {
         // arrange
         var ct = TestContext.Current.CancellationToken;
         ValidationResult failed = Error.Validation("invalid");
-        var mock = new Mock<IValidator>();
+        var mock = new Mock<IValidationService>();
         mock.Setup(s => s.ValidateAsync(
                 It.IsAny<object>(),
                 It.IsAny<Dictionary<string, object>>(),

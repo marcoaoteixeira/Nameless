@@ -1,20 +1,20 @@
 ﻿using FluentValidation;
 using Nameless.Contracts;
 
-namespace Nameless.Validation.FluentValidation;
+namespace Nameless.Validation;
 
 /// <summary>
-///     Default implementation of <see cref="IValidator"/> that uses
+///     Default implementation of <see cref="IValidationService"/> that uses
 ///     FluentValidation for validation.
 /// </summary>
-public class FluentValidationValidator : IValidator {
-    private readonly IFluentValidationValidator[] _validators;
+public class ValidationService : IValidationService {
+    private readonly IValidator[] _validators;
 
     /// <summary>
-    ///     Initializes a new instance of <see cref="FluentValidationValidator" />.
+    ///     Initializes a new instance of <see cref="ValidationService" />.
     /// </summary>
-    /// <param name="validators"> A collection of <see cref="global::FluentValidation.IValidator" />.</param>
-    public FluentValidationValidator(IEnumerable<IFluentValidationValidator> validators) {
+    /// <param name="validators"> A collection of <see cref="IValidator" />.</param>
+    public ValidationService(IEnumerable<IValidator> validators) {
         // we might need to iterate over it multiple times,
         // so we convert it to an array
         _validators = [.. validators];

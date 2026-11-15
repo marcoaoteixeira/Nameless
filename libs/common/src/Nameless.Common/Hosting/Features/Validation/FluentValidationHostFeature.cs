@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
-using Nameless.Hosting;
 using Nameless.Validation;
-using Nameless.Validation.FluentValidation;
 
 namespace Nameless.Hosting.Features.Validation;
 
@@ -17,10 +16,10 @@ public class FluentValidationHostFeature : HostFeature<FluentValidationFeatureOp
         var options = ActionHelper.FromDelegate(ConfigureFeature)
                                   .WithAssemblies(context.Assemblies);
 
-        builder.Services.TryAddTransient<IValidator, FluentValidationValidator>();
+        builder.Services.TryAddTransient<IValidationService, ValidationService>();
         builder.Services.TryAddEnumerable(options.Validators.Select(
             implementation => ServiceDescriptor.Transient(
-                typeof(IFluentValidationValidator),
+                typeof(IValidator),
                 implementation
             )
         ));
