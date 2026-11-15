@@ -1,8 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Nameless.Contracts;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Helpers;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Xaml;
 
 namespace Nameless.Windows.Localization;
 
@@ -21,8 +25,8 @@ namespace Nameless.Windows.Localization;
 ///     <see cref="string.Format(string,object[])"/> template.
 /// </remarks>
 public class TranslatorExtension : MarkupExtension {
-    private static ITranslator Translator {
-        get => field ?? NullTranslator.Instance;
+    private static ITranslatorFactory TranslatorFactory {
+        get => field ?? NullTranslatorFactory.Instance;
         set;
     }
 
@@ -52,8 +56,10 @@ public class TranslatorExtension : MarkupExtension {
 
     /// <inheritdoc />
     public override object ProvideValue(IServiceProvider provider) {
+        var rootObjectType = GetRootTarget(provider);
+        var translator = TranslatorFactory.Create(rootObjectType);
         var keyBinding = new Binding($"[{Key}]") {
-            Source = Translator,
+            Source = translator,
             Mode = BindingMode.OneWay
         };
 
@@ -72,43 +78,46 @@ public class TranslatorExtension : MarkupExtension {
     }
 
     /// <summary>
-    ///     Wires the shared static <see cref="ITranslator"/> used by all
+    ///     Wires the shared static <see cref="ITranslatorFactory"/> used by all
     ///     <see cref="TranslatorExtension"/> instances. Call this once after the DI
-    ///     container is built, passing the resolved <see cref="ITranslator"/>
+    ///     container is built, passing the resolved <see cref="ITranslatorFactory"/>
     ///     singleton.
     /// </summary>
-    /// <param name="translator">
-    ///     The translator to use for all XAML bindings.
-    /// </param>
-    public static void SetTranslator(ITranslator translator) {
-        Translator = translator;
-    }
-
-    /// <summary>
-    ///     Resolves and wires the shared static <see cref="ITranslator"/>
-    ///     used by all <see cref="TranslatorExtension"/> instances.
-    ///     Call this once after the DI container is built, passing the
-    ///     resolved <see cref="ITranslator"/> singleton.
-    /// </summary>
     /// <param name="provider">
-    ///     The DI provider.
+    ///     The service provider.
     /// </param>
-    public static void ResolveTranslator<T>(IServiceProvider provider) {
+    public static void ResolveTranslatorFactory(IServiceProvider provider) {
         var appConfigurationManager = provider.GetRequiredService<IAppConfigurationManager>();
-        var translator = provider.GetService<ITranslator<T>>() ?? NullTranslator<T>.Instance;
-
-        SetTranslator(translator);
 
         if (!CultureResolver.TryGet(appConfigurationManager.Language, out var culture)) {
             CommonLog.Warning(
                 provider.GetLogger(typeof(TranslatorExtension)),
                 $"Unable to resolve culture '{appConfigurationManager.Language}'.",
-                tag: "WPF_TRANSLATOR_EXTENSION"
+                typeof(TranslatorExtension).Tag
             );
-
-            return;
         }
 
-        translator.SetCulture(culture);
+        CultureInfo.CurrentCulture = culture ?? CultureInfo.CurrentCulture;
+        CultureInfo.CurrentUICulture = culture ?? CultureInfo.CurrentUICulture;
+
+        TranslatorFactory = provider.GetService<ITranslatorFactory>() ?? NullTranslatorFactory.Instance;
     }
+
+    private static Type GetRootTarget(IServiceProvider serviceProvider) {
+        var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+        var root = serviceProvider.GetService(typeof(IRootObjectProvider)) as IRootObjectProvider;
+
+        // Inside a template/style, TargetObject is an internal placeholder (SharedDp),
+        // not a DependencyObject. Return 'this' so WPF calls you again when the
+        // template is applied to a real element.
+        if (target?.TargetObject is not null &&
+            target.TargetObject is not DependencyObject &&
+            target.TargetObject.GetType().FullName == "System.Windows.SharedDp") {
+            return typeof(UnknownRootObject);
+        }
+
+        return root?.RootObject.GetType() ?? typeof(UnknownRootObject);
+    }
+
+    internal readonly record struct UnknownRootObject;
 }

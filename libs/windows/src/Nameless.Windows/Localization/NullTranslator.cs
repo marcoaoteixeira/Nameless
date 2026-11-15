@@ -55,3 +55,28 @@ public sealed class NullTranslator<T> : ITranslator<T> {
     /// <inheritdoc />
     public void SetCulture(string cultureName) { }
 }
+
+/// <summary>
+///     Null-Object Translator Factory
+/// </summary>
+[SkipAssemblyScan]
+public sealed class NullTranslatorFactory : ITranslatorFactory {
+    /// <summary>
+    ///     Gets the singleton instance.
+    /// </summary>
+    public static ITranslatorFactory Instance => new NullTranslatorFactory();
+
+    static NullTranslatorFactory() { }
+
+    private NullTranslatorFactory() { }
+
+    /// <inheritdoc />
+    public ITranslator Create(Type anchor) {
+        return NullTranslator.Instance;
+    }
+
+    /// <inheritdoc />
+    public ITranslator Create(string section) {
+        return NullTranslator.Instance;
+    }
+}

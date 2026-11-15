@@ -74,7 +74,7 @@
             <!-- Cancel Button -->
             <ui:Button Appearance="Danger"
                        Command="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.CancelCommand}"
-                       Content="{loc:Translator TaskRunnerWindow_CancelButton_Content}"
+                       Content="{loc:Translator CancelButton_Content}"
                        Cursor="Hand"
                        Foreground="White"
                        Icon="{ui:SymbolIcon HandLeft24}"
@@ -85,7 +85,7 @@
             <!-- Close Button -->
             <ui:Button Appearance="Success"
                        Click="CloseButtonHandler"
-                       Content="{loc:Translator TaskRunnerWindow_CloseButton_Content}"
+                       Content="{loc:Translator CloseButton_Content}"
                        Cursor="Hand"
                        Icon="{ui:SymbolIcon ArrowExit20}"
                        IsEnabled="{Binding ElementName=TaskRunnerWindowRoot, Path=ViewModel.Idle, Mode=OneWay}"
