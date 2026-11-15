@@ -93,16 +93,17 @@ public class TranslatorExtension : MarkupExtension {
     /// <param name="provider">
     ///     The DI provider.
     /// </param>
-    public static void ResolveTranslator(IServiceProvider provider) {
+    public static void ResolveTranslator<T>(IServiceProvider provider) {
         var appConfigurationManager = provider.GetRequiredService<IAppConfigurationManager>();
-        var translator = provider.GetService<ITranslator>() ?? NullTranslator.Instance;
+        var translator = provider.GetService<ITranslator<T>>() ?? NullTranslator<T>.Instance;
 
         SetTranslator(translator);
 
         if (!CultureResolver.TryGet(appConfigurationManager.Language, out var culture)) {
             CommonLog.Warning(
                 provider.GetLogger(typeof(TranslatorExtension)),
-                $"Unable to resolve culture '{appConfigurationManager.Language}'."
+                $"Unable to resolve culture '{appConfigurationManager.Language}'.",
+                tag: "WPF_TRANSLATOR_EXTENSION"
             );
 
             return;
