@@ -17,6 +17,7 @@
     "PerformSystemUpdateAsync_TaskRunnerWindow_Title": "Atualizando aplicação",
     "PerformSystemUpdateAsync_UpToDate": "Você está usando a versão mais recente ({0})."
   },
+
   "AppConfigurationPage": {
     "AppDirectoryPathCard_Button_Caption": "Abrir Diretório da Aplicação",
     "AppDirectoryPathCard_Message": "O diretório que contêm todos os dados da aplicação, bem como arquivos de configuração, suporte e logs.",
@@ -42,6 +43,7 @@
     "VersionCard_Button_Caption": "Verificar Atualização do Sistema",
     "VersionCard_Title": "Versão Atual"
   },
+
   "Bootstrapper": {
     "ExecuteStepWithRetryAsync_StepFailure": "Step '{0}' falhou com erro '{1}'.",
     "ExecuteStepWithRetryAsync_StepFinish": "Step '{0}' concluído!",
@@ -51,10 +53,12 @@
     "RunAsync_Finish": "Bootstrapper concluído!",
     "RunAsync_Start": "Bootstrapper iniciando..."
   },
+
   "CleanupPreviousSystemUpdateStep": {
     "ExecuteAsync_CleaningUp": "Limpando resíduos da atualização anterior...",
     "DisplayName": "Limpar Atualização Anterior"
   },
+
   "EnsureApplicationDirectoriesExistenceStep": {
     "ExecuteAsync_CreateBackupDirectory": "Criando diretório de arquivos de backup...",
     "ExecuteAsync_CreateDatabaseDirectory": "Criando diretório de arquivos de banco de dados...",
@@ -62,14 +66,17 @@
     "ExecuteAsync_CreateUpdateDirectory": "Criando diretório de arquivos de atualização...",
     "DisplayName": "Criar Diretórios Aplicação"
   },
+
   "InitializeLuceneIndexStep": {
     "ExecuteAsync_Finish": "Índice do Lucene inicializado com sucesso!",
     "ExecuteAsync_Startup": "Inicializando índice do Lucene..."
   },
+
   "OpenCurrentLogFileRequestHandler": {
     "HandleAsync_Notify_Missing_Log_File_Message": "Não foi possível localizar o arquivo de log de aplicação.",
     "HandleAsync_Notify_Missing_Log_File_Title": "Arquivo Log Aplicação"
   },
+
   "PerformApplicationBackupRequestHandler": {
     "HandleAsync_BackingUpDatabase": "Realizando backup do banco de dados...",
     "HandleAsync_BackingUpDatabase_Failure": "Falha ao realizar o backup do banco de dados: {0}",
@@ -85,6 +92,7 @@
     "HandleAsync_Starting": "Iniciando backup da aplicação...",
     "HandleAsync_Success": "Backup da aplicação concluído com sucesso!"
   },
+
   "PerformApplicationRestoreRequestHandler": {
     "HandleAsync_ClosingDatabaseConnection": "Fechando conexão com o banco de dados...",
     "HandleAsync_ClosingDatabaseConnection_Failure": "Falha ao fechar a conexão com o banco de dados: {0}",
@@ -104,6 +112,7 @@
     "HandleAsync_ValidatingArchive": "Validando arquivo de backup...",
     "HandleAsync_ValidatingArchive_Failure": "Falha ao validar o arquivo de backup: {0}"
   },
+
   "PerformSystemUpdateRequestHandler": {
     "HandleAsync_CheckingPrerequisites": "Verificando pré-requisitos...",
     "HandleAsync_CheckingPrerequisites_Failure": "Falha na verificação de pré-requisitos: {0}",
@@ -132,8 +141,11 @@
     "HandleAsync_VerifyingPackage": "Verificando pacote de atualização...",
     "HandleAsync_VerifyingPackage_Failure": "O pacote de atualização falhou na verificação: {0}"
   },
+
   "TaskRunnerWindow": {
-    "CancelButton_Caption": "Cancelar",
-    "CloseButton_Caption": "Fechar"
-  }
+    "CloseButton_Content": "Fechar",
+    "CancelButton_Content": "Cancelar",
+    "CloseBlocked_Message": "A ação de fechar está bloqueada até o término da tarefa.",
+    "Cancelled_Message": "A tarefa foi cancelada inesperadamente."
+  } 
 }

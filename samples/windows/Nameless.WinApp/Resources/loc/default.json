@@ -17,6 +17,7 @@
     "PerformSystemUpdateAsync_TaskRunnerWindow_Title": "Updating application",
     "PerformSystemUpdateAsync_UpToDate": "You are running the latest version ({0})."
   },
+
   "AppConfigurationPage": {
     "AppDirectoryPathCard_Button_Caption": "Open Application Directory",
     "AppDirectoryPathCard_Message": "The directory containing all application data, as well as configuration, support, and log files.",
@@ -132,8 +133,11 @@
     "HandleAsync_VerifyingPackage": "Verifying update package...",
     "HandleAsync_VerifyingPackage_Failure": "The update package failed verification: {0}"
   },
+
   "TaskRunnerWindow": {
-    "CancelButton_Caption": "Cancel",
-    "CloseButton_Caption": "Close"
-  }
+    "CloseButton_Content": "Close",
+    "CancelButton_Content": "Cancel",
+    "CloseBlocked_Message": "Close action is blocked until task run finishes.",
+    "Cancelled_Message": "Task was cancelled by user."
+  } 
 }

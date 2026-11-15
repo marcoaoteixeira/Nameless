@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Helpers;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
@@ -64,7 +66,7 @@ public partial class App {
     }
 
     private static Task OnCurrentHostStart(IServiceProvider provider, CancellationToken cancellationToken) {
-        TranslatorExtension.ResolveTranslator(provider);
+        TranslatorExtension.ResolveTranslatorFactory(provider);
 
         var main = provider.GetRequiredService<INavigationWindow>();
 
