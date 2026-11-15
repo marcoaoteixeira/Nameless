@@ -1,4 +1,5 @@
-﻿using Nameless.Contracts;
+﻿using FluentValidation;
+using Nameless.Contracts;
 using Nameless.Registration;
 
 namespace Nameless.Hosting.Features.Validation;
@@ -13,7 +14,7 @@ public class FluentValidationFeatureOptions : AssemblyScanAware<FluentValidation
     ///     Gets the registered validator types.
     /// </summary>
     public IReadOnlyCollection<Type> Validators => UseAssemblyScan
-        ? ExecuteAssemblyScan(typeof(IFluentValidationValidator))
+        ? ExecuteAssemblyScan(typeof(IValidator))
         : _validators;
 
     /// <summary>
@@ -25,7 +26,7 @@ public class FluentValidationFeatureOptions : AssemblyScanAware<FluentValidation
     ///     actions can be chained.
     /// </returns>
     public FluentValidationFeatureOptions WithValidator<TFluentValidationValidator>()
-        where TFluentValidationValidator : IFluentValidationValidator {
+        where TFluentValidationValidator : IValidator {
         return WithValidator(typeof(TFluentValidationValidator));
     }
 
@@ -38,13 +39,13 @@ public class FluentValidationFeatureOptions : AssemblyScanAware<FluentValidation
     ///     actions can be chained.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     if <paramref name="type"/> is not assignable from <see cref="IFluentValidationValidator"/>,
+    ///     if <paramref name="type"/> is not assignable from <see cref="IValidator"/>,
     ///     is an open generic type, or is a non-concrete type.
     /// </exception>
     public FluentValidationFeatureOptions WithValidator(Type type) {
         Throws.When.OpenGenericType(type);
         Throws.When.NonConcreteType(type);
-        Throws.When.NonAssignableFrom(type, typeof(IFluentValidationValidator));
+        Throws.When.NonAssignableFrom(type, typeof(IValidator));
 
         _validators.Add(type);
 

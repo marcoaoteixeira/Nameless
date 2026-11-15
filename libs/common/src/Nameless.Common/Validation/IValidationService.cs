@@ -3,7 +3,7 @@
 /// <summary>
 ///     Defines methods to implement a validation service.
 /// </summary>
-public interface IValidator {
+public interface IValidationService {
     /// <summary>
     ///     Validates a value.
     /// </summary>

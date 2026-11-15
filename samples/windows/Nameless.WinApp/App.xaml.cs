@@ -1,10 +1,8 @@
-﻿using System.Globalization;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
-using Nameless.Windows.Helpers;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;

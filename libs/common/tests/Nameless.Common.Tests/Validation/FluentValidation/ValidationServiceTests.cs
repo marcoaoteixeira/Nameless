@@ -3,7 +3,7 @@ using FluentValidation;
 namespace Nameless.Validation.FluentValidation;
 
 [UnitTest]
-public class FluentValidationValidatorTests {
+public class ValidationServiceTests {
     private sealed record SampleModel(string Name, int Age);
 
     // Validator that always passes
@@ -49,7 +49,7 @@ public class FluentValidationValidatorTests {
     [Fact]
     public async Task ValidateAsync_WithNoValidators_ReturnsSuccess() {
         // arrange
-        var sut = new FluentValidationValidator(validators: []);
+        var sut = new ValidationService(validators: []);
         var model = new SampleModel("Alice", 30);
 
         // act
@@ -62,7 +62,7 @@ public class FluentValidationValidatorTests {
     [Fact]
     public async Task ValidateAsync_WithPassingValidator_ReturnsSuccess() {
         // arrange
-        var sut = new FluentValidationValidator(validators: [new PassingValidator()]);
+        var sut = new ValidationService(validators: [new PassingValidator()]);
         var model = new SampleModel("Alice", 30);
 
         // act
@@ -75,7 +75,7 @@ public class FluentValidationValidatorTests {
     [Fact]
     public async Task ValidateAsync_WithFailingValidator_ReturnsFailureWithErrors() {
         // arrange
-        var sut = new FluentValidationValidator(validators: [new FailingNameValidator()]);
+        var sut = new ValidationService(validators: [new FailingNameValidator()]);
         var model = new SampleModel("Alice", 30);
 
         // act
@@ -92,7 +92,7 @@ public class FluentValidationValidatorTests {
     [Fact]
     public async Task ValidateAsync_WithMultipleValidators_AggregatesAllErrors() {
         // arrange
-        var sut = new FluentValidationValidator(validators: [
+        var sut = new ValidationService(validators: [
             new FailingNameValidator(),
             new FailingAgeValidator()
         ]);
@@ -114,7 +114,7 @@ public class FluentValidationValidatorTests {
     public async Task ValidateAsync_WithCustomContext_PassesContextToValidator() {
         // arrange
         var capturedContext = new Dictionary<string, object>();
-        var sut = new FluentValidationValidator(validators: [new ContextCapturingValidator(capturedContext)]);
+        var sut = new ValidationService(validators: [new ContextCapturingValidator(capturedContext)]);
         var model = new SampleModel("Alice", 30);
         var inputContext = new Dictionary<string, object> {
             ["TenantId"] = "tenant-001",

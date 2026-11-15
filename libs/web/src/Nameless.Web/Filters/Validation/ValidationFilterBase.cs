@@ -58,8 +58,8 @@ public abstract class ValidationFilterBase {
     ///     <see langword="true"/> if the validation service is available;
     ///     otherwise, <see langword="false"/>.
     /// </returns>
-    protected bool TryResolveValidation(IServiceProvider provider, [NotNullWhen(returnValue: true)] out IValidator? output) {
-        output = provider.GetService<IValidator>();
+    protected bool TryResolveValidation(IServiceProvider provider, [NotNullWhen(returnValue: true)] out IValidationService? output) {
+        output = provider.GetService<IValidationService>();
 
         var isServiceUnavailable = output is not null;
         if (!isServiceUnavailable) { return isServiceUnavailable; }
@@ -68,7 +68,7 @@ public abstract class ValidationFilterBase {
 
         CommonLog.Warning(
             logger,
-            message: $"Service '{nameof(IValidator)}' is unavailable.",
+            message: $"Service '{nameof(IValidationService)}' is unavailable.",
             tag: GetType().Tag
         );
 

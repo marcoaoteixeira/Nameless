@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.Contracts;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Helpers;
 using System.Globalization;
