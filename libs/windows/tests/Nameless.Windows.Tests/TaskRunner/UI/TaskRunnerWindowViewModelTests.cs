@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using Moq;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Windows.Events;
@@ -27,7 +28,7 @@ public class TaskRunnerWindowViewModelTests {
 
         // assert
         Assert.Equal(TaskRunnerOutcome.Completed, await sut.Completion);
-        Assert.DoesNotContain(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.DarkRed);
+        Assert.DoesNotContain(sut.Entries, e => e.Foreground == Brushes.DarkRed);
     }
 
     [Fact]
@@ -55,7 +56,7 @@ public class TaskRunnerWindowViewModelTests {
         // assert
         var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => sut.Completion);
         Assert.Same(exception, thrown);
-        Assert.Single(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.DarkRed);
+        Assert.Single(sut.Entries, e => e.Foreground == Brushes.DarkRed);
     }
 
     [Fact]
@@ -76,8 +77,8 @@ public class TaskRunnerWindowViewModelTests {
 
         // assert
         Assert.Equal(TaskRunnerOutcome.Cancelled, await sut.Completion);
-        Assert.Single(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.Goldenrod);
-        Assert.DoesNotContain(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.DarkRed);
+        Assert.Single(sut.Entries, e => e.Foreground == Brushes.Goldenrod);
+        Assert.DoesNotContain(sut.Entries, e => e.Foreground == Brushes.DarkRed);
     }
 
     [Fact]
@@ -91,7 +92,7 @@ public class TaskRunnerWindowViewModelTests {
 
         // assert
         await Assert.ThrowsAsync<OperationCanceledException>(() => sut.Completion);
-        Assert.Single(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.DarkRed);
+        Assert.Single(sut.Entries, e => e.Foreground == Brushes.DarkRed);
     }
 
     [Fact]
@@ -275,6 +276,6 @@ public class TaskRunnerWindowViewModelTests {
         sut.NotifyCloseBlocked();
 
         // assert
-        Assert.Single(sut.Entries, e => e.Foreground == System.Windows.Media.Brushes.Goldenrod);
+        Assert.Single(sut.Entries, e => e.Foreground == Brushes.Goldenrod);
     }
 }

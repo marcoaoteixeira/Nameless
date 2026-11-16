@@ -5,6 +5,7 @@ using Nameless.ObjectModel;
 using Nameless.WinApp.Features.CheckSystemUpdate;
 using Nameless.WinApp.Features.PerformSystemUpdate;
 using Nameless.WinApp.Infrastructure;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.WinApp.Tests.Tooling;
 using Nameless.Windows.AppConfiguration;
@@ -12,7 +13,6 @@ using Nameless.Windows.Dialogs.FileSystem;
 using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Events;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.TaskRunner;
 
 namespace Nameless.WinApp.ViewModels.Pages;
@@ -57,7 +57,7 @@ public class AppConfigurationPageViewModelTests {
         var mediatorMock = new Mock<IMediator>();
         var messageDialogMock = new Mock<IMessageDialog>();
         var eventPublisherMock = new Mock<IEventPublisher>();
-        eventPublisherMock.Setup(x => x.PublishAsync(It.IsAny<SnackBarNotificationEvent>())).Returns(Task.CompletedTask);
+        eventPublisherMock.Setup(x => x.PublishAsync(It.IsAny<MainWindowNotificationEvent>())).Returns(Task.CompletedTask);
         var taskRunnerMock = new Mock<ITaskRunner>();
 
         var environment = new FakeSystemUpdateEnvironment {
@@ -113,7 +113,7 @@ public class AppConfigurationPageViewModelTests {
             harness.TaskRunnerMock.Verify(x => x.CreateBuilder(), Times.Never);
 
             harness.EventPublisherMock.Verify(
-                x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Information)),
+                x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Information)),
                 Times.Once
             );
         });
@@ -156,7 +156,7 @@ public class AppConfigurationPageViewModelTests {
             // the real resx value is formatted with ex.Message at runtime —
             // this pins which key the generic-failure branch uses.
             harness.EventPublisherMock.Verify(
-                x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e =>
+                x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e =>
                     e.Type == NotificationType.Failure &&
                     e.Message.Contains("AppConfigurationPageViewModel_PerformSystemUpdateAsync_Failure", StringComparison.Ordinal))),
                 Times.Once
@@ -177,7 +177,7 @@ public class AppConfigurationPageViewModelTests {
             await harness.ViewModel.PerformSystemUpdateCommand.ExecuteAsync(null);
 
             harness.EventPublisherMock.Verify(
-                x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e =>
+                x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e =>
                     e.Type == NotificationType.Failure && e.Message.Contains("RateLimited", StringComparison.Ordinal))),
                 Times.Once
             );

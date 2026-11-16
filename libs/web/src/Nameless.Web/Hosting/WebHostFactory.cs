@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Nameless.Hosting;
 using Serilog.Extensions.Logging;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Nameless.Web.Hosting;
 

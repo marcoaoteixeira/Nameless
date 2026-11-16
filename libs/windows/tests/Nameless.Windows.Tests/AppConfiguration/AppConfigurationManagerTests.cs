@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Nameless.Application;
@@ -182,7 +183,7 @@ public class AppConfigurationManagerTests {
 
         sut.Manager.Set("Theme", "Dark");
 
-        using var otherWriterLock = new System.IO.FileStream(tempPath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+        using var otherWriterLock = new FileStream(tempPath, SysFileMode.Create, SysFileAccess.Write, SysFileShare.None);
 
         // act
         await sut.Manager.SaveChangesAsync(TestContext.Current.CancellationToken);

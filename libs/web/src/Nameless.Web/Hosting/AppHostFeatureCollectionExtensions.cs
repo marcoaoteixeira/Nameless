@@ -2,6 +2,7 @@
 using Nameless.Hosting.Features.Mediator;
 using Nameless.Hosting.Features.Resilience;
 using Nameless.Hosting.Features.Validation;
+using Nameless.Hosting.Features.Workers;
 using Nameless.Web.Hosting.Features.Antiforgery;
 using Nameless.Web.Hosting.Features.Auth;
 using Nameless.Web.Hosting.Features.Common;

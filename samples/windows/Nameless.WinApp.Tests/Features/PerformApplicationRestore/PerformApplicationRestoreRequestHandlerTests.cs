@@ -11,12 +11,11 @@ using Nameless.Lucene;
 using Nameless.Testing.Tools.IO;
 using Nameless.WinApp.Data;
 using Nameless.WinApp.Features.PerformApplicationBackup;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Tests.Tooling;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Events;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.BackupRecovery;
-using Nameless.Windows.Notification.SnackBar;
 
 namespace Nameless.WinApp.Features.PerformApplicationRestore;
 
@@ -47,7 +46,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
             .Setup(x => x.PublishAsync(It.IsAny<BackupRecoveryProgressNotificationEvent>()))
             .Returns(Task.CompletedTask);
         eventPublisherMock
-            .Setup(x => x.PublishAsync(It.IsAny<SnackBarNotificationEvent>()))
+            .Setup(x => x.PublishAsync(It.IsAny<MainWindowNotificationEvent>()))
             .Returns(Task.CompletedTask);
 
         var appConfigurationManagerMock = CreateAppConfigurationManagerMock();
@@ -186,7 +185,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Never);
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Once
         );
     }
@@ -370,7 +369,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Once
         );
     }
@@ -409,7 +408,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Never
         );
     }
@@ -442,7 +441,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         Assert.DoesNotContain(SysDirectory.GetFileSystemEntries(sut.Root.Path), entry => entry.Contains(".bak-", StringComparison.Ordinal));
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Once
         );
     }
@@ -483,7 +482,7 @@ public class PerformApplicationRestoreRequestHandlerTests {
         sut.AppConfigurationManagerMock.Verify(x => x.Reload(), Times.Once);
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Never
         );
     }

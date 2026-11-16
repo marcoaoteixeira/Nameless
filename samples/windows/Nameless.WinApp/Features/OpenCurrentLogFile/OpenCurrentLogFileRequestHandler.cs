@@ -2,11 +2,11 @@
 using Nameless.IO;
 using Nameless.IO.Physical;
 using Nameless.Mediator.Requests;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.Windows.Events;
 using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.SnackBar;
 
 namespace Nameless.WinApp.Features.OpenCurrentLogFile;
 
@@ -26,9 +26,9 @@ public class OpenCurrentLogFileRequestHandler : IRequestHandler<OpenCurrentLogFi
         var currentFile = logDir.GetFiles().OrderBy(file => file.LastWriteTime).FirstOrDefault();
 
         if (currentFile is null) {
-            await _eventPublisher.PublishWarningAsync<SnackBarNotificationEvent>(
-                title: _translator["HandleAsync_Notify_Missing_Log_File_Title"],
-                message: _translator["HandleAsync_Notify_Missing_Log_File_Message"]
+            await _eventPublisher.WarningAsync<OpenCurrentLogFileNotificationEvent>(
+                message: _translator["HandleAsync_Notify_Missing_Log_File_Message"],
+                title: _translator["HandleAsync_Notify_Missing_Log_File_Title"]
             );
 
             return;

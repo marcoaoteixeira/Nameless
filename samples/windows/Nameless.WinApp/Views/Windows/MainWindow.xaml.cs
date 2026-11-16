@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.ViewModels.Windows;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Dialogs.Message;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
-using Nameless.Windows.Notification.SnackBar;
+using Nameless.Windows.Notification;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using Wpf.Ui;
@@ -139,10 +140,37 @@ public partial class MainWindow : INavigationWindow {
     }
 
     private void SubscribeForNotifications() {
-        _eventPublisher.Register<SnackBarNotificationEvent>(this, ShowNotificationInSnackBar);
+        _eventPublisher.Register<BackupRecoveryProgressNotificationEvent>(this, ShowNotificationInSnackBar);
+        _eventPublisher.Register<OpenCurrentLogFileNotificationEvent>(this, ShowNotificationInSnackBar);
+        _eventPublisher.Register<SystemUpdateNotificationEvent>(this, ShowNotificationInSnackBar);
     }
 
-    private void ShowNotificationInSnackBar(object sender, SnackBarNotificationEvent evt) {
-        Dispatcher.InvokeAsync(() => _snackBarService.Show(evt));
+    private void ShowNotificationInSnackBar(object sender, MainWindowNotificationEvent evt) {
+        switch (evt.Mode) {
+            case NotificationMode.SnackBar:
+                var appearance = evt.Type.ToControlAppearance();
+
+                Dispatcher.InvokeAsync(() => _snackBarService.Show(
+                    title: evt.Title,
+                    message: evt.Message,
+                    appearance: appearance,
+                    icon: appearance.Icon,
+                    timeout: _appConfigurationManager.SnackBarTimeout
+                ));
+                break;
+
+            case NotificationMode.MessageDialog:
+                _messageDialog.Show(evt.Message, opts => {
+                    opts.Title = evt.Title;
+                    opts.Icon = evt.Type switch {
+                        NotificationType.Warning => MessageDialogIcon.Warning,
+                        NotificationType.Failure => MessageDialogIcon.Error,
+                        _ => MessageDialogIcon.Information
+                    };
+                    opts.Buttons = MessageDialogButtons.Ok;
+                    opts.Owner = System.Windows.Application.Current.MainWindow;
+                });
+                break;
+        }
     }
 }

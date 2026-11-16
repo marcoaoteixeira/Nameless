@@ -1,6 +1,9 @@
-﻿using Wpf.Ui;
+﻿using Nameless.WinApp.Infrastructure.Events;
+using Nameless.Windows;
+using Nameless.Windows.Notification;
+using Wpf.Ui;
 
-namespace Nameless.Windows.Notification.SnackBar;
+namespace Nameless.WinApp.Infrastructure;
 
 /// <summary>
 ///     Snack Bar Service Extension Methods
@@ -21,7 +24,7 @@ public static class SnackBarServiceExtension {
         /// <param name="evt">
         ///     The event.
         /// </param>
-        public void Show(SnackBarNotificationEvent evt) {
+        public void Show(MainWindowNotificationEvent evt) {
             var appearance = evt.Type.ToControlAppearance();
 
             self.Show(

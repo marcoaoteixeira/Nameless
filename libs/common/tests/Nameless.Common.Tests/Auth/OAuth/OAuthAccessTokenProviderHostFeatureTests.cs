@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Auth.Support;
@@ -7,7 +8,6 @@ using Nameless.Helpers;
 using Nameless.Hosting;
 using Nameless.Hosting.Features.Auth;
 using Nameless.Testing.Tools.Mockers.Hosting;
-using System.Reflection;
 
 namespace Nameless.Auth.OAuth;
 

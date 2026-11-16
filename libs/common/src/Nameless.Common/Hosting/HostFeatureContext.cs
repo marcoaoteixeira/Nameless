@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Reflection;
+using Microsoft.Extensions.Logging;
 using Nameless.Contracts;
-using System.Reflection;
 
 namespace Nameless.Hosting;
 

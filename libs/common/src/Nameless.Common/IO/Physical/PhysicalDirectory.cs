@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.FileSystemGlobbing;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.FileSystemGlobbing;
 using Nameless.Contracts;
-using System.Diagnostics;
 
 namespace Nameless.IO.Physical;
 

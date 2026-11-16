@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Windows;
+using Microsoft.Extensions.Configuration;
 using Nameless.Application;
 using Nameless.Configuration;
 using Nameless.Contracts;
 using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Bootstrap.Notification;
 using Nameless.Windows.UI;
-using System.Windows;
 
 namespace Nameless.WinApp.Views.Windows;
 

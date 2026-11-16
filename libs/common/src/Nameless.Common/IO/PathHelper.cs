@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.Primitives;
 using Nameless.Contracts;
-using System.Text.RegularExpressions;
 
 namespace Nameless.IO;
 

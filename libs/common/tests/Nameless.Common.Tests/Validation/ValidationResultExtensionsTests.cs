@@ -73,7 +73,7 @@ public class ValidationResultExtensionsTests {
     [Fact]
     public void Aggregate_WithSomeFailed_ReturnsCombinedErrors() {
         // arrange
-        var results = new ValidationResult[] {
+        var results = new[] {
             Error.Validation("error one"),
             ValidationResult.Successful,
             Error.Missing("error two")

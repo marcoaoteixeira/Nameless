@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics;
+using System.Globalization;
+using System.Windows.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nameless.Application;
 using Nameless.Mediator;
@@ -8,6 +11,7 @@ using Nameless.WinApp.Features.PerformApplicationBackup;
 using Nameless.WinApp.Features.PerformApplicationRestore;
 using Nameless.WinApp.Features.PerformSystemUpdate;
 using Nameless.WinApp.Infrastructure;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
@@ -18,14 +22,8 @@ using Nameless.Windows.Helpers;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.BackupRecovery;
-using Nameless.Windows.Notification.SnackBar;
 using Nameless.Windows.TaskRunner;
 using Nameless.Windows.UI;
-using System.Diagnostics;
-using System.Globalization;
-using System.Windows.Controls;
-using Nameless.WinApp.Infrastructure.Events;
 using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
 
@@ -129,7 +127,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             var check = await _mediator.ExecuteAsync(new CheckSystemUpdateRequest(), cancellationToken);
 
             if (!check.IsUpdateAvailable) {
-                await _eventPublisher.PublishInformationAsync<SnackBarNotificationEvent>(
+                await _eventPublisher.InformationAsync<SystemUpdateNotificationEvent>(
                     message: T["PerformSystemUpdateAsync_UpToDate", check.Current.Format(includePrefix: true)]
                 );
 
@@ -172,7 +170,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                 // The update is already committed. Do not roll back and do
                 // not shut down — the old process keeps working from its
                 // in-memory image until the user reopens it by hand.
-                await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+                await _eventPublisher.FailureAsync<SystemUpdateNotificationEvent>(
                     message: T["PerformSystemUpdateAsync_RelaunchFailed", ex.Message]
                 );
             }
@@ -181,12 +179,12 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
             var resetsAt = ex.RateLimitResetsAt?.ToLocalTime().ToString("f", CultureInfo.CurrentCulture) ??
                            T["PerformSystemUpdateAsync_RateLimited_UnknownReset"];
 
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+            await _eventPublisher.FailureAsync<SystemUpdateNotificationEvent>(
                 message: T["PerformSystemUpdateAsync_RateLimited", resetsAt]
             );
         }
         catch (Exception ex) {
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+            await _eventPublisher.FailureAsync<SystemUpdateNotificationEvent>(
                 message: T["PerformSystemUpdateAsync_Failure", ex.Message]
             );
         }
@@ -216,13 +214,13 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
                                            .RunAsync();
 
             if (outcome is TaskRunnerOutcome.Completed && backupFilePath is not null) {
-                await _eventPublisher.PublishSuccessAsync<SnackBarNotificationEvent>(
+                await _eventPublisher.SuccessAsync<BackupRecoveryProgressNotificationEvent>(
                     message: T["PerformApplicationBackupAsync_Success", backupFilePath]
                 );
             }
             // Cancelled: nothing to report, the handler already published a cancellation-aware progress entry.
         } catch (Exception ex) {
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+            await _eventPublisher.FailureAsync<BackupRecoveryProgressNotificationEvent>(
                 message: T["PerformApplicationBackupAsync_Failure", ex.Message]
             );
         }
@@ -262,7 +260,7 @@ public partial class AppConfigurationPageViewModel : ViewModel, INavigationAware
 
             System.Windows.Application.Current.Shutdown();
         } catch (Exception ex) {
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
+            await _eventPublisher.FailureAsync<BackupRecoveryProgressNotificationEvent>(
                 message: T["PerformApplicationRestoreAsync_Failure", ex.Message]
             );
         }

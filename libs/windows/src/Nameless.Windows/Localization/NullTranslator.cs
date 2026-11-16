@@ -1,6 +1,6 @@
-﻿using Nameless.Registration;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
+using Nameless.Registration;
 
 namespace Nameless.Windows.Localization;
 

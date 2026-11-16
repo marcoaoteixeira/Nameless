@@ -103,7 +103,7 @@ public class MediatorImplTests {
         var collected = new List<int>();
 
         // act
-        await foreach (var item in mediator.CreateAsync<int>(new MediatorTestStream(), CancellationToken.None)) {
+        await foreach (var item in mediator.CreateAsync(new MediatorTestStream(), CancellationToken.None)) {
             collected.Add(item);
         }
 

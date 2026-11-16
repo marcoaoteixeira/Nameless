@@ -9,11 +9,11 @@ using Nameless.IO.Physical;
 using Nameless.Lucene;
 using Nameless.Testing.Tools.IO;
 using Nameless.WinApp.Data;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Tests.Tooling;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Events;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.BackupRecovery;
 
 namespace Nameless.WinApp.Features.PerformApplicationBackup;
 

@@ -47,6 +47,7 @@
 // - [FromServices]/DI-bound and other non-API-surface parameters are excluded,
 //   matching built-in generator behavior.
 
+using System.Text.Json;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -54,7 +55,6 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.OpenApi;
 using Nameless.Web.Internals;
-using System.Text.Json;
 
 namespace Nameless.Web.OpenApi;
 

@@ -1,7 +1,8 @@
 ﻿using Nameless.Contracts;
 using Nameless.Registration;
+using Nameless.Workers;
 
-namespace Nameless.Workers;
+namespace Nameless.Hosting.Features.Workers;
 
 /// <summary>
 ///     The registration configurator for Workers

@@ -1,6 +1,6 @@
-﻿using Nameless.Windows.Notification;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
+using Nameless.Windows.Notification;
 
 namespace Nameless.Windows.TaskRunner.UI;
 

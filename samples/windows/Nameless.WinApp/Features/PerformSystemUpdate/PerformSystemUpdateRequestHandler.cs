@@ -12,12 +12,12 @@ using Nameless.ObjectModel;
 using Nameless.WinApp.Data;
 using Nameless.WinApp.Features.CheckSystemUpdate;
 using Nameless.WinApp.Infrastructure;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.Windows;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.SnackBar;
 
 namespace Nameless.WinApp.Features.PerformSystemUpdate;
 
@@ -143,8 +143,8 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
         catch (OperationCanceledException) when (!committed) {
             await RollbackSwapsAsync(swaps);
 
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: _translator[$"HandleAsync_RolledBack_Cancelled"]
+            await _eventPublisher.FailureAsync<SystemUpdateNotificationEvent>(
+                message: _translator["HandleAsync_RolledBack_Cancelled"]
             );
 
             return SystemUpdateOutcome.RolledBack;
@@ -152,8 +152,8 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
         catch (Exception ex) when (!committed) {
             await RollbackSwapsAsync(swaps);
 
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(_translator[$"HandleAsync_RolledBack"], ex.Message)
+            await _eventPublisher.FailureAsync<SystemUpdateNotificationEvent>(
+                message: _translator["HandleAsync_RolledBack", ex.Message]
             );
 
             return SystemUpdateOutcome.RolledBack;
@@ -408,8 +408,8 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
             // publish itself is wrapped separately: a publisher that is
             // also down must not turn into an unhandled exception here.
             try {
-                await _eventPublisher.PublishWarningAsync<SystemUpdateProgressNotificationEvent>(
-                    message: string.Format(_translator[$"HandleAsync_SelfHeal_Failure"], destinationPath, ex.Message)
+                await _eventPublisher.WarningAsync<SystemUpdateProgressNotificationEvent>(
+                    message: _translator["HandleAsync_SelfHeal_Failure", destinationPath, ex.Message]
                 );
             }
             catch (Exception publishEx) {
@@ -490,14 +490,14 @@ public class PerformSystemUpdateRequestHandler : IRequestHandler<PerformSystemUp
     }
 
     private Task PublishProgressAsync(string suffix) {
-        return _eventPublisher.PublishInformationAsync<SystemUpdateProgressNotificationEvent>(
+        return _eventPublisher.InformationAsync<SystemUpdateProgressNotificationEvent>(
             message: _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
-        return _eventPublisher.PublishFailureAsync<SystemUpdateProgressNotificationEvent>(
-            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
+        return _eventPublisher.FailureAsync<SystemUpdateProgressNotificationEvent>(
+            message: _translator[$"HandleAsync_{suffix}_Failure", exception.Message]
         );
     }
 }

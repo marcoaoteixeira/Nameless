@@ -1,4 +1,5 @@
 using Nameless.Hosting.Features.Mediator;
+using Nameless.Mediator.Events;
 using Nameless.Mediator.Requests;
 using Nameless.Mediator.Streams;
 
@@ -18,7 +19,7 @@ public class PassThroughStreamBehavior<TRequest, TResponse> : IStreamPipelineBeh
     }
 }
 
-public class GenericEventHandler<TEvent> : Events.IEventHandler<TEvent> where TEvent : Events.IEvent {
+public class GenericEventHandler<TEvent> : IEventHandler<TEvent> where TEvent : IEvent {
     public Task HandleAsync(TEvent evt, CancellationToken cancellationToken) {
         return Task.CompletedTask;
     }
