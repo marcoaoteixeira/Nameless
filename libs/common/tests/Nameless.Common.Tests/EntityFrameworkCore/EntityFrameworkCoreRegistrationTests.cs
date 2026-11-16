@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Nameless.Hosting.Features.EntityFrameworkCore;
 
@@ -9,11 +10,11 @@ public class EntityFrameworkCoreFeatureOptionsTests {
 
     private sealed class FakeDatabaseSeeder : IDatabaseSeeder {
         public int Order => 0;
-        public Task ExecuteAsync(Microsoft.EntityFrameworkCore.DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken) {
+        public Task ExecuteAsync(DbContext dbContext, bool storeManagementOperation, CancellationToken cancellationToken) {
             return Task.CompletedTask;
         }
 
-        public void Execute(Microsoft.EntityFrameworkCore.DbContext dbContext, bool storeManagementOperation) { }
+        public void Execute(DbContext dbContext, bool storeManagementOperation) { }
     }
 
     [Fact]
@@ -35,7 +36,7 @@ public class EntityFrameworkCoreFeatureOptionsTests {
     public void WithDbContextConfiguration_SetsValue() {
         // arrange
         var sut = new EntityFrameworkCoreFeatureOptions();
-        Action<IServiceProvider, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder> configure = (_, _) => { };
+        Action<IServiceProvider, DbContextOptionsBuilder> configure = (_, _) => { };
 
         // act
         var returned = sut.WithDbContextConfiguration(configure);

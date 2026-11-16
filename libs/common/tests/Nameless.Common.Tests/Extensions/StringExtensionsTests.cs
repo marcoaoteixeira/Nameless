@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Nameless.Extensions;
 
@@ -173,7 +174,7 @@ public class StringExtensionsTests {
     public void Split_WithRegexPattern_SplitsOnMatches() {
         // Split(string, RegexOptions) — no built-in string.Split takes RegexOptions,
         // so this resolves to the extension method.
-        var result = "a1b2c".Split(@"\d", System.Text.RegularExpressions.RegexOptions.None);
+        var result = "a1b2c".Split(@"\d", RegexOptions.None);
 
         Assert.Equal(3, result.Length);
     }

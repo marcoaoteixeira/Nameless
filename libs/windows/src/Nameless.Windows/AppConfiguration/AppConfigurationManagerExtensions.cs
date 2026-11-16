@@ -9,6 +9,7 @@ public static class AppConfigurationManagerExtensions {
     private const string THEME_KEY = nameof(Theme);
     private const string CONFIRM_BEFORE_EXIT_KEY = "ConfirmBeforeExit";
     private const string UI_LANGUAGE_KEY = "UILanguage";
+    private const string SNACK_BAR_TIMEOUT = "SnackBarTimeout";
 
     extension(IAppConfigurationManager self) {
         /// <summary>
@@ -33,6 +34,14 @@ public static class AppConfigurationManagerExtensions {
         public string Language {
             get => self.TryGet<string>(UI_LANGUAGE_KEY, out var output) ? output : "pt-BR";
             set => self.Set(UI_LANGUAGE_KEY, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets the snack bar timeout.
+        /// </summary>
+        public TimeSpan SnackBarTimeout {
+            get => self.TryGet<TimeSpan>(SNACK_BAR_TIMEOUT, out var output) ? output : TimeSpan.FromSeconds(5);
+            set => self.Set(SNACK_BAR_TIMEOUT, value);
         }
     }
 }

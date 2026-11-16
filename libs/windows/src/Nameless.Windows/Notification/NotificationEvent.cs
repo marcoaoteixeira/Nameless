@@ -10,23 +10,26 @@ public abstract record NotificationEvent : Event {
     /// <summary>
     ///     Gets or sets the title.
     /// </summary>
-    public string? Title { get; init; }
+    public string Title {
+        get => string.IsNullOrWhiteSpace(field) ? GetType().Name : field;
+        set;
+    }
 
     /// <summary>
     ///     Gets or sets the message.
     /// </summary>
     public string Message {
         get;
-        init => field = Throws.When.Null(value);
+        set => field = Throws.When.Null(value);
     } = string.Empty;
 
     /// <summary>
     ///     Gets or sets the type.
     /// </summary>
-    public NotificationType Type { get; init; }
+    public NotificationType Type { get; set; }
 
     /// <summary>
-    ///     Gets
+    ///     Gets or sets the notification metadata.
     /// </summary>
-    public IReadOnlyDictionary<string, object?>? Metadata { get; init; }
+    public Dictionary<string, object?>? Metadata { get; set; }
 }

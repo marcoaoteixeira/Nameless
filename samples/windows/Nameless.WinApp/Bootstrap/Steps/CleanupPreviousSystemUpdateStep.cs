@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Nameless.Application;
 using Nameless.Contracts;
@@ -6,8 +8,6 @@ using Nameless.Windows;
 using Nameless.Windows.Bootstrap;
 using Nameless.Windows.Bootstrap.Notification;
 using Nameless.Windows.Localization;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Nameless.WinApp.Bootstrap.Steps;
 

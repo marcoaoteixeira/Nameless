@@ -16,10 +16,10 @@ using Nameless.Windows.Hosting.Features.Events;
 using Nameless.Windows.Hosting.Features.Localization;
 using Nameless.Windows.Hosting.Features.Mvvm;
 using Nameless.Windows.Hosting.Features.Navigation;
+using Nameless.Windows.Hosting.Features.Notification;
 using Nameless.Windows.Hosting.Features.Office;
 using Nameless.Windows.Hosting.Features.TaskRunner;
 using Nameless.Windows.Hosting.Features.UI;
-using Nameless.Windows.Notification.SnackBar;
 using Nameless.Workers;
 
 namespace Nameless.Windows.Hosting;

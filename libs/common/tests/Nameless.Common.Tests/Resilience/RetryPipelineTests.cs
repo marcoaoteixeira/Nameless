@@ -1,4 +1,5 @@
 using Polly;
+using Polly.Retry;
 
 namespace Nameless.Resilience;
 
@@ -45,7 +46,7 @@ public class RetryPipelineTests {
         };
 
         var strategy = new ResiliencePipelineBuilder()
-            .AddRetry(new Polly.Retry.RetryStrategyOptions {
+            .AddRetry(new RetryStrategyOptions {
                 MaxRetryAttempts = 1,
                 ShouldHandle = new PredicateBuilder().Handle<InvalidOperationException>(),
                 DelayGenerator = _ => ValueTask.FromResult<TimeSpan?>(TimeSpan.Zero),

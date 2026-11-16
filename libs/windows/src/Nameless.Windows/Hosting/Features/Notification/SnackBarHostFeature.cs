@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Nameless.Hosting;
 using Wpf.Ui;
 
-namespace Nameless.Windows.Notification.SnackBar;
+namespace Nameless.Windows.Hosting.Features.Notification;
 
 /// <summary>
 ///     Snack Bar Host Feature

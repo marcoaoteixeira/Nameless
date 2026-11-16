@@ -222,7 +222,7 @@ public class RequestHandlerInvokerTests {
 
         // act & assert
         await Assert.ThrowsAsync<ArgumentNullException>(
-            () => sut.ExecuteAsync((IRequest)null!, TestContext.Current.CancellationToken));
+            () => sut.ExecuteAsync(null!, TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -297,7 +297,7 @@ public class RequestHandlerInvokerTests {
 
         // act & assert
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => sut.ExecuteAsync((IRequest)new AmbiguousRequest(), TestContext.Current.CancellationToken));
+            () => sut.ExecuteAsync(new AmbiguousRequest(), TestContext.Current.CancellationToken));
     }
 
     [Fact]

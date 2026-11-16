@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using Nameless.Testing.Tools.Logging;
 
 namespace Nameless.Logging;
@@ -64,7 +65,7 @@ public class StopwatchLoggerFormattingTests {
     [Fact]
     public void StartStopwatchLogger_WithNonGenericLogger_UsesUnknownOrCategoryName() {
         // arrange
-        var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
+        var logger = NullLogger.Instance;
 
         // act
         var exception = Record.Exception(() => { using var _ = logger.StartStopwatchLogger(); });

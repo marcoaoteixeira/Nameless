@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Nameless.Windows.AppConfiguration;
-using Nameless.Windows.Helpers;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using Nameless.Windows.AppConfiguration;
+using Nameless.Windows.Helpers;
 
 namespace Nameless.Windows.Localization;
 

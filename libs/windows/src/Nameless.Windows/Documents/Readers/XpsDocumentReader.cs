@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using Nameless.Contracts;
-using Nameless.ObjectModel;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Xps.Packaging;
+using Microsoft.Extensions.Logging;
+using Nameless.Contracts;
+using Nameless.ObjectModel;
 
 namespace Nameless.Windows.Documents.Readers;
 

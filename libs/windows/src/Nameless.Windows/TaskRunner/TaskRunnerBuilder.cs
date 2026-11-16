@@ -1,8 +1,8 @@
-﻿using Nameless.Contracts;
+﻿using System.Windows;
+using Nameless.Contracts;
 using Nameless.Windows.Notification;
 using Nameless.Windows.TaskRunner.UI;
 using Nameless.Windows.UI;
-using System.Windows;
 
 namespace Nameless.Windows.TaskRunner;
 

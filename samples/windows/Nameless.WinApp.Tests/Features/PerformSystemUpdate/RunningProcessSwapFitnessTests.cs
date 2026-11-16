@@ -17,7 +17,7 @@ public class RunningProcessSwapFitnessTests {
         using var directory = new TempDirectory(nameof(RunningProcessSwapFitnessTests));
 
         var systemPing = SysPath.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.System), "PING.EXE"
+            Environment.GetFolderPath(Environment.SpecialFolder.System), "PING.EXE"
         );
         var runningExePath = directory.Combine("app.exe");
         var newExeContent = "new-build-stand-in"u8.ToArray();

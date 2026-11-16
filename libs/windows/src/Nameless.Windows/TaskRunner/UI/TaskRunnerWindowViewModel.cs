@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nameless.Contracts;
 using Nameless.Windows.Controls;
@@ -6,7 +7,6 @@ using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Mvvm;
 using Nameless.Windows.Notification;
-using System.Collections.ObjectModel;
 
 namespace Nameless.Windows.TaskRunner.UI;
 

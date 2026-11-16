@@ -1,6 +1,3 @@
-using System.IO;
-using System.IO.Compression;
-using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,13 +7,15 @@ using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Mediator.Requests;
 using Nameless.WinApp.Data;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.BackupRecovery;
-using Nameless.Windows.Notification.SnackBar;
+using System.IO;
+using System.IO.Compression;
+using System.Text.Json;
 
 namespace Nameless.WinApp.Features.PerformApplicationRestore;
 
@@ -161,9 +160,10 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         catch (OperationCanceledException) when (!committed) {
             await RollbackSwapsAsync(swaps);
 
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: _translator[$"HandleAsync_RolledBack_Cancelled"]
-            );
+            await _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
+                evt.Type = NotificationType.Failure;
+                evt.Message = _translator["HandleAsync_RolledBack_Cancelled"];
+            });
 
             return RestoreOutcome.RolledBack;
         }
@@ -173,9 +173,10 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             // attempt.
             await RollbackSwapsAsync(swaps);
 
-            await _eventPublisher.PublishFailureAsync<SnackBarNotificationEvent>(
-                message: string.Format(_translator[$"HandleAsync_RolledBack"], ex.Message)
-            );
+            await _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
+                evt.Type = NotificationType.Failure;
+                evt.Message = _translator["HandleAsync_RolledBack", ex.Message];
+            });
 
             return RestoreOutcome.RolledBack;
         }
@@ -384,9 +385,10 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             // runs against the original exception that triggered this
             // self-heal attempt. The `.bak-*` sibling this leaves behind is
             // called out explicitly so it is not unaccounted for.
-            await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                message: string.Format(_translator[$"HandleAsync_SelfHeal_Failure"], destinationPath, ex.Message)
-            );
+            await _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
+                evt.Type = NotificationType.Warning;
+                evt.Message = _translator["HandleAsync_SelfHeal_Failure", destinationPath, ex.Message];
+            });
         }
     }
 
@@ -414,7 +416,8 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
                     // before this run — nothing to move back, the delete
                     // above already undid it.
                     if (swap.BackupPath is not null) { SysDirectory.Move(swap.BackupPath, swap.OriginalPath); }
-                } else {
+                }
+                else {
                     if (SysFile.Exists(swap.OriginalPath)) { SysFile.Delete(swap.OriginalPath); }
 
                     if (swap.BackupPath is not null) { SysFile.Move(swap.BackupPath, swap.OriginalPath); }
@@ -436,7 +439,8 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
             try {
                 if (swap.IsDirectory) {
                     if (SysDirectory.Exists(swap.BackupPath)) { SysDirectory.Delete(swap.BackupPath, recursive: true); }
-                } else if (SysFile.Exists(swap.BackupPath)) {
+                }
+                else if (SysFile.Exists(swap.BackupPath)) {
                     SysFile.Delete(swap.BackupPath);
                 }
             }
@@ -447,9 +451,10 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
                 // publisher is also down, that must not stop the loop from
                 // attempting to clean up the remaining siblings.
                 try {
-                    await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                        message: string.Format(_translator[$"HandleAsync_DeletingBackupSiblings_Failure"], swap.BackupPath, ex.Message)
-                    );
+                    await _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
+                        evt.Type = NotificationType.Warning;
+                        evt.Message = _translator["HandleAsync_DeletingBackupSiblings_Failure", swap.BackupPath, ex.Message];
+                    });
                 }
                 catch (Exception publishEx) {
                     CommonLog.Error(_logger, $"Backup-sibling cleanup warning publish failed for '{swap.BackupPath}': {publishEx.Message}", publishEx, tag: GetType().Tag);
@@ -467,14 +472,15 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
     }
 
     private Task PublishProgressAsync(string suffix) {
-        return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"HandleAsync_{suffix}"]
+        return _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(
+            evt => evt.Message = _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
-        return _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
-        );
+        return _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
+            evt.Type = NotificationType.Failure;
+            evt.Message = _translator[$"HandleAsync_{suffix}_Failure", exception.Message];
+        });
     }
 }

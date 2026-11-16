@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Nameless.WinApp.Infrastructure;
 using Nameless.WinApp.Views.Windows;
 using Nameless.Windows;
@@ -6,8 +8,6 @@ using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
 using Nameless.Windows.Localization;
-using System.Reflection;
-using System.Windows;
 using Wpf.Ui;
 
 namespace Nameless.WinApp;

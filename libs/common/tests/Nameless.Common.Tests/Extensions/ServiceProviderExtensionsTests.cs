@@ -88,7 +88,7 @@ public class ServiceProviderExtensionsTests {
         var provider = new ServiceCollection().BuildServiceProvider();
 
         // act
-        var options = provider.GetOptions<SampleOptions>(() => new SampleOptions { Value = 7 });
+        var options = provider.GetOptions(() => new SampleOptions { Value = 7 });
 
         // assert
         Assert.Equal(7, options.Value.Value);

@@ -2,6 +2,8 @@
 global using SysPath = System.IO.Path;
 global using SysFile = System.IO.File;
 global using SysDirectory = System.IO.Directory;
+using System.Runtime.CompilerServices;
+using SQLitePCL;
 
 namespace Nameless;
 
@@ -11,8 +13,8 @@ namespace Nameless;
 // guarantees this runs before any test touches SQLite, regardless of
 // test execution order.
 internal static class SqliteProviderInitializer {
-    [System.Runtime.CompilerServices.ModuleInitializer]
+    [ModuleInitializer]
     public static void Initialize() {
-        SQLitePCL.Batteries_V2.Init();
+        Batteries_V2.Init();
     }
 }

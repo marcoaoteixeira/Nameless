@@ -2,9 +2,8 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Nameless.Helpers;
-using Nameless.Hosting;
 
-namespace Nameless.Workers;
+namespace Nameless.Hosting.Features.Workers;
 
 /// <summary>
 ///     Periodic Worker App Host Feature.

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
-using Nameless.Hosting;
-using Serilog.Extensions.Logging;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Hosting;
+using Nameless.Hosting;
 using Nameless.Windows.Hosting.Wrappers;
+using Serilog.Extensions.Logging;
 
 namespace Nameless.Windows.Hosting;
 

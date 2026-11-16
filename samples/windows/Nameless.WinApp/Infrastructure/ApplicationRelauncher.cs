@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Nameless.WinApp.Infrastructure;
@@ -14,7 +15,7 @@ public sealed class ApplicationRelauncher : IApplicationRelauncher {
                 WorkingDirectory = workingDirectoryPath
             })) { }
         }
-        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception) {
+        catch (Exception ex) when (ex is InvalidOperationException or Win32Exception) {
             throw new InvalidOperationException($"Could not start '{executablePath}'.", ex);
         }
 

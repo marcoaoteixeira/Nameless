@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using Nameless.Testing.Tools.Attributes;
 using Nameless.Windows.Localization;
+using Nameless.Windows.Windows.Navigation.Resources;
 using Wpf.Ui.Controls;
 
 namespace Nameless.Windows.Navigation;
@@ -52,7 +53,7 @@ public class AutoDiscoverableNavigationViewItemProviderTests {
         var attribute = new NavigationViewItemAttribute {
             Icon = SymbolRegular.Settings48,
             TitleResourceName = "NavigationViewItemAttribute_Title",
-            ResourceType = typeof(global::Nameless.Windows.Windows.Navigation.Resources.Resources)
+            ResourceType = typeof(Resources)
         };
         var entry = new AutoDiscoverableNavigationViewItemProvider.Entry(typeof(AutoDiscoverableNavigationViewItemProviderTests), attribute);
 

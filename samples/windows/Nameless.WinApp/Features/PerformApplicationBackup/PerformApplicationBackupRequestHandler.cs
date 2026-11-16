@@ -9,12 +9,12 @@ using Nameless.IO;
 using Nameless.Lucene;
 using Nameless.Mediator.Requests;
 using Nameless.WinApp.Data;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.Windows;
 using Nameless.Windows.AppConfiguration;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.BackupRecovery;
 
 namespace Nameless.WinApp.Features.PerformApplicationBackup;
 
@@ -181,8 +181,8 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
         var configFile = _applicationContext.FileManager.GetFile(Constants.BackupRecovery.AppConfigFileName);
 
         if (!configFile.Exists) {
-            await _eventPublisher.PublishWarningAsync<BackupRecoveryProgressNotificationEvent>(
-                message: _translator["HandleAsync_CopyingConfigurationFile_Missing"]
+            await _eventPublisher.FailureAsync<BackupRecoveryProgressNotificationEvent>(
+                _translator["HandleAsync_CopyingConfigurationFile_Missing"]
             );
 
             return;
@@ -293,14 +293,14 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
     }
 
     private Task PublishProgressAsync(string suffix) {
-        return _eventPublisher.PublishInformationAsync<BackupRecoveryProgressNotificationEvent>(
-            message: _translator[$"HandleAsync_{suffix}"]
+        return _eventPublisher.InformationAsync<BackupRecoveryProgressNotificationEvent>(
+            _translator[$"HandleAsync_{suffix}"]
         );
     }
 
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
-        return _eventPublisher.PublishFailureAsync<BackupRecoveryProgressNotificationEvent>(
-            message: string.Format(_translator[$"HandleAsync_{suffix}_Failure"], exception.Message)
+        return _eventPublisher.FailureAsync<BackupRecoveryProgressNotificationEvent>(
+            _translator[$"HandleAsync_{suffix}_Failure", exception.Message]
         );
     }
 }

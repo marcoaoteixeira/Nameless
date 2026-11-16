@@ -13,13 +13,13 @@ using Nameless.Testing.Tools.IO;
 using Nameless.WinApp.Data;
 using Nameless.WinApp.Features.CheckSystemUpdate;
 using Nameless.WinApp.Infrastructure;
+using Nameless.WinApp.Infrastructure.Events;
 using Nameless.WinApp.Infrastructure.GitHub;
 using Nameless.WinApp.Tests.Tooling;
 using Nameless.Windows;
 using Nameless.Windows.Events;
 using Nameless.Windows.Localization;
 using Nameless.Windows.Notification;
-using Nameless.Windows.Notification.SnackBar;
 
 namespace Nameless.WinApp.Features.PerformSystemUpdate;
 
@@ -157,7 +157,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             .Setup(x => x.PublishAsync(It.IsAny<SystemUpdateProgressNotificationEvent>()))
             .Returns(Task.CompletedTask);
         eventPublisherMock
-            .Setup(x => x.PublishAsync(It.IsAny<SnackBarNotificationEvent>()))
+            .Setup(x => x.PublishAsync(It.IsAny<MainWindowNotificationEvent>()))
             .Returns(Task.CompletedTask);
 
         var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
@@ -232,7 +232,7 @@ public class PerformSystemUpdateRequestHandlerTests {
             Times.Once
         );
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Never
         );
     }
@@ -599,7 +599,7 @@ public class PerformSystemUpdateRequestHandlerTests {
         Assert.Equal(originalExeBytes, SysFile.ReadAllBytes(sut.Environment.ExecutablePath));
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Message.Contains("RolledBack_Cancelled", StringComparison.Ordinal))),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Message.Contains("RolledBack_Cancelled", StringComparison.Ordinal))),
             Times.Once
         );
     }
@@ -639,7 +639,7 @@ public class PerformSystemUpdateRequestHandlerTests {
         Assert.True(SysFile.Exists(sut.Environment.ExecutablePath));
 
         sut.EventPublisherMock.Verify(
-            x => x.PublishAsync(It.Is<SnackBarNotificationEvent>(e => e.Type == NotificationType.Failure)),
+            x => x.PublishAsync(It.Is<MainWindowNotificationEvent>(e => e.Type == NotificationType.Failure)),
             Times.Never
         );
     }

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Microsoft.Extensions.Time.Testing;
 using Nameless.Auth.OAuth;
 using Nameless.Auth.Support;
@@ -246,7 +247,7 @@ public sealed class OAuthAccessTokenProviderTests {
         var ex = await Assert.ThrowsAsync<AccessTokenRequestException>(
             () => provider.GetTokenAsync(new ClientCredentialsRequest(), TestContext.Current.CancellationToken).AsTask());
 
-        Assert.IsAssignableFrom<System.Text.Json.JsonException>(ex.InnerException);
+        Assert.IsAssignableFrom<JsonException>(ex.InnerException);
     }
 
     // ---------- Errors ----------
