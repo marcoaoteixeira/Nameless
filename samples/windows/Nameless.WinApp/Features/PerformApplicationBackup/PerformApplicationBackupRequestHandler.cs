@@ -181,7 +181,7 @@ public class PerformApplicationBackupRequestHandler : IRequestHandler<PerformApp
         var configFile = _applicationContext.FileManager.GetFile(Constants.BackupRecovery.AppConfigFileName);
 
         if (!configFile.Exists) {
-            await _eventPublisher.FailureAsync<BackupRecoveryProgressNotificationEvent>(
+            await _eventPublisher.WarningAsync<BackupRecoveryProgressNotificationEvent>(
                 _translator["HandleAsync_CopyingConfigurationFile_Missing"]
             );
 

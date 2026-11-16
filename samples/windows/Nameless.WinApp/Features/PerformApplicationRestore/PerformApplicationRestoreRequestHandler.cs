@@ -477,9 +477,14 @@ public class PerformApplicationRestoreRequestHandler : IRequestHandler<PerformAp
         );
     }
 
+    // Warning, not Failure: this reports a step going wrong mid-attempt,
+    // while the restore is still rolling back. The definitive Failure
+    // notification is the single "RolledBack"/"RolledBack_Cancelled"
+    // message published once rollback finishes — a step-level Failure here
+    // would double-count it.
     private Task PublishStepFailureAsync(string suffix, Exception exception) {
         return _eventPublisher.PublishAsync<BackupRecoveryProgressNotificationEvent>(evt => {
-            evt.Type = NotificationType.Failure;
+            evt.Type = NotificationType.Warning;
             evt.Message = _translator[$"HandleAsync_{suffix}_Failure", exception.Message];
         });
     }

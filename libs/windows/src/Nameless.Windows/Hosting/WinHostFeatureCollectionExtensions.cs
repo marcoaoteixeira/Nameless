@@ -7,6 +7,7 @@ using Nameless.Hosting.Features.Lucene;
 using Nameless.Hosting.Features.Mediator;
 using Nameless.Hosting.Features.Resilience;
 using Nameless.Hosting.Features.Validation;
+using Nameless.Hosting.Features.Workers;
 using Nameless.Windows.Hosting.Features.AppConfiguration;
 using Nameless.Windows.Hosting.Features.Bootstrap;
 using Nameless.Windows.Hosting.Features.Dialogs.FileSystem;
